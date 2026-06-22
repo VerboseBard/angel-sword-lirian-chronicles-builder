@@ -5558,6 +5558,12 @@
     };
     const STARTING_CLASS_EXP = 1000;
     const STARTING_INTERLUDE_POINTS = 3;
+    const CLASS_PURCHASABLE_LEVELS = 7;
+    const CLASS_PASSIVE_SLOTS = {
+      heart: 2,
+      soul: 4,
+      skills: 6
+    };
     const CLASS_GROUP_ROLE_ORDER = ["Controller", "Defender", "Healer", "Striker", "Support", "Utility", "Specialist", "Artisan", "Gatherer"];
 
     const BUILDER_STEPS = [
@@ -6979,16 +6985,17 @@
 
     function buildLookup(data) {
       const makeMap = (entries = []) => {
+        const normalizedEntries = entries.map((entry) => normalizePulledRulesEntry(entry));
         const byId = new Map();
         const byName = new Map();
-        entries.forEach((entry) => {
+        normalizedEntries.forEach((entry) => {
           byId.set(normalizeKey(entry.id), entry);
           byName.set(normalizeKey(entry.name), entry);
         });
         return {
           byId,
           byName,
-          entries,
+          entries: normalizedEntries,
           resolve(value) {
             const key = normalizeKey(value);
             return byId.get(key) || byName.get(key) || null;
@@ -7513,9 +7520,44 @@
       return text.length >= 16 && !/\s/.test(text) && /^[A-Za-z0-9+/=]+$/.test(text);
     }
 
+    function looksDecodableBase64Text(value) {
+      const cleaned = cleanText(value);
+      if (!cleaned || /\s/.test(cleaned) || cleaned.length % 4 !== 0 || !/^[A-Za-z0-9+/]+={0,2}$/.test(cleaned)) {
+        return false;
+      }
+      if (cleaned.length < 8 && !cleaned.includes("=")) {
+        return false;
+      }
+
+      try {
+        const decoded = atob(cleaned);
+        const normalized = decoded
+          .replace(/[\u0000-\u001f]/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+        if (!normalized) {
+          return false;
+        }
+        const nonAscii = normalized.replace(/[\u0020-\u007e]/g, "");
+        return nonAscii.length / normalized.length <= 0.1;
+      } catch (error) {
+        return false;
+      }
+    }
+
     function firstReadableText(...values) {
-      const cleaned = values.map((value) => cleanText(value)).filter(Boolean);
-      const readable = cleaned.find((value) => !looksEncodedBlob(value));
+      const cleaned = values.flatMap((value) => {
+        const original = cleanText(value);
+        if (!original) {
+          return [];
+        }
+        return [
+          decodePossibleBase64Text(original),
+          stripSimpleHtml(original),
+          original
+        ];
+      }).map((value) => cleanText(value)).filter(Boolean);
+      const readable = cleaned.find((value) => !looksEncodedBlob(value) && !looksDecodableBase64Text(value));
       return readable || cleaned[0] || "";
     }
 
@@ -7525,7 +7567,7 @@
 
     function decodePossibleBase64Text(value) {
       const cleaned = cleanText(value);
-      if (!cleaned || !looksEncodedBlob(cleaned)) {
+      if (!cleaned || (!looksEncodedBlob(cleaned) && !looksDecodableBase64Text(cleaned))) {
         return cleaned;
       }
 
@@ -7539,6 +7581,65 @@
       } catch (error) {
         return cleaned;
       }
+    }
+
+    function normalizePulledRulesEntry(entry) {
+      if (!entry || typeof entry !== "object") {
+        return entry;
+      }
+      if (Array.isArray(entry)) {
+        return entry.map((item) => normalizePulledRulesEntry(item));
+      }
+
+      const normalized = { ...entry };
+      [
+        "attributes",
+        "benefit1",
+        "benefit2",
+        "benefit3",
+        "benefit4",
+        "contentText",
+        "description",
+        "descriptions",
+        "descriptionText",
+        "descriptionsText",
+        "guide",
+        "guideText",
+        "heart",
+        "proficiencies",
+        "requirement",
+        "requirementText",
+        "requirements",
+        "requirementsText",
+        "skills",
+        "soul"
+      ].forEach((field) => {
+        if (typeof normalized[field] === "string") {
+          normalized[field] = firstReadableText(normalized[field]);
+        }
+      });
+
+      [
+        "abilities",
+        "traits",
+        "keyAbility",
+        "keyAbilityRef",
+        "associatedAbilityRef",
+        "ability1Ref",
+        "ability2Ref",
+        "ability3Ref",
+        "ability4Ref",
+        "ability5Ref",
+        "ability6Ref",
+        "ability7Ref",
+        "ultimateAbilityRef"
+      ].forEach((field) => {
+        if (normalized[field]) {
+          normalized[field] = normalizePulledRulesEntry(normalized[field]);
+        }
+      });
+
+      return normalized;
     }
 
     function getClassLeadText(record) {
@@ -7600,11 +7701,71 @@
       return abilities;
     }
 
+    function getClassProgressSlots(record) {
+      const activeAbilities = getClassAbilityRecords(record);
+      const activeLabels = [
+        "Class ability",
+        "Class ability",
+        "Class ability",
+        "Ultimate ability"
+      ];
+      const passiveSlots = [
+        {
+          type: "passive",
+          passiveType: "heart",
+          label: "Heart passive",
+          name: "Heart",
+          description: cleanText(record?.heart) || "Class Heart passive bonus."
+        },
+        {
+          type: "passive",
+          passiveType: "soul",
+          label: "Soul passive",
+          name: "Soul",
+          description: cleanText(record?.soul) || "Class Soul passive bonus."
+        },
+        {
+          type: "passive",
+          passiveType: "skills",
+          label: "Class skill passive",
+          name: "Class Skills",
+          description: cleanText(record?.skills) || "Class skill passive bonus."
+        }
+      ];
+
+      return Array.from({ length: CLASS_PURCHASABLE_LEVELS }, (_, index) => {
+        const slotNumber = index + 1;
+        if (slotNumber % 2 === 0) {
+          return passiveSlots[(slotNumber / 2) - 1];
+        }
+        const activeIndex = (slotNumber - 1) / 2;
+        const ability = activeAbilities[activeIndex] || null;
+        return {
+          type: "ability",
+          ability,
+          label: activeLabels[activeIndex] || "Class ability",
+          name: ability?.name || `Unlisted ${activeLabels[activeIndex] || "class ability"}`,
+          description: ability
+            ? cleanText(ability.descriptionText || ability.description || "")
+            : "The official API has not exposed this class ability record yet."
+        };
+      });
+    }
+
+    function getClassProgressSlotCount(record) {
+      return record ? CLASS_PURCHASABLE_LEVELS : 0;
+    }
+
+    function isClassPassiveUnlocked(record, passiveType) {
+      const slotNumber = CLASS_PASSIVE_SLOTS[passiveType];
+      return Boolean(slotNumber && getClassPurchasedAbilityCount(record) >= slotNumber);
+    }
+
     function getClassPurchasedAbilityCount(record) {
       if (!record?.id) {
         return 0;
       }
-      const abilityCount = getClassAbilityRecords(record).length;
+      const abilityCount = getClassProgressSlotCount(record);
       const saved = toNumber(state.builder.classAbilityProgress?.[record.id], 0);
       return clamp(Math.floor(saved), 0, abilityCount);
     }
@@ -7614,7 +7775,7 @@
       if (!record) {
         return;
       }
-      const abilityCount = getClassAbilityRecords(record).length;
+      const abilityCount = getClassProgressSlotCount(record);
       const nextCount = clamp(Math.floor(toNumber(count, 0)), 0, abilityCount);
       state.builder.classAbilityProgress = {
         ...(state.builder.classAbilityProgress || {}),
@@ -7627,7 +7788,10 @@
     }
 
     function getPurchasedClassAbilities(record) {
-      return getClassAbilityRecords(record).slice(0, getClassPurchasedAbilityCount(record));
+      return getClassProgressSlots(record)
+        .slice(0, getClassPurchasedAbilityCount(record))
+        .filter((slot) => slot.type === "ability" && slot.ability)
+        .map((slot) => slot.ability);
     }
 
     function getClassKeyAbilityPlayRecord(record) {
@@ -7653,7 +7817,7 @@
     function getSelectedClassProgress() {
       return getSelectedClassDetails().slice(0, CLASS_ROWS.length).map((record, index) => {
         const purchasedCount = getClassPurchasedAbilityCount(record);
-        const abilityCount = getClassAbilityRecords(record).length;
+        const abilityCount = getClassProgressSlotCount(record);
         return {
           row: CLASS_ROWS[index],
           record,
@@ -8756,7 +8920,7 @@
       getSelectedClassProgress().forEach(({ record }) => {
         const source = `${record.name} class`;
         const heartOptions = getStatOptionsFromText(record.heart, SECONDARY_STATS);
-        if (heartOptions.length > 1) {
+        if (isClassPassiveUnlocked(record, "heart") && heartOptions.length > 1) {
           definitions.push({
             id: getClassChoiceId(record, "heart-stat"),
             source,
@@ -8771,7 +8935,7 @@
         }
 
         const soulOptions = getStatOptionsFromText(record.soul, MAIN_STATS);
-        if (soulOptions.length > 1) {
+        if (isClassPassiveUnlocked(record, "soul") && soulOptions.length > 1) {
           definitions.push({
             id: getClassChoiceId(record, "soul-stat"),
             source,
@@ -8785,9 +8949,11 @@
           });
         }
 
-        getClassSkillPoolChoiceDefinitions(record).forEach((choice) => {
-          definitions.push(choice);
-        });
+        if (isClassPassiveUnlocked(record, "skills")) {
+          getClassSkillPoolChoiceDefinitions(record).forEach((choice) => {
+            definitions.push(choice);
+          });
+        }
       });
 
       getSelectedBreakthroughRecords().forEach((entry) => {
@@ -9630,14 +9796,16 @@
 
       getSelectedClassProgress().forEach(({ record: entry }) => {
         const classSkillText = cleanText(entry.skills);
-        const trackedClassSkillPools = getClassSkillPoolChoiceDefinitions(entry);
-        if (!trackedClassSkillPools.length) {
+        const trackedClassSkillPools = isClassPassiveUnlocked(entry, "skills")
+          ? getClassSkillPoolChoiceDefinitions(entry)
+          : [];
+        if (isClassPassiveUnlocked(entry, "skills") && !trackedClassSkillPools.length) {
           collectComputedTextBonuses(bucket, `${entry.name} class`, entry.skills);
         }
-        if (getStatOptionsFromText(entry.heart, SECONDARY_STATS).length <= 1) {
+        if (isClassPassiveUnlocked(entry, "heart") && getStatOptionsFromText(entry.heart, SECONDARY_STATS).length <= 1) {
           collectComputedTextBonuses(bucket, `${entry.name} heart`, entry.heart);
         }
-        if (getStatOptionsFromText(entry.soul, MAIN_STATS).length <= 1) {
+        if (isClassPassiveUnlocked(entry, "soul") && getStatOptionsFromText(entry.soul, MAIN_STATS).length <= 1) {
           collectComputedTextBonuses(bucket, `${entry.name} soul`, entry.soul);
         }
 
@@ -10090,7 +10258,7 @@
           }
           const savedLevel = Math.max(1, toNumber(state.fields[`ClassLevel${row}`], 1));
           const savedCost = Math.max(0, toNumber(state.fields[`Cost${row}`], 0));
-          const abilityCount = getClassAbilityRecords(record).length;
+          const abilityCount = getClassProgressSlotCount(record);
           const countFromLevel = savedLevel > 1 ? savedLevel - 1 : 0;
           const countFromCost = savedCost > getClassUnlockCost(record)
             ? Math.floor((savedCost - getClassUnlockCost(record)) / 100)
@@ -13989,7 +14157,7 @@
       if (!record) {
         return `<div class="sheet-class-reference">${renderClassDetailCard(null)}</div>`;
       }
-      const abilityCount = getClassAbilityRecords(record).length;
+      const abilityCount = getClassProgressSlotCount(record);
       const purchasedCount = clamp(toNumber(progressEntry?.purchasedCount, getClassPurchasedAbilityCount(record)), 0, abilityCount);
       const level = Math.max(1, toNumber(progressEntry?.level, 1 + purchasedCount));
       const totalCost = Math.max(0, toNumber(progressEntry?.cost, getClassProgressCost(record, purchasedCount)));
@@ -14002,7 +14170,8 @@
       const learnedAbilities = getPurchasedClassAbilities(record).map((ability) => ability?.name).filter(Boolean);
       const progressItems = [
         `Current level: ${level}`,
-        `Learned abilities: ${purchasedCount} / ${abilityCount}`,
+        `Class levels purchased: ${purchasedCount} / ${abilityCount}`,
+        `Active abilities learned: ${learnedAbilities.length} / ${getClassAbilityRecords(record).length}`,
         `Total class investment: ${totalCost} EXP plus 1 Interlude Point`,
         mastered ? "Mastery status: mastered" : "Mastery status: still progressing"
       ];
@@ -14015,7 +14184,7 @@
               <h4>Current Sheet Progress</h4>
               <div class="detail-highlight-grid">
                 ${renderDetailHighlight("Level", `Level ${level}`)}
-                ${renderDetailHighlight("Abilities Learned", `${purchasedCount} / ${abilityCount}`)}
+                ${renderDetailHighlight("Class Levels", `${purchasedCount} / ${abilityCount}`)}
                 ${renderDetailHighlight("Status", mastered ? "Mastered" : "In Progress")}
               </div>
               ${renderDetailList(progressItems)}
@@ -14048,7 +14217,7 @@
         content: renderPlayClassReferenceContent(progressEntry || {
           record,
           purchasedCount: getClassPurchasedAbilityCount(record),
-          abilityCount: getClassAbilityRecords(record).length,
+          abilityCount: getClassProgressSlotCount(record),
           level
         })
       });
@@ -14701,12 +14870,12 @@
       return `
         <div class="review-panel">
           <strong>Class EXP Spending</strong>
-          <p>Unlocking a class grants its key ability. Each listed class ability below costs 100 EXP and must be learned in order.</p>
+          <p>Unlocking a class grants its key ability. Each class has 7 purchasable levels after unlock; active abilities and passive Heart, Soul, and class skill increases must be learned in order.</p>
           <div class="class-progress-grid">
             ${progress.map((entry) => {
-              const abilities = getClassAbilityRecords(entry.record);
-              const nextAbility = abilities[entry.purchasedCount];
-              const canLearnNext = Boolean(nextAbility) && budget.remainingExp >= 100;
+              const slots = getClassProgressSlots(entry.record);
+              const nextSlot = slots[entry.purchasedCount];
+              const canLearnNext = Boolean(nextSlot) && budget.remainingExp >= 100;
               const mastered = isTrackedClassMastered(entry);
               return `
                 <div class="class-progress-card">
@@ -14719,19 +14888,19 @@
                   </header>
                   ${entry.record.keyAbility?.name ? `<p><strong>Key:</strong> ${escapeHtml(entry.record.keyAbility.name)}</p>` : ""}
                   <ul class="class-progress-list">
-                    ${abilities.length ? abilities.map((ability, index) => `
+                    ${slots.length ? slots.map((slot, index) => `
                       <li class="${index >= entry.purchasedCount ? "is-locked" : ""}">
-                        <span>${escapeHtml(ability.name || `Ability ${index + 1}`)}</span>
+                        <span>${escapeHtml(`Level ${index + 2}: ${slot.name || slot.label}`)}</span>
                         <span>${index < entry.purchasedCount ? "Learned" : "100 EXP"}</span>
                       </li>
-                    `).join("") : `<li><span>No listed purchasable abilities in the pulled class data.</span></li>`}
+                    `).join("") : `<li><span>No purchasable class progression slots are available.</span></li>`}
                   </ul>
                   <div class="class-progress-actions">
-                    <button type="button" data-builder-action="learn-class-ability" data-id="${escapeHtml(entry.record.id)}" ${canLearnNext ? "" : "disabled"}>${nextAbility ? `Learn ${escapeHtml(nextAbility.name)}` : "All Listed Abilities Learned"}</button>
-                    <button type="button" class="secondary" data-builder-action="refund-class-ability" data-id="${escapeHtml(entry.record.id)}" ${entry.purchasedCount > 0 ? "" : "disabled"}>Refund Last Ability</button>
+                    <button type="button" data-builder-action="learn-class-ability" data-id="${escapeHtml(entry.record.id)}" ${canLearnNext ? "" : "disabled"}>${nextSlot ? `Learn ${escapeHtml(nextSlot.name || nextSlot.label)}` : "Class Mastered"}</button>
+                    <button type="button" class="secondary" data-builder-action="refund-class-ability" data-id="${escapeHtml(entry.record.id)}" ${entry.purchasedCount > 0 ? "" : "disabled"}>Refund Last Class Level</button>
                     <button type="button" class="secondary" data-builder-action="toggle-class" data-id="${escapeHtml(entry.record.id)}">Remove Class</button>
                   </div>
-                  ${nextAbility && !canLearnNext ? `<p>${escapeHtml(`Needs 100 EXP, but only ${budget.remainingExp} remains in the starting class pool.`)}</p>` : ""}
+                  ${nextSlot && !canLearnNext ? `<p>${escapeHtml(`Needs 100 EXP, but only ${budget.remainingExp} remains in the starting class pool.`)}</p>` : ""}
                 </div>
               `;
             }).join("")}
@@ -15180,25 +15349,25 @@
         return;
       }
 
-      const abilities = getClassAbilityRecords(record);
+      const slots = getClassProgressSlots(record);
       const current = getClassPurchasedAbilityCount(record);
-      const nextAbility = abilities[current];
-      if (!nextAbility) {
-        setStatus(`${record.name} has no more listed abilities to learn in the pulled class data.`);
+      const nextSlot = slots[current];
+      if (!nextSlot) {
+        setStatus(`${record.name} is already mastered.`);
         renderBuilder();
         return;
       }
 
       const budget = getClassUnlockBudgetState();
       if (budget.remainingExp < 100) {
-        setStatus(`${nextAbility.name} costs 100 EXP, but only ${budget.remainingExp} remains in the starting class pool.`);
+        setStatus(`${nextSlot.name || nextSlot.label} costs 100 EXP, but only ${budget.remainingExp} remains in the starting class pool.`);
         renderBuilder();
         return;
       }
 
       setClassPurchasedAbilityCount(record.id, current + 1);
       syncBuilderSelectionsIntoSheet();
-      setStatus(`Learned ${nextAbility.name} from ${record.name}.`);
+      setStatus(`Learned ${nextSlot.name || nextSlot.label} from ${record.name}.`);
       renderBuilder();
     }
 
@@ -15210,14 +15379,14 @@
       }
       const current = getClassPurchasedAbilityCount(record);
       if (current <= 0) {
-        setStatus(`${record.name} has no purchased class abilities to refund.`);
+        setStatus(`${record.name} has no purchased class levels to refund.`);
         renderBuilder();
         return;
       }
-      const ability = getClassAbilityRecords(record)[current - 1];
+      const slot = getClassProgressSlots(record)[current - 1];
       setClassPurchasedAbilityCount(record.id, current - 1);
       syncBuilderSelectionsIntoSheet();
-      setStatus(`Refunded ${ability?.name || "the last ability"} from ${record.name}.`);
+      setStatus(`Refunded ${slot?.name || slot?.label || "the last class level"} from ${record.name}.`);
       renderBuilder();
     }
 
