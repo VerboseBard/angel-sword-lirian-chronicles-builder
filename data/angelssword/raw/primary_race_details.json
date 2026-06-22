@@ -1,0 +1,262 @@
+[
+  {
+    "id": "6a06299f6be32fced4930880",
+    "indexId": "675a52b4-b8b7-43f8-8a97-fdb6125f0da3",
+    "primaryRaceId": "chimera",
+    "name": "Chimera",
+    "description": "PHA+Q2hpbWVyYSBhcmUgY3JlYXR1cmVzIHRoYXQgaGF2ZSBiZWVuIG11dGF0ZWQgZHVlIHRvIG1hZ2ljIGFuZCBoYXZlIGdhaW5lZCBzZW50aWVuY2UuICZuYnNwO0FsbW9zdCBhbGwgQ2hpbWVyYSBjYW4gYmUgdHJhY2VkIGJhY2sgdG8gYXJlYXMgb2YgaGlnaCBtYWdpY2FsIGNvbmNlbnRyYXRpb24gYW5kIGEgbGlmZWZvcm0gdGhhdCB3YXMgbXV0YXRlZC4gJm5ic3A7RGVzcGl0ZSBiZWluZyBxdWl0ZSB2YXJpZWQgaW4gcGh5c2ljYWwgY2hhcmFjdGVyaXN0aWNzLCBhbGwgQ2hpbWVyYSBhcmUgZWZmZWN0aXZlbHkgdGhlIHNhbWUgcmFjZSBhdCB0aGVpciBjb3JlLiAmbmJzcDtJdCBpcyB1bmtub3duIGhvdyBhcmNhbmUgbWFnaWMgd2FzIGFibGUgdG8gcGF0dGVybiBpdHNlbGYgaW4gc3VjaCBhIHdheeKApjwvcD48cD5Gcm9tIFNsaW1lIENoaW1lcmEgdG8gdGhlIG1vcmUgY29tbW9uIEZlbGluZSBDaGltZXJhcywgdGhlcmUgYXJlIHZhcmllZCBzdWItcmFjZXMgdGhhdCBjYW4gYmUgZm91bmQgdGhyb3VnaG91dCB0aGUgd29ybGQuIEFuZCB0aG9zZSBzdWItcmFjZXMgY2FuIHZhcnkgd2lkZWx5LCBldmVuIHdpdGhpbiB0aGUgc2FtZSBwaGVub3R5cGVzLiBDb2xvcmF0aW9uLCBlYXIgYW5kIHRhaWwgc2hhcGVzLCBhbmQgZXZlbiBudW1iZXIgb2YgcGh5c2ljYWwgY2hhcmFjdGVyaXN0aWNzLiBUaGVzZSB3aWRlbHkgdmFyeWluZyBwaGVub3R5cGVzIGFyZSBicm9hZGx5IGNhdGVnb3JpemVkIGluIHR3byB3YXlzOiBrYW5vbGl0aCBhbmQgem9hbGl0aC48L3A+PHA+S2Fub2xpdGggY2hpbWVyYSBoYXZlIGxpbWl0ZWQgcGh5c2ljYWwgY2hhcmFjdGVyaXN0aWNzLiBNb3N0IGthbm9saXRocyB3aWxsIGhhdmUgZWFycywgdGFpbHMsIG9yIGJvdGggY29ycmVzcG9uZGluZyB0byB0aGVpciBzdWItcmFjZS4gS2Fub2xpdGhzIGFyZSB0aGUgbW9zdCBjb21tb24gdHlwZSBvZiBjaGltZXJhIG92ZXJhbGwgYW5kIHdoYXQgbW9zdCB3aWxsIHRoaW5rIG9mIHdoZW4gaW1hZ2luaW5nIGEgY2hpbWVyYSBvZiBhbnkgc3ViLXJhY2UuPC9wPjxwPlpvYWxpdGggY2hpbWVyYSBoYXZlIGV4YWdnZXJhdGVkIG9yIHByZXZhbGVudCBwaHlzaWNhbCBjaGFyYWN0ZXJpc3RpY3MuIEZ1ciwgc2NhbGVzLCByZXBsYWNlZCBvciBhbHRlcmVkIGxpbWJzLCBhbmQgYW5pbWFsaXN0aWMgZmFjZSBzaGFwZXMgYXJlIGFsbCBleGFtcGxlcyBvZiB6b2FsaXRoIGZlYXR1cmVzLiBUaGlzIG9mdGVuIGxlYWRzIHRvIHpvYWxpdGggY2hpbWVyYSBoYXZpbmcgYSBmYXIgbW9yZSDigJxiZXN0aWFs4oCdIGFwcGVhcmFuY2Ugd2hpY2ggY2FuIHNvbWV0aW1lcyBicmluZyBzb2NpYWwgY2hhbGxlbmdlcy4gV2hpbGUgem9hbGl0aCBjaGltZXJhIGFyZSBvdmVyYWxsIHJhcmVyIHRoYW4ga2Fub2xpdGgsIHRoZXJlIGFyZSBzb21lIHN1Yi1yYWNlcyB0aGF0IHRoaXMgdHJlbmQgaXMgcmV2ZXJzZWQuIENlbnRhdXJzLCBoYXJwaWVzLCBsYW1pYWZvbGssIGFuZCBzbGltZWZvbGsgYXJlIGFsbCBleGFtcGxlcyBvZiBzdWItcmFjZXMgd2hpY2ggdHJlbmQgdG93YXJkIHpvYWxpdGguPC9wPg==",
+    "attributes": "You gain +1 in toughness and +1 in awareness.",
+    "proficiencies": "You can speak, read and write Common as well as the special dialect of your sub-race. ",
+    "skills": "You gain +5 skill points in either Magic, Survival, Animal Husbandry, Perception, Insight, Linguistics or Artifice.",
+    "ambition": "",
+    "ability1": "cadfb72a-b7a9-440f-8d69-da4d3092c0f2",
+    "ability2": "",
+    "wi": {
+      "text": "",
+      "ability": ""
+    },
+    "lir": {
+      "text": "",
+      "ability": ""
+    },
+    "d": {
+      "text": "",
+      "ability": ""
+    },
+    "ar": {
+      "text": "",
+      "ability": ""
+    },
+    "lu": {
+      "text": "",
+      "ability": ""
+    },
+    "ni": {
+      "text": "",
+      "ability": ""
+    },
+    "un": {
+      "text": "",
+      "ability": ""
+    },
+    "vi": {
+      "text": "",
+      "ability": ""
+    },
+    "none": {
+      "text": "",
+      "ability": ""
+    },
+    "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/233b3142-f3b0-4e82-8b41-3b6fe33a7da7-Slime_GIrl_New_raw_1.lg.webp",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/1bf33da4-b9ac-44cf-ae53-ce85f84ee58f-Slime_GIrl_New_raw_1.sm.webp",
+    "imageAlignment": "top"
+  },
+  {
+    "id": "6a06299f6be32fced4930882",
+    "indexId": "913ce48c-ee4b-4a4e-a71d-90ceb5eb1b8e",
+    "primaryRaceId": "demon",
+    "name": "Demon",
+    "description": "PHA+SW4gRGVtb24gbG9yZSwgdGhleSB3ZXJlIHRoZSBkZXNjZW5kYW50cyBvZiBBbmdlbHMgd2hvIGhhZCByZWJlbGxlZCBhZ2FpbnN0IHByb3ZpZGVuY2UuJm5ic3A7IExvc2luZyB0aGVpciBhbmdlbGljIHdpbmdzIGFuZCBtZXRob2RzIHRvIGFic29yYiB0aGUgRGl2aW5lIG1pZ2h0IG9mIExpZ2h0LCB0aGV54oCZdmUgYWRhcHRlZCB0ZWNobmlxdWVzIHRvIGJ1cm4gdGhlaXIgb3duIGxpZmUgZm9yY2UgdG8gdGVtcG9yYXJpbHkgdGFwIGludG8gdGhlaXIgcG93ZXJzLiZuYnNwOyBUaGUgZGFuZ2Vyb3VzIHRlY2huaXF1ZSBjYWxsZWQmbmJzcDs8c3Ryb25nPkRpdmluZSBSZWxlYXNlPC9zdHJvbmc+LCBpcyBoaWdobHkgcHJhaXNlZCBhcyB0aGUgcGlubmFjbGUgb2YgYSBkZW1vbuKAmXMgcG93ZXJzLjwvcD48cD5XaGlsZSBvcmlnaW5hbGx5IHNsYW5kZXJlZCBhcyDigJxkZW1vbnPigJ0gYnkgaHVtYW5zIGFuZCB0aGUgYW5nZWxzIG9mIG9sZCwgdGhlIGRlbW9ucyBoYXZlIGVtYnJhY2VkIHRoZSBuYW1lIGFzIHByb29mIG9mIHRoZWlyIHJlYmVsbGlvbi4mbmJzcDs8L3A+PHA+RGVtb25zIGFwcGVhciBhcyBodW1hbm9pZHMsIGFuZCBidXQgaGF2ZSB2YXJ5aW5nIHNlY29uZGFyeSBjaGFyYWN0ZXJpc3RpY3MuJm5ic3A7IFNvbWUgaGF2ZSB0aW55IHdpbmdzIHRoYXQgYXJlIGRldm9pZCBvZiB0aGUgcHJvdmlkZW5jZSBhYnNvcmJpbmcg4oCcZmVhdGhlcnPigJ0sIHdoaWxlIHNvbWUgaGF2ZSB2YXJpb3VzIGtpbmRzIG9mIGhvcm5zIG9yIGV5ZSBwYXR0ZXJucy4mbmJzcDsgU29tZSBldmVuIGhhdmUgcG9pbnRlZCBlYXJzIGxpa2UgdGhlIGZhZS48L3A+PHA+VGhlIERlbW9uIGNpdHkgb2YgU29ydGhlbiBleGlzdHMgYXMgYW4gYXJpc3RvY3JhdGljIG1lcml0b2NyYWN5LCB3aGVyZSB0aGUgcG93ZXIgYmFsYW5jZSBzaGlmdHMsIGhvdXNlcyBkaWUgYW5kIG5ldyBvbmVzIGFyZSBib3JuIGJhc2VkIG9uIHRoZWlyIGNvbnRyaWJ1dGlvbiB0byBzb2NpZXR5LiAmbmJzcDtUaGVzZSBEZW1vbiBob3VzZXMgYWxsIGdyYW50IHRoZWlyIG9mZnNwcmluZyBhIG1pZGRsZSBuYW1lLCB0aGlzIG5hbWUgcmVmZXJlbmNpbmcgdGhlaXIgcm9sZXMgaW4gc29jaWV0eSBmcm9tIHNlcnZhbnRzIHRvIHNvbGRpZXJzIHRvIHNjaG9sYXJzLiAmbmJzcDtFYWNoIGZhbWlseSBwYXNzZXMgZG93biB0aGUgdGVjaG5pcXVlcyBvZiB0aGVpciByb2xlLCBzcGVjaWFsaXppbmcgZm9yIHRoZSBncmVhdGVzdCBlZmZpY2llbmN5LiBOb25lIG9mIHRoZXNlIHJvbGVzIGFyZSBsb29rZWQgZG93biB1cG9uLCBhbmQgaXQgaXMgY29uc2lkZXJlZCBhbiBob25vciB0byBmdWxmaWxsIHlvdXIgcHVycG9zZSB0byB0aGUgaGlnaGVzdCBjYXBhYmlsaXR5LiAmbmJzcDtXaGlsZSB0aGUgdHJhZGl0aW9uIG9mIGFkaGVyaW5nIHRvIGhvdXNlIHNvY2lldGFsIHJvbGVzLCB0aGV5IGFyZSBub3QgaW5mbGV4aWJsZS4gJm5ic3A7SXQgaXMgbm90IHVudXN1YWwgZm9yIGFuIGluZGl2aWR1YWwgdG8gY2FydmUgb3V0IGEgbmV3IGxpZmUgcGF0aCBpZiB0aGV5IGRlbW9uc3RyYXRlIGV4Y2VwdGlvbmFsIG1lcml0LCBhbmQgc3RyYXlpbmcgZnJvbSB0aGF0IGFzc2lnbmVkIGZhbWlseSByb2xlIHdvdWxkIHRoZW4gbm90IGJlIHZpZXdlZCBuZWdhdGl2ZWx5LjwvcD48cD48c3Ryb25nPlNpemU8L3N0cm9uZz46IE1lZGl1bTwvcD4=",
+    "attributes": "You gain +1 in Power and +1 in Reason.",
+    "proficiencies": "You can speak, read, write Common and Sorthen.  You also gain proficiency in one common weapon or +5 skill points in a skill relating to your demon clan.",
+    "skills": "You gain +5 skill points in either Common Knowledge, Magic, Religion, History, Flight, Artifice.",
+    "ambition": "",
+    "ability1": "75120cd3-9056-429b-b614-5ee38f7c8d1c",
+    "ability2": "34774ae5-c638-4229-8966-72c279bc7c3a",
+    "wi": {
+      "text": "Saboteurs - You gain proficiency with Saboteur Thread Daggers in addition to the ability below. You may also enter the Saboteur class at no experience cost.",
+      "ability": "1e26e66c-34c5-49dc-b99f-68b157be8aee"
+    },
+    "lir": {
+      "text": "Oracles",
+      "ability": "95a005b4-b06e-4596-9c6b-8e53c36ec258"
+    },
+    "d": {
+      "text": "Soldiers",
+      "ability": "9ddbe44c-4360-46a3-9903-45f90f53f059"
+    },
+    "ar": {
+      "text": "Tacticians",
+      "ability": "69b2d823-7c91-4ea6-96ab-a4a5e195a09f"
+    },
+    "lu": {
+      "text": "Mages",
+      "ability": "d27cabd1-f73b-4651-8658-5f4d92657ea7"
+    },
+    "ni": {
+      "text": "Engineers and Airship staff",
+      "ability": "fbcd4a2a-8a87-465f-b5d6-66436daffccd"
+    },
+    "un": {
+      "text": "Maids and Butlers - You may enter the Maid class at no experience cost.",
+      "ability": "fd369348-a806-47d8-9d62-0c2230771ae6"
+    },
+    "vi": {
+      "text": "Medical and Healers - You may enter the Medic class at no experience cost.",
+      "ability": "0e2cca4a-edc5-4f1a-a64b-6508cf7df15c"
+    },
+    "none": {
+      "text": "Those without family skills",
+      "ability": "e5913b8b-9a90-4cdc-b82f-1d7659c26639"
+    },
+    "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/fdd1d9a1-6201-4957-a01c-8b2b822ed8d1-Demon_Portrait_New_raw.lg.webp",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/7a2206e1-b5dc-433d-bc13-ee552982d128-Demon_Portrait_New_raw.sm.webp",
+    "imageAlignment": "middle"
+  },
+  {
+    "id": "6a06299f6be32fced4930881",
+    "indexId": "cb5ea351-a25c-4934-896f-74b17000992d",
+    "primaryRaceId": "fae",
+    "name": "Fae",
+    "description": "PHA+VGhlIEZhZSBhcmUgd2lkZWx5IGNvbnNpZGVyZWQgdGhlIGZpcnN0IHBlb3BsZSB0aGF0IHBvcHVsYXRlZCBMeXJhLiZuYnNwOyBUaGV5IGFyZSBiZWluZ3MgdGhhdCB3ZXJlIGJvcm4gZnJvbSB0aGUgd2lsbCBvZiBuYXR1cmUgYW5kIHRoZSB3b3JsZCBpdHNlbGYuJm5ic3A7IEZhZXJpZXMgY2FuIGJlIHF1aXRlIHZhcmllZCBpbiBjdWx0dXJlIGFuZCBkZW1lYW5vciwgc29tZSB1c2luZyB0aGVpciBhZ2UgaW1tb3J0YWxpdHkgdG8gYWNoaWV2ZSBncmVhdCB3aXNkb20tLSB3aGlsZSBvdGhlcnMgbWlnaHQgdXNlIGl0IHRvIGxhemUgYWJvdXQgYW5kIGJlIG1lcnJ5LjwvcD48cD5UaGUgbW9zdCBjb21tb24gdHlwZSBvZiBGYWUgYXJlIHRoZSBIaWdoIEZhZSB3aGljaCBhcHBlYXIgYXMgeW91dGhmdWwgaHVtYW5vaWRzIHdpdGggcG9pbnRlZCBlYXJzIGFuZCBleWVzIHRoYXQgY29tZSBpbiB2YXJpb3VzIGNvbG9ycyBhbmQgcGF0dGVybnM8L3A+",
+    "attributes": "You gain +1 in Agility and +1 in Cunning.",
+    "proficiencies": "You can speak, read and write Sylvan, as well as Common.",
+    "skills": "You gain +5 skill points in either Magic, Medicine, Negotiation, Intimidation, Insight.",
+    "ambition": "",
+    "ability1": "cc310c04-2d58-4361-9629-49fcf0cf2e52",
+    "ability2": "",
+    "wi": {
+      "text": "",
+      "ability": ""
+    },
+    "lir": {
+      "text": "",
+      "ability": ""
+    },
+    "d": {
+      "text": "",
+      "ability": ""
+    },
+    "ar": {
+      "text": "",
+      "ability": ""
+    },
+    "lu": {
+      "text": "",
+      "ability": ""
+    },
+    "ni": {
+      "text": "",
+      "ability": ""
+    },
+    "un": {
+      "text": "",
+      "ability": ""
+    },
+    "vi": {
+      "text": "",
+      "ability": ""
+    },
+    "none": {
+      "text": "",
+      "ability": ""
+    },
+    "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/1ca62b85-ac72-431a-8b1b-9d7219cbd96e-Dryad_raw.lg.webp",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/42158447-1039-4c70-992b-00b67e562492-Dryad_raw.sm.webp",
+    "imageAlignment": "top"
+  },
+  {
+    "id": "6a06299f6be32fced493087e",
+    "indexId": "f59714f1-f4cf-47f3-912d-39284c4a225d",
+    "primaryRaceId": "human",
+    "name": "Human",
+    "description": "PHA+VGhlIG9yaWdpbiBvZiBodW1hbnMgaXMgbm90IHF1aXRlIGNsZWFyLS0gYSByYWNlIG9mIGdlbmVyYWxseSBob21vZ2Vub3VzIGNoYXJhY3RlcmlzdGljcyBpbiBjb21wYXJpc29uIHRvIHRoZSBvdGhlciByYWNlcy4mbmJzcDsgRGVzcGl0ZSB0aGVpciBzaW1pbGFyaXR5LCBodW1hbnMgYXJlIHZhcmllZCBpbiBuYXR1cmUgYW5kIGhhdmUgYWRhcHRlZCB0byBtYW55IGRpZmZlcmVudCBlbnZpcm9ubWVudHMuJm5ic3A7IEh1bWFucyBhcmUgcXVpY2sgbGVhcm5lcnMgYW5kIHF1aWNrIHRvIGFkYXB0LCBhIGhhc3RlIHRoYXQgaXMgdW5zZWVuIGluIHNvbWUgb2YgdGhlIG90aGVyIHJhY2VzLCBhIGJ5cHJvZHVjdCBvZiB0aGVpciBnZW5lcmFsbHkgc2hvcnRlciBsaWZlc3BhbnMuPC9wPjxwPkZvciBhIHJlYXNvbiBzdGlsbCB1bmtub3duLCB0aGUgaHVtYW5zIGFyZSBibGVzc2VkIGJ5IHByb3ZpZGVuY2UtLSB0aGUgZ3JlYXQgcG93ZXIgb2YgZGl2aW5lIGxpZ2h0IGFuZCBhcmUgYm9ybiB3aXRoIGEgc3BlY2lhbCBhdHR1bmVtZW50IGZvciBpdCByZWdhcmRsZXNzIG9mIHRoZWlyIHJlbGlnaW9uLjwvcD48cD48c3Ryb25nPlNpemU8L3N0cm9uZz46IE1lZGl1bTwvcD4=",
+    "attributes": "You gain +1 in the main stat of your choice and +1 in the substat of your choice.",
+    "proficiencies": "You can speak, read and write Common, as well as another Language of your choice.  You also gain proficiency in one common weapon group.",
+    "skills": "You gain +5 skill points in any non-crafting or gathering skill of your choice.",
+    "ambition": "You start with an additional 100 exp that is also added to your spirit core.",
+    "ability1": "8e02ce04-e955-4780-81ad-dc995399e404",
+    "ability2": "2e0a8599-3bfd-4efb-bee5-9098f82e2536",
+    "wi": {
+      "text": "",
+      "ability": ""
+    },
+    "lir": {
+      "text": "",
+      "ability": ""
+    },
+    "d": {
+      "text": "",
+      "ability": ""
+    },
+    "ar": {
+      "text": "",
+      "ability": ""
+    },
+    "lu": {
+      "text": "",
+      "ability": ""
+    },
+    "ni": {
+      "text": "",
+      "ability": ""
+    },
+    "un": {
+      "text": "",
+      "ability": ""
+    },
+    "vi": {
+      "text": "",
+      "ability": ""
+    },
+    "none": {
+      "text": "",
+      "ability": ""
+    },
+    "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/5f165baa-403c-4a63-b6b7-2a3f8d40ebb5-Sword_Saint_New_raw.lg.webp",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/aa638108-9b8e-48ad-9e58-c7451e054c42-Sword_Saint_New_raw.sm.webp",
+    "imageAlignment": "top"
+  },
+  {
+    "id": "6a06299f6be32fced493087f",
+    "indexId": "d4f38a14-5d79-4ddc-9fac-07c5e7800a1a",
+    "primaryRaceId": "youkai",
+    "name": "Youkai",
+    "description": "PHA+Q29udHJhcnkgdG8gcG9wdWxhciBiZWxpZWYsIFlvdWthaSBhcmUgbm90IHRoZSBzYW1lIGFzIENoaW1lcmEuJm5ic3A7IFJhdGhlciB0aGFuIGJlaW5nIGxpZmVmb3JtcyB0aGF0IGhhdmUgYXR0YWluZWQgc2VudGllbmNlIHRocm91Z2ggbWFnaWNhbCBtdXRhdGlvbnMsIFlvdWthaSB3ZXJlIG9uY2UgYW1iaWVudCBtYWdpYyB0aGF0IGJpbmRlZCB0b2dldGhlciB0byBmb3JtIGxpZmVmb3Jtcy4mbmJzcDsgSGFpbGluZyBmcm9tIHRoZSBtaXN0eSBpc2xlIG9mIEtpcmFyYSwgdGhlIFlvdWthaSBhcmUgdGhlIHJhcmVzdCByYWNlIGFtb25nc3QgdGhlIHBvcHVsYXRpb24gb2YgTHlyLjwvcD48cD5MaWtlIENoaW1lcmEsIHRoZSBZb3VrYWkgbGluZWFnZXMgYXJlIGRpdmlkZWQgaW50byBTdWItUmFjZXMuPC9wPg==",
+    "attributes": "You gain +1 in Focus and +1 in Presence.",
+    "proficiencies": "You can speak, read and write Kiraran, as well as Common. ",
+    "skills": "You gain +5 skill points in either Insight, Intimidation, Magic, Medicine, Negotiation",
+    "ambition": "",
+    "ability1": "b447ce81-f722-4d68-8b70-7d22637b81c3",
+    "ability2": "",
+    "wi": {
+      "text": "",
+      "ability": ""
+    },
+    "lir": {
+      "text": "",
+      "ability": ""
+    },
+    "d": {
+      "text": "",
+      "ability": ""
+    },
+    "ar": {
+      "text": "",
+      "ability": ""
+    },
+    "lu": {
+      "text": "",
+      "ability": ""
+    },
+    "ni": {
+      "text": "",
+      "ability": ""
+    },
+    "un": {
+      "text": "",
+      "ability": ""
+    },
+    "vi": {
+      "text": "",
+      "ability": ""
+    },
+    "none": {
+      "text": "",
+      "ability": ""
+    },
+    "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/91841f75-d892-4be8-921b-809f3775fc3c-Jiangshi_New_raw.lg.webp",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/6cdb70f8-f6b5-43c2-a494-361d0f916d92-Jiangshi_New_raw.sm.webp",
+    "imageAlignment": "top"
+  }
+]

@@ -1,0 +1,80 @@
+{
+  "generatedAt": "2026-06-14T18:24:39.040Z",
+  "latestVersion": {
+    "versionNumber": "0.13.0",
+    "versionId": "6a06299f6be32fced493035f",
+    "name": "Lyrian Chronicles"
+  },
+  "sourceUrls": {
+    "site": "https://rpg.angelssword.com",
+    "onlineManual": "https://rpg.angelssword.com/game/online-manual",
+    "latestUpdate": "https://rpg.angelssword.com/game/latest/latest-update",
+    "settingsGuide": "https://rpg.angelssword.com/game/latest/settings-guide",
+    "rulebook": "https://rpg.angelssword.com/game/latest/rulebook",
+    "breakthroughs": "https://rpg.angelssword.com/game/latest/breakthroughs",
+    "keywords": "https://rpg.angelssword.com/game/latest/keywords",
+    "races": "https://rpg.angelssword.com/game/latest/races",
+    "classes": "https://rpg.angelssword.com/game/latest/classes",
+    "abilities": "https://rpg.angelssword.com/game/latest/abilities",
+    "items": "https://rpg.angelssword.com/game/latest/items",
+    "monsters": "https://rpg.angelssword.com/game/latest/monsters",
+    "monsterAbilities": "https://rpg.angelssword.com/game/latest/monster-abilities"
+  },
+  "manualIndex": [
+    {
+      "slug": "latest-update",
+      "title": "Latest update",
+      "url": "https://rpg.angelssword.com/game/latest/latest-update"
+    },
+    {
+      "slug": "settings-guide",
+      "title": "Settings guide",
+      "url": "https://rpg.angelssword.com/game/latest/settings-guide"
+    },
+    {
+      "slug": "rulebook",
+      "title": "Rulebook",
+      "url": "https://rpg.angelssword.com/game/latest/rulebook"
+    },
+    {
+      "slug": "breakthroughs",
+      "title": "Breakthroughs",
+      "url": "https://rpg.angelssword.com/game/latest/breakthroughs"
+    },
+    {
+      "slug": "keywords",
+      "title": "Keywords",
+      "url": "https://rpg.angelssword.com/game/latest/keywords"
+    },
+    {
+      "slug": "races",
+      "title": "Races",
+      "url": "https://rpg.angelssword.com/game/latest/races"
+    },
+    {
+      "slug": "classes",
+      "title": "Classes",
+      "url": "https://rpg.angelssword.com/game/latest/classes"
+    },
+    {
+      "slug": "abilities",
+      "title": "Abilities",
+      "url": "https://rpg.angelssword.com/game/latest/abilities"
+    },
+    {
+      "slug": "items",
+      "title": "Items",
+      "url": "https://rpg.angelssword.com/game/latest/items"
+    },
+    {
+      "slug": "monsters",
+      "title": "Monsters",
+      "url": "https://rpg.angelssword.com/game/latest/monsters"
+    },
+    {
+      "slug": "monster-abilities",
+      "title": "Monster abilities",
+      "url": "https://rpg.angelssword.com/game/latest/monster-abilities"
+    }
+  ]
+}

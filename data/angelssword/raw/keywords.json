@@ -1,0 +1,597 @@
+[
+  {
+    "id": "6a06299f6be32fced4930644",
+    "indexId": "eac777b0-b114-4559-8ac2-0225e7bd2416",
+    "keywordId": "active",
+    "name": "Active",
+    "description": "PHA+WW91IGNhbm5vdCB1c2UgdGhlIFByZXBhcmUgYWN0aW9uIG9uIHRoaXMgYWJpbGl0eS48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced493062f",
+    "indexId": "4d9857ec-4df6-4ba4-9268-31c45092aa21",
+    "keywordId": "aid",
+    "name": "Aid",
+    "description": "PHA+QWJpbGl0aWVzIHdpdGggdGhlIEFpZCBrZXl3b3JkIGNhbiBvbmx5IGJlIHVzZWQgb24gYWxsaWVzLCB1bmxlc3MgdGhlIGFiaWxpdHkgc3BlY2lmaWNhbGx5IHN0YXRlcyB5b3UgY2FuIHVzZSBpdCBvbiB5b3Vyc2VsZi48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced49305ff",
+    "indexId": "00a85b38-a930-4260-bde5-b1d2a0c5a1f2",
+    "keywordId": "artillery",
+    "name": "Artillery",
+    "description": "PHA+VGhlIGF0dGFjayBjYW4gdGFyZ2V0IG5vbi1oaWRkZW4gdW5pdHMgYmVoaW5kIGNvdmVyIChldmVuIGZ1bGwgY292ZXIpIGFuZCBpZ25vcmUgY292ZXIgYm9udXNlcy48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced493064e",
+    "indexId": "07432b3c-1945-4698-be43-758981fd5a49",
+    "keywordId": "augment",
+    "name": "Augment",
+    "description": "PHA+QW4gYXR0YWNrIHRoYXQgaGFzIGJlZW4gbW9kaWZpZWQgYnkgYW4gQXVnbWVudCBlZmZlY3QgY2Fubm90IGJlIG1vZGlmaWVkIGFnYWluIGFuZCBnaXZlbiBhbm90aGVyIEF1Z21lbnQgZWZmZWN0LjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced4930643",
+    "indexId": "17337955-a183-457b-bb2b-9194d3cd8231",
+    "keywordId": "blanketing",
+    "name": "Blanketing",
+    "description": "PHA+V2hlbiB5b3UgbWFrZSBhbiBhdHRhY2sgYWdhaW5zdCBtdWx0aXBsZSB0YXJnZXRzIHdpdGggdGhpcyBhYmlsaXR5LCByb2xsIG9uZSBhY2N1cmFjeSBhbmQgZGFtYWdlIGNoZWNrIHRoYXQgYXBwbGllcyBhZ2FpbnN0IGFsbCB0YXJnZXRzLjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced493063a",
+    "indexId": "5c7a0fd6-6356-4570-b8cb-5aa6799fb0ab",
+    "keywordId": "bleeding",
+    "name": "Bleeding",
+    "description": "PHA+WW91IHRha2UgMWQ2IHRydWUgZGFtYWdlIGF0IHRoZSBzdGFydCBvZiB5b3VyIHR1cm4uPC9wPg=="
+  },
+  {
+    "id": "6a06299f6be32fced4930600",
+    "indexId": "1d9bb50b-1e8d-4fb4-890c-cb7a8041667e",
+    "keywordId": "blinded",
+    "name": "Blinded",
+    "description": "PHA+QmxpbmRlZCBjaGFyYWN0ZXJzIHN1ZmZlciBhIC1YIHBlbmFsdHkgdG8gdGhlaXIgYWNjdXJhY3kgcm9sbHMgd2hlcmUgWCBpcyB0aGUgYmxpbmRlZCB2YWx1ZS4gSWYgdGhleSBhcmUgQmxpbmRlZCBmb3IgMyBvciBoaWdoZXIsIHRoZXkgY2Fubm90IG1ha2UgYW55IHJhbmdlZCBhdHRhY2tzIHdpdGhvdXQgZmlyc3QgbG9jYXRpbmcgYSB0YXJnZXQgdGhyb3VnaCBhbm90aGVyIG1lYW5zIHRoYW4gc2lnaHQuIElmIHRoZXkgYXJlIGJsaW5kZWQgZm9yIDUgb3IgaGlnaGVyLCB0aGV5IGFsc28gY2Fubm90IGdhaW4gU3VyZSBIaXQgb24gdGhlaXIgYXR0YWNrcy48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced493060a",
+    "indexId": "d488b696-b5f6-4644-adb5-fc83766547cd",
+    "keywordId": "block-crush",
+    "name": "Block Crush",
+    "description": "PHA+QmxvY2sgQ3J1c2ggYXR0YWNrcyBpZ25vcmUgYW55IGFkZGl0aW9uYWwgR3VhcmQgZ2FpbmVkIGZyb20gdGhlIEJsb2NrIGFjdGlvbi48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced493062c",
+    "indexId": "d023900c-ae49-4e0f-9d70-ef7402eaebcf",
+    "keywordId": "broken",
+    "name": "Broken",
+    "description": "PHA+T25seSBhcHBsaWVzIHRvIGVxdWlwbWVudC4gQXJtb3IgYW5kIHNoaWVsZHMgdGhhdCBhcmUgYnJva2VuIHByb3ZpZGUgbm8gYmVuZWZpdCBvciBuZWdhdGl2ZXMuIFdlYXBvbnMgdGhhdCBhcmUgYnJva2VuIGNhbiBvbmx5IGJlIHVzZWQgYXMgYW4gaW1wcm92aXNlZCB3ZWFwb24uPC9wPg=="
+  },
+  {
+    "id": "6a06299f6be32fced4930601",
+    "indexId": "a1145a79-b6f8-4e1c-8242-46bc19db0fb8",
+    "keywordId": "burning",
+    "name": "Burning",
+    "description": "PHA+QSBCdXJuaW5nIGNoYXJhY3RlciB0YWtlcyBYIGRhbWFnZSBhdCB0aGUgZW5kIG9mIHRoZWlyIHR1cm4uIFRoZXkgbWF5IHNwZW5kIDEgQVAgdG8gcmVtb3ZlIHRoaXMgZWZmZWN0LjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced4930602",
+    "indexId": "2fa2f790-dc31-454e-b773-053fcb5ae4e5",
+    "keywordId": "challenge",
+    "name": "Challenge",
+    "description": "PHA+SWYgYSBjaGFsbGVuZ2VkIGNoYXJhY3RlciBkb2VzIG5vdCBpbmNsdWRlIHRoZSBjaGFsbGVuZ2VyIGFzIGEgdGFyZ2V0LCB0aGV5IHByb3Zva2UgYSBtZWxlZSBhdHRhY2sgb2Ygb3Bwb3J0dW5pdHkgZnJvbSB0aGUgY2hhbGxlbmdlci48L3A+PHA+VGhpcyBkb2VzIG5vdCB0cmlnZ2VyIGlmIHRoZSBjaGFsbGVuZ2VkIHRhcmdldCBtYWtlcyBhbiBhdHRhY2sgb2Ygb3Bwb3J0dW5pdHkgb3IgaWYgdGhlIGNoYWxsZW5nZXIgaXMgbm90IGEgdGFyZ2V0IGR1ZSBlZmZlY3RzIHN1Y2ggYXMgY2hhcm0uPC9wPg=="
+  },
+  {
+    "id": "6a06299f6be32fced4930638",
+    "indexId": "ce1b49be-edb8-4bdc-ad57-9f840b1f708c",
+    "keywordId": "charm",
+    "name": "Charm",
+    "description": "PHA+WW91IG1heSBub3Qgd2lsbGluZ2x5IHRhcmdldCB0aGUgY2hhcm1lciB3aXRoIGF0dGFja3MgdW5sZXNzIHlvdSBoYXZlIG5vIG90aGVyIHZhbGlkIHRhcmdldHMgKGV4Y2x1ZGluZyBhbGxpZXMpIGZvciB0aGUgYXR0YWNrLiBZb3VyIEFvRSBhYmlsaXRpZXMgdGhhdCB0YXJnZXQgYWxsaWVzIGFsc28gaW5jbHVkZSB0aGUgY2hhcm1lciwgYW5kIHlvdXIgQW9FIGF0dGFja3Mgb3IgYWJpbGl0aWVzIHRoYXQgZXhjbHVkZSBhbGxpZXMgYWxzbyBleGNsdWRlIHRoZSBjaGFybWVyLjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced4930647",
+    "indexId": "4442e9d7-2f08-4318-9358-893f7f785227",
+    "keywordId": "circuit",
+    "name": "Circuit",
+    "description": "PHA+VGhlIGZpcnN0IHRpbWUgZWFjaCBjb21iYXQgeW91IHVzZSBhbiBhYmlsaXR5IHdpdGggdGhpcyBrZXl3b3JkLCB0aGUgbWFuYSBjb3N0IGlzIHJlZHVjZWQgYnkgMS4gQWZ0ZXJ3YXJkcywgdGhpcyBtYW5hIGNvc3QgcmVkdWN0aW9uIGlzIHJlbW92ZWQgZnJvbSBhbGwgYWJpbGl0aWVzIHdpdGggdGhpcyBrZXl3b3JkLjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced4930603",
+    "indexId": "6cffc4e1-6836-4399-b258-21b0add51ae0",
+    "keywordId": "combo",
+    "name": "Combo",
+    "description": "PHA+Q29tYm8gYWJpbGl0aWVzIGdhaW4gYSBib251cyB3aGVuIHVzZWQgZGlyZWN0bHkgYWZ0ZXIgYW5vdGhlciBhYmlsaXR5LiBDb21ibyBhYmlsaXRpZXMgcmVtYWluIHZhbGlkIHVudGlsIHlvdSBzcGVuZCBBUCBvbiBhIGRpZmZlcmVudCBhYmlsaXR5IG9yIGFjdGlvbi48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced4930604",
+    "indexId": "ec7daaed-57a5-4b75-aecd-9879c96fd131",
+    "keywordId": "concentration",
+    "name": "Concentration",
+    "description": "PHA+QSBjaGFyYWN0ZXIgY2FuIG9ubHkgaGF2ZSAxIENvbmNlbnRyYXRpb24gZWZmZWN0IGFjdGl2ZSBhdCB0aGUgc2FtZSB0aW1lLiBUaGV5IG1heSBkcm9wIGEgQ29uY2VudHJhdGlvbiBlZmZlY3QgZHVyaW5nIHRoZWlyIHR1cm4gZm9yIDAgQVAuIFdoZW4gYSBjaGFyYWN0ZXIgZ2V0cyBEb3duZWQsIHRoZXkgbG9zZSBDb25jZW50cmF0aW9uLjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced4930649",
+    "indexId": "0e468cf9-5779-460c-b72a-0d52e53979dc",
+    "keywordId": "crushing",
+    "name": "Crushing",
+    "description": "PHA+T24gYW4gdW5ibG9ja2VkIGhpdCwgdGhpcyBhdHRhY2sgZGVhbHMgYSBtaW5pbXVtIGRhbWFnZSBlcXVhbCB0byB5b3VyIFBvd2VyLjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced4930605",
+    "indexId": "f29356fb-274d-4365-ba2b-0aea6a18a2db",
+    "keywordId": "daze",
+    "name": "Daze",
+    "description": "PHA+WW91IGltbWVkaWF0ZWx5IGxvc2UgMSBBUC4gSWYgeW91IGRvIG5vdCBoYXZlIGFueSBBUCwgeW91IGluc3RlYWQgcmVnZW4gMSBsZXNzIEFQIGF0IHRoZSBzdGFydCBvZiB5b3VyIG5leHQgdHVybi4gQSBkYXplZCB0YXJnZXQgYmVjb21lcyBpbW11bmUgdG8gRGF6ZSB1bnRpbCB0aGUgZW5kIG9mIHRoZWlyIG5leHQgdHVybi48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced4930606",
+    "indexId": "5de332e1-9e01-4ca7-b9ef-1e69cf4d0c79",
+    "keywordId": "disarm",
+    "name": "Disarm",
+    "description": "PHA+V2hlbiBkaXNhcm1lZCwgeW91IGNhbm5vdCBtYWtlIHdlYXBvbiBhdHRhY2tzIHdpdGggdGhlIHdlYXBvbiB5b3Ugd2VyZSB3aWVsZGluZyB3aGVuIHlvdSBnb3QgZGlzYXJtZWQuIFlvdSBtdXN0IGRyYXcgdGhlIHdlYXBvbiBhZ2FpbiB0byB1c2UgaXQgd2hlbiB0aGUgRGlzYXJtIGVuZHMuIFVuYXJtZWQgYXR0YWNrcyBhcmUgdW5hZmZlY3RlZCBieSBEaXNhcm0uPC9wPg=="
+  },
+  {
+    "id": "6a06299f6be32fced493063c",
+    "indexId": "79e00490-6478-44bb-abc9-d9118eac6d96",
+    "keywordId": "domain",
+    "name": "Domain",
+    "description": "PHA+QSBkb21haW4gYXJlYSBzcGVsbC4gT25seSBvbmUgZG9tYWluIGFyZWEgbWF5IGJlIGFjdGl2ZSBhdCBhIGxvY2F0aW9uIGF0IGEgdGltZS48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced4930632",
+    "indexId": "7bb8b8b9-fb07-467f-a68a-3bce52282ddd",
+    "keywordId": "enchantment",
+    "name": "Enchantment",
+    "description": "PHA+QW4gZW5jaGFudG1lbnQgaXMgcGxhY2VkIG9uIGEgd2VhcG9uLiBBIHdlYXBvbiBjYW4gb25seSBoYXZlIDEgZW5jaGFudG1lbnQgYXQgdGhlIHNhbWUgdGltZS4gSWYgYW4gZW5jaGFudG1lbnQgaXMgcGxhY2VkIG9uIGEgY2hhbm5lbGluZyB3ZWFwb24sIGl0IHRyYW5zZmVyIHRoZSBlbmNoYW50bWVudCBwcm9wZXJ0aWVzIHRvIGFueSBzcGVsbHMgY2FzdCB3aGlsZSBob2xkaW5nIGl0LjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced4930635",
+    "indexId": "5da14c6e-8d2a-44b5-84fa-2b685167d302",
+    "keywordId": "esoteric-art",
+    "name": "Esoteric Art",
+    "description": "PHA+WW91IGNhbiBvbmx5IHVzZSAxIGFiaWxpdHkgd2l0aCB0aGlzIGtleXdvcmQgb3Igd2l0aCB0aGUgU2VjcmV0IEFydCBrZXl3b3JkIHBlciBlbmNvdW50ZXIuJm5ic3A7PC9wPg=="
+  },
+  {
+    "id": "6a06299f6be32fced4930637",
+    "indexId": "8e376297-5f7b-4a60-83fe-e273135ac448",
+    "keywordId": "expose",
+    "name": "Expose",
+    "description": "PHA+VGhlIHRhcmdldCdzIGNyaXQgdGhyZXNob2xkIGlzIHJlZHVjZWQgYnkgdGhlIGV4cG9zZSB2YWx1ZSAoYmFzZSAxLCByZWR1Y2luZyBub3JtYWwgY3JpdCB0aHJlc2hvbGQgZnJvbSAyMOKGkjE5KS4gU3RhY2tzIHdpdGgga2F0YW5hJ3MgcmVkdWNlZCBjcml0IHRocmVzaG9sZCBhbmQgb3RoZXIgYWJpbGl0aWVzIHdoaWNoIGxvd2VyIHRoZSBjcml0IHRocmVzaG9sZCBvZiB0aGUgdXNlci48L3A+PHA+RXhwb3NlIGlzIHJlbW92ZWQgb25jZSB0aGUgdGFyZ2V0IGlzIGNyaXRpY2FsbHkgaGl0IChyZWdhcmRsZXNzIG9mIGlmIHRoZXkgZGVmZW5kIG9yIG5vdCk8L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced4930607",
+    "indexId": "20a8fe36-099e-4b67-820a-2d5110263145",
+    "keywordId": "fire",
+    "name": "Fire",
+    "description": "PHA+U3BlbGxzIGFuZCBhdHRhY2tzIHRoYXQgZGVhbCBGaXJlIGRhbWFnZSBtYXkgaWduaXRlIGZsYW1tYWJsZSwgdW5hdHRlbmRlZCBvYmplY3RzLjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced4930608",
+    "indexId": "e6dc65e1-dfcd-4b88-ab9b-f52ed11089e5",
+    "keywordId": "flashback",
+    "name": "Flashback",
+    "description": "PHA+Rmxhc2hiYWNrcyBhcmUgYWJpbGl0aWVzIHRoYXQgcmVmZXIgdG8gYW4gZWFybGllciB0aW1lIGluIHRoZSBjYW1wYWlnbi4gVGhleSByZWZsZWN0IHByaW9yIHBsYW5uaW5nIHRoYXQgdGhlIGNoYXJhY3RlciBoYXMgbWFkZSB0byBhZmZlY3QgdGhlIGN1cnJlbnQgc2l0dWF0aW9uLjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced4930609",
+    "indexId": "c5ef3c1c-7cfc-4715-9843-7c9568f23baf",
+    "keywordId": "full-pierce",
+    "name": "Full Pierce",
+    "description": "PHA+RnVsbCBwaWVyY2UgYXR0YWNrcyBjYW5ub3QgYmUgcmVkdWNlZCBieSBndWFyZC48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced493060b",
+    "indexId": "25efada6-1d4e-4206-aab9-ac350a353102",
+    "keywordId": "half-pierce",
+    "name": "Half Pierce",
+    "description": "PHA+SGFsZiBQaWVyY2UgYXR0YWNrcyBpZ25vcmUgR3VhcmQsIHVubGVzcyB0aGUgdGFyZ2V0IHRha2VzIHRoZSBCbG9jayBhY3Rpb24gb3IgRG9kZ2UgYWN0aW9uLjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced493064f",
+    "indexId": "e1e7059e-8541-43b3-ac10-17ff84fecf32",
+    "keywordId": "half-rapid",
+    "name": "Half Rapid",
+    "description": "PHA+VGhpcyBhYmlsaXR5IG1heSBiZSB1c2VkIG9uY2Ugb24gZWFjaCBjcmVhdHVyZSBldmVyeSByb3VuZC48L3A+"
+  },
+  {
+    "id": "6a1b5f216be32fced4930c25",
+    "indexId": "1e8bb4b3-d32f-4ea8-abe3-ed067dc52319",
+    "keywordId": "hellfire",
+    "name": "Hellfire",
+    "description": "PHA+SGVsbGZpcmUgZnVuY3Rpb25zIGxpa2UgQnVybmluZyAoWW91IHRha2UgWCBkYW1hZ2UgYXQgdGhlIGVuZCBvZiB5b3VyIHR1cm4pLCBidXQgaXQgY2FuIG5vIGxvbmdlciBiZSByZW1vdmVkIHRoZSBub3JtYWwgd2F5IGlmIG5vdCByZW1vdmVkIGJlZm9yZSB0aGUgZW5kIG9mIHRoZSB0YXJnZXTigJlzIG5leHQgdHVybi4gSXQgY2FuIHN0aWxsIGJlIGRpc3BlbGxlZCB0aHJvdWdoIHRoZSB1c2Ugb2YgYWJpbGl0aWVzLjwvcD48cD5IZWxsZmlyZSBjYW4gYmUgYXBwbGllZCB0byBlbmVtaWVzIGltbXVuZSB0byBCdXJuaW5nLCBidXQgaXQgY2FuIHN0aWxsIGJlIHJlbW92ZWQgbGlrZSBub3JtYWwgZXZlbiBhZnRlciBhIHR1cm4gaGFzIHBhc3NlZC4gSGVsbGZpcmUgaXMgYXV0b21hdGljYWxseSByZW1vdmVkIGF0IHRoZSBlbmQgb2YgdGhlIGVuY291bnRlci48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced493063f",
+    "indexId": "6d176f9b-ace1-4689-acc4-344c411d31b9",
+    "keywordId": "hiding",
+    "name": "Hiding",
+    "description": "PHA+V2hpbGUgaW4gSGlkaW5nLCBlbmVtaWVzIGNhbm5vdCBzZWUgb3IgdGFyZ2V0IHlvdSBhbmQgZXZlbiBpZiB0aGV5IGFyZSBhd2FyZSBvZiB5b3VyIHByZXNlbmNlLCB0aGV5IGNhbm5vdCBwaW5wb2ludCB5b3VyIGV4YWN0IGxvY2F0aW9uLiBZb3UgbG9zZSBIaWRpbmcgaWYgeW91IG1vdmUsIGF0dGFjayBvciB1c2UgYW55IG90aGVyIGFiaWxpdHkgdGhhdCBkb2VzIG5vdCBoYXZlIHRoZSBTdGVhbHRoIGtleXdvcmQgdW5sZXNzIHRoYXQgbW92ZW1lbnQgb3IgYXR0YWNrIHNheXMgb3RoZXJ3aXNlLjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced4930639",
+    "indexId": "2cb7e815-0e3a-4c9d-8b54-5fe40754529c",
+    "keywordId": "illumination",
+    "name": "Illumination",
+    "description": "PHA+VGhlIG5leHQgYXR0YWNrIGFnYWluc3QgeW91IGdldHMgYW4gWCBib251cyB0byB0aGUgYWNjdXJhY3kgcm9sbCAoQ29uc3VtZWQgZXZlbiBvbiBhIG1pc3MpLjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced493060c",
+    "indexId": "202dc4ee-51c2-4dff-a8d1-c8de3cd0ffbf",
+    "keywordId": "immovable",
+    "name": "Immovable",
+    "description": "PHA+V2hpbGUgbm90IGZseWluZywgZWZmZWN0cyBmcm9tIG90aGVyIGNyZWF0dXJlcyB0aGF0IGtub2NrIHlvdSBwcm9uZSBvciBmb3JjZSB5b3UgdG8gbW92ZSBzdWNoIGFzIGtub2NrYmFja3MgYXJlIGluZWZmZWN0aXZlLjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced493060d",
+    "indexId": "fa291071-2630-4dfa-9626-5dc912591713",
+    "keywordId": "instant",
+    "name": "Instant",
+    "description": "PHA+Q2FuIGJlIHVzZWQgd2hpbGUgYW5vdGhlciBhY3Rpb24gaXMgcmVzb2x2aW5nIHRvIHRlbXBvcmFyaWx5IGludGVycnVwdCBpdC4gVGhlIEluc3RhbnQgYWJpbGl0eSByZXNvbHZlcyBpbW1lZGlhdGVseSBhbmQgYmVmb3JlIGFueSBpbnRlcnJ1cHRlZCBhYmlsaXR5IGNhbiByZXNvbHZlLiBUaGUgY3VycmVudCBhY3Rpb24gaXMgY2FuY2VsbGVkIGFuZCByZWZ1bmRlZCBpZiB0aGUgdGFyZ2V0IGJlY29tZXMgaW52YWxpZC48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced493060e",
+    "indexId": "550c60b9-d89f-4de8-96f5-097ed6ad7bf8",
+    "keywordId": "killing-blow",
+    "name": "Killing Blow",
+    "description": "PHA+S2lsbGluZyBCbG93IGVmZmVjdHMgdHJpZ2dlciB3aGVuIHJlZHVjaW5nIHRoZSBIUCBvZiBlbmVteSB0byAwIG9yIGxvd2VyLjwvcD48cD5Zb3UgY2Fubm90IGJlbmVmaXQgZnJvbSB0aGUgc2FtZSBLaWxsaW5nIEJsb3cgZWZmZWN0IGFnYWluc3QgdGhlIHNhbWUgdGFyZ2V0IG1vcmUgdGhhbiBvbmNlLjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced493060f",
+    "indexId": "67075aad-dec3-4c83-9802-92bbf7dd4331",
+    "keywordId": "lock-on",
+    "name": "Lock On",
+    "description": "PHA+TG9jayBPbiBhdHRhY2tzIGlnbm9yZSB0aGUgYm9udXMgZnJvbSBkb2RnZS48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced493064a",
+    "indexId": "68fa5644-5bdb-4e8b-bf2d-be96ef80c535",
+    "keywordId": "lockstep",
+    "name": "Lockstep",
+    "description": "PHA+VGhpcyBhdHRhY2sgYWx3YXlzIG1hdGNoZXMgdGhlIHRhcmdldCdzIGJhc2UgZXZhc2lvbiAoaW5jbHVkaW5nIGJvbnVzZXMgZXRjLCBidXQgdGhleSBtYXkgc3RpbGwgZG9kZ2UgaXQgbGlrZSBub3JtYWwpLjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced4930610",
+    "indexId": "afa3db7b-1d98-4bff-b5e9-50bef9420cc1",
+    "keywordId": "miracle",
+    "name": "Miracle",
+    "description": "PHA+QSBjaGFyYWN0ZXIgbWF5IG9ubHkgY2FzdCAxIE1pcmFjbGUgcGVyIGVuY291bnRlci48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced4930611",
+    "indexId": "e10bc7b8-fbbd-452b-be2f-8b38d533311d",
+    "keywordId": "mystic-eye",
+    "name": "Mystic Eye",
+    "description": "PHA+VGhpcyBhYmlsaXR5IGlzIG1hZGUgd2l0aCBhIE15c3RpYyBFeWUuPC9wPg=="
+  },
+  {
+    "id": "6a06299f6be32fced4930612",
+    "indexId": "fe2396d3-ee76-4ed6-bb40-a7ad4d8efa41",
+    "keywordId": "ninjutsu",
+    "name": "Ninjutsu",
+    "description": "PHA+VGhpcyBhYmlsaXR5IHJlcXVpcmVzIHR3byBmcmVlIGhhbmRzLiBZb3UgbWF5IHdpZWxkIFNtYWxsIHdlYXBvbiwgU2Fib3RldXIgdGhyZWFkZWQgZGFnZ2VyLCBPbmUtaGFuZGVkIHRocm93biBhbmQgU2V0cyBvZiBNaXNzaWxlcyB3ZWFwb25zIGFuZCBzdGlsbCBjb3VudCBhcyBoYXZpbmcgeW91ciBoYW5kIGZyZWUuPC9wPg=="
+  },
+  {
+    "id": "6a06299f6be32fced4930641",
+    "indexId": "90f1f5a8-c03a-4f8d-a620-8af7b02b17a1",
+    "keywordId": "offstep",
+    "name": "Offstep",
+    "description": "PHA+QXR0YWNrcyBhZ2FpbnN0IHlvdSBhbHdheXMgbWVldCB5b3VyIGJhc2UgZXZhc2lvbiAoSW5jbHVkaW5nIGJvbnVzZXMgZXRjLCBidXQgeW91IG1heSBzdGlsbCBkb2RnZSB0aGVtIGxpa2Ugbm9ybWFsKS48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced4930646",
+    "indexId": "0793f88a-b87f-45b0-b7e7-1642ecf82c2a",
+    "keywordId": "opener",
+    "name": "Opener",
+    "description": "PHA+VGhpcyBhYmlsaXR5IGNhbiBvbmx5IGJlIHVzZWQgYXMgdGhlIGZpcnN0IGFjdGlvbiBpbiBhIHR1cm4uIChQYXlpbmcgdXBrZWVwIGRvZXMgbm90IGNvdW50IGFzIGFuIGFjdGlvbik8L3A+"
+  },
+  {
+    "id": "6a21c57d6be32fced4930c4f",
+    "indexId": "d3fcdaa5-032e-4e1e-af16-950271b14151",
+    "keywordId": "opportunistic",
+    "name": "Opportunistic",
+    "description": "PHA+WW91IG1heSB1c2UgdGhpcyBhYmlsaXR5IGluc3RlYWQgb2YgbWFraW5nIGEgcmVndWxhciBvZiBhdHRhY2sgb2Ygb3Bwb3J0dW5pdHkuIFRoaXMgYWJpbGl0eSBpcyBjb3VudGVkIGFzIG1ha2luZyBhbiBhdHRhY2sgb2Ygb3Bwb3J0dW5pdHkgYW5kIHlvdSBkb24ndCBnZXQgeW91ciByZWd1bGFyIG9uZSBpZiB5b3UgdXNlIGl0LjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced4930613",
+    "indexId": "3ff4d097-9577-49b6-800d-9f1f6983da69",
+    "keywordId": "overcharge",
+    "name": "Overcharge",
+    "description": "PHA+WW91IG1heSBzcGVuZCBhZGRpdGlvbmFsIEFQIGFuZC9vciBNYW5hIHRvIGluY3JlYXNlIHRoZSBwb3dlciBvZiB0aGUgYWJpbGl0eS48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced4930633",
+    "indexId": "a541b2de-0829-4cc4-9dbd-c2059e08f7e7",
+    "keywordId": "pass",
+    "name": "Pass",
+    "description": "PHA+WW91IGNhbiBtb3ZlIHRocm91Z2ggZW5lbXkgdW5pdHMgZm9yIHRoaXMgbW92ZW1lbnQuPC9wPg=="
+  },
+  {
+    "id": "6a06299f6be32fced493064b",
+    "indexId": "28e456c9-3b37-4704-a48f-636d67ec7163",
+    "keywordId": "persist",
+    "name": "Persist",
+    "description": "PHA+VGhpcyBlZmZlY3QgY29zdHMgK1ggbWFuYSB0byBkaXNwZWwuIElmIHRoZSBjcmVhdHVyZSBkaXNwZWxsaW5nIGl0IGRvZXMgbm90IHVzZSBtYW5hLCBpdCB0YWtlcyArWCBBUCAob3IgK1ggUlApIGluc3RlYWQuPC9wPjxwPkRvZXMgbm90IGFwcGx5IHdoZW4gdGhleSB1c2UgdGhlIG5hdHVyYWwgd2F5IG9mIHJlbW92aW5nIGl0LCBpZiBwb3NzaWJsZSAoRm9yIGV4YW1wbGUgYnkgc3BlbmRpbmcgMSBBUCB0byByZW1vdmUgYSBCdXJuKS48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced4930645",
+    "indexId": "2ba73803-2365-41e3-9e97-be1bdc1d65ff",
+    "keywordId": "pinpoint",
+    "name": "Pinpoint",
+    "description": "PHA+WW91IGlnbm9yZSBwb2ludHMgb2YgdGhlIHRhcmdldCdzIGd1YXJkIGVxdWFsIHRvIHlvdXIgRm9jdXMuIENhbm5vdCByZWR1Y2UgZ3VhcmQgYmVsb3cgMC48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced493062d",
+    "indexId": "37f7a6ae-322a-49c6-a034-4b90eb85053d",
+    "keywordId": "presence-concealment",
+    "name": "Presence Concealment",
+    "description": "PHA+WW91IGhpZGUgeW91ciBtYW5hIG91dHB1dCBhbmQgYXVyYSwgbWFraW5nIGl0IGhhcmRlciB0byBkZXRlY3QgeW91IGJ5IG1hZ2ljYWwgbWVhbnPigJRDYXVzaW5nIHlvdXIgc3Bpcml0IGNvcmUgdG8gYmUgY29uc2lkZXJlZCAwIGZvciB0aGUgcHVycG9zZXMgb2YgZGV0ZWN0aW9uIGFuZCBhdXJhIGFiaWxpdGllcy4gJm5ic3A7SW4gYWRkaXRpb24geW91IGdhaW4gYSArNSBib251cyB0byBzdGVhbHRoLjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced4930614",
+    "indexId": "ff3590e1-4c9a-4b26-a4c7-3bcb2195b436",
+    "keywordId": "prone",
+    "name": "Prone",
+    "description": "PHA+QW4gYWJpbGl0eSB3aXRoIHRoaXMga2V5d29yZCBjYW4gYmUgdXNlZCB3aGlsZSBQcm9uZSB3aXRoIG5vIHBlbmFsdHkuIEFsbCBhdHRhY2tzIHdpdGhvdXQgdGhlIFByb25lIGtleXdvcmQgY29zdCArMSBBUCBhbmQgUlAgd2hpbGUgcHJvbmUuPC9wPg=="
+  },
+  {
+    "id": "6a06299f6be32fced4930615",
+    "indexId": "ca168d73-441f-496b-b1a8-0af1762e27f7",
+    "keywordId": "quick",
+    "name": "Quick",
+    "description": "PHA+VGhlIGZpcnN0IHRpbWUgYWZ0ZXIgdXNpbmcgYW4gYWJpbGl0eSB3aXRoIFF1aWNrLCBvdGhlciBhYmlsaXRpZXMgd2l0aCBRdWljayB1c2VkIGluIHNhbWUgdHVybiBjb3N0ICsxIEFQLjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced4930636",
+    "indexId": "dd923002-136f-4830-9344-42cbbb52cef1",
+    "keywordId": "rage",
+    "name": "Rage",
+    "description": "PHA+VGhpcyBhYmlsaXR5IGNhbiBiZSB1c2VkIHdoaWxlIGluIFJhZ2UgU3RhbmNlLjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced4930616",
+    "indexId": "6e4c2928-ddae-48f7-9f79-c929e9abfbc4",
+    "keywordId": "rapid",
+    "name": "Rapid",
+    "description": "PHA+VGhpcyBhYmlsaXR5IGNhbiBiZSB1c2VkIG1vcmUgdGhhbiBvbmNlIHBlciB0dXJuLjwvcD4="
+  },
+  {
+    "id": "6a1f63bf6be32fced4930c39",
+    "indexId": "f90f0ce0-18d7-4af7-82b3-1fbf110cb26a",
+    "keywordId": "regrowth",
+    "name": "Regrowth",
+    "description": "PHA+WW91IGhlYWwgZm9yIDMrRm9jdXMgKG9mIHRoZSBvbmUgd2hvIGFwcGxpZWQgaXQpIGF0IHRoZSBzdGFydCBvZiB5b3VyIHR1cm4uPC9wPg=="
+  },
+  {
+    "id": "6a06299f6be32fced4930617",
+    "indexId": "1fd87cd9-f9db-4fae-8ddd-2c2f3a1284b4",
+    "keywordId": "root",
+    "name": "Root",
+    "description": "PHA+WW91IGNhbm5vdCBtb3ZlIGFuZCB5b3VyIGV2YXNpb24gd2hlbiB0YWtpbmcgdGhlIERvZGdlIHJlYWN0aW9uIGlzIGNoYW5nZWQgdG8gMTMgKyBBZ2lsaXR5IChyb3VuZGVkIGRvd24pPC9wPg=="
+  },
+  {
+    "id": "6a06299f6be32fced4930648",
+    "indexId": "0e6c5ba2-7f7e-40b4-aaae-3cebf2e04b2d",
+    "keywordId": "safe",
+    "name": "Safe",
+    "description": "PHA+VGhpcyBzcGVsbCBhbmQvb3IgYXR0YWNrIGRvZXMgbm90IHByb3Zva2UgYXR0YWNrcyBvZiBvcHBvcnR1bml0eS48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced493064d",
+    "indexId": "3a552029-2889-464b-b037-38ac98580b65",
+    "keywordId": "sanctify",
+    "name": "Sanctify",
+    "description": "PHA+QXR0YWNrcyBhZ2FpbnN0IHlvdSB0aGF0IGhpdCBoZWFsIGFuIGVuZW15IGF0dGFja2VyIGJ5IDMrdGhlIGFwcGxpZXIncyBmb2N1cy4gQWZ0ZXIgdGhpcyB0cmlnZ2VycywgdGhlIHN0YWNrcyBvZiB0aGlzIGRlYnVmZiBhcmUgcmVkdWNlZCBieSAxLjwvcD48cD5BbiBhdHRhY2tlciBhdCBmdWxsIEhQIG1heSBjaG9vc2Ugbm90IHRvIHRyaWdnZXIgdGhlIGVmZmVjdC48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced4930642",
+    "indexId": "52ecee25-6b45-4e64-9cf2-7c516b771f08",
+    "keywordId": "scatter",
+    "name": "Scatter",
+    "description": "PHA+V2hlbiB5b3UgbWFrZSBhbiBhdHRhY2sgYWdhaW5zdCBtdWx0aXBsZSB0YXJnZXRzIHdpdGggdGhpcyBhYmlsaXR5LCByb2xsIGEgc2VwYXJhdGUgYWNjdXJhY3kgYW5kIGRhbWFnZSBjaGVjayBhZ2FpbnN0IGVhY2ggdGFyZ2V0LjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced4930618",
+    "indexId": "adfc9176-039b-4f2f-828e-cd14573451aa",
+    "keywordId": "secret-art",
+    "name": "Secret Art",
+    "description": "PHA+WW91IGNhbiBvbmx5IHVzZSAxIGFiaWxpdHkgd2l0aCB0aGlzIGtleXdvcmQgb3Igd2l0aCB0aGUgRXNvdGVyaWMgQXJ0IGtleXdvcmQgcGVyIGVuY291bnRlci4mbmJzcDs8L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced4930619",
+    "indexId": "0db22031-edae-49eb-8a2b-01680c7fe3dc",
+    "keywordId": "setup",
+    "name": "Setup",
+    "description": "PHA+U2V0dXAgYXR0YWNrcyBjYW4gYmUgY29tcGxldGVkIGJ5IHNwZW5kaW5nIEFQIGluIHRoZSBmb2xsb3dpbmcgdHVybi4gV2hpbGUgY2hhcmdpbmcgdGhlIGF0dGFjaywgbm8gb3RoZXIgQVAgYWN0aW9ucyBjYW4gYmUgdGFrZW4gYW5kIGF0dGFja3MgYWdhaW5zdCB5b3UgZ2FpbiB0aGUgVHJpY2sgQXR0YWNrIGtleXdvcmQuIFlvdSBtYXkgY2FuY2VsIGEgc2V0dXAgYXR0YWNrIGluc3RlYWQgb2YgZmluaXNoaW5nIGl0IGFuZCBkb24ndCBuZWVkIHRvIHNwZW5kIHRoZSByZW1haW5pbmcgQVAuIFNldHVwIGF0dGFja3MgY2Fubm90IGFjdGl2YXRlIGJlZm9yZSB0aGUgc3RhcnQgb2YgeW91ciBuZXh0IHR1cm4gYW5kIHlvdSBjYW5ub3QgdXNlIHRoZSBQcmVwYXJlIGFjdGlvbiBvbiBTZXR1cCBhYmlsaXRpZXMuIFlvdSBtYXkgY2FuY2VsIGEgc2V0dXAgYXR0YWNrIGF0IGFueSB0aW1lIGJ5IHNwZW5kaW5nIDAgUlAuIFlvdSBtdXN0IHNwZW5kIGF0IGxlYXN0IDEgQVAgdG8gYmVnaW4gY2hhcmdpbmcgYSBzZXR1cCBhdHRhY2suPC9wPg=="
+  },
+  {
+    "id": "6a06299f6be32fced493061a",
+    "indexId": "0bcb8fe9-7215-4793-8199-db2672365d0b",
+    "keywordId": "shaken",
+    "name": "Shaken",
+    "description": "PHA+VGhlIHRhcmdldCdzIG1heGltdW0gQVAgaXMgcmVkdWNlZCBieSAxLjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced493061b",
+    "indexId": "918abd51-5b78-4af7-8e72-474cdf443429",
+    "keywordId": "shieldbreaker",
+    "name": "Shieldbreaker",
+    "description": "PHA+VGhpcyBhdHRhY2sgZGVhbHMgZG91YmxlIGRhbWFnZSB0byB0aGUgSFAgb2YgU2hpZWxkcyBhbmQgVGVtcG9yYXJ5IEhQLiBBbnkgY2FycnlvdmVyIGRhbWFnZSBpcyBub3QgZG91YmxlZC48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced493062a",
+    "indexId": "a34dacc0-1b1c-4813-9bde-6af795344267",
+    "keywordId": "sickened",
+    "name": "Sickened",
+    "description": "PHA+V2hlbiBtYWtpbmcgYSByb2xsIHRoYXQgdXNlcyBGb2N1cywgUG93ZXIsIEFnaWxpdHkgb3IgVG91Z2huZXNzLCB0aGV5IGFyZSB0cmVhdGVkIGFzIDEgbG93ZXIuPC9wPg=="
+  },
+  {
+    "id": "6a06299f6be32fced493061c",
+    "indexId": "cbe95f38-cc4d-4a67-8c13-0cf7774ee434",
+    "keywordId": "sidestep",
+    "name": "Sidestep",
+    "description": "PHA+WW91ciBtb3ZlbWVudCBkb2VzIG5vdCBwcm92b2tlIGF0dGFja3Mgb2Ygb3Bwb3J0dW5pdGllcy48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced493061d",
+    "indexId": "009c28db-9ead-4a10-8b0f-58552e3e327c",
+    "keywordId": "slow",
+    "name": "Slow",
+    "description": "PHA+WW91ciBtb3ZlbWVudCBzcGVlZCBpcyBoYWx2ZWQuPC9wPg=="
+  },
+  {
+    "id": "6a06299f6be32fced4930630",
+    "indexId": "60962ad3-ab10-41e4-95bd-f668ee6b4167",
+    "keywordId": "soaked",
+    "name": "Soaked",
+    "description": "PHA+QSBzb2FrZWQgdGFyZ2V0IHRha2VzIFggYWRkaXRpb25hbCBkYW1hZ2Ugd2hlbiB0YWtpbmcgTGlnaHRpbmcgZGFtYWdlLjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced493061e",
+    "indexId": "d136875f-9ba2-4d44-9d53-d6d61dd1b291",
+    "keywordId": "song",
+    "name": "Song",
+    "description": "PHA+QSBjaGFyYWN0ZXIgY2FuIG9ubHkgaGF2ZSAxIFNvbmcgYWN0aXZlIGF0IHRoZSBzYW1lIHRpbWUuPC9wPg=="
+  },
+  {
+    "id": "6a06299f6be32fced493061f",
+    "indexId": "1d4c9d83-92f9-4c8f-97a0-03364af0d89d",
+    "keywordId": "sound",
+    "name": "Sound",
+    "description": "PHA+VGhpcyBhYmlsaXR5J3MgZWZmZWN0IGlzIGJhc2VkIGFyb3VuZCBzb3VuZC4gVGhvc2Ugd2hvIGNhbid0IGhlYXIgaXQgYXJlIHVuYWZmZWN0ZWQuPC9wPg=="
+  },
+  {
+    "id": "6a06299f6be32fced4930631",
+    "indexId": "4c06100e-0210-4287-a782-0fce51327591",
+    "keywordId": "spell",
+    "name": "Spell",
+    "description": "PHA+VGhpcyBhYmlsaXR5IGlzIGNvbnNpZGVyZWQgYSBzcGVsbC4gVW5sZXNzIHN0YXRlZCBvdGhlcndpc2UsIGl0IHdpbGwgcHJvdm9rZSBhdHRhY2tzIG9mIG9wcG9ydHVuaXR5LjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced493063d",
+    "indexId": "ddc35d94-ab34-4134-9f4c-9f756d314802",
+    "keywordId": "stacking",
+    "name": "Stacking",
+    "description": "PHA+QWJpbGl0aWVzIHdpdGggdGhpcyBrZXl3b3JkIGdpdmUgc3RhY2tzIG9mIHNvbWV0aGluZy4gWW91IGNhbiBvbmx5IGdhaW4gc3RhY2tzIG9mIDEgdGhpbmcgd2l0aCB0aGlzIGtleXdvcmQgYSB0aGUgc2FtZSB0aW1lLiBVcG9uIGdhaW5pbmcgYSBzdGFjayBvZiBhIGRpZmZlcmVudCBraW5kLCB5b3VyIG9yaWdpbmFsIHN0YWNrcyBhcmUgbG9zdC48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced4930640",
+    "indexId": "c6c37243-7354-489c-bc7c-d8a254d38109",
+    "keywordId": "stagger",
+    "name": "Stagger",
+    "description": "PHA+QSBjaGFyYWN0ZXIgaW5mbGljdGVkIHdpdGggU3RhZ2dlciBoYXMgdGhlaXIgZXZhc2lvbiByZWR1Y2VkIGJ5IFgsIHdoZXJlIFggaXMgdGhlIFN0YWdnZXIgdmFsdWUuPC9wPg=="
+  },
+  {
+    "id": "6a06299f6be32fced4930620",
+    "indexId": "4f1b555a-cf53-42a9-9b43-818c43115fe9",
+    "keywordId": "stance",
+    "name": "Stance",
+    "description": "PHA+T25seSAxIFN0YW5jZSBhYmlsaXR5IGNhbiBiZSBhY3RpdmUgYXQgdGhlIHNhbWUgdGltZS48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced4930621",
+    "indexId": "ee475527-8a40-43ba-87aa-d45f6655d785",
+    "keywordId": "static",
+    "name": "Static",
+    "description": "PHA+QXQgdGhlIGVuZCBvZiB5b3VyIG5leHQgdHVybiwgeW91IGRlYWwgWCBsaWdodG5pbmcgZGFtYWdlIHRvIGFsbCBhbGxpZXMgd2l0aGluIDVmdCBvZiB5b3UuPC9wPg=="
+  },
+  {
+    "id": "6a06299f6be32fced493063e",
+    "indexId": "13a42b5c-ea37-4d56-bc5c-6c2909a3d0ca",
+    "keywordId": "stealth",
+    "name": "Stealth",
+    "description": "PHA+VGhpcyBhYmlsaXR5IGRvZXMgbm90IHB1bGwgeW91IG91dCBvZiBIaWRpbmcuIFlvdSBtdXN0IHN0aWxsIGJlIGluIGxvdyBjb3ZlciBhZnRlciB1c2luZyB0aGlzIGFiaWxpdHkgdG8gcmVtYWluIGluIEhpZGluZy48L3A+"
+  },
+  {
+    "id": "6a2c8e2e6be32fced4930c88",
+    "indexId": "43ec950b-b2a6-417c-bf4a-5457f855405f",
+    "keywordId": "strafe",
+    "name": "Strafe",
+    "description": "PHA+WW91IG11c3QgaGF2ZSBtb3ZlZCBhdCBsZWFzdCB0aGUgU3RyYWZlIGRpc3RhbmNlIHRvd2FyZHMgdGhlIHRhcmdldCBiZWZvcmUgbWFraW5nIGFuIGF0dGFjayB3aXRoIHRoaXMga2V5d29yZC48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced4930622",
+    "indexId": "44993b6e-f93f-4121-9980-b607f4dc4d81",
+    "keywordId": "stun",
+    "name": "Stun",
+    "description": "PHA+WW91ciBBUCwgQVAgcmVjb3ZlcnkgYW5kIFJQIGlzIHNldCB0byAwIHdoZW4gYWZmbGljdGVkIGJ5IHRoaXMuIFdoZW4gaXQgZW5kcywgeW91IHJlZ2FpbiBhbnkgdW51c2VkIFJQIGxvc3QgZnJvbSB0aGlzIGVmZmVjdC48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced4930623",
+    "indexId": "490f3e8f-98b8-47ab-a41f-aefa26bc8fd8",
+    "keywordId": "summon",
+    "name": "Summon",
+    "description": "PHA+VGhpcyBhYmlsaXR5IGNvdW50cyB0b3dhcmRzIHlvdXIgbWF4aW11bSBzdW1tb24gbGltaXQuIFlvdSBjYW4gb25seSBoYXZlIDIgc3VtbW9ucyBhY3RpdmUgYXQgdGhlIHNhbWUgdGltZS48L3A+PHA+QSBzdW1tb24gZG9lcyBub3QgY291bnQgYXMgYSB2YWxpZCB0YXJnZXQgZm9yIGFiaWxpdGllcyB0aGF0IHJlcXVpcmUgYSDigJh3aWxsaW5n4oCZIGFsbHkuPC9wPg=="
+  },
+  {
+    "id": "6a06299f6be32fced4930634",
+    "indexId": "ad06fb6c-a6a8-4cdc-b62c-9162f8442cc0",
+    "keywordId": "sunder",
+    "name": "Sunder",
+    "description": "PHA+QSBjaGFyYWN0ZXIgaW5mbGljdGVkIHdpdGggU3VuZGVyIGhhcyB0aGVpciBndWFyZCByZWR1Y2VkIGJ5IFgsIHdoZXJlIFggaXMgdGhlIFN1bmRlciB2YWx1ZS48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced4930624",
+    "indexId": "5232e3cf-4b87-48b7-a53f-d522d1a4036b",
+    "keywordId": "sure-hit",
+    "name": "Sure Hit",
+    "description": "PHA+U3VyZSBoaXQgYXR0YWNrcyBhbHdheXMgaGl0IGFuZCBkbyBub3QgcmVxdWlyZSBhbiBhY2N1cmFjeSByb2xsLCBidXQgdGhleSBhdXRvbWF0aWNhbGx5IG1pc3MgYWdhaW5zdCB0YXJnZXRzIHdpdGggZnVsbCBjb3Zlci48L3A+"
+  },
+  {
+    "id": "6a06299f6be32fced493062b",
+    "indexId": "a9056be5-02dd-471b-a01c-a23bf213d242",
+    "keywordId": "teleport",
+    "name": "Teleport",
+    "description": "PHA+WW91IHRlbGVwb3J0IGluc3RlYWQgb2YgbW92aW5nIG5vcm1hbGx5LiBUZWxlcG9ydGF0aW9uIGRvZXMgbm90IHByb3Zva2UgQXR0YWNrcyBvZiBPcHBvcnR1bml0eSBhbmQgaWdub3JlcyBtb3N0IGZvcm1zIG9mIHNsb3dzLCByb290cyBhbmQgZ3JhcHBsZXMuIFlvdSBuZWVkIHRvIHNlZSB3aGVyZSB5b3UgdGVsZXBvcnQgdG8sIGJ1dCBjYW4gb3RoZXJ3aXNlIGlnbm9yZSBkaWZmaWN1bHQgdGVycmFpbiBhbmQgc29saWQgb2JqZWN0cyBpbiB0aGUgd2F5LiBVbmxlc3Mgc3RhdGVkIG90aGVyd2lzZSwgeW91IG9ubHkgbW92ZSB5b3Vyc2VsZiBhbmQgeW91ciBiZWxvbmdpbmdzIHdoZW4gdGVsZXBvcnRpbmcsIG5vdCBvdGhlciBjcmVhdHVyZXMgeW91IG1pZ2h0IGJlIHRvdWNoaW5nLjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced493064c",
+    "indexId": "9b904e8f-b318-41d0-a151-61171ae874eb",
+    "keywordId": "toxic",
+    "name": "Toxic",
+    "description": "PHA+QSBjaGFyYWN0ZXIgc3VmZmVyaW5nIGZyb20gVG94aWMgdGFrZXMgMWQ2IEZ1bGwgUGllcmNlIFBvaXNvbiBkYW1hZ2UgYXQgdGhlIHN0YXJ0IG9mIHRoZWlyIHR1cm4uPC9wPg=="
+  },
+  {
+    "id": "6a06299f6be32fced493062e",
+    "indexId": "040f0d4c-cb8c-481c-94c9-7cdeb3032bdc",
+    "keywordId": "transformation",
+    "name": "Transformation",
+    "description": "PHA+WW91IGNhbiBvbmx5IGhhdmUgb25lIHRyYW5zZm9ybWF0aW9uIGVmZmVjdCBhY3RpdmUgYXQgb25lIHRpbWUuPC9wPg=="
+  },
+  {
+    "id": "6a06299f6be32fced4930625",
+    "indexId": "f0712a24-568b-43f9-a3bb-832bb66af172",
+    "keywordId": "trick-attack",
+    "name": "Trick Attack",
+    "description": "PHA+VGhlIHRhcmdldCBvZiB0aGUgYXR0YWNrIG11c3Qgc3BlbmQgZG91YmxlIFJQIHRvIHJlYWN0IHRvIGEgVHJpY2sgQXR0YWNrLjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced493063b",
+    "indexId": "c8e4fdb6-7948-43a6-9ec3-a764096599f2",
+    "keywordId": "type",
+    "name": "Type",
+    "description": "PHA+WW91IGNhbiBvbmx5IGJlIDEg4oCYdHlwZeKAmSBhdCB0aGUgc2FtZSB0aW1lLiZuYnNwOzwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced4930626",
+    "indexId": "d0e8aacb-546b-4123-ba4c-9331ae27cf31",
+    "keywordId": "unarmed-strike",
+    "name": "Unarmed Strike",
+    "description": "PHA+VGhpcyBhYmlsaXR5IG11c3QgYmUgbWFkZSB3aXRoIGFuIHVuYXJtZWQgYXR0YWNrLjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced4930627",
+    "indexId": "fd712af4-2392-4bd9-b51c-25296f06f1b2",
+    "keywordId": "unbalanced",
+    "name": "Unbalanced",
+    "description": "PHA+WW91ciBuZXh0IGF0dGFjayBjb3N0cyAxIGV4dHJhIEFQLjwvcD4="
+  },
+  {
+    "id": "6a06299f6be32fced4930628",
+    "indexId": "c17863ed-20ca-4cbc-8456-40c3dd824fd8",
+    "keywordId": "upkeep",
+    "name": "Upkeep",
+    "description": "PHA+WW91IG1heSBjaG9vc2UgdG8gcGF5IHRoZSBjb3N0IGF0IHRoZSBiZWdpbm5pbmcgb2YgeW91ciB0dXJuLiBJZiB5b3UgZG9uJ3QsIHRoZSBlZmZlY3QgaXMgdGVybWluYXRlZC48L3A+PHA+V2hpbGUgZG93bmVkLCB5b3UgY2Fubm90IHBheSB1cGtlZXAuPC9wPg=="
+  },
+  {
+    "id": "6a06299f6be32fced4930629",
+    "indexId": "d70a6b0e-dce7-4a4d-8852-6e50d0cd8787",
+    "keywordId": "weakened",
+    "name": "Weakened",
+    "description": "PHA+WW91ciBtYXhpbXVtIEFQIGdvZXMgZG93biB0byAyIGFuZCBtYXhpbXVtIFJQIGdvZXMgZG93biB0byAxLiBXaGVuIGl0IGVuZHMsIHlvdSByZWdhaW4gYW55IHVudXNlZCBSUCBsb3N0IGZyb20gdGhpcyBlZmZlY3QuPC9wPg=="
+  }
+]

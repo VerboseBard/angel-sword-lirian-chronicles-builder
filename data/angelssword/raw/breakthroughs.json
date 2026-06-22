@@ -1,0 +1,882 @@
+[
+  {
+    "id": "6a06299f6be32fced4930469",
+    "indexId": "aafdafa8-abe6-478f-85a8-bda44172b78f",
+    "breakthroughId": "8-eyes--spiderfolk-",
+    "name": "8 Eyes (Spiderfolk)",
+    "cost": "100",
+    "requirements": "Must be a spiderfolk.",
+    "description": "PHA+WW91IG1heSBoYXZlIHVwIHRvIDggTXlzdGljIEV5ZXMgaW5zdGVhZCBvZiB0aGUgcmVndWxhciAyLjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930466",
+    "indexId": "b3238ec2-b29b-42e2-83fd-fdfe572380a9",
+    "breakthroughId": "angelblooded--human---restricted-",
+    "name": "Angelblooded (Human) (Restricted)",
+    "cost": "0",
+    "requirements": "Must be a human and only a human. Requires GM Approval",
+    "description": "PHA+WW91IGhhdmUgdGhlIGJsb29kIG9mIGFuZ2VscyBpbiB5b3UuIFlvdSBtYXkgcHVyY2hhc2UgdGhlIEFuZ2VsYmxvb2RlZCBjbGFzcy48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493047e",
+    "indexId": "986e7955-0941-467d-9043-a9341bbda7a9",
+    "breakthroughId": "arachne--spiderfolk-",
+    "name": "Arachne (Spiderfolk)",
+    "cost": "0",
+    "requirements": "Must be a spiderfolk. Can only be taken at character creation.",
+    "description": "PHA+WW91IGxvc2UgeW91ciBleHRyYSBhcm1zIHJhY2lhbCBhYmlsaXR5LiBJbiBleGNoYW5nZSwgeW91IGJlY29tZSBMYXJnZSBzaXplIGFuZCB5b3VyIG1heCBidXJkZW4gaXMgaW5jcmVhc2VkIGJ5IDIuIFdoZW4gYXR0ZW1wdGluZyB0byBtb3ZlIHRocm91Z2ggNWZ0IHdpZGUgc3BhY2VzLCBpdCBpcyBjb25zaWRlcmVkIGRpZmZpY3VsdCB0ZXJyYWluIGZvciB5b3UgYW5kIG1hbnkgaHVtYW5vaWQgYnVpbGRpbmdzIHdpbGwgc3RydWdnbGUgdG8gYWNjb21tb2RhdGUgeW91LiBZb3UgYWxzbyBzdWZmZXIgYSAtMTAgcGVuYWx0eSB0byBzd2ltbWluZyBjaGVja3MsIGJ1dCB5b3UgbWF5IGNsaW1iIHRocm91Z2ggeW91ciBzcGlkZXIgY2xpbWIgYWJpbGl0eSBhdCB5b3VyIG5vcm1hbCBzcGVlZCBpbnN0ZWFkIG9mIGhhbGYgc3BlZWQuPC9wPjxwPkluIGFkZGl0aW9uLCB5b3UgY291bnQgYXMgbW91bnRlZCBmb3IgdGhlIHB1cnBvc2VzIG9mIGFiaWxpdGllcyB0aGF0IHJlcXVpcmUgeW91IHRvIGJlIG1vdW50ZWQuIFRoaXMgZG9lcyBub3QgbGV0IHlvdSBiZSBhIG1vdW50IHRvIG90aGVyIGNyZWF0dXJlcy48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930460",
+    "indexId": "fd764314-601d-434a-aa7b-9a3eee8dd7ce",
+    "breakthroughId": "become-fire--salamander-",
+    "name": "Become Fire (Salamander)",
+    "cost": "200",
+    "requirements": "Must be a Salamander.",
+    "description": "PHA+VGhlIFJQIGNvc3Qgb2YgQ29uc3VtZSBGaXJlIGlzIHJlZHVjZWQgdG8gMC48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930461",
+    "indexId": "8d9791d3-2c3b-404f-af15-9fed79ef46a3",
+    "breakthroughId": "become-ice--yuki-onna-",
+    "name": "Become Ice (Yuki-Onna)",
+    "cost": "200",
+    "requirements": "Must be a Yuki-Onna.",
+    "description": "PHA+VGhlIFJQIGNvc3Qgb2YgQWJzb3JiIEljZSBpcyByZWR1Y2VkIHRvIDAgdGhlIGZpcnN0IHRpbWUgeW91IHVzZSBpdCBwZXIgcm91bmQuIENvc3QgaXMgcmVzZXQgYmFjayB0byAwIHdoZW4gaXQgYmVjb21lcyB5b3VyIHR1cm48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930449",
+    "indexId": "f319aea5-b094-4157-91a4-763e4e8e3b85",
+    "breakthroughId": "become-lightning--raijin-",
+    "name": "Become Lightning (Raijin)",
+    "cost": "200",
+    "requirements": "Must be a Raijin Youkai.",
+    "description": "PHA+VGhlIFJQIGNvc3Qgb2YgQ29uc3VtZSBMaWdodG5pbmcgaXMgcmVkdWNlZCB0byAwIHRoZSBmaXJzdCB0aW1lIHlvdSB1c2UgaXQgcGVyIHJvdW5kLiBDb3N0IGlzIHJlc2V0IGJhY2sgdG8gMCB3aGVuIGl0IGJlY29tZXMgeW91ciB0dXJuLiBBbnkgUG93ZXIgYm9udXMgeW91IGdhaW4gZnJvbSB1c2luZyBDb25zdW1lIExpZ2h0bmluZyBkb2VzIG5vdCBzdGFjay48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a1f531e6be32fced4930c2e",
+    "indexId": "04663818-6856-4c01-a7d2-a219b7f50475",
+    "breakthroughId": "become-wind--sylph-",
+    "name": "Become Wind (Sylph)",
+    "cost": "200",
+    "requirements": "Must be a Sylph Fae",
+    "description": "PHA+VGhlIFJQIGNvc3Qgb2YgQ29uc3VtZSBXaW5kIGlzIHJlZHVjZWQgdG8gMCB0aGUgZmlyc3QgdGltZSB5b3UgdXNlIGl0IHBlciByb3VuZC4gQ29zdCBpcyByZXNldCBiYWNrIHRvIDAgd2hlbiBpdCBiZWNvbWVzIHlvdXIgdHVybjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930467",
+    "indexId": "0e5b0dc1-f105-4621-ace9-4f56029c8c5e",
+    "breakthroughId": "blend-in--slimefolk-",
+    "name": "Blend In (Slimefolk)",
+    "cost": "200",
+    "requirements": "Must be a Slimefolk.",
+    "description": "PHA+WW91IGRpc2d1aXNlIHlvdXIgYXBwZWFyYW5jZSB1c2luZyBtYWdpYyB0byBiZSB0aGF0IG9mIGFub3RoZXIgcmFjZSAoYW5kIGdhaW4gYSArMzAgYm9udXMgdG8gaGlkZSB0aGlzIG1hZ2ljYWwgZWZmZWN0IGZyb20gdGhpbmdzIHN1Y2ggYXMgc2Vuc2UgbWFnaWMpLiBUaGlzIHNraWxsIGRvZXMgbm90IGFsbG93IHlvdSB0byBjaGFuZ2UgeW91ciBhcHBlYXJhbmNlIGF0IHdpbGwsIGJ1dCBpbnN0ZWFkIGxldHMgeW91IGFwcGVhciBhcyB5b3Ugd291bGQgYXMgYSBkaWZmZXJlbnQgcmFjZS4gJm5ic3A7WW91IGNob29zZSB0aGlzIHJhY2Ugd2hlbiB0aGlzIGJyZWFrdGhyb3VnaCBpcyBwaWNrZWQgdXAgYW5kIGNhbm5vdCBjaGFuZ2UgaXQuPGJyPjxicj5JbiBhZGRpdGlvbiwgdGhlIGZpcnN0IHRpbWUgeW91IHVzZSBTbGltZSBCb2R5IHdoaWxlIGRpc2d1aXNlZCBpbiB0aGlzIHdheSwgaXQgY29zdHMgMCBSUCBpbnN0ZWFkIG9mIDEgUlAgYnV0IHJldmVhbHMgeW91ciBhY3R1YWwgcmFjZS4gJm5ic3A7VGhpcyBlZmZlY3QgZG9lcyBub3Qgd29yayBpZiB0aGUgYXR0YWNrZXIga25vd3MgdGhhdCB5b3UgYXJlIGEgU2xpbWVmb2xrLjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493047f",
+    "indexId": "33729faa-0de7-44d9-960a-2f3c944468a1",
+    "breakthroughId": "blend-in-ii--slimefolk-",
+    "name": "Blend In II (Slimefolk)",
+    "cost": "25",
+    "requirements": "Must have Blend In.",
+    "description": "PHA+WW91IG1heSBkaXNndWlzZSBhcyBhIGRpZmZlcmVudCByYWNlIGluIGFkZGl0aW9uIHRvIHlvdXIgY2hvc2VuIHJhY2UgZHVyaW5nIEJsZW5kIEluLiBZb3UgbWF5IHRha2UgdGhpcyBicmVha3Rocm91Z2ggbXVsdGlwbGUgdGltZXMsIHNlbGVjdGluZyBhIG5ldyByYWNlIHRvIGRpc2d1aXNlIGFzIGVhY2ggdGltZS48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930443",
+    "indexId": "1b0f7b2b-5414-4cb9-aab3-afc69390d50a",
+    "breakthroughId": "blessed-by-kari--human-",
+    "name": "Blessed by Kari (Human)",
+    "cost": "100",
+    "requirements": "Must be a Human.",
+    "description": "PHA+QWZ0ZXIgdXNpbmcgRGl2aW5lIFByb3ZpZGVuY2UgeW91IG1heSB1c2UgaXQgYSBzZWNvbmQgdGltZSBiZWZvcmUgcmVzdGluZywgYnV0IHRoZSBjb3N0IGluY3JlYXNlcyB0byAxIFJQLiBUaGlzIHNlY29uZCB1c2UgbXVzdCBwaWNrIGEgZGlmZmVyZW50IG9wdGlvbiB0aGVuIHlvdXIgZmlyc3Qgb25lLjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930454",
+    "indexId": "f16beb54-87c1-49b9-9db0-fec7c01e2684",
+    "breakthroughId": "bully",
+    "name": "Bully",
+    "cost": "50",
+    "requirements": "-",
+    "description": "PHA+WW91IGdhaW4gYSArNSBib251cyB0byBpbnRpbWlkYXRpb24gc2tpbGwgY2hlY2tzIGFnYWluc3QgdGFyZ2V0cyB3aXRoIGxlc3MgRml0bmVzcyB0aGFuIHlvdS48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493047d",
+    "indexId": "60a9f33e-f68d-4483-8cb7-87c61f925613",
+    "breakthroughId": "celestial-dragon--ryujin-",
+    "name": "Celestial Dragon (Ryujin)",
+    "cost": "300",
+    "requirements": "Must be a Ryujin. Can only be taken at character creation.",
+    "description": "PHA+WW91ciBlbGVtZW50YWwgbWFzdGVyeSBmcm9tIHlvdXIgUnl1amluJ3MgTWFzdGVyeSBtYXkgYmUgSG9seSBvciBEYXJrIGFzIHdlbGwuIEluIGFkZGl0aW9uLCB5b3UgY2FuIHVzZSBGbGlnaHQuPC9wPg==",
+    "ability": "5b304038-c45a-4521-b58f-2ad9545e1a9d"
+  },
+  {
+    "id": "6a06299f6be32fced4930485",
+    "indexId": "b71866fc-efab-44fe-88d3-92b0c54fb418",
+    "breakthroughId": "combat-doggy--cu-sith-",
+    "name": "Combat Doggy (Cu Sith)",
+    "cost": "100",
+    "requirements": "Must be a Cu Sith.",
+    "description": "PHA+WW91IG1heSB1c2UgYWJpbGl0aWVzIGxpa2Ugbm9ybWFsIHdoaWxlIGluIERvZyBGb3JtIGFuZCBtYXkgdXNlIE9uZS1IYW5kZWQgd2VhcG9uLiBBbnkgYWJpbGl0aWVzIHRoYXQgcmVxdWlyZSBhIHNwZWNpZmljIGFybW9yIG9yIG90aGVyIHNwZWNpZmljIHBoeXNpY2FsIHJlcXVpcmVtZW50cyBzdGlsbCBjYW5ub3QgYmUgdXNlZC48L3A+PHA+WW91ciBEb2cgRm9ybSBubyBsb25nZXIgYnJlYWtzIHVwb24gdGFraW5nIGRhbWFnZS48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493047a",
+    "indexId": "ac1771fd-fad7-414a-bda2-491df277347d",
+    "breakthroughId": "combat-kitty--cait-sith-",
+    "name": "Combat Kitty (Cait Sith)",
+    "cost": "100",
+    "requirements": "Must be a Cait Sith.",
+    "description": "PHA+WW91IG1heSB1c2UgYWJpbGl0aWVzIGxpa2Ugbm9ybWFsIHdoaWxlIGluIGNhdCBmb3JtIGFuZCBtYXkgdXNlIE9uZS1IYW5kZWQgd2VhcG9uLiBBbnkgYWJpbGl0aWVzIHRoYXQgcmVxdWlyZSBhIHNwZWNpZmljIGFybW9yIG9yIG90aGVyIHNwZWNpZmljIHBoeXNpY2FsIHJlcXVpcmVtZW50cyBzdGlsbCBjYW5ub3QgYmUgdXNlZC48L3A+PHA+WW91ciBjYXQgZm9ybSBubyBsb25nZXIgYnJlYWtzIG9uIGRhbWFnZS48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930465",
+    "indexId": "cba3fb90-fefe-4899-8b3f-8a52c13b57cc",
+    "breakthroughId": "curse-of-vampirism",
+    "name": "Curse of Vampirism",
+    "cost": "300",
+    "requirements": "Must be taken at character creation or after being killed by a vampire's bite.",
+    "description": "PHA+WW91IHJpc2UgYXMgYSB2YW1waXJlLCBhbiBpbW1vcnRhbCBjcmVhdHVyZSB0aGF0IGZlZWRzIG9uIHRoZSBibG9vZCBvZiBsaXZpbmcgY3JlYXR1cmVzIGFuZCZuYnNwOzxzdHJvbmc+aW1tZWRpYXRlbHkgZ2FpbiB0aGUgVmFtcGlyZSByYWNpYWwgc3R5bGUgY2xhc3MgYW5kIGl0cyBrZXkgYWJpbGl0eTwvc3Ryb25nPi4gWW91ciByYWNlIGNoYW5nZXMgdG8g4oCYVmFtcGlyZeKAmSwgYnV0IHlvdSBrZWVwIHRoZSBiZW5lZml0cyBvZiB5b3VyIHByZXZpb3VzIHJhY2UuPC9wPjxwPkFzIGEgdmFtcGlyZSwgeW91IG5vIGxvbmdlciBhZ2UgYW5kIHlvdXIgcGh5c2ljYWwgYXBwZWFyYW5jZSBjaGFuZ2VzIHNsaWdodGx5LiBZb3VyIHNraW4gYmVjb21lcyBtb3JlIHBhbGUgYW5kIHlvdSBncm93IGEgcGFpciBvZiBmYW5ncy4gWW91IHN0aWxsIG5lZWQgdG8gZWF0LCBkcmluayBhbmQgYnJlYXRoZSBhcyBub3JtYWwuPC9wPjxwPkEgdmFtcGlyZeKAmXMgc3Bpcml0IGNvcmUgaXMgY3JhY2tlZCwgbWFraW5nIGl0IGRpZmZpY3VsdCBmb3IgaXQgdG8gcmVnZW5lcmF0ZSBtYW5hIG5hdHVyYWxseSBhbmQgcmVxdWlyaW5nIGl0IHRvIG9idGFpbiBpdCBmcm9tIG90aGVyIGNyZWF0dXJlcy4gWW91IG5vIGxvbmdlciByZWdlbmVyYXRlIG1hbmEgZnJvbSBlYXRpbmcgKGluY2x1ZGluZyBwb3Rpb25zKSwgcmVzdGluZyBhbmQgY2FuIG5vIGxvbmdlciB1c2UgdGhlIERyYXcgTWFuYSBlbmNvdW50ZXIgY29uY2x1c2lvbiBhY3Rpb24uIFlvdSBzdGlsbCByZWNvdmVyIGZ1bGwgbWFuYSBhdCB0aGUgc3RhcnQgb2YgYSBuZXcgYXJjLiZuYnNwOzwvcD48cD5Zb3UgYXJlIHdlYWsgdG8gc3VubGlnaHQuIEV2ZXJ5IHJvdW5kIHlvdSBzcGVuZCBpbiBzdW5saWdodCB3aXRob3V0IHByb3BlciBwcm90ZWN0aW9uIHlvdSB0YWtlIDEwIHRydWUgZGFtYWdlIGFuZCB5b3VyIG1heGltdW0gSFAgaXMgbG93ZXJlZCBieSAxMC4gWW91ciBtYXhpbXVtIEhQIHJlbWFpbnMgbG93ZXJlZCB1bnRpbCB5b3UgZmluaXNoIGEgcmVzdC4gWW91IG1heSBjYXJyeSBhIHBhcmFzb2wgb3Igc2ltaWxhciBvYmplY3QgaW4gb25lIGhhbmQgdG8gcHJvdGVjdCB5b3Vyc2VsZiBmcm9tIHRoZSBzdW4gYW5kIGNhbiBkbyBzbyBldmVuIGluIGNvbWJhdC48L3A+PHA+SW4gYWRkaXRpb24gdG8gdGhlc2UgZHJhd2JhY2tzLCB5b3Ugbm8gbG9uZ2VyIHJlY2VpdmUgV291bmRzIHVubGVzcyB0aGUgZGFtYWdlIHRoYXQgcmVkdWNlZCB5b3VyIEhQIHRvIDAgd2FzIGZpcmUsIGhvbHkgb3IgdHJ1ZSBkYW1hZ2UuIFlvdSBhbHNvIGdhaW4gNjBmdCBEYXJrdmlzaW9uLiBEYXJrdmlzaW9uIGxldHMgeW91IHNlZSBpbiB0b3RhbCBkYXJrbmVzcywgZXZlbiBpZiB0aGVyZSdzIG5vIHNvdXJjZSBvZiBsaWdodC48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930484",
+    "indexId": "c6b4d9b7-06e5-452c-9054-9f49a2a76a76",
+    "breakthroughId": "deep-connection",
+    "name": "Deep Connection",
+    "cost": "50",
+    "requirements": "Cavalier mastered.",
+    "description": "PHA+WW91IG1heSBjb21tYW5kIHlvdXIgbW91bnQgdG8gbW92ZSBhbmQgYXR0YWNrIGV2ZW4gaWYgeW91J3JlIG5vdCBtb3VudGVkIG9uIGl0LiBUaGlzIHN0aWxsIHVzaW5nIEFQLCBNYW5hIGV0YyBsaWtlIG5vcm1hbCBhcyBpZiB5b3Ugd2VyZSBtb3VudGVkLjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930440",
+    "indexId": "7ad03e80-b3f9-4ffa-be35-6a460363ccf8",
+    "breakthroughId": "deus-ex-machina",
+    "name": "Deus Ex Machina",
+    "cost": "600",
+    "requirements": "-",
+    "description": "PHA+VGhlIGZpcnN0IHRpbWUgeW91IHdvdWxkIGRpZSBmcm9tIGEgbW9ydGFsIHdvdW5kIGF0IEVuY291bnRlciBDb25jbHVzaW9uLCB0aGUgbW9ydGFsIHdvdW5kIGlzIHJlbW92ZWQgYW5kIHlvdSBpbnN0ZWFkIHJlY2VpdmUgYSBub3JtYWwgaW5qdXJ5LiBUaGUgYmVuZWZpdCBvZiB0aGlzIGJyZWFrdGhyb3VnaCBpcyB0aGVuIGxvc3QgYW5kIHlvdSBtYXkgbm90IGNob29zZSB0aGlzIGJyZWFrdGhyb3VnaCBhZ2FpbiBhZnRlci48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493044c",
+    "indexId": "b3ef521f-a8d6-481f-8c90-c05d959b1089",
+    "breakthroughId": "divine-luck-i",
+    "name": "Divine Luck I",
+    "cost": "300",
+    "requirements": "-",
+    "description": "PHA+T25jZSBwZXIgcmVzdCwgeW91IG1heSByb2xsIGFuIGFkZGl0aW9uYWwgZGljZSB3aGVuIG1ha2luZyBhIGNoZWNrIGFuZCB0YWtlIHRoZSBoaWdoZXIgcmVzdWx0LjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493044d",
+    "indexId": "fc6a7e76-d7ac-41e3-a8d8-d5500ed8d308",
+    "breakthroughId": "divine-luck-ii",
+    "name": "Divine Luck II",
+    "cost": "600",
+    "requirements": "Must have purchased Divine Luck I.",
+    "description": "PHA+T25jZSBwZXIgYXJjLCB5b3UgbWF5IGNob29zZSB0byBhdXRvbWF0aWNhbGx5IHN1Y2NlZWQgb24gYSBjaGVjayAoaWYgc3VjY2VzcyBpcyBwb3NzaWJsZSkuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930468",
+    "indexId": "d1c3d5ef-65bb-43f5-8a04-51771146f0b2",
+    "breakthroughId": "drag-along--lamia-",
+    "name": "Drag along (Lamia)",
+    "cost": "200",
+    "requirements": "Must be a Lamia.",
+    "description": "PHA+V2hlbiB5b3UgaGF2ZSBhIHRhcmdldCB1bmRlciB0aGUgZWZmZWN0IG9mICJKdXN0IGEgaHVnIiwgeW91IGNhbiBzdGlsbCBtb3ZlIGF0IGhhbGYgb2YgeW91ciBub3JtYWwgbW92ZW1lbnQgc3BlZWQgd2hpbGUgdW5kZXIgdGhlIDxzdHJvbmc+SnVzdCBhIGh1Zzwvc3Ryb25nPiByb290IGVmZmVjdCBhbmQgeW91IHN0aWxsIGNvdW50IGFzIHJvb3RlZCBmb3IgYWxsIG90aGVyIHB1cnBvc2VzLjwvcD48cD5XaGVuIG1vdmluZywgeW91IGNhbiBkcmFnIGFsb25nIHRoZSB0YXJnZXQgb2YgSnVzdCBhIGh1ZywgYnV0IHRoZXkgc3RpbGwgY291bnQgYXMgcm9vdGVkIGF0IHlvdXIgbmV3IGxvY2F0aW9uLjwvcD48cD5JbiBhZGRpdGlvbiwgeW91ciBncmFwcGxlIHBvd2VyIGluY3JlYXNlcyBieSArMS48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493044b",
+    "indexId": "40caec22-8ca7-4055-83d9-1790f56ef7a3",
+    "breakthroughId": "dual-personality",
+    "name": "Dual Personality",
+    "cost": "300",
+    "requirements": "-",
+    "description": "PHA+V2hldGhlciB0aHJvdWdoIG1hZ2ljYWwgb3Igbm9uLW1hZ2ljYWwgbWVhbnMsIHlvdSBoYXZlIG1vcmUgdGhhbiBhIHNpbmdsZSBwZXJzb25hbGl0eSBvciBlbnRpdHkgd2l0aGluIHlvdSB0aHJvdWdoIGVpdGhlciBwaHlzaWNhbCBvciBtYWdpY2FsIG1lYW5zLiBXaGVuIHVuZGVyIHRoZSBpbmZsdWVuY2Ugb2YgYSBDaGFybSwgSWxsdXNpb24gb3Igb3RoZXIgbWluZC1pbmZsdWVuY2luZyBlZmZlY3QgeW91IG1heSBzcGVuZCAxIEFQIHRvIHN3aXRjaCBwZXJzb25hbGl0aWVzL2VudGl0aWVzIGFuZCBhY3QgYXMgbm9ybWFsLjwvcD48cD5Zb3UgbWF5IG9ubHkgZG8gdGhpcyBvbmNlIHBlciBlbmNvdW50ZXIuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930463",
+    "indexId": "9ffa91f3-be68-4877-b4fd-91c91ba3d0af",
+    "breakthroughId": "early-ascension",
+    "name": "Early Ascension",
+    "cost": "300",
+    "requirements": "Must be taken at character creation.",
+    "description": "PHA+WW91IGFyZSB0cmVhdGVkIGFzIGhhdmluZyAxIGNsYXNzIG1hc3RlcmVkIGZvciB0aGUgcHVycG9zZXMgb2Ygc2VsZWN0aW5nIGEgdGllciAyIGNsYXNzIHRoYXQgaGFzIOKAnEFueSBjbGFzcyBtYXN0ZXJlZOKAnSBvciBzaW1pbGFyIHJlcXVpcmVtZW50LiBUaGlzIGRvZXMgbm90IGFwcGx5IHRvIGFueSBjbGFzcyB0aGF0IHJlcXVpcmVzIGEgc3BlY2lmaWMgY2xhc3MgdG8gYmUgbWFzdGVyZWQgYW5kIGl0IGRvZXNuJ3QgYXV0b21hdGljYWxseSBxdWFsaWZ5IHlvdSBmb3Igb3RoZXIgcmVxdWlyZW1lbnRzIHN1Y2ggYXMgd2VhcG9uIHByb2ZpY2llbmNpZXMuJm5ic3A7PC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930452",
+    "indexId": "05009dd0-73e9-4f90-98bc-e6fbe75a1c5f",
+    "breakthroughId": "elemental-affinity",
+    "name": "Elemental Affinity",
+    "cost": "150",
+    "requirements": "-",
+    "description": "PHA+WW91IGdhaW4gRWxlbWVudGFsIE1hc3RlcnkgaW4gYW4gZWxlbWVudCBvZiB5b3VyIGNob2ljZS48L3A+PHA+WW91IG1heSBwaWNrIHRoaXMgYnJlYWt0aHJvdWdoIG1vcmUgdGhhbiBvbmNlLCBjaG9vc2luZyBhIGRpZmZlcmVudCBlbGVtZW50IGVhY2ggdGltZS48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493047c",
+    "indexId": "f9283358-e643-4552-bed5-42724a980de8",
+    "breakthroughId": "elemental-breath--ryujin-",
+    "name": "Elemental Breath (Ryujin)",
+    "cost": "100",
+    "requirements": "Must be a Ryujin.",
+    "description": "PHA+WW91IG1heSBsZXQgeW91ciBEcmFnb24gQnJlYXRoIGRvIHRoZSBkYW1hZ2Ugb2YgYW55IGVsZW1lbnQgdGhhdCB5b3UgaGF2ZSBtYXN0ZXJlZC48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930457",
+    "indexId": "0917066a-bf81-46fd-8013-8f0738b734c8",
+    "breakthroughId": "elixir-addict",
+    "name": "Elixir Addict",
+    "cost": "0",
+    "requirements": "Must have used at least 3 elixirs.",
+    "description": "PHA+WW91IGhhdmUgYmVjb21lIHVzZWQgdG8gdGhlIGVmZmVjdHMgb2YgZHJpbmtpbmcgZWxpeGlycywgdG9vIHVzZWQgaW4gZmFjdC4gQXQgdGhlIGVuZCBvZiB5b3VyIHR1cm4gaW4gY29tYmF0LCBpZiB5b3UgZG8gbm90IGhhdmUgYW4gRWxpeGlyIGFjdGl2ZSB5b3UgdGFrZSA2IHRydWUgZGFtYWdlLiBUaGUgSFAgY29zdCBvZiBkcmlua2luZyBhbGwgZWxpeGlycyBpcyByZWR1Y2VkIGJ5IDExLjwvcD48cD5UaGlzIGJyZWFrdGhyb3VnaCBtYXkgYmUgcmVtb3ZlZCBkdXJpbmcgYW4gaW50ZXJsdWRlIHBoYXNlIGJ5IHNwZW5kaW5nIDEgSVAuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930488",
+    "indexId": "7f83a2c6-5300-41f3-959d-ad0fe0a9603f",
+    "breakthroughId": "expert-summoner",
+    "name": "Expert Summoner",
+    "cost": "0",
+    "requirements": "At least 1 of Summoner, Mogul, Animal Summoner or Necromancer maxed. 3000+ Spirit Core",
+    "description": "PHA+V2hlbiB5b3Ugc3VtbW9uIGR1cmluZyB0aGUgZmlyc3Qgb3Igc2Vjb25kIHJvdW5kIG9mIGFuIGVuY291bnRlciwgeW91IG1heSB0cmFuc2ZlciBtYWluIHN0YXQgcG9pbnRzIGZyb20geW91cnNlbGYgaW50byB5b3VyIHN1bW1vbi48L3A+PHA+VGhlIG1heGltdW0gc3RhdCBwb2ludHMgeW91IGNhbiBpbWJ1ZSBmb3IgYWxsIHlvdXIgc3VtbW9ucyBjb21iaW5lZCBpcyBlcXVhbCB0byB5b3VyIHRvdGFsIG1haW4gc3RhdCBwb2ludHMgKEZvY3VzLCBQb3dlciwgQWdpbGl0eSwgVG91Z2huZXNzKSAtIDE4LiBZb3UgY2FuIG5vdCBsb3dlciBhIHN0YXQgYmVsb3cgMyB3aXRoIHRoaXMuIFdoZW4geW91IGxvc2Ugc3RhdCBwb2ludHMgZHVlIHRvIHRoaXMsIHlvdXIgcmVsYXRlZCB2YWx1ZXMgc3VjaCBhcyBtYW5hLCBIUCBhbmQgUlAgaGF2ZSB0aGVpciBtYXggcmVkdWNlZC4gV2hlbiBsb3dlcmluZyB5b3VyIGFnaWxpdHkgb3IgdG91Z2huZXNzLCB5b3UgYWxzbyBsb3NlIFJQIG9yIEhQIGVxdWFsIHRvIHRoZSByZXNwZWN0aXZlIHN0YXQgbG9zdC4gSWYgeW91ciAmbmJzcDtNYW5hIGlzIGhpZ2hlciB0aGFuIHlvdXIgbWF4IE1hbmEgYWZ0ZXIgaW1idWluZywgaXQgaXMgcmVkdWNlZCB0byB0aGUgbmV3IG1heC48L3A+PHA+VGhpcyB0cmFuc2ZlciBzdGF5cyB1bnRpbCBlbmQgb2YgZW5jb3VudGVyIG9yIHVudGlsIHRoZSBzdW1tb24geW91IGludmVzdGVkIGluIGRpZXMgKG9yIGlzIG90aGVyd2lzZSByZW1vdmVkIGZyb20gY29tYmF0KS4gWW91ciBtYXggb2YgeW91ciBzdGF0cyBpcyByZXR1cm5lZCB0byBub3JtYWwsIGJ1dCBhbnkgSFAgb3IgTWFuYSBsb3N0IGR1ZSB0byB0aGlzIGlzIG5vdCByZWZ1bmRlZC48L3A+PHA+WW91IG1heSBpbWJ1ZSBhIEhlcm9pYyBzdW1tb24gd2l0aCBhbnkgYW1vdW50IG9mIHN0YXRzIGZyb20gdGhpcyBwb29sLiBUaGVzZSBwb2ludHMgZG9uJ3QgbmVlZCB0byBiZSBhIGRpcmVjdCB0cmFuc2ZlciAoZm9yIGV4YW1wbGUsIHlvdSBjYW4gbG93ZXIgeW91ciBBZ2lsaXR5IGJ5IDIgdG8gYnVmZiB5b3VyIHN1bW1vbnMgUG93ZXIpLiBUaGV5IGluY3JlYXNlIHlvdXIgc3VtbW9ucyB2YWx1ZXMgc3VjaCBhcyBIUC9SUCBldGMgYnkgdGhlIHJlZ3VsYXIgYW1vdW50IHRoZXNlIHN0YXRzIGdpdmUuPC9wPjxwPkZvciBncnVudCBzdW1tb25zLCB5b3UgbWF5IGltYnVlIHRoZW0gd2l0aCBoYWxmIG9mIHRoaXMgbWF4LiBUaGV5IGFyZSBzdGlsbCBjYXBwZWQgYXQgbWF4IDEgUlAuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930458",
+    "indexId": "02e547b9-990c-48b3-8831-9d82f9c6ea24",
+    "breakthroughId": "fae-flash-acrobat--fae-",
+    "name": "Fae Flash Acrobat (Fae)",
+    "cost": "50",
+    "requirements": "Must be a Fae.",
+    "description": "PHA+V2hpbGUgdXNpbmcgRmFlIEZsYXNoLCB5b3UgbWF5IHRlbGVwb3J0IGEgcGFydGlhbCBkaXN0YW5jZSBhbmQgbWF0ZXJpYWxpemUgdGhlcmUgdG8gcmVkaXJlY3QgeW91ciB0ZWxlcG9ydC4gSW4gYSBzaW5nbGUgRmFlIFN0ZXAsIHlvdSBtYXkgdGVsZXBvcnQgbXVsdGlwbGUgdGltZXMsIHJlYXBwZWFyaW5nIGVhY2ggdGltZSB5b3Ugc3RvcCwgdG8gdGVsZXBvcnQgZnJvbSB0aGF0IG5ldyBwb3NpdGlvbi4gWW91IGFyZSBzdGlsbCBsaW1pdGVkIGJ5IHlvdXIgbWF4aW11bSB0ZWxlcG9ydCBkaXN0YW5jZSBhbmQgY2Fubm90IHRha2UgYW55IG90aGVyIGFjdGlvbnMgYmV0d2VlbiBlYWNoIHRlbGVwb3J0LjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930444",
+    "indexId": "75c704e5-20d8-4791-9ca7-6ebe362103ea",
+    "breakthroughId": "faerie-flash-master--fae-",
+    "name": "Faerie Flash Master (Fae)",
+    "cost": "100",
+    "requirements": "Must be a Fae.",
+    "description": "PHA+V2hlbiB1c2luZyB5b3VyIEZhZXJpZSBGbGFzaCBhYmlsaXR5LCB5b3UgbWF5IHNwZW5kIFggYWRkaXRpb25hbCBtYW5hIHRvIGluY3JlYXNlIHlvdXIgdGVsZXBvcnQgZGlzdGFuY2UgYnkgWCB0aW1lcyB5b3VyIG1vdmVtZW50IHNwZWVkLjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930433",
+    "indexId": "4179c9b9-1eee-4a1a-8460-7b2f40921204",
+    "breakthroughId": "faerie-chimera-hybrid--race-",
+    "name": "Faerie-Chimera Hybrid (Race)",
+    "cost": "200",
+    "requirements": "Must be chosen at character creation. Must choose Faerie or Chimera race.",
+    "description": "PHA+QW4gZXh0cmVtZWx5IHJhcmUgY29uZGl0aW9uIGluIHdoaWNoIGEgQ2hpbWVyYSBwYXJlbnQgYW5kIGEgRmFlcmllIHBhcmVudCBwcm9kdWNlcyBhIGNoaWxkIHdpdGggQ2hpbWVyYSB0cmFpdHMuIFRoZSBvZGRzIGFyZSBzYWlkIHRvIGJlIGxlc3MgdGhhbiAxJS48L3A+PHA+SWYgeW91ciBtYWluIHJhY2UgaXMgQ2hpbWVyYSwgeW91IG1heSBjaG9vc2UgYSBGYWUgc3VicmFjZSBpbnN0ZWFkIG9mIGEgQ2hpbWVyYSBvbmUuIElmIHlvdXIgbWFpbiByYWNlIGlzIEZhZSwgeW91IG1heSBjaG9vc2UgYSBDaGltZXJhIHN1YnJhY2UgaW5zdGVhZCBvZiBhIEZhZSBvbmUuJm5ic3A7PC9wPjxwPllvdSBkbyBub3QgZ2V0IGFueSBvZiB0aGUgYmFzZSB0cmFpdHMgZnJvbSB0aGUgb3RoZXIgcmFjZSBhbmQga2VlcCB0aGUgb25lcyBmcm9tIHlvdXIgY2hvc2VuIG1haW4gcmFjZS4gSG93ZXZlciwgeW91IGRvIGdldCB0aGUgbGFuZ3VhZ2UgZnJvbSB0aGUgb3RoZXIgcmFjZSAob3IgYSBkaWFsZWN0IG9mIGNob29zaW5nIGEgY2hpbWVyYSBzdWJyYWNlKTwvcD48cD5JZiB5b3UgcGljayBIaWdoIEZhZSBhcyB5b3VyIHN1YnJhY2UsIHlvdSBnYWluIEZhZSBGbGFzaCBpbnN0ZWFkIG9mIEZhZSBGbGFzaCBJSS48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930470",
+    "indexId": "97ccaea7-ffb4-4fdd-ac25-4eb9d6a7b143",
+    "breakthroughId": "fast-metabolism",
+    "name": "Fast Metabolism",
+    "cost": "150",
+    "requirements": "-",
+    "description": "PHA+T25jZSBwZXIgYXJjIHlvdSBtYXkgZWF0IGZvb2QgYW5kIGdhaW4gdGhlIGJlbmVmaXRzIGV2ZW4gaWYgeW91IGFscmVhZHkgaGFkIGdvdHRlbiB0aGUgYmVuZWZpdHMgZnJvbSBlYXRpbmcgZm9vZCB0aGF0IGRheS48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493046b",
+    "indexId": "adf2da75-1740-4532-affe-bebf9bcc7c59",
+    "breakthroughId": "fast-movement--centaur-",
+    "name": "Fast Movement (Centaur)",
+    "cost": "200",
+    "requirements": "Must be Centaur or Arachne Spiderfolk",
+    "description": "PHA+WW91ciBiYXNlIG1vdmVtZW50IHNwZWVkIGluY3JlYXNlcyBieSA1ZnQuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930453",
+    "indexId": "f15a735e-f8ca-432f-b075-202bd284f62f",
+    "breakthroughId": "fearless",
+    "name": "Fearless",
+    "cost": "200",
+    "requirements": "-",
+    "description": "PHA+V2hlbmV2ZXIgeW91IGFyZSBhZmZsaWN0ZWQgYnkgYSBGZWFyIHR5cGUgY29uZGl0aW9uLCB5b3UgbWF5IHNwZW5kIDEgUlAgb3IgMCBBUCB0byByZW1vdmUgaXQuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930447",
+    "indexId": "a9dd9a11-8408-40c7-98e1-f5a3b16c392c",
+    "breakthroughId": "fight-and-flight--chimera-",
+    "name": "Fight and Flight (Chimera)",
+    "cost": "200",
+    "requirements": "Must be a Chimera.",
+    "description": "PHA+V2hlbiB1c2luZyBGaWdodCBvciBGbGlnaHQsIHlvdSBubyBsb25nZXIgcmVjZWl2ZSB0aGUgZHJhd2JhY2suPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493045a",
+    "indexId": "e6591f4f-eec0-4b4f-8ec3-32f2007cd00d",
+    "breakthroughId": "flesheater--jiangshi-",
+    "name": "Flesheater (Jiangshi)",
+    "cost": "100",
+    "requirements": "Must be a Jiangshi.",
+    "description": "PHA+V2hlbiB1c2luZyBDb25zdW1lIEVuZW15LCB5b3UgbWF5IGNvbnNpZGVyIHRoYXQgeW91ciBmb29kIGZvciB0aGUgZGF5IGFuZCByZWdhaW4gbWFuYSBlcXVhbCB0byBhIG5vcm1hbCByYXRpb24uIFlvdSBjYW5ub3QgZ2FpbiB0aGlzIGJlbmVmaXQgaWYgeW91IGFscmVhZHkgcmVnYWluZWQgbWFuYSBmcm9tIGZvb2QgdGhhdCBkYXkgYW5kIHVzaW5nIHRoaXMgYmVuZWZpdCBwcmV2ZW50cyB5b3UgZnJvbSByZWdhaW5pbmcgbWFuYSBmcm9tIGZvb2QgdW50aWwgeW914oCZdmUgcmVzdGVkLjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493045b",
+    "indexId": "7e563b66-935f-4edc-8a8f-766c3e7794c8",
+    "breakthroughId": "flying-counter--kitsune-",
+    "name": "Flying Counter (Kitsune)",
+    "cost": "200",
+    "requirements": "Must be a Kitsune.",
+    "description": "PHA+V2hlbiB1c2luZyBGYWRpbmcgQ291bnRlciwgeW91IG1heSBtb3ZlIHVwIHRvIHlvdXIgbW92ZW1lbnQgc3BlZWQgaW5zdGVhZCBvZiA1ZnQuIFRoaXMgbW92ZW1lbnQgaGFzIEZsaWdodCBhbmQgc3RpbGwgZG9lcyBub3QgcHJvdm9rZSBhdHRhY2tzIG9mIG9wcG9ydHVuaXR5LjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493045d",
+    "indexId": "1666248a-dd60-4cb9-83af-18d4c978f6de",
+    "breakthroughId": "four-paw-sprint--catfolk-",
+    "name": "Four Paw Sprint (Catfolk)",
+    "cost": "100",
+    "requirements": "Must be a Catfolk.",
+    "description": "PHA+V2hlbiBzcGVuZGluZyBhdCBsZWFzdCAzIEFQIG9mIG1vdmVtZW50LCB5b3VyIGJhc2UgbW92ZW1lbnQgc3BlZWQgaXMgaW5jcmVhc2VkIHRvIDQwZnQgaW5zdGVhZCBvZiAyNS48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493043d",
+    "indexId": "d2dfb912-5ff7-40e4-9c96-44ab480673d9",
+    "breakthroughId": "greatshield-training",
+    "name": "Greatshield Training",
+    "cost": "100",
+    "requirements": "You must be proficient with shields.",
+    "description": "PHA+WW91IGdhaW4gcHJvZmljaWVuY3kgd2l0aCBHcmVhdHNoaWVsZHMuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493043c",
+    "indexId": "f729ba66-87cd-47cf-bb73-b3558d805c52",
+    "breakthroughId": "heavy-armor-training",
+    "name": "Heavy Armor Training",
+    "cost": "100",
+    "requirements": "You must be proficient with Light and Medium armor.",
+    "description": "PHA+WW91IGdhaW4gcHJvZmljaWVuY3kgd2l0aCBIZWF2eSBBcm1vci48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493045f",
+    "indexId": "a199aec1-ae91-43b0-a1d1-ee2a3a0c8f8c",
+    "breakthroughId": "hide-behind-ally--pixie-",
+    "name": "Hide Behind Ally (Pixie)",
+    "cost": "300",
+    "requirements": "Must be a Pixie.",
+    "description": "PHA+V2hlbiBvY2N1cHlpbmcgdGhlIHNhbWUgc3BhY2UgYXMgYSBjb25zY2lvdXMgYWxseSB0aGF0J3MgYXQgbGVhc3QgYSBzaXplIGJpZ2dlciB0aGFuIHlvdSwgeW91IG1heSBjaG9vc2UgdG8gYmVjb21lIHVudGFyZ2V0YWJsZSB0byBzaW5nbGUgdGFyZ2V0IGF0dGFja3MuIFRoZSBhbGx5IG11c3QgYmUgd2lsbGluZyB0byB0YWtlIHRoZSBoaXRzIGZvciB5b3UsIHRob3VnaCB0aGV5IG1heSByZWFjdCB0byB0aGVzZSBhdHRhY2tzIGFzIG5vcm1hbC4gV2hpbGUgb2NjdXB5aW5nIHRoZSBzYW1lIHNwYWNlIGFzIGEgY29uc2Npb3VzIGFsbHksIGFueSBlZmZlY3QgdGhhdCB0cmlnZ2VycyB1cG9uIG5vdCBiZWluZyB0YXJnZXRlZCBieSBhbiBlbmVteSAoc3VjaCBhcyBDaGFsbGVuZ2UpIHdpbGwgbm90IGJlIHRyaWdnZXJlZC4gRG9lcyBub3Qgd29yayBhZ2FpbnN0IEF0dGFja3Mgb2YgT3Bwb3J0dW5pdHkuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930432",
+    "indexId": "d676b6a8-0840-41c6-bcd9-6b99ef9d2831",
+    "breakthroughId": "human-chimera-hybrid--race-",
+    "name": "Human-Chimera Hybrid (Race)",
+    "cost": "200",
+    "requirements": "Must be chosen at character creation. Must choose Human race.",
+    "description": "PHA+V2hpbGUgbW9zdCB1bmlvbnMgb2YgSHVtYW4gYW5kIENoaW1lcmEgcGFyZW50cyByZXN1bHQgaW4gdGhlIG9mZnNwcmluZyBiZWluZyBmdWxseSBvZiBIdW1hbiBvciBmdWxseSBvZiBDaGltZXJhLCB0aGVyZSBhcmUgcmFyZSBpbnN0YW5jZXMgaW4gd2hpY2ggdGhlIENoaW1lcmEgdHJhaXRzIGFyZSBzdGlsbCBwcmVzZW50IGluIGEgaHVtYW4gb2Zmc3ByaW5nLjwvcD48cD5DaG9vc2Ugb25lIENoaW1lcmEgU3VicmFjZSBhbmQgZ2FpbiBhbGwgb2YgaXRzIGZlYXR1cmVzLiZuYnNwO1lvdSBkbyBub3QgZ2FpbiBhbnkgb2YgdGhlIENoaW1lcmEgYmFzZSB0cmFpdHMgYW5kIGluc3RlYWQgaGF2ZSB0aGUgSHVtYW4gb25lcywgaW5jbHVkaW5nIERpdmluZSBQcm92aWRlbmNlLiBZb3UgZG8gbm90IGdldCB0aGUgMTAwIGV4dHJhIGV4cCB0aGF0IGh1bWFucyBub3JtYWxseSBnZXQgb3IgaHVtYW4gYWRhcHRhYmlsaXR5LjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930442",
+    "indexId": "f21a4bb6-0543-4ee9-9942-712262b3a2fd",
+    "breakthroughId": "improved-demonic-divine-release--demon-",
+    "name": "Improved Demonic Divine Release (Demon)",
+    "cost": "300",
+    "requirements": "Must be a Demon",
+    "description": "PHA+V2hlbiBhY3RpdmF0aW5nIHlvdXIgZGl2aW5lIHJlbGVhc2UgeW91IG1heSBjaG9vc2UgdG8gcmVkdWNlIHlvdXIgbWF4IEhQIGJ5IDIyLiBXaGVuIHlvdSBkbywgeW91IGRvIG5vdCBwYXkgYW55IGFkZGl0aW9uYWwgSFAgY29zdCB0byBhY3RpdmF0ZSBpdCBhbmQgdGhlIEhQIFVwa2VlcCBpcyByZWR1Y2VkIHRvIDAgd2hpbGUgYWJvdmUgMCBIUC48L3A+PHA+V2hlbiB5b3UgZmFsbCBiZWxvdyAwIEhQLCB5b3UgcGF5IHRoZSBpbmNyZWFzZWQgVXBrZWVwIGNvc3QgYXMgbm9ybWFsLjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930448",
+    "indexId": "dab7e9ee-ff71-41aa-b474-3389400e235f",
+    "breakthroughId": "in-sync--youkai-",
+    "name": "In Sync (Youkai)",
+    "cost": "100",
+    "requirements": "Must be a Youkai.",
+    "description": "PHA+QWZ0ZXIgeW91IHVzZSBTcGlyaXR1YWwgU3luYywgeW91IG1heSBjYW5jZWwgdGhlIGVmZmVjdCBmb3IgMCBSUCBhdCBhbnkgdGltZS4gSWYgeW91IGRvLCB5b3UgcmVnYWluIG1hbmEgbGlrZSBpdCBpcyBkZXNjcmliZWQgaW4gdGhlIGFiaWxpdHkgb3IgOCBIUCBmb3IgZWFjaCB0ZW1wb3JhcnkgbWFuYSB5b3Ugc3RpbGwgaGFkIHJlbWFpbmluZy48L3A+PHA+SW4gYWRkaXRpb24sIHRoZSBtYXhpbXVtIG1hbmEgb3IgSFAgeW91IGNhbiBzcGVuZCBvbiBTcGlyaXR1YWwgU3luYyBpcyBkb3VibGVkLjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930474",
+    "indexId": "bb5d7dd1-af65-4fce-9675-a4fea97cded4",
+    "breakthroughId": "kit-expert",
+    "name": "Kit Expert",
+    "cost": "200",
+    "requirements": "-",
+    "description": "PHA+WW91IG1heSByZWR1Y2UgdGhlIEJ1cmRlbiBjb3N0IG9mIGEgc2luZ2xlIGtpdCBpbiB5b3VyIGludmVudG9yeSBieSAyLjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930455",
+    "indexId": "49576f97-4ab5-45ca-ad3e-c98b9bdafdfe",
+    "breakthroughId": "language-training",
+    "name": "Language Training",
+    "cost": "100",
+    "requirements": "-",
+    "description": "PHA+WW91IGxlYXJuIGEgbGFuZ3VhZ2Ugb2YgeW91ciBjaG9pY2UuIFJhcmUsIGRlYWQgb3Igc2ltaWxhciBsYW5ndWFnZXMgbWF5IGJlIHVuYXZhaWxhYmxlIChHTeKAmXMgZGlzY3JldGlvbikuPC9wPjxwPllvdSBtYXkgdGFrZSB0aGlzIGJyZWFrdGhyb3VnaCBtdWx0aXBsZSB0aW1lcywgcGlja2luZyBhIGRpZmZlcmVudCBsYW5ndWFnZSBlYWNoIHRpbWUuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930478",
+    "indexId": "712791f4-6cbb-4681-80b4-4666b34b1c66",
+    "breakthroughId": "large-specimen--nio--bullfolk-or-bearfolk-",
+    "name": "Large Specimen (Nio, Bullfolk or Bearfolk)",
+    "cost": "100",
+    "requirements": "Must be a Nio, Bullfolk or Bearfolk.",
+    "description": "PHA+WW91ciBzaXplIGJlY29tZXMgTGFyZ2UuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493043a",
+    "indexId": "0327396a-1722-494b-93ac-bf8a79babb26",
+    "breakthroughId": "light-armor-training",
+    "name": "Light Armor Training",
+    "cost": "25",
+    "requirements": "-",
+    "description": "PHA+WW91IGdhaW4gcHJvZmljaWVuY3kgd2l0aCBMaWdodCBBcm1vciBhbmQgc2hpZWxkcy48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493044a",
+    "indexId": "7956f508-8c8c-4a6a-8aa7-266b75e8668c",
+    "breakthroughId": "light-sleeper",
+    "name": "Light Sleeper",
+    "cost": "75",
+    "requirements": "-",
+    "description": "PHA+V2hlbiBhc2xlZXAsIHlvdSBtYXkgcm9sbCBQZXJjZXB0aW9uIHJvbGxzIGFzIGlmIHlvdSB3ZXJlIGF3YWtlIHRvIGJlIGF3YXJlIG9mIGRhbmdlciBhcHByb2FjaGluZy48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930481",
+    "indexId": "4c457daa-aa10-4b8e-879a-99bc8ce97a87",
+    "breakthroughId": "mark-of-conflict",
+    "name": "Mark of Conflict",
+    "cost": "0",
+    "requirements": "Must be an Unknown Paladin that follows Eisen. Must have the Mark of Justice ability.",
+    "description": "PHA+VGhlIGVmZmVjdCBvZiB5b3VyIE1hcmsgb2YgSnVzdGljZSBjaGFuZ2VzIHRvIHRoZSBmb2xsb3dpbmc6PC9wPjxwPuKAnFlvdSBtYXJrIGEgc2luZ2xlIGVuZW15LCBpbmZsaWN0aW5nIHRoZSBNYXJrIG9mIENvbmZsaWN0IG9uIHRoZW0uIElmIGFuIGVuZW15IG1vdmVzIGF3YXkgZnJvbSB5b3UgYW5kIG5vdCB0b3dhcmRzIGFub3RoZXIgYWxseSwgdGhleSB0YWtlIEZ1bGwgUGllcmNlIHBoeXNpY2FsIGRhbWFnZSBlcXVhbCB0byB5b3VyIFBvd2VyIGZvciBlYWNoIDIwZnQgb2YgbW92ZW1lbnQgdGhleSBzcGVudCBtb3ZpbmcgYXdheSBmcm9tIHlvdS7igJ08L3A+PHA+VGhlIHJhbmdlIGFuZCBBUCBjb3N0IHJlbWFpbiB0aGUgc2FtZS48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493043b",
+    "indexId": "ab136b22-8d6a-45dd-b2b8-4479b11caa54",
+    "breakthroughId": "medium-armor-training",
+    "name": "Medium Armor Training",
+    "cost": "50",
+    "requirements": "You must be proficient with Light Armor",
+    "description": "PHA+WW91IGdhaW4gcHJvZmljaWVuY3kgd2l0aCBNZWRpdW0gQXJtb3IuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493047b",
+    "indexId": "df29a1bf-6089-4108-b852-6d5557dbcaa6",
+    "breakthroughId": "mental-torture--unseelie-",
+    "name": "Mental Torture (Unseelie)",
+    "cost": "100",
+    "requirements": "Must be an Unseelie.",
+    "description": "PHA+V2hlbiB5b3Ugcm9sbCBhIG5hdHVyYWwgMjAgb24geW91ciBhY2N1cmFjeSByb2xsLCB5b3UgbWF5IGFwcGx5IHRoZSBlZmZlY3RzIG9mIFRvcnR1cmUgVGVjaG5pcXVlcyBldmVuIGlmIHRoZSBlbmVteSBEb2RnZXMgb3IgQmxvY2tzIGl0LjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930441",
+    "indexId": "5fad2fbd-117f-45de-a874-23ec8d9550fe",
+    "breakthroughId": "mixed-house--demon-",
+    "name": "Mixed House (Demon)",
+    "cost": "100",
+    "requirements": "Must be a Demon.",
+    "description": "PHA+WW91IGNob29zZSBhbm90aGVyIGhvdXNlIHRvIGdhaW4gdGhlIGJlbmVmaXQgb2YuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930445",
+    "indexId": "7898e2c7-2a72-4fa8-bc06-13b93e171466",
+    "breakthroughId": "mystic-eyes-of-faerie-light--fae-",
+    "name": "Mystic Eyes of Faerie Light (Fae)",
+    "cost": "100",
+    "requirements": "Must be a Fae.",
+    "description": "PHA+WW91ciBGYWUgZXllcyBoYXZlIGRldmVsb3BlZCBpbnRvIHRoZSBFeWVzIG9mIEZhZXJpZSBMaWdodC4mbmJzcDsgWW91IG1heSBwdXJjaGFzZSB0aGUgRmFlcmllIExpZ2h0IEV5ZXMgY2xhc3MuPC9wPjxwPkluIGFkZGl0aW9uLCB5b3UgY2FuIG1ha2UgYSBQZXJjZXB0aW9uIGNoZWNrIGF0ICsxMCBib251cyB0byBkZXRlcm1pbmUgaWYgc29tZXRoaW5nIGlzIGFuIGlsbHVzaW9uLiBZb3UgYXJlIG5vdCBpbW11bmUgdG8gdGhlc2UgaWxsdXNpb25zIGhvd2V2ZXIuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493046e",
+    "indexId": "0fa5b003-e9eb-49c9-a5f9-5e50b58c34cf",
+    "breakthroughId": "natural-immunity--ratfolk-",
+    "name": "Natural Immunity (Ratfolk)",
+    "cost": "100",
+    "requirements": "Must be Ratfolk",
+    "description": "PHA+V2hlbiB5b3Ugc3VjY2Vzc2Z1bGx5IHJlc2lzdCB0aGUgZWZmZWN0IG9mIGEgZGlzZWFzZSBvciBwb2lzb24gKG9yIGFyZSBpbW11bmUgdG8gdGhlIGVmZmVjdCksIHlvdSBtYXkgY2hvb3NlIHRvIGJlY29tZSBhZmZsaWN0ZWQgYW55d2F5LiBZb3Ugc3VmZmVyIG5vIGVmZmVjdHMgZnJvbSBhIGRpc2Vhc2Ugb3IgcG9pc29uIHlvdSBjaG9vc2UgdG8gYWNjZXB0IHRoaXMgd2F5LiBUaGlzIHBvaXNvbiBvciBkaXNlYXNlIGxhc3RzIHRoZSBub3JtYWwgZHVyYXRpb24gb3IgdW50aWwgdGhlIGVuZCBvZiB0aGUgZW5jb3VudGVyLCB3aGljaGV2ZXIgaXMgc2hvcnRlci48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930476",
+    "indexId": "34b8e8e7-d8b9-43ea-a0bd-50d873600df2",
+    "breakthroughId": "on-the-draw",
+    "name": "On the draw",
+    "cost": "100",
+    "requirements": "-",
+    "description": "PHA+WW91IGdhaW4gKzEgdG8geW91ciBpbml0aWF0aXZlLjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930434",
+    "indexId": "fe8267f3-b340-4f24-a59f-388750fe73e3",
+    "breakthroughId": "organized-inventory",
+    "name": "Organized Inventory",
+    "cost": "100",
+    "requirements": "-",
+    "description": "PHA+SW5jcmVhc2VzIHlvdXIgaW4tY29tYmF0IGJ1cmRlbiBjYXBhY2l0eSBieSAxLjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493044e",
+    "indexId": "319b2e72-de29-441b-a0a8-f8f65a684b73",
+    "breakthroughId": "organized-inventory-ii",
+    "name": "Organized Inventory II",
+    "cost": "200",
+    "requirements": "Must have the Organized Inventory breakthrough",
+    "description": "PHA+WW91ciBpbi1jb21iYXQgQnVyZGVuIGNhcGFjaXR5IGlzIGluY3JlYXNlZCBieSAxLjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493044f",
+    "indexId": "d4e1caca-8e77-4b4c-8156-9a1e425e0eaa",
+    "breakthroughId": "organized-inventory-iii",
+    "name": "Organized Inventory III",
+    "cost": "300",
+    "requirements": "Must have the Organized Inventory II breakthrough",
+    "description": "PHA+WW91ciBpbi1jb21iYXQgQnVyZGVuIGNhcGFjaXR5IGlzIGluY3JlYXNlZCBieSAxLjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930462",
+    "indexId": "99ff1560-2863-4f33-9301-ee7cf4d5a627",
+    "breakthroughId": "overrun--centaur-",
+    "name": "Overrun (Centaur)",
+    "cost": "200",
+    "requirements": "Must be a Centaur.",
+    "description": "PHA+V2hlbiB1c2luZyB0aGUgQ2hhcmdlIG9yIFNwZWFyIENoYXJnZSBhYmlsaXR5IHlvdXIgbW92ZW1lbnQgc3BlZWQgaXMgaW5jcmVhc2VkIGJ5IDVmdCBhbmQgaWYgeW91ciBhdHRhY2sgbWFkZSB0aHJvdWdoIHRoZSBDaGFyZ2UgYWJpbGl0eSBkb2VzIGRhbWFnZSwgaXQga25vY2tzIHRoZSB0YXJnZXQgcHJvbmUuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930471",
+    "indexId": "7f3433df-8797-49d0-a254-b8a6b3759aa4",
+    "breakthroughId": "panda-martial-arts--red-panda-",
+    "name": "Panda Martial Arts (Red Panda)",
+    "cost": "100",
+    "requirements": "Must be Red Panda",
+    "description": "PHA+WW91IGNhbiBiZSBpbiBQYW5kYSBzdGFuY2UgYXQgdGhlIHNhbWUgdGltZSBhcyBhbm90aGVyIHN0YW5jZSB3aXRob3V0IGVpdGhlciBzdGFuY2UgZW5kaW5nLjwvcD48cD5PdGhlciBydWxlcyBmb3Igc3RhbmNlIGJyZWFraW5nIChzdWNoIGFzIGVudGVyaW5nIDIgbm9uLXBhbmRhIHN0YW5jZXMpIHN0aWxsIGFwcGx5LjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493046f",
+    "indexId": "37a3c35d-e778-4741-b787-704bbae5b73b",
+    "breakthroughId": "photosynthesis--dryad-",
+    "name": "Photosynthesis (Dryad)",
+    "cost": "100",
+    "requirements": "Must be Dryad.",
+    "description": "PHA+Qnkgc3BlbmRpbmcgYXQgbGVhc3QgYW4gaG91ciBpbiB0aGUgZGlyZWN0IHN1bmxpZ2h0LCB5b3UgbWF5IGdhaW4gdGhlIGJlbmVmaXRzIG9mIGhhdmluZyBlYXRlbiBmb29kIGFuZCB5b3UgZG8gbm90IG5lZWQgdG8gZWF0IG9yIGRyaW5rIGZvciB0aGUgbmV4dCAyNCBob3Vycy48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930475",
+    "indexId": "aebebfc4-e6c3-4e70-ad36-4b0063732300",
+    "breakthroughId": "power-saving-mode--ancient-marionette-",
+    "name": "Power Saving Mode (Ancient Marionette)",
+    "cost": "100",
+    "requirements": "Must be an Ancient Marionette",
+    "description": "PHA+SWYgeW91IGFyZSBhdCBtYXhpbXVtIG1hbmEgZHVyaW5nIHlvdXIgbWVhbCwgeW91IG9ubHkgbmVlZCB0byBjb25zdW1lIGhhbGYgdGhlIG5vcm1hbCBhbW91bnQgdG8gYmUgd2VsbCBmZWQuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930459",
+    "indexId": "b312c868-2837-42e2-9045-8fba8e3602ca",
+    "breakthroughId": "powerful-ki--oni-",
+    "name": "Powerful Ki (Oni)",
+    "cost": "200",
+    "requirements": "Must be an Oni.",
+    "description": "PHA+V2hlbiB1c2luZyBHcmF2aXRhdGlvbmFsIEtpLCB0aGUgcmFuZ2UgaW5jcmVhc2VzIGJ5IDMwZnQuIFRoZSBwdXNoIGFuZCBwdWxsIGRpc3RhbmNlIGluY3JlYXNlcyBieSB1cCB0byAxMGZ0LiBJbiBhZGRpdGlvbiwgeW91IG1heSBzcGVuZCAxIEFQIGluc3RlYWQgb2YgMSBSUCBvbiBpdC48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493043e",
+    "indexId": "45822ac3-a314-4d89-bcd6-2d8344dc2d9a",
+    "breakthroughId": "primary-stat-training",
+    "name": "Primary Stat Training",
+    "cost": "400",
+    "requirements": "-",
+    "description": "PHA+WW91IGdhaW4gYSArMSBib251cyB0byBGb2N1cywgUG93ZXIsIEFnaWxpdHkgb3IgVG91Z2huZXNzLjwvcD48cD5UaGlzIGJyZWFrdGhyb3VnaCBjYW4gYmUgc2VsZWN0ZWQgbXVsdGlwbGUgdGltZXMuIFRoZSBlZmZlY3RzIHN0YWNrLiBFYWNoIHRpbWUgeW91IHRha2UgdGhpcyBicmVha3Rocm91Z2ggdGhlIGNvc3QgaW5jcmVhc2VzIGJ5IDEwMCwgdXAgdG8gYSBtYXhpbXVtIG9mIDcwMC48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493046d",
+    "indexId": "5ba5e6af-a6bb-4823-8bcf-9e2daf512be2",
+    "breakthroughId": "racial-flight",
+    "name": "Racial Flight",
+    "cost": "300",
+    "requirements": "Must be Phoenix, Mothfolk, Lizardfolk or Willowisp race.",
+    "description": "PHA+WW91IG1heSB1c2UgRmxpZ2h0LjwvcD4=",
+    "ability": "5b304038-c45a-4521-b58f-2ad9545e1a9d"
+  },
+  {
+    "id": "6a06299f6be32fced4930456",
+    "indexId": "2a202a86-be68-4862-a6fa-668874701d8c",
+    "breakthroughId": "rapid-flash--high-fae-",
+    "name": "Rapid Flash (High Fae)",
+    "cost": "100",
+    "requirements": "Must be a High Fae.",
+    "description": "PHA+WW91ciBGYWUgRmxhc2ggZ2FpbnMgdGhlIFJhcGlkIGtleXdvcmQuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930473",
+    "indexId": "b7b38bd5-0123-4000-b73d-046fe2898b41",
+    "breakthroughId": "rich-parents",
+    "name": "Rich Parents",
+    "cost": "300",
+    "requirements": "Must be taken at character creation.",
+    "description": "PHA+WW91IHN0YXJ0IHRoZSBnYW1lIHdpdGggYW4gYWRkaXRpb25hbCAzMDAwIENsaW0gb2YgZnVuZHMuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493043f",
+    "indexId": "bf5c2d85-7a07-4a2c-9e3f-6a51a915aed1",
+    "breakthroughId": "secondary-stat-training",
+    "name": "Secondary Stat Training",
+    "cost": "200",
+    "requirements": "-",
+    "description": "PHA+WW91IGdhaW4gYSArMSBib251cyB0byBGaXRuZXNzLCBDdW5uaW5nLCBSZWFzb24sIEF3YXJlbmVzcyBvciBQcmVzZW5jZS48L3A+PHA+VGhpcyBicmVha3Rocm91Z2ggY2FuIGJlIHNlbGVjdGVkIG11bHRpcGxlIHRpbWVzLiBUaGUgZWZmZWN0cyBzdGFjay48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930437",
+    "indexId": "29589820-d937-49d7-88dd-5f3ab90ee5ce",
+    "breakthroughId": "skill-training",
+    "name": "Skill Training",
+    "cost": "25",
+    "requirements": "-",
+    "description": "PHA+WW91IGdhaW4gYSBzaW5nbGUgc2tpbGwgcG9pbnQgb3IgdHdvIGV4cGVydGlzZSBwb2ludHMgdG8gc3BlbmQgb24gYSBza2lsbC4gQ3JhZnRpbmcgc2tpbGxzIGNhbm5vdCBiZSBzZWxlY3RlZCB3aXRoIHRoaXMgdHJhaW5pbmcuPC9wPjxwPllvdSBtYXkgc2VsZWN0IHRoaXMgYnJlYWt0aHJvdWdoIG11bHRpcGxlIHRpbWVzLiBJdHMgZWZmZWN0cyBjYW4gc3RhY2suPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493046c",
+    "indexId": "296b5632-0f01-444f-aae5-dffb22d5fd2b",
+    "breakthroughId": "skilled-flier",
+    "name": "Skilled Flier",
+    "cost": "100",
+    "requirements": "Must have Flight racial ability or Racial Flight breakthrough",
+    "description": "PHA+V2hlbiB5b3UgYXJlIGFib3V0IHRvIGxvc2UgSGVpZ2h0IGZyb20gdGFraW5nIGRhbWFnZSBkdWUgdG8geW91ciBGbGlnaHQgYWJpbGl0eSwgeW91IG1heSBpbnN0ZWFkIHNwZW5kIDMgTWFuYSB0byBuZWdhdGUgbG9zaW5nIGhlaWdodCBmcm9tIHRoZSBmbGlnaHQgbWVjaGFuaWMgdW50aWwgdGhlIHN0YXJ0IG9mIHlvdXIgbmV4dCB0dXJuLjwvcD48cD5BYmlsaXRpZXMgdGhhdCBtYWtlIHlvdSBsb3NlIGhlaWdodCBub3QgcGFydCBvZiB0aGUgRmxpZ2h0IGFiaWxpdHkgKHN1Y2ggYXMgZG93bmJ1cnN0KSBtYXkgc3RpbGwga25vY2sgeW91IG91dCBvZiB0aGUgYWlyLjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930483",
+    "indexId": "94c72324-0872-435e-90b9-bd7b8e0d3d3f",
+    "breakthroughId": "slime-summoner",
+    "name": "Slime Summoner",
+    "cost": "100",
+    "requirements": "Must be a mastered Animal Summoner.",
+    "description": "PHA+V2hlbiB1c2luZyB0aGUgU3VtbW9uIEFuaW1hbCBhYmlsaXR5LCB5b3UgbWF5IGluc3RlYWQgY2hvb3NlIHRvIHN1bW1vbiBzbGltZXMuIFlvdSByb2xsIHJhbmRvbWx5IGZyb20gdGhlIGZvbGxvd2luZyBzbGltZXM6IFNsaW1lLCBGaXJlIFNsaW1lLCBFYXJ0aCBTbGltZSwgV2F0ZXIgU2xpbWUsIFdpbmQgU2xpbWUgb3IgTWFuYSBTbGltZS48L3A+PHA+RXZlbiBpZiB5b3UgaGF2ZSB0aGUgV2lsZGhlYXJ0IGNsYXNzLCB5b3Ugc3RpbGwgY2Fubm90IGNob29zZSB3aGljaCBzbGltZSB5b3Ugc3VtbW9uIGV4Y2VwdCB5b3UgbWF5IGNob29zZSB0byBzdW1tb24gdGhlIHJlZ3VsYXIgU2xpbWUuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930464",
+    "indexId": "69ad5786-9e4b-4099-bf12-036fd89873f1",
+    "breakthroughId": "slow-starter",
+    "name": "Slow Starter",
+    "cost": "300",
+    "requirements": "Must be taken at character creation.",
+    "description": "PHA+WW91IHJlY2VpdmUgMjAwIGxlc3MgRVhQIGF0IGNoYXJhY3RlciBjcmVhdGlvbiB0byBzcGVuZCBvbiBjbGFzc2VzIGFuZCBhYmlsaXRpZXMuIEV2ZXJ5IHRpbWUgeW91IGdldCBFWFAgYWZ0ZXIgY2hhcmFjdGVyIGNyZWF0aW9uLCB5b3UgZ2V0IHR3aWNlIGFzIG11Y2guIFRoaXMgbGFzdHMgdW50aWwgeW914oCZdmUgcmVjZWl2ZWQgYSB0b3RhbCBvZiA1MDAgKDEwMDAgd2hlbiBkb3VibGVkKSBleHAuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930486",
+    "indexId": "2a89d4f8-4911-487a-89e6-413cd15931e5",
+    "breakthroughId": "small-doggy--cu-sith-",
+    "name": "Small Doggy (Cu Sith)",
+    "cost": "0",
+    "requirements": "Must be a Cu Sith.",
+    "description": "PHA+V2hlbiB5b3UgZW50ZXIgeW91ciBEb2cgRm9ybSwgeW91IGJlY29tZSBhIHNtYWxsIGRvZyBpbnN0ZWFkLiBJbnN0ZWFkIG9mIHRoZSB1c3VhbCBib251c2VzIGFuZCBwZW5hbHRpZXMsIHlvdSBpbnN0ZWFkIGxvc2UgNCBndWFyZCBhbmQgOCBCbG9jayBidXQgZ2FpbiBhICsyIFNpemUgYm9udXMgdG8gRXZhc2lvbiBhbmQgRG9kZ2UuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930482",
+    "indexId": "d5492d93-94da-4c58-94ea-82a66d05d4f5",
+    "breakthroughId": "small-specimen--cowfolk-",
+    "name": "Small Specimen (Cowfolk)",
+    "cost": "25",
+    "requirements": "Cowfolk only. Must be taken at character creation.",
+    "description": "PHA+WW91ciBzaXplIGlzIFNtYWxsIGluc3RlYWQgb2YgTWVkaXVtLjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930439",
+    "indexId": "0e92a4c2-fad0-4b5c-81a3-9310307dadc1",
+    "breakthroughId": "speciality-weapon-training",
+    "name": "Speciality Weapon Training",
+    "cost": "100",
+    "requirements": "-",
+    "description": "PHA+WW91IGdhaW4gcHJvZmljaWVuY3kgd2l0aCBhIFNwZWNpYWxpdHkgV2VhcG9uIGdyb3VwLjwvcD48cD5UaGlzIGJyZWFrdGhyb3VnaCBjYW4gYmUgc2VsZWN0ZWQgbXVsdGlwbGUgdGltZXMuIFlvdSBtdXN0IHNlbGVjdCBhIGRpZmZlcmVudCB3ZWFwb24gZ3JvdXAgZWFjaCB0aW1lIHlvdSBzZWxlY3QgaXQuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930472",
+    "indexId": "23ade1b1-4956-4974-8601-52b61d8516e9",
+    "breakthroughId": "summon-contract--fortuna--lady-luck",
+    "name": "Summon Contract: Fortuna, Lady Luck",
+    "cost": "0",
+    "requirements": "Must be a summoner and have visited the eidolon.",
+    "description": "PHA+PHN0cm9uZz5BcHBlYXJhbmNlPC9zdHJvbmc+OiBGb3J0dW5hIGFwcGVhcnMgYXMgYSBiZWF1dGlmdWwgbGFkeSB3ZWFyaW5nIGNsb3RoaW5nIG9mIHRoZSBoaWdoZXN0IHF1YWxpdHkuIEhlciBjbG90aGVzIGNoYW5nZSBlYWNoIHRpbWUgc2hlIGFwcGVhcnMsIGJ1dCBzaGUgYWx3YXlzIGNhcnJpZXMgd2l0aCBoZXIgYSBwYXJhc29sIGRlc2lnbmVkIGxpa2UgYSByb3VsZXR0ZSB3aGVlbC48YnI+PHN0cm9uZz5EZXNpcmVzPC9zdHJvbmc+OiBGb3J0dW5hIGRlc2lyZXMgdG8gc2VlIGdhbWJsaW5nLiBUbyBoYXZlIHBlb3BsZSBiZXQgdGhlaXIgYWxsIG9uIGltcG9zc2libGUgb2Rkcy48YnI+PHN0cm9uZz5QYWN0IENvc3Q8L3N0cm9uZz46IFlvdSBjYW4gbmV2ZXIgbmF0dXJhbGx5IHJvbGwgMjAgYWdhaW4uIEV2ZXJ5IDIwIHlvdSByb2xsIGlzIHJlZHVjZWQgdG8gMTkuPGJyPjxzdHJvbmc+QXR0dW5lbWVudCBDb3N0Ojwvc3Ryb25nPiBOb25lPGJyPjxzdHJvbmc+UmUtU3VtbW9uIENvc3Q8L3N0cm9uZz46IFJvbGwgYSBuYXR1cmFsIDIwIChiZWZvcmUgdGhlIHBhY3QgY29zdCByZWR1Y2VzIGl0KSBvbiBhbiBhdHRhY2sgb3Igc2tpbGwgY2hlY2sgd2l0aCBjb25zZXF1ZW5jZXMgZm9yIGZhaWx1cmUgKEdN4oCZcyBkZWNpc2lvbikuPC9wPjxwPldoZW4geW91IGNvbnRyYWN0IEZvcnR1bmEsIHlvdSBhcmUgYWJsZSB0byBhdHR1bmUgdG8gaXQuIFdoaWxlIGF0dHVuZWQsIHlvdSBnYWluIGFjY2VzcyB0byB0aGUgRHJhdyBMdWNrIGFiaWxpdHkgdGhyb3VnaCB5b3VyIENoYW5uZWwgRWlkb2xvbiBhYmlsaXR5LiBZb3Ugc3VtbW9uIHRoZSBKYWNrIG9mIEhlYXJ0cyBmb3IgeW91ciBMZXNzZXIgRWlkb2xvbiBhbmQgRm9ydHVuYSBmb3IgeW91ciBFaWRvbG9uIChUaGUgc3RhdHMgZm9yIHRoZXNlIGFyZSBsaXN0ZWQgdW5kZXIgbW9uc3RlcnMpLjwvcD4=",
+    "ability": "7d26f4ec-eaef-4dc8-a244-a5cecc769b09"
+  },
+  {
+    "id": "6a06299f6be32fced4930477",
+    "indexId": "9d2ff949-92dd-45ba-a6d7-ba52c40f87b1",
+    "breakthroughId": "summon-contract--ixilune--the-swarm",
+    "name": "Summon Contract: Ixilune, The Swarm",
+    "cost": "0",
+    "requirements": "Must be a summoner and have visited the eidolon.",
+    "description": "PHA+PHN0cm9uZz5BcHBlYXJhbmNlOjwvc3Ryb25nPiBIb3QgYnVnIGxhZHkuPGJyPjxzdHJvbmc+RGVzaXJlczo8L3N0cm9uZz4gSXhpbHVuZSBkZXNpcmVzIHRvIGNvbnN1bWUgZXZlcnl0aGluZy48YnI+PHN0cm9uZz5QYWN0IENvc3Q6PC9zdHJvbmc+IFlvdSBuZWVkIHRvIGVhdCAxLjV4IGFzIG11Y2ggZm9vZCB0byBiZSBmZWQuPGJyPjxzdHJvbmc+QXR0dW5lbWVudCBDb3N0Ojwvc3Ryb25nPiBOb25lPGJyPjxzdHJvbmc+UmUtU3VtbW9uIENvc3Q6PC9zdHJvbmc+IE11c3QgZWF0IHRoZSBmbGVzaCBvZiBhIGNyZWF0dXJlIG9mIHRoZSBzYW1lIChtYWluKSByYWNlLjwvcD48cD5XaGVuIHlvdSBjb250cmFjdCBJeGlsdW5lLCB5b3UgYXJlIGFibGUgdG8gYXR0dW5lIHRvIGl0LiBXaGlsZSBhdHR1bmVkLCB5b3UgZ2FpbiBhY2Nlc3MgdGhlIERpc3RyYWN0aW5nIFN3YXJtIGFiaWxpdHkgdGhyb3VnaCB5b3VyIENoYW5uZWwgRWlkb2xvbiBhYmlsaXR5LiBZb3Ugc3VtbW9uIHRoZSBEZXZvdXJpbmcgU3dhcm0gZm9yIHlvdXIgTGVzc2VyIEVpZG9sb24gYW5kIEl4aWx1bmUgZm9yIHlvdXIgRWlkb2xvbi4gKFRoZSBzdGF0cyBmb3IgdGhlc2UgYXJlIGxpc3RlZCB1bmRlciBtb25zdGVycy4pPC9wPg==",
+    "ability": "40915658-9ccb-49b5-bae4-04f51db828c8"
+  },
+  {
+    "id": "6a06299f6be32fced493046a",
+    "indexId": "cb8daf36-337c-4cde-b338-5a539b51dfcc",
+    "breakthroughId": "summon-contract--pipoltr--the-gardener",
+    "name": "Summon Contract: Pipoltr, The Gardener",
+    "cost": "0",
+    "requirements": "Must be a summoner and have visited the eidolon.",
+    "description": "PHVsPjxsaT48c3Ryb25nPkFwcGVhcmFuY2U6Jm5ic3A7PC9zdHJvbmc+UGlwb2x0ciBhcHBlYXJzIGFzIGEgZ2lhbnQgc2NhcmFiIGJlZXRsZSB3aG9zZSBjYXJhcGFjZSBnbGludHMgd2l0aCBhIG1ldGFsbGljIHNoZWVuIGxpa2UgYnVybmlzaGVkIGJyb256ZSBhbmQgZW1lcmFsZCBncmVlbi4mbmJzcDsgSGlzIHByZXNlbmNlIGlzIGJvdGggb3RoZXJ3b3JsZGx5IGFuZCBhbmNpZW50LCBjdXJ2ZWQgYW50ZW5uYWUgc3Byb3V0IGZyb20gaGlzIGhlYWQgdGhhdCBjYW4gZGV0ZWN0IHRoZSBoZWFsdGggb2YgcGxhbnRzLiZuYnNwOyBIaXMgY29tcG91bmQgZXllcyBzaGluZSBsaWtlIGJyaWxsaWFudCBnZW1zLjwvbGk+PGxpPjxzdHJvbmc+RGVzaXJlczombmJzcDs8L3N0cm9uZz5QaXBvbHRy4oCZcyBkZXNpcmUgaXMgdGhlIGhlYWx0aCBvZiBuYXR1cmUuPC9saT48bGk+PHN0cm9uZz5QYWN0IENvc3Q6Jm5ic3A7IDwvc3Ryb25nPjEgTWF4aW11bSBNYW5hLjwvbGk+PGxpPjxzdHJvbmc+QXR0dW5lbWVudCBDb3N0Ojwvc3Ryb25nPiBOb25lPC9saT48bGk+PHN0cm9uZz5SZS1TdW1tb24gRWlkb2xvbjombmJzcDs8L3N0cm9uZz4mbmJzcDtDaGFyYWN0ZXIgbXVzdCBzcGVuZCBhbiBFUCB0byBwZXJmb3JtIDEgZGF5IG9mIGdhcmRlbmluZyB3b3JrIGJlZm9yZSByZXN1bW1vbmluZyBQaXBvbHRyLjwvbGk+PC91bD48cD5XaGVuIHlvdSBjb250cmFjdCBQaXBvbHRyLCB5b3UgYXJlIGFibGUgdG8gYXR0dW5lIHRvIGl0LiBXaGlsZSBhdHR1bmVkLCB5b3UgZ2FpbiBhY2Nlc3MgdGhlIFZpbmUgV2FsbCBDb3ZlciBhYmlsaXR5IHRocm91Z2ggeW91ciBDaGFubmVsIEVpZG9sb24gYWJpbGl0eS4gWW91IHN1bW1vbiB0aGUgUmhpbm9jZXJvcyBCZWV0bGUgZm9yIHlvdXIgTGVzc2VyIEVpZG9sb24gYW5kIFBpcG9sdHIgZm9yIHlvdXIgRWlkb2xvbi4gKFRoZSBzdGF0cyBmb3IgdGhlc2UgYXJlIGxpc3RlZCB1bmRlciBtb25zdGVycy4pPC9wPg==",
+    "ability": "2fce3db9-f052-4ae5-825e-c9ddd82589ef"
+  },
+  {
+    "id": "6a06299f6be32fced493045e",
+    "indexId": "51d9c6b8-cb21-48a4-93cb-39e70b752e85",
+    "breakthroughId": "superior-escapist--rabbitfolk-",
+    "name": "Superior Escapist (Rabbitfolk)",
+    "cost": "100",
+    "requirements": "Must be a Rabbitfolk.",
+    "description": "PHA+WW91IG1heSB1c2UgeW91ciBFc2NhcGUgQXJ0aXN0IHdoZW4gUm9vdGVkIHRvIHJlbW92ZSBpdCBpbiBhZGRpdGlvbiB0byBncmFwcGxlcy48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced493045c",
+    "indexId": "81f1de89-e38d-42c7-9710-8166449e5c11",
+    "breakthroughId": "tengu-defensive-aura--tengu-",
+    "name": "Tengu Defensive Aura (Tengu)",
+    "cost": "100",
+    "requirements": "Must be a Tengu.",
+    "description": "PHA+WW91ciByZXNpc3RhbmNlIHRvIGFzdHJhIGNvcnJ1cHRpb24gaXMgaW5jcmVhc2VkIGJ5IDEgKFlvdXIgU0MgaXMgdHJlYXRlZCBhcyA1MDAgaGlnaGVyIHdoZW4gZGV0ZXJtaW5pbmcgaWYgeW91IHN1ZmZlciBmcm9tIGFzdHJhIGNvcnJ1cHRpb24pLiBJbiBhZGRpdGlvbiwgeW91IGRvIG5vdCBzdWZmZXIgYW55IG5lZ2F0aXZlIGVmZmVjdHMgd2hlbiB0aGUgYXN0cmEgbGV2ZWwgaXMgcmFpc2VkIGFydGlmaWNpYWxseS4gKHN1Y2ggYXMgZnJvbSBFeG91c2lhaSdzKS48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930435",
+    "indexId": "8521fc76-4efd-4951-b84f-8356867598d5",
+    "breakthroughId": "the-unknown-paladin",
+    "name": "The Unknown Paladin",
+    "cost": "200",
+    "requirements": "Must be a believer in a god.",
+    "description": "PHA+RGVzcGl0ZSBub3QgYmVpbmcgaHVtYW4sIHlvdSBmdWxmaWxsIHRoZSBodW1hbiByZXF1aXJlbWVudCB0byBiZWNvbWUgYSBQYWxhZGluLiZuYnNwO0luIGFkZGl0aW9uLCB5b3VyIFNtaXRlIHNraWxsJ3MgZGFtYWdlIHR5cGUgY2hhbmdlcyB0byBvbmUgdGhhdCByZXByZXNlbnRzIHlvdXIgY2hvc2VuIERpdmluZS4gVGhlIHBhbGFkaW4gaG9seSB3ZWFwb24ga2V5IGFiaWxpdHkgYWxzbyBjaGFuZ2VzIGl0cyBkYW1hZ2UgdHlwZSB0byB0aGUgb25lIHRoYXQgcmVwcmVzZW50cyB5b3VyIGNob3NlbiBEaXZpbmUuPC9wPjxwPjxzdHJvbmc+S2FyaTo8L3N0cm9uZz4gSG9seSZuYnNwOzxicj48c3Ryb25nPkhlaXJhOjwvc3Ryb25nPiBBc3RyYTxicj48c3Ryb25nPlBhbmRvcmE6PC9zdHJvbmc+IEFyY2FuZTxicj48c3Ryb25nPk1ha2FpOjwvc3Ryb25nPiBXYXRlcjxicj48c3Ryb25nPkF5dXppIEtpcmFyYTo8L3N0cm9uZz4gRmlyZSZuYnNwOzxicj48c3Ryb25nPkVpc2VuOjwvc3Ryb25nPiBQaHlzaWNhbCZuYnNwOzxicj48c3Ryb25nPkF0aGVuYTo8L3N0cm9uZz4gTGlnaHRuaW5nJm5ic3A7PGJyPjxzdHJvbmc+Q2xpbzo8L3N0cm9uZz4gQXJjYW5lJm5ic3A7PGJyPjxzdHJvbmc+WWdnZHJhc2lsOjwvc3Ryb25nPiBFYXJ0aDwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930487",
+    "indexId": "e68daed1-6d5b-4f61-99da-b253b007143d",
+    "breakthroughId": "third-eye",
+    "name": "Third Eye",
+    "cost": "200",
+    "requirements": "-",
+    "description": "PHA+WW91IG1heSBoYXZlIHVwIHRvIDMgTXlzdGljIEV5ZXMgaW5zdGVhZCBvZiB0aGUgcmVndWxhciAyLjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930446",
+    "indexId": "ed1c6436-8f72-4788-9a54-9356464133a4",
+    "breakthroughId": "touched-by-death",
+    "name": "Touched by Death",
+    "cost": "200",
+    "requirements": "Must be taken at character creation or after your HP has dropped below 0 in an encounter.",
+    "description": "PHA+TmVhci1kZWF0aCBleHBlcmllbmNlcyBzb21ldGltZXMgbGVhdmUgcGVvcGxlIG1vcmUgc2Vuc2l0aXZlIHRvIGRlYXRoIGl0c2VsZiwgbWFuaWZlc3RpbmcgaW4gd2hhdCBpcyBjYWxsZWQgdGhlIFNoaW5pZ2FtaeKAmXMgRXllcy4gWW91IG1heSBwdXJjaGFzZSB0aGUgU2hpbmlnYW1pIEV5ZXMgY2xhc3MuPC9wPjxwPkluIGFkZGl0aW9uLCB5b3UgbWF5IHNwZW5kIDEgQVAgdG8gc2VlIHRoZSBIUCBwZXJjZW50YWdlIGFuZCB3ZWFrIHNwb3RzIChpZiBhbnkpIG9mIGFsbCBjcmVhdHVyZXMgZm9yIDEgdHVybi48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930479",
+    "indexId": "3366d50c-0f52-4ed7-a1ed-b51c21445936",
+    "breakthroughId": "universal-training",
+    "name": "Universal Training",
+    "cost": "700",
+    "requirements": "-",
+    "description": "PHA+WW91IGdhaW4gKzEgdG8gYW55IHByaW1hcnkgc3RhdCwgKzEgdG8gYW55IHNlY29uZGFyeSBzdGF0IGFuZCA1IHNraWxsIHBvaW50cy4gWW91IG1heSBwdXQgdGhlc2Ugc2tpbGwgcG9pbnRzIGludG8gYW55IG5vcm1hbCBza2lsbCwgZXhjZXB0IGNyYWZ0aW5nIGFuZCBnYXRoZXJpbmcgc2tpbGxzLjwvcD48cD5UaGlzIGJyZWFrdGhyb3VnaCBtYXkgYmUgdGFrZW4gbXVsdGlwbGUgdGltZXMuIFRoZSBlZmZlY3RzIHN0YWNrLjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930438",
+    "indexId": "2bd098f7-6554-42a0-afa7-7b6a15df122a",
+    "breakthroughId": "weapon-training",
+    "name": "Weapon Training",
+    "cost": "25",
+    "requirements": "-",
+    "description": "PHA+WW91IGdhaW4gcHJvZmljaWVuY3kgd2l0aCBhIHdlYXBvbiBncm91cC4gWW91IG1heSBub3Qgc2VsZWN0IFNwZWNpYWxpdHkgV2VhcG9ucyB3aXRoIHRoaXMuPC9wPjxwPlRoaXMgYnJlYWt0aHJvdWdoIGNhbiBiZSBzZWxlY3RlZCBtdWx0aXBsZSB0aW1lcy4gWW91IG11c3Qgc2VsZWN0IGEgZGlmZmVyZW50IHdlYXBvbiBncm91cCBlYWNoIHRpbWUgeW91IHNlbGVjdCBpdC48L3A+",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930436",
+    "indexId": "fb1ecde9-ff6d-4d94-bde7-e8881be68963",
+    "breakthroughId": "wide-circuits-i",
+    "name": "Wide Circuits I",
+    "cost": "150",
+    "requirements": "-",
+    "description": "PHA+WW91ciBtYXhpbXVtIG1hbmEgaW5jcmVhc2VzIGJ5IDEuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930450",
+    "indexId": "e2a0e613-f37d-4d8a-bfae-dfb6db0edd39",
+    "breakthroughId": "wide-circuits-ii",
+    "name": "Wide Circuits II",
+    "cost": "175",
+    "requirements": "Must have the Wide Circuits breakthrough.",
+    "description": "PHA+WW91ciBtYXhpbXVtIE1hbmEgaXMgaW5jcmVhc2VkIGJ5IDEuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930451",
+    "indexId": "82825f86-6850-4b0a-8830-3fa4c268ee1b",
+    "breakthroughId": "wide-circuits-iii",
+    "name": "Wide Circuits III",
+    "cost": "200",
+    "requirements": "Must have the Wide Circuits II breakthrough.",
+    "description": "PHA+WW91ciBtYXhpbXVtIE1hbmEgaXMgaW5jcmVhc2VkIGJ5IDEuPC9wPg==",
+    "ability": ""
+  },
+  {
+    "id": "6a06299f6be32fced4930480",
+    "indexId": "782d71a7-b467-4a2d-a7dd-80bd047d6cbd",
+    "breakthroughId": "wide-circuits-iv",
+    "name": "Wide Circuits IV",
+    "cost": "250",
+    "requirements": "Must have the Wide Circuits III breakthrough",
+    "description": "PHA+WW91ciBtYXhpbXVtIE1hbmEgaXMgaW5jcmVhc2VkIGJ5IDEuPC9wPjxwPllvdSBtYXkgdGFrZSB0aGlzIGJyZWFrdGhyb3VnaCBtdWx0aXBsZSB0aW1lcy4gVGhlIGVmZmVjdHMgc3RhY2suPC9wPg==",
+    "ability": ""
+  }
+]

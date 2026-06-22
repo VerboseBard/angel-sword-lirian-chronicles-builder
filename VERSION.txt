@@ -1,0 +1,3 @@
+Lyrian Chronicles Character Builder - Beta Version 1.3 Web
+Checkpoint copied forward from the Beta 1.2 build.
+This copy is intended for web-hosted Beta 1.3 testing and GitHub Pages deployment.

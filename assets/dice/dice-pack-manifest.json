@@ -1,0 +1,31 @@
+{
+  "format": "lyrian-dice-pack-manifest",
+  "version": 1,
+  "generatedAt": "2026-06-14",
+  "packs": [
+    {
+      "id": "new-angelsword",
+      "name": "Angel Sword Dice",
+      "description": "Installed and ready.",
+      "installed": true,
+      "basePath": "assets/dice/new-angelsword",
+      "preview": "selection-preview.png"
+    },
+    {
+      "id": "leaflit",
+      "name": "Leaflit Dice",
+      "description": "Downloadable dice pack planned for a future update.",
+      "installed": false,
+      "availabilityLabel": "Coming soon",
+      "previewUrl": "assets/dice/dice-coming-soon.svg"
+    },
+    {
+      "id": "asari",
+      "name": "Asari Dice",
+      "description": "Downloadable dice pack planned for a future update.",
+      "installed": false,
+      "availabilityLabel": "Coming soon",
+      "previewUrl": "assets/dice/dice-coming-soon.svg"
+    }
+  ]
+}

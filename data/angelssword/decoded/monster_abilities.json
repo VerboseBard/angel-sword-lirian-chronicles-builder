@@ -1,0 +1,1298 @@
+[
+  {
+    "id": "6a06299f6be32fced49306bb",
+    "indexId": "da933fa6-33d2-45bd-8d6f-d215b9e5cda4",
+    "monsterAbilityId": "absorb-magic",
+    "name": "Absorb Magic",
+    "description": "PHA+V2hlbiB5b3UgdGFrZSBBcmNhbmUsIEZpcmUsIFdhdGVyLCBXaW5kLCBFYXJ0aCwgSG9seSBvciBEYXJrIGRhbWFnZSBvciBhbnkgb2YgaXRzIHN1YnR5cGVzLCB5b3UgY2hhcmdlIHlvdXIgY3J5c3RhbHMuIFlvdXIgbmV4dCBDcnlzdGFsIFN0b21wIGRvZXMgYWRkaXRpb25hbCBkYW1hZ2UgZXF1YWwgdG8gdGhlIFBvd2VyIG9mIHRoZSBhdHRhY2tlciBhbmQgdGhlIGRhbWFnZSB0eXBlIG9mIGl0IGNoYW5nZXMgdG8gdGhlIHR5cGUgeW91IHRvb2suIERvZXMgbm90IHN0YWNrLjwvcD4=",
+    "descriptionHtml": "<p>When you take Arcane, Fire, Water, Wind, Earth, Holy or Dark damage or any of its subtypes, you charge your crystals. Your next Crystal Stomp does additional damage equal to the Power of the attacker and the damage type of it changes to the type you took. Does not stack.</p>",
+    "descriptionText": "When you take Arcane, Fire, Water, Wind, Earth, Holy or Dark damage or any of its subtypes, you charge your crystals. Your next Crystal Stomp does additional damage equal to the Power of the attacker and the damage type of it changes to the type you took. Does not stack."
+  },
+  {
+    "id": "6a06299f6be32fced49306ac",
+    "indexId": "95da0af2-8c7e-473c-9391-8497397c73e9",
+    "monsterAbilityId": "alchemic-engine-overdrive",
+    "name": "Alchemic Engine Overdrive",
+    "description": "PHA+VGhpcyBjcmVhdHVyZSBnYWluZXMgKzIgZXh0cmEgQVAgYXQgdGhlIHN0YXJ0IG9mIGV2ZXJ5IHR1cm4gYWZ0ZXIgaXRzIGJlZW4gcmVkdWNlZCB0byBsZXNzIHRoYW4gNTAlIEhQLjwvcD4=",
+    "descriptionHtml": "<p>This creature gaines +2 extra AP at the start of every turn after its been reduced to less than 50% HP.</p>",
+    "descriptionText": "This creature gaines +2 extra AP at the start of every turn after its been reduced to less than 50% HP."
+  },
+  {
+    "id": "6a06299f6be32fced4930691",
+    "indexId": "824fa8a9-407c-4658-8d63-8c963131c082",
+    "monsterAbilityId": "animal-shield",
+    "name": "Animal Shield",
+    "description": "PHA+V2hlbiBhIGNyZWF0dXJlIHlvdSBzdW1tb25lZCBpcyB3aXRoaW4gNWZ0IG9mIHlvdSwgeW91IG1heSBjaGFuZ2UgdGhlIHRhcmdldCBvZiBhbnkgYXR0YWNrIHRhcmdldGluZyB5b3UgdG8gdGhhdCBjcmVhdHVyZSBpbnN0ZWFkLiBPbmx5IHdvcmtzIGlmIHRoZSBjcmVhdHVyZSBpc27igJl0IGFscmVhZHkgdGFyZ2V0ZWQgYXMgcGFydCBvZiB0aGUgYXR0YWNrLiZuYnNwOzwvcD4=",
+    "descriptionHtml": "<p>When a creature you summoned is within 5ft of you, you may change the target of any attack targeting you to that creature instead. Only works if the creature isn’t already targeted as part of the attack.&nbsp;</p>",
+    "descriptionText": "When a creature you summoned is within 5ft of you, you may change the target of any attack targeting you to that creature instead. Only works if the creature isn’t already targeted as part of the attack."
+  },
+  {
+    "id": "6a06299f6be32fced4930692",
+    "indexId": "1e7cfe3d-b99b-468f-8e43-6a0cd472903e",
+    "monsterAbilityId": "arcane-barrier",
+    "name": "Arcane Barrier",
+    "description": "PHA+V2hlbiB0YWtpbmcgdGhlIEJsb2NrIGFjdGlvbiB3aGlsZSB5b3UgaGF2ZSBhdCBsZWFzdCAxIG1hbmEsIHlvdXIgR3VhcmQgaXMgaW5jcmVhc2VkIGJ5IGFuIGFkZGl0aW9uYWwgOC48L3A+",
+    "descriptionHtml": "<p>When taking the Block action while you have at least 1 mana, your Guard is increased by an additional 8.</p>",
+    "descriptionText": "When taking the Block action while you have at least 1 mana, your Guard is increased by an additional 8."
+  },
+  {
+    "id": "6a06299f6be32fced49306d8",
+    "indexId": "08c1c09b-dac5-4346-b452-c26bf937f4f5",
+    "monsterAbilityId": "arcane-body",
+    "name": "Arcane Body",
+    "description": "PHA+WW91ciBhdHRhY2tzIG1heSBkZWFsIFBoeXNpY2FsIG9yIEFyY2FuZSBkYW1hZ2UuIFdoZW4geW91IGRlYWwgQXJjYW5lIGRhbWFnZSwgdGhlIHRhcmdldCBsb3NlcyAxIE1QIHRob3VnaCB0aGV5IGdldCB0byBtYWtlIGEgU2F2ZSBpZiB0aGlzIHdhcyBhIGxpZ2h0IGF0dGFjay4gRnVydGhlcm1vcmUsIGFueSB0YXJnZXQgZW5kaW5nIGl0cyB0dXJuIHdoaWxlIHJvb3RlZCBieSB5b3VyIENvbnN1bWUgbG9zZXMgMSBNUC48L3A+",
+    "descriptionHtml": "<p>Your attacks may deal Physical or Arcane damage. When you deal Arcane damage, the target loses 1 MP though they get to make a Save if this was a light attack. Furthermore, any target ending its turn while rooted by your Consume loses 1 MP.</p>",
+    "descriptionText": "Your attacks may deal Physical or Arcane damage. When you deal Arcane damage, the target loses 1 MP though they get to make a Save if this was a light attack. Furthermore, any target ending its turn while rooted by your Consume loses 1 MP."
+  },
+  {
+    "id": "6a06299f6be32fced49306d7",
+    "indexId": "b19b8be8-8b39-4983-839f-6ee9bcf2e50b",
+    "monsterAbilityId": "arcane-type-ii",
+    "name": "Arcane Type II",
+    "description": "PHA+WW91IHRha2UgaGFsZiBkYW1hZ2UgZnJvbSBBcmNhbmUgYXR0YWNrcyBvciBkYW1hZ2UuPC9wPg==",
+    "descriptionHtml": "<p>You take half damage from Arcane attacks or damage.</p>",
+    "descriptionText": "You take half damage from Arcane attacks or damage."
+  },
+  {
+    "id": "6a06299f6be32fced4930664",
+    "indexId": "02670669-7146-4edf-a373-38071466953e",
+    "monsterAbilityId": "armored-chitin",
+    "name": "Armored Chitin",
+    "description": "PHA+V2hlbiB1c2luZyB0aGUgQmxvY2sgcmVhY3Rpb24sIGdhaW4gKzUgZ3VhcmQgKEFkZGVkIGludG8gdGhlIHN0YXRzIGFscmVhZHkpLjwvcD4=",
+    "descriptionHtml": "<p>When using the Block reaction, gain +5 guard (Added into the stats already).</p>",
+    "descriptionText": "When using the Block reaction, gain +5 guard (Added into the stats already)."
+  },
+  {
+    "id": "6a06299f6be32fced49306ba",
+    "indexId": "2eab7198-75b4-4478-80c7-e22be5e6a73c",
+    "monsterAbilityId": "aurasense",
+    "name": "Aurasense",
+    "description": "PHA+WW91IGNhbiBwZXJmZWN0bHkgZGV0ZWN0IGFueSBjcmVhdHVyZSB3aXRoaW4gMTIwZnQgd2l0aCBhIHNwaXJpdCBjb3JlIGhpZ2hlciB0aGFuIDEwMC48L3A+",
+    "descriptionHtml": "<p>You can perfectly detect any creature within 120ft with a spirit core higher than 100.</p>",
+    "descriptionText": "You can perfectly detect any creature within 120ft with a spirit core higher than 100."
+  },
+  {
+    "id": "6a06299f6be32fced49306a4",
+    "indexId": "a5a7c359-fa41-4645-ad5f-19654934f868",
+    "monsterAbilityId": "battle-tactics",
+    "name": "Battle Tactics",
+    "description": "PHA+Jm5ic3A7QWxsIEdydW50IGxldmVsIGFsbGllcyB1bmRlciB5b3VyIGNvbW1hbmQmbmJzcDsgd2lsbCBmaWdodCBtb3JlIGludGVsbGlnZW50bHksIGJlaW5nIG1vcmUgbGlrZWx5IHRvIHRhcmdldCBlbmVtaWVzIHRoYXQgYXJlIHdlYWsgb3Igb3V0IG9mIHBvc2l0aW9uPC9wPg==",
+    "descriptionHtml": "<p>&nbsp;All Grunt level allies under your command&nbsp; will fight more intelligently, being more likely to target enemies that are weak or out of position</p>",
+    "descriptionText": "All Grunt level allies under your command  will fight more intelligently, being more likely to target enemies that are weak or out of position"
+  },
+  {
+    "id": "6a06299f6be32fced493065e",
+    "indexId": "6d95c7ea-0deb-4f52-8f07-69282351466d",
+    "monsterAbilityId": "berserker",
+    "name": "Berserker",
+    "description": "PHA+VXBvbiBiZWluZyByZWR1Y2VkIHRvIGhhbGYgSFAsIHlvdSBnbyBpbnRvIGEgdGFudHJ1bSBsaWtlIHJhZ2UuIFdoaWxlIGluIHRoaXMgc3RhdGUsIGluY3JlYXNlIHlvdXIgUG93ZXIgYnkgMi4gSWYgeW91IGFyZSA8c3Ryb25nPlN0dW5uZWQ8L3N0cm9uZz4gb3IgPHN0cm9uZz5XZWFrZW5lZDwvc3Ryb25nPiB0aGlzIHN0YXRlIHdpbGwgZW5kIGZvciB0aGUgcmVzdCBvZiBjb21iYXQuPC9wPg==",
+    "descriptionHtml": "<p>Upon being reduced to half HP, you go into a tantrum like rage. While in this state, increase your Power by 2. If you are <strong>Stunned</strong> or <strong>Weakened</strong> this state will end for the rest of combat.</p>",
+    "descriptionText": "Upon being reduced to half HP, you go into a tantrum like rage. While in this state, increase your Power by 2. If you are Stunned or Weakened this state will end for the rest of combat."
+  },
+  {
+    "id": "6a06299f6be32fced49306b5",
+    "indexId": "455f2eab-5b72-4de7-97ca-3e74d33a36de",
+    "monsterAbilityId": "black-mount",
+    "name": "Black Mount",
+    "description": "PHA+WW91IGFyZSByaWRpbmcgb24gYSBtb3VudC4gVGhlIG1vdW50IGhhcyBhIHNlcGFyYXRlIDc1IEhQLCB1c2VzIHlvdXIgZGVmZW5zaXZlIHN0YXRzIGFuZCBmb2xsb3dzIG5vcm1hbCBob3JzZSBtb3VudCBydWxlcy4gV2hpbGUgbW91bnRlZCwgeW91IGNhbiBvbmx5IG1vdmUgaW4gYSBzdHJhaWdodCBsaW5lIHdoaWxlIHRha2luZyBhIG1vdmVtZW50IGFjdGlvbi4gQWZ0ZXIgbG9zaW5nIHlvdXIgbW91bnQsIHlvdXIgbW92ZW1lbnQgc3BlZWQgaXMgcmVkdWNlZCB0byAyMGZ0LiBXaGlsZSBhYm92ZSAwIEhQLCB5b3VyIG1vdW50IGhlYWxzIGZvciB5b3VyIFRvdWdobmVzcyBIUCBhdCB0aGUgc3RhcnQgb2YgeW91ciB0dXJuLjwvcD4=",
+    "descriptionHtml": "<p>You are riding on a mount. The mount has a separate 75 HP, uses your defensive stats and follows normal horse mount rules. While mounted, you can only move in a straight line while taking a movement action. After losing your mount, your movement speed is reduced to 20ft. While above 0 HP, your mount heals for your Toughness HP at the start of your turn.</p>",
+    "descriptionText": "You are riding on a mount. The mount has a separate 75 HP, uses your defensive stats and follows normal horse mount rules. While mounted, you can only move in a straight line while taking a movement action. After losing your mount, your movement speed is reduced to 20ft. While above 0 HP, your mount heals for your Toughness HP at the start of your turn."
+  },
+  {
+    "id": "6a06299f6be32fced493067e",
+    "indexId": "c21a9000-b18d-4992-8f89-3d191b4653b9",
+    "monsterAbilityId": "bludgeoning-weakness",
+    "name": "Bludgeoning Weakness",
+    "description": "PHA+WW91IHRha2UgZG91YmxlIGRhbWFnZSBmcm9tIEJsdWRnZW9uaW5nIHdlYXBvbnMuPC9wPg==",
+    "descriptionHtml": "<p>You take double damage from Bludgeoning weapons.</p>",
+    "descriptionText": "You take double damage from Bludgeoning weapons."
+  },
+  {
+    "id": "6a06299f6be32fced49306b4",
+    "indexId": "948145f3-3606-4faf-a932-51aad0fdfcc6",
+    "monsterAbilityId": "boar-charger",
+    "name": "Boar Charger",
+    "description": "PHA+V2hlbiB1bmRlciB0aGUgVHJhbXBsZSBlZmZlY3QsIHlvdSBjYW4gdHJhbXBsZSBlbmVtaWVzIHRoZSBzYW1lIHNpemUgYXMgeW91IChNZWRpdW0pLiBZb3UgYWxzbyBkZWFsIGFuIGFkZGl0aW9uYWwgUG93ZXIgZGFtYWdlIHdpdGggdGhlIGF0dGFjay48L3A+",
+    "descriptionHtml": "<p>When under the Trample effect, you can trample enemies the same size as you (Medium). You also deal an additional Power damage with the attack.</p>",
+    "descriptionText": "When under the Trample effect, you can trample enemies the same size as you (Medium). You also deal an additional Power damage with the attack."
+  },
+  {
+    "id": "6a06299f6be32fced4930696",
+    "indexId": "e52121f1-909d-4845-95b3-1e12cacdd529",
+    "monsterAbilityId": "boar-hide",
+    "name": "Boar Hide",
+    "description": "PHA+WW91IGdhaW4gYSArMSBib251cyB0byB5b3VyIGd1YXJkIGFuZCArMiBib251cyB0byBCbG9jayAoYWxyZWFkeSBhZGRlZCB0byBzdGF0cykuPC9wPg==",
+    "descriptionHtml": "<p>You gain a +1 bonus to your guard and +2 bonus to Block (already added to stats).</p>",
+    "descriptionText": "You gain a +1 bonus to your guard and +2 bonus to Block (already added to stats)."
+  },
+  {
+    "id": "6a06299f6be32fced49306b3",
+    "indexId": "93016c0c-78dc-4f0d-a4c9-63370c896c85",
+    "monsterAbilityId": "boar-mount",
+    "name": "Boar Mount",
+    "description": "PHA+WW91IGFyZSByaWRpbmcgb24gYSBib2FyIG1vdW50LiBUaGUgYm9hciBtb3VudCBoYXMgYSBzZXBhcmF0ZSAxMCBIUCBhbmQgZm9sbG93cyBub3JtYWwgYm9hciBtb3VudCBydWxlcy4gV2hpbGUgbW91bnRlZCwgeW91IGNhbiBvbmx5IG1vdmUgaW4gYSBzdHJhaWdodCBsaW5lIHdoaWxlIHRha2luZyBhIG1vdmVtZW50IGFjdGlvbi4gQWZ0ZXIgbG9zaW5nIHlvdXIgbW91bnQsIHlvdXIgbW92ZW1lbnQgc3BlZWQgaXMgcmVkdWNlZCB0byAyMGZ0LjwvcD4=",
+    "descriptionHtml": "<p>You are riding on a boar mount. The boar mount has a separate 10 HP and follows normal boar mount rules. While mounted, you can only move in a straight line while taking a movement action. After losing your mount, your movement speed is reduced to 20ft.</p>",
+    "descriptionText": "You are riding on a boar mount. The boar mount has a separate 10 HP and follows normal boar mount rules. While mounted, you can only move in a straight line while taking a movement action. After losing your mount, your movement speed is reduced to 20ft."
+  },
+  {
+    "id": "6a06299f6be32fced4930670",
+    "indexId": "7122c1e6-1eb2-4ac0-8c12-b21e162763f4",
+    "monsterAbilityId": "burrow",
+    "name": "Burrow",
+    "description": "PHA+WW91IG1vdmUgdW5kZXJncm91bmQgYXQgeW91ciBub3JtYWwgc3BlZWQuIFlvdSBkbyBub3QgcHJvdm9rZSBhdHRhY2tzIG9mIG9wcG9ydHVuaXRpZXMgZXhjZXB0IGZyb20gb3RoZXIgYnVycm93ZWQgY3JlYXR1cmVzLjwvcD4=",
+    "descriptionHtml": "<p>You move underground at your normal speed. You do not provoke attacks of opportunities except from other burrowed creatures.</p>",
+    "descriptionText": "You move underground at your normal speed. You do not provoke attacks of opportunities except from other burrowed creatures."
+  },
+  {
+    "id": "6a06299f6be32fced4930693",
+    "indexId": "4ab5e139-15c6-4443-b6e7-697b81890c22",
+    "monsterAbilityId": "calm-aim",
+    "name": "Calm Aim",
+    "description": "PHA+SWYgeW91IGRpZG7igJl0IG1vdmUgc2luY2UgdGhlIHN0YXJ0IG9mIHlvdXIgbGFzdCB0dXJuLCB5b3UgZ2FpbiBhICsxZDQgYm9udXMgdG8gYWxsIGFjY3VyYWN5IGNoZWNrcy4mbmJzcDs8L3A+",
+    "descriptionHtml": "<p>If you didn’t move since the start of your last turn, you gain a +1d4 bonus to all accuracy checks.&nbsp;</p>",
+    "descriptionText": "If you didn’t move since the start of your last turn, you gain a +1d4 bonus to all accuracy checks."
+  },
+  {
+    "id": "6a06299f6be32fced4930676",
+    "indexId": "7eafa27c-83ef-4330-9bfd-01fa35a26302",
+    "monsterAbilityId": "camouflage",
+    "name": "Camouflage",
+    "description": "PHA+WW91IGFyZSBoaWRkZW4gd2l0aCBhIFN0ZWFsdGggb2YgMzAgd2hpbGUgcHJldGVuZGluZyB0byBiZSBhbiBvcmRpbmFyeSBwbGFudCB1bnRpbCB5b3UgYXR0YWNrLiBMdXJpbmcgUG9sbGVuIGRvZXMgbm90IGJyZWFrIGNhbW91ZmxhZ2UgYW5kIHdpbGwgbm90IHRyaWdnZXIgY29tYmF0IHdoZW4gdXNlZCB3aGlsZSBjcmVhdHVyZXMgYXJlIHVuYXdhcmUgb2YgeW91LjwvcD4=",
+    "descriptionHtml": "<p>You are hidden with a Stealth of 30 while pretending to be an ordinary plant until you attack. Luring Pollen does not break camouflage and will not trigger combat when used while creatures are unaware of you.</p>",
+    "descriptionText": "You are hidden with a Stealth of 30 while pretending to be an ordinary plant until you attack. Luring Pollen does not break camouflage and will not trigger combat when used while creatures are unaware of you."
+  },
+  {
+    "id": "6a06299f6be32fced4930690",
+    "indexId": "2cf20cf2-9b36-4d39-bc4b-ca21c2fe86a7",
+    "monsterAbilityId": "combat-healer",
+    "name": "Combat Healer",
+    "description": "PHA+WW91ciBIZWFsaW5nIHNwZWxscyBkbyBub3QgcHJvdm9rZSBhdHRhY2tzIG9mIG9wcG9ydHVuaXR5LjwvcD4=",
+    "descriptionHtml": "<p>Your Healing spells do not provoke attacks of opportunity.</p>",
+    "descriptionText": "Your Healing spells do not provoke attacks of opportunity."
+  },
+  {
+    "id": "6a06299f6be32fced4930697",
+    "indexId": "256a314f-a763-459e-95d5-a42e2d60b965",
+    "monsterAbilityId": "controlled-space",
+    "name": "Controlled Space",
+    "description": "PHA+SWYgeW91IG1ha2UgYW4gYXR0YWNrIG9mIG9wcG9ydHVuaXR5LCB5b3UgY2FuIG1ha2UgYSBIZWF2eSBhdHRhY2sgZm9yIDAgUlAgaW5zdGVhZCBvZiAxLiBZb3UgZ2FpbiBhICsyIGJvbnVzIHRvIGFjY3VyYWN5IGNoZWNrcyB3aGVuIG1ha2luZyBhdHRhY2tzIG9mIG9wcG9ydHVuaXR5LjwvcD4=",
+    "descriptionHtml": "<p>If you make an attack of opportunity, you can make a Heavy attack for 0 RP instead of 1. You gain a +2 bonus to accuracy checks when making attacks of opportunity.</p>",
+    "descriptionText": "If you make an attack of opportunity, you can make a Heavy attack for 0 RP instead of 1. You gain a +2 bonus to accuracy checks when making attacks of opportunity."
+  },
+  {
+    "id": "6a06299f6be32fced4930674",
+    "indexId": "0d9b2951-1206-43ed-9c3e-2a90ede769a6",
+    "monsterAbilityId": "core-brain",
+    "name": "Core Brain",
+    "description": "PHA+Q3JpdGljYWwgYXR0YWNrcyBkZWFsIDEyNSBib251cyB0cnVlIGRhbWFnZSB0byB5b3UuPC9wPg==",
+    "descriptionHtml": "<p>Critical attacks deal 125 bonus true damage to you.</p>",
+    "descriptionText": "Critical attacks deal 125 bonus true damage to you."
+  },
+  {
+    "id": "6a06299f6be32fced4930653",
+    "indexId": "999c0cd9-535f-40f8-b3c3-15207189cdb0",
+    "monsterAbilityId": "creature-of-fire",
+    "name": "Creature of Fire",
+    "description": "PHA+WW91IHRha2UgaGFsZiBkYW1hZ2UgZnJvbSBhbGwgZmlyZSBkYW1hZ2UgYW5kIHlvdXIgYXR0YWNrcyBkZWFsIGZpcmUgZGFtYWdlLjwvcD4=",
+    "descriptionHtml": "<p>You take half damage from all fire damage and your attacks deal fire damage.</p>",
+    "descriptionText": "You take half damage from all fire damage and your attacks deal fire damage."
+  },
+  {
+    "id": "6a06299f6be32fced4930688",
+    "indexId": "0d1df557-5228-4017-bc48-2e342c3cebc2",
+    "monsterAbilityId": "crushing-maw",
+    "name": "Crushing Maw",
+    "description": "PHA+V2hlbiBtYWtpbmcgYSBiYXNpYyBMaWdodCBvciBIZWF2eSBhdHRhY2sgd2l0aCB5b3VyIG1hdywgeW91IGJlY29tZSBlbmhhbmNlZCBhZ2FpbnN0IFNsb3dlZCB0YXJnZXRzLiBJZiBpdOKAmXMgYSBMaWdodCBhdHRhY2ssIHlvdSBnYWluIFN1cmUgSGl0LiBJZiBpdOKAmXMgYSBIZWF2eSBhdHRhY2ssIHlvdSBnYWluIEZ1bGwgUGllcmNlLjwvcD4=",
+    "descriptionHtml": "<p>When making a basic Light or Heavy attack with your maw, you become enhanced against Slowed targets. If it’s a Light attack, you gain Sure Hit. If it’s a Heavy attack, you gain Full Pierce.</p>",
+    "descriptionText": "When making a basic Light or Heavy attack with your maw, you become enhanced against Slowed targets. If it’s a Light attack, you gain Sure Hit. If it’s a Heavy attack, you gain Full Pierce."
+  },
+  {
+    "id": "6a06299f6be32fced4930657",
+    "indexId": "0b8cacbf-a4e5-45da-991c-2721c3646653",
+    "monsterAbilityId": "deathtouch",
+    "name": "Deathtouch",
+    "description": "PHA+QSBub24taGVyb2ljIGNyZWF0dXJlIHJlZHVjZWQgdG8gMCBIUCBieSB5b3UgaW1tZWRpYXRlbHkgcmlzZXMgYXMgYSBXaWdodCBhZnRlciAyNCBob3VycyBoYXZlIHBhc3NlZC48L3A+",
+    "descriptionHtml": "<p>A non-heroic creature reduced to 0 HP by you immediately rises as a Wight after 24 hours have passed.</p>",
+    "descriptionText": "A non-heroic creature reduced to 0 HP by you immediately rises as a Wight after 24 hours have passed."
+  },
+  {
+    "id": "6a06299f6be32fced4930689",
+    "indexId": "70b8733c-3866-4dd6-ba4d-814d709e273e",
+    "monsterAbilityId": "double-headed",
+    "name": "Double Headed",
+    "description": "PHA+WW91IHRha2UgdHdvIHR1cm5zLiBSZWdhcmRsZXNzIG9mIGluaXRpYXRpdmUsIHlvdXIgZmlyc3QgdHVybiBhbHdheXMgY29tZXMgZmlyc3QgaW4gYSByb3VuZC4gWW91ciBzZWNvbmQgdHVybiBjb21lcyBhZnRlciBoYWxmIG9mIHlvdXIgZW5lbWllcyBoYXZlIHRha2VuIHRoZWlyIHR1cm4uJm5ic3A7PC9wPg==",
+    "descriptionHtml": "<p>You take two turns. Regardless of initiative, your first turn always comes first in a round. Your second turn comes after half of your enemies have taken their turn.&nbsp;</p>",
+    "descriptionText": "You take two turns. Regardless of initiative, your first turn always comes first in a round. Your second turn comes after half of your enemies have taken their turn."
+  },
+  {
+    "id": "6a06299f6be32fced493068e",
+    "indexId": "20c77e16-ce62-45f2-a346-131fcba4ad2c",
+    "monsterAbilityId": "dragon-fire",
+    "name": "Dragon Fire",
+    "description": "PHA+V2hlbiB5b3UgaW5mbGljdCBCdXJuaW5nIG9uIGEgdGFyZ2V0IHRoYXQgaXMgYWxyZWFkeSBzdWZmZXJpbmcgZnJvbSBCdXJuaW5nLCB0aGV5IGltbWVkaWF0ZWx5IHRha2UgRmlyZSBkYW1hZ2UgZXF1YWwgdG8gdGhlIGV4aXN0aW5nIEJ1cm5pbmcgdmFsdWUuPC9wPg==",
+    "descriptionHtml": "<p>When you inflict Burning on a target that is already suffering from Burning, they immediately take Fire damage equal to the existing Burning value.</p>",
+    "descriptionText": "When you inflict Burning on a target that is already suffering from Burning, they immediately take Fire damage equal to the existing Burning value."
+  },
+  {
+    "id": "6a06299f6be32fced49306d4",
+    "indexId": "3be9c614-0921-4156-bfe5-d1dc3c28b376",
+    "monsterAbilityId": "earth-body",
+    "name": "Earth Body",
+    "description": "PHA+WW91ciBhdHRhY2tzIG1heSBkZWFsIEVhcnRoIG9yIFBoeXNpY2FsIGRhbWFnZS4gV2hlbiB5b3UgZGVhbCBFYXJ0aCBkYW1hZ2UsIHRoZSB0YXJnZXQgbXVzdCBtYWtlIGEgU2F2ZSBvciBiZWNvbWVzIFNsb3dlZCB1bnRpbCB0aGUgZW5kIG9mIHRoZWlyIG5leHQgdHVybi48L3A+",
+    "descriptionHtml": "<p>Your attacks may deal Earth or Physical damage. When you deal Earth damage, the target must make a Save or becomes Slowed until the end of their next turn.</p>",
+    "descriptionText": "Your attacks may deal Earth or Physical damage. When you deal Earth damage, the target must make a Save or becomes Slowed until the end of their next turn."
+  },
+  {
+    "id": "6a06299f6be32fced4930655",
+    "indexId": "1d828594-f7e8-49da-aaeb-25391ac90884",
+    "monsterAbilityId": "earth-immunity",
+    "name": "Earth Immunity",
+    "description": "PHA+WW91IHRha2Ugbm8gZGFtYWdlIGZyb20gRWFydGggZGFtYWdlLjwvcD4=",
+    "descriptionHtml": "<p>You take no damage from Earth damage.</p>",
+    "descriptionText": "You take no damage from Earth damage."
+  },
+  {
+    "id": "6a06299f6be32fced49306d3",
+    "indexId": "5283f510-bfe5-4ce9-a7c2-1fadda06c3dd",
+    "monsterAbilityId": "earth-type-ii",
+    "name": "Earth Type II",
+    "description": "PHA+WW91IHRha2UgaGFsZiBkYW1hZ2UgZnJvbSBFYXJ0aCBhbmQgTGlnaHRuaW5nIGF0dGFja3Mgb3IgZGFtYWdlLCBidXQgeW91IHRha2UgNTAlIG1vcmUgZnJvbSBXaW5kIHR5cGUgYXR0YWNrcyBhbmQgZGFtYWdlLiBZb3UgYWxzbyB0YWtlIGhhbGYgZGFtYWdlIGZyb20gcGh5c2ljYWwgYXR0YWNrcywgYnV0IHlvdXIgbW92ZW1lbnQgc3BlZWQgaXMgaGFsdmVkLjwvcD4=",
+    "descriptionHtml": "<p>You take half damage from Earth and Lightning attacks or damage, but you take 50% more from Wind type attacks and damage. You also take half damage from physical attacks, but your movement speed is halved.</p>",
+    "descriptionText": "You take half damage from Earth and Lightning attacks or damage, but you take 50% more from Wind type attacks and damage. You also take half damage from physical attacks, but your movement speed is halved."
+  },
+  {
+    "id": "6a06299f6be32fced49306c3",
+    "indexId": "372badb8-f940-4d3d-884b-20f740dca7ac",
+    "monsterAbilityId": "elite-solo-aura",
+    "name": "Elite Solo Aura",
+    "description": "PHA+WW91IGdhaW4gYSArMSBib251cyB0byBzYXZlcy48L3A+",
+    "descriptionHtml": "<p>You gain a +1 bonus to saves.</p>",
+    "descriptionText": "You gain a +1 bonus to saves."
+  },
+  {
+    "id": "6a06299f6be32fced49306a2",
+    "indexId": "72eda79c-e202-460f-8b73-0fd9827fd674",
+    "monsterAbilityId": "evasive-rogue",
+    "name": "Evasive Rogue",
+    "description": "PHA+WW91IG1heSB1c2UgRXZhc2l2ZSBNYW5ldXZlciBmb3IgMCBSUCBpbnN0ZWFkIG9mIGl0cyBub3JtYWwgY29zdC48L3A+",
+    "descriptionHtml": "<p>You may use Evasive Maneuver for 0 RP instead of its normal cost.</p>",
+    "descriptionText": "You may use Evasive Maneuver for 0 RP instead of its normal cost."
+  },
+  {
+    "id": "6a06299f6be32fced49306b8",
+    "indexId": "052bacea-47c7-4fcc-98c8-50d892943c51",
+    "monsterAbilityId": "faewolf-shimmer",
+    "name": "Faewolf Shimmer",
+    "description": "PHA+WW91ciBmb3JtIGFwcGVhcnMgaGFsZi1yZWFsIGluIGRpbSBvciBtb29ubGl0IHNldHRpbmdzLiBZb3UgYmVnaW4gYW4gZW5jb3VudGVyIGhpZGRlbiB1bmxlc3Mgc3BvdHRlZCB3aXRoIGEgUGVyY2VwdGlvbiBjaGVjayAoZS5nLiwgREMgMjMpLiBJZiBmb3JjZWQgaW50byBicmlnaHQgbGlnaHQsIG9yIGlmIHlvdSBtYWtlcyBub2lzZSAobGlrZSBhIGhvd2wpLCB0aGUgR00gY2FuIGFsbG93IGFub3RoZXIgUGVyY2VwdGlvbiByb2xsIHRvIGRldGVjdCBpdC48L3A+",
+    "descriptionHtml": "<p>Your form appears half-real in dim or moonlit settings. You begin an encounter hidden unless spotted with a Perception check (e.g., DC 23). If forced into bright light, or if you makes noise (like a howl), the GM can allow another Perception roll to detect it.</p>",
+    "descriptionText": "Your form appears half-real in dim or moonlit settings. You begin an encounter hidden unless spotted with a Perception check (e.g., DC 23). If forced into bright light, or if you makes noise (like a howl), the GM can allow another Perception roll to detect it."
+  },
+  {
+    "id": "6a06299f6be32fced4930683",
+    "indexId": "d3e4365d-ea78-4f20-a33e-5cb28a3de48f",
+    "monsterAbilityId": "feeding-time",
+    "name": "Feeding Time",
+    "description": "PHA+QXQgdGhlIGVuZCBvZiB5b3VyIHR1cm4sIHlvdSBkZWFsIGEgYmFzZSAxIHRydWUgZGFtYWdlICsgMSB0cnVlIGRhbWFnZSB0byBhbGwgZW5lbWllcyBmb3IgZWFjaCBwYXJ0IG9mIHlvdXIgdG9rZW4gdGhhdCBpcyB0b3VjaGluZyB0aGUgdGFyZ2V0LjwvcD4=",
+    "descriptionHtml": "<p>At the end of your turn, you deal a base 1 true damage + 1 true damage to all enemies for each part of your token that is touching the target.</p>",
+    "descriptionText": "At the end of your turn, you deal a base 1 true damage + 1 true damage to all enemies for each part of your token that is touching the target."
+  },
+  {
+    "id": "6a06299f6be32fced49306d0",
+    "indexId": "edba8161-063b-44c9-a865-e3c73263eefb",
+    "monsterAbilityId": "fire-body",
+    "name": "Fire Body",
+    "description": "PHA+WW91ciBhdHRhY2tzIG1heSBkZWFsIEZpcmUgb3IgUGh5c2ljYWwgZGFtYWdlLiBXaGVuIHlvdSBkZWFsIEZpcmUgZGFtYWdlLCB5b3UgYWxzbyBpbmZsaWN0IEJ1cm5pbmcgMipYIHdoZXJlIFggaXMgeW91ciBQb3dlci4gRnVydGhlcm1vcmUsIGFueSB0YXJnZXQgZW5kaW5nIGl0cyB0dXJuIHdoaWxlIHJvb3RlZCBieSB5b3VyIENvbnN1bWUgdGFrZXMgbGlnaHQgRmlyZSBkYW1hZ2UuPC9wPg==",
+    "descriptionHtml": "<p>Your attacks may deal Fire or Physical damage. When you deal Fire damage, you also inflict Burning 2*X where X is your Power. Furthermore, any target ending its turn while rooted by your Consume takes light Fire damage.</p>",
+    "descriptionText": "Your attacks may deal Fire or Physical damage. When you deal Fire damage, you also inflict Burning 2*X where X is your Power. Furthermore, any target ending its turn while rooted by your Consume takes light Fire damage."
+  },
+  {
+    "id": "6a06299f6be32fced493066a",
+    "indexId": "095d34a9-64d6-416e-98e6-69fc875325dc",
+    "monsterAbilityId": "fire-immunity",
+    "name": "Fire Immunity",
+    "description": "PHA+WW91IHRha2Ugbm8gZGFtYWdlIGZyb20gRmlyZSBkYW1hZ2UuJm5ic3A7PC9wPg==",
+    "descriptionHtml": "<p>You take no damage from Fire damage.&nbsp;</p>",
+    "descriptionText": "You take no damage from Fire damage."
+  },
+  {
+    "id": "6a06299f6be32fced4930668",
+    "indexId": "2e0e2e98-e862-44c1-ba36-405727965e74",
+    "monsterAbilityId": "fire-resistance",
+    "name": "Fire Resistance",
+    "description": "PHA+WW91IHRha2Ugb25seSBoYWxmIGRhbWFnZSBmcm9tIGFsbCBmaXJlIGRhbWFnZS48L3A+",
+    "descriptionHtml": "<p>You take only half damage from all fire damage.</p>",
+    "descriptionText": "You take only half damage from all fire damage."
+  },
+  {
+    "id": "6a06299f6be32fced49306cf",
+    "indexId": "b17da643-a337-440b-aca6-eb268904394f",
+    "monsterAbilityId": "fire-type-ii",
+    "name": "Fire Type II",
+    "description": "PHA+WW91IHRha2UgaGFsZiBkYW1hZ2UgZnJvbSBGaXJlIGFuZCBGcm9zdCBhdHRhY2tzIG9yIGRhbWFnZSwgYnV0IHlvdSB0YWtlIDUwJSBtb3JlIGZyb20gV2F0ZXIgdHlwZSBhdHRhY2tzIGFuZCBkYW1hZ2UuIFlvdSBhcmUgaW1tdW5lIHRvIEJ1cm5pbmcuPC9wPg==",
+    "descriptionHtml": "<p>You take half damage from Fire and Frost attacks or damage, but you take 50% more from Water type attacks and damage. You are immune to Burning.</p>",
+    "descriptionText": "You take half damage from Fire and Frost attacks or damage, but you take 50% more from Water type attacks and damage. You are immune to Burning."
+  },
+  {
+    "id": "6a06299f6be32fced4930679",
+    "indexId": "05433328-7587-47bc-b775-94c4b0173580",
+    "monsterAbilityId": "fire-vulnerability",
+    "name": "Fire Vulnerability",
+    "description": "PHA+RmlyZSBkYW1hZ2UgZGVhbHQgdG8geW91IGlzIHRyZWF0ZWQgYXMgRnVsbCBQaWVyY2UgZGFtYWdlLjwvcD4=",
+    "descriptionHtml": "<p>Fire damage dealt to you is treated as Full Pierce damage.</p>",
+    "descriptionText": "Fire damage dealt to you is treated as Full Pierce damage."
+  },
+  {
+    "id": "6a06299f6be32fced493065a",
+    "indexId": "833ba56f-a30b-4b60-96da-844726d69c62",
+    "monsterAbilityId": "fire-weakness",
+    "name": "Fire Weakness",
+    "description": "PHA+WW91IHRha2UgZG91YmxlIGRhbWFnZSBmcm9tIEZpcmUgZGFtYWdlLjwvcD4=",
+    "descriptionHtml": "<p>You take double damage from Fire damage.</p>",
+    "descriptionText": "You take double damage from Fire damage."
+  },
+  {
+    "id": "6a06299f6be32fced493066d",
+    "indexId": "8e621c97-ef80-4372-b3a5-8aa94b916353",
+    "monsterAbilityId": "flight",
+    "name": "Flight",
+    "description": "PHA+WW91IGNhbiBGbHkgdGhyb3VnaCB0aGUgYWlyIGFzIGlmIHlvdSB3ZXJlIG1vdmluZyBvbiBsYW5kIGFuZCB5b3VyIG1vdmVtZW50IHNwZWVkIGlzIGRvdWJsZWQgd2hpbGUgZG9pbmcgc28uPC9wPjxwPklmIHlvdSB0YWtlIGRhbWFnZSB3aGlsZSBmbHlpbmcgaGlnaGVyIHRoYW4gNWZ0IGFib3ZlIHRoZSBncm91bmQsIHlvdXIgYWx0aXR1ZGUgZHJvcHMgYnkgMjBmdC4gSWYgdGhpcyB3b3VsZCByZWR1Y2UgeW91ciBhbHRpdHVkZSB0byB0aGUgcG9pbnQgd2hlcmUgeW91IHRvdWNoIHRoZSBncm91bmQsIHlvdSBiZWNvbWUgcm9vdGVkIGFuZCBjYW5ub3QgZmx5IGFnYWluIHVudGlsIHRoZSBlbmQgb2YgeW91ciBuZXh0IHR1cm4uIElmIHRoZSBhdHRhY2sgdGhhdCByZWR1Y2VkIHlvdXIgSFAgY2FtZSBmcm9tIGFuIGZseWluZyBjcmVhdHVyZSBvdGhlciB0aGFuIHlvdXJzZWxmLCB5b3UgZG8gbm90IGxvc2UgYWx0aXR1ZGUuPC9wPg==",
+    "descriptionHtml": "<p>You can Fly through the air as if you were moving on land and your movement speed is doubled while doing so.</p><p>If you take damage while flying higher than 5ft above the ground, your altitude drops by 20ft. If this would reduce your altitude to the point where you touch the ground, you become rooted and cannot fly again until the end of your next turn. If the attack that reduced your HP came from an flying creature other than yourself, you do not lose altitude.</p>",
+    "descriptionText": "You can Fly through the air as if you were moving on land and your movement speed is doubled while doing so.\n\nIf you take damage while flying higher than 5ft above the ground, your altitude drops by 20ft. If this would reduce your altitude to the point where you touch the ground, you become rooted and cannot fly again until the end of your next turn. If the attack that reduced your HP came from an flying creature other than yourself, you do not lose altitude."
+  },
+  {
+    "id": "6a06299f6be32fced493066f",
+    "indexId": "9911259d-c0b2-418a-84bc-dc15cd23951e",
+    "monsterAbilityId": "fly-by",
+    "name": "Fly-by",
+    "description": "PHA+WW91IGNhbiBmbHkgdGhyb3VnaCB0aGUgYWlyIGFzIGlmIHlvdSB3ZXJlIG1vdmluZyBvbiBsYW5kIGFuZCB5b3VyIG1vdmVtZW50IHNwZWVkIGlzIGRvdWJsZWQgd2hpbGUgZG9pbmcgc28uIFdoaWxlIGZseWluZywgeW91IG1heSBtYWtlIGFueSBvZiB5b3VyIGF0dGFja3MgKHNwZW5kaW5nIEFQIGFzIG5vcm1hbCkgZHVyaW5nIHlvdXIgbW92ZW1lbnQgYW5kIGNvbnRpbnVlIHRvIG1vdmUgYWZ0ZXJ3YXJkcy48L3A+",
+    "descriptionHtml": "<p>You can fly through the air as if you were moving on land and your movement speed is doubled while doing so. While flying, you may make any of your attacks (spending AP as normal) during your movement and continue to move afterwards.</p>",
+    "descriptionText": "You can fly through the air as if you were moving on land and your movement speed is doubled while doing so. While flying, you may make any of your attacks (spending AP as normal) during your movement and continue to move afterwards."
+  },
+  {
+    "id": "6a06299f6be32fced493065d",
+    "indexId": "020f4341-b7f5-4f26-8558-bbfd9dc79a34",
+    "monsterAbilityId": "frost-creation--weapons",
+    "name": "Frost Creation: Weapons",
+    "description": "PHA+WW91IG1heSBjcmVhdGUgYW55IHdlYXBvbiBhbmQgdXNlIGl0IGltbWVkaWF0ZWx5LiBZb3UgYXJlIGNvbnNpZGVyZWQgcHJvZmljaWVudCBpbiBhbnkgd2VhcG9uIGNyZWF0ZWQgdGhyb3VnaCB0aGlzIGFiaWxpdHkuIFRoZXNlIHdlYXBvbnMgbWF5IGRlYWwgRnJvc3QgZGFtYWdlIGluc3RlYWQgb2YgdGhlaXIgbm9ybWFsIGRhbWFnZS4gWW91IG1heSBhbHNvIGNyZWF0ZSB0d28gd2VhcG9ucyBhdCB0aGUgc2FtZSB0aW1lLCBidXQgdGhleSBtdXN0IGJlIHR3byBMaWdodCB3ZWFwb25zIG9mIHRoZSBzYW1lIHR5cGUuIFlvdSBtYXkgZGlzbWlzcyB0aGVzZSB3ZWFwb25zIGF0IGFueSB0aW1lIGZvciBubyBjb3N0LjwvcD4=",
+    "descriptionHtml": "<p>You may create any weapon and use it immediately. You are considered proficient in any weapon created through this ability. These weapons may deal Frost damage instead of their normal damage. You may also create two weapons at the same time, but they must be two Light weapons of the same type. You may dismiss these weapons at any time for no cost.</p>",
+    "descriptionText": "You may create any weapon and use it immediately. You are considered proficient in any weapon created through this ability. These weapons may deal Frost damage instead of their normal damage. You may also create two weapons at the same time, but they must be two Light weapons of the same type. You may dismiss these weapons at any time for no cost."
+  },
+  {
+    "id": "6a06299f6be32fced4930672",
+    "indexId": "59ae149f-d79e-4e49-b844-045fe1e5bc9d",
+    "monsterAbilityId": "gel-body",
+    "name": "Gel Body",
+    "description": "PHA+WW91IGNhbm5vdCB1c2UgYmFzaWMgZGVmZW5zaXZlIGFjdGlvbnM6Jm5ic3A7QmxvY2sgb3IgRG9kZ2UsIGJ1dCB5b3UgaGF2ZSAxMDAgRGFtYWdlIFJlZHVjdGlvbiB0byBhbGwgbm9uLW1hZ2ljYWwgYXR0YWNrcy48L3A+",
+    "descriptionHtml": "<p>You cannot use basic defensive actions:&nbsp;Block or Dodge, but you have 100 Damage Reduction to all non-magical attacks.</p>",
+    "descriptionText": "You cannot use basic defensive actions: Block or Dodge, but you have 100 Damage Reduction to all non-magical attacks."
+  },
+  {
+    "id": "6a06299f6be32fced49306db",
+    "indexId": "9e35cc51-5312-46f9-bb30-3a4b2b68dc60",
+    "monsterAbilityId": "gravity-well",
+    "name": "Gravity Well",
+    "description": "PHA+QWxsIGVuZW1pZXMgd2l0aGluIDQwZnQgb2YgeW91IGFyZSBzbG93ZWQuIFRoaXMgYXBwbGllcyBpbW1lZGlhdGVseSB3aGVuIHRoZXkgZW50ZXIgdGhpcyByYW5nZSBhbmQgbGFzdHMgZm9yIHRoZSBlbnRpcmUgbW92ZW1lbnQgb2YgbGVhdmluZyB0aGlzIHJhbmdlLjwvcD4=",
+    "descriptionHtml": "<p>All enemies within 40ft of you are slowed. This applies immediately when they enter this range and lasts for the entire movement of leaving this range.</p>",
+    "descriptionText": "All enemies within 40ft of you are slowed. This applies immediately when they enter this range and lasts for the entire movement of leaving this range."
+  },
+  {
+    "id": "6a06299f6be32fced49306c0",
+    "indexId": "f9663e19-be98-4423-8463-e42c17f75747",
+    "monsterAbilityId": "growing-sludge",
+    "name": "Growing Sludge",
+    "description": "PHA+SWYgeW91IGRpZCBub3QgbW92ZSBpbiB5b3VyIGxhc3QgdHVybiwgeW91ciBBUCByZWNvdmVyeSBhbmQgbWF4aW11bSBBUCBpbmNyZWFzZSBieSAxICh1cCB0byBhIG1heGltdW0gb2YgMSkuJm5ic3A7PC9wPg==",
+    "descriptionHtml": "<p>If you did not move in your last turn, your AP recovery and maximum AP increase by 1 (up to a maximum of 1).&nbsp;</p>",
+    "descriptionText": "If you did not move in your last turn, your AP recovery and maximum AP increase by 1 (up to a maximum of 1)."
+  },
+  {
+    "id": "6a06299f6be32fced49306b6",
+    "indexId": "981ce734-1afc-43af-b897-7c9f3322858a",
+    "monsterAbilityId": "halberd",
+    "name": "Halberd",
+    "description": "PHA+WW91IGhhdmUgMTBmdCByZWFjaCwgYnV0IHlvdXIgd2VhcG9uIGlzIG90aGVyd2lzZSB0cmVhdGVkIGFzIGEgTGlnaHQgYXhlLiZuYnNwOzwvcD4=",
+    "descriptionHtml": "<p>You have 10ft reach, but your weapon is otherwise treated as a Light axe.&nbsp;</p>",
+    "descriptionText": "You have 10ft reach, but your weapon is otherwise treated as a Light axe."
+  },
+  {
+    "id": "6a06299f6be32fced49306d9",
+    "indexId": "bded923e-104e-47fe-8a3f-f15d76cea347",
+    "monsterAbilityId": "hard-shell",
+    "name": "Hard Shell",
+    "description": "PHA+WW91IGhhdmUgKzEgZ3VhcmQgYW5kICs0IEJsb2NrLCBidXQgLTIgRXZhc2lvbiAoYWxyZWFkeSBhZGRlZCB0byBzdGF0cykuIFlvdSBhbHNvIGhhdmUgNSBEUiBhZ2FpbnN0IHNsYXNoaW5nIGF0dGFja3MuPC9wPg==",
+    "descriptionHtml": "<p>You have +1 guard and +4 Block, but -2 Evasion (already added to stats). You also have 5 DR against slashing attacks.</p>",
+    "descriptionText": "You have +1 guard and +4 Block, but -2 Evasion (already added to stats). You also have 5 DR against slashing attacks."
+  },
+  {
+    "id": "6a06299f6be32fced493066b",
+    "indexId": "41f49d0e-d287-4f4a-ba2f-7363027a7891",
+    "monsterAbilityId": "hardened-scales",
+    "name": "Hardened Scales",
+    "description": "PHA+WW91IGdhaW4gKzEgR3VhcmQsIGFuZCBhIGZ1cnRoZXIgKzIgR3VhcmQgd2hlbiB0YWtpbmcgdGhlIEJsb2NrIGFjdGlvbiAoQWxyZWFkeSBhZGRlZCB0byBzdGF0cykuPC9wPg==",
+    "descriptionHtml": "<p>You gain +1 Guard, and a further +2 Guard when taking the Block action (Already added to stats).</p>",
+    "descriptionText": "You gain +1 Guard, and a further +2 Guard when taking the Block action (Already added to stats)."
+  },
+  {
+    "id": "6a06299f6be32fced49306b0",
+    "indexId": "bff7dc0a-7522-43c3-9162-f92856117162",
+    "monsterAbilityId": "hardened-skin-mutation",
+    "name": "Hardened Skin Mutation",
+    "description": "PHA+WW91ciBndWFyZCBpcyBpbmNyZWFzZWQgYnkgMi48L3A+",
+    "descriptionHtml": "<p>Your guard is increased by 2.</p>",
+    "descriptionText": "Your guard is increased by 2."
+  },
+  {
+    "id": "6a06299f6be32fced49306a0",
+    "indexId": "0b31f2af-f171-459e-8d45-2d416f8299ca",
+    "monsterAbilityId": "head-limit",
+    "name": "Head Limit",
+    "description": "PHA+RWFjaCBoZWFkIHRoYXQgZ3Jvd3MgZXh0cmEgcGFzdCB0aGUgb3JpZ2luYWwgMyBsb3dlcnMgeW91ciBhZ2lsaXR5IGJ5IDEgYW5kIG1vdmVtZW50IHNwZWVkIGJ5IDVmdC4gV2hlbiB5b3VyIGFnaWxpdHkgcmVhY2hlcyAwIGJlY2F1c2Ugb2YgdGhpcywgeW91IGRpZS48L3A+",
+    "descriptionHtml": "<p>Each head that grows extra past the original 3 lowers your agility by 1 and movement speed by 5ft. When your agility reaches 0 because of this, you die.</p>",
+    "descriptionText": "Each head that grows extra past the original 3 lowers your agility by 1 and movement speed by 5ft. When your agility reaches 0 because of this, you die."
+  },
+  {
+    "id": "6a06299f6be32fced4930686",
+    "indexId": "7c265edf-35f5-4244-b15d-f26b4e79e6b1",
+    "monsterAbilityId": "head-or-tails",
+    "name": "Head or Tails",
+    "description": "PHA+V2hlbiBtYWtpbmcgYSBiYXNpYyBMaWdodCBvciBIZWF2eSBBdHRhY2ssIHlvdSBtYXkgYXR0YWNrIHdpdGggZWl0aGVyIHlvdXIgaGVhZCBvciB0YWlsLiBZb3UgZ2FpbiBhIGJlbmVmaXQgYmFzZWQgb24gdGhlIGJvZHkgcGFydCBjaG9zZW4uPC9wPg==",
+    "descriptionHtml": "<p>When making a basic Light or Heavy Attack, you may attack with either your head or tail. You gain a benefit based on the body part chosen.</p>",
+    "descriptionText": "When making a basic Light or Heavy Attack, you may attack with either your head or tail. You gain a benefit based on the body part chosen."
+  },
+  {
+    "id": "6a06299f6be32fced493069f",
+    "indexId": "0cd4f695-7b4e-4467-afd5-bf14a8bdc323",
+    "monsterAbilityId": "head-regrowth",
+    "name": "Head Regrowth",
+    "description": "PHA+V2hlbiBhIGhlYWQgaXMga2lsbGVkLCB0d28gbmV3IGhlYWRzIGltbWVkaWF0ZWx5IHNwcm91dCBmcm9tIHRoZSBkZWZlYXRlZCBoZWFkcy4gVGhlc2UgbmV3IGhlYWRzIHNoYXJlIHRoZSBlbGVtZW50IG9mIHRoZSBvcmlnaW5hbCBkZWZlYXRlZCBoZWFkcyBhbmQgZnVuY3Rpb24gYXMgdHdvIGZyZXNoIGhlYWRzIGFzIGRlc2NyaWJlZCBpbiB0aGUgbXVsdGktaGVhZGVkIGFiaWxpdHkuPC9wPg==",
+    "descriptionHtml": "<p>When a head is killed, two new heads immediately sprout from the defeated heads. These new heads share the element of the original defeated heads and function as two fresh heads as described in the multi-headed ability.</p>",
+    "descriptionText": "When a head is killed, two new heads immediately sprout from the defeated heads. These new heads share the element of the original defeated heads and function as two fresh heads as described in the multi-headed ability."
+  },
+  {
+    "id": "6a06299f6be32fced49306b2",
+    "indexId": "d97133b3-e8a1-4ba2-af8d-adb5b11f5bea",
+    "monsterAbilityId": "heavy-cavalry",
+    "name": "Heavy Cavalry",
+    "description": "PHA+WW91IGhhdmUgYSBtb3VudCB0aGF0IGhhcyAyNSBIUCBhbmQgdXNlcyB5b3VyIGRlZmVuc2l2ZSBzdGF0cyBpbiBjb21iYXQuIEl0IGZvbGxvd3MgdGhlIG5vcm1hbCBob3JzZSBtb3VudCBydWxlcy4gV2hpbGUgbW91bnRlZCwgeW91IGNhbiBvbmx5IG1vdmUgaW4gYSBzdHJhaWdodCBsaW5lIHdoaWxlIHRha2luZyBhIG1vdmVtZW50IGFjdGlvbi4gQWZ0ZXIgbG9zaW5nIHlvdXIgbW91bnQsIHlvdXIgbW92ZW1lbnQgc3BlZWQgaXMgcmVkdWNlZCB0byAyMGZ0LjwvcD4=",
+    "descriptionHtml": "<p>You have a mount that has 25 HP and uses your defensive stats in combat. It follows the normal horse mount rules. While mounted, you can only move in a straight line while taking a movement action. After losing your mount, your movement speed is reduced to 20ft.</p>",
+    "descriptionText": "You have a mount that has 25 HP and uses your defensive stats in combat. It follows the normal horse mount rules. While mounted, you can only move in a straight line while taking a movement action. After losing your mount, your movement speed is reduced to 20ft."
+  },
+  {
+    "id": "6a06299f6be32fced4930685",
+    "indexId": "2f705465-6aa1-4a08-bf5b-89800ea69d20",
+    "monsterAbilityId": "heavy-paws",
+    "name": "Heavy Paws",
+    "description": "PHA+V2hlbiB5b3UgZGVhbCBkYW1hZ2UgdG8gYSB0YXJnZXQsIHRoZXkgYmVjb21lIFVuYmFsYW5jZWQuIElmIHRoZXkgYXJlIGFscmVhZHkgVW5iYWxhbmNlZCwgdGhleSBiZWNvbWUgRGF6ZWQuPC9wPg==",
+    "descriptionHtml": "<p>When you deal damage to a target, they become Unbalanced. If they are already Unbalanced, they become Dazed.</p>",
+    "descriptionText": "When you deal damage to a target, they become Unbalanced. If they are already Unbalanced, they become Dazed."
+  },
+  {
+    "id": "6a06299f6be32fced49306c5",
+    "indexId": "075aa22d-3654-41fc-84f5-2bfb7c630aed",
+    "monsterAbilityId": "high-flock-tactics",
+    "name": "High Flock Tactics",
+    "description": "PHA+WW91IGdhaW4gYSArMSBib251cyB0byB5b3VyIGFjY3VyYWN5IHJvbGxzIChtYXggKzYpIGZvciBlYWNoIG90aGVyIEFzdHJhbiBNYWdwaWUgYXR0YWNraW5nIHRoZSBzYW1lIHRhcmdldCB0aGlzIHJvdW5kLjwvcD4=",
+    "descriptionHtml": "<p>You gain a +1 bonus to your accuracy rolls (max +6) for each other Astran Magpie attacking the same target this round.</p>",
+    "descriptionText": "You gain a +1 bonus to your accuracy rolls (max +6) for each other Astran Magpie attacking the same target this round."
+  },
+  {
+    "id": "6a06299f6be32fced4930682",
+    "indexId": "2a8f4f49-0cef-4861-aef9-f240a9161227",
+    "monsterAbilityId": "holy-vulnerability",
+    "name": "Holy Vulnerability",
+    "description": "PHA+SG9seSBkYW1hZ2UgZGVhbHQgdG8geW91IGlzIHRyZWF0ZWQgYXMgRnVsbCBQaWVyY2UgZGFtYWdlLjwvcD4=",
+    "descriptionHtml": "<p>Holy damage dealt to you is treated as Full Pierce damage.</p>",
+    "descriptionText": "Holy damage dealt to you is treated as Full Pierce damage."
+  },
+  {
+    "id": "6a06299f6be32fced49306aa",
+    "indexId": "07dc1fdd-7b57-44ae-a72e-aad3994d2bc1",
+    "monsterAbilityId": "holy-weakness",
+    "name": "Holy Weakness",
+    "description": "PHA+WW91IHRha2UgZG91YmxlIGRhbWFnZSBmcm9tIEhvbHkgZGFtYWdlLjwvcD4=",
+    "descriptionHtml": "<p>You take double damage from Holy damage.</p>",
+    "descriptionText": "You take double damage from Holy damage."
+  },
+  {
+    "id": "6a06299f6be32fced4930661",
+    "indexId": "257eca6e-3d39-4029-ba95-5a28fea63e75",
+    "monsterAbilityId": "host-defense",
+    "name": "Host Defense",
+    "description": "PHA+V2hlbiB5b3UgYmVjb21lIHRoZSB0YXJnZXQgb2YgYW4gYXR0YWNrLCB0aGUgY3JlYXR1cmUgeW91IGFyZSBidXJyb3dlZCBpbiB0YWtlcyB0aGUgZGFtYWdlIGFzIHdlbGwsIGV2ZW4gaWYgeW91IGRvZGdlIHRoZSBhdHRhY2suIEFueSBkYW1hZ2UgeW91IHRha2UgaXMgcmVkdWNlZCBieSB5b3VyIGhvc3TigJlzIEd1YXJkIGFnYWluc3QgdGhlIGF0dGFjay4gSWYgdGhlIGhvc3QgdGFrZXMgZGFtYWdlIGZyb20gYW4gYXJlYSBhdHRhY2ssIHlvdSBhcmUgYWxzbyBhdXRvbWF0aWNhbGx5IGhpdC48L3A+",
+    "descriptionHtml": "<p>When you become the target of an attack, the creature you are burrowed in takes the damage as well, even if you dodge the attack. Any damage you take is reduced by your host’s Guard against the attack. If the host takes damage from an area attack, you are also automatically hit.</p>",
+    "descriptionText": "When you become the target of an attack, the creature you are burrowed in takes the damage as well, even if you dodge the attack. Any damage you take is reduced by your host’s Guard against the attack. If the host takes damage from an area attack, you are also automatically hit."
+  },
+  {
+    "id": "6a06299f6be32fced49306ca",
+    "indexId": "2b11ba55-f051-4c6e-85e5-298bf7201ea1",
+    "monsterAbilityId": "hover",
+    "name": "Hover",
+    "description": "PHA+WW91IGNhbiBwYXNzaXZlbHkgaG92ZXIgdXAgdG8gNWZ0IGFib3ZlIHRoZSBncm91bmQuIFdoaWxlIGhvdmVyaW5nLCB5b3UgYXJlIG5vdCBhbiBlbGlnaWJsZSB0YXJnZXQgZm9yIGFiaWxpdGllcyB0aGF0IHJlcXVpcmUgYSB0YXJnZXQgdG8gYmUgZmx5aW5nIG9yIGFpcmJvcm5lIHVubGVzcyB5b3UnZCBtZWV0IHRob3NlIGNvbmRpdGlvbnMgbm9ybWFsbHkuPC9wPg==",
+    "descriptionHtml": "<p>You can passively hover up to 5ft above the ground. While hovering, you are not an eligible target for abilities that require a target to be flying or airborne unless you'd meet those conditions normally.</p>",
+    "descriptionText": "You can passively hover up to 5ft above the ground. While hovering, you are not an eligible target for abilities that require a target to be flying or airborne unless you'd meet those conditions normally."
+  },
+  {
+    "id": "6a06299f6be32fced49306a1",
+    "indexId": "f2bbc52d-1f8c-4211-8531-028136cbb0d0",
+    "monsterAbilityId": "hydra-elements",
+    "name": "Hydra Elements",
+    "description": "PHA+RWFjaCBoZWFkIGhhcyBhbiBlbGVtZW50LiBUaGVyZSBpcyBhbiBFYXJ0aCwgYSBGcm9zdCwgYW5kIGEgTGlnaHRuaW5nIGVsZW1lbnQgaGVhZC4gRWFjaCBoZWFkIHRha2VzIGhhbGYgZGFtYWdlIGZyb20gYXR0YWNrcyBkZWFsaW5nIHRoZSBzYW1lIHR5cGUgb2YgZGFtYWdlIGFzIHRoZWlyIGVsZW1lbnQuIFRoZWlyIGVsZW1lbnQgYWxzbyBpbmZsdWVuY2VzIHRoZWlyIEh5ZHJhIEJyZWF0aCBhdHRhY2suPC9wPg==",
+    "descriptionHtml": "<p>Each head has an element. There is an Earth, a Frost, and a Lightning element head. Each head takes half damage from attacks dealing the same type of damage as their element. Their element also influences their Hydra Breath attack.</p>",
+    "descriptionText": "Each head has an element. There is an Earth, a Frost, and a Lightning element head. Each head takes half damage from attacks dealing the same type of damage as their element. Their element also influences their Hydra Breath attack."
+  },
+  {
+    "id": "6a06299f6be32fced493065c",
+    "indexId": "bb597190-2010-4b1e-a7f1-fe4cff0f5926",
+    "monsterAbilityId": "ice-defense",
+    "name": "Ice Defense",
+    "description": "PHA+WW91IHByb3Zva2Ugbm8gYXR0YWNrcyBvZiBvcHBvcnR1bml0eSBmcm9tIFNsb3dlZCBlbmVtaWVzLiBZb3UgZ2FpbiBhICs0IGJvbnVzIHRvIEd1YXJkIHdoZW4gdGFraW5nIHRoZSBCbG9jayByZWFjdGlvbi4gKEFscmVhZHkgYWRkZWQgdG8gc3RhdHMpPC9wPg==",
+    "descriptionHtml": "<p>You provoke no attacks of opportunity from Slowed enemies. You gain a +4 bonus to Guard when taking the Block reaction. (Already added to stats)</p>",
+    "descriptionText": "You provoke no attacks of opportunity from Slowed enemies. You gain a +4 bonus to Guard when taking the Block reaction. (Already added to stats)"
+  },
+  {
+    "id": "6a06299f6be32fced493065b",
+    "indexId": "590a459a-9ae7-422f-91c0-31068a24f914",
+    "monsterAbilityId": "ice-immunity",
+    "name": "Ice Immunity",
+    "description": "PHA+WW91IHRha2Ugbm8gZGFtYWdlIGZyb20gRnJvc3QgZGFtYWdlLjwvcD4=",
+    "descriptionHtml": "<p>You take no damage from Frost damage.</p>",
+    "descriptionText": "You take no damage from Frost damage."
+  },
+  {
+    "id": "6a06299f6be32fced49306be",
+    "indexId": "93539d47-e7df-4f89-bca7-4cb74338a092",
+    "monsterAbilityId": "ice-resistance",
+    "name": "Ice Resistance",
+    "description": "PHA+WW91IHRha2UgaGFsZiBkYW1hZ2UgZnJvbSBGcm9zdCBkYW1hZ2UuPC9wPg==",
+    "descriptionHtml": "<p>You take half damage from Frost damage.</p>",
+    "descriptionText": "You take half damage from Frost damage."
+  },
+  {
+    "id": "6a06299f6be32fced49306bf",
+    "indexId": "1439e0b2-43d9-41b3-a23f-cb6ba3aeb53c",
+    "monsterAbilityId": "icy-puddle",
+    "name": "Icy Puddle",
+    "description": "PHA+V2hlbiBraWxsZWQsIHRoZSBzcG90IHlvdSB3ZXJlIGtpbGxlZCBvbiB0dXJucyBpbnRvIGljZSBhbmQgYmVjb21lcyBkaWZmaWN1bHQgdGVycmFpbiBmb3Igb3RoZXIgY3JlYXR1cmVzLjwvcD4=",
+    "descriptionHtml": "<p>When killed, the spot you were killed on turns into ice and becomes difficult terrain for other creatures.</p>",
+    "descriptionText": "When killed, the spot you were killed on turns into ice and becomes difficult terrain for other creatures."
+  },
+  {
+    "id": "6a06299f6be32fced493068d",
+    "indexId": "a917a198-b1b2-4cc3-8a66-510bd1308b8c",
+    "monsterAbilityId": "incorporeal",
+    "name": "Incorporeal",
+    "description": "PHA+WW91IGRvIG5vdCBzcGVuZCB5b3VyIFJQIHdoZW4gcmVhY3RpbmcgYWdhaW5zdCBhIHBoeXNpY2FsIGF0dGFjayBtYWRlIHdpdGggYSBub24tbWFnaWNhbCB3ZWFwb24uIEEgd2VhcG9uIHRoYXQgaXMgZW5jaGFudGVkIGNvdW50cyBhcyBtYWdpY2FsLjwvcD4=",
+    "descriptionHtml": "<p>You do not spend your RP when reacting against a physical attack made with a non-magical weapon. A weapon that is enchanted counts as magical.</p>",
+    "descriptionText": "You do not spend your RP when reacting against a physical attack made with a non-magical weapon. A weapon that is enchanted counts as magical."
+  },
+  {
+    "id": "6a06299f6be32fced49306cc",
+    "indexId": "23f2e8b9-ae22-4caf-8877-22178d2eb131",
+    "monsterAbilityId": "ink-explosion",
+    "name": "Ink Explosion",
+    "description": "PHA+V2hlbiB5b3UgZGllLCB5b3UgZXhwbG9kZSBpbiBhIGJsb2Igb2YgaW5rLiBZb3UgQmxpbmQgYWxsIGVuZW1pZXMgYW5kIGNyZWF0ZSBkaWZmaWN1bHQgdGVycmFpbiBpbiBhIDVmdCByYWRpdXMgYXJvdW5kIHlvdS48L3A+",
+    "descriptionHtml": "<p>When you die, you explode in a blob of ink. You Blind all enemies and create difficult terrain in a 5ft radius around you.</p>",
+    "descriptionText": "When you die, you explode in a blob of ink. You Blind all enemies and create difficult terrain in a 5ft radius around you."
+  },
+  {
+    "id": "6a06299f6be32fced4930675",
+    "indexId": "3030f6c5-0b54-4430-b918-ede880b41ce0",
+    "monsterAbilityId": "insatiable-hunger",
+    "name": "Insatiable Hunger",
+    "description": "PHA+WW91IGNhbiB1c2UgR2x1dHRvbnkgYXMgYW4gYXR0YWNrIG9mIG9wcG9ydHVuaXR5IGZvciAxIFJQLjwvcD4=",
+    "descriptionHtml": "<p>You can use Gluttony as an attack of opportunity for 1 RP.</p>",
+    "descriptionText": "You can use Gluttony as an attack of opportunity for 1 RP."
+  },
+  {
+    "id": "6a06299f6be32fced49306cb",
+    "indexId": "c442f448-5d96-4d11-940b-23223991720c",
+    "monsterAbilityId": "ixilune-s-chitin",
+    "name": "Ixilune's Chitin",
+    "description": "PHA+WW91IGhhdmUgKzIgZ3VhcmQgYW5kICs2IEJsb2NrIChhbHJlYWR5IGFkZGVkIHRvIHN0YXRzKS4mbmJzcDs8L3A+",
+    "descriptionHtml": "<p>You have +2 guard and +6 Block (already added to stats).&nbsp;</p>",
+    "descriptionText": "You have +2 guard and +6 Block (already added to stats)."
+  },
+  {
+    "id": "6a06299f6be32fced4930698",
+    "indexId": "ca85c9e4-079e-46f1-bc6e-76c2940d569b",
+    "monsterAbilityId": "just-a-nightmare",
+    "name": "Just a nightmare",
+    "description": "PHA+VGhlIGRyZWFtZWF0ZXIgb25seSBhdHRhY2tzIHNsZWVwaW5nIHRhcmdldHMgYW5kIGEgYmF0dGxlIGFnYWluc3QgdGhlIGRyZWFtIGVhdGVyIGRvZXMgbm90IHRha2UgcGxhY2UgaW4gdGhlIHBoeXNpY2FsIHdvcmxkLCBidXQgaW4gYSBkcmVhbXNjYXBlIGNyZWF0ZWQgYnkgaXQuIEEgY3JlYXR1cmUgdGhhdCBpcyDigJhraWxsZWTigJkgYnkgdGhlIGRyZWFtZWF0ZXIgZG9lcyBub3QgZGllLiBJbnN0ZWFkLCB0aGV5IGRvIG5vdCBnYWluIHRoZSBub3JtYWwgYmVuZWZpdHMgb2YgcmVzdGluZyBhbmQgdGhlaXIgbWFuYSBpcyByZWR1Y2VkIGJ5IDIuIElmIHRoZWlyIG1hbmEgd291bGQgZ28gYmVsb3cgMCBiZWNhdXNlIG9mIHRoaXMsIHRoZXkgaW5zdGVhZCBsb3NlIDUgTWF4IEhQIHBlciBtYW5hIHRoYXQgY291bGQgbm90IGJlIHJlZHVjZWQuIFRoaXMgZWZmZWN0IGxhc3RzIHVudGlsIHRoZSBjcmVhdHVyZSBjb21wbGV0ZXMgYSByZXN0IHVuZGlzdHVyYmVkIGJ5IHRoZSBkcmVhbWVhdGVyIG9yIHVudGlsIHRoZSBkcmVhbWVhdGVyIGRpZXMuPC9wPg==",
+    "descriptionHtml": "<p>The dreameater only attacks sleeping targets and a battle against the dream eater does not take place in the physical world, but in a dreamscape created by it. A creature that is ‘killed’ by the dreameater does not die. Instead, they do not gain the normal benefits of resting and their mana is reduced by 2. If their mana would go below 0 because of this, they instead lose 5 Max HP per mana that could not be reduced. This effect lasts until the creature completes a rest undisturbed by the dreameater or until the dreameater dies.</p>",
+    "descriptionText": "The dreameater only attacks sleeping targets and a battle against the dream eater does not take place in the physical world, but in a dreamscape created by it. A creature that is ‘killed’ by the dreameater does not die. Instead, they do not gain the normal benefits of resting and their mana is reduced by 2. If their mana would go below 0 because of this, they instead lose 5 Max HP per mana that could not be reduced. This effect lasts until the creature completes a rest undisturbed by the dreameater or until the dreameater dies."
+  },
+  {
+    "id": "6a06299f6be32fced49306bc",
+    "indexId": "0ca0d657-7ebc-4065-bb20-0c84cad28299",
+    "monsterAbilityId": "keen-ii",
+    "name": "Keen II",
+    "description": "PHA+WW91IGxhbmQgYSBjcml0aWNhbCBoaXQgd2hlbiB5b3Ugcm9sbCAxOCBvciBoaWdoZXIuPC9wPg==",
+    "descriptionHtml": "<p>You land a critical hit when you roll 18 or higher.</p>",
+    "descriptionText": "You land a critical hit when you roll 18 or higher."
+  },
+  {
+    "id": "6a06299f6be32fced49306c8",
+    "indexId": "4009f36d-30f6-43f6-b497-23be8537f005",
+    "monsterAbilityId": "large-nimble-flier",
+    "name": "Large Nimble Flier",
+    "description": "PHA+WW91IGRvIG5vdCBsb3NlIGFsdGl0dWRlIGZvciBiZWluZyBoaXQgd2hpbGUgZmx5aW5nLiBIb3dldmVyLCB5b3UgY291bnQgYXMgbW91bnRlZCBmb3IgYW50aS1tb3VudCBhYmlsaXRpZXMgc3VjaCBhcyBCcmFjZS48L3A+",
+    "descriptionHtml": "<p>You do not lose altitude for being hit while flying. However, you count as mounted for anti-mount abilities such as Brace.</p>",
+    "descriptionText": "You do not lose altitude for being hit while flying. However, you count as mounted for anti-mount abilities such as Brace."
+  },
+  {
+    "id": "6a06299f6be32fced4930651",
+    "indexId": "6a6e1c98-95bd-4cb1-9aed-e11fa38d2806",
+    "monsterAbilityId": "last-resort",
+    "name": "Last Resort",
+    "description": "PHA+V2hlbiB5b3VyIEhQIGlzIGxvd2VyZWQgdG8gMCwgeW91IHdpbGwgaW1tZWRpYXRlbHkgdXNlIEV4cGxvZGUgU2VsZiBhcyBhIHJlYWN0aW9uLiBBZnRlciB0aGF0LCB5b3UgaW1tZWRpYXRlbHkgZGllLjwvcD4=",
+    "descriptionHtml": "<p>When your HP is lowered to 0, you will immediately use Explode Self as a reaction. After that, you immediately die.</p>",
+    "descriptionText": "When your HP is lowered to 0, you will immediately use Explode Self as a reaction. After that, you immediately die."
+  },
+  {
+    "id": "6a06299f6be32fced493068f",
+    "indexId": "c2080171-8086-4687-840c-5f779bb262bf",
+    "monsterAbilityId": "lead-the-pack",
+    "name": "Lead the pack",
+    "description": "PHA+WW91IGFsd2F5cyBhY3QgcmlnaHQgYmVmb3JlIG90aGVyIHdvbHZlcyBkby4gVGhlaXIgaW5pdGlhdGl2ZSBpcyBwbGFjZWQgYXMgMC4xIGhpZ2hlciB0aGFuIHRoYXQgb2Ygbm9ybWFsIHdvbHZlcy4gV2hlbiB5b3UgYXJlIGFsaXZlIGF0IHRoZSBlbmNvdW50ZXIgc3RhcnQgcGhhc2UsIHdvbHZlcyBhY3QgZmlyc3QgaW4gdGhlIGNhc2Ugb2YgYSB0aWVkIGluaXRpYXRpdmUuPC9wPg==",
+    "descriptionHtml": "<p>You always act right before other wolves do. Their initiative is placed as 0.1 higher than that of normal wolves. When you are alive at the encounter start phase, wolves act first in the case of a tied initiative.</p>",
+    "descriptionText": "You always act right before other wolves do. Their initiative is placed as 0.1 higher than that of normal wolves. When you are alive at the encounter start phase, wolves act first in the case of a tied initiative."
+  },
+  {
+    "id": "6a06299f6be32fced49306a3",
+    "indexId": "c8e7378b-da13-411d-afbc-eb66b6cf30ee",
+    "monsterAbilityId": "leadership",
+    "name": "Leadership",
+    "description": "PHA+QWxsIEdydW50IGxldmVsIGFsbGllcyB1bmRlciB5b3VyIGNvbW1hbmQgZ2FpbiBhICsxIGJvbnVzIHRvIHRoZWlyIEZvY3VzIGFuZCBBZ2lsaXR5LjwvcD4=",
+    "descriptionHtml": "<p>All Grunt level allies under your command gain a +1 bonus to their Focus and Agility.</p>",
+    "descriptionText": "All Grunt level allies under your command gain a +1 bonus to their Focus and Agility."
+  },
+  {
+    "id": "6a06299f6be32fced49306cd",
+    "indexId": "3738c478-0515-4516-b49b-247cd5c3caf3",
+    "monsterAbilityId": "lesser-fiend-regeneration",
+    "name": "Lesser Fiend Regeneration",
+    "description": "PHA+WW91IGhlYWwgZm9yIFRvdWdobmVzcyBIUCBhdCB0aGUgc3RhcnQgb2YgeW91ciB0dXJuLjwvcD4=",
+    "descriptionHtml": "<p>You heal for Toughness HP at the start of your turn.</p>",
+    "descriptionText": "You heal for Toughness HP at the start of your turn."
+  },
+  {
+    "id": "6a06299f6be32fced49306ab",
+    "indexId": "854ae132-02d0-4d84-84ae-9c8a25b9f69e",
+    "monsterAbilityId": "light-array-barrier",
+    "name": "Light Array Barrier",
+    "description": "PHA+VGhpcyBjcmVhdHVyZSBoYXMgNDAgYmxvY2ssIGJ1dCBjYW5ub3QgZG9kZ2UuPC9wPg==",
+    "descriptionHtml": "<p>This creature has 40 block, but cannot dodge.</p>",
+    "descriptionText": "This creature has 40 block, but cannot dodge."
+  },
+  {
+    "id": "6a06299f6be32fced4930658",
+    "indexId": "48f909ca-80f4-47a0-aa6a-95a41b093ca2",
+    "monsterAbilityId": "light-vulnerability",
+    "name": "Light Vulnerability",
+    "description": "PHA+SWYgeW91IGFyZSBpbiBhbiBhcmVhIHdpdGggYSBicmlnaHQgbGlnaHQsIGJlY29tZSZuYnNwOzxzdHJvbmc+V2Vha2VuZWQ8L3N0cm9uZz4uPC9wPg==",
+    "descriptionHtml": "<p>If you are in an area with a bright light, become&nbsp;<strong>Weakened</strong>.</p>",
+    "descriptionText": "If you are in an area with a bright light, become Weakened."
+  },
+  {
+    "id": "6a06299f6be32fced493067c",
+    "indexId": "86d78189-bdae-4c0a-bcff-2b1e8958c10d",
+    "monsterAbilityId": "lightning-immunity",
+    "name": "Lightning Immunity",
+    "description": "PHA+WW91IHRha2Ugbm8gZGFtYWdlIGZyb20gTGlnaHRuaW5nIGRhbWFnZS48L3A+",
+    "descriptionHtml": "<p>You take no damage from Lightning damage.</p>",
+    "descriptionText": "You take no damage from Lightning damage."
+  },
+  {
+    "id": "6a06299f6be32fced4930699",
+    "indexId": "219df912-8109-43b9-b00a-d42819bc6151",
+    "monsterAbilityId": "limited-dreaming",
+    "name": "Limited Dreaming",
+    "description": "PHA+V2hpbGUgaW4gYSBkcmVhbXNwYWNlIGNyZWF0ZWQgYnkgYSBkcmVhbWVhdGVyLCBhbGwgYWJpbGl0aWVzIHRoYXQgaGF2ZSByZXN0cmljdGlvbnMgc3VjaCBhcyDigJxDYW4gb25seSBiZSB1c2VkIG9uY2UgcGVyIFgu4oCdIG9yIOKAnFlvdSByZWdhaW4gdGhlIHVzZSBvZiB0aGlzIGFiaWxpdHkgYWZ0ZXIgYSByZXN0LuKAnSBjYW5ub3QgYmUgdXNlZC4gVGhlIGV4Y2VwdGlvbiB0byB0aGlzIGlzIGFiaWxpdGllcyB0aGF0IHNheSDigJxDYW4gb25seSBiZSB1c2VkIG9uY2UgcGVyIGVuY291bnRlci7igJ0gb3Ig4oCcWW91IHJlZ2FpbiB0aGUgdXNlIG9mIHRoaXMgYWJpbGl0eSBhdCB0aGUgRW5jb3VudGVyIENvbmNsdXNpb24gUGhhc2XigJ0uPC9wPg==",
+    "descriptionHtml": "<p>While in a dreamspace created by a dreameater, all abilities that have restrictions such as \u001cCan only be used once per X.\u001d or \u001cYou regain the use of this ability after a rest.\u001d cannot be used. The exception to this is abilities that say \u001cCan only be used once per encounter.\u001d or \u001cYou regain the use of this ability at the Encounter Conclusion Phase\u001d.</p>",
+    "descriptionText": "While in a dreamspace created by a dreameater, all abilities that have restrictions such as \u001cCan only be used once per X.\u001d or \u001cYou regain the use of this ability after a rest.\u001d cannot be used. The exception to this is abilities that say \u001cCan only be used once per encounter.\u001d or \u001cYou regain the use of this ability at the Encounter Conclusion Phase\u001d."
+  },
+  {
+    "id": "6a06299f6be32fced493069b",
+    "indexId": "37577ac3-6580-48f6-9b65-3428581182ba",
+    "monsterAbilityId": "limited-flight",
+    "name": "Limited Flight",
+    "description": "PHA+WW91IG1heSBmbHkgZHVyaW5nIHlvdXIgbW92ZW1lbnQgYXQgeW91ciBub3JtYWwgc3BlZWQsIGJ1dCBpZiB5b3UgYXJlIHN0aWxsIGFpcmJvcm5lIGF0IHRoZSBlbmQgb2YgeW91ciB0dXJuLCB5b3UgZmFsbCB0byB0aGUgZ3JvdW5kIHRha2luZyBmYWxsIGRhbWFnZSBhcyBub3JtYWwuPC9wPg==",
+    "descriptionHtml": "<p>You may fly during your movement at your normal speed, but if you are still airborne at the end of your turn, you fall to the ground taking fall damage as normal.</p>",
+    "descriptionText": "You may fly during your movement at your normal speed, but if you are still airborne at the end of your turn, you fall to the ground taking fall damage as normal."
+  },
+  {
+    "id": "6a06299f6be32fced49306c4",
+    "indexId": "af4ad5c1-ec07-4bea-b6f9-c68bf34f3bd5",
+    "monsterAbilityId": "low-flock-tactics",
+    "name": "Low Flock Tactics",
+    "description": "PHA+WW91IGdhaW4gYSArMSBib251cyB0byB5b3VyIGFjY3VyYWN5IHJvbGxzIChtYXggKzMpIGZvciBlYWNoIG90aGVyIEFzdHJhbiBNYWdwaWUgYXR0YWNraW5nIHRoZSBzYW1lIHRhcmdldCB0aGlzIHJvdW5kLiBBbGwgQXN0cmFuIE1hZ3BpZSdzIHRha2UgdGhlaXIgdHVybiBhdCB0aGUgc2FtZSB0aW1lLjwvcD4=",
+    "descriptionHtml": "<p>You gain a +1 bonus to your accuracy rolls (max +3) for each other Astran Magpie attacking the same target this round. All Astran Magpie's take their turn at the same time.</p>",
+    "descriptionText": "You gain a +1 bonus to your accuracy rolls (max +3) for each other Astran Magpie attacking the same target this round. All Astran Magpie's take their turn at the same time."
+  },
+  {
+    "id": "6a06299f6be32fced49306bd",
+    "indexId": "301c733e-4108-48a9-b762-7da40cdb8daa",
+    "monsterAbilityId": "luck-aura",
+    "name": "Luck Aura",
+    "description": "PHA+V2hlbiBhbiBhbGx5IHdpdGhpbiA2MGZ0IHJvbGxzIGEgMSwgdGhleSBtYXkgYXV0b21hdGljYWxseSByZXJvbGwgdGhhdCByb2xsIGFuZCBhY2NlcHQgdGhlIG5ldyByZXN1bHQuPC9wPg==",
+    "descriptionHtml": "<p>When an ally within 60ft rolls a 1, they may automatically reroll that roll and accept the new result.</p>",
+    "descriptionText": "When an ally within 60ft rolls a 1, they may automatically reroll that roll and accept the new result."
+  },
+  {
+    "id": "6a06299f6be32fced49306b7",
+    "indexId": "d1c6d9aa-7dce-40e8-bca3-a066daa6ffb6",
+    "monsterAbilityId": "medium-fiend-regeneration",
+    "name": "Medium Fiend Regeneration",
+    "description": "PHA+WW91IGhlYWwgZm9yIFRvdWdobmVzcyB4IDMgSFAgYXQgdGhlIHN0YXJ0IG9mIHlvdXIgdHVybi48L3A+",
+    "descriptionHtml": "<p>You heal for Toughness x 3 HP at the start of your turn.</p>",
+    "descriptionText": "You heal for Toughness x 3 HP at the start of your turn."
+  },
+  {
+    "id": "6a06299f6be32fced493067f",
+    "indexId": "d1cb00b8-9b26-4c71-a10a-07b2e76efcea",
+    "monsterAbilityId": "mindless",
+    "name": "Mindless",
+    "description": "PHA+WW91IGFyZSBpbW11bmUgdG8gYWxsIG1pbmQtYWZmZWN0aW5nIGVmZmVjdHMuPC9wPg==",
+    "descriptionHtml": "<p>You are immune to all mind-affecting effects.</p>",
+    "descriptionText": "You are immune to all mind-affecting effects."
+  },
+  {
+    "id": "6a06299f6be32fced49306b1",
+    "indexId": "43bb0cd0-d338-4460-8103-bbaf66a39533",
+    "monsterAbilityId": "minor-hardened-skin-mutation",
+    "name": "Minor Hardened Skin Mutation",
+    "description": "PHA+WW91IGdhaW4gKzEgR3VhcmQuPC9wPg==",
+    "descriptionHtml": "<p>You gain +1 Guard.</p>",
+    "descriptionText": "You gain +1 Guard."
+  },
+  {
+    "id": "6a06299f6be32fced49306a5",
+    "indexId": "874da6cc-b12b-4add-8a70-84ae1cf548de",
+    "monsterAbilityId": "morale-failure",
+    "name": "Morale Failure",
+    "description": "PHA+V2hlbiB5b3VyIEhQIHJlYWNoZXMgMCBvciBsb3dlciwgYWxsIEdydW50IGxldmVsIGFsbGllcyB1bmRlciB5b3VyIGNvbW1hbmQgZXhwZXJpZW5jZSBNb3JhbGUgRmFpbHVyZS4gVW5sZXNzIHRoZXJlIGlzIGFub3RoZXIgSGVyb2ljIGxldmVsIGFsbHkgb24gdGhlIGJhdHRsZWZpZWxkLCBhbGwgR3J1bnQgbGV2ZWwgYWxsaWVzIHdpbGwgYXR0ZW1wdCB0byBmbGVlIHRoZSBiYXR0bGVmaWVsZCwgcG90ZW50aWFsbHkgaW5zdGFudGx5IGVuZGluZyB0aGUgZW5jb3VudGVyLjwvcD4=",
+    "descriptionHtml": "<p>When your HP reaches 0 or lower, all Grunt level allies under your command experience Morale Failure. Unless there is another Heroic level ally on the battlefield, all Grunt level allies will attempt to flee the battlefield, potentially instantly ending the encounter.</p>",
+    "descriptionText": "When your HP reaches 0 or lower, all Grunt level allies under your command experience Morale Failure. Unless there is another Heroic level ally on the battlefield, all Grunt level allies will attempt to flee the battlefield, potentially instantly ending the encounter."
+  },
+  {
+    "id": "6a06299f6be32fced493069e",
+    "indexId": "601830b0-9440-4024-96a2-251d55cb4f93",
+    "monsterAbilityId": "multi-headed",
+    "name": "Multi-headed",
+    "description": "PHA+WW91IGhhdmUgMyBoZWFkcywgZWFjaCB3aXRoIHRoZWlyIG93biBIUCBhbmQgZWxlbWVudC4gRWFjaCBoZWFkIGhhcyAyIEFQLCAzIFJQIGFuZCB0aGV5IGFsbCB1c2UgdGhlIHNhbWUgc3RhdHMgYXMgbGlzdGVkIGluIHRoZSBzdGF0cyBibG9jay4gUm9sbCBzZXBhcmF0ZSBpbml0aWF0aXZlIGZvciBlYWNoIGhlYWQuIEFuIEFvRSBhdHRhY2sgb25seSBkb2VzIGRhbWFnZSB0byBvbmUgb2YgdGhlIGhlYWRzLCBjaG9zZW4gYnkgdGhlIGF0dGFja2VyLjwvcD4=",
+    "descriptionHtml": "<p>You have 3 heads, each with their own HP and element. Each head has 2 AP, 3 RP and they all use the same stats as listed in the stats block. Roll separate initiative for each head. An AoE attack only does damage to one of the heads, chosen by the attacker.</p>",
+    "descriptionText": "You have 3 heads, each with their own HP and element. Each head has 2 AP, 3 RP and they all use the same stats as listed in the stats block. Roll separate initiative for each head. An AoE attack only does damage to one of the heads, chosen by the attacker."
+  },
+  {
+    "id": "6a06299f6be32fced4930663",
+    "indexId": "dd566a9b-f1c2-4b83-ad42-af901c2d243c",
+    "monsterAbilityId": "no-escape",
+    "name": "No Escape",
+    "description": "PHA+WW91IG1heSB1c2UgQnVycm93IGFzIGFuIG9wcG9ydHVuaXR5IGF0dGFjayBmb3IgMCBSUC48L3A+",
+    "descriptionHtml": "<p>You may use Burrow as an opportunity attack for 0 RP.</p>",
+    "descriptionText": "You may use Burrow as an opportunity attack for 0 RP."
+  },
+  {
+    "id": "6a06299f6be32fced4930652",
+    "indexId": "669374d6-001c-407e-a253-f6fd147ebffa",
+    "monsterAbilityId": "overheat",
+    "name": "Overheat",
+    "description": "PHA+V2hlbiB5b3UgdGFrZSBmaXJlIGRhbWFnZSwgeW91IHdpbGwgc3RhcnQgdG8gZXhwbG9kZS4gQXQgdGhlIGVuZCBvZiB5b3VyIG5leHQgdHVybiwgeW91ciBIUCB3aWxsIGJlIHNldCB0byAwIGFuZCB5b3Ugd2lsbCB1c2UgRXhwbG9kZSBTZWxmLjwvcD4=",
+    "descriptionHtml": "<p>When you take fire damage, you will start to explode. At the end of your next turn, your HP will be set to 0 and you will use Explode Self.</p>",
+    "descriptionText": "When you take fire damage, you will start to explode. At the end of your next turn, your HP will be set to 0 and you will use Explode Self."
+  },
+  {
+    "id": "6a06299f6be32fced493065f",
+    "indexId": "ba9e6efd-fb2e-4907-adab-a238bf198116",
+    "monsterAbilityId": "pack-tactics",
+    "name": "Pack Tactics",
+    "description": "PHA+Rm9yIGVhY2ggb3RoZXIgV29sZiBhZGphY2VudCB0byB0aGUgdGFyZ2V0LCBhIFdvbGYgZ2V0cyBhICsyIGJvbnVzIHRvIGFjY3VyYWN5IHJvbGxzIG9uIGF0dGFja3MgYWdhaW5zdCB0aGF0IHRhcmdldC48L3A+",
+    "descriptionHtml": "<p>For each other Wolf adjacent to the target, a Wolf gets a +2 bonus to accuracy rolls on attacks against that target.</p>",
+    "descriptionText": "For each other Wolf adjacent to the target, a Wolf gets a +2 bonus to accuracy rolls on attacks against that target."
+  },
+  {
+    "id": "6a06299f6be32fced4930654",
+    "indexId": "1e53cd27-34cc-4b57-a365-4c88fdfb89d6",
+    "monsterAbilityId": "petrifying-gaze",
+    "name": "Petrifying Gaze",
+    "description": "PHA+QSBjcmVhdHVyZSBhdHRhY2tpbmcgeW91IHN1ZmZlcnMgYSBzdGFja2luZyAtMSBwZW5hbHR5IHRvIHRoZWlyIGFnaWxpdHkgYXMgdGhleSBzdHJ1Z2dsZSB0byBhdm9pZCBtZWV0aW5nIHRoZSBjcmVhdHVyZeKAmXMgcGV0cmlmeWluZyBnYXplLiBFdmVyeSB0dXJuIG5vdCBzcGVudCBhdHRhY2tpbmcgdGhlIGJhc2lsaXNrIHJlc3RvcmVzIDEgYWdpbGl0eSB0byB0aGUgY2hhcmFjdGVyLjwvcD4=",
+    "descriptionHtml": "<p>A creature attacking you suffers a stacking -1 penalty to their agility as they struggle to avoid meeting the creature’s petrifying gaze. Every turn not spent attacking the basilisk restores 1 agility to the character.</p>",
+    "descriptionText": "A creature attacking you suffers a stacking -1 penalty to their agility as they struggle to avoid meeting the creature’s petrifying gaze. Every turn not spent attacking the basilisk restores 1 agility to the character."
+  },
+  {
+    "id": "6a06299f6be32fced4930656",
+    "indexId": "003b9263-eafc-4968-ab85-fca3deea0499",
+    "monsterAbilityId": "phase-through",
+    "name": "Phase through",
+    "description": "PHA+WW91IG1heSBtb3ZlIHRocm91Z2ggc29saWQgb2JqZWN0cyBhbmQgZW5lbWllcyB3aXRoIG5vIHBlbmFsdHkuPC9wPg==",
+    "descriptionHtml": "<p>You may move through solid objects and enemies with no penalty.</p>",
+    "descriptionText": "You may move through solid objects and enemies with no penalty."
+  },
+  {
+    "id": "6a06299f6be32fced4930687",
+    "indexId": "ea1e7754-bb9c-49ec-b043-db06ece34dd3",
+    "monsterAbilityId": "poison-tail",
+    "name": "Poison Tail",
+    "description": "PHA+V2hlbiBtYWtpbmcgYSBiYXNpYyBMaWdodCBvciBIZWF2eSBhdHRhY2sgd2l0aCB5b3VyIHRhaWwsIHlvdSBpbmZsaWN0IERhemUgb24gZGVhbGluZyBkYW1hZ2UuIElmIHRoZSB0YXJnZXQgaXMgYWxyZWFkeSBEYXplZCwgeW91IGluc3RlYWQgZGVhbCA1IChMaWdodCkgb3IgMTAgKEhlYXZ5KSBGdWxsIFBpZXJjZSBQb2lzb24gZGFtYWdlLjwvcD4=",
+    "descriptionHtml": "<p>When making a basic Light or Heavy attack with your tail, you inflict Daze on dealing damage. If the target is already Dazed, you instead deal 5 (Light) or 10 (Heavy) Full Pierce Poison damage.</p>",
+    "descriptionText": "When making a basic Light or Heavy attack with your tail, you inflict Daze on dealing damage. If the target is already Dazed, you instead deal 5 (Light) or 10 (Heavy) Full Pierce Poison damage."
+  },
+  {
+    "id": "6a06299f6be32fced4930673",
+    "indexId": "12659734-f986-4a80-8661-50ff462037b9",
+    "monsterAbilityId": "prismatic-adaptability",
+    "name": "Prismatic Adaptability",
+    "description": "PHA+V2hlbiBzdHJ1Y2sgYnkgYSBtYWdpY2FsIGF0dGFjaywgeW91IGdhaW4gMTAwIERhbWFnZSBSZWR1Y3Rpb24gdG8gdGhhdCBhdHRhY2sgZWxlbWVudCBpbmRlZmluaXRlbHkuJm5ic3A7WW91IGNhbiBvbmx5IGhhdmUgb25lIGluc3RhbmNlIG9mIHRoaXMgYWRhcHRhYmlsaXR5IGF0IGEgdGltZS48L3A+",
+    "descriptionHtml": "<p>When struck by a magical attack, you gain 100 Damage Reduction to that attack element indefinitely.&nbsp;You can only have one instance of this adaptability at a time.</p>",
+    "descriptionText": "When struck by a magical attack, you gain 100 Damage Reduction to that attack element indefinitely. You can only have one instance of this adaptability at a time."
+  },
+  {
+    "id": "6a06299f6be32fced493069d",
+    "indexId": "640edf9c-bf94-4fba-b00e-f61a93349565",
+    "monsterAbilityId": "razorsharp",
+    "name": "Razorsharp",
+    "description": "PHA+WW91IGJsYWRlbGlrZSBhcm1zIGFyZSByYXpvciBzaGFycCwgY2F1c2luZyB0aGUgdGFyZ2V0IHRvIGJsZWVkIHdoZW4gaGl0LiBXaGVuIHlvdSBkZWFsIGRhbWFnZSB0byBhIHRhcmdldCB3ZWFyaW5nIG5vIGFybW9yIG9yIGxpZ2h0IGFybW9yLCB5b3UgZGVhbHMgYW4gYWRkaXRpb25hbCBQb3dlciB0cnVlIGRhbWFnZS48L3A+",
+    "descriptionHtml": "<p>You bladelike arms are razor sharp, causing the target to bleed when hit. When you deal damage to a target wearing no armor or light armor, you deals an additional Power true damage.</p>",
+    "descriptionText": "You bladelike arms are razor sharp, causing the target to bleed when hit. When you deal damage to a target wearing no armor or light armor, you deals an additional Power true damage."
+  },
+  {
+    "id": "6a06299f6be32fced49306a7",
+    "indexId": "f34d8409-1461-45b2-a0bc-ead10e647d7a",
+    "monsterAbilityId": "reach",
+    "name": "Reach",
+    "description": "PHA+WW91ciBhdHRhY2tzIGNhbiBhdHRhY2sgdGFyZ2V0cyB1cCB0byAxMGZ0IGF3YXkuPC9wPg==",
+    "descriptionHtml": "<p>Your attacks can attack targets up to 10ft away.</p>",
+    "descriptionText": "Your attacks can attack targets up to 10ft away."
+  },
+  {
+    "id": "6a06299f6be32fced49306df",
+    "indexId": "8726fdf0-9cfb-4159-8e30-8a8ef30310e0",
+    "monsterAbilityId": "regenerating-bone",
+    "name": "Regenerating Bone",
+    "description": "PHA+WW91IHJlZ2VuZXJhdGUgVG91Z2huZXNzIEhQIGF0IHRoZSBzdGFydCBvZiB5b3VyIHR1cm4uPC9wPg==",
+    "descriptionHtml": "<p>You regenerate Toughness HP at the start of your turn.</p>",
+    "descriptionText": "You regenerate Toughness HP at the start of your turn."
+  },
+  {
+    "id": "6a06299f6be32fced49306a9",
+    "indexId": "9f5575a5-3085-42ca-9792-db132b2bd573",
+    "monsterAbilityId": "regenerating-bone-ii",
+    "name": "Regenerating Bone II",
+    "description": "PHA+RWFjaCBvZiB5b3VyIGluZGl2aWR1YWwgcGFydHMgcmVnZW5lcmF0ZXMgVG91Z2huZXNzIEhQIGF0IHRoZSBzdGFydCBvZiB5b3VyIHR1cm4uIFRoaXMgY29udGludWVzIGV2ZW4gYWZ0ZXIgYSBib2R5IHBhcnQgcmVhY2hlcyAwIEhQIHVudGlsIGFsbCBib2R5IHBhcnRzIGhhdmUgYmVlbiByZWR1Y2VkIHRvIDAgSFAgb3IgbG93ZXIuPC9wPg==",
+    "descriptionHtml": "<p>Each of your individual parts regenerates Toughness HP at the start of your turn. This continues even after a body part reaches 0 HP until all body parts have been reduced to 0 HP or lower.</p>",
+    "descriptionText": "Each of your individual parts regenerates Toughness HP at the start of your turn. This continues even after a body part reaches 0 HP until all body parts have been reduced to 0 HP or lower."
+  },
+  {
+    "id": "6a06299f6be32fced4930659",
+    "indexId": "4c108971-aaff-40d9-a739-16cc2a50a243",
+    "monsterAbilityId": "regeneration",
+    "name": "Regeneration",
+    "description": "PHA+SWYgeW91IHdlcmUgbm90IGhpdCB3aXRoIGEgSGVhdnkgQXR0YWNrIGR1cmluZyB0aGUgbGFzdCB0dXJuLCBoZWFsIGZvciAzMCBIUC48L3A+",
+    "descriptionHtml": "<p>If you were not hit with a Heavy Attack during the last turn, heal for 30 HP.</p>",
+    "descriptionText": "If you were not hit with a Heavy Attack during the last turn, heal for 30 HP."
+  },
+  {
+    "id": "6a06299f6be32fced49306dc",
+    "indexId": "8aca8ebe-d508-493f-9b64-46cbebe735de",
+    "monsterAbilityId": "repulsor-field",
+    "name": "Repulsor Field",
+    "description": "PHA+QW55IGF0dGFjayBhZ2FpbnN0IHlvdSBmcm9tIGZ1cnRoZXIgdGhhbiA0MGZ0IGF3YXkgYXV0b21hdGljYWxseSBtaXNzZXMuPC9wPg==",
+    "descriptionHtml": "<p>Any attack against you from further than 40ft away automatically misses.</p>",
+    "descriptionText": "Any attack against you from further than 40ft away automatically misses."
+  },
+  {
+    "id": "6a06299f6be32fced4930680",
+    "indexId": "1372f62c-c230-49c9-99b8-7460c1a4fbb8",
+    "monsterAbilityId": "resurrection",
+    "name": "Resurrection",
+    "description": "PHA+V2hlbiB5b3UgcmVhY2ggMCBIUCwgeW91IGFyZSByZXZpdmVkIHdpdGggMSBIUCBhdCB0aGUgc3RhcnQgb2YgeW91ciBuZXh0IHR1cm4uIEFueSBkYW1hZ2UgZGVhbHQgdG8geW91IHdoaWxlIHlvdSBoYXZlIDAgSFAgZGlzYWJsZXMgdGhpcyBhYmlsaXR5LjwvcD4=",
+    "descriptionHtml": "<p>When you reach 0 HP, you are revived with 1 HP at the start of your next turn. Any damage dealt to you while you have 0 HP disables this ability.</p>",
+    "descriptionText": "When you reach 0 HP, you are revived with 1 HP at the start of your next turn. Any damage dealt to you while you have 0 HP disables this ability."
+  },
+  {
+    "id": "6a06299f6be32fced493068b",
+    "indexId": "4d0090bb-1a77-4976-8b43-d82bb81fccfd",
+    "monsterAbilityId": "revel-in-death",
+    "name": "Revel in Death",
+    "description": "PHA+SWYgdGhlcmUncyBhIGNvcnBzZSB3aXRoaW4gNWZ0IG9mIHlvdSBhdCB0aGUgc3RhcnQgb2YgeW91ciB0dXJuLCB5b3UgaGVhbCBmb3IgaGFsZiB5b3VyIG1heGltdW0gSFAgYW5kIGdhaW4gYSArNCBib251cyB0byBhY2N1cmFjeSBjaGVja3MuPC9wPg==",
+    "descriptionHtml": "<p>If there's a corpse within 5ft of you at the start of your turn, you heal for half your maximum HP and gain a +4 bonus to accuracy checks.</p>",
+    "descriptionText": "If there's a corpse within 5ft of you at the start of your turn, you heal for half your maximum HP and gain a +4 bonus to accuracy checks."
+  },
+  {
+    "id": "6a06299f6be32fced49306af",
+    "indexId": "2d1b07d6-4c5a-4fc7-9950-c0e755f2b15e",
+    "monsterAbilityId": "rush",
+    "name": "Rush",
+    "description": "PHA+QSBjcmVhdHVyZSB3aXRoIFJ1c2ggZ2V0cyBhIHR1cm4gaW1tZWRpYXRlbHkgd2hlbiBiZWluZyBzdW1tb25lZCwgYW5kIHRoZSBzdW1tb25pbmcgcmFuZ2UgaXMgaW5jcmVhc2VkIHRvIDYwZnQuJm5ic3A7IElmIHN1bW1vbmVkIGluIHRoZSBtaWRkbGUgb2YgeW91ciB0dXJuLCB0aGVuIHRha2UgdGhpcyBjcmVhdHVyZSdzIHR1cm4gZmlyc3QsIHRoZW4gZmluaXNoIHRoZSByZW1haW5kZXIgb2YgeW91ciB0dXJuLjwvcD4=",
+    "descriptionHtml": "<p>A creature with Rush gets a turn immediately when being summoned, and the summoning range is increased to 60ft.&nbsp; If summoned in the middle of your turn, then take this creature's turn first, then finish the remainder of your turn.</p>",
+    "descriptionText": "A creature with Rush gets a turn immediately when being summoned, and the summoning range is increased to 60ft.  If summoned in the middle of your turn, then take this creature's turn first, then finish the remainder of your turn."
+  },
+  {
+    "id": "6a06299f6be32fced4930650",
+    "indexId": "bfcc8738-873d-4768-874e-cec3f1ae665a",
+    "monsterAbilityId": "shimmer",
+    "name": "Shimmer",
+    "description": "PHA+WW91ciBwb3NpdGlvbiBpcyBjb25zdGFudGx5IGluIGZsdXgsIGV2ZW4gd2hlbiBub3QgbW92aW5nLiBTaW5nbGUgdGFyZ2V0IFN1cmUgSGl0IGF0dGFja3MgYXJlIHRyZWF0ZWQgYXMgTG9jay1vbiBhZ2FpbnN0IHlvdS4gWW91IGhhdmUgMCBndWFyZCwgYnV0IGdhaW4gKzIgZG9kZ2UgKGFscmVhZHkgYWRkZWQgdG8gc3RhdHMpLjwvcD4=",
+    "descriptionHtml": "<p>Your position is constantly in flux, even when not moving. Single target Sure Hit attacks are treated as Lock-on against you. You have 0 guard, but gain +2 dodge (already added to stats).</p>",
+    "descriptionText": "Your position is constantly in flux, even when not moving. Single target Sure Hit attacks are treated as Lock-on against you. You have 0 guard, but gain +2 dodge (already added to stats)."
+  },
+  {
+    "id": "6a06299f6be32fced493066e",
+    "indexId": "6cace468-a50c-4831-8976-e98f2def1afa",
+    "monsterAbilityId": "shimmer-spider",
+    "name": "Shimmer Spider",
+    "description": "PHA+WW91IGFyZSBwZXJtYW5lbnRseSBoaWRkZW4gdW50aWwgeW91IGF0dGFjayBvciB5b3UgYXJlIHNwb3R0ZWQgd2l0aCBhIHBlcmNlcHRpb24gY2hlY2sgbGlrZSBub3JtYWwgKERDMjMpLjwvcD4=",
+    "descriptionHtml": "<p>You are permanently hidden until you attack or you are spotted with a perception check like normal (DC23).</p>",
+    "descriptionText": "You are permanently hidden until you attack or you are spotted with a perception check like normal (DC23)."
+  },
+  {
+    "id": "6a06299f6be32fced4930671",
+    "indexId": "7c16b46e-7595-4c6f-acd4-f87fb05d1206",
+    "monsterAbilityId": "single-fin",
+    "name": "Single Fin",
+    "description": "PHA+V2hlbiBub3QgYXR0YWNraW5nLCBvbmx5IGEgc2luZ2xlIGZpbiBzdGlja3Mgb3V0IGZyb20gdW5kZXIgdGhlIGdyb3VuZC4gV2hpbGUgeW91IGFyZSBub3QgYXR0YWNraW5nLCB5b3UgZ2FpbiBhICsxMC8rMjAgYm9udXMgdG8geW91ciBkb2RnZSBleGNlcHQgYWdhaW5zdCBvdGhlciBidXJyb3dlZCBjcmVhdHVyZXMuIFlvdSBjYW5ub3QgbWFrZSByZWFjdGlvbnMgd2hpbGUgbm90IHVuZGVyZ3JvdW5kLjwvcD4=",
+    "descriptionHtml": "<p>When not attacking, only a single fin sticks out from under the ground. While you are not attacking, you gain a +10/+20 bonus to your dodge except against other burrowed creatures. You cannot make reactions while not underground.</p>",
+    "descriptionText": "When not attacking, only a single fin sticks out from under the ground. While you are not attacking, you gain a +10/+20 bonus to your dodge except against other burrowed creatures. You cannot make reactions while not underground."
+  },
+  {
+    "id": "6a06299f6be32fced49306a8",
+    "indexId": "aec6abc7-7721-42ab-928a-9990b6e5c0de",
+    "monsterAbilityId": "skeletal-part-targeting",
+    "name": "Skeletal Part Targeting",
+    "description": "PHA+WW91IGhhdmUgNCBhcm1zIHdoaWNoIGNhbiBiZSB0YXJnZXRlZCBzZXBhcmF0ZWx5IGZyb20gdGhlIG1haW4gYm9keS4gRm9yIGVhY2ggYWN0aXZlIGFybSwgeW91IGdhaW4gMSBBUC4gRWFjaCBhcm0gaGFzIDQwIEhQIGFuZCB1c2VzIHRoZSBEb2RnZSBhbmQgR3VhcmQgb2YgdGhlIG1haW4gYm9keS4gVGhleSBoYXZlIDEgUlAsIHdoaWNoIHJlZ2VuZXJhdGVzIGF0IHRoZSBzdGFydCBvZiB5b3VyIHR1cm4uIEVhY2ggYXJtIGlzIGF0dGFjaGVkIHRvIHRoZSBtYWluIGJvZHkgYW5kIG1vdmVzIGFsb25nIHdpdGggaXQuIFRoZXkgb3RoZXJ3aXNlIGhhdmUgYSBtb3ZlbWVudCBzcGVlZCBvZiAwIGFuZCBhcmUgaW1tdW5lIHRvIEtub2NrYmFja3MsIFByb25lIGFuZCBvdGhlciBkaXNhYmxpbmcgZWZmZWN0cy4gQW4gQW9FIGF0dGFjayBvbmx5IGRvZXMgZGFtYWdlIHRvIDEgcGFydCBvZiB5b3VyIGJvZHksIGVpdGhlciB0aGUgbWFpbiBib2R5IG9yIGFuIGFybSwgd2hpY2ggaXMgY2hvc2VuIGJ5IHRoZSBhdHRhY2tlci48L3A+",
+    "descriptionHtml": "<p>You have 4 arms which can be targeted separately from the main body. For each active arm, you gain 1 AP. Each arm has 40 HP and uses the Dodge and Guard of the main body. They have 1 RP, which regenerates at the start of your turn. Each arm is attached to the main body and moves along with it. They otherwise have a movement speed of 0 and are immune to Knockbacks, Prone and other disabling effects. An AoE attack only does damage to 1 part of your body, either the main body or an arm, which is chosen by the attacker.</p>",
+    "descriptionText": "You have 4 arms which can be targeted separately from the main body. For each active arm, you gain 1 AP. Each arm has 40 HP and uses the Dodge and Guard of the main body. They have 1 RP, which regenerates at the start of your turn. Each arm is attached to the main body and moves along with it. They otherwise have a movement speed of 0 and are immune to Knockbacks, Prone and other disabling effects. An AoE attack only does damage to 1 part of your body, either the main body or an arm, which is chosen by the attacker."
+  },
+  {
+    "id": "6a06299f6be32fced49306da",
+    "indexId": "7c153c40-b72b-4898-b0af-dc85074f4da9",
+    "monsterAbilityId": "skitter",
+    "name": "Skitter",
+    "description": "PHA+WW91ciBtb3ZlbWVudCBpbiBhIHN0cmFpZ2h0IGxpbmUgZ2FpbnMgKzEwIG1vdmVtZW50IHNwZWVkLjwvcD4=",
+    "descriptionHtml": "<p>Your movement in a straight line gains +10 movement speed.</p>",
+    "descriptionText": "Your movement in a straight line gains +10 movement speed."
+  },
+  {
+    "id": "6a06299f6be32fced49306ce",
+    "indexId": "b62f421c-bf9b-4508-b1fa-dcdd547b6c3c",
+    "monsterAbilityId": "slime-type",
+    "name": "Slime Type",
+    "description": "PHA+WW91IGdhaW4gMTAgRGFtYWdlIFJlZHVjdGlvbiBhZ2FpbnN0IHBoeXNpY2FsIGRhbWFnZSwgYnV0IGNhbm5vdCBCbG9jayBvciBEb2RnZSBhdHRhY2tzLjwvcD4=",
+    "descriptionHtml": "<p>You gain 10 Damage Reduction against physical damage, but cannot Block or Dodge attacks.</p>",
+    "descriptionText": "You gain 10 Damage Reduction against physical damage, but cannot Block or Dodge attacks."
+  },
+  {
+    "id": "6a06299f6be32fced4930695",
+    "indexId": "c0455e7b-f5ea-47e5-921a-603aac6d7c32",
+    "monsterAbilityId": "slippery",
+    "name": "Slippery",
+    "description": "PHA+WW91IG1heSB1c2UgdGhlIERpc2VuZ2FnZSBhY3Rpb24gZm9yIDAgQVAuPC9wPg==",
+    "descriptionHtml": "<p>You may use the Disengage action for 0 AP.</p>",
+    "descriptionText": "You may use the Disengage action for 0 AP."
+  },
+  {
+    "id": "6a06299f6be32fced493067b",
+    "indexId": "0db17577-5208-487c-a6fe-3a936602bfc1",
+    "monsterAbilityId": "snow-camouflage",
+    "name": "Snow Camouflage",
+    "description": "PHA+WW91IG1heSBoaWRlIGluc2lkZSBhIGJsaXp6YXJkIHdpdGhvdXQgcmVxdWlyaW5nIGNvdmVyIHRvIGhpZGUgYmVoaW5kLjwvcD4=",
+    "descriptionHtml": "<p>You may hide inside a blizzard without requiring cover to hide behind.</p>",
+    "descriptionText": "You may hide inside a blizzard without requiring cover to hide behind."
+  },
+  {
+    "id": "6a06299f6be32fced493066c",
+    "indexId": "2635baf2-cb6a-4550-ba0a-2fa95fe12781",
+    "monsterAbilityId": "soft-wings",
+    "name": "Soft Wings",
+    "description": "PHA+SWYgeW91IHRha2UgZGFtYWdlIGZyb20gYSBIZWF2eSBvciBQcmVjaXNlIEF0dGFjayB3aGlsZSBmbHlpbmcsIGJ1dCB5b3UgbXVzdCBpbW1lZGlhdGVseSBsYW5kLiBZb3UgY2Fubm90IGZseSBhZ2FpbiB1bnRpbCB0aGUgZW5kIG9mIHlvdXIgbmV4dCB0dXJuLjwvcD4=",
+    "descriptionHtml": "<p>If you take damage from a Heavy or Precise Attack while flying, but you must immediately land. You cannot fly again until the end of your next turn.</p>",
+    "descriptionText": "If you take damage from a Heavy or Precise Attack while flying, but you must immediately land. You cannot fly again until the end of your next turn."
+  },
+  {
+    "id": "6a06299f6be32fced4930662",
+    "indexId": "8d98f2ba-d7f4-4cf8-88f9-5bccde9b20d6",
+    "monsterAbilityId": "spider-climb",
+    "name": "Spider Climb",
+    "description": "PHA+WW91IGNhbiB3YWxrIG9uIHdhbGxzIGFzIGlmIGl0IHdlcmUgc29saWQgZ3JvdW5kLiBZb3UgaWdub3JlIHdlYmJpbmcgYW5kIG90aGVyIGRpZmZpY3VsdCB0ZXJyYWluIGNyZWF0ZWQgYnkgc3BpZGVycy48L3A+",
+    "descriptionHtml": "<p>You can walk on walls as if it were solid ground. You ignore webbing and other difficult terrain created by spiders.</p>",
+    "descriptionText": "You can walk on walls as if it were solid ground. You ignore webbing and other difficult terrain created by spiders."
+  },
+  {
+    "id": "6a06299f6be32fced4930666",
+    "indexId": "c15d05fd-dbb6-40fe-b314-a35a88f07005",
+    "monsterAbilityId": "spider-host",
+    "name": "Spider Host",
+    "description": "PHA+V2hlbiB5b3UgdGFrZSBkYW1hZ2UgZnJvbSBhIHdlYXBvbiBhdHRhY2ssIGEgQnVycm93aW5nIFNwaWRlciBhcHBlYXJzIG5leHQgdG8geW91LCBjbG9zZXN0IHRvIHRoZSBwb2ludCBvZiBpbXBhY3Qgb2YgdGhlIGF0dGFjay48L3A+",
+    "descriptionHtml": "<p>When you take damage from a weapon attack, a Burrowing Spider appears next to you, closest to the point of impact of the attack.</p>",
+    "descriptionText": "When you take damage from a weapon attack, a Burrowing Spider appears next to you, closest to the point of impact of the attack."
+  },
+  {
+    "id": "6a06299f6be32fced493069c",
+    "indexId": "9490afcd-ae5f-48b4-917d-b7d8f9e5a7ca",
+    "monsterAbilityId": "stalk",
+    "name": "Stalk",
+    "description": "PHA+WW91IGFyZSBjYW1vdWZsYWdlZCBhcyB5b3Ugc3RhbGtzIHlvdXIgcHJleS4gWW91IGdhaW4gYSBib251cyArMTAgdG8gc3RlYWx0aCBjaGVja3MgYW5kIGNhbiBtb3ZlIGF0IGZ1bGwgc3BlZWQgd2hpbGUgaGlkaW5nLiBXaGVuIHlvdSBnZXQgYSBzdXJwcmlzZSByb3VuZCwgeW91ciBpbml0aWF0aXZlIGlzIHRyZWF0ZWQgYXMgaWYgeW91IGhhZCByb2xsZWQgdGhlIG1heGltdW0gcG9zc2libGUuPC9wPg==",
+    "descriptionHtml": "<p>You are camouflaged as you stalks your prey. You gain a bonus +10 to stealth checks and can move at full speed while hiding. When you get a surprise round, your initiative is treated as if you had rolled the maximum possible.</p>",
+    "descriptionText": "You are camouflaged as you stalks your prey. You gain a bonus +10 to stealth checks and can move at full speed while hiding. When you get a surprise round, your initiative is treated as if you had rolled the maximum possible."
+  },
+  {
+    "id": "6a06299f6be32fced4930677",
+    "indexId": "a282c8f9-f6d3-404a-9242-a692cb0d817a",
+    "monsterAbilityId": "stationary",
+    "name": "Stationary",
+    "description": "PHA+WW91IGhhdmUgMCBtb3ZlbWVudCBhbmQgY2FuIG9ubHkgYmUgZm9yY2VmdWxseSBtb3ZlZCB0aHJvdWdoIFNlY3JldCBBcnQgb3IgQ2xpbWF4IEFydCBhYmlsaXRpZXMuPC9wPg==",
+    "descriptionHtml": "<p>You have 0 movement and can only be forcefully moved through Secret Art or Climax Art abilities.</p>",
+    "descriptionText": "You have 0 movement and can only be forcefully moved through Secret Art or Climax Art abilities."
+  },
+  {
+    "id": "6a06299f6be32fced49306a6",
+    "indexId": "0ef5e61b-7616-4bf3-a32d-f7c2ceb3f083",
+    "monsterAbilityId": "steady-stance",
+    "name": "Steady Stance",
+    "description": "PHA+WW91IGFyZSBpbW11bmUgdG8gS25vY2tiYWNrcyBhbmQgY2Fubm90IGJlIGtub2NrZWQgcHJvbmUuJm5ic3A7PC9wPg==",
+    "descriptionHtml": "<p>You are immune to Knockbacks and cannot be knocked prone.&nbsp;</p>",
+    "descriptionText": "You are immune to Knockbacks and cannot be knocked prone."
+  },
+  {
+    "id": "6a06299f6be32fced4930694",
+    "indexId": "561b3c90-c0dd-4027-a3e7-ad6fbe62421f",
+    "monsterAbilityId": "stealthy",
+    "name": "Stealthy",
+    "description": "PHA+WW91IHN0YXJ0IHRoZSBiYXR0bGUgaW4gc3RlYWx0aCAoMTArWW91ciBzdGVhbHRoIHNraWxsIGJvbnVzKSB1bmxlc3Mgc3BvdHRlZCBvciB2aXNpYmxlIGJlZm9yZSB0aGUgYmF0dGxlIHN0YXJ0cy48L3A+",
+    "descriptionHtml": "<p>You start the battle in stealth (10+Your stealth skill bonus) unless spotted or visible before the battle starts.</p>",
+    "descriptionText": "You start the battle in stealth (10+Your stealth skill bonus) unless spotted or visible before the battle starts."
+  },
+  {
+    "id": "6a06299f6be32fced49306c1",
+    "indexId": "4b2b13eb-876d-483a-963e-0d410e3462de",
+    "monsterAbilityId": "sticky-movement",
+    "name": "Sticky Movement",
+    "description": "PHA+WW91IGNhbiB3YWxrIG9uIHdhbGxzIGFzIGlmIGl0IHdlcmUgc29saWQgZ3JvdW5kLjwvcD4=",
+    "descriptionHtml": "<p>You can walk on walls as if it were solid ground.</p>",
+    "descriptionText": "You can walk on walls as if it were solid ground."
+  },
+  {
+    "id": "6a06299f6be32fced493069a",
+    "indexId": "66966db7-3b41-49de-ab03-35b713076f15",
+    "monsterAbilityId": "stone-skin",
+    "name": "Stone Skin",
+    "description": "PHA+WW91IGdhaW4gKzIgZ3VhcmQsIGJ1dCBsb3NlIDIgYWdpbGl0eS4gKEFscmVhZHkgYWRkZWQgdG8gc3RhdHMpPC9wPg==",
+    "descriptionHtml": "<p>You gain +2 guard, but lose 2 agility. (Already added to stats)</p>",
+    "descriptionText": "You gain +2 guard, but lose 2 agility. (Already added to stats)"
+  },
+  {
+    "id": "6a06299f6be32fced493067d",
+    "indexId": "2820da07-8ac6-42da-bdcb-93e0acbd4cd1",
+    "monsterAbilityId": "storm-creature",
+    "name": "Storm Creature",
+    "description": "PHA+WW91ciBGb2N1cywgUG93ZXIgYW5kIEFnaWxpdHkgYXJlIGRvdWJsZWQgZHVyaW5nIGEgc3Rvcm0uPC9wPg==",
+    "descriptionHtml": "<p>Your Focus, Power and Agility are doubled during a storm.</p>",
+    "descriptionText": "Your Focus, Power and Agility are doubled during a storm."
+  },
+  {
+    "id": "6a06299f6be32fced49306c7",
+    "indexId": "11cf987f-bcad-40ea-951a-5431e689f2d3",
+    "monsterAbilityId": "strike-for-the-shiny--smartly-",
+    "name": "Strike for the Shiny, Smartly!",
+    "description": "PHA+WW91IGFyZSBwcmVkaXNwb3NlZCB0byBhdHRhY2sgdGFyZ2V0cyB3aG8gYXJlIGRpc3BsYXlpbmcgdGhlIG1vc3QgdmFsdWFibGUgaXRlbXMsIENyYWZ0ZXIgbnVtZXJpY2FsIGJvbnVzZXMgKEZvY3VzLCBQb3dlciwgQ3JhZnRpbmcgc2tpbGwpIGFyZSBub3QgcGVyY2VwdGlibGUgYnV0IHRoaW5ncyBsaWtlIGxheWVyaW5nIGZvciBhcm1vciBvciBhbGxveWluZyB3ZWFwb25zIGFyZSwgWW91IHByaW9yaXRpemUgdmFsdWUgb24gd2VhcG9ucyBhbmQgYXJ0aWZhY3RzLCBidXQgaWYgbm9uZSBvZiB0aGF0IGlzIHZpc2libGUgdGhlbiB5b3Ugd2lsbCBkZWZhdWx0IHRvIGF0dGFja2luZyB0aGUgb25lIHdpdGggdGhlIHNoaW5pZXN0IGFybW9yLiBZb3UgYWxzbyBjb25zaWRlciBjdXJyZW50IGhlYWx0aCwgYXR0ZW1wdGluZyB0byBkb3duIChub3QgZmluaXNoIG9mZiwganVzdCBkb3duKSBsb3cgaGVhbHRoICZndDsyNSUgSFAgdGFyZ2V0cyBhcyB0b3AgcHJpb3JpdHksIGl04oCZcyBlYXNpZXIgdG8gbG9vdCBwZW9wbGUgd2hvIGNhbuKAmXQgZmlnaHQgYmFjayBhZnRlciBhbGwhPC9wPg==",
+    "descriptionHtml": "<p>You are predisposed to attack targets who are displaying the most valuable items, Crafter numerical bonuses (Focus, Power, Crafting skill) are not perceptible but things like layering for armor or alloying weapons are, You prioritize value on weapons and artifacts, but if none of that is visible then you will default to attacking the one with the shiniest armor. You also consider current health, attempting to down (not finish off, just down) low health &gt;25% HP targets as top priority, it’s easier to loot people who can’t fight back after all!</p>",
+    "descriptionText": "You are predisposed to attack targets who are displaying the most valuable items, Crafter numerical bonuses (Focus, Power, Crafting skill) are not perceptible but things like layering for armor or alloying weapons are, You prioritize value on weapons and artifacts, but if none of that is visible then you will default to attacking the one with the shiniest armor. You also consider current health, attempting to down (not finish off, just down) low health >25% HP targets as top priority, it’s easier to loot people who can’t fight back after all!"
+  },
+  {
+    "id": "6a06299f6be32fced49306c6",
+    "indexId": "977964c8-eaae-43e2-b0e6-df722d6334f2",
+    "monsterAbilityId": "strike-for-the-shiny-",
+    "name": "Strike for the Shiny!",
+    "description": "PHA+WW91IGFyZSBwcmVkaXNwb3NlZCB0byBhdHRhY2sgdGFyZ2V0cyB3aG8gYXJlIGRpc3BsYXlpbmcgdGhlIG1vc3QgdmFsdWFibGUgaXRlbXMsIENyYWZ0ZXIgbnVtZXJpY2FsIGJvbnVzZXMgKEZvY3VzLCBQb3dlciwgQ3JhZnRpbmcgc2tpbGwpIGFyZSBub3QgcGVyY2VwdGlibGUgYnV0IHRoaW5ncyBsaWtlIGxheWVyaW5nIGZvciBhcm1vciBvciBhbGxveWluZyB3ZWFwb25zIGFyZSwgWW91IHByaW9yaXRpemUgdmFsdWUgb24gd2VhcG9ucyBhbmQgYXJ0aWZhY3RzLCBidXQgaWYgbm9uZSBvZiB0aGF0IGlzIHZpc2libGUgdGhlbiB5b3Ugd2lsbCBkZWZhdWx0IHRvIGF0dGFja2luZyB0aGUgb25lIHdpdGggdGhlIHNoaW5pZXN0IGFybW9yLjwvcD4=",
+    "descriptionHtml": "<p>You are predisposed to attack targets who are displaying the most valuable items, Crafter numerical bonuses (Focus, Power, Crafting skill) are not perceptible but things like layering for armor or alloying weapons are, You prioritize value on weapons and artifacts, but if none of that is visible then you will default to attacking the one with the shiniest armor.</p>",
+    "descriptionText": "You are predisposed to attack targets who are displaying the most valuable items, Crafter numerical bonuses (Focus, Power, Crafting skill) are not perceptible but things like layering for armor or alloying weapons are, You prioritize value on weapons and artifacts, but if none of that is visible then you will default to attacking the one with the shiniest armor."
+  },
+  {
+    "id": "6a06299f6be32fced493067a",
+    "indexId": "8d4aa970-2c9e-4001-b9a2-699bc8c5275f",
+    "monsterAbilityId": "sub-zero-body",
+    "name": "Sub-Zero Body",
+    "description": "PHA+WW91ciBib2R5IGlzIGZyZWV6aW5nIGNvbGQuIEFueSBtZWxlZSBhdHRhY2tzIG1hZGUgYnkgeW91IGRlYWwgRnJvc3QgZGFtYWdlLiBBbnkgY3JlYXR1cmUgdG91Y2hpbmcgeW91IGZvciBhbiBleHRlbmRlZCBwZXJpb2Qgb2YgdGltZSB0YWtlcyBIZWF2eSBGcm9zdCBkYW1hZ2UgYXQgdGhlIHN0YXJ0IG9mIHRoZWlyIHR1cm4uJm5ic3A7PC9wPg==",
+    "descriptionHtml": "<p>Your body is freezing cold. Any melee attacks made by you deal Frost damage. Any creature touching you for an extended period of time takes Heavy Frost damage at the start of their turn.&nbsp;</p>",
+    "descriptionText": "Your body is freezing cold. Any melee attacks made by you deal Frost damage. Any creature touching you for an extended period of time takes Heavy Frost damage at the start of their turn."
+  },
+  {
+    "id": "6a06299f6be32fced49306ad",
+    "indexId": "1f9fbe2c-a56b-428f-a84c-b48a946f6659",
+    "monsterAbilityId": "summon-i",
+    "name": "Summon I",
+    "description": "PHA+VGhpcyBzdW1tb24gaGFzIGFuIHVwa2VlcCBvZiAxIEFQIHBlciBjcmVhdHVyZSBhbmQgY291bnRzIGFzIDEgdG93YXJkcyB5b3VyIHN1bW1vbiBsaW1pdC48L3A+",
+    "descriptionHtml": "<p>This summon has an upkeep of 1 AP per creature and counts as 1 towards your summon limit.</p>",
+    "descriptionText": "This summon has an upkeep of 1 AP per creature and counts as 1 towards your summon limit."
+  },
+  {
+    "id": "6a06299f6be32fced49306ae",
+    "indexId": "8b2e04f3-536f-4fa2-8bd1-1cf6aa807ac5",
+    "monsterAbilityId": "summon-ii",
+    "name": "Summon II",
+    "description": "PHA+VGhpcyBjcmVhdHVyZSBoYXMgYW4gdXBrZWVwIG9mIDIgQVAgYW5kIGNvdW50cyBhcyAyIHRvd2FyZHMgeW91ciBzdW1tb24gbGltaXQuPC9wPg==",
+    "descriptionHtml": "<p>This creature has an upkeep of 2 AP and counts as 2 towards your summon limit.</p>",
+    "descriptionText": "This creature has an upkeep of 2 AP and counts as 2 towards your summon limit."
+  },
+  {
+    "id": "6a06299f6be32fced49306dd",
+    "indexId": "5e12f8b6-934c-46b8-a3f7-25dc44cb88fb",
+    "monsterAbilityId": "superboss-resistance",
+    "name": "Superboss Resistance",
+    "description": "PHA+WW91IGFyZSBpbW11bmUgdG8gYW55IHN0YXR1cyBlZmZlY3RzIHRoYXQgd291bGQgY2F1c2UgeW91IHRvIGxvc2UgQVAgb3Igb3RoZXJ3aXNlIHByZXZlbnQgeW91IGZyb20gYWN0aW5nLjwvcD4=",
+    "descriptionHtml": "<p>You are immune to any status effects that would cause you to lose AP or otherwise prevent you from acting.</p>",
+    "descriptionText": "You are immune to any status effects that would cause you to lose AP or otherwise prevent you from acting."
+  },
+  {
+    "id": "6a06299f6be32fced49306de",
+    "indexId": "56e0ee90-0c7a-4db4-a4f8-4c0ccd097a98",
+    "monsterAbilityId": "superior-fiend-regeneration-",
+    "name": "Superior Fiend Regeneration+",
+    "description": "PHA+WW91IGhlYWwgZm9yIFRvdWdobmVzcyB4IDIwIGF0IHRoZSBzdGFydCBvZiB5b3VyIHR1cm4uPC9wPg==",
+    "descriptionHtml": "<p>You heal for Toughness x 20 at the start of your turn.</p>",
+    "descriptionText": "You heal for Toughness x 20 at the start of your turn."
+  },
+  {
+    "id": "6a06299f6be32fced49306b9",
+    "indexId": "009763fa-e8db-4fef-9557-ea447b47a8ed",
+    "monsterAbilityId": "surefooted",
+    "name": "Surefooted",
+    "description": "PHA+WW91IHRyZWF0IG5hdHVyYWwgdW5ldmVuIHRlcnJhaW4gKHJvY2tzLCBmYWxsZW4gbG9ncywgZXRjLikgYXMgbm9ybWFsIGdyb3VuZCBhbmQgY2FuIGxlYXAgc2hvcnQgc3BhbnMgKDXigJMxMGZ0KSB3aXRob3V0IGNvc3RpbmcgZXh0cmEgbW92ZW1lbnQuPC9wPg==",
+    "descriptionHtml": "<p>You treat natural uneven terrain (rocks, fallen logs, etc.) as normal ground and can leap short spans (5–10ft) without costing extra movement.</p>",
+    "descriptionText": "You treat natural uneven terrain (rocks, fallen logs, etc.) as normal ground and can leap short spans (5–10ft) without costing extra movement."
+  },
+  {
+    "id": "6a06299f6be32fced49306c9",
+    "indexId": "eb32a808-a0ec-4d64-a52e-2c2c611443a8",
+    "monsterAbilityId": "swarm",
+    "name": "Swarm",
+    "description": "PHA+WW91IG9ubHkgdGFrZSAxIGRhbWFnZSBmb3IgZWFjaCBzaW5nbGUtdGFyZ2V0IGF0dGFjayBidXQgY2FuIHRha2UgZnVsbCBkYW1hZ2UgZnJvbSBBb0UgYXR0YWNrcy4gWW91IGNhbm5vdCBtYWtlIG5vcm1hbCBhdHRhY2tzLjwvcD4=",
+    "descriptionHtml": "<p>You only take 1 damage for each single-target attack but can take full damage from AoE attacks. You cannot make normal attacks.</p>",
+    "descriptionText": "You only take 1 damage for each single-target attack but can take full damage from AoE attacks. You cannot make normal attacks."
+  },
+  {
+    "id": "6a06299f6be32fced4930660",
+    "indexId": "037384e4-16fa-4ab0-b9ec-3458268b47e7",
+    "monsterAbilityId": "swarm-tactics",
+    "name": "Swarm Tactics",
+    "description": "PHA+V2hlbiB5b3UgYW5kIG90aGVyIHdvbHZlcyBtb3ZlIG9uIHlvdXIgaW5pdGlhdGl2ZSwgYWxsIG9mIHlvdSBtb3ZlIGJlZm9yZSBtYWtpbmcgYW55IGF0dGFja3MuPC9wPg==",
+    "descriptionHtml": "<p>When you and other wolves move on your initiative, all of you move before making any attacks.</p>",
+    "descriptionText": "When you and other wolves move on your initiative, all of you move before making any attacks."
+  },
+  {
+    "id": "6a06299f6be32fced4930684",
+    "indexId": "4d3a4cac-1e17-4c66-b5e4-3414b3300f1c",
+    "monsterAbilityId": "target-rich-environment",
+    "name": "Target Rich Environment",
+    "description": "PHA+U3dhcm0gY3JlYXR1cmVzIGFyZSB2ZXJ5IGZyYWdpbGUgb24gdGhlaXIgb3duIGFuZCBhIHNpbmdsZSBibG93IGZyb20gYW55IGFkdmVudHVyZXIgY2FuIGRpc3BhdGNoIHlvdSwgc28gYXJlYSBvZiBlZmZlY3QgYXR0YWNrcyBhbmQgc3BlbGxzIGFyZSBlc3BlY2lhbGx5IGVmZmVjdGl2ZSBhZ2FpbnN0IHlvdS4mbmJzcDs8L3A+PHA+RWFjaCBhdHRhY2sgdGhhdCBpcyBzaW5nbGUgdGFyZ2V0IHdpbGwgZG8gMSBkYW1hZ2UgYW5kIHdpbGwgdGFrZSBvdXQgMSBjcmVhdHVyZS4gQW9FIGFiaWxpdGllcyB3aWxsIGluZmxpY3QgdGhlaXIgdXN1YWwgZGFtYWdlIGFuZCB0YWtlIG91dCBhIG51bWJlciBvZiBjcmVhdHVyZXMgZXF1YWwgdG8gdGhlIGRhbWFnZSBkZWFsdC48L3A+",
+    "descriptionHtml": "<p>Swarm creatures are very fragile on their own and a single blow from any adventurer can dispatch you, so area of effect attacks and spells are especially effective against you.&nbsp;</p><p>Each attack that is single target will do 1 damage and will take out 1 creature. AoE abilities will inflict their usual damage and take out a number of creatures equal to the damage dealt.</p>",
+    "descriptionText": "Swarm creatures are very fragile on their own and a single blow from any adventurer can dispatch you, so area of effect attacks and spells are especially effective against you.\n\nEach attack that is single target will do 1 damage and will take out 1 creature. AoE abilities will inflict their usual damage and take out a number of creatures equal to the damage dealt."
+  },
+  {
+    "id": "6a06299f6be32fced49306c2",
+    "indexId": "9eb9f90f-176d-4ee6-9c06-3555404daec0",
+    "monsterAbilityId": "the-blur",
+    "name": "The Blur",
+    "description": "PHA+WW91ciBmb3JtIGJsdXJzIGFzIGl0IG1vdmVzLCBkdWUgdG8gZGlzdG9ydGlvbnMgaXQgY3JlYXRlcyBpbiBzcGFjZSB1c2luZyBpdHMgbWFuYSBhdXJhLiBZb3UgaGF2ZSAyNSBFdmFzaW9uIHdoaWxlIGluIFRoZSBCbHVyLiBXaGVuIGhpdCBieSBhbiBhdHRhY2sgb3Igd2hlbiB1c2luZyBhIGRlZmVuc2l2ZSBhY3Rpb24sIHlvdSBsb3NlIFRoZSBCbHVyLiBXaGlsZSBpbiBUaGUgQmx1ciwgeW91IGFyZSBpbW11bmUgdG8gZGFtYWdlIHRoYXQgaXMgdHJpZ2dlcmVkIGJ5IGV2YXNpb24vZG9kZ2Ugc3VjaCBhcyB0aGUgQXhlIHdlYXBvbiBncm91cCBwYXNzaXZlLjwvcD48cD5Zb3UgcmVnYWluIFRoZSBCbHVyIGF0IHRoZSBzdGFydCBvZiB5b3VyIHR1cm4uPC9wPg==",
+    "descriptionHtml": "<p>Your form blurs as it moves, due to distortions it creates in space using its mana aura. You have 25 Evasion while in The Blur. When hit by an attack or when using a defensive action, you lose The Blur. While in The Blur, you are immune to damage that is triggered by evasion/dodge such as the Axe weapon group passive.</p><p>You regain The Blur at the start of your turn.</p>",
+    "descriptionText": "Your form blurs as it moves, due to distortions it creates in space using its mana aura. You have 25 Evasion while in The Blur. When hit by an attack or when using a defensive action, you lose The Blur. While in The Blur, you are immune to damage that is triggered by evasion/dodge such as the Axe weapon group passive.\n\nYou regain The Blur at the start of your turn."
+  },
+  {
+    "id": "6a06299f6be32fced4930681",
+    "indexId": "68981891-c40b-476a-ade3-407a5c5359a1",
+    "monsterAbilityId": "thicc-skull",
+    "name": "Thicc Skull",
+    "description": "PHA+WW91ciBza3VsbCBpcyBleGNlcHRpb25hbGx5IGhhcmQuIFlvdSBhcmUgaW1tdW5lIHRvIERhemUgYW5kIG5vbi1tYWdpY2FsIFN0dW4gZWZmZWN0cy48L3A+",
+    "descriptionHtml": "<p>Your skull is exceptionally hard. You are immune to Daze and non-magical Stun effects.</p>",
+    "descriptionText": "Your skull is exceptionally hard. You are immune to Daze and non-magical Stun effects."
+  },
+  {
+    "id": "6a06299f6be32fced4930665",
+    "indexId": "f8098d33-75b3-4047-8f65-609920b3bdc2",
+    "monsterAbilityId": "threatening",
+    "name": "Threatening",
+    "description": "PHA+V2hlbiBtYWtpbmcgYW4gb3Bwb3J0dW5pdHkgYXR0YWNrLCB5b3UgYXJlIHRyZWF0ZWQgYXMgaGF2aW5nIDQgaGlnaGVyIEZvY3VzIGFuZCBQb3dlci48L3A+",
+    "descriptionHtml": "<p>When making an opportunity attack, you are treated as having 4 higher Focus and Power.</p>",
+    "descriptionText": "When making an opportunity attack, you are treated as having 4 higher Focus and Power."
+  },
+  {
+    "id": "6a06299f6be32fced4930669",
+    "indexId": "4b575709-815a-49f1-b7da-9dda1addef6e",
+    "monsterAbilityId": "tiny-wings",
+    "name": "Tiny Wings",
+    "description": "PHA+WW91IGNhbiBmbHkgd2hpbGUgbW92aW5nLCBidXQgZmFsbCBkb3duIHRvIHRoZSBncm91bmQgYWZ0ZXIgeW91ciBtb3ZlbWVudC48L3A+",
+    "descriptionHtml": "<p>You can fly while moving, but fall down to the ground after your movement.</p>",
+    "descriptionText": "You can fly while moving, but fall down to the ground after your movement."
+  },
+  {
+    "id": "6a06299f6be32fced493068c",
+    "indexId": "0b319c53-a4a1-4628-9073-944a5878edae",
+    "monsterAbilityId": "tripping-pounce",
+    "name": "Tripping Pounce",
+    "description": "PHA+PHN0cm9uZz4mbmJzcDs8L3N0cm9uZz5PbiBkYW1hZ2UgYnkgYW55IGF0dGFja3MgbWFkZSB0aHJvdWdoIHRoZSBQb3VuY2UgYWJpbGl0eSwgeW91IGtub2NrIHRoZSB0YXJnZXQgUHJvbmUuPC9wPg==",
+    "descriptionHtml": "<p><strong>&nbsp;</strong>On damage by any attacks made through the Pounce ability, you knock the target Prone.</p>",
+    "descriptionText": "On damage by any attacks made through the Pounce ability, you knock the target Prone."
+  },
+  {
+    "id": "6a06299f6be32fced4930678",
+    "indexId": "bc7540f8-f8f0-4f79-a8fb-ea70054bca38",
+    "monsterAbilityId": "vine-tentacles",
+    "name": "Vine Tentacles",
+    "description": "PHA+WW91IGhhdmUgYSBtZWxlZSBhdHRhY2sgcmFuZ2Ugb2YgMTBmdC48L3A+",
+    "descriptionHtml": "<p>You have a melee attack range of 10ft.</p>",
+    "descriptionText": "You have a melee attack range of 10ft."
+  },
+  {
+    "id": "6a06299f6be32fced49306d2",
+    "indexId": "54307d54-72a7-4393-90da-a5916df292e2",
+    "monsterAbilityId": "water-body",
+    "name": "Water Body",
+    "description": "PHA+WW91ciBhdHRhY2tzIG1heSBkZWFsIFdhdGVyIG9yIFBoeXNpY2FsIGRhbWFnZS4gV2hlbiB5b3UgZGVhbCBXYXRlciBkYW1hZ2UsIHlvdSBpbmZsaWN0IFNvYWtlZCBYIHdoZXJlIFggaXMgeW91ciBQb3dlci48L3A+",
+    "descriptionHtml": "<p>Your attacks may deal Water or Physical damage. When you deal Water damage, you inflict Soaked X where X is your Power.</p>",
+    "descriptionText": "Your attacks may deal Water or Physical damage. When you deal Water damage, you inflict Soaked X where X is your Power."
+  },
+  {
+    "id": "6a06299f6be32fced49306d1",
+    "indexId": "d637a15c-70d9-4284-a74b-39072ea59216",
+    "monsterAbilityId": "water-type-ii",
+    "name": "Water Type II",
+    "description": "PHA+WW91IHRha2UgaGFsZiBkYW1hZ2UgZnJvbSBGaXJlIGFuZCBXYXRlciBhdHRhY2tzIG9yIGRhbWFnZSwgYnV0IHlvdSB0YWtlIDUwJSBtb3JlIGZyb20gTGlnaHRuaW5nIHR5cGUgYXR0YWNrcyBhbmQgZGFtYWdlLiBZb3UgYXJlIGltbXVuZSB0byBTb2FrZWQsIGNhbiBzd2ltIGF0IHR3aWNlIHlvdXIgc3BlZWQgYW5kIGJyZWF0aGUgdW5kZXJ3YXRlci48L3A+",
+    "descriptionHtml": "<p>You take half damage from Fire and Water attacks or damage, but you take 50% more from Lightning type attacks and damage. You are immune to Soaked, can swim at twice your speed and breathe underwater.</p>",
+    "descriptionText": "You take half damage from Fire and Water attacks or damage, but you take 50% more from Lightning type attacks and damage. You are immune to Soaked, can swim at twice your speed and breathe underwater."
+  },
+  {
+    "id": "6a06299f6be32fced4930667",
+    "indexId": "b0afecfe-02af-4fad-a545-d50ab9e032e0",
+    "monsterAbilityId": "web-hunter",
+    "name": "Web Hunter",
+    "description": "PHA+V2hlbiBhdHRhY2tpbmcgYSB0YXJnZXQgdGhhdCBpcyBTbG93ZWQgb3IgUm9vdGVkIGJ5IHdlYnMsIHlvdSBnYWluIExvY2stT24gb24geW91ciBiYXNpYyBMaWdodCBhbmQgSGVhdnkgQXR0YWNrLjwvcD4=",
+    "descriptionHtml": "<p>When attacking a target that is Slowed or Rooted by webs, you gain Lock-On on your basic Light and Heavy Attack.</p>",
+    "descriptionText": "When attacking a target that is Slowed or Rooted by webs, you gain Lock-On on your basic Light and Heavy Attack."
+  },
+  {
+    "id": "6a06299f6be32fced49306d6",
+    "indexId": "926c89a0-8d51-46ff-bc8b-4a93d6513ec9",
+    "monsterAbilityId": "wind-body",
+    "name": "Wind Body",
+    "description": "PHA+WW91ciBhdHRhY2tzIG1heSBkZWFsIFBoeXNpY2FsIG9yIFdpbmQgZGFtYWdlLiBZb3UgbWF5IFNpZGVzdGVwIDVmdCBhZnRlciBldmVyeSBhdHRhY2suPC9wPg==",
+    "descriptionHtml": "<p>Your attacks may deal Physical or Wind damage. You may Sidestep 5ft after every attack.</p>",
+    "descriptionText": "Your attacks may deal Physical or Wind damage. You may Sidestep 5ft after every attack."
+  },
+  {
+    "id": "6a06299f6be32fced49306d5",
+    "indexId": "74113526-d933-4810-9da2-5208abe8aafd",
+    "monsterAbilityId": "wind-type-ii",
+    "name": "Wind Type II",
+    "description": "PHA+WW91IHRha2UgaGFsZiBkYW1hZ2UgZnJvbSBXaW5kIGF0dGFja3Mgb3IgZGFtYWdlIGFuZCBnYWluICsyIEV2YXNpb24gYWdhaW5zdCByYW5nZWQgYXR0YWNrcy48L3A+",
+    "descriptionHtml": "<p>You take half damage from Wind attacks or damage and gain +2 Evasion against ranged attacks.</p>",
+    "descriptionText": "You take half damage from Wind attacks or damage and gain +2 Evasion against ranged attacks."
+  },
+  {
+    "id": "6a06299f6be32fced493068a",
+    "indexId": "edb94e00-68ee-4c7f-b39f-c0723c591ec5",
+    "monsterAbilityId": "wings",
+    "name": "Wings",
+    "description": "PHA+WW91IGNhbiBGbHkgdGhyb3VnaCB0aGUgYWlyIGFzIGlmIHlvdSB3ZXJlIG1vdmluZyBvbiBsYW5kIGFuZCB5b3VyIHNwZWVkIGlzIGRvdWJsZWQgd2hpbGUgZG9pbmcgc28uPC9wPg==",
+    "descriptionHtml": "<p>You can Fly through the air as if you were moving on land and your speed is doubled while doing so.</p>",
+    "descriptionText": "You can Fly through the air as if you were moving on land and your speed is doubled while doing so."
+  }
+]

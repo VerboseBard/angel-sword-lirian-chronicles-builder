@@ -1,0 +1,746 @@
+[
+  {
+    "id": "6a06299f6be32fced4930880",
+    "indexId": "675a52b4-b8b7-43f8-8a97-fdb6125f0da3",
+    "primaryRaceId": "chimera",
+    "name": "Chimera",
+    "description": "PHA+Q2hpbWVyYSBhcmUgY3JlYXR1cmVzIHRoYXQgaGF2ZSBiZWVuIG11dGF0ZWQgZHVlIHRvIG1hZ2ljIGFuZCBoYXZlIGdhaW5lZCBzZW50aWVuY2UuICZuYnNwO0FsbW9zdCBhbGwgQ2hpbWVyYSBjYW4gYmUgdHJhY2VkIGJhY2sgdG8gYXJlYXMgb2YgaGlnaCBtYWdpY2FsIGNvbmNlbnRyYXRpb24gYW5kIGEgbGlmZWZvcm0gdGhhdCB3YXMgbXV0YXRlZC4gJm5ic3A7RGVzcGl0ZSBiZWluZyBxdWl0ZSB2YXJpZWQgaW4gcGh5c2ljYWwgY2hhcmFjdGVyaXN0aWNzLCBhbGwgQ2hpbWVyYSBhcmUgZWZmZWN0aXZlbHkgdGhlIHNhbWUgcmFjZSBhdCB0aGVpciBjb3JlLiAmbmJzcDtJdCBpcyB1bmtub3duIGhvdyBhcmNhbmUgbWFnaWMgd2FzIGFibGUgdG8gcGF0dGVybiBpdHNlbGYgaW4gc3VjaCBhIHdheeKApjwvcD48cD5Gcm9tIFNsaW1lIENoaW1lcmEgdG8gdGhlIG1vcmUgY29tbW9uIEZlbGluZSBDaGltZXJhcywgdGhlcmUgYXJlIHZhcmllZCBzdWItcmFjZXMgdGhhdCBjYW4gYmUgZm91bmQgdGhyb3VnaG91dCB0aGUgd29ybGQuIEFuZCB0aG9zZSBzdWItcmFjZXMgY2FuIHZhcnkgd2lkZWx5LCBldmVuIHdpdGhpbiB0aGUgc2FtZSBwaGVub3R5cGVzLiBDb2xvcmF0aW9uLCBlYXIgYW5kIHRhaWwgc2hhcGVzLCBhbmQgZXZlbiBudW1iZXIgb2YgcGh5c2ljYWwgY2hhcmFjdGVyaXN0aWNzLiBUaGVzZSB3aWRlbHkgdmFyeWluZyBwaGVub3R5cGVzIGFyZSBicm9hZGx5IGNhdGVnb3JpemVkIGluIHR3byB3YXlzOiBrYW5vbGl0aCBhbmQgem9hbGl0aC48L3A+PHA+S2Fub2xpdGggY2hpbWVyYSBoYXZlIGxpbWl0ZWQgcGh5c2ljYWwgY2hhcmFjdGVyaXN0aWNzLiBNb3N0IGthbm9saXRocyB3aWxsIGhhdmUgZWFycywgdGFpbHMsIG9yIGJvdGggY29ycmVzcG9uZGluZyB0byB0aGVpciBzdWItcmFjZS4gS2Fub2xpdGhzIGFyZSB0aGUgbW9zdCBjb21tb24gdHlwZSBvZiBjaGltZXJhIG92ZXJhbGwgYW5kIHdoYXQgbW9zdCB3aWxsIHRoaW5rIG9mIHdoZW4gaW1hZ2luaW5nIGEgY2hpbWVyYSBvZiBhbnkgc3ViLXJhY2UuPC9wPjxwPlpvYWxpdGggY2hpbWVyYSBoYXZlIGV4YWdnZXJhdGVkIG9yIHByZXZhbGVudCBwaHlzaWNhbCBjaGFyYWN0ZXJpc3RpY3MuIEZ1ciwgc2NhbGVzLCByZXBsYWNlZCBvciBhbHRlcmVkIGxpbWJzLCBhbmQgYW5pbWFsaXN0aWMgZmFjZSBzaGFwZXMgYXJlIGFsbCBleGFtcGxlcyBvZiB6b2FsaXRoIGZlYXR1cmVzLiBUaGlzIG9mdGVuIGxlYWRzIHRvIHpvYWxpdGggY2hpbWVyYSBoYXZpbmcgYSBmYXIgbW9yZSDigJxiZXN0aWFs4oCdIGFwcGVhcmFuY2Ugd2hpY2ggY2FuIHNvbWV0aW1lcyBicmluZyBzb2NpYWwgY2hhbGxlbmdlcy4gV2hpbGUgem9hbGl0aCBjaGltZXJhIGFyZSBvdmVyYWxsIHJhcmVyIHRoYW4ga2Fub2xpdGgsIHRoZXJlIGFyZSBzb21lIHN1Yi1yYWNlcyB0aGF0IHRoaXMgdHJlbmQgaXMgcmV2ZXJzZWQuIENlbnRhdXJzLCBoYXJwaWVzLCBsYW1pYWZvbGssIGFuZCBzbGltZWZvbGsgYXJlIGFsbCBleGFtcGxlcyBvZiBzdWItcmFjZXMgd2hpY2ggdHJlbmQgdG93YXJkIHpvYWxpdGguPC9wPg==",
+    "descriptionHtml": "<p>Chimera are creatures that have been mutated due to magic and have gained sentience. &nbsp;Almost all Chimera can be traced back to areas of high magical concentration and a lifeform that was mutated. &nbsp;Despite being quite varied in physical characteristics, all Chimera are effectively the same race at their core. &nbsp;It is unknown how arcane magic was able to pattern itself in such a way&</p><p>From Slime Chimera to the more common Feline Chimeras, there are varied sub-races that can be found throughout the world. And those sub-races can vary widely, even within the same phenotypes. Coloration, ear and tail shapes, and even number of physical characteristics. These widely varying phenotypes are broadly categorized in two ways: kanolith and zoalith.</p><p>Kanolith chimera have limited physical characteristics. Most kanoliths will have ears, tails, or both corresponding to their sub-race. Kanoliths are the most common type of chimera overall and what most will think of when imagining a chimera of any sub-race.</p><p>Zoalith chimera have exaggerated or prevalent physical characteristics. Fur, scales, replaced or altered limbs, and animalistic face shapes are all examples of zoalith features. This often leads to zoalith chimera having a far more \u001cbestial\u001d appearance which can sometimes bring social challenges. While zoalith chimera are overall rarer than kanolith, there are some sub-races that this trend is reversed. Centaurs, harpies, lamiafolk, and slimefolk are all examples of sub-races which trend toward zoalith.</p>",
+    "descriptionText": "Chimera are creatures that have been mutated due to magic and have gained sentience.  Almost all Chimera can be traced back to areas of high magical concentration and a lifeform that was mutated.  Despite being quite varied in physical characteristics, all Chimera are effectively the same race at their core.  It is unknown how arcane magic was able to pattern itself in such a way&\n\nFrom Slime Chimera to the more common Feline Chimeras, there are varied sub-races that can be found throughout the world. And those sub-races can vary widely, even within the same phenotypes. Coloration, ear and tail shapes, and even number of physical characteristics. These widely varying phenotypes are broadly categorized in two ways: kanolith and zoalith.\n\nKanolith chimera have limited physical characteristics. Most kanoliths will have ears, tails, or both corresponding to their sub-race. Kanoliths are the most common type of chimera overall and what most will think of when imagining a chimera of any sub-race.\n\nZoalith chimera have exaggerated or prevalent physical characteristics. Fur, scales, replaced or altered limbs, and animalistic face shapes are all examples of zoalith features. This often leads to zoalith chimera having a far more \u001cbestial\u001d appearance which can sometimes bring social challenges. While zoalith chimera are overall rarer than kanolith, there are some sub-races that this trend is reversed. Centaurs, harpies, lamiafolk, and slimefolk are all examples of sub-races which trend toward zoalith.",
+    "attributes": "You gain +1 in toughness and +1 in awareness.",
+    "proficiencies": "You can speak, read and write Common as well as the special dialect of your sub-race. ",
+    "skills": "You gain +5 skill points in either Magic, Survival, Animal Husbandry, Perception, Insight, Linguistics or Artifice.",
+    "ambition": "",
+    "ability1": "cadfb72a-b7a9-440f-8d69-da4d3092c0f2",
+    "ability2": "",
+    "wi": {
+      "text": "",
+      "ability": ""
+    },
+    "lir": {
+      "text": "",
+      "ability": ""
+    },
+    "d": {
+      "text": "",
+      "ability": ""
+    },
+    "ar": {
+      "text": "",
+      "ability": ""
+    },
+    "lu": {
+      "text": "",
+      "ability": ""
+    },
+    "ni": {
+      "text": "",
+      "ability": ""
+    },
+    "un": {
+      "text": "",
+      "ability": ""
+    },
+    "vi": {
+      "text": "",
+      "ability": ""
+    },
+    "none": {
+      "text": "",
+      "ability": ""
+    },
+    "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/233b3142-f3b0-4e82-8b41-3b6fe33a7da7-Slime_GIrl_New_raw_1.lg.webp",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/1bf33da4-b9ac-44cf-ae53-ce85f84ee58f-Slime_GIrl_New_raw_1.sm.webp",
+    "imageAlignment": "top",
+    "ability1Ref": {
+      "id": "6a06299f6be32fced4930a1e",
+      "indexId": "cadfb72a-b7a9-440f-8d69-da4d3092c0f2",
+      "trueAbilityId": "fight-or-flight",
+      "name": "Fight or Flight",
+      "description": "PHA+PHN0cm9uZz5GaWdodDogPC9zdHJvbmc+WW91IGltbWVkaWF0ZWx5IGdhaW4gMiBBUCB0aGF0IGNhbiBiZSB1c2VkIG9uIGJhc2ljIGFiaWxpdGllcywgYnV0IGxvc2UgMSBSUC48L3A+PHA+PHN0cm9uZz5GbGlnaHQ6PC9zdHJvbmc+IFlvdSBpbW1lZGlhdGVseSBnYWluIDEgUlAsIGJ1dCByZWNvdmVyIDIgbGVzcyBBUCBvbiB5b3VyIG5leHQgdHVybi48L3A+PHA+WW91IHJlZ2FpbiB0aGUgdXNlIG9mIHRoaXMgYWJpbGl0eSBhZnRlciB0aGUgRW5jb3VudGVyIENvbmNsdXNpb24gcGhhc2UuPC9wPg==",
+      "descriptionHtml": "<p><strong>Fight: </strong>You immediately gain 2 AP that can be used on basic abilities, but lose 1 RP.</p><p><strong>Flight:</strong> You immediately gain 1 RP, but recover 2 less AP on your next turn.</p><p>You regain the use of this ability after the Encounter Conclusion phase.</p>",
+      "descriptionText": "Fight: You immediately gain 2 AP that can be used on basic abilities, but lose 1 RP.\n\nFlight: You immediately gain 1 RP, but recover 2 less AP on your next turn.\n\nYou regain the use of this ability after the Encounter Conclusion phase.",
+      "manaCost": "",
+      "apCost": "",
+      "rpCost": "0",
+      "keywords": "Rage",
+      "range": "Self",
+      "requirement": ""
+    },
+    "ability2Ref": null,
+    "lineageChoices": {
+      "wi": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "lir": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "d": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "ar": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "lu": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "ni": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "un": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "vi": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "none": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      }
+    }
+  },
+  {
+    "id": "6a06299f6be32fced4930882",
+    "indexId": "913ce48c-ee4b-4a4e-a71d-90ceb5eb1b8e",
+    "primaryRaceId": "demon",
+    "name": "Demon",
+    "description": "PHA+SW4gRGVtb24gbG9yZSwgdGhleSB3ZXJlIHRoZSBkZXNjZW5kYW50cyBvZiBBbmdlbHMgd2hvIGhhZCByZWJlbGxlZCBhZ2FpbnN0IHByb3ZpZGVuY2UuJm5ic3A7IExvc2luZyB0aGVpciBhbmdlbGljIHdpbmdzIGFuZCBtZXRob2RzIHRvIGFic29yYiB0aGUgRGl2aW5lIG1pZ2h0IG9mIExpZ2h0LCB0aGV54oCZdmUgYWRhcHRlZCB0ZWNobmlxdWVzIHRvIGJ1cm4gdGhlaXIgb3duIGxpZmUgZm9yY2UgdG8gdGVtcG9yYXJpbHkgdGFwIGludG8gdGhlaXIgcG93ZXJzLiZuYnNwOyBUaGUgZGFuZ2Vyb3VzIHRlY2huaXF1ZSBjYWxsZWQmbmJzcDs8c3Ryb25nPkRpdmluZSBSZWxlYXNlPC9zdHJvbmc+LCBpcyBoaWdobHkgcHJhaXNlZCBhcyB0aGUgcGlubmFjbGUgb2YgYSBkZW1vbuKAmXMgcG93ZXJzLjwvcD48cD5XaGlsZSBvcmlnaW5hbGx5IHNsYW5kZXJlZCBhcyDigJxkZW1vbnPigJ0gYnkgaHVtYW5zIGFuZCB0aGUgYW5nZWxzIG9mIG9sZCwgdGhlIGRlbW9ucyBoYXZlIGVtYnJhY2VkIHRoZSBuYW1lIGFzIHByb29mIG9mIHRoZWlyIHJlYmVsbGlvbi4mbmJzcDs8L3A+PHA+RGVtb25zIGFwcGVhciBhcyBodW1hbm9pZHMsIGFuZCBidXQgaGF2ZSB2YXJ5aW5nIHNlY29uZGFyeSBjaGFyYWN0ZXJpc3RpY3MuJm5ic3A7IFNvbWUgaGF2ZSB0aW55IHdpbmdzIHRoYXQgYXJlIGRldm9pZCBvZiB0aGUgcHJvdmlkZW5jZSBhYnNvcmJpbmcg4oCcZmVhdGhlcnPigJ0sIHdoaWxlIHNvbWUgaGF2ZSB2YXJpb3VzIGtpbmRzIG9mIGhvcm5zIG9yIGV5ZSBwYXR0ZXJucy4mbmJzcDsgU29tZSBldmVuIGhhdmUgcG9pbnRlZCBlYXJzIGxpa2UgdGhlIGZhZS48L3A+PHA+VGhlIERlbW9uIGNpdHkgb2YgU29ydGhlbiBleGlzdHMgYXMgYW4gYXJpc3RvY3JhdGljIG1lcml0b2NyYWN5LCB3aGVyZSB0aGUgcG93ZXIgYmFsYW5jZSBzaGlmdHMsIGhvdXNlcyBkaWUgYW5kIG5ldyBvbmVzIGFyZSBib3JuIGJhc2VkIG9uIHRoZWlyIGNvbnRyaWJ1dGlvbiB0byBzb2NpZXR5LiAmbmJzcDtUaGVzZSBEZW1vbiBob3VzZXMgYWxsIGdyYW50IHRoZWlyIG9mZnNwcmluZyBhIG1pZGRsZSBuYW1lLCB0aGlzIG5hbWUgcmVmZXJlbmNpbmcgdGhlaXIgcm9sZXMgaW4gc29jaWV0eSBmcm9tIHNlcnZhbnRzIHRvIHNvbGRpZXJzIHRvIHNjaG9sYXJzLiAmbmJzcDtFYWNoIGZhbWlseSBwYXNzZXMgZG93biB0aGUgdGVjaG5pcXVlcyBvZiB0aGVpciByb2xlLCBzcGVjaWFsaXppbmcgZm9yIHRoZSBncmVhdGVzdCBlZmZpY2llbmN5LiBOb25lIG9mIHRoZXNlIHJvbGVzIGFyZSBsb29rZWQgZG93biB1cG9uLCBhbmQgaXQgaXMgY29uc2lkZXJlZCBhbiBob25vciB0byBmdWxmaWxsIHlvdXIgcHVycG9zZSB0byB0aGUgaGlnaGVzdCBjYXBhYmlsaXR5LiAmbmJzcDtXaGlsZSB0aGUgdHJhZGl0aW9uIG9mIGFkaGVyaW5nIHRvIGhvdXNlIHNvY2lldGFsIHJvbGVzLCB0aGV5IGFyZSBub3QgaW5mbGV4aWJsZS4gJm5ic3A7SXQgaXMgbm90IHVudXN1YWwgZm9yIGFuIGluZGl2aWR1YWwgdG8gY2FydmUgb3V0IGEgbmV3IGxpZmUgcGF0aCBpZiB0aGV5IGRlbW9uc3RyYXRlIGV4Y2VwdGlvbmFsIG1lcml0LCBhbmQgc3RyYXlpbmcgZnJvbSB0aGF0IGFzc2lnbmVkIGZhbWlseSByb2xlIHdvdWxkIHRoZW4gbm90IGJlIHZpZXdlZCBuZWdhdGl2ZWx5LjwvcD48cD48c3Ryb25nPlNpemU8L3N0cm9uZz46IE1lZGl1bTwvcD4=",
+    "descriptionHtml": "<p>In Demon lore, they were the descendants of Angels who had rebelled against providence.&nbsp; Losing their angelic wings and methods to absorb the Divine might of Light, they\u0019ve adapted techniques to burn their own life force to temporarily tap into their powers.&nbsp; The dangerous technique called&nbsp;<strong>Divine Release</strong>, is highly praised as the pinnacle of a demon\u0019s powers.</p><p>While originally slandered as \u001cdemons\u001d by humans and the angels of old, the demons have embraced the name as proof of their rebellion.&nbsp;</p><p>Demons appear as humanoids, and but have varying secondary characteristics.&nbsp; Some have tiny wings that are devoid of the providence absorbing \u001cfeathers\u001d, while some have various kinds of horns or eye patterns.&nbsp; Some even have pointed ears like the fae.</p><p>The Demon city of Sorthen exists as an aristocratic meritocracy, where the power balance shifts, houses die and new ones are born based on their contribution to society. &nbsp;These Demon houses all grant their offspring a middle name, this name referencing their roles in society from servants to soldiers to scholars. &nbsp;Each family passes down the techniques of their role, specializing for the greatest efficiency. None of these roles are looked down upon, and it is considered an honor to fulfill your purpose to the highest capability. &nbsp;While the tradition of adhering to house societal roles, they are not inflexible. &nbsp;It is not unusual for an individual to carve out a new life path if they demonstrate exceptional merit, and straying from that assigned family role would then not be viewed negatively.</p><p><strong>Size</strong>: Medium</p>",
+    "descriptionText": "In Demon lore, they were the descendants of Angels who had rebelled against providence.  Losing their angelic wings and methods to absorb the Divine might of Light, they\u0019ve adapted techniques to burn their own life force to temporarily tap into their powers.  The dangerous technique called Divine Release, is highly praised as the pinnacle of a demon\u0019s powers.\n\nWhile originally slandered as \u001cdemons\u001d by humans and the angels of old, the demons have embraced the name as proof of their rebellion.\n\nDemons appear as humanoids, and but have varying secondary characteristics.  Some have tiny wings that are devoid of the providence absorbing \u001cfeathers\u001d, while some have various kinds of horns or eye patterns.  Some even have pointed ears like the fae.\n\nThe Demon city of Sorthen exists as an aristocratic meritocracy, where the power balance shifts, houses die and new ones are born based on their contribution to society.  These Demon houses all grant their offspring a middle name, this name referencing their roles in society from servants to soldiers to scholars.  Each family passes down the techniques of their role, specializing for the greatest efficiency. None of these roles are looked down upon, and it is considered an honor to fulfill your purpose to the highest capability.  While the tradition of adhering to house societal roles, they are not inflexible.  It is not unusual for an individual to carve out a new life path if they demonstrate exceptional merit, and straying from that assigned family role would then not be viewed negatively.\n\nSize: Medium",
+    "attributes": "You gain +1 in Power and +1 in Reason.",
+    "proficiencies": "You can speak, read, write Common and Sorthen.  You also gain proficiency in one common weapon or +5 skill points in a skill relating to your demon clan.",
+    "skills": "You gain +5 skill points in either Common Knowledge, Magic, Religion, History, Flight, Artifice.",
+    "ambition": "",
+    "ability1": "75120cd3-9056-429b-b614-5ee38f7c8d1c",
+    "ability2": "34774ae5-c638-4229-8966-72c279bc7c3a",
+    "wi": {
+      "text": "Saboteurs - You gain proficiency with Saboteur Thread Daggers in addition to the ability below. You may also enter the Saboteur class at no experience cost.",
+      "ability": "1e26e66c-34c5-49dc-b99f-68b157be8aee"
+    },
+    "lir": {
+      "text": "Oracles",
+      "ability": "95a005b4-b06e-4596-9c6b-8e53c36ec258"
+    },
+    "d": {
+      "text": "Soldiers",
+      "ability": "9ddbe44c-4360-46a3-9903-45f90f53f059"
+    },
+    "ar": {
+      "text": "Tacticians",
+      "ability": "69b2d823-7c91-4ea6-96ab-a4a5e195a09f"
+    },
+    "lu": {
+      "text": "Mages",
+      "ability": "d27cabd1-f73b-4651-8658-5f4d92657ea7"
+    },
+    "ni": {
+      "text": "Engineers and Airship staff",
+      "ability": "fbcd4a2a-8a87-465f-b5d6-66436daffccd"
+    },
+    "un": {
+      "text": "Maids and Butlers - You may enter the Maid class at no experience cost.",
+      "ability": "fd369348-a806-47d8-9d62-0c2230771ae6"
+    },
+    "vi": {
+      "text": "Medical and Healers - You may enter the Medic class at no experience cost.",
+      "ability": "0e2cca4a-edc5-4f1a-a64b-6508cf7df15c"
+    },
+    "none": {
+      "text": "Those without family skills",
+      "ability": "e5913b8b-9a90-4cdc-b82f-1d7659c26639"
+    },
+    "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/fdd1d9a1-6201-4957-a01c-8b2b822ed8d1-Demon_Portrait_New_raw.lg.webp",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/7a2206e1-b5dc-433d-bc13-ee552982d128-Demon_Portrait_New_raw.sm.webp",
+    "imageAlignment": "middle",
+    "ability1Ref": {
+      "id": "6a06299f6be32fced4930a20",
+      "indexId": "75120cd3-9056-429b-b614-5ee38f7c8d1c",
+      "trueAbilityId": "divine-release",
+      "name": "Divine Release",
+      "description": "PHA+PGk+RGVtb25zIGNhbiBmZWVkIG9uIHRoZWlyIG93biBsaWZlZm9yY2UgdG8gcmVsZWFzZSBhIGJyaWxsaWFudCBkaXNwbGF5IG9mIGRpdmluZSBwb3dlcnMuJm5ic3A7SG9ybnMgY2FuIGVsb25nYXRlLCBmYW5ncyBtaWdodCBncm93LCBleWVzIGdsb3cgYW5kIGV2ZW4gd2luZ3MgY2FuIHNwcm91dCBhcyB0aGUgRGVtb24gcmVhbGl6ZXMgdGhlaXIgRGl2aW5lIFJvb3RzLjwvaT48L3A+PHA+VXBrZWVwOiAxMSBIUDwvcD48cD5Zb3UgdHJhbnNmb3JtIGludG8geW91ciBuZXcgZm9ybSBhbmQgdGFrZSAxMSB0cnVlIGRhbWFnZS4mbmJzcDtZb3UgbWF5IGVuZCB0aGlzIGZvcm0gYXQgYW55IHRpbWUgYnkgc3BlbmRpbmcgMCBSUC4gV2hpbGUgdGhlIGZvcm0gbGFzdHMgeW91IGdhaW4gdGhlIGZvbGxvd2luZyBiZW5lZml0czo8L3A+PHA+PHN0cm9uZz5GYWxsZW4gR3VhcmQ6PC9zdHJvbmc+IFdoZW4geW91IHRha2UgdGhlIEJsb2NrIGJhc2ljIGFjdGlvbiwgeW91IGdhaW4gYW4gYWRkaXRpb25hbCArNSB0byBndWFyZC48YnI+PHN0cm9uZz5GYWxsZW4gQWxhY3JpdHk6PC9zdHJvbmc+IFlvdSBnYWluICs1IG1vdmVtZW50IHNwZWVkIGFuZCB0aGUgYWJpbGl0eSB0byBmbHkuPGJyPjxzdHJvbmc+RmFsbGVuIE1pZ2h0Ojwvc3Ryb25nPiBZb3UgZ2FpbiArMSBBUCBhdCB0aGUgc3RhcnQgb2YgeW91ciB0dXJuLjxicj48c3Ryb25nPkZhbGxlbiBDb252aWN0aW9uOiA8L3N0cm9uZz5XaGVuIHlvdSBhcmUgcmVkdWNlZCB0byAwIEhQLCB5b3UgZG8gbm90IGVudGVyIHRoZSBkb3duZWQgc3RhdGUuIFlvdSBzdGlsbCByZWNlaXZlIHRoZSB3b3VuZGVkIHN0YXR1cy4gV2hpbGUgYXQgb3IgYmVsb3cgMCBIUCwgdGhlIHVwa2VlcCBmb3IgdGhpcyBhYmlsaXR5IGlzIGluY3JlYXNlZCB0byAxNi4gSWYgeW91IGVuZCB0aGlzIGFiaWxpdHkgd2hpbGUgYXQgb3IgYmVsb3cgMCBIUCwgeW91IGFyZSBpbW1lZGlhdGVseSBwbGFjZWQgaW50byB0aGUgZG93bmVkIHN0YXRlLiBJZiB5b3VyIEhQIGJlY29tZSBlcXVhbCB0byBvciBsb3dlciB0aGFuIHlvdXIgbmVnYXRpdmUgbWF4aW11bSBIUCwgeW91IGFyZSBpbW1lZGlhdGVseSBpbmNhcGFjaXRhdGVkIGFuZCB0aGlzIGFiaWxpdHkgZW5kcy48L3A+PHA+T25jZSB5b3UgdXNlIHRoaXMgYWJpbGl0eSwgeW91IGNhbm5vdCBkbyBzbyBhZ2FpbiB1bnRpbCB5b3UgZmluaXNoIGFuIGludGVybHVkZSByZXN0IHBoYXNlLjwvcD4=",
+      "descriptionHtml": "<p><i>Demons can feed on their own lifeforce to release a brilliant display of divine powers.&nbsp;Horns can elongate, fangs might grow, eyes glow and even wings can sprout as the Demon realizes their Divine Roots.</i></p><p>Upkeep: 11 HP</p><p>You transform into your new form and take 11 true damage.&nbsp;You may end this form at any time by spending 0 RP. While the form lasts you gain the following benefits:</p><p><strong>Fallen Guard:</strong> When you take the Block basic action, you gain an additional +5 to guard.<br><strong>Fallen Alacrity:</strong> You gain +5 movement speed and the ability to fly.<br><strong>Fallen Might:</strong> You gain +1 AP at the start of your turn.<br><strong>Fallen Conviction: </strong>When you are reduced to 0 HP, you do not enter the downed state. You still receive the wounded status. While at or below 0 HP, the upkeep for this ability is increased to 16. If you end this ability while at or below 0 HP, you are immediately placed into the downed state. If your HP become equal to or lower than your negative maximum HP, you are immediately incapacitated and this ability ends.</p><p>Once you use this ability, you cannot do so again until you finish an interlude rest phase.</p>",
+      "descriptionText": "Demons can feed on their own lifeforce to release a brilliant display of divine powers. Horns can elongate, fangs might grow, eyes glow and even wings can sprout as the Demon realizes their Divine Roots.\n\nUpkeep: 11 HP\n\nYou transform into your new form and take 11 true damage. You may end this form at any time by spending 0 RP. While the form lasts you gain the following benefits:\n\nFallen Guard: When you take the Block basic action, you gain an additional +5 to guard.\nFallen Alacrity: You gain +5 movement speed and the ability to fly.\nFallen Might: You gain +1 AP at the start of your turn.\nFallen Conviction: When you are reduced to 0 HP, you do not enter the downed state. You still receive the wounded status. While at or below 0 HP, the upkeep for this ability is increased to 16. If you end this ability while at or below 0 HP, you are immediately placed into the downed state. If your HP become equal to or lower than your negative maximum HP, you are immediately incapacitated and this ability ends.\n\nOnce you use this ability, you cannot do so again until you finish an interlude rest phase.",
+      "manaCost": "",
+      "apCost": "0",
+      "rpCost": "",
+      "keywords": "Transformation,Rage",
+      "range": "Self",
+      "requirement": ""
+    },
+    "ability2Ref": {
+      "id": "6a06299f6be32fced4930a28",
+      "indexId": "34774ae5-c638-4229-8966-72c279bc7c3a",
+      "trueAbilityId": "demonblood-regeneration",
+      "name": "Demonblood Regeneration",
+      "description": "PHA+WW91IGhlYWwgZmFzdGVyIHRoYW4gdGhvc2Ugb2Ygb3RoZXIgcmFjZXMuIFlvdSBnYWluIHRoZSBmb2xsb3dpbmcgYmVuZWZpdHM6PC9wPjx1bD48bGk+V2hlbiB1c2luZyBHcml0LCB5b3UgaGVhbCBmb3IgNiBIUCBpbnN0ZWFkLjwvbGk+PGxpPldoZW4gdXNpbmcgU2Vjb25kIFdpbmQsIHlvdSBoZWFsIGZvciBhbiBhZGRpdGlvbmFsIDMgSFAuPC9saT48L3VsPg==",
+      "descriptionHtml": "<p>You heal faster than those of other races. You gain the following benefits:</p><ul><li>When using Grit, you heal for 6 HP instead.</li><li>When using Second Wind, you heal for an additional 3 HP.</li></ul>",
+      "descriptionText": "You heal faster than those of other races. You gain the following benefits:\n\n- When using Grit, you heal for 6 HP instead.\n- When using Second Wind, you heal for an additional 3 HP.",
+      "manaCost": "",
+      "apCost": "",
+      "rpCost": "",
+      "keywords": "",
+      "range": "",
+      "requirement": ""
+    },
+    "lineageChoices": {
+      "wi": {
+        "text": "Saboteurs - You gain proficiency with Saboteur Thread Daggers in addition to the ability below. You may also enter the Saboteur class at no experience cost.",
+        "ability": "1e26e66c-34c5-49dc-b99f-68b157be8aee",
+        "abilityRef": {
+          "id": "6a06299f6be32fced4930908",
+          "indexId": "1e26e66c-34c5-49dc-b99f-68b157be8aee",
+          "trueAbilityId": "presence-concealment",
+          "name": "Presence Concealment",
+          "description": "PHA+Qnkgc3VwcHJlc3NpbmcgeW91ciBtYW5hIG91dHB1dCB5b3UgY29uY2VhbCB5b3VyIHByZXNlbmNlLCBnYWluaW5nIFByZXNlbmNlIENvbmNlYWxtZW50LiAmbmJzcDtZb3UgY2Fubm90IHVzZSBhbnkgYWJpbGl0ZXMgdGhhdCBjb3N0IG1hbmEgb3IgYW55IGFiaWxpdGllcyB3aXRoIHRoZSBhdXJhIGtleXdvcmQgd2hpbGUgaW4gUHJlc2VuY2UgQ29uY2VhbG1lbnQuICZuYnNwO1lvdSBjYW4gZW5kIHRoaXMgZWZmZWN0IGZvciAwIFJQIGJ1dCB0aGUgaW5hYmlsaXR5IHRvIHVzZSBhYmlsaXRpZXMgdGhhdCBjb3N0IG1hbmEgb3IgYWJpbGl0aWVzIHdpdGggdGhlIGF1cmEga2V5d29yZCBwZXJzaXN0cyB1bnRpbCB0aGUgZW5kIG9mIHlvdXIgbmV4dCB0dXJuLjwvcD4=",
+          "descriptionHtml": "<p>By suppressing your mana output you conceal your presence, gaining Presence Concealment. &nbsp;You cannot use any abilites that cost mana or any abilities with the aura keyword while in Presence Concealment. &nbsp;You can end this effect for 0 RP but the inability to use abilities that cost mana or abilities with the aura keyword persists until the end of your next turn.</p>",
+          "descriptionText": "By suppressing your mana output you conceal your presence, gaining Presence Concealment.  You cannot use any abilites that cost mana or any abilities with the aura keyword while in Presence Concealment.  You can end this effect for 0 RP but the inability to use abilities that cost mana or abilities with the aura keyword persists until the end of your next turn.",
+          "manaCost": "",
+          "apCost": "4",
+          "rpCost": "",
+          "keywords": "Presence Concealment,Stealth",
+          "range": "Self",
+          "requirement": "LQ==",
+          "otherCosts": ""
+        }
+      },
+      "lir": {
+        "text": "Oracles",
+        "ability": "95a005b4-b06e-4596-9c6b-8e53c36ec258",
+        "abilityRef": {
+          "id": "6a06299f6be32fced4930a21",
+          "indexId": "95a005b4-b06e-4596-9c6b-8e53c36ec258",
+          "trueAbilityId": "predict",
+          "name": "Predict",
+          "description": "PHA+WW91IG1heSB0YWtlIHRoZSBEb2RnZSBhY3Rpb24gYW5kIHJlbW92ZSB0aGUgTG9jayBPbiBlZmZlY3QgZnJvbSB0aGUgdHJpZ2dlcmluZyBhdHRhY2suPC9wPg==",
+          "descriptionHtml": "<p>You may take the Dodge action and remove the Lock On effect from the triggering attack.</p>",
+          "descriptionText": "You may take the Dodge action and remove the Lock On effect from the triggering attack.",
+          "manaCost": "1",
+          "apCost": "",
+          "rpCost": "1",
+          "keywords": "",
+          "range": "Self",
+          "requirement": "PHA+WW91IGFyZSB0aGUgdGFyZ2V0IG9mIGFuIGF0dGFjay48L3A+",
+          "requirementHtml": "<p>You are the target of an attack.</p>",
+          "requirementText": "You are the target of an attack."
+        }
+      },
+      "d": {
+        "text": "Soldiers",
+        "ability": "9ddbe44c-4360-46a3-9903-45f90f53f059",
+        "abilityRef": {
+          "id": "6a06299f6be32fced4930a22",
+          "indexId": "9ddbe44c-4360-46a3-9903-45f90f53f059",
+          "trueAbilityId": "mana-burst",
+          "name": "Mana Burst",
+          "description": "PHA+WW91IGF1Z21lbnQgeW91ciBuZXh0IGF0dGFjaywgaW5jcmVhc2luZyBhY2N1cmFjeSBieSAzIGFuZCBkZWFsaW5nIDMgYm9udXMgZGFtYWdlIG9uIGhpdC48L3A+PHA+WW91IG1heSB1c2UgQVAgZm9yIHRoaXMgYXR0YWNrIGluc3RlYWQuJm5ic3A7PC9wPg==",
+          "descriptionHtml": "<p>You augment your next attack, increasing accuracy by 3 and dealing 3 bonus damage on hit.</p><p>You may use AP for this attack instead.&nbsp;</p>",
+          "descriptionText": "You augment your next attack, increasing accuracy by 3 and dealing 3 bonus damage on hit.\n\nYou may use AP for this attack instead.",
+          "manaCost": "1",
+          "apCost": "",
+          "rpCost": "1",
+          "keywords": "Augment",
+          "range": "Self",
+          "requirement": ""
+        }
+      },
+      "ar": {
+        "text": "Tacticians",
+        "ability": "69b2d823-7c91-4ea6-96ab-a4a5e195a09f",
+        "abilityRef": {
+          "id": "6a06299f6be32fced4930a23",
+          "indexId": "69b2d823-7c91-4ea6-96ab-a4a5e195a09f",
+          "trueAbilityId": "mind-s-eye",
+          "name": "Mind's Eye",
+          "description": "PHA+WW91IG1heSBhc2sgdGhlIEdNIGZvciB0aGUgcm91Z2ggYmVzdCBjb3Vyc2Ugb2YgYWN0aW9uIGR1cmluZyBhbiBlbmNvdW50ZXIgYmFzZWQgb24gdGhlIGluZm9ybWF0aW9uIHlvdSBoYXZlLiBUaGUgR00gc2hvdWxkIGFuc3dlciB0cnV0aGZ1bGx5LCBidXQgZG9lcyBub3QgbmVlZCB0byBnbyBpbiBkZXB0aC4gKEZvciBleGFtcGxlOiBSZXRyZWF0LCBraWxsIHRoZSBncnVudHMsIGZvY3VzIHRoZSBib3NzLCB1c2UgbWFnaWMgYXR0YWNrcyBldGMpLjwvcD4=",
+          "descriptionHtml": "<p>You may ask the GM for the rough best course of action during an encounter based on the information you have. The GM should answer truthfully, but does not need to go in depth. (For example: Retreat, kill the grunts, focus the boss, use magic attacks etc).</p>",
+          "descriptionText": "You may ask the GM for the rough best course of action during an encounter based on the information you have. The GM should answer truthfully, but does not need to go in depth. (For example: Retreat, kill the grunts, focus the boss, use magic attacks etc).",
+          "manaCost": "2",
+          "apCost": "0",
+          "rpCost": "",
+          "keywords": "",
+          "range": "Self",
+          "requirement": ""
+        }
+      },
+      "lu": {
+        "text": "Mages",
+        "ability": "d27cabd1-f73b-4651-8658-5f4d92657ea7",
+        "abilityRef": {
+          "id": "6a06299f6be32fced4930a24",
+          "indexId": "d27cabd1-f73b-4651-8658-5f4d92657ea7",
+          "trueAbilityId": "dense-mana",
+          "name": "Dense Mana",
+          "description": "PHA+WW91IGF1Z21lbnQgeW91ciBuZXh0IGFiaWxpdHksIGluY3JlYXNpbmcgdGhlJm5ic3A7UG90ZW5jeSBvZiB5b3VyIG5leHQgYWJpbGl0eSBieSAyLjwvcD4=",
+          "descriptionHtml": "<p>You augment your next ability, increasing the&nbsp;Potency of your next ability by 2.</p>",
+          "descriptionText": "You augment your next ability, increasing the Potency of your next ability by 2.",
+          "manaCost": "1",
+          "apCost": "",
+          "rpCost": "0",
+          "keywords": "",
+          "range": "Self",
+          "requirement": ""
+        }
+      },
+      "ni": {
+        "text": "Engineers and Airship staff",
+        "ability": "fbcd4a2a-8a87-465f-b5d6-66436daffccd",
+        "abilityRef": {
+          "id": "6a06299f6be32fced4930a25",
+          "indexId": "fbcd4a2a-8a87-465f-b5d6-66436daffccd",
+          "trueAbilityId": "emergency-maneuvers",
+          "name": "Emergency Maneuvers",
+          "description": "PHA+V2hlbiB5b3UgZmFpbCBhIGNoZWNrIHdoZW4gb3BlcmF0aW5nIGFuIGFpcnNoaXAsIHlvdSBtYXkgdXNlIHRoaXMgdG8gcmVyb2xsIHRoZSBjaGVjay4gWW91IG11c3QgYWNjZXB0IHRoZSBuZXcgcmVzdWx0IGFuZCBjYW5ub3QgcmVyb2xsIGl0IGFnYWluLjwvcD4=",
+          "descriptionHtml": "<p>When you fail a check when operating an airship, you may use this to reroll the check. You must accept the new result and cannot reroll it again.</p>",
+          "descriptionText": "When you fail a check when operating an airship, you may use this to reroll the check. You must accept the new result and cannot reroll it again.",
+          "manaCost": "1",
+          "apCost": "",
+          "rpCost": "0",
+          "keywords": "",
+          "range": "Self",
+          "requirement": ""
+        }
+      },
+      "un": {
+        "text": "Maids and Butlers - You may enter the Maid class at no experience cost.",
+        "ability": "fd369348-a806-47d8-9d62-0c2230771ae6",
+        "abilityRef": {
+          "id": "6a06299f6be32fced4930a26",
+          "indexId": "fd369348-a806-47d8-9d62-0c2230771ae6",
+          "trueAbilityId": "graceful-service",
+          "name": "Graceful Service",
+          "description": "PHA+WW91IGFzc2lzdCBhIHRhcmdldCBjaGFyYWN0ZXIsIGdpdmluZyB0aGVtIDEgYWRkaXRpb25hbCBlbmNvdW50ZXIgY29uY2x1c2lvbiBhY3Rpb24uPC9wPjxwPlRoaXMgdXNlcyB1cCB5b3VyIG93biBlbmNvdW50ZXIgY29uY2x1c2lvbiBhY3Rpb24uPC9wPg==",
+          "descriptionHtml": "<p>You assist a target character, giving them 1 additional encounter conclusion action.</p><p>This uses up your own encounter conclusion action.</p>",
+          "descriptionText": "You assist a target character, giving them 1 additional encounter conclusion action.\n\nThis uses up your own encounter conclusion action.",
+          "manaCost": "",
+          "apCost": "",
+          "rpCost": "",
+          "keywords": "",
+          "range": "",
+          "requirement": ""
+        }
+      },
+      "vi": {
+        "text": "Medical and Healers - You may enter the Medic class at no experience cost.",
+        "ability": "0e2cca4a-edc5-4f1a-a64b-6508cf7df15c",
+        "abilityRef": {
+          "id": "6a06299f6be32fced4930a27",
+          "indexId": "0e2cca4a-edc5-4f1a-a64b-6508cf7df15c",
+          "trueAbilityId": "first-response",
+          "name": "First Response",
+          "description": "PHA+SWYgeW91IGhhdmUgYSBNZWRpY2FsIEtpdCwgeW91IG1heSB1c2UgeW91ciBlbmNvdW50ZXIgY29uY2x1c2lvbiB0byBnaXZlIHRoZSBTZWNvbmQgV2luZCBlbmNvdW50ZXIgY29uY2x1c2lvbiBlZmZlY3QgdG8gc29tZW9uZSBlbHNlLiBZb3UgaGVhbCBmb3IgYW4gYWRkaXRpb25hbCAxZDYgKCszIGZyb20geW91ciBEZW1vbmJsb29kIFJlZ2VuZXJhdGlvbiBpZiB5b3UgaGF2ZSBpdCkgd2hlbiBkb2luZyB0aGlzLiZuYnNwOzwvcD4=",
+          "descriptionHtml": "<p>If you have a Medical Kit, you may use your encounter conclusion to give the Second Wind encounter conclusion effect to someone else. You heal for an additional 1d6 (+3 from your Demonblood Regeneration if you have it) when doing this.&nbsp;</p>",
+          "descriptionText": "If you have a Medical Kit, you may use your encounter conclusion to give the Second Wind encounter conclusion effect to someone else. You heal for an additional 1d6 (+3 from your Demonblood Regeneration if you have it) when doing this.",
+          "manaCost": "",
+          "apCost": "",
+          "rpCost": "",
+          "keywords": "",
+          "range": "",
+          "requirement": ""
+        }
+      },
+      "none": {
+        "text": "Those without family skills",
+        "ability": "e5913b8b-9a90-4cdc-b82f-1d7659c26639",
+        "abilityRef": {
+          "id": "6a06299f6be32fced4930981",
+          "indexId": "e5913b8b-9a90-4cdc-b82f-1d7659c26639",
+          "trueAbilityId": "instinct",
+          "name": "Instinct",
+          "description": "PHA+VGhlIGZpcnN0IHRpbWUgcGVyIGVuY291bnRlciB0aGF0IHlvdSBhcmUgYXR0YWNrZWQgYnkgYSBTdGVhbHRoIGF0dGFjaywgdGhhdCBhdHRhY2sgZG9lcyBub3QgZ2FpbiB0aGUgVHJpY2sgQXR0YWNrIGJlbmVmaXQuIElmIHlvdSBiZWNvbWUgdGhlIHRhcmdldCBvZiBhbiBhdHRhY2sgd2hpbGUgeW91J3JlIHN1cnByaXNlZCwgeW91IG1heSBzdGlsbCByZWFjdCB0byBpdCBhbmQgYW55IHNwZWNpYWwgcHJvcGVydGllcyBvZiBhbiBhdHRhY2sgdGhhdCByZXF1aXJlIHlvdSB0byBiZSB1bmF3YXJlIG9mIHRoZSBhdHRhY2sgKHN1Y2ggYXMgS2lsbHNob3QpIGRvIG5vdCBhcHBseSB0byBpdC4mbmJzcDs8L3A+PHA+SW4gYWRkaXRpb24sIHdoZW4geW91IGFyZSBhYm91dCB0byB0YWtlIGFuIGFjdGlvbiB0aGF0IGxlYWRzIHRvIGdyYXZlIGhhcm0gb3IgZGVhdGggKGV4YW1wbGU6IFRoZSBlbmVteSBoYXMgYW4gaW5zdGFudCBkZWF0aCBhYmlsaXR5KSwgeW91IGNhbiByZWNlaXZlIGEgcHJlbW9uaXRpb24gZnJvbSB0aGUgRE0uPC9wPg==",
+          "descriptionHtml": "<p>The first time per encounter that you are attacked by a Stealth attack, that attack does not gain the Trick Attack benefit. If you become the target of an attack while you're surprised, you may still react to it and any special properties of an attack that require you to be unaware of the attack (such as Killshot) do not apply to it.&nbsp;</p><p>In addition, when you are about to take an action that leads to grave harm or death (example: The enemy has an instant death ability), you can receive a premonition from the DM.</p>",
+          "descriptionText": "The first time per encounter that you are attacked by a Stealth attack, that attack does not gain the Trick Attack benefit. If you become the target of an attack while you're surprised, you may still react to it and any special properties of an attack that require you to be unaware of the attack (such as Killshot) do not apply to it.\n\nIn addition, when you are about to take an action that leads to grave harm or death (example: The enemy has an instant death ability), you can receive a premonition from the DM.",
+          "manaCost": "",
+          "apCost": "",
+          "rpCost": "",
+          "keywords": "",
+          "range": "",
+          "requirement": "",
+          "otherCosts": ""
+        }
+      }
+    }
+  },
+  {
+    "id": "6a06299f6be32fced4930881",
+    "indexId": "cb5ea351-a25c-4934-896f-74b17000992d",
+    "primaryRaceId": "fae",
+    "name": "Fae",
+    "description": "PHA+VGhlIEZhZSBhcmUgd2lkZWx5IGNvbnNpZGVyZWQgdGhlIGZpcnN0IHBlb3BsZSB0aGF0IHBvcHVsYXRlZCBMeXJhLiZuYnNwOyBUaGV5IGFyZSBiZWluZ3MgdGhhdCB3ZXJlIGJvcm4gZnJvbSB0aGUgd2lsbCBvZiBuYXR1cmUgYW5kIHRoZSB3b3JsZCBpdHNlbGYuJm5ic3A7IEZhZXJpZXMgY2FuIGJlIHF1aXRlIHZhcmllZCBpbiBjdWx0dXJlIGFuZCBkZW1lYW5vciwgc29tZSB1c2luZyB0aGVpciBhZ2UgaW1tb3J0YWxpdHkgdG8gYWNoaWV2ZSBncmVhdCB3aXNkb20tLSB3aGlsZSBvdGhlcnMgbWlnaHQgdXNlIGl0IHRvIGxhemUgYWJvdXQgYW5kIGJlIG1lcnJ5LjwvcD48cD5UaGUgbW9zdCBjb21tb24gdHlwZSBvZiBGYWUgYXJlIHRoZSBIaWdoIEZhZSB3aGljaCBhcHBlYXIgYXMgeW91dGhmdWwgaHVtYW5vaWRzIHdpdGggcG9pbnRlZCBlYXJzIGFuZCBleWVzIHRoYXQgY29tZSBpbiB2YXJpb3VzIGNvbG9ycyBhbmQgcGF0dGVybnM8L3A+",
+    "descriptionHtml": "<p>The Fae are widely considered the first people that populated Lyra.&nbsp; They are beings that were born from the will of nature and the world itself.&nbsp; Faeries can be quite varied in culture and demeanor, some using their age immortality to achieve great wisdom-- while others might use it to laze about and be merry.</p><p>The most common type of Fae are the High Fae which appear as youthful humanoids with pointed ears and eyes that come in various colors and patterns</p>",
+    "descriptionText": "The Fae are widely considered the first people that populated Lyra.  They are beings that were born from the will of nature and the world itself.  Faeries can be quite varied in culture and demeanor, some using their age immortality to achieve great wisdom-- while others might use it to laze about and be merry.\n\nThe most common type of Fae are the High Fae which appear as youthful humanoids with pointed ears and eyes that come in various colors and patterns",
+    "attributes": "You gain +1 in Agility and +1 in Cunning.",
+    "proficiencies": "You can speak, read and write Sylvan, as well as Common.",
+    "skills": "You gain +5 skill points in either Magic, Medicine, Negotiation, Intimidation, Insight.",
+    "ambition": "",
+    "ability1": "cc310c04-2d58-4361-9629-49fcf0cf2e52",
+    "ability2": "",
+    "wi": {
+      "text": "",
+      "ability": ""
+    },
+    "lir": {
+      "text": "",
+      "ability": ""
+    },
+    "d": {
+      "text": "",
+      "ability": ""
+    },
+    "ar": {
+      "text": "",
+      "ability": ""
+    },
+    "lu": {
+      "text": "",
+      "ability": ""
+    },
+    "ni": {
+      "text": "",
+      "ability": ""
+    },
+    "un": {
+      "text": "",
+      "ability": ""
+    },
+    "vi": {
+      "text": "",
+      "ability": ""
+    },
+    "none": {
+      "text": "",
+      "ability": ""
+    },
+    "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/1ca62b85-ac72-431a-8b1b-9d7219cbd96e-Dryad_raw.lg.webp",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/42158447-1039-4c70-992b-00b67e562492-Dryad_raw.sm.webp",
+    "imageAlignment": "top",
+    "ability1Ref": {
+      "id": "6a06299f6be32fced4930978",
+      "indexId": "cc310c04-2d58-4361-9629-49fcf0cf2e52",
+      "trueAbilityId": "faerie-flash",
+      "name": "Faerie Flash",
+      "description": "PHA+WW91IFRlbGVwb3J0IHVwIHRvIHR3aWNlIHlvdXIgU3BlZWQgdG8gYW4gdW5vY2N1cGllZCBzcGFjZSB0aGF0IHlvdSBjYW4gc2VlLiBDYW4gb25seSBiZSB1c2VkIG9uY2UgcGVyIGVuY291bnRlci48L3A+",
+      "descriptionHtml": "<p>You Teleport up to twice your Speed to an unoccupied space that you can see. Can only be used once per encounter.</p>",
+      "descriptionText": "You Teleport up to twice your Speed to an unoccupied space that you can see. Can only be used once per encounter.",
+      "manaCost": "1",
+      "apCost": "1",
+      "rpCost": "",
+      "keywords": "Teleport,Rage",
+      "range": "-",
+      "requirement": "LQ==",
+      "otherCosts": ""
+    },
+    "ability2Ref": null,
+    "lineageChoices": {
+      "wi": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "lir": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "d": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "ar": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "lu": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "ni": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "un": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "vi": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "none": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      }
+    }
+  },
+  {
+    "id": "6a06299f6be32fced493087e",
+    "indexId": "f59714f1-f4cf-47f3-912d-39284c4a225d",
+    "primaryRaceId": "human",
+    "name": "Human",
+    "description": "PHA+VGhlIG9yaWdpbiBvZiBodW1hbnMgaXMgbm90IHF1aXRlIGNsZWFyLS0gYSByYWNlIG9mIGdlbmVyYWxseSBob21vZ2Vub3VzIGNoYXJhY3RlcmlzdGljcyBpbiBjb21wYXJpc29uIHRvIHRoZSBvdGhlciByYWNlcy4mbmJzcDsgRGVzcGl0ZSB0aGVpciBzaW1pbGFyaXR5LCBodW1hbnMgYXJlIHZhcmllZCBpbiBuYXR1cmUgYW5kIGhhdmUgYWRhcHRlZCB0byBtYW55IGRpZmZlcmVudCBlbnZpcm9ubWVudHMuJm5ic3A7IEh1bWFucyBhcmUgcXVpY2sgbGVhcm5lcnMgYW5kIHF1aWNrIHRvIGFkYXB0LCBhIGhhc3RlIHRoYXQgaXMgdW5zZWVuIGluIHNvbWUgb2YgdGhlIG90aGVyIHJhY2VzLCBhIGJ5cHJvZHVjdCBvZiB0aGVpciBnZW5lcmFsbHkgc2hvcnRlciBsaWZlc3BhbnMuPC9wPjxwPkZvciBhIHJlYXNvbiBzdGlsbCB1bmtub3duLCB0aGUgaHVtYW5zIGFyZSBibGVzc2VkIGJ5IHByb3ZpZGVuY2UtLSB0aGUgZ3JlYXQgcG93ZXIgb2YgZGl2aW5lIGxpZ2h0IGFuZCBhcmUgYm9ybiB3aXRoIGEgc3BlY2lhbCBhdHR1bmVtZW50IGZvciBpdCByZWdhcmRsZXNzIG9mIHRoZWlyIHJlbGlnaW9uLjwvcD48cD48c3Ryb25nPlNpemU8L3N0cm9uZz46IE1lZGl1bTwvcD4=",
+    "descriptionHtml": "<p>The origin of humans is not quite clear-- a race of generally homogenous characteristics in comparison to the other races.&nbsp; Despite their similarity, humans are varied in nature and have adapted to many different environments.&nbsp; Humans are quick learners and quick to adapt, a haste that is unseen in some of the other races, a byproduct of their generally shorter lifespans.</p><p>For a reason still unknown, the humans are blessed by providence-- the great power of divine light and are born with a special attunement for it regardless of their religion.</p><p><strong>Size</strong>: Medium</p>",
+    "descriptionText": "The origin of humans is not quite clear-- a race of generally homogenous characteristics in comparison to the other races.  Despite their similarity, humans are varied in nature and have adapted to many different environments.  Humans are quick learners and quick to adapt, a haste that is unseen in some of the other races, a byproduct of their generally shorter lifespans.\n\nFor a reason still unknown, the humans are blessed by providence-- the great power of divine light and are born with a special attunement for it regardless of their religion.\n\nSize: Medium",
+    "attributes": "You gain +1 in the main stat of your choice and +1 in the substat of your choice.",
+    "proficiencies": "You can speak, read and write Common, as well as another Language of your choice.  You also gain proficiency in one common weapon group.",
+    "skills": "You gain +5 skill points in any non-crafting or gathering skill of your choice.",
+    "ambition": "You start with an additional 100 exp that is also added to your spirit core.",
+    "ability1": "8e02ce04-e955-4780-81ad-dc995399e404",
+    "ability2": "2e0a8599-3bfd-4efb-bee5-9098f82e2536",
+    "wi": {
+      "text": "",
+      "ability": ""
+    },
+    "lir": {
+      "text": "",
+      "ability": ""
+    },
+    "d": {
+      "text": "",
+      "ability": ""
+    },
+    "ar": {
+      "text": "",
+      "ability": ""
+    },
+    "lu": {
+      "text": "",
+      "ability": ""
+    },
+    "ni": {
+      "text": "",
+      "ability": ""
+    },
+    "un": {
+      "text": "",
+      "ability": ""
+    },
+    "vi": {
+      "text": "",
+      "ability": ""
+    },
+    "none": {
+      "text": "",
+      "ability": ""
+    },
+    "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/5f165baa-403c-4a63-b6b7-2a3f8d40ebb5-Sword_Saint_New_raw.lg.webp",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/aa638108-9b8e-48ad-9e58-c7451e054c42-Sword_Saint_New_raw.sm.webp",
+    "imageAlignment": "top",
+    "ability1Ref": {
+      "id": "6a06299f6be32fced4930a1b",
+      "indexId": "8e02ce04-e955-4780-81ad-dc995399e404",
+      "trueAbilityId": "divine-providence",
+      "name": "Divine Providence",
+      "description": "PHA+V2hlbiB5b3UgdXNlIHRoaXMgYWJpbGl0eSB5b3UgY2hvb3NlIG9uZSBvZiB0aGUgZm9sbG93aW5nIGVmZmVjdHM6PC9wPjxwPiZuYnNwOzwvcD48cD48c3Ryb25nPkRpdmluZSBQcm90ZWN0aW9uOjwvc3Ryb25nPiBZb3UgYXJlIHByb3RlY3RlZCBmcm9tIGhhcm0gdGhyb3VnaCBkaXZpbmUgcHJvdGVjdGlvbiwgZ2FpbmluZyAxMDAgZGFtYWdlIHJlZHVjdGlvbiBhZ2FpbnN0IHRoZSBuZXh0IHNvdXJjZSBvZiBkYW1hZ2UgeW91IHRha2UuPC9wPjxwPjxzdHJvbmc+Rm9ydHVuZTo8L3N0cm9uZz4gV2hlbiB1c2VkIGZvciB0aGlzIGVmZmVjdCwgdGhpcyBhYmlsaXR5IGJlY29tZXMgSW5zdGFudC4gWW91IG1heSByZXJvbGwgeW91ciBsYXN0IGQyMCBhbmQgdGFrZSB0aGUgbmV3IHJlc3VsdC48L3A+PHA+PHN0cm9uZz5IZWFsdGg6PC9zdHJvbmc+IFlvdSBoZWFsIHNvbWVvbmUgKG9yIHlvdXJzZWxmKSB3aXRoaW4gdG91Y2hpbmcgZGlzdGFuY2UgZm9yIDE1IGhwLjwvcD48cD48c3Ryb25nPkxpZ2h0Ojwvc3Ryb25nPiBZb3Ugc3VtbW9uIGEgYnJpZ2h0IGxpZ2h0IGF0IHlvdXIgcG9zaXRpb24gdGhhdCBzaGluZXMgYSBicmlnaHQgbGlnaHQgdXAgdG8gMzBmdCBhcm91bmQgeW91LiBZb3UgbWF5IGRldG9uYXRlIHRoaXMgbGlnaHQgYnkgc3BlbmRpbmcgMCBBUCB0byZuYnNwOzxzdHJvbmc+RGF6ZSZuYnNwOzwvc3Ryb25nPmFsbCBlbmVtaWVzIHdpdGhpbiBpdHMgcmFuZ2UuPC9wPjxwPiZuYnNwOzwvcD48cD5PbmNlIHlvdSB1c2UgdGhpcyBhYmlsaXR5LCB5b3UgbWF5IG5vdCB1c2UgaXQgYWdhaW4gdW50aWwgYWZ0ZXIgYSByZXN0LjwvcD4=",
+      "descriptionHtml": "<p>When you use this ability you choose one of the following effects:</p><p>&nbsp;</p><p><strong>Divine Protection:</strong> You are protected from harm through divine protection, gaining 100 damage reduction against the next source of damage you take.</p><p><strong>Fortune:</strong> When used for this effect, this ability becomes Instant. You may reroll your last d20 and take the new result.</p><p><strong>Health:</strong> You heal someone (or yourself) within touching distance for 15 hp.</p><p><strong>Light:</strong> You summon a bright light at your position that shines a bright light up to 30ft around you. You may detonate this light by spending 0 AP to&nbsp;<strong>Daze&nbsp;</strong>all enemies within its range.</p><p>&nbsp;</p><p>Once you use this ability, you may not use it again until after a rest.</p>",
+      "descriptionText": "When you use this ability you choose one of the following effects:\n\nDivine Protection: You are protected from harm through divine protection, gaining 100 damage reduction against the next source of damage you take.\n\nFortune: When used for this effect, this ability becomes Instant. You may reroll your last d20 and take the new result.\n\nHealth: You heal someone (or yourself) within touching distance for 15 hp.\n\nLight: You summon a bright light at your position that shines a bright light up to 30ft around you. You may detonate this light by spending 0 AP to Daze all enemies within its range.\n\nOnce you use this ability, you may not use it again until after a rest.",
+      "manaCost": "",
+      "apCost": "",
+      "rpCost": "0",
+      "keywords": "Rage,Daze",
+      "range": "Self",
+      "requirement": ""
+    },
+    "ability2Ref": {
+      "id": "6a06299f6be32fced4930a1c",
+      "indexId": "2e0a8599-3bfd-4efb-bee5-9098f82e2536",
+      "trueAbilityId": "human-adaptability",
+      "name": "Human Adaptability",
+      "description": "PHA+QXMgYW4gZXJyYW5kIGFjdGlvbiwgeW91IG1heSByZWZ1bmQgYW4gYWJpbGl0eSBhbmQgY2hvb3NlIHRvIGxlYXJuIGFub3RoZXIgYWJpbGl0eS4mbmJzcDtZb3UgY2Fubm90IHBpY2sgYW4gYWJpbGl0eSB0aGF0IG1ha2VzIHlvdSBpbmVsaWdpYmxlIGZvciBhbnkgb2YgeW91ciBwcmVyZXF1aXNpdGVzLiBZb3VyIG5ldyBhYmlsaXR5IG11c3QgY29zdCB0aGUgc2FtZSBhcyB5b3VyIHVubGVhcm5lZCBvbmUsIG9yIHlvdSBtdXN0IHBheSBhZGRpdGlvbmFsIG5vcm1hbCBFWFAgdG8gbWFrZSB1cCBmb3IgdGhlIGNvc3QgZGlmZmVyZW5jZS4gSWYgeW91IGNob29zZSB0byB1bmxlYXJuIGEgY2xhc3MgYW5kIGxlYXJuIGEgbmV3IG9uZSB3aXRoIHRoaXMgYWJpbGl0eSwgeW91IG11c3Qgc3BlbmQgSVAgZm9yIHRoYXQgbmV3IGNsYXNzIGFzIG5vcm1hbC4gQW55IHByZXZpb3VzIElQIHNwZW50IG9uIGxlYXJuaW5nIHRoZSBjbGFzcyB5b3UgdW5sZWFybiBpcyBOT1QgcmVmdW5kZWQuPC9wPjxwPklmIHlvdSBjaG9vc2UgdG8gcmVmdW5kIHByaW1hcnkgc3RhdHMsIHNlY29uZGFyeSBzdGF0cyBvciBza2lsbCBwb2ludHMgYW5kIHRoZW4gbGV2ZWwgdXAgdGhlIGNsYXNzIGFnYWluLCB5b3UgbXVzdCBwdXQgdGhvc2UgcG9pbnRzIGJhY2sgaW4gdGhlIHNhbWUgdGhpbmdzIHlvdSBvcmlnaW5hbGx5IHB1dCB0aGVtIGluLjwvcD48cD5Eb2VzIG5vdCB3b3JrIG9uIGJyZWFrdGhyb3VnaHMuPC9wPg==",
+      "descriptionHtml": "<p>As an errand action, you may refund an ability and choose to learn another ability.&nbsp;You cannot pick an ability that makes you ineligible for any of your prerequisites. Your new ability must cost the same as your unlearned one, or you must pay additional normal EXP to make up for the cost difference. If you choose to unlearn a class and learn a new one with this ability, you must spend IP for that new class as normal. Any previous IP spent on learning the class you unlearn is NOT refunded.</p><p>If you choose to refund primary stats, secondary stats or skill points and then level up the class again, you must put those points back in the same things you originally put them in.</p><p>Does not work on breakthroughs.</p>",
+      "descriptionText": "As an errand action, you may refund an ability and choose to learn another ability. You cannot pick an ability that makes you ineligible for any of your prerequisites. Your new ability must cost the same as your unlearned one, or you must pay additional normal EXP to make up for the cost difference. If you choose to unlearn a class and learn a new one with this ability, you must spend IP for that new class as normal. Any previous IP spent on learning the class you unlearn is NOT refunded.\n\nIf you choose to refund primary stats, secondary stats or skill points and then level up the class again, you must put those points back in the same things you originally put them in.\n\nDoes not work on breakthroughs.",
+      "manaCost": "",
+      "apCost": "",
+      "rpCost": "",
+      "keywords": "Errand",
+      "range": "",
+      "requirement": ""
+    },
+    "lineageChoices": {
+      "wi": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "lir": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "d": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "ar": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "lu": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "ni": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "un": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "vi": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "none": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      }
+    }
+  },
+  {
+    "id": "6a06299f6be32fced493087f",
+    "indexId": "d4f38a14-5d79-4ddc-9fac-07c5e7800a1a",
+    "primaryRaceId": "youkai",
+    "name": "Youkai",
+    "description": "PHA+Q29udHJhcnkgdG8gcG9wdWxhciBiZWxpZWYsIFlvdWthaSBhcmUgbm90IHRoZSBzYW1lIGFzIENoaW1lcmEuJm5ic3A7IFJhdGhlciB0aGFuIGJlaW5nIGxpZmVmb3JtcyB0aGF0IGhhdmUgYXR0YWluZWQgc2VudGllbmNlIHRocm91Z2ggbWFnaWNhbCBtdXRhdGlvbnMsIFlvdWthaSB3ZXJlIG9uY2UgYW1iaWVudCBtYWdpYyB0aGF0IGJpbmRlZCB0b2dldGhlciB0byBmb3JtIGxpZmVmb3Jtcy4mbmJzcDsgSGFpbGluZyBmcm9tIHRoZSBtaXN0eSBpc2xlIG9mIEtpcmFyYSwgdGhlIFlvdWthaSBhcmUgdGhlIHJhcmVzdCByYWNlIGFtb25nc3QgdGhlIHBvcHVsYXRpb24gb2YgTHlyLjwvcD48cD5MaWtlIENoaW1lcmEsIHRoZSBZb3VrYWkgbGluZWFnZXMgYXJlIGRpdmlkZWQgaW50byBTdWItUmFjZXMuPC9wPg==",
+    "descriptionHtml": "<p>Contrary to popular belief, Youkai are not the same as Chimera.&nbsp; Rather than being lifeforms that have attained sentience through magical mutations, Youkai were once ambient magic that binded together to form lifeforms.&nbsp; Hailing from the misty isle of Kirara, the Youkai are the rarest race amongst the population of Lyr.</p><p>Like Chimera, the Youkai lineages are divided into Sub-Races.</p>",
+    "descriptionText": "Contrary to popular belief, Youkai are not the same as Chimera.  Rather than being lifeforms that have attained sentience through magical mutations, Youkai were once ambient magic that binded together to form lifeforms.  Hailing from the misty isle of Kirara, the Youkai are the rarest race amongst the population of Lyr.\n\nLike Chimera, the Youkai lineages are divided into Sub-Races.",
+    "attributes": "You gain +1 in Focus and +1 in Presence.",
+    "proficiencies": "You can speak, read and write Kiraran, as well as Common. ",
+    "skills": "You gain +5 skill points in either Insight, Intimidation, Magic, Medicine, Negotiation",
+    "ambition": "",
+    "ability1": "b447ce81-f722-4d68-8b70-7d22637b81c3",
+    "ability2": "",
+    "wi": {
+      "text": "",
+      "ability": ""
+    },
+    "lir": {
+      "text": "",
+      "ability": ""
+    },
+    "d": {
+      "text": "",
+      "ability": ""
+    },
+    "ar": {
+      "text": "",
+      "ability": ""
+    },
+    "lu": {
+      "text": "",
+      "ability": ""
+    },
+    "ni": {
+      "text": "",
+      "ability": ""
+    },
+    "un": {
+      "text": "",
+      "ability": ""
+    },
+    "vi": {
+      "text": "",
+      "ability": ""
+    },
+    "none": {
+      "text": "",
+      "ability": ""
+    },
+    "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/91841f75-d892-4be8-921b-809f3775fc3c-Jiangshi_New_raw.lg.webp",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/6cdb70f8-f6b5-43c2-a494-361d0f916d92-Jiangshi_New_raw.sm.webp",
+    "imageAlignment": "top",
+    "ability1Ref": {
+      "id": "6a06299f6be32fced4930a1d",
+      "indexId": "b447ce81-f722-4d68-8b70-7d22637b81c3",
+      "trueAbilityId": "spiritual-sync",
+      "name": "Spiritual Sync",
+      "description": "PHA+SWYgeW91IHBhaWQgbWFuYSBmb3IgdGhpcyBhYmlsaXR5LCB5b3UgZ2FpbiBUZW1wb3JhcnkgSFAgZXF1YWwgdG8gOFguIEFueSBUZW1wb3JhcnkgSFAgZnJvbSB0aGlzIGFiaWxpdHkgcmVtYWluaW5nIGFmdGVyIHRoZSBlbmNvdW50ZXIgY29uY2x1c2lvbiBwaGFzZSBpcyB0dXJuZWQgYmFjayBpbnRvIG1hbmEgYXQgYSByYXRpbyBvZiA4IFRlbXBvcmFyeSBIUCB0byAxIG1hbmEuPC9wPjxwPllvdSBtYXkgaW5zdGVhZCBwYXkgSFAgZm9yIHRoaXMgYWJpbGl0eS4gSWYgeW91IGRvLCB5b3UgZ2FpbiAxIFRlbXBvcmFyeSBNYW5hIGZvciBldmVyeSA4IEhQIHlvdSBzcGVuZC4gWW91IGNhbm5vdCBzcGVuZCBtb3JlIEhQIHRoYW4geW91IGN1cnJlbnRseSBoYXZlLiBBbnkgVGVtcG9yYXJ5IG1hbmEgaXMgbG9zdCBhdCB0aGUgZW5jb3VudGVyIGNvbmNsdXNpb24gcGhhc2UuPC9wPjxwPllvdSBtYXkgc3BlbmQgYSBtYXhpbXVtIG9mIDMgbWFuYSBvciAyNCBIUCBvbiB0aGlzIGFiaWxpdHkuPC9wPjxwPk9uY2UgeW91IHVzZSB0aGlzIGFiaWxpdHksIHlvdSBtYXkgbm90IHVzZSBpdCBhZ2FpbiB1bnRpbCBhZnRlciBhbiBlbmNvdW50ZXIgY29uY2x1c2lvbiBwaGFzZS48L3A+",
+      "descriptionHtml": "<p>If you paid mana for this ability, you gain Temporary HP equal to 8X. Any Temporary HP from this ability remaining after the encounter conclusion phase is turned back into mana at a ratio of 8 Temporary HP to 1 mana.</p><p>You may instead pay HP for this ability. If you do, you gain 1 Temporary Mana for every 8 HP you spend. You cannot spend more HP than you currently have. Any Temporary mana is lost at the encounter conclusion phase.</p><p>You may spend a maximum of 3 mana or 24 HP on this ability.</p><p>Once you use this ability, you may not use it again until after an encounter conclusion phase.</p>",
+      "descriptionText": "If you paid mana for this ability, you gain Temporary HP equal to 8X. Any Temporary HP from this ability remaining after the encounter conclusion phase is turned back into mana at a ratio of 8 Temporary HP to 1 mana.\n\nYou may instead pay HP for this ability. If you do, you gain 1 Temporary Mana for every 8 HP you spend. You cannot spend more HP than you currently have. Any Temporary mana is lost at the encounter conclusion phase.\n\nYou may spend a maximum of 3 mana or 24 HP on this ability.\n\nOnce you use this ability, you may not use it again until after an encounter conclusion phase.",
+      "manaCost": "-1",
+      "apCost": "0",
+      "rpCost": "",
+      "keywords": "Rage",
+      "range": "Self",
+      "requirement": ""
+    },
+    "ability2Ref": null,
+    "lineageChoices": {
+      "wi": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "lir": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "d": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "ar": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "lu": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "ni": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "un": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "vi": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      },
+      "none": {
+        "text": "",
+        "ability": "",
+        "abilityRef": null
+      }
+    }
+  }
+]

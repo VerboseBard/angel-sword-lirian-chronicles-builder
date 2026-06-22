@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "product": "Lyrian Chronicles Character Suite",
+  "defaultVersion": "0.13.0",
+  "latestKnownVersion": "0.13.0",
+  "officialManualUrl": "https://rpg.angelssword.com/game/online-manual",
+  "versions": [
+    {
+      "id": "0.12.5",
+      "label": "0.12.5 - Lyrian Chronicles",
+      "status": "downloaded",
+      "dataPath": "assets/versions/0.12.5/lyrian-data.js",
+      "detailPath": "assets/versions/0.12.5/lyrian-detail-data.js",
+      "local": true,
+      "updates": [
+        "Rules",
+        "Added Astra Corruption effects to the rulebook.",
+        "Added short animal raising rules",
+        "Races",
+        "NEW:- Sheepfolk, a chimera subrace with an affinity for aetherie magic.",
+        "Classes",
+        "NEW:- Necromaster, t3 version of necromancer",
+        "Biochemist, a t2 specialist class that copies chimera's."
+      ],
+      "sections": [
+        "Latest update",
+        "Settings guide",
+        "Rulebook",
+        "Breakthroughs",
+        "Keywords",
+        "Races",
+        "Classes",
+        "Abilities",
+        "Items",
+        "Monsters",
+        "Monster abilities"
+      ]
+    },
+    {
+      "id": "0.12.6",
+      "label": "0.12.6 - Lyrian Chronicles",
+      "status": "downloaded",
+      "dataPath": "assets/versions/0.12.6/lyrian-data.js",
+      "detailPath": "assets/versions/0.12.6/lyrian-detail-data.js",
+      "local": true,
+      "updates": [
+        "Rules",
+        "You can now escape a battle while grabbed or carried by another creature.",
+        "Added the Grab Ally action to the rules.",
+        "Classes",
+        "NEW:- Sanctioner, a t2 focus based healing class.",
+        "Jewel Idol, the t2 cool idol.",
+        "Merchant, a t1 utility class that excels in obtaining items. (Procurement works a bit differently in Mirane.)",
+        "Mogul, t2 merchant that uses the power of money."
+      ],
+      "sections": [
+        "Latest update",
+        "Settings guide",
+        "Rulebook",
+        "Breakthroughs",
+        "Keywords",
+        "Races",
+        "Classes",
+        "Abilities",
+        "Items",
+        "Monsters",
+        "Monster abilities"
+      ]
+    },
+    {
+      "id": "0.13.0",
+      "label": "0.13.0 - Lyrian Chronicles",
+      "status": "downloaded",
+      "dataPath": "assets/versions/0.13.0/lyrian-data.js",
+      "detailPath": "assets/versions/0.13.0/lyrian-detail-data.js",
+      "local": true,
+      "updates": [
+        "Races",
+        "NEW:- Sylph, a wind aligned fae subrace.",
+        "Phoenix rebirth now removes all buffs/debuffs.",
+        "Slime Body mana cost reduced from 1→0.",
+        "Fading Counter mana cost reduced from 1→0.",
+        "Blinding Dust now has the circuit keyword.",
+        "Faerie Flash II slightly updated to account for abilities potentially resetting Faerie Flash.",
+        "Classes"
+      ],
+      "sections": [
+        "Latest update",
+        "Settings guide",
+        "Rulebook",
+        "Breakthroughs",
+        "Keywords",
+        "Races",
+        "Classes",
+        "Abilities",
+        "Items",
+        "Monsters",
+        "Monster abilities"
+      ]
+    }
+  ]
+}

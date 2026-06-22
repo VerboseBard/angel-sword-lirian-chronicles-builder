@@ -1,0 +1,842 @@
+[
+  {
+    "id": "6a06299f6be32fced493084a",
+    "indexId": "4ca88f6c-c588-46d0-8a9a-6436a47063f0",
+    "monsterId": "acolyte",
+    "name": "Acolyte",
+    "lore": "PHA+QWNvbHl0ZXMgYXJlIGJlZ2lubmluZyBzcGVsbGNhc3RlcnMgdGhhdCBkcmF3IHRoZWlyIHBvd2VyIGZyb20gdGhlIGdvZHMuIER1ZSB0byB0aGUgcG9wdWxhcml0eSBhbmQgc3RyZW5ndGggb2YgS2FyaSwgdGhlIGh1bWFuIGdvZGRlc3MsIHRoZSB2YXN0IG1ham9yaXR5IG9mIGFjb2x5dGXigJlzIGluIHRoZSB3b3JsZCBhcmUgaHVtYW4uIEhvd2V2ZXIsIGFjb2x5dGVzIG9mIG90aGVyIHJhY2VzIGRvIHN0aWxsIGV4aXN0LiBTb21lIG1heSBmb2xsb3cgS2FyaSwgd2hpbGUgb3RoZXJzIG1heSBmb2xsb3cgdGhlaXIgb3duIGdvZCBvciBnb2RkZXNzLjwvcD4=",
+    "type": "Grunt Humanoid",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/ee0c5061-1860-4219-8a5d-f3380e86f699-Acolyte_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930861",
+    "indexId": "233b788d-924a-45b4-b085-4307d22e976c",
+    "monsterId": "alchemic-golem",
+    "name": "Alchemic Golem",
+    "lore": "PHA+QWxjaGVtaWMgR29sZW1zIGFyZSBmb3JtaWRhYmxlIGNvbnN0cnVjdHMgbWV0aWN1bG91c2x5IGNyYWZ0ZWQgYnkgc2tpbGxlZCBBcnRpZmljZXJzIGFuZCBBbGNoZW1pc3RzLiBUaGVzZSBodWxraW5nIGd1YXJkaWFucyBjb21lIGluIHZhcmlvdXMgY29uZmlndXJhdGlvbnMsIGVhY2ggdGFpbG9yZWQgdG8gc2VydmUgc3BlY2lmaWMgc2VjdXJpdHkgcHVycG9zZXMgd2l0aGluIHRoZWlyIGRlc2lnbmF0ZWQgZG9tYWlucy4gVHlwaWNhbGx5IHN0YXRpb25lZCBhcyBwcm90ZWN0b3JzLCBBbGNoZW1pYyBHb2xlbXMgc3RhbmQgc2VudGluZWwgb3ZlciB2YWx1YWJsZSB0cmVhc3VyZXMsIGFuY2llbnQgc2VjcmV0cywgYW5kIGNyaXRpY2FsIHJlc2VhcmNoIGZhY2lsaXRpZXMsIGVuc3VyaW5nIHRoYXQgb25seSB0aG9zZSBkZWVtZWQgd29ydGh5IG1heSBwYXNzLjwvcD48cD5EZXNwaXRlIHRoZWlyIGltcG9zaW5nIHNpemUgYW5kIGludHJpY2F0ZSBkZXNpZ25zLCBlYWNoIEdvbGVtIGV4aGliaXRzIGEgdW5pcXVlIGJsZW5kIG9mIGFsY2hlbWljYWwgcHJvd2VzcyBhbmQgbWVjaGFuaWNhbCBpbmdlbnVpdHksIHJlZmxlY3RpbmcgdGhlIGV4cGVydGlzZSBvZiB0aGVpciBjcmVhdG9ycy4gQWR2ZW50dXJlcnMgZGVsdmluZyBpbnRvIGZvcmdvdHRlbiBydWlucyBvciBleHBsb3JpbmcgY3V0dGluZy1lZGdlIHJlc2VhcmNoIGZhY2lsaXRpZXMgY2FuIGV4cGVjdCB0byBlbmNvdW50ZXIgZGl2ZXJzZSB2YXJpYW50cyBvZiB0aGVzZSBzZW50aW5lbHMuIFdoZXRoZXIgZ3VhcmRpbmcgdGhlIHJlbW5hbnRzIG9mIGEgbG9zdCBjaXZpbGl6YXRpb24gb3IgdGhlIGZvcmVmcm9udCBvZiBhcmNhbmUgZXhwZXJpbWVudGF0aW9uLCBBbGNoZW1pYyBHb2xlbXMgcHJlc2VudCBib3RoIGEgc2lnbmlmaWNhbnQgY2hhbGxlbmdlIGFuZCBhIHRlc3RhbWVudCB0byB0aGUgZW5kdXJpbmcgbGVnYWN5IG9mIHRoZWlyIG1ha2Vycy48L3A+",
+    "type": "Boss Construct",
+    "dangerLevel": "E",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/b4d7d922-68be-4887-b7c7-21a9fecd3924-Alchemical_Golem_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930849",
+    "indexId": "6b5ba9af-2073-4a0c-a109-0ee731a81aa8",
+    "monsterId": "alpha-wolf",
+    "name": "Alpha Wolf",
+    "lore": "PHA+QSBiaWcgd29sZiBpbiBjaGFyZ2Ugb2YgYSBwYWNrLjwvcD4=",
+    "type": "Heroic Beast",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/1fa22135-568b-4e7d-8c95-d9f51cf6ea66-Wolf_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493084b",
+    "indexId": "3bac8963-4dd6-4851-8684-16effcb9958c",
+    "monsterId": "amanita-mushroom",
+    "name": "Amanita Mushroom",
+    "lore": "PHA+QW4gYWxtb3N0IG1pbmRsZXNzIGNyZWF0dXJlLCB0aGUgQW1hbml0YSB3aWxsIGF0dGFjayBuZWFyYnkgcGVvcGxlIGlmIGl0IG5lZWRzIHRvIGZlZWQuIE90aGVyd2lzZSwgaXQgaXMgZG9jaWxlIHVubGVzcyBwcm92b2tlZC48L3A+",
+    "type": "Grunt Plant",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/b92c7db2-9401-4fc8-9482-f43404f23672-Amanita_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493084c",
+    "indexId": "3acecc5b-53dd-492a-af43-9f01da2ad3c7",
+    "monsterId": "animal-summoner",
+    "name": "Animal Summoner",
+    "lore": "PHA+VGhlIHByb2Nlc3Mgb2YgYW5pbWFsIHN1bW1vbmluZyBpcyB1c3VhbGx5IGRvbmUgYnkgRmFlLCBidXQgYW55IG1hZ2UgY2FuIGxlYXJuIGl0IGlmIHRoZXkgYXJlIGluIHR1bmUgd2l0aCBuYXR1cmUuPC9wPg==",
+    "type": "Heroic Humanoid",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/f1140563-770f-479f-9086-5708b27e7982-Animal_Summoner_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493084d",
+    "indexId": "8b2c538f-295f-4463-b4cc-26ce9863b452",
+    "monsterId": "apprentice",
+    "name": "Apprentice",
+    "lore": "PHA+QXBwcmVudGljZXMgYXJlIGJlZ2lubmluZyBzcGVsbGNhc3RlcnMgd2l0aG91dCBhIHNwZWNpYWxpemF0aW9uLiBUaGV5IGV4aXN0IGluIGV2ZXJ5IHJhY2UsIHRob3VnaCBodW1hbiBtYWdlcyBhcmUgdGhlIHJhcmVzdCBvbmVzLjwvcD4=",
+    "type": "Grunt Humanoid",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/9d88df29-4134-41ef-983e-ae494330be0f-Apprentice_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493084e",
+    "indexId": "3b6f4f44-90d9-4db4-96a5-1d2589195d15",
+    "monsterId": "archer",
+    "name": "Archer",
+    "lore": "PHA+QXJjaGVyIGlzIGEgbmFtZSBnaXZlbiB0byBhbGwgdXNlcnMgb2YgcmFuZ2VkIHdlYXBvbnJ5LCByZWdhcmRsZXNzIG9mIHdoZXRoZXIgdGhleSB1c2UgYSBib3cgb3Igbm90LiBUaGV5IGV4aXN0IGluIGV2ZXJ5IHJhY2UgYW5kIGNhbiB1c2UgYSB3aWRlIHZhcmlldHkgb2YgcmFuZ2VkIHdlYXBvbnMuJm5ic3A7PC9wPg==",
+    "type": "Grunt Humanoid",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/feda0767-0de8-42d1-aa02-1cdfe689f7cd-Archer_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930837",
+    "indexId": "854fda0d-8bbc-4f48-9166-6edb2404bc4f",
+    "monsterId": "armored-spider",
+    "name": "Armored Spider",
+    "lore": "PHA+QSB0eXBlIG9mIGxhcmdlIHNwaWRlciB0aGF0IGhhcyBldm9sdmVkIGludG8gaGF2aW5nIGEgdGhpY2sgYXJtb3JlZCBjYXJhcGFjZSwgZ2l2aW5nIGl0IG1vcmUgYnVsayB0aGFuIG90aGVyIHNwaWRlciBzcGVjaWVzLjwvcD4=",
+    "type": "Grunt Insect",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/ca511234-a5b0-4889-b504-c5b0f4cf1853-Armored_Spider_1_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493084f",
+    "indexId": "96022318-54b7-4fae-adb3-8b46b622698e",
+    "monsterId": "assassin",
+    "name": "Assassin",
+    "lore": "PHA+V2hpbGUgdGhlIG9yaWdpbmFsIGFzc2Fzc2lucyBjb21lIGZyb20gdGhlIGRlc2VydCBjaXR5IG9mIFRlbHNpbiwgdGhlIHRlcm0gaGFzIGV2b2x2ZWQgc2luY2UgdGhlbi4gSXQgbm93IHJlZmVycyB0byBhbnkgc29ydCBvZiBzdGVhbHRoeSBpbmRpdmlkdWFsIHdobyBzZWVrcyB0byBlbGltaW5hdGUgcHJpb3JpdHkgdGFyZ2V0cyBxdWlja2x5IGFuZCBlZmZpY2llbnRseS4gVGhleSBleGlzdCBpbiB0aGUgZW1wbG95IG9mIGFsbCBtYWpvciBuYXRpb25zIGluIHRoZSB3b3JsZCwgYW5kIHBlb3BsZSB3aXRoIGEgc2ltaWxhciBza2lsbCBzZXQgYXJlIG5vdCBoYXJkIHRvIGZpbmQgaW4gYWR2ZW50dXJlcuKAmXMgZ3VpbGRzLCBhcyB3ZWxsIGFzIG90aGVyIG9yZ2FuaXphdGlvbnMuPC9wPg==",
+    "type": "Heroic Humanoid",
+    "dangerLevel": "E",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/8d10a7dd-9988-4634-b1e7-0104780e2139-Assassin_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930836",
+    "indexId": "d0dd5468-6751-4483-81c6-51029d86a0a4",
+    "monsterId": "astral-spider",
+    "name": "Astral Spider",
+    "lore": "PHA+QSB0eXBlIG9mIGxhcmdlIHNwaWRlcnMgdGhhdCBoYXMgc3VmZmVyZWQgZnJvbSBhc3RyYWwgY29ycnVwdGlvbiwgZ2l2aW5nIGl0IHRlbGVwb3J0YXRpb24gYWJpbGl0aWVzLjwvcD4=",
+    "type": "Grunt Insect",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/7d70f066-df43-44c7-b451-4f687dea1fb1-Astra_Spider_1_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493082a",
+    "indexId": "1846638f-c9f2-4438-ba93-6d664f6f6af7",
+    "monsterId": "astral-tiger",
+    "name": "Astral Tiger",
+    "lore": "PHA+VGhlIGFzdHJhbCB0aWdlciBpcyBhIHRpZ2VyIHRoYXQgaGFzIGJlZW4gY29ycnVwdGVkIGJ5IEFzdHJhLiBJdCBwaGFzZXMgaW4gYW5kIG91dCBvZiByZWFsaXR5IGF0IHNlZW1pbmcgcmFuZG9tIHRpbWVzLCB0aG91Z2ggdGhlIGJlYXN0IGl0c2VsZiBhbHdheXMgc2VlbSBwZXJmZWN0bHkgYXdhcmUgb2YgaG93IGl0IHdpbGwgbW92ZS48L3A+",
+    "type": "Heroic Beast ",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/9a095484-64c5-4dd5-b092-04a3b0dc2cd5-astral_tiger_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930870",
+    "indexId": "e5dd33c0-4bfa-45e6-906d-52a0af651c9a",
+    "monsterId": "astran-magpie",
+    "name": "Astran Magpie",
+    "lore": "PHA+QW4gYXN0cmEgY29ycnVwdGVkIG1hZ3BpZS48L3A+PHA+PGk+QnkgTWVnYSBNaWtlIDcwPC9pPjwvcD4=",
+    "type": "Grunt Beast",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/81551dd2-498f-4fd3-9714-75916e307c9f-Magpie_Greater_-_Copy.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493086f",
+    "indexId": "7f8991ea-de69-4d58-896f-16ea4ed66d81",
+    "monsterId": "bandersnatch",
+    "name": "Bandersnatch",
+    "lore": "PHA+QW5ncnkgZnVycnkgY2F0PC9wPg==",
+    "type": "Boss Humanoid",
+    "dangerLevel": "E",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/6ae928bf-1883-4e94-a8cd-0b84e6057a42-fucam.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930845",
+    "indexId": "8e04fffd-ad92-449e-b699-72857fa9224a",
+    "monsterId": "bear",
+    "name": "Bear",
+    "lore": "PHA+QSBjb21tb24gYmVhci4gTm90IGEgdGhyZWF0IHRvIGFkdmVudHVyZXJzLCBidXQgc3RpbGwgZGFuZ2Vyb3VzIHRvIHRoZSBhdmVyYWdlIHBlcnNvbi48L3A+",
+    "type": "Grunt Beast",
+    "dangerLevel": "E",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/1536b732-a120-46e0-aa04-2dce92f955bd-Bear_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930868",
+    "indexId": "bbfb4f94-2803-4c69-bf56-1af3b9d14ab7",
+    "monsterId": "black-knight",
+    "name": "Black Knight",
+    "lore": "PHA+VG8gZG8uPC9wPg==",
+    "type": "Boss Fiend",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/a289b7b1-ffb9-4644-a41f-30dea62d3cba-Boss_Black_Knight_-_Raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930850",
+    "indexId": "cbe33786-1ee3-43b1-a0da-7ee572ee8fa5",
+    "monsterId": "boar",
+    "name": "Boar",
+    "lore": "PHA+QSBjb21tb24gYm9hci48L3A+",
+    "type": "Grunt Beast",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/e7042814-6cc3-48db-b45b-35b731973a19-boar_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930838",
+    "indexId": "62d16871-3bef-4e81-80bd-eee89fc875d6",
+    "monsterId": "broodmother",
+    "name": "Broodmother",
+    "lore": "PHA+VGhlIGJyb29kbW90aGVyIGlzIGEgZ2lhbnQgc3BpZGVyIHRoYXQgYmlydGhzIG90aGVyIHNwaWRlcnMuPC9wPg==",
+    "type": "Boss Insect",
+    "dangerLevel": "E",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/457698ec-0e5c-41ca-bb9a-215c4e1b0e3c-Brood_Mother_1_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930851",
+    "indexId": "179e546c-5623-493b-9553-f8869e5cbdb5",
+    "monsterId": "brute",
+    "name": "Brute",
+    "lore": "PHA+QnJ1dGVzIGFyZSBjb21iYXRhbnRzIHRoYXQgc3BlY2lhbGl6ZSBpbiBtZWxlZSBjb21iYXQuIFRoZXkgZXhpc3QgaW4gZXZlcnkgcmFjZSBhbmQgY2l2aWxpemF0aW9uIGFuZCBjYW4gdXNlIGEgd2lkZSB2YXJpZXR5IG9mIHdlYXBvbnMgYW5kIGFybW9yLjwvcD4=",
+    "type": "Grunt Humanoid",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/d4b11642-50e0-4754-b522-1f4f1173381b-Brute_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930834",
+    "indexId": "cad5ce5e-cf33-4101-b233-a1427d6fe81c",
+    "monsterId": "burrowing-spider",
+    "name": "Burrowing Spider",
+    "lore": "PHA+QSB0aW55IHNwaWRlciB0aGF0IGlzIGxpa2UgYSBwYXJhc2l0ZS4gT25jZSBpdCBmaW5kcyBpdHMgd2F5IGluc2lkZSBhIGhvc3QsIGl0IGVhdHMgaXRzIHdheSB0byB0aGUgdGFyZ2V0cyBoZWFydC48L3A+",
+    "type": "Grunt Insect",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/30da2c92-eaa0-42ea-90b4-2b64bf08030d-Burrowing_Spider_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493082f",
+    "indexId": "045afa55-cf1c-4d03-98a2-9cad90c62872",
+    "monsterId": "cheetah",
+    "name": "Cheetah",
+    "lore": "PHA+QSBzcG90dGVkIGJpZyBjYXQuPC9wPg==",
+    "type": "Beast",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/f9b72646-0231-438c-8089-4904c3077726-Cheetah_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493086a",
+    "indexId": "3b2cee74-787e-48cd-8134-634dd9cb4842",
+    "monsterId": "crystal-behemoth",
+    "name": "Crystal Behemoth",
+    "lore": "PHA+QSBsYXJnZSBmaWVuZCB0aGF0IGZlZWRzIG9uIHRoZSBwdXJwbGUgY3J5c3RhbHMgdGhhdCBhcmUgZW1iZWRkZWQgaW4gaXRzIHNraW4uPC9wPg==",
+    "type": "Boss Fiend",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/6bbf8295-8363-4b19-b74b-e4ab502e5542-Crystal Eater.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930852",
+    "indexId": "69c02b17-f64d-4706-b3c4-9c3492b937a9",
+    "monsterId": "deathcap-mushroom",
+    "name": "Deathcap Mushroom",
+    "lore": "PHA+LTwvcD4=",
+    "type": "Heroic Plant",
+    "dangerLevel": "D",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/3b179682-ef5a-4291-8e52-e8ed550b1f2c-Deathcap_Mushroom_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930853",
+    "indexId": "593c1495-8fcc-47f4-95c1-1c51af296b4c",
+    "monsterId": "defender",
+    "name": "Defender",
+    "lore": "PHA+RGVmZW5kZXJzIGFyZSBmcm9udCBsaW5lcnMgd2hvIGdvIGluIGZpcnN0IGFuZCBhYnNvcmIgdGhlIGhpdHMgZm9yIHRoZWlyIGFsbGllcy4gRXhpc3RpbmcgaW4gZXZlcnkgY3VsdHVyZSBhbmQgb2YgYW55IHJhY2UsIHRoZXkgYXJlIHVzdWFsbHkgaGVhdmlseSBhcm1vcmVkIHdpdGggc2hpZWxkcy4mbmJzcDs8L3A+",
+    "type": "Heroic Humanoid",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/4a3f11f0-fff2-4c66-a8b4-c760d694bc0a-Defender_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930872",
+    "indexId": "75a79747-df8a-4c59-8cad-244c72960974",
+    "monsterId": "devouring-swarm",
+    "name": "Devouring Swarm",
+    "lore": "PHA+U3VtbW9uaW5nIENvc3Q6IDEgQVAsIDEgTWFuYTwvcD48cD4xMHgxMGZ0IHNpemU8L3A+",
+    "type": "Grunt Insect",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/1fc80e09-dfbe-4cdd-80d0-3d07e2a57891-Locust Swarm.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493083a",
+    "indexId": "b342a5aa-c335-47d0-b876-9ca5771aec9b",
+    "monsterId": "drake",
+    "name": "Drake",
+    "lore": "PHA+QSBkaXN0YW50IHJlbGF0aXZlIG9mIHRoZSBkcmFnb25zIHRoYXQgaGF2ZSB2YW5pc2hlZC4gVGhvdWdoIHRoZXkgc3BlbnQgbW9zdCBvZiB0aGVpciB0aW1lIHNsZWVwaW5nIGluIHRoZWlyIGNhdmVzLCB0aGV5IGFyZSBob3N0aWxlIHRvIGFsbCBsaXZpbmcgY3JlYXR1cmVzIGFuZCB2aWV3IHRoZW0gYXJlIGxpdHRsZSBtb3JlIHRoYW4gcHJleS48L3A+",
+    "type": "Heroic Dragon",
+    "dangerLevel": "D",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/af735805-eb5d-4f2d-a029-a931afd7b858-Drake_1_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930839",
+    "indexId": "ee9239b8-a900-48f3-afd5-65b8310e40c3",
+    "monsterId": "drake-wyrmling--fire-",
+    "name": "Drake Wyrmling (Fire)",
+    "lore": "PHA+QSBkaXN0YW50IHJlbGF0aXZlIG9mIHRoZSBkcmFnb25zIHRoYXQgaGF2ZSB2YW5pc2hlZC4gVGhlIHd5cm1saW5nIGlzIGEgeW91bmcgd3lybSB0aGF0IGhhcyBub3QgeWV0IG1hdHVyZWQuIERlc3BpdGUgdGhlaXIgYWdlLCB0aGV5IGFyZSBub3QgYW55IGxlc3MgaG9zdGlsZSBhbmQgdmljaW91cyAtIGF0dGFja2luZyBhbnkgdW5rbm93biBjcmVhdHVyZSB0aGF0IGFwcHJvYWNoZXMgaXQuPC9wPg==",
+    "type": "Grunt Dragon",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/cec1230d-9faf-4b9a-a660-3b4b5c35bc13-Wyrmling_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930854",
+    "indexId": "594d6d22-fe9b-4774-a3ab-093fab959c79",
+    "monsterId": "dreameater",
+    "name": "Dreameater",
+    "lore": "PHA+QSBmb3JtbGVzcyBjcmVhdHVyZSB0aGF0IG9ubHkgZXZlciBhcHBlYXJzIGluIHNvbWVvbmUncyBkcmVhbXMuIEl0IGNhbiBzZWVtaW5nbHkgZW50ZXIgdGhlIGRyZWFtIG9mIGFueW9uZSwgbm8gbWF0dGVyIGhvdyBmYXIgYXdheSB0aGV5IGFyZS4gVGFyZ2V0cyBwZW9wbGUgdGhhdCBhcmUgYWxvbmUgYW5kIGVuam95cyB0b3JtZW50aW5nIGl0cyBwcmV5IHVudGlsIHRoZXkgZXZlbnR1YWxseSBkaWUgdG8gZXhoYXVzdGlvbi4gT25jZSBpdCBoYXMgY2hvc2VuIGl0cyB0YXJnZXQsIGl0IHdpbGwga2VlcCB2aXNpdGluZyBpdCB1bnRpbCBlaXRoZXIgaXQgb3IgdGhlIHZpY3RpbSBkaWVzLjwvcD4=",
+    "type": "Heroic Fiend",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/3760fe14-4307-4940-8601-4e4a5d39540e-Dreameater_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493086e",
+    "indexId": "2de0df42-4f4c-4011-b606-247fcc22db98",
+    "monsterId": "dredge-ooze",
+    "name": "Dredge Ooze",
+    "lore": "PHA+QSBjb21tb24gc2xpbWUgdHlwZSBjcmVhdHVyZSBjb3JydXB0ZWQgYnkgQXN0cmEuIE5vdyBob3N0aWxlIHRvIGFueSBsaXZpbmcgY3JlYXR1cmUgaXQgc2Vlcy48L3A+",
+    "type": "Grunt Aberration",
+    "dangerLevel": "E",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/687c52c4-8b41-4da8-af50-13042e693c34-SludgeMelee.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930878",
+    "indexId": "8e171899-a425-41c0-aaf2-1989a2f35186",
+    "monsterId": "earth-slime",
+    "name": "Earth Slime",
+    "lore": "PHA+SnVzdCBhIHNsaW1lLjwvcD48cD48aT5CeSBOeWEuPC9pPjwvcD4=",
+    "type": "Grunt Slime",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/5e0af3af-ec8a-4bec-8b0f-7a3cd7bb43c4-earth.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930860",
+    "indexId": "31b31570-d8a3-4f96-bca3-9d3c3544e9be",
+    "monsterId": "efreet",
+    "name": "Efreet",
+    "lore": "PHA+LTwvcD4=",
+    "type": "Heroic Elemental",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/40491ea9-ebd5-4710-8539-6f006c6c56ce-Efreet_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930869",
+    "indexId": "f1f68521-ca7c-4db6-9f42-b3107b39a9b5",
+    "monsterId": "faewolf",
+    "name": "Faewolf",
+    "lore": "PHA+TGVnZW5kcyBzYXkgdGhlc2Ugd29sdmVzIHdlcmUgb25jZSBub3JtYWwgZm9yZXN0IHByZWRhdG9ycyB3aG8gc3R1bWJsZWQgdXBvbiBhIGZleSBuZXh1cyBvciB3ZXJlIHN1YmplY3QgdG8gYW4gb3RoZXJ3b3JsZGx5IGN1cnNlLiBPdmVyIGdlbmVyYXRpb25zLCB0aGV54oCZdmUgYWRhcHRlZCwgZGV2ZWxvcGluZyB1bmlxdWUgdGVsZXBvcnRhdGlvbiBwb3dlcnMgZnVlbGVkIGJ5IGEgYmxlbmQgb2Ygc3Bpcml0dWFsIG1hbmEgYW5kIHdpbGQgZmFlIGVuZXJneS48L3A+",
+    "type": "Heroic Beast",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/f4b98300-873a-422d-a168-bece9562e483-Faewolf.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930876",
+    "indexId": "54f72d3d-86a4-4ba4-9238-ecb856bae517",
+    "monsterId": "fire-slime",
+    "name": "Fire Slime",
+    "lore": "PHA+SnVzdCBhIGZpcmUgc2xpbWUuPC9wPjxwPjxpPkJ5IE55YS48L2k+PC9wPg==",
+    "type": "Grunt Slime",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/2be6de6f-5792-4726-a956-c9842abfb10c-fire.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493086c",
+    "indexId": "2d61160f-e3da-4316-b389-1b6e5cb44092",
+    "monsterId": "fortuna",
+    "name": "Fortuna",
+    "lore": "PHA+U3VtbW9uIGNvc3Q6IDQgQVAsIDQgTWFuYTwvcD4=",
+    "type": "Heroic Humanoid (Summon)",
+    "dangerLevel": "E",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/b36911c0-8f98-4f90-9321-4178f7e78c8a-Fortuna.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493083e",
+    "indexId": "037e50a4-2e9b-4429-9845-adf21cce8dca",
+    "monsterId": "frost-maiden",
+    "name": "Frost Maiden",
+    "lore": "PHA+QW4gaWNlIGVsZW1lbnRhbCB0eXBlIGNyZWF0dXJlIHRoYXQgaXMgaW5oZXJlbnRseSBhdHRyYWN0ZWQgdG8gdGhlIHdhcm10aCBvZiBvdGhlciBjcmVhdHVyZXMuIFNhaWQgdG8gYmUgYSBtYW5pZmVzdGF0aW9uIG9mIHRyYXZlbGVycyB0aGF0IGdvdCBsb3N0IGluIGEgYmxpenphcmQgYW5kIGNsb3NlbHkgcmVsYXRlZCB0byB0aGUgeXVraS1vbm5hIHlvdWthaS4gTm90IGEgY3JlYXR1cmUgd2l0aCBtYWxpY2lvdXMgaW50ZW50IG5lY2Vzc2FyaWx5LCBidXQgaGVyIHdheSBvZiB0aGlua2luZyBtYXkgYmUgdG9vIGFsaWVuIHRvIG5lZ290aWF0ZSB3aXRoLjwvcD4=",
+    "type": "Heroic Elemental",
+    "dangerLevel": "D",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/0b15375b-d44b-4f9a-8d5f-1a1fb9e19342-Frost_Maiden_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930855",
+    "indexId": "6af9d154-b7e4-47f1-8f62-92557f49259f",
+    "monsterId": "gargoyle",
+    "name": "Gargoyle",
+    "lore": "PHA+R2FyZ295bGVzIGFyZSB1c3VhbGx5IHRpZWQgdG8gYW4gYWJhbmRvbmVkIHBsYWNlIG1hZGUgb3V0IG9mIHN0b25lIHdoZXJlIHRoZXkgd2lsbCBsaWUgZG9ybWFudCBpbiB0aGVpciBzdG9uZSBmb3JtIHVudGlsIHBlb3BsZSBhcHByb2FjaC4gV2hlbiBsaXZpbmcgY3JlYXR1cmVzIGdldCBjbG9zZSBlbm91Z2gsIHRoZXkgd2lsbCByZXZlYWwgdGhlbXNlbHZlcyBhbmQgYXR0YWNrIHRoZW0uIFRoZSByZWFzb24gYmVoaW5kIHRoZWlyIGhvc3RpbGl0eSByZW1haW5zIHVuY2xlYXIsIGFuZCBtb3N0IGFkdmVudHVyZXJzIHRoYXQgZG9u4oCZdCB3YW50IHRvIGRlYWwgd2l0aCB0aGVtIHNpbXBseSBhdm9pZCB0aGVpciByZXN0aW5nIHBsYWNlLjwvcD4=",
+    "type": "Heroic Elemental",
+    "dangerLevel": "E",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/33fec48c-48cc-4354-a585-1b3f7a89475f-Gargoyle_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493082c",
+    "indexId": "af3c5a29-cd5f-4fd8-a531-7e0005d6191a",
+    "monsterId": "ghost",
+    "name": "Ghost",
+    "lore": "PHA+VGhlIGdob3N0IGlzIGFuIHVuZGVhZCBtb25zdGVyIHRoYXQgc3Bhd25lZCBmcm9tIGEgcGVyc29uIHRoYXQgZGllZCB3aGlsZSBiZWFyaW5nIGEgc3Ryb25nIGdydWRnZS4gVGhleSBhcmUgaG9zdGlsZSB0byBhbnkgbGl2aW5nIGNyZWF0dXJlIGFyb3VuZCB0aGVtLCBtaXN0YWtpbmcgdGhlbSBmb3IgdGhlIHN1YmplY3Qgb2YgdGhlaXIgdmVuZ2VhbmNlLjwvcD4=",
+    "type": "Heroic Undead",
+    "dangerLevel": "F+",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/023ca995-1e30-42d3-aa35-0080900a9f2e-Ghost_3_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930843",
+    "indexId": "c9e2184c-ceb6-459d-9283-f3d8f190426b",
+    "monsterId": "ghoul",
+    "name": "Ghoul",
+    "lore": "PHA+R2hvdWxzIGFyZSB1bmRlYWQgdGhhdCBhcmUgcGVycGV0dWFsbHkgaHVuZ3J5LiBUaGV5IGZlZWQgb24gdGhlIGNvcnBzZXMgb2YgZGVhZCBjcmVhdHVyZXMsIHByZWZlcmFibHkgaHVtYW5vaWRzLjwvcD4=",
+    "type": "Grunt Undead",
+    "dangerLevel": "F+",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/ab1ed61f-069d-4db5-a690-a17ae5b3a886-Ghoul_2_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493087b",
+    "indexId": "29cd6310-8fce-43d3-b743-8f82676104e4",
+    "monsterId": "giant-astra-crab",
+    "name": "Giant Astra Crab",
+    "lore": "PHA+VGhlIHVsdGltYXRlIGxpZmVmb3JtLjwvcD48cD48aT5CeSBOeWEuPC9pPjwvcD4=",
+    "type": "Heroic Boss",
+    "dangerLevel": "C",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/c03d778e-0ccc-4305-9fc5-2ef9bf55919e-crab.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930856",
+    "indexId": "3cfa048e-ddef-4fbd-a8ce-8d25c7c1629a",
+    "monsterId": "giant-mantis",
+    "name": "Giant Mantis",
+    "lore": "PHA+QSBtYW50aXMgdGhlIHNpemUgb2YgYSByZWd1bGFyIHBlcnNvbi4gTm9ib2R5IGtub3dzIGhvdyB0aGV5IGdyZXcgc28gYmlnLjwvcD4=",
+    "type": "Heroic Insect",
+    "dangerLevel": "F+",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/95285bab-51be-425f-848e-99c31cb00926-Mantis_Final_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493083d",
+    "indexId": "2edfb73e-c645-4f2c-a47b-8e28650dbaf0",
+    "monsterId": "giant-prismatic-slime",
+    "name": "Giant Prismatic Slime",
+    "lore": "PHA+QSBmaWVuZCB0aGF0IGFwcGVhcnMgbGlrZSBhIGdpYW50IHNsaW1lLiBTZWVrcyB0byBkZXZvdXIgdGhlIG1hbmEgb2Ygb3RoZXIgY3JlYXR1cmVzLjwvcD4=",
+    "type": "Heroic Fiend",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/fdb16272-86ae-4f92-a6c0-780cea96d19f-Huge_Prismatic_Slime_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930835",
+    "indexId": "2c23fbc1-3bce-4ee7-8adc-9cb61add492e",
+    "monsterId": "giant-spider",
+    "name": "Giant Spider",
+    "lore": "PHA+QSBsYXJnZSBzcGlkZXIgdGhhdCBwcmV5cyBvbiByZWd1bGFyIHBlb3BsZS48L3A+",
+    "type": "Grunt Insect",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/e5b077ac-13c1-4207-bd2c-b937beb0b937-Giant_Spider_1_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493087c",
+    "indexId": "a2b113da-ac79-4a2d-9547-f5883d125fcf",
+    "monsterId": "gravity-fiend",
+    "name": "Gravity Fiend",
+    "lore": "PHA+QW4gRXhvdXNpYWkgd2l0aCBncmF2aXR5IHBvd2Vycy48L3A+",
+    "type": "Boss Fiend",
+    "dangerLevel": "EX",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/a7fbb95b-7e0a-4ced-aadb-cc58a020c020-Gravity Fiend.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930871",
+    "indexId": "faf56c97-49d3-4ee5-8aac-dee22ca2d03c",
+    "monsterId": "greater-astran-magpie",
+    "name": "Greater Astran Magpie",
+    "lore": "PHA+QW4gYXN0cmEgY29ycnVwdGVkIG1hZ3BpZTwvcD48cD48aT5CeSBNZWdhIE1pa2UgNzA8L2k+PC9wPg==",
+    "type": "Heroic Beast",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/e20611c2-3d07-4cf6-b41b-1c363c3f7a33-Magpie_Lesser_-_Copy.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930847",
+    "indexId": "1ad81deb-26a8-4a67-89b0-2ba70b0e70b2",
+    "monsterId": "greater-manticore",
+    "name": "Greater Manticore",
+    "lore": "PHA+VGhlIGdyZWF0ZXIgbWFudGljb3JlIGlzIGEgbW9uc3Ryb3VzIGNvbWJpbmF0aW9uIG9mIHRocmVlIGRpZmZlcmVudCB0eXBlcyBvZiBhbmltYWwgb3JpZ2luYWxseSBmdXNlZCB0b2dldGhlciB0aHJvdWdoIG1hZ2ljLiBUaGV5IHBvc3Nlc3MgbGl0dGxlIGludGVsbGlnZW5jZSBhbmQgZG8gbGl0dGxlIG1vcmUgdGhhbiBmZWFzdCBvbiBhbnlvbmUgdW5mb3J0dW5hdGUgZW5vdWdoIHRvIHJ1biBpbnRvIG9uZS4gVGhlaXIgc2Vjb25kIGhlYWQgaXMgYSBtdXRhdGlvbiBjYXVzZWQgYnkgYXN0cmEgY29ycnVwdGlvbiB0aGF0IG9ubHkgbWFrZXMgaXQgbW9yZSB2aWNpb3VzLjwvcD4=",
+    "type": "Boss Beast",
+    "dangerLevel": "E",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/a7d991b9-5376-43c3-a976-31a8ac92cfe9-Manticore_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930848",
+    "indexId": "f70ed688-a434-4ce3-85af-72f6cde20f96",
+    "monsterId": "gryphon",
+    "name": "Gryphon",
+    "lore": "PHA+VGhlIGdyeXBob24gZGVzcGl0ZSBpdHMgYXBwZWFyYW5jZSBpcyBhbiBhbmltYWwgdGhhdCBuYXR1cmFsbHkgYXBwZWFycyBpbiB0aGUgd2lsZC4gVGhleSBhcmUgdGVycml0b3JpYWwsIGJ1dCBub3QgaG9zdGlsZSB0byBwZW9wbGUgdGhhdCBzdGF5IGZhciBlbm91Z2ggYXdheSBmcm9tIHRoZW0uPC9wPg==",
+    "type": "Heroic Beast",
+    "dangerLevel": "E",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/fdab3774-61ac-4944-bef5-e8871a09cfce-Griffon_2_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493083f",
+    "indexId": "dfda600c-0e75-4290-85f4-5450b45609bc",
+    "monsterId": "heliamphora",
+    "name": "Heliamphora",
+    "lore": "PHA+VGhlIEhlbGlhbXBob3JhIGlzIGEgbGFyZ2UgcGl0Y2hlciBwbGFudCwgb2Ygd2hpY2ggc21hbGxlciB2ZXJzaW9ucyBhcmUgc29tZXRpbWVzIGtlcHQgYXMgaG91c2UgcGxhbnRzLiBJdCBpcyBlZmZlY3RpdmVseSBtaW5kbGVzcywganVzdCBsdXJpbmcgaW4gY3JlYXR1cmVzIHdpdGggaXRzIHBvbGxlbiBhbmQgYXR0YWNraW5nIHRoZW0gdG8gZWF0LjwvcD4=",
+    "type": "Boss Plant",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/00fea509-bc40-42bc-8b79-08d8520c2490-Heliamphora_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930867",
+    "indexId": "465c66ad-f229-4d88-80fc-45a04a84fd01",
+    "monsterId": "hobgoblin-boar-rider",
+    "name": "Hobgoblin Boar Rider",
+    "lore": "PHA+SG9iZ29ibGlucyBvbiBhIGJvYXIuPC9wPg==",
+    "type": "Grunt Humanoid",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/4d84ee18-8c5c-4dbf-b6a2-afe7230e9eb4-Hog_Rider_-_Raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930864",
+    "indexId": "302ecf1d-2f2a-4297-ba54-7fcf6f8b658c",
+    "monsterId": "hobgoblin-fighter",
+    "name": "Hobgoblin Fighter",
+    "lore": "PHA+R29ibzwvcD4=",
+    "type": "Grunt Humanoid",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/d37a1ef8-8760-404a-bf1f-ce68f6dcd459-Hobgoblin.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930865",
+    "indexId": "41663996-7ee8-4f21-ac22-ecc438d5bc2a",
+    "monsterId": "hobgoblin-tactician",
+    "name": "Hobgoblin Tactician",
+    "lore": "PHA+QSBnb2JvIHRhY3RpY2lhbjwvcD4=",
+    "type": "Heroic Humanoid",
+    "dangerLevel": "E",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/c409785f-89cd-4932-bb8c-0e48ad645d49-Hobgoblin Tactician.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930857",
+    "indexId": "f1035881-c895-4ef9-88cb-175d83bcd060",
+    "monsterId": "hydra",
+    "name": "Hydra",
+    "lore": "PHA+QSB3ZWlyZCBhbmltYWwgdGhhdCBoYXMgdGhyZWUgaGVhZHMgdGhhdCBlYWNoIGhhdmUgdGhlaXIgb3duIHRob3VnaHRzLiBFYWNoIGhlYWQgaXRzZWxmIGlzIGFuIGludGVsbGlnZW50IGNyZWF0dXJlICh0aG91Z2ggdGhleSBsYWNrIHRoZSBhYmlsaXR5IHRvIHNwZWFrIGEgY29tbW9uIGxhbmd1YWdlKSwgYnV0IHRoZSBoZWFkcyB0aGVtc2VsdmVzIGFyZSBhbHdheXMgaW4gY29uZmxpY3QuIFRoZXkgc3RydWdnbGUgdG8gbWFrZSBhIGRlY2lzaW9uIG9uIGV2ZW4gdGhlIG1vc3QgYmFzaWMgdGhpbmdzLCBzb21ldGltZXMgcmVzb3J0aW5nIHRvIGluZmlnaHRpbmcuIE9ubHkgd2hlbiB0aGVpciBleGlzdGVuY2UgaXMgdGhyZWF0ZW5lZCBieSBhbiBvdXRzaWRlIHNvdXJjZSBkbyB0aGUgaGVhZHMgd29yayB0b2dldGhlci48L3A+",
+    "type": "Boss Beast",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/d4cfe9d4-ea58-4cf3-95be-755457bf5701-Hydra_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493082b",
+    "indexId": "7cab2b64-587c-4dd7-9011-6e1d6c261d56",
+    "monsterId": "ice-queen",
+    "name": "Ice Queen",
+    "lore": "PHA+QW4gaWNlIGVsZW1lbnRhbCB3aXRoIGhpZ2ggaW50ZWxsaWdlbmNlIHRoYXQgY29tbWFuZHMgb3RoZXIgZWxlbWVudGFscyBhbmQgYmVhc3RzIGluIHRoZSBhcmVhLiBTaGUgZG9lcyB0aGlzIHdpdGhvdXQgZGlyZWN0bHkgY29tbXVuaWNhdGluZyB3aXRoIHRoZW0sIG1lcmVseSBoZXIgcHJlc2VuY2UgaW4gdGhlIGFyZWEgaXMgZW5vdWdoIGZvciBpY2UgY3JlYXR1cmVzIHRvIHN1Ym1pdC48L3A+PHA+U2hlIGlzIGRvbWluZWVyaW5nLCBidXQgY2FuIGJlIHJlYXNvbmVkIGFuZCBuZWdvdGlhdGVkIHdpdGggaWYgc2hvd24gdGhlIHByb3BlciByZXNwZWN0LjwvcD4=",
+    "type": "Boss Elemental",
+    "dangerLevel": "E",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/41c81beb-8b19-4784-a8d9-07ce028ad113-Frost_Queen_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930874",
+    "indexId": "fd910e9c-9aff-4a53-8dca-b1e74a161628",
+    "monsterId": "inkblight",
+    "name": "Inkblight",
+    "lore": "PHA+QSBmaWVuZCBmb3VuZCBpbiBzdG9yeWJvb2sgZHVuZ2VvbnMuPC9wPg==",
+    "type": "Grunt Fiend",
+    "dangerLevel": "D",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/bdb7a022-89a6-4f48-941d-c699c0172a1f-InkMonster.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930873",
+    "indexId": "aeb3291a-b484-4f4e-b70a-1676aefce2ee",
+    "monsterId": "ixilune",
+    "name": "Ixilune",
+    "lore": "PHA+U3VtbW9uaW5nIENvc3Q6IDQgQVAsIDIgTWFuYTwvcD48cD4xMHgxMGZ0IHNpemU8L3A+",
+    "type": "Heroic Insect",
+    "dangerLevel": "E",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/ab3d05c4-b3eb-406b-b4c6-09dd62ef55a1-Ixilune.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493086b",
+    "indexId": "f064af3a-1490-480d-9098-91ff1560a342",
+    "monsterId": "jack-of-hearts",
+    "name": "Jack of Hearts",
+    "lore": "PHA+MiBBUCwgMiBNYW5hIHRvIHN1bW1vbjwvcD4=",
+    "type": "Grunt Humanoid (Summon)",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/02b9d454-08b6-492c-80ad-e9ee00616b31-Jack of Hearts.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493083c",
+    "indexId": "40b25edb-fc58-44c9-9952-0105c45be630",
+    "monsterId": "landshark",
+    "name": "Landshark",
+    "lore": "PHA+VGhlIGxhbmRzaGFyayBpcyBhIHNtYWxsIGJlYXN0IHRoYXQgdHJhdmVscyBiZWxvdyB0aGUgZ3JvdW5kIGFuZCBhdHRhY2tzIHRyYXZlbGVycy48L3A+",
+    "type": "Grunt Beast",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/81f97e5f-e4cc-4f18-a8e1-6118bcdbe156-Land_Shark_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930858",
+    "indexId": "15a27a75-d729-4a2a-acdb-ca06c90a9ffd",
+    "monsterId": "mage",
+    "name": "Mage",
+    "lore": "PHA+TWFnZXMgYXJlIHNwZWxsY2FzdGVycyB3aXRob3V0IGEgc3BlY2lhbGl6YXRpb24uIFRoZXkgYXJlIHRoZSBtb3N0IGNvbW1vbiB0eXBlIG9mIG1hZ2UsIHRob3VnaCBtb3N0IHdpbGwgc29vbiBzcGVjaWFsaXplIGluIGFuIGVsZW1lbnQgb3IgbWFnaWMgdHlwZS4gVGhleSBleGlzdCBpbiBldmVyeSByYWNlLCB0aG91Z2ggaHVtYW4gbWFnZXMgYXJlIHRoZSByYXJlc3Qgb25lcy48L3A+",
+    "type": "Heroic Humanoid",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/78e169fd-e002-457f-a2d1-a5cbfaa9dd2a-Mage_2_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493087a",
+    "indexId": "90bf4b7e-fe94-4f9c-a871-1af40a3a4a7d",
+    "monsterId": "mana-slime",
+    "name": "Mana Slime",
+    "lore": "PHA+SnVzdCBhIHNsaW1lLjwvcD48cD48aT5CeSBOeWEuPC9pPjwvcD4=",
+    "type": "Grunt Slime",
+    "dangerLevel": "E",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/829e0e86-aaf8-446a-8354-dac3d0bd3542-magic.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930846",
+    "indexId": "a344632b-984b-488f-8882-92f2c4e27b2f",
+    "monsterId": "manticore",
+    "name": "Manticore",
+    "lore": "PHA+VGhlIG1hbnRpY29yZSBpcyBhIG1vbnN0cm91cyBjb21iaW5hdGlvbiBvZiB0aHJlZSBkaWZmZXJlbnQgdHlwZXMgb2YgYW5pbWFsIG9yaWdpbmFsbHkgZnVzZWQgdG9nZXRoZXIgdGhyb3VnaCBtYWdpYy4gVGhleSBwb3NzZXNzIGxpdHRsZSBpbnRlbGxpZ2VuY2UgYW5kIGRvIGxpdHRsZSBtb3JlIHRoYW4gZmVhc3Qgb24gYW55b25lIHVuZm9ydHVuYXRlIGVub3VnaCB0byBydW4gaW50byBvbmUuJm5ic3A7PC9wPg==",
+    "type": "Heroic Beast",
+    "dangerLevel": "E",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/e2441f49-c6a9-4146-81ce-b6687f147531-Manticore_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930842",
+    "indexId": "8adae12b-9af9-451b-ae42-6709e154d07c",
+    "monsterId": "minotaur",
+    "name": "Minotaur",
+    "lore": "PHA+QSBjcmVhdHVyZSBvZnRlbiBjb25mdXNlZCB3aXRoIHRoZSBjaGltZXJhIG9mIE5vcnRoaS4gRGVzcGl0ZSBhIHNpbWlsYXIgYXBwZWFyYW5jZSwgdGhlIG9yaWdpbmFsIG1pbm90YXVyIGlzIGEgY3Vyc2VkIGNyZWF0dXJlIG9uY2UgbG9ja2VkIGF3YXkgaW4gYSBsYWJ5cmludGguIEl0cyBvZmZzcHJpbmcgbm93IHJvYW0gdGhlIHdvcmxkLCBjYXVzaW5nIGRlc3RydWN0aW9uIHdoZXJldmVyIHRoZXkgZ28uPC9wPg==",
+    "type": "Heroic Humanoid",
+    "dangerLevel": "E",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/e67ec0e8-567a-48c2-89fb-dfb26ded7a8e-Minotaur_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493082e",
+    "indexId": "f8e333d6-a866-4c03-b5a1-ae713e9fd60d",
+    "monsterId": "ogre",
+    "name": "Ogre",
+    "lore": "PHA+QSBodWdlIGh1bWFub2lkIG1vbnN0ZXIgdGhhdCBwb3NzZXNzIHNvbWUgZm9ybSBvZiBpbnRlbGxpZ2VuY2Ugc2ltaWxhciB0byB0aGF0IG9mIGEgaHVtYW4gY2hpbGQuIFRoZXkgYXJlIG9mdGVuIGVhc2lseSB0cmlja2VkIGJ5IHNraWxsZWQgbWFuaXB1bGF0b3JzIHdobyB1c2UgdGhlbSBmb3IgdGhlaXIgb3duIGdvYWxzLjwvcD4=",
+    "type": "Heroic Humanoid",
+    "dangerLevel": "D",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/5ea505c8-22c7-4fd0-922a-8f819aa69376-Ogre_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930863",
+    "indexId": "eeb2e2d4-0ccf-493a-9d9a-d3d21be224d3",
+    "monsterId": "pipoltr",
+    "name": "Pipoltr",
+    "lore": "PHA+U3VtbW9uIGNvc3Q6IDQgQVAsIDQgTWFuYTwvcD48cD4xMHgxMGZ0IHNpemU8L3A+",
+    "type": "Heroic Insect (Summon)",
+    "dangerLevel": "E",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/b63577f2-5d04-4eff-9c33-a18e4ba07f39-Pipoltr_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930859",
+    "indexId": "b1f00295-d1b0-471d-93ce-c720958c22f6",
+    "monsterId": "priest",
+    "name": "Priest",
+    "lore": "PHA+UHJpZXN0cyBhcmUgc3BlbGxjYXN0ZXJzIHRoYXQgZHJhdyB0aGVpciBwb3dlciBmcm9tIHRoZSBnb2RzLiBEdWUgdG8gdGhlIHBvcHVsYXJpdHkgYW5kIHN0cmVuZ3RoIG9mIEthcmksIHRoZSBodW1hbiBnb2RkZXNzLCB0aGUgdmFzdCBtYWpvcml0eSBvZiBwcmllc3RzIGluIHRoZSB3b3JsZCBhcmUgaHVtYW4uIEhvd2V2ZXIsIHByaWVzdHMgb2Ygb3RoZXIgcmFjZXMgZG8gc3RpbGwgZXhpc3QuIFNvbWUgbWF5IGZvbGxvdyBLYXJpLCB3aGlsZSBvdGhlcnMgbWF5IGZvbGxvdyB0aGVpciBvd24gZ29kIG9yIGdvZGRlc3MuPC9wPg==",
+    "type": "Heroic Humanoid",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/eea439d7-3799-4dc4-8753-32af5bb799c6-Priest_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930840",
+    "indexId": "c3001893-6a2f-4a2e-b72c-7e6472bb3b2d",
+    "monsterId": "raiju",
+    "name": "Raiju",
+    "lore": "PHA+VGhlIHJhaWp1IGlzIG9mdGVuIGNvbmZ1c2VkIGZvciBhbiBhbmltYWwgZHVlIHRvIGl0cyBhcHBlYXJhbmNlLiBJbiByZWFsaXR5LCBpdHMgYW4gZWxlbWVudGFsIHRoYXQgc2VydmVzIGFzIHRoZSBodW50aW5nIGRvZyBmb3IgYSBtb3JlIHBvd2VyZnVsIGVsZW1lbnRhbCBjcmVhdHVyZS4gSXQgd2lsbCB0cmFjayBhbmQgaG91bmQgYW4gZW5lbXkgZnJvbSBhZmFyLCB0aGVuIG1vdmUgaW4gZm9yIHRoZSBraWxsIG9uY2UgdGhlIHdlYXRoZXIgY2hhbmdlcy48L3A+PHA+U3Rvcm1zIGhhdmUgYW4gdW5uYXR1cmFsbHkgaGlnaCBjaGFuY2Ugb2YgYXBwZWFyaW5nIHdoZW4gdGhpcyBjcmVhdHVyZSBpcyBhcm91bmQuPC9wPg==",
+    "type": "Grunt Elemental",
+    "dangerLevel": "F (B)",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/a6c9d940-331f-4f14-9c40-cc64280e4713-Raiju_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930862",
+    "indexId": "e85b8f9d-ed30-4720-a186-00c3c5483044",
+    "monsterId": "rhinoceros-beetle",
+    "name": "Rhinoceros Beetle",
+    "lore": "PHA+U3VtbW9uIGNvc3Q6IDMgQVAsIDIgTWFuYS48L3A+",
+    "type": "Grunt Insect (Summon)",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/f332b611-e7a3-4154-bdc8-04e4a51177c9-Rhino_Beetle_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493086d",
+    "indexId": "c8f8bb67-6873-40e9-9223-d75312aac67a",
+    "monsterId": "rime-vermin",
+    "name": "Rime Vermin",
+    "lore": "PHA+QW4gYXJ0aWZpY2lhbGx5IG1hZGUgZWxlbWVudGFsIGNyZWF0dXJlIHRoYXQgd2FzIGNyZWF0ZWQgYnkgYSBwb3dlcmZ1bCBZdWtpIE9ubmEuIE9mdGVuIGlzIGRpc2d1aXNlZCBhcyByZWd1bGFyIGljZSwgYnV0IHRvbyBzbG93IHRvIHRha2UgYWR2YW50YWdlIG9mIGFueSBzdXJwcmlzZXMuPC9wPg==",
+    "type": "Grunt Elemental",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/2bba7bbe-70c0-4b47-872d-efe122ff970b-Ice skitterer.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493085a",
+    "indexId": "6ccfb3c5-9080-4f9e-80c6-f9d32b45c298",
+    "monsterId": "rogue",
+    "name": "Rogue",
+    "lore": "PHA+Um9ndWVzIGFyZSBzaGlmdHkgaW5kaXZpZHVhbHMgdGhhdCB1c2UgdHJpY2tlcnkgYW5kIGRpcnR5IHRhY3RpY3MgdG8gd2luIGJhdHRsZXMuIFRoZXkgZXhpc3QgaW4gZXZlcnkgcmFjZSBhbmQgc29jaWV0eS48L3A+",
+    "type": "Grunt Humanoid",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/d0be5f8c-610d-429b-a379-4dea2e70d484-Rogue_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493087d",
+    "indexId": "45dd408b-8e9b-4b63-8721-fd1f61a48f2c",
+    "monsterId": "skeletal-champion",
+    "name": "Skeletal Champion",
+    "lore": "PHA+QSBza2VsZXRvbiB3YXJyaW9yIHN1bW1vbmVkIGJ5IG5lY3JvbWFuY2Vycy48L3A+",
+    "type": "Heroic Undead",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/159f0057-7cf3-4bd8-a6b1-46755716a007-skeletalchamp.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493085f",
+    "indexId": "b806cbe0-f4f3-40ac-bc5b-1ab9d24a5a76",
+    "monsterId": "skeletal-monstrosity",
+    "name": "Skeletal Monstrosity",
+    "lore": "PHA+VGhlc2UgY3JlYXR1cmVzIGFyZSBjcmVhdGVkIGJ5IHNraWxsZWQgbmVjcm9tYW5jZXJzIGFuZCBkdWUgdG8gdGhlaXIgcmVnZW5lcmF0aXZlIGFiaWxpdGllcyB3aWxsIG9mdGVuIG91dCBsaXZlIHRoZWlyIG1hc3RlcnMuIFRob3VnaCB0aGV5IGFyZSBtaW5kbGVzcywgdGhlaXIgZm9ybWVyIGluc3RydWN0aW9ucyBzdGlsbCBsaW5nZXIgYW5kIHRoZXkgYXJlIGxpa2VseSB0byBhdHRhY2sgYW55IGNyZWF0dXJlcyB0aGF0IGFwcHJvYWNoIGl0LjwvcD4=",
+    "type": "Boss Undead",
+    "dangerLevel": "E",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/f3b5b96a-1010-4950-bf10-e94b4a10cd9b-Skeletal_Monstrosity_2_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930841",
+    "indexId": "cfa979d6-cf24-4bce-8d41-8b2b429aa3ab",
+    "monsterId": "skeleton",
+    "name": "Skeleton",
+    "lore": "PHA+U2tlbGV0b25zIGFyZSB0aGUgYm9uZXMgb2YgcGVvcGxlIGxvbmcgZGVhZCB0aGF0IGhhdmUgYmVlbiByZWFuaW1hdGVkLCB1c3VhbGx5IHRocm91Z2ggbmVjcm9tYW5jeSBidXQgcmFyZWx5IHRocm91Z2ggYXN0cmEgY29ycnVwdGlvbi4gVGhleSBhcmUgbWluZGxlc3MgdW5kZWFkLCBzd2luZ2luZyBhIHdlYXBvbiAtIG9mdGVuIHRpbWVzIGEgYm9uZSBvZiB0aGVtc2VsdmVzIC0gYXQgdGhlIGNsb3Nlc3QgbGl2aW5nIGNyZWF0dXJlIHRoZXkgc2VlLjwvcD4=",
+    "type": "Grunt Undead",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/c38312c8-407e-4829-80f6-83c8d3f74b75-Skeleton_1_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930875",
+    "indexId": "42c8941d-b6e6-4266-8540-2c001cba9c2a",
+    "monsterId": "slime",
+    "name": "Slime",
+    "lore": "PHA+SnVzdCBhIHNsaW1lLjwvcD48cD48aT5CeSBOeWEuPC9pPjwvcD4=",
+    "type": "Grunt Slime",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/a511541f-bf4f-4749-a8a1-dadb1bbf1864-common.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493085b",
+    "indexId": "0a32f7ff-0c43-4413-87cb-3cec8c75dd57",
+    "monsterId": "sniper",
+    "name": "Sniper",
+    "lore": "PHA+U25pcGVyIGlzIGEgdGl0bGUgZ2l2ZW4gdG8gYWxsIHVzZXJzIG9mIHJhbmdlZCB3ZWFwb25yeSB0aGF0IGRpc3BsYXkgc29tZSBsZXZlbCBvZiBza2lsbC4gVGhleSBleGlzdCBpbiBldmVyeSByYWNlIGFuZCBjYW4gdXNlIGEgd2lkZSB2YXJpZXR5IG9mIHJhbmdlZCB3ZWFwb25zLiZuYnNwOzwvcD4=",
+    "type": "Heroic Humanoid",
+    "dangerLevel": "E",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/12635e11-c3a6-46c4-936e-d7978ed2c16a-Sniper_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493085c",
+    "indexId": "a5c968eb-7b1b-443f-bf8d-061805ba0ebd",
+    "monsterId": "tactician",
+    "name": "Tactician",
+    "lore": "PHA+VGFjdGljaWFucyBhcmUgZm91bmQgaW4gdmlydHVhbGx5IGV2ZXJ5IHNvY2lldHkgYW5kIGNhbiBiZSBvZiBhbnkgcmFjZS4gT2Z0ZW50aW1lcywgYnV0IG5vdCBhbHdheXMsIHRoZXkgYXJlIGxlYWRlcnMgc3VjaCBhcyBhIGNhcHRhaW4sIGdlbmVyYWwgb3Igc29tZXRoaW5nIHNpbXBsZXIgbGlrZSBhIGJhbmRpdCBjaGllZi4gVGhleSBsZWFkIHRoZWlyIHRyb29wcyB0byB2aWN0b3J5IG5vdCBhbHdheXMgdGhyb3VnaCBjaGFyaXNtYSwgYnV0IHRocm91Z2ggdGFjdGljcy48L3A+",
+    "type": "Heroic Humanoid",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/42cb83ff-8a61-49a4-b7db-4aa505b28c93-Tactician_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493085d",
+    "indexId": "7601da34-961c-40df-bdd7-2113128d7758",
+    "monsterId": "tank",
+    "name": "Tank",
+    "lore": "PHA+VGFua3MgYXJlIGZyb250IGxpbmVycyB3aG8gZ28gaW4gZmlyc3QgYW5kIGFic29yYiB0aGUgaGl0cyBmb3IgdGhlaXIgYWxsaWVzLiBFeGlzdGluZyBpbiBldmVyeSBjdWx0dXJlIGFuZCBvZiBhbnkgcmFjZSwgdGhleSBhcmUgdXN1YWxseSBoZWF2aWx5IGFybW9yZWQgd2l0aCBzaGllbGRzLiZuYnNwOzwvcD4=",
+    "type": "Grunt Humanoid",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/0fa30a89-68b7-49fc-82dd-878f7d8d53d2-tank_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930833",
+    "indexId": "13648d76-aa41-4501-8497-bc3825c43dd3",
+    "monsterId": "troll",
+    "name": "Troll",
+    "lore": "PHA+VHJvbGxzIGRlc2NlbmQgZnJvbSB3aGF0IHdlcmUgb25jZSByZWd1bGFyIGh1bWFucyB0aGF0IG11dGF0ZWQgaW50byB0aGVzZSBoaWRlb3VzIGNyZWF0dXJlcy4mbmJzcDs8L3A+PHA+SW4gYSB3YXksIHRoZXkgYXJlIHNpbWlsYXIgdG8gd2hhdCBob2Jnb2JsaW5zIGFyZSB0byBub3JtYWwgZ29ibGlucy4gUGVyaGFwcyBiZWNhdXNlIG9mIHRoaXMsIHRoZXkgYXJlIG9mdGVuIGZvdW5kIGluIHRoZSBjb21wYW55IG9mIHRoZW0uPC9wPg==",
+    "type": "Heroic Humanoid",
+    "dangerLevel": "E",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/eb4cb323-3fde-4286-a0e0-2216f726afe8-Troll_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493082d",
+    "indexId": "37399fa5-38a1-411d-a96e-eadb0fff9f4d",
+    "monsterId": "unstable-efreet",
+    "name": "Unstable Efreet",
+    "lore": "PHA+VW5zdGFibGUgRWZyZWV0cyBhcmUgc3BsaXQgb2ZmIHBhcnRzIG9mIGEgbm9ybWFsIEVmcmVldC4gVGhlaXIgdmVyeSBleGlzdGVuY2UgaXMgYSBmbGVldGluZyB0aGluZyB3aXRoIHRoZW0gYmVpbmcgYWJsZSB0byBleGlzdCBmb3IgbGl0dGxlIG1vcmUgdGhhbiBkYXkgYmVmb3JlIHRoZWlyIGZsYW1lcyBnb2luZyBvdXQgYW5kIHRoZW0gdmFuaXNoaW5nIGludG8gbm90aGluZ25lc3MuPC9wPg==",
+    "type": "Grunt Elemental",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/9dd04371-2c1a-410a-888f-d6124d513641-Unstable_Efreet_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493085e",
+    "indexId": "7e01da8a-a562-4d00-a86a-65982731d597",
+    "monsterId": "warrior",
+    "name": "Warrior",
+    "lore": "PHA+V2FycmlvcnMgYXJlIGNvbWJhdGFudHMgdGhhdCBzcGVjaWFsaXplIGluIG1lbGVlIGNvbWJhdC4gVGhleSBleGlzdCBpbiBldmVyeSByYWNlIGFuZCBjaXZpbGl6YXRpb24gYW5kIGNhbiB1c2UgYSB3aWRlIHZhcmlldHkgb2Ygd2VhcG9ucyBhbmQgYXJtb3IuPC9wPg==",
+    "type": "Heroic Humanoid",
+    "dangerLevel": "E",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/8a1a66c9-71e9-4380-8cb3-a4af48a0169f-Warrior_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930877",
+    "indexId": "2694fbca-10cf-4200-8195-2ad30a0d9d10",
+    "monsterId": "water-slime",
+    "name": "Water Slime",
+    "lore": "PHA+SnVzdCBhIHNsaW1lLjwvcD48cD48aT5CeSBOeWEuPC9pPjwvcD4=",
+    "type": "Grunt Slime",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/32adf002-d57f-473c-83c7-35f0da806e8b-water.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930866",
+    "indexId": "c826e401-8801-4159-8661-f2a74e3505fc",
+    "monsterId": "westrian-heavy-paladin",
+    "name": "Westrian Heavy Paladin",
+    "lore": "PHA+VG8gZG8uPC9wPg==",
+    "type": "Heroic Humanoid",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/c61c607c-d182-4093-8a96-ba5d4291652c-Enemy_Paladin_-_Raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930832",
+    "indexId": "cab51a10-d024-475a-a24d-dae0de8ead42",
+    "monsterId": "wight",
+    "name": "Wight",
+    "lore": "PHA+V2hlbiBhIGNyZWF0dXJlIGlzIHNsYWluIGJ5IGEgV3JhaXRoLCB0aGVyZSdzIGEgaGlnaCBjaGFuY2UgYSBXaWdodCB3aWxsIGJlIGJvcm4gZnJvbSBpdHMgY29ycHNlLiBXaWdodHMgYXJlIGF1dG9tYXRpY2FsbHkgc3Vic2VydmllbnQgdG8gdGhlIFdyYWl0aCB0aGF0IGtpbGxlZCB0aGVtIGFuZCBtdXN0IHN0YXkgd2l0aGluIGEgbWlsZSByYWRpdXMgb2YgaXQgb3IgZGlzYXBwZWFyIGVudGlyZWx5LjwvcD4=",
+    "type": "Grunt Undead",
+    "dangerLevel": "F+",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/0ac05118-fcb1-47bc-91fa-2ac255fde9a3-Wight_1_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930879",
+    "indexId": "0468641d-2948-4192-8aa7-bd97ff08c1e8",
+    "monsterId": "wind-slime",
+    "name": "Wind Slime",
+    "lore": "PHA+SnVzdCBhIHNsaW1lLjwvcD48cD48aT5CeSBOeWEuPC9pPjwvcD4=",
+    "type": "Grunt Slime",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/f33e71dd-c075-4ebf-a8e7-2780eba9a54c-wind.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930830",
+    "indexId": "2d5c74b1-57e0-4aba-a3ea-601a041a97d1",
+    "monsterId": "wolf",
+    "name": "Wolf",
+    "lore": "PHA+QSBub3JtYWwgd29sZi4gT2NjYXNpb25hbGx5IGtlcHQgYXMgcGV0LjwvcD4=",
+    "type": "Grunt Beast",
+    "dangerLevel": "F",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/f51dc53f-784c-4c9e-9df1-5e910c521bac-Wolf_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930831",
+    "indexId": "db02a240-dd26-49f9-8784-f841d739b726",
+    "monsterId": "wraith",
+    "name": "Wraith",
+    "lore": "PHA+QSB2ZW5nZWZ1bCBzcGlyaXQgdGhhdCBkaWVkIGluIHRoZSBkYXJrbmVzcyB3aGlsZSBpdCB3YXMgc3RpbGwgYWxpdmUuIEJyb3VnaHQgYmFjayB0byBsaWZlIHRocm91Z2ggYSBuZWNyb21hbmNlciBvciB0aHJvdWdoIGFzdHJhIGNvcnJ1cHRpb24sIHRoZXkgYXR0YWNrIGFueSBsaXZpbmcgY3JlYXR1cmUgdGhhdCB0aGV5IGNhbiBzZWUuIFRoZXkgYXJlIHdlYWsgdG8gYnJpZ2h0IGxpZ2h0cyBhbmQgd2lsbCBuZXZlciB3aWxsaW5nbHkgZ28gaW50byB0aGUgc3VubGlnaHQuPC9wPg==",
+    "type": "Heroic Undead",
+    "dangerLevel": "D+",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/4d00ef33-8eaf-46a0-a6f6-2fbdff631af1-Wraith_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced493083b",
+    "indexId": "a9795389-424b-4ef5-9f9d-a1959051af54",
+    "monsterId": "wyrm--fire-",
+    "name": "Wyrm (Fire)",
+    "lore": "PHA+QSBkaXN0YW50IHJlbGF0aXZlIG9mIHRoZSBkcmFnb25zIHRoYXQgaGF2ZSB2YW5pc2hlZC4gVGhvdWdoIHRoZXkgc3BlbnQgbW9zdCBvZiB0aGVpciB0aW1lIHNsZWVwaW5nIGluIHRoZWlyIGNhdmVzLCB0aGV5IGFyZSBob3N0aWxlIHRvIGFsbCBsaXZpbmcgY3JlYXR1cmVzIGFuZCB2aWV3IHRoZW0gYXJlIGxpdHRsZSBtb3JlIHRoYW4gcHJleS4gV3lybXMgYXJlIG9sZGVyLCBtb3JlIGludGVsbGlnZW50IGFuZCBtb3JlIGRhbmdlcm91cyB0aGFuIHRoZWlyIERyYWtlIGFuZCBXeXJtbGluZyBjb3VudGVycGFydHMuPC9wPg==",
+    "type": "Boss Dragon",
+    "dangerLevel": "C",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/2ec47897-5219-4c9b-9360-f340577f0f47-Fire_Wyrm_raw.sm.webp"
+  },
+  {
+    "id": "6a06299f6be32fced4930844",
+    "indexId": "b76c498e-5025-482b-8e31-34c5210058e2",
+    "monsterId": "zombies",
+    "name": "Zombies",
+    "lore": "PHA+TWluZGxlc3MgY29ycHNlcyByZXN1cnJlY3RlZCB0aHJvdWdoIG5lY3JvbWFuY3kgb3IgYXN0cmEgY29ycnVwdGlvbi4mbmJzcDs8L3A+",
+    "type": "Grunt Undead",
+    "dangerLevel": "E",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/fec1c509-ef0e-4ad4-85ae-6254e9065893-Zombie_raw.sm.webp"
+  }
+]
