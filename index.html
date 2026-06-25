@@ -5986,6 +5986,7 @@
       lastManifest: null
     };
     let playerNotesAutosaveTimer = 0;
+    let builderSearchRenderTimer = 0;
     const exportPrepCache = {
       key: "",
       payload: null,
@@ -6226,7 +6227,6 @@
           renderBuilder();
           renderPlayDashboard();
           invalidateExportCache();
-          scheduleExportCachePrep(250);
         }
         if (options.status !== false) {
           setStatus(`Loaded Lyrian rules version ${version.id}.`);
@@ -14499,7 +14499,7 @@
       return `
         <div class="builder-content-grid">
           <div class="builder-search-row">
-            <input class="builder-search-input" type="search" data-builder-search="ancestry" placeholder="${escapeHtml(labels.searchPlaceholder)}" value="${escapeHtml(state.builder.searches.ancestry)}">
+            <input class="builder-search-input" type="text" autocomplete="off" data-builder-search="ancestry" placeholder="${escapeHtml(labels.searchPlaceholder)}" value="${escapeHtml(state.builder.searches.ancestry)}">
             <p>${mode === "clan"
               ? `Showing official Demon clan options for ${race?.name || "Demon"}.`
               : (mode === "none"
@@ -14641,7 +14641,7 @@
       return `
         <div class="builder-content-grid">
           <div class="builder-search-row">
-            <input class="builder-search-input" type="search" data-builder-search="breakthrough" placeholder="Search breakthroughs" value="${escapeHtml(state.builder.searches.breakthrough)}">
+            <input class="builder-search-input" type="text" autocomplete="off" data-builder-search="breakthrough" placeholder="Search breakthroughs" value="${escapeHtml(state.builder.searches.breakthrough)}">
             <p>Only breakthroughs that fit the current race, ancestry, and already-selected prerequisite breakthroughs are shown here.</p>
           </div>
           <div class="selected-chip-list">
@@ -14721,7 +14721,7 @@
         <div class="builder-content-grid">
           <p class="builder-note">Class creation starts with <strong>${STARTING_CLASS_EXP} EXP</strong> and <strong>${STARTING_INTERLUDE_POINTS} Interlude Points</strong>. Unlocking a class costs <strong>1 Interlude Point + 100 EXP per tier</strong>, and the class key ability comes online as soon as that class is unlocked.</p>
           <div class="builder-search-row">
-            <input class="builder-search-input" type="search" data-builder-search="class" placeholder="Search classes" value="${escapeHtml(state.builder.searches.class)}">
+            <input class="builder-search-input" type="text" autocomplete="off" data-builder-search="class" placeholder="Search classes" value="${escapeHtml(state.builder.searches.class)}">
             <p>Classes are grouped by role by default. Locked cards stay grayed out until the tracked build meets their official prerequisites.</p>
           </div>
           <div class="selected-chip-list">
@@ -15029,7 +15029,7 @@
             <p>${escapeHtml(funds.hasOverride ? "The override is currently setting the available total shown above." : "Leave blank to use the standard total plus any breakthrough bonuses.")}</p>
           </label>
           <div class="builder-search-row">
-            <input class="builder-search-input" type="search" data-builder-search="item" placeholder="Search items" value="${escapeHtml(state.builder.searches.item)}">
+            <input class="builder-search-input" type="text" autocomplete="off" data-builder-search="item" placeholder="Search items" value="${escapeHtml(state.builder.searches.item)}">
             <p>Selected items seed the combat inventory rows and the items page notes.</p>
           </div>
           ${selectedIds.size ? `<div class="selected-chip-list">${getSelectedItemRecords().map((entry) => `<span class="selected-chip">${escapeHtml(entry.name)}</span>`).join("")}</div>` : ""}
@@ -15226,9 +15226,18 @@
       const input = document.querySelector(`[data-builder-search="${cssEscape(searchKey)}"]`);
       if (input) {
         const value = state.builder.searches[searchKey] || "";
+        input.value = value;
         input.focus();
         input.setSelectionRange(value.length, value.length);
       }
+    }
+
+    function scheduleBuilderSearchRender(searchKey) {
+      window.clearTimeout(builderSearchRenderTimer);
+      builderSearchRenderTimer = window.setTimeout(() => {
+        builderSearchRenderTimer = 0;
+        renderBuilderWithSearchFocus(searchKey);
+      }, 90);
     }
 
     function setBuilderRace(id) {
@@ -15732,7 +15741,7 @@
     function invalidateExportCache() {
       exportPrepCache.key = "";
       exportPrepCache.payload = null;
-      scheduleExportCachePrep();
+      clearScheduledExportCachePrep();
     }
 
     function scheduleExportCachePrep(delay = 900) {
@@ -17898,7 +17907,7 @@
         if (event.target.dataset.builderSearch) {
           const key = event.target.dataset.builderSearch;
           state.builder.searches[key] = event.target.value;
-          renderBuilderWithSearchFocus(key);
+          scheduleBuilderSearchRender(key);
           return;
         }
 
@@ -18378,7 +18387,6 @@
         setStatus(activeSlotId ? "Loaded the active saved character slot." : "Loaded saved character.");
       }
       preloadDiceSetFaceArt();
-      scheduleExportCachePrep(250);
     }
 
     initialize().catch((error) => {

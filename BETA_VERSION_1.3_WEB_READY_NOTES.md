@@ -10,6 +10,11 @@ Beta 1.3 starts from the Beta 1.2 character builder and converts the package int
 - Updated the app title and version notes for Beta 1.3 Web.
 - Reworded hosted update messaging so public users are not told to run the local launcher.
 
+## Future URL Note
+
+- Keep the existing public GitHub Pages URL stable for Beta 1.3 because it has already been shared publicly.
+- The current repository/Page slug uses `lirian`; correct the public slug to `lyrian` only in a future build or patch where a new link or redirect plan is intentional.
+
 ## Preserved From Beta 1.2
 
 - Character builder and live sheet flow.
