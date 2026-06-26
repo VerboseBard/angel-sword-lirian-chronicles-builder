@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { discoverOfficialVersions, planVersionUpdate, readLocalManifest } from "./update-lyrian-version.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const PROJECT_ROOT = path.resolve(__dirname, "..");
+const PROJECT_ROOT = process.env.LYRIAN_PROJECT_ROOT ? path.resolve(process.env.LYRIAN_PROJECT_ROOT) : path.resolve(__dirname, "..");
 const HOST = process.env.LYRIAN_HOST || "127.0.0.1";
 const START_PORT = Number(process.env.LYRIAN_PORT || 4176);
 

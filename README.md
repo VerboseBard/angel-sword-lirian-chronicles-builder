@@ -17,7 +17,7 @@ npm start
 
 Then open the local URL printed by the server.
 
-The public site is deployed by GitHub Actions from the repository root. Pushing to `main` rebuilds the hosted version automatically.
+The public site is deployed by GitHub Actions from the repository root. Pushing to `main` publishes the static web package automatically.
 
 ## Included
 

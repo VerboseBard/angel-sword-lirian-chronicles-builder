@@ -11,3 +11,6 @@ qa-*.jpeg
 *.rar
 Thumbs.db
 .DS_Store
+dist/
+qa-test-results/
+deploy-temp-dist/
