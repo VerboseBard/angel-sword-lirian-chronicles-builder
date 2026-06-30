@@ -2251,20 +2251,6 @@
     scene.add(rim);
 
     const floorY = -1.55;
-    const floor = new THREE.Mesh(
-      new THREE.PlaneGeometry(15, 9),
-      new THREE.MeshStandardMaterial({
-        color: 0x050911,
-        roughness: 0.8,
-        metalness: 0.02,
-        transparent: true,
-        opacity: 0.28
-      })
-    );
-    floor.rotation.x = -Math.PI / 2;
-    floor.position.y = floorY - 0.04;
-    floor.receiveShadow = false;
-    scene.add(floor);
 
     const aspect = width / height;
     const viewWidth = aspect >= 1 ? 9.8 : 5.8;

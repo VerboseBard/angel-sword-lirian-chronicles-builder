@@ -1,15 +1,17 @@
 {
   "name": "angel-sword-lirian-chronicles-builder",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "private": true,
   "description": "Web-ready Angel Sword Lyrian Chronicles character builder.",
   "type": "module",
   "scripts": {
+    "build": "esbuild src/js/main.js --bundle --format=iife --global-name=LyrianApp --target=es2020 --outfile=assets/app.bundle.js",
     "start": "node scripts/server.mjs",
     "serve": "node scripts/server.mjs",
-    "test": "node scripts/test-cross-browser.mjs"
+    "test": "npm run build && node scripts/test-cross-browser.mjs"
   },
   "devDependencies": {
+    "esbuild": "^0.25.5",
     "playwright": "^1.60.0"
   }
 }

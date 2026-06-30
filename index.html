@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lyrian Chronicles Character Builder - Beta 1.3 Web</title>
+  <title>Lyrian Chronicles Character Builder - Beta 1.4</title>
   <link rel="icon" type="image/png" href="assets/lyrian-symbol.png">
   <script src="assets/lyrian-form-map.js"></script>
   <script src="assets/lyrian-data.js"></script>
@@ -12,7 +12,7 @@
   <script src="assets/pdf-lib.min.js"></script>
   <script src="assets/xlsx.full.min.js"></script>
   <script src="assets/jszip.min.js"></script>
-  <link rel="stylesheet" href="./src/css/main.css">
+  <link rel="stylesheet" href="./src/css/main.css?v=1.4.0">
 </head>
 <body>
   <section id="builder-view" class="builder-view">
@@ -21,6 +21,10 @@
         <div class="builder-sidebar-header">
           <div class="builder-sidebar-logo" aria-hidden="true"></div>
           <section class="version-manager" aria-label="Game version manager">
+            <div class="builder-build-version" aria-label="Builder build version">
+              <span>Builder build</span>
+              <strong>Beta 1.4</strong>
+            </div>
             <label for="game-version-select">Select game version</label>
             <select id="game-version-select"></select>
             <div id="version-update-list" class="version-update-list" aria-live="polite"></div>
@@ -304,7 +308,7 @@
 
             <section class="play-tab-panel" data-play-tab-panel="actions">
               <div class="play-inline-actions">
-                <button id="play-restore-turn" type="button">Restore AP / RP</button>
+                <button id="play-restore-turn" type="button">Recover AP</button>
                 <button id="play-full-restore" type="button">Full Restore</button>
                 <button id="play-sync-derived" type="button">Sync Derived Stats</button>
                 <button id="play-clear-log" type="button">Clear Log</button>
@@ -348,13 +352,8 @@
             </section>
           </section>
 
-          <section class="play-panel play-build-strip-panel play-audit-column">
-            <div class="play-build-strip-header">
-              <p class="eyebrow">Builder Audit</p>
-              <h3>Funds and Builder Effects</h3>
-              <p>This column keeps the builder-fed details that are not already visible elsewhere on the live sheet: starting funds, auto-applied effects, and pending builder choices.</p>
-            </div>
-            <div id="sheet-build-summary" class="play-build-strip"></div>
+          <section class="play-panel play-reference-column">
+            <div id="play-reference-detail" class="play-reference-detail" hidden></div>
           </section>
         </div>
       </section>
@@ -405,7 +404,7 @@
   <script src="assets/dice-3d/dice-3d-embedded.js"></script>
   <script src="assets/dice-3d/new-angelsword-dice-face-art.384-webp.js?v=new-angelsword-384-webp-test-1"></script>
   <script src="assets/dice-3d/lyrian-accurate-dice.js?v=alpha4-new-angelsword-sidecar-27-d4-triangle-pivot"></script>
-  <script src="./src/js/main.js"></script>
+  <script src="assets/app.bundle.js?v=1.4.0"></script>
 </body>
 </html>
 

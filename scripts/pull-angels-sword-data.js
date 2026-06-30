@@ -94,7 +94,7 @@ async function main() {
   const decodedData = decodeBase64Html(rawData);
   const joinedData = buildJoinedData(decodedData);
   const siteSnapshots = process.env.LYRIAN_SKIP_SNAPSHOTS === "1"
-    ? { note: "Site snapshots skipped by the Beta 1.3 local updater." }
+    ? { note: "Site snapshots skipped by the Beta 1.4 local updater." }
     : repairTextTree(await captureSiteSnapshots());
   const manifest = buildManifest(decodedData, joinedData, siteSnapshots);
 

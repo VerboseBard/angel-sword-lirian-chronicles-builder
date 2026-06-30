@@ -1,10 +1,12 @@
-# Lyrian Chronicles Character Builder - Beta 1.3 Web
+# Lyrian Chronicles Character Builder - Beta 1.4 Web
 
-This is the web-ready Beta 1.3 package for the Angel Sword character builder and live play sheet.
+This is the web-ready Beta 1.4 package for the Angel Sword character builder and live play sheet.
+
+It updates the hosted Beta 1.3 release channel while keeping the same public GitHub Pages link.
 
 ## Public Web Build
 
-This version is designed to be published as a single browser link through GitHub Pages. Visitors open the site URL directly; they do not need to download a ZIP, install Node.js, or run a local launcher.
+The live public site is published as a single browser link through GitHub Pages. Visitors open the site URL directly; they do not need to download a ZIP, install Node.js, or run a local launcher.
 
 ## Local Development
 

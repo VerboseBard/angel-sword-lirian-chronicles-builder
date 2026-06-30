@@ -21,7 +21,9 @@ const MIME_TYPES = new Map([
   [".jpg", "image/jpeg"],
   [".jpeg", "image/jpeg"],
   [".gif", "image/gif"],
+  [".webp", "image/webp"],
   [".svg", "image/svg+xml"],
+  [".mp3", "audio/mpeg"],
   [".glb", "model/gltf-binary"],
   [".gltf", "model/gltf+json; charset=utf-8"],
   [".pdf", "application/pdf"],
@@ -73,7 +75,7 @@ async function handleApi(request, response, pathname) {
       mode: "local-server",
       projectRoot: PROJECT_ROOT,
       campaignPrototype: true,
-      message: "Beta 1.3 local development server is connected."
+      message: "Beta 1.4 local development server is connected."
     });
   }
 
@@ -201,7 +203,7 @@ async function start() {
     try {
       await listenOnPort(server, port);
       const url = `http://${HOST}:${port}/`;
-      console.log(`Lyrian Beta 1.3 web build running at ${url}`);
+      console.log(`Lyrian Beta 1.4 working build running at ${url}`);
       console.log("Close this terminal window to stop the local development server.");
       openBrowser(url);
       return;

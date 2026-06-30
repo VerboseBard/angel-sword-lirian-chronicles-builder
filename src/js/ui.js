@@ -1,0 +1,11859 @@
+import { BUILDER_STEPS, CLASS_GROUP_ROLE_ORDER, CLASS_PASSIVE_SLOTS, CLASS_PURCHASABLE_LEVELS, CLASS_ROWS, CLICKABLE_ROLL_FIELDS, COMMON_WEAPON_GROUP_OPTIONS, CREATION_SKILL_POINT_BUDGET, DEFAULT_DICE_SET_ID, DEMON_CLAN_SKILL_OPTIONS, DICE_PREVIEW_FALLBACK_URL, DICE_SETS, DICE_SET_ID_ALIASES, DICE_SOUND_ASSETS, DICE_TRAY_TYPES, EMBEDDED_STATE_CHUNK_SIZE, EMBEDDED_STATE_FORMAT, ENABLE_ACCURATE_DICE_ROLLS, ENABLE_WEBGL_DICE_ROLLS, INVENTORY_ROWS, MAIN_STATS, MAIN_STAT_CREATION_ARRAY, MAX_DICE_TRAY_DICE, MULTILINE_FIELDS, NAME_FIELDS, OFFICIAL_LANGUAGE_OPTIONS, PAGE_BACKGROUNDS, PASSIVE_READ_ONLY_FIELDS, PDF_STATE_CHUNK_FIELD_PREFIX, PDF_STATE_MANIFEST_FIELD, PLAY_BASIC_ACTIONS, PLAY_ROLLS, PORTRAIT_JPEG_QUALITY, PORTRAIT_MAX_DIMENSION, PORTRAIT_NORMALIZE_THRESHOLD, SAVE_SNAPSHOT_PORTRAIT_LIMIT, SECONDARY_STATS, SECONDARY_STAT_CREATION_ARRAY, SKILL_ALIASES, SKILL_DEFINITIONS, SKILL_EXPERTISE_OPTIONS, SKILL_OPTIONS, SPECIALITY_WEAPON_GROUP_OPTIONS, STARTING_CLASS_EXP, STARTING_INTERLUDE_POINTS, SUBSTAT_OPTIONS, VERSION_CHECK_ENDPOINT, VERSION_DOWNLOAD_ENDPOINT, VERSION_LOCAL_ENDPOINT, VERSION_STATUS_ENDPOINT } from "./constants.js";
+import { asArray, clamp, cleanText, cssEscape, escapeHtml, formatModifier, normalizeKey, normalizePhrase, toNumber } from "./utils.js";
+import { clearSheet, createDefaultState, getSavedSlots, mergePlayState, persistWorkingState, scheduleWorkingStatePersist, state, updateFieldValue } from "./state.js";
+import { applyGameVersion, detailLookup, exportPrepCache, getAncestryDetail, getAncestryOptionsByPrimaryRace, getAncestryRequirementPhrases, getBreakthroughBudgetState, getBuilderChoiceDefinitionsCacheKey, getCampaignProgressState, getClassDetail, getClassUnlockBudgetState, getComputedBonuses, getCurrentSecondaryLineageMode, getDemonClanOptions, getDerivedCombatStats, getHumanRaceSkillChoiceOptions, getRaceDetail, getRaceRequirementPhrases, getSecondaryLineageLabels, getSelectedAncestryDetail, getSelectedBreakthroughRecords, getSelectedClassDetails, getSelectedClassProgress, getSelectedGameVersionId, getSelectedItemRecords, getSelectedRaceDetail, getSkillBreakdownParts, getSkillRowsData, getStartingFundsState, getVersionManifest, getVersionRecord, getVersionRecords, lookup, persistSelectedGameVersion, syncPlayResourcesFromFields, usePlayCost, versionRuntime } from "./rules.js";
+import { dicePackRuntime, preloadDiceSetFaceArt, renderDiceTray } from "./dice.js";
+import { closeSheetModal, deriveSaveSlotName, exportJsonState, exportPdfState, exportSpreadsheetState, exportState, extractAbilityHeading, getWorksheetNumberText, getWorksheetText, handleImportedCharacterFile, handleSaveSlotAction, loadFromBrowser, openSheetModal, parseClimCost, parseNumericCost, saveCurrentCharacterToActiveSlot, saveCurrentCharacterToNewSlot, saveToBrowser, setSpreadsheetExportCell } from "./io.js";
+
+
+
+const DICE_PACK_MANIFEST_URL = "assets/dice/dice-pack-manifest.json";
+    export const PDF_LONG_TEXT_FIELDS = new Set([
+      "Injuries",
+      "Personality",
+      "Appearance",
+      "Items",
+      "Proficiencies",
+      "BDescription",
+      ...Array.from({ length: 24 }, (_, index) => `Ability${index + 1}`)
+    ]);
+const SPREADSHEET_MAIN_STAT_ROWS = {
+      Toughness: 45,
+      Power: 46,
+      Agility: 47,
+      Focus: 48
+    };
+const SPREADSHEET_SECONDARY_STAT_ROWS = {
+      Fitness: 45,
+      Cunning: 46,
+      Reason: 47,
+      Awareness: 48,
+      Presence: 49
+    };
+let playerNotesAutosaveTimer = 0;
+let builderSearchRenderTimer = 0;
+let versionProgressTicker = 0;
+function stopVersionProgressTicker() {
+      window.clearInterval(versionProgressTicker);
+      versionProgressTicker = 0;
+    }
+export function setVersionProgress(percent, label) {
+      const progress = document.getElementById("version-progress");
+const bar = document.getElementById("version-progress-bar");
+const percentNode = document.getElementById("version-progress-percent");
+const labelNode = document.getElementById("version-progress-label");
+      if (!progress || !bar || !percentNode || !labelNode) {
+        return;
+      }
+      progress.hidden = false;
+      bar.style.width = `${Math.max(0, Math.min(100, percent))}%`;
+      percentNode.textContent = `${Math.round(percent)}%`;
+      labelNode.textContent = label || "Working";
+    }
+function startVersionProgressTicker(startPercent, maxPercent, label) {
+      stopVersionProgressTicker();
+let current = startPercent;
+      setVersionProgress(current, label);
+      versionProgressTicker = window.setInterval(() => {
+const remaining = Math.max(0, maxPercent - current);
+        current = Math.min(maxPercent, current + Math.max(0.6, remaining * 0.08));
+        setVersionProgress(current, label);
+      }, 700);
+    }
+export function hideVersionProgress() {
+      stopVersionProgressTicker();
+const progress = document.getElementById("version-progress");
+      if (progress) {
+        progress.hidden = true;
+      }
+    }
+function updateVersionConnection(message) {
+const node = document.getElementById("version-connection");
+      if (node) {
+        node.textContent = message;
+      }
+    }
+export function renderVersionManager() {
+const manifest = getVersionManifest();
+const select = document.getElementById("game-version-select");
+const updateList = document.getElementById("version-update-list");
+const downloadButton = document.getElementById("version-download-button");
+      if (!select || !updateList || !downloadButton) {
+        return;
+      }
+const selectedVersion = getSelectedGameVersionId();
+      select.innerHTML = "";
+      getVersionRecords().forEach((version) => {
+        const option = document.createElement("option");
+        option.value = version.id;
+        option.textContent = version.label || `${version.id} - Lyrian Chronicles`;
+        option.selected = version.id === selectedVersion;
+        select.appendChild(option);
+      });
+const active = getVersionRecord(selectedVersion);
+      updateList.innerHTML = "";
+const title = document.createElement("p");
+      title.innerHTML = `<strong>Latest update</strong>`;
+      updateList.appendChild(title);
+const list = document.createElement("ul");
+      (active?.updates?.length ? active.updates : ["No local update notes have been entered for this version yet."]).forEach((item) => {
+const entry = document.createElement("li");
+        entry.textContent = item;
+        list.appendChild(entry);
+      });
+      updateList.appendChild(list);
+
+      if (versionRuntime.latestCheck?.hasUpdate && versionRuntime.latestCheck.latestVersion) {
+        downloadButton.hidden = false;
+        downloadButton.textContent = `Download ${versionRuntime.latestCheck.latestVersion}`;
+      } else {
+        downloadButton.hidden = true;
+      }
+
+      if (!versionRuntime.serverAvailable) {
+        updateVersionConnection("Web build. Published updates arrive here automatically.");
+      } else {
+        updateVersionConnection(`Local development server connected. Current local data: ${manifest.latestKnownVersion || selectedVersion}.`);
+      }
+    }
+export function loadScriptAsset(src) {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+const delimiter = src.includes("?") ? "&" : "?";
+        script.src = `${src}${delimiter}t=${Date.now()}`;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error(`Could not load ${src}`));
+        document.head.appendChild(script);
+      });
+    }
+async function refreshLocalVersionManifest() {
+      if (window.location.protocol !== "file:") {
+        const response = await fetch(VERSION_LOCAL_ENDPOINT, { cache: "no-store" });
+const data = await response.json();
+        if (!response.ok || !data?.ok || !data.manifest) {
+          throw new Error(data?.message || "The local version manifest could not be refreshed.");
+        }
+        window.LYRIAN_VERSION_MANIFEST = data.manifest;
+        return data.manifest;
+      }
+
+      await loadScriptAsset("assets/versions/manifest.js");
+      return getVersionManifest();
+    }
+function shouldProbeVersionServer() {
+      if (window.location.protocol === "file:" || window.location.protocol === "https:") {
+        return false;
+      }
+const hostname = window.location.hostname.toLowerCase();
+      return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
+    }
+export async function detectVersionServer() {
+      if (!shouldProbeVersionServer()) {
+        versionRuntime.serverAvailable = false;
+        renderVersionManager();
+        return false;
+      }
+      try {
+        const response = await fetch(VERSION_STATUS_ENDPOINT, { cache: "no-store" });
+const data = await response.json();
+        versionRuntime.serverAvailable = Boolean(data?.ok);
+        renderVersionManager();
+        return versionRuntime.serverAvailable;
+      } catch {
+        versionRuntime.serverAvailable = false;
+        renderVersionManager();
+        return false;
+      }
+    }
+async function checkForVersionUpdates() {
+      const connected = versionRuntime.serverAvailable || await detectVersionServer();
+      if (!connected) {
+        setStatus("This web build is updated by published site deployments. Refresh after a new Beta 1.4 update is pushed.");
+        renderVersionManager();
+        return;
+      }
+
+      try {
+        startVersionProgressTicker(15, 70, "Reading official Lyrian manual and version API");
+const response = await fetch(VERSION_CHECK_ENDPOINT, { cache: "no-store" });
+        stopVersionProgressTicker();
+        setVersionProgress(75, "Comparing local and official versions");
+const data = await response.json();
+        if (!response.ok || !data?.ok) {
+          throw new Error(data?.message || "The official version check failed.");
+        }
+        versionRuntime.latestCheck = data;
+        if (data.hasUpdate) {
+          setStatus(`Official Lyrian data ${data.latestVersion} appears newer than local ${data.localLatest}.`);
+        } else {
+          setStatus(`No newer official Lyrian version found. Local latest is ${data.localLatest}.`);
+        }
+        setVersionProgress(100, "Update check complete");
+        setTimeout(hideVersionProgress, 500);
+        renderVersionManager();
+      } catch (error) {
+        hideVersionProgress();
+        setStatus(error.message || "Could not check for Lyrian updates.");
+        renderVersionManager();
+      }
+    }
+async function downloadVersionUpdate() {
+      const targetVersion = versionRuntime.latestCheck?.latestVersion || "";
+      if (!targetVersion) {
+        setStatus("Check for updates before downloading a rules version.");
+        return;
+      }
+
+      try {
+        startVersionProgressTicker(10, 80, `Downloading and building ${targetVersion}`);
+const response = await fetch(VERSION_DOWNLOAD_ENDPOINT, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ version: targetVersion })
+        });
+        stopVersionProgressTicker();
+        setVersionProgress(85, "Validating updater result");
+const data = await response.json();
+        if (!response.ok || !data?.ok) {
+          throw new Error(data?.message || "The updater could not safely install this version yet.");
+        }
+        setVersionProgress(88, "Refreshing local version list");
+        await refreshLocalVersionManifest();
+        versionRuntime.latestCheck = null;
+        state.ui.gameVersion = targetVersion;
+        persistSelectedGameVersion(targetVersion);
+        renderVersionManager();
+const didApply = await applyGameVersion(targetVersion);
+        if (didApply) {
+          setVersionProgress(100, `${targetVersion} installed`);
+          setStatus(data.message || `Installed Lyrian rules version ${targetVersion}.`);
+          setTimeout(hideVersionProgress, 700);
+        }
+      } catch (error) {
+        hideVersionProgress();
+        setStatus(error.message || "Version download failed.");
+      }
+    }
+function includesPhrase(text, phrase) {
+      const normalizedPhrase = normalizePhrase(phrase);
+      if (!normalizedPhrase) {
+        return false;
+      }
+const normalizedText = ` ${normalizePhrase(text)} `;
+      return normalizedText.includes(` ${normalizedPhrase} `);
+    }
+function getBreakthroughStem(name) {
+      return cleanText(name)
+        .replace(/\([^)]*\)/g, "")
+        .replace(/\b[IVX]+\b$/i, "")
+        .trim();
+    }
+function romanToNumber(value) {
+      const numerals = {
+        i: 1,
+        ii: 2,
+        iii: 3,
+        iv: 4,
+        v: 5,
+        vi: 6,
+        vii: 7,
+        viii: 8,
+        ix: 9,
+        x: 10
+      };
+      return numerals[normalizeKey(value)] || 99;
+    }
+function getBreakthroughPrereqPriority(entry) {
+      const simpleName = cleanText(entry?.name).replace(/\([^)]*\)/g, "").trim();
+const roman = simpleName.match(/\b([IVX]+)$/i);
+      if (!roman) {
+        return 0;
+      }
+      return romanToNumber(roman[1]);
+    }
+function legacyNormalizeBrokenUtf8Text(value) {
+      return normalizeBrokenUtf8Text(String(value || ""))
+        .replace(/Ã¢â‚¬â„¢/g, "'")
+        .replace(/Ã¢â‚¬Å“/g, "\"")
+        .replace(/Ã¢â‚¬Â/g, "\"")
+        .replace(/Ã¢â‚¬â€/g, " - ")
+        .replace(/Ã¢â‚¬â€œ/g, "-");
+    }
+function legacyCleanText(value) {
+      return String(value ?? "")
+        .replace(/â€™/g, "’")
+        .replace(/â€œ/g, "“")
+        .replace(/â€/g, "”")
+        .replace(/â€”/g, "—")
+        .replace(/â€“/g, "–")
+        .replace(/\u001c/g, "\"")
+        .replace(/\u001d/g, "\"")
+        .trim();
+    }
+export function normalizeLyrianText(value) {
+      return String(value ?? "")
+        .replace(/ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢/g, "'")
+        .replace(/ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ/g, "\"")
+        .replace(/ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â/g, "\"")
+        .replace(/ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â/g, " - ")
+        .replace(/ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“/g, "-")
+        .replace(/Ã¢â‚¬â„¢/g, "'")
+        .replace(/Ã¢â‚¬Å“/g, "\"")
+        .replace(/Ã¢â‚¬Â/g, "\"")
+        .replace(/Ã¢â‚¬â€/g, " - ")
+        .replace(/Ã¢â‚¬â€œ/g, "-")
+        .replace(/\u001c/g, "\"")
+        .replace(/\u001d/g, "\"")
+        .trim();
+    }
+function parseModifierValue(value) {
+      const matches = cleanText(value).match(/[-+]?\d+/g);
+      if (!matches || !matches.length) {
+        return 0;
+      }
+      return toNumber(matches[matches.length - 1], 0);
+    }
+function rollDie(sides) {
+      return 1 + Math.floor(Math.random() * sides);
+    }
+function rollDice(count, sides) {
+      return Array.from({ length: count }, () => rollDie(sides));
+    }
+function parseBurdenValue(value) {
+      const match = cleanText(value).match(/-?\d+(?:\.\d+)?/);
+      return match ? Number(match[0]) : 0;
+    }
+function getExpertiseSpendFromValue(value) {
+      const bonus = Math.max(0, parseModifierValue(value));
+      return Math.ceil(bonus / 2);
+    }
+function formatExpertiseValueFromSpend(spend) {
+      const numericSpend = Math.max(0, toNumber(spend, 0));
+const bonus = numericSpend * 2;
+      return bonus ? `+${bonus}` : "";
+    }
+function getRacialSkillFieldName(choiceId, index) {
+      return `RacialSkillPoint:${choiceId}:${index}`;
+    }
+function getClassSkillPoolFieldName(choiceId, index, kind = "skill") {
+      const prefix = kind === "expertise" ? "ClassExpertiseSpend" : "ClassSkillPoint";
+      return `${prefix}:${choiceId}:${index}`;
+    }
+function normalizeExpertiseSpecialtyName(value) {
+      return cleanText(value).replace(/\s+/g, " ").slice(0, 80);
+    }
+function canSkillUseExpertise(definition) {
+      return Boolean(definition) && definition.group !== "gathering";
+    }
+function getSkillExpertiseOptionList(skillName) {
+      const canonical = getCanonicalSkillName(skillName) || cleanText(skillName);
+        const options = SKILL_EXPERTISE_OPTIONS[canonical] || [];
+      return Array.from(new Set(options.map(normalizeExpertiseSpecialtyName).filter(Boolean)));
+    }
+function toTitleCasePhrase(value) {
+      return cleanText(value).toLowerCase().replace(/\b[a-z]/g, (letter) => letter.toUpperCase());
+    }
+function formatConditionalExpertiseName(value) {
+      const normalized = normalizePhrase(value);
+      if (/lying|lies|liar/.test(normalized)) {
+        return "Discern Lies";
+      }
+      if (/vibration/.test(normalized)) {
+        return "Vibration Sense";
+      }
+const cleaned = cleanText(value)
+        .replace(/^(?:when|while|against|for|with|looking to|to)\s+/i, "")
+        .replace(/\bchecks?\b/gi, "")
+        .replace(/\s+/g, " ")
+        .trim();
+      return toTitleCasePhrase(cleaned).slice(0, 80);
+    }
+function parseSkillExpertiseTarget(targetText) {
+      const text = cleanText(targetText)
+        .replace(/\bexpertise(?:\s+skill)?\b/gi, "")
+        .replace(/\bbonus\b/gi, "")
+        .replace(/[.]+$/g, "")
+        .trim();
+      if (!text) {
+        return null;
+      }
+const parenMatch = text.match(/^(.+?)\s*\(([^)]+)\)/);
+      if (parenMatch) {
+        const resolved = resolveComputedBonusTarget(parenMatch[1]);
+const specialty = normalizeExpertiseSpecialtyName(parenMatch[2]);
+        if (resolved?.bucket === "skillChecks" && specialty) {
+          return { skillName: resolved.key, specialty };
+        }
+      }
+const colonMatch = text.match(/^([^:]+):\s*(.+)$/);
+      if (colonMatch) {
+        const resolved = resolveComputedBonusTarget(colonMatch[1]);
+const specialty = normalizeExpertiseSpecialtyName(colonMatch[2]);
+        if (resolved?.bucket === "skillChecks" && specialty) {
+          return { skillName: resolved.key, specialty };
+        }
+      }
+const resolved = resolveComputedBonusTarget(text);
+      if (resolved?.bucket !== "skillChecks") {
+        return null;
+      }
+const conditionMatch = cleanText(targetText).match(/\b(when|while|against|for|with)\b\s+(.+)$/i);
+const specialty = conditionMatch
+        ? formatConditionalExpertiseName(conditionMatch[0])
+        : "";
+      return specialty ? { skillName: resolved.key, specialty } : null;
+    }
+function getSkillExpertiseInputValue(panel) {
+      const specialtyInput = panel?.querySelector("[data-skill-expertise-name]");
+const customInput = panel?.querySelector("[data-skill-expertise-custom]");
+const selected = cleanText(specialtyInput?.value || "");
+      if (selected === "__custom__") {
+        return customInput?.value || "";
+      }
+      return selected;
+    }
+function getExpertiseSourceKey(source, choiceId = "") {
+      return source === "class" ? `class:${cleanText(choiceId)}` : "creation";
+    }
+function parseExpertiseSourceSpec(value) {
+      const text = cleanText(value);
+      if (text.startsWith("class:")) {
+        return {
+          source: "class",
+          choiceId: text.slice(6)
+        };
+      }
+      return {
+        source: "creation",
+        choiceId: ""
+      };
+    }
+function sanitizeSkillExpertiseEntry(entry) {
+      const skillIndex = Math.max(1, Math.floor(toNumber(entry?.skillIndex, 0)));
+const name = normalizeExpertiseSpecialtyName(entry?.name);
+const source = cleanText(entry?.source) === "class" ? "class" : "creation";
+const choiceId = source === "class" ? cleanText(entry?.choiceId) : "";
+const points = Math.max(0, Math.floor(toNumber(entry?.points, 0)));
+      if (!skillIndex || !name || points <= 0 || (source === "class" && !choiceId)) {
+        return null;
+      }
+      return {
+        skillIndex,
+        name,
+        source,
+        choiceId,
+        points
+      };
+    }
+function getStoredSkillExpertiseEntries() {
+      return (Array.isArray(state.builder.skillExpertiseEntries) ? state.builder.skillExpertiseEntries : [])
+        .map(sanitizeSkillExpertiseEntry)
+        .filter(Boolean);
+    }
+function setStoredSkillExpertiseEntries(entries) {
+      const merged = new Map();
+      entries
+        .map(sanitizeSkillExpertiseEntry)
+        .filter(Boolean)
+        .forEach((entry) => {
+            const key = [
+            entry.skillIndex,
+            getExpertiseSourceKey(entry.source, entry.choiceId),
+            normalizePhrase(entry.name)
+          ].join("|");
+const current = merged.get(key);
+          if (current) {
+            current.points += entry.points;
+          } else {
+            merged.set(key, { ...entry });
+          }
+        });
+      state.builder.skillExpertiseEntries = Array.from(merged.values());
+    }
+function getStoredExpertiseEntriesForSource(skillIndex, source, choiceId = "") {
+      const row = Number(skillIndex);
+const sourceKey = getExpertiseSourceKey(source, choiceId);
+      return getStoredSkillExpertiseEntries().filter((entry) =>
+        entry.skillIndex === row && getExpertiseSourceKey(entry.source, entry.choiceId) === sourceKey
+      );
+    }
+function getStoredExpertiseSpendForSource(skillIndex, source, choiceId = "") {
+      return getStoredExpertiseEntriesForSource(skillIndex, source, choiceId)
+        .reduce((total, entry) => total + Math.max(0, entry.points), 0);
+    }
+function getCreationExpertiseSpendForSkill(index) {
+      const storedSpend = getStoredExpertiseSpendForSource(index, "creation");
+      if (storedSpend > 0) {
+        return storedSpend;
+      }
+      return getExpertiseSpendFromValue(state.fields[`Expertise${index}`]);
+    }
+function getClassExpertiseSpendForSkill(choice, index) {
+      const storedSpend = getStoredExpertiseSpendForSource(index, "class", choice?.id);
+      if (storedSpend > 0) {
+        return storedSpend;
+      }
+      return Math.max(0, toNumber(state.fields[getClassSkillPoolFieldName(choice?.id || "", index, "expertise")], 0));
+    }
+function getSkillExpertiseEntries(index) {
+      const row = Number(index);
+      const entries = [];
+const addEntry = (entry) => {
+        const safe = sanitizeSkillExpertiseEntry(entry);
+        if (safe && safe.skillIndex === row) {
+          entries.push(safe);
+        }
+      };
+
+      getStoredSkillExpertiseEntries()
+        .filter((entry) => entry.skillIndex === row)
+        .forEach(addEntry);
+
+      if (!getStoredExpertiseEntriesForSource(row, "creation").length) {
+        const legacyCreationSpend = getExpertiseSpendFromValue(state.fields[`Expertise${row}`]);
+        if (legacyCreationSpend > 0) {
+          addEntry({
+            skillIndex: row,
+            name: "Unassigned creation expertise",
+            source: "creation",
+            choiceId: "",
+            points: legacyCreationSpend
+          });
+        }
+      }
+
+      getVisibleClassSkillPoolChoices()
+        .filter((choice) => choice.allowExpertise && isSkillAllowedForClassPool(choice, SKILL_DEFINITIONS[row - 1]?.name))
+        .forEach((choice) => {
+          if (getStoredExpertiseEntriesForSource(row, "class", choice.id).length) {
+            return;
+          }
+const legacyClassSpend = Math.max(0, toNumber(state.fields[getClassSkillPoolFieldName(choice.id, row, "expertise")], 0));
+          if (legacyClassSpend > 0) {
+            addEntry({
+              skillIndex: row,
+              name: `Unassigned ${choice.source} expertise`,
+              source: "class",
+              choiceId: choice.id,
+              points: legacyClassSpend
+            });
+          }
+        });
+
+      return entries;
+    }
+function getComputedSkillExpertiseEntries(index, bonuses = getComputedBonuses()) {
+      const definition = SKILL_DEFINITIONS[Number(index) - 1];
+      if (!definition) {
+        return [];
+      }
+const computed = bonuses.skillExpertise?.[definition.name] || [];
+      return computed
+        .map((entry) => ({
+          name: normalizeExpertiseSpecialtyName(entry?.name),
+          bonus: Math.max(0, Math.floor(toNumber(entry?.bonus, 0))),
+          source: cleanText(entry?.source || "Feature")
+        }))
+        .filter((entry) => entry.name && entry.bonus > 0);
+    }
+function getSkillExpertiseGroups(index, bonuses = getComputedBonuses()) {
+      const groups = new Map();
+      getSkillExpertiseEntries(index).forEach((entry) => {
+        const key = normalizePhrase(entry.name);
+const current = groups.get(key) || {
+          name: entry.name,
+          points: 0,
+          bonus: 0,
+          sources: {},
+          fixedSources: []
+        };
+const sourceKey = getExpertiseSourceKey(entry.source, entry.choiceId);
+        current.points += entry.points;
+        current.bonus += entry.points * 2;
+        current.sources[sourceKey] = (current.sources[sourceKey] || 0) + entry.points;
+        groups.set(key, current);
+      });
+
+      getComputedSkillExpertiseEntries(index, bonuses).forEach((entry) => {
+        const key = normalizePhrase(entry.name);
+const current = groups.get(key) || {
+          name: entry.name,
+          points: 0,
+          bonus: 0,
+          sources: {},
+          fixedSources: []
+        };
+        current.bonus += entry.bonus;
+        current.fixedSources.push({
+          source: entry.source,
+          bonus: entry.bonus
+        });
+        groups.set(key, current);
+      });
+
+      return Array.from(groups.values())
+        .filter((entry) => entry.bonus > 0)
+        .sort((a, b) => b.bonus - a.bonus || a.name.localeCompare(b.name));
+    }
+function getBestExpertiseBonusForSkill(index, bonuses = getComputedBonuses()) {
+      return getSkillExpertiseGroups(index, bonuses).reduce((best, entry) => Math.max(best, entry.bonus), 0);
+    }
+function getBestCreationExpertiseBonusForSkill(index) {
+      const groups = new Map();
+      getSkillExpertiseEntries(index)
+        .filter((entry) => entry.source === "creation")
+        .forEach((entry) => {
+          const key = normalizePhrase(entry.name);
+          groups.set(key, (groups.get(key) || 0) + entry.points);
+        });
+      return Array.from(groups.values()).reduce((best, points) => Math.max(best, points * 2), 0);
+    }
+function getTotalExpertiseSpendForSkill(index) {
+      return getSkillExpertiseEntries(index).reduce((total, entry) => total + entry.points, 0);
+    }
+function syncExpertiseDisplayField(index) {
+      const bestBonus = getBestCreationExpertiseBonusForSkill(index);
+      updateFieldValue(`Expertise${index}`, bestBonus ? formatModifier(bestBonus) : "");
+    }
+function addSkillExpertisePoint(index, sourceSpec, name) {
+      const row = Number(index);
+const definition = SKILL_DEFINITIONS[row - 1];
+const source = parseExpertiseSourceSpec(sourceSpec);
+const specialty = normalizeExpertiseSpecialtyName(name);
+      if (!definition || !specialty) {
+        setStatus("Enter an expertise specialty name first.");
+        return false;
+      }
+      if (!canSkillUseExpertise(definition)) {
+        setStatus(`${definition.name} does not have legal expertise specialties.`);
+        return false;
+      }
+
+      if (source.source === "class") {
+      const choice = getVisibleClassSkillPoolChoices().find((entry) => entry.id === source.choiceId);
+        if (!choice || !choice.allowExpertise || !isSkillAllowedForClassPool(choice, definition.name)) {
+          setStatus("That class skill benefit cannot buy expertise for this skill.");
+          return false;
+        }
+        if (getClassSkillPoolState(choice).remaining <= 0) {
+          setStatus(`${choice.source} has no class skill points remaining.`);
+          return false;
+        }
+      } else if (getSkillBudgetState().remaining <= 0) {
+        setStatus("No creation skill points remain for expertise.");
+        return false;
+      }
+const entries = getStoredSkillExpertiseEntries();
+const key = [
+        row,
+        getExpertiseSourceKey(source.source, source.choiceId),
+        normalizePhrase(specialty)
+      ].join("|");
+let didUpdate = false;
+const nextEntries = entries.map((entry) => {
+        const entryKey = [
+          entry.skillIndex,
+          getExpertiseSourceKey(entry.source, entry.choiceId),
+          normalizePhrase(entry.name)
+        ].join("|");
+        if (entryKey !== key) {
+          return entry;
+        }
+        didUpdate = true;
+        return {
+          ...entry,
+          points: entry.points + 1
+        };
+      });
+      if (!didUpdate) {
+        nextEntries.push({
+          skillIndex: row,
+          name: specialty,
+          source: source.source,
+          choiceId: source.choiceId,
+          points: 1
+        });
+      }
+      setStoredSkillExpertiseEntries(nextEntries);
+      syncExpertiseDisplayField(row);
+      syncSkillFields();
+      setStatus(`Added +2 ${specialty} expertise to ${definition.name}.`);
+      return true;
+    }
+function adjustSkillExpertisePoint(index, sourceSpec, name, delta) {
+      const row = Number(index);
+const source = parseExpertiseSourceSpec(sourceSpec);
+const specialty = normalizeExpertiseSpecialtyName(name);
+const change = Math.trunc(toNumber(delta, 0));
+      if (!row || !specialty || !change) {
+        return false;
+      }
+      if (change > 0) {
+        return addSkillExpertisePoint(row, sourceSpec, specialty);
+      }
+const key = [
+        row,
+        getExpertiseSourceKey(source.source, source.choiceId),
+        normalizePhrase(specialty)
+      ].join("|");
+const nextEntries = getStoredSkillExpertiseEntries()
+        .map((entry) => {
+          const entryKey = [
+            entry.skillIndex,
+            getExpertiseSourceKey(entry.source, entry.choiceId),
+            normalizePhrase(entry.name)
+          ].join("|");
+          if (entryKey !== key) {
+            return entry;
+          }
+          return {
+            ...entry,
+            points: Math.max(0, entry.points - 1)
+          };
+        })
+        .filter((entry) => entry.points > 0);
+      setStoredSkillExpertiseEntries(nextEntries);
+      syncExpertiseDisplayField(row);
+      syncSkillFields();
+      setStatus(`Removed one ${specialty} expertise point.`);
+      return true;
+    }
+function getVisibleRacialSkillPoolChoices() {
+      return getBuilderChoiceDefinitions().filter((choice) =>
+        choice.type === "racial-skill-pool" && isBuilderChoiceVisible(choice)
+      );
+    }
+function getVisibleClassSkillPoolChoices() {
+      return getBuilderChoiceDefinitions().filter((choice) =>
+        choice.type === "class-skill-pool" && isBuilderChoiceVisible(choice)
+      );
+    }
+function isSkillAllowedForRacialPool(choice, skillName) {
+      return getChoiceOptionValueSet(choice).has(cleanText(skillName));
+    }
+function isSkillAllowedForClassPool(choice, skillName) {
+      return getChoiceOptionValueSet(choice).has(cleanText(skillName));
+    }
+function isFixedClassSkillPool(choice) {
+      return Boolean(choice?.autoAssign) && !choice.allowExpertise && getChoiceOptionList(choice).length === 1;
+    }
+function getRacialSkillSpend(choice, index) {
+      return Math.max(0, toNumber(state.fields[getRacialSkillFieldName(choice.id, index)], 0));
+    }
+function getClassSkillPoolSpend(choice, index, kind = "skill") {
+      if (kind === "expertise") {
+        return getClassExpertiseSpendForSkill(choice, index);
+      }
+      if (kind === "skill" && isFixedClassSkillPool(choice)) {
+        const definition = SKILL_DEFINITIONS[index - 1];
+const fixedSkill = getChoiceOptionList(choice)[0]?.value || "";
+        if (definition && cleanText(definition.name) === cleanText(fixedSkill)) {
+          return Math.max(0, toNumber(choice.amount, 0));
+        }
+      }
+      return Math.max(0, toNumber(state.fields[getClassSkillPoolFieldName(choice.id, index, kind)], 0));
+    }
+function getRacialSkillPoolState(choice) {
+      const rows = SKILL_DEFINITIONS.map((definition, index) => ({
+        definition,
+        index: index + 1
+      }));
+const spent = rows.reduce((total, row) => {
+        if (!isSkillAllowedForRacialPool(choice, row.definition.name)) {
+          return total;
+        }
+        return total + getRacialSkillSpend(choice, row.index);
+      }, 0);
+const budget = Math.max(0, toNumber(choice.amount, 0));
+      return {
+        budget,
+        spent,
+        remaining: budget - spent
+      };
+    }
+function getClassSkillPoolState(choice) {
+      const rows = SKILL_DEFINITIONS.map((definition, index) => ({
+        definition,
+        index: index + 1
+      }));
+const spent = rows.reduce((total, row) => {
+        if (!isSkillAllowedForClassPool(choice, row.definition.name)) {
+          return total;
+        }
+        return total
+          + getClassSkillPoolSpend(choice, row.index, "skill")
+          + getClassSkillPoolSpend(choice, row.index, "expertise");
+      }, 0);
+const budget = Math.max(0, toNumber(choice.amount, 0));
+      return {
+        budget,
+        spent,
+        remaining: budget - spent
+      };
+    }
+function getRacialSkillAllocationOptions(choice, index) {
+      const definition = SKILL_DEFINITIONS[index - 1];
+      if (!choice || !definition || !isSkillAllowedForRacialPool(choice, definition.name)) {
+        return {
+          currentSpend: 0,
+          currentValid: true,
+          choices: [0],
+          maxSpend: 0
+        };
+      }
+const currentSpend = getRacialSkillSpend(choice, index);
+const pool = getRacialSkillPoolState(choice);
+const spentElsewhere = pool.spent - currentSpend;
+const maxSpend = Math.max(0, pool.budget - spentElsewhere);
+      return {
+        currentSpend,
+        currentValid: currentSpend <= maxSpend,
+        maxSpend,
+        choices: Array.from({ length: maxSpend + 1 }, (_, choiceValue) => choiceValue)
+      };
+    }
+function getClassSkillAllocationOptions(choice, index, kind = "skill") {
+      const definition = SKILL_DEFINITIONS[index - 1];
+      if (!choice || !definition || !isSkillAllowedForClassPool(choice, definition.name) || (kind === "expertise" && !choice.allowExpertise)) {
+        return {
+          currentSpend: 0,
+          currentValid: true,
+          choices: [0],
+          maxSpend: 0
+        };
+      }
+      if (isFixedClassSkillPool(choice)) {
+        const fixedSpend = getClassSkillPoolSpend(choice, index, kind);
+        return {
+          currentSpend: fixedSpend,
+          currentValid: true,
+          maxSpend: fixedSpend,
+          choices: [fixedSpend]
+        };
+      }
+const currentSpend = getClassSkillPoolSpend(choice, index, kind);
+const pool = getClassSkillPoolState(choice);
+const spentElsewhere = pool.spent - currentSpend;
+const maxSpend = Math.max(0, pool.budget - spentElsewhere);
+      return {
+        currentSpend,
+        currentValid: currentSpend <= maxSpend,
+        maxSpend,
+        choices: Array.from({ length: maxSpend + 1 }, (_, choiceValue) => choiceValue)
+      };
+    }
+function getRacialSkillPointsForSkill(index) {
+      const definition = SKILL_DEFINITIONS[index - 1];
+      if (!definition) {
+        return {
+          total: 0,
+          breakdown: []
+        };
+      }
+const breakdown = getVisibleRacialSkillPoolChoices()
+        .filter((choice) => isSkillAllowedForRacialPool(choice, definition.name))
+        .map((choice) => ({
+          choice,
+          value: getRacialSkillSpend(choice, index)
+        }))
+        .filter((entry) => entry.value > 0);
+      return {
+        total: breakdown.reduce((sum, entry) => sum + entry.value, 0),
+        breakdown
+      };
+    }
+function setRacialSkillAllocation(choiceId, index, value) {
+      const choice = getVisibleRacialSkillPoolChoices().find((entry) => entry.id === choiceId);
+const row = Number(index);
+      if (!choice || !Number.isFinite(row) || row < 1) {
+        return;
+      }
+const optionState = getRacialSkillAllocationOptions(choice, row);
+const requestedSpend = Math.max(0, toNumber(value, 0));
+const safeSpend = optionState.choices.includes(requestedSpend) ? requestedSpend : clamp(requestedSpend, 0, optionState.maxSpend);
+      updateFieldValue(getRacialSkillFieldName(choice.id, row), safeSpend ? String(safeSpend) : "");
+      syncSkillFields();
+    }
+function adjustRacialSkillAllocation(choiceId, index, delta) {
+      const choice = getVisibleRacialSkillPoolChoices().find((entry) => entry.id === choiceId);
+const row = Number(index);
+      if (!choice || !Number.isFinite(row) || row < 1) {
+        return;
+      }
+const current = getRacialSkillSpend(choice, row);
+      setRacialSkillAllocation(choiceId, row, current + Math.trunc(toNumber(delta, 0)));
+    }
+function setClassSkillPoolAllocation(choiceId, index, kind, value) {
+      const choice = getVisibleClassSkillPoolChoices().find((entry) => entry.id === choiceId);
+const row = Number(index);
+const allocationKind = kind === "expertise" ? "expertise" : "skill";
+      if (!choice || !Number.isFinite(row) || row < 1) {
+        return;
+      }
+      if (isFixedClassSkillPool(choice)) {
+        syncSkillFields();
+        return;
+      }
+const optionState = getClassSkillAllocationOptions(choice, row, allocationKind);
+const requestedSpend = Math.max(0, toNumber(value, 0));
+const safeSpend = optionState.choices.includes(requestedSpend) ? requestedSpend : clamp(requestedSpend, 0, optionState.maxSpend);
+      updateFieldValue(getClassSkillPoolFieldName(choice.id, row, allocationKind), safeSpend ? String(safeSpend) : "");
+      syncSkillFields();
+    }
+function adjustClassSkillPoolAllocation(choiceId, index, kind, delta) {
+      const choice = getVisibleClassSkillPoolChoices().find((entry) => entry.id === choiceId);
+const row = Number(index);
+const allocationKind = kind === "expertise" ? "expertise" : "skill";
+      if (!choice || !Number.isFinite(row) || row < 1 || isFixedClassSkillPool(choice)) {
+        return;
+      }
+const current = getClassSkillPoolSpend(choice, row, allocationKind);
+      setClassSkillPoolAllocation(choiceId, row, allocationKind, current + Math.trunc(toNumber(delta, 0)));
+    }
+function getClassSkillPoolSummary(choice) {
+      const assignments = SKILL_DEFINITIONS
+        .map((definition, index) => {
+          const row = index + 1;
+          if (!isSkillAllowedForClassPool(choice, definition.name)) {
+            return "";
+          }
+const skillSpend = getClassSkillPoolSpend(choice, row, "skill");
+const expertiseSpend = getClassSkillPoolSpend(choice, row, "expertise");
+          return [
+            skillSpend > 0 ? `${definition.name} +${skillSpend} skill` : "",
+            expertiseSpend > 0 ? `${definition.name} +${expertiseSpend * 2} expertise` : ""
+          ].filter(Boolean).join(", ");
+        })
+        .filter(Boolean);
+      if (!assignments.length) {
+        return "";
+      }
+      return `${choice.source}: ${assignments.join("; ")}`;
+    }
+function getSkillBudgetState() {
+      const rows = getSkillRowsData();
+const spent = rows.reduce((total, entry) => total + Math.max(0, entry.creationSkillPoints) + Math.max(0, entry.creationExpertiseSpend), 0);
+const remaining = CREATION_SKILL_POINT_BUDGET - spent;
+      return {
+        budget: CREATION_SKILL_POINT_BUDGET,
+        spent,
+        remaining,
+        rows
+      };
+    }
+function getSkillAllocationOptions(index, type) {
+      const skill = getSkillRowData(index);
+      if (!skill) {
+        return {
+          currentSpend: 0,
+          currentValid: true,
+          choices: [0],
+          maxSpend: 0
+        };
+      }
+const currentSpend = type === "expertise"
+        ? Math.max(0, skill.creationExpertiseSpend)
+        : Math.max(0, skill.creationSkillPoints);
+const budget = getSkillBudgetState();
+const spentElsewhere = budget.spent - currentSpend;
+const maxSpend = Math.max(0, CREATION_SKILL_POINT_BUDGET - spentElsewhere);
+const currentValid = currentSpend <= maxSpend;
+
+      return {
+        currentSpend,
+        currentValid,
+        maxSpend,
+        choices: Array.from({ length: maxSpend + 1 }, (_, choice) => choice)
+      };
+    }
+function getRemainingStatArrayOptions(definitions, expectedArray, currentKey) {
+      const counts = new Map();
+      expectedArray.forEach((value) => {
+        counts.set(value, (counts.get(value) || 0) + 1);
+      });
+
+      definitions.forEach((entry) => {
+        if (entry.key === currentKey) {
+          return;
+        }
+        const value = toNumber(state.fields[entry.key], NaN);
+        if (!Number.isFinite(value)) {
+          return;
+        }
+const remaining = counts.get(value) || 0;
+        if (remaining > 0) {
+          counts.set(value, remaining - 1);
+        }
+      });
+const currentValue = toNumber(state.fields[currentKey], NaN);
+const currentValid = Number.isFinite(currentValue) && (counts.get(currentValue) || 0) > 0;
+const choices = Array.from(counts.entries())
+        .filter(([, amount]) => amount > 0)
+        .map(([value]) => value)
+        .sort((a, b) => b - a);
+
+      return {
+        currentValue: Number.isFinite(currentValue) ? currentValue : "",
+        currentValid,
+        choices
+      };
+    }
+function paragraphize(value) {
+      const text = escapeHtml(value);
+      if (!text) {
+        return "<p>No pulled description is available for this entry yet.</p>";
+      }
+      return `<p>${text.replace(/\n{2,}/g, "</p><p>").replace(/\n/g, "<br>")}</p>`;
+    }
+function getFirstSentence(value) {
+      const text = cleanText(value).replace(/\s+/g, " ").trim();
+      if (!text) {
+        return "";
+      }
+const match = text.match(/^.*?[.!?](?=\s|$)/);
+      return match ? match[0].trim() : text;
+    }
+export function buildDemonClanEntry(race, choiceKey, choice) {
+      const title = cleanText(choice?.title || choice?.text || "");
+const note = cleanText(choice?.note || "");
+const roleText = cleanText(choice?.text || "");
+const ability = choice?.abilityRef || null;
+      if (!title && !roleText && !ability?.name) {
+        return null;
+      }
+const code = cleanText(choice?.code || choiceKey || "").toUpperCase();
+      return {
+        id: `demon-clan-${normalizeKey(code || title || choiceKey || "entry")}`,
+        name: [code, title || roleText].filter(Boolean).join(" - ") || code || "Demon Clan",
+        shortName: title || roleText || code || "Demon Clan",
+        primaryRace: race?.name || "Demon",
+        descriptionText: note || roleText,
+        detailKind: "demon-clan",
+        lineageCode: code,
+        clanText: roleText,
+        clanTitle: title || roleText,
+        clanNote: note,
+        imageSmUrl: race?.imageSmUrl || "",
+        imageLgUrl: race?.imageLgUrl || "",
+        detailSectionTitle: "Clan Technique",
+        traits: ability ? [ability] : []
+      };
+    }
+export function getAllSecondaryLineageOptions() {
+      return [
+        ...detailLookup.ancestries.entries,
+        ...detailLookup.races.entries.flatMap((race) => getDemonClanOptions(race))
+      ];
+    }
+function getProfileIdentitySummary() {
+      const race = getSelectedRaceDetail();
+const ancestry = getSelectedAncestryDetail();
+const lines = [];
+
+      if (race) {
+        const raceSummary = getFirstSentence(race.descriptionText || race.description);
+        lines.push(`Species: ${race.name}${raceSummary ? ` — ${raceSummary}` : ""}`);
+      }
+
+      if (ancestry) {
+        const ancestrySummary = getFirstSentence(ancestry.descriptionText || ancestry.description);
+        lines.push(`${getSecondaryLineageLabels(race).summaryLabel}: ${ancestry.name}${ancestrySummary ? ` — ${ancestrySummary}` : ""}`);
+      }
+
+      if (!lines.length) {
+        return "Choose a species and secondary lineage to see a short identity summary here.";
+      }
+
+      return lines.join("\n\n");
+    }
+export function setStatus(message) {
+      ["status-pill", "builder-status-pill"].forEach((id) => {
+        const node = document.getElementById(id);
+        if (node) {
+          node.textContent = message;
+        }
+      });
+    }
+function buildDatalist(id, values) {
+      const datalist = document.createElement("datalist");
+      datalist.id = id;
+      values.forEach((value) => {
+        const option = document.createElement("option");
+        option.value = value;
+        datalist.appendChild(option);
+      });
+      return datalist;
+    }
+export function createDatalists() {
+      const root = document.body;
+      [
+        "race-list",
+        "ancestry-list",
+        "class-list",
+        "item-list",
+        "breakthrough-list",
+        "ability-list",
+        "skill-list",
+        "substat-list"
+      ].forEach((id) => document.getElementById(id)?.remove());
+const secondaryLineageValues = Array.from(
+        new Set(
+          getAllSecondaryLineageOptions()
+            .flatMap((item) => [item.name, item.shortName, item.lineageCode])
+            .map((value) => cleanText(value))
+            .filter(Boolean)
+        )
+      );
+      root.appendChild(buildDatalist("race-list", window.LYRIAN_DATA.races.map((item) => item.name)));
+      root.appendChild(buildDatalist("ancestry-list", secondaryLineageValues));
+      root.appendChild(buildDatalist("class-list", window.LYRIAN_DATA.classes.map((item) => item.name)));
+      root.appendChild(buildDatalist("item-list", (lookup.items?.entries || window.LYRIAN_DATA.items).map((item) => item.name)));
+      root.appendChild(buildDatalist("breakthrough-list", window.LYRIAN_DATA.breakthroughs.map((item) => item.name)));
+      root.appendChild(buildDatalist("ability-list", window.LYRIAN_DATA.abilities.map((item) => item.name)));
+      root.appendChild(buildDatalist("skill-list", SKILL_OPTIONS));
+      root.appendChild(buildDatalist("substat-list", SUBSTAT_OPTIONS));
+    }
+function makeFieldShell(field, mode = "small") {
+      const shell = document.createElement("div");
+      shell.className = `field-shell ${mode}`;
+      shell.style.left = `${field.left}%`;
+      shell.style.top = `${field.top}%`;
+      shell.style.width = `${field.width}%`;
+      shell.style.height = `${field.height}%`;
+      return shell;
+    }
+function isAbilityField(name) {
+      return /^Ability\d+$/.test(name);
+    }
+function isSkillField(name) {
+      return /^Skill\d+$/.test(name) || /^Stat\d+$/.test(name) || /^Bonus\d+$/.test(name) || /^SkillPoint\d+$/.test(name) || /^Expertise\d+$/.test(name);
+    }
+function isClassField(name) {
+      return /^Class\d+$/.test(name) || /^ClassTier\d+$/.test(name) || /^ClassLevel\d+$/.test(name) || /^Cost\d+$/.test(name);
+    }
+function isInventoryField(name) {
+      return /^CombatInventory\d+$/.test(name) || /^Amount\d+$/.test(name) || /^Bulk\d+$/.test(name) || /^Description\d+$/.test(name);
+    }
+function setupFocusTracking(element, fieldName) {
+      element.addEventListener("focus", () => {
+        state.lastFocusedField = fieldName;
+      });
+    }
+function buildStandardField(field) {
+      const isMultiline = MULTILINE_FIELDS.has(field.name);
+const mode = isMultiline
+        ? "large"
+        : (isInventoryField(field.name) ? "inventory" : (isSkillField(field.name) ? "skill" : (isClassField(field.name) ? "class" : "small")));
+const shell = makeFieldShell(field, mode);
+const element = document.createElement(isMultiline ? "textarea" : "input");
+
+      if (isMultiline) {
+        element.className = "sheet-textarea";
+      } else {
+        element.className = "sheet-field";
+        element.type = "text";
+      }
+
+      element.dataset.field = field.name;
+      element.spellcheck = false;
+      setupFocusTracking(element, field.name);
+
+      if (PASSIVE_READ_ONLY_FIELDS.has(field.name) || CLICKABLE_ROLL_FIELDS.has(field.name)) {
+        element.readOnly = true;
+      }
+
+      if (PASSIVE_READ_ONLY_FIELDS.has(field.name)) {
+        element.tabIndex = -1;
+        shell.style.pointerEvents = "none";
+      }
+
+      if (CLICKABLE_ROLL_FIELDS.has(field.name)) {
+        element.classList.add("sheet-roll-field");
+      }
+
+      if (/^Skill\d+$/.test(field.name)) {
+        element.setAttribute("list", "skill-list");
+      }
+
+      if (/^Stat\d+$/.test(field.name)) {
+        element.setAttribute("list", "substat-list");
+      }
+
+      if (/^Class\d+$/.test(field.name)) {
+        element.setAttribute("list", "class-list");
+      }
+
+      if (field.name === "Primary Race") {
+        element.setAttribute("list", "race-list");
+      }
+
+      if (field.name === "Sub Race") {
+        element.setAttribute("list", "ancestry-list");
+      }
+
+      if (/^CombatInventory\d+$/.test(field.name)) {
+        element.setAttribute("list", "item-list");
+      }
+
+      element.addEventListener("input", () => {
+        state.fields[field.name] = element.value;
+        if (NAME_FIELDS.includes(field.name)) {
+          syncNameFields(element.value, field.name);
+        } else if (field.name === "Primary Race") {
+          const race = detailLookup.races.resolve(element.value);
+          if (race) {
+            state.builder.selectedRaceId = race.id;
+          }
+          refreshBuilderIdentity();
+          renderBuilderSummary();
+        } else if (field.name === "Sub Race") {
+          const ancestry = getAncestryDetail(element.value);
+          if (ancestry) {
+            state.builder.selectedAncestryId = ancestry.id;
+          } else if (!cleanText(element.value)) {
+            state.builder.selectedAncestryId = "";
+          }
+          refreshBuilderIdentity();
+          renderBuilderSummary();
+        } else if (/^SkillPoint\d+$/.test(field.name) || /^Expertise\d+$/.test(field.name)) {
+          syncSkillFields();
+          renderBuilderDetail();
+          renderBuilderSummary();
+        }
+        syncPlayResourcesFromFields(true);
+        renderPlayDashboardIfVisible();
+      });
+
+      element.addEventListener("change", () => {
+        if (/^Class\d+$/.test(field.name)) {
+          autoFillClassRow(field.name, element.value);
+        }
+        if (/^CombatInventory\d+$/.test(field.name)) {
+          autoFillInventoryRow(field.name, element.value);
+        }
+      });
+
+      if (/^Bonus(\d+)$/.test(field.name)) {
+        element.addEventListener("click", () => {
+          const match = field.name.match(/^Bonus(\d+)$/);
+          if (match) {
+            rollSkillCheck(match[1]);
+          }
+        });
+      }
+
+      shell.appendChild(element);
+      return shell;
+    }
+function buildAbilityField(field) {
+      const shell = document.createElement("div");
+      shell.className = "ability-slot";
+      shell.style.left = `${field.left}%`;
+      shell.style.top = `${field.top}%`;
+      shell.style.width = `${field.width}%`;
+      shell.style.height = `${field.height}%`;
+const picker = document.createElement("input");
+      picker.className = "ability-picker";
+      picker.type = "text";
+      picker.setAttribute("list", "ability-list");
+      picker.placeholder = "Ability name";
+      picker.dataset.abilityPicker = field.name;
+      setupFocusTracking(picker, field.name);
+const body = document.createElement("textarea");
+      body.className = "ability-body";
+      body.dataset.field = field.name;
+      body.spellcheck = false;
+      setupFocusTracking(body, field.name);
+
+      picker.addEventListener("input", () => {
+        state.abilitySelections[field.name] = picker.value;
+      });
+
+      picker.addEventListener("change", () => {
+        const ability = lookup.abilities.resolve(picker.value);
+        if (ability) {
+          fillAbilityField(field.name, ability);
+        }
+      });
+
+      body.addEventListener("input", () => {
+        state.fields[field.name] = body.value;
+      });
+
+      shell.append(picker, body);
+      return shell;
+    }
+export function buildSheet() {
+      const stack = document.getElementById("sheet-stack");
+      stack.innerHTML = "";
+      window.LYRIAN_FORM_MAP.pages.forEach((pageConfig) => {
+        const page = document.createElement("section");
+        page.className = "sheet-page";
+        page.id = `page-${pageConfig.page}`;
+        page.style.backgroundImage = `url('${PAGE_BACKGROUNDS[pageConfig.page]}')`;
+const overlay = document.createElement("div");
+        overlay.className = "page-fields";
+
+        pageConfig.fields.forEach((field) => {
+          overlay.appendChild(isAbilityField(field.name) ? buildAbilityField(field) : buildStandardField(field));
+        });
+
+        page.appendChild(overlay);
+        stack.appendChild(page);
+      });
+    }
+export function syncNameFields(value, sourceName = "Name") {
+      NAME_FIELDS.forEach((fieldName) => {
+        updateFieldValue(fieldName, value);
+        if (fieldName === sourceName) {
+          return;
+        }
+const node = document.querySelector(`[data-field="${cssEscape(fieldName)}"]`);
+        if (node && node.value !== value) {
+          node.value = value;
+        }
+      });
+const header = document.getElementById("builder-name-header");
+      if (header && header.value !== value) {
+        header.value = value;
+      }
+const profileNameInput = document.querySelector('[data-profile-field="Name"]');
+      if (profileNameInput && profileNameInput.value !== value) {
+        profileNameInput.value = value;
+      }
+
+      refreshSheetToolbar();
+      refreshBuilderIdentity();
+      renderBuilderDetail();
+      renderBuilderSummary();
+      renderPlayDashboardIfVisible();
+    }
+export function applyStateToDom() {
+      state.play = mergePlayState(state.play);
+      hydrateBuilderSelectionsFromFields();
+      seedBuilderInspection();
+
+      document.querySelectorAll("[data-field]").forEach((node) => {
+        const fieldName = node.dataset.field;
+const nextValue = String(state.fields[fieldName] ?? "");
+        if (node.value !== nextValue) {
+          node.value = nextValue;
+        }
+      });
+
+      document.querySelectorAll("[data-profile-field]").forEach((node) => {
+        const fieldName = node.dataset.profileField;
+const nextValue = String(state.fields[fieldName] ?? "");
+        if (node.value !== nextValue) {
+          node.value = nextValue;
+        }
+      });
+
+      document.querySelectorAll("[data-ability-picker]").forEach((node) => {
+        const fieldName = node.dataset.abilityPicker;
+const nextValue = String(state.abilitySelections[fieldName] ?? "");
+        if (node.value !== nextValue) {
+          node.value = nextValue;
+        }
+      });
+const headerName = document.getElementById("builder-name-header");
+      if (headerName) {
+        headerName.value = cleanText(state.fields.Name);
+      }
+
+      syncBuilderSelectionsIntoSheet();
+      renderBuilder();
+      renderPlayTabs();
+      updateModeVisibility();
+    }
+function autoFillClassRow(fieldName, value) {
+      const match = fieldName.match(/^Class(\d+)$/);
+      if (!match) {
+        return;
+      }
+const row = match[1];
+const classData = lookup.classes.resolve(value);
+      if (!classData) {
+        return;
+      }
+const tierField = document.querySelector(`[data-field="ClassTier${row}"]`);
+      if (tierField && !tierField.value) {
+        tierField.value = String(classData.tier);
+        state.fields[`ClassTier${row}`] = tierField.value;
+      }
+
+      if (!state.builder.selectedClassIds.includes(classData.id) && state.builder.selectedClassIds.length < CLASS_ROWS.length) {
+        state.builder.selectedClassIds.push(classData.id);
+      }
+
+      renderBuilderSummary();
+      setStatus(`Loaded class data for ${classData.name}.`);
+    }
+function autoFillInventoryRow(fieldName, value) {
+      const match = fieldName.match(/^CombatInventory(\d+)$/);
+      if (!match) {
+        return;
+      }
+const row = match[1];
+const item = lookup.items.resolve(value);
+      if (!item) {
+        return;
+      }
+const amountField = document.querySelector(`[data-field="Amount${row}"]`);
+const bulkField = document.querySelector(`[data-field="Bulk${row}"]`);
+const descriptionField = document.querySelector(`[data-field="Description${row}"]`);
+
+      if (amountField && !amountField.value) {
+        amountField.value = "1";
+        state.fields[`Amount${row}`] = "1";
+      }
+
+      if (bulkField && !bulkField.value && item.burden) {
+        bulkField.value = item.burden;
+        state.fields[`Bulk${row}`] = item.burden;
+      }
+
+      if (descriptionField && !descriptionField.value) {
+        const compact = [item.type, item.subType, item.cost].filter(Boolean).join(" | ");
+        descriptionField.value = compact;
+        state.fields[`Description${row}`] = compact;
+      }
+
+      if (!state.builder.selectedItemIds.includes(item.id) && state.builder.selectedItemIds.length < INVENTORY_ROWS.length) {
+        setBuilderItemQuantity(item.id, 1);
+      }
+
+      renderBuilderSummary();
+      setStatus(`Added ${item.name} to inventory row ${row}.`);
+    }
+function formatAbilityText(ability) {
+      const lines = [ability.name];
+      if (ability.costLabel) {
+        lines.push(`Cost: ${formatCostLabelForDisplay(ability.costLabel)}`);
+      }
+      if (ability.range) {
+        lines.push(`Range: ${ability.range}`);
+      }
+      if (ability.keywords && ability.keywords.length) {
+        lines.push(`Keywords: ${ability.keywords.join(", ")}`);
+      }
+      if (ability.requirement) {
+        lines.push(`Requirement: ${ability.requirement}`);
+      }
+      if (ability.description) {
+        lines.push("", cleanText(ability.description));
+      }
+      return lines.join("\n");
+    }
+export function fillAbilityField(fieldName, ability) {
+      const picker = document.querySelector(`[data-ability-picker="${cssEscape(fieldName)}"]`);
+const body = document.querySelector(`[data-field="${cssEscape(fieldName)}"]`);
+      if (!picker || !body) {
+        return;
+      }
+      picker.value = ability.name;
+      body.value = formatAbilityText(ability);
+      state.abilitySelections[fieldName] = ability.name;
+      state.fields[fieldName] = body.value;
+      setStatus(`Filled ${fieldName} with ${ability.name}.`);
+    }
+export function firstEmptyField(prefixRegex) {
+      const nodes = [...document.querySelectorAll("[data-field]")];
+const target = nodes.find((node) => prefixRegex.test(node.dataset.field) && !node.value.trim());
+      return target ? target.dataset.field : "";
+    }
+export function appendFieldText(fieldName, text) {
+      const node = document.querySelector(`[data-field="${cssEscape(fieldName)}"]`);
+      if (!node) {
+        return;
+      }
+      const next = node.value.trim() ? `${node.value.trim()}\n\n${text}` : text;
+      node.value = next;
+      state.fields[fieldName] = next;
+      setStatus(`Updated ${fieldName}.`);
+    }
+function getPreviewText(value) {
+      if (!value) {
+        return "<h4>Waiting for a selection</h4><p>Start typing in the search field above to preview data from the archived Angel's Sword pull.</p>";
+      }
+      return value;
+    }
+function looksEncodedBlob(value) {
+      const text = cleanText(value);
+      return text.length >= 16 && !/\s/.test(text) && /^[A-Za-z0-9+/=]+$/.test(text);
+    }
+function looksDecodableBase64Text(value) {
+      const cleaned = cleanText(value);
+      if (!cleaned || /\s/.test(cleaned) || cleaned.length % 4 !== 0 || !/^[A-Za-z0-9+/]+={0,2}$/.test(cleaned)) {
+        return false;
+      }
+      if (cleaned.length < 8 && !cleaned.includes("=")) {
+        return false;
+      }
+
+      try {
+        const decoded = atob(cleaned);
+const normalized = decoded
+          .replace(/[\u0000-\u001f]/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+        if (!normalized) {
+          return false;
+        }
+const nonAscii = normalized.replace(/[\u0020-\u007e]/g, "");
+        return nonAscii.length / normalized.length <= 0.1;
+      } catch (error) {
+        return false;
+      }
+    }
+export function firstReadableText(...values) {
+      const cleaned = values.flatMap((value) => {
+        const original = cleanText(value);
+        if (!original) {
+          return [];
+        }
+        return [
+          decodePossibleBase64Text(original),
+          stripSimpleHtml(original),
+          original
+        ];
+      }).map((value) => cleanText(value)).filter(Boolean);
+const readable = cleaned.find((value) => !looksEncodedBlob(value) && !looksDecodableBase64Text(value));
+      return readable || cleaned[0] || "";
+    }
+function stripSimpleHtml(value) {
+      return cleanText(value).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+    }
+function decodePossibleBase64Text(value) {
+      const cleaned = cleanText(value);
+      if (!cleaned || (!looksEncodedBlob(cleaned) && !looksDecodableBase64Text(cleaned))) {
+        return cleaned;
+      }
+
+      try {
+        const decoded = atob(cleaned);
+const normalized = decoded
+          .replace(/[\u0000-\u001f]/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+        return stripSimpleHtml(normalized);
+      } catch (error) {
+        return cleaned;
+      }
+    }
+export function normalizePulledRulesEntry(entry) {
+      if (!entry || typeof entry !== "object") {
+        return entry;
+      }
+      if (Array.isArray(entry)) {
+        return entry.map((item) => normalizePulledRulesEntry(item));
+      }
+const normalized = { ...entry };
+      [
+        "attributes",
+        "benefit1",
+        "benefit2",
+        "benefit3",
+        "benefit4",
+        "contentText",
+        "description",
+        "descriptions",
+        "descriptionText",
+        "descriptionsText",
+        "guide",
+        "guideText",
+        "heart",
+        "proficiencies",
+        "requirement",
+        "requirementText",
+        "requirements",
+        "requirementsText",
+        "skills",
+        "soul"
+      ].forEach((field) => {
+        if (typeof normalized[field] === "string") {
+          normalized[field] = firstReadableText(normalized[field]);
+        }
+      });
+
+      [
+        "abilities",
+        "traits",
+        "keyAbility",
+        "keyAbilityRef",
+        "associatedAbilityRef",
+        "ability1Ref",
+        "ability2Ref",
+        "ability3Ref",
+        "ability4Ref",
+        "ability5Ref",
+        "ability6Ref",
+        "ability7Ref",
+        "ultimateAbilityRef"
+      ].forEach((field) => {
+        if (normalized[field]) {
+          normalized[field] = normalizePulledRulesEntry(normalized[field]);
+        }
+      });
+
+      return normalized;
+    }
+function getClassLeadText(record) {
+      return firstReadableText(record?.descriptionText, record?.description);
+    }
+function getClassGuideText(record) {
+      return firstReadableText(record?.guideText, record?.guide);
+    }
+function getClassFallbackSummary(record) {
+      const requirementsText = getClassRequirementsText(record);
+const tierRole = [
+        record?.tier ? `Tier ${record.tier}` : "",
+        [record?.role1, record?.role2].filter(Boolean).join(" / ")
+      ].filter(Boolean).join(" ");
+const parts = [
+        tierRole,
+        requirementsText && !/^none\.?$/i.test(requirementsText) ? `Requires: ${cleanText(requirementsText).replace(/[.]+$/g, "")}` : "",
+        record?.keyAbility?.name ? `Key ability: ${record.keyAbility.name}` : ""
+      ].filter(Boolean);
+      return parts.join(". ");
+    }
+function getClassCardText(record) {
+      return getClassLeadText(record) || getClassGuideText(record) || getClassFallbackSummary(record);
+    }
+function getClassRequirementsText(record) {
+      return firstReadableText(
+        record?.requirementsText,
+        stripSimpleHtml(record?.requirementsHtml),
+        decodePossibleBase64Text(record?.requirements),
+        stripSimpleHtml(record?.requirements),
+        record?.requirements
+      );
+    }
+function getClassAbilityRecords(record) {
+      const seen = new Set();
+const abilities = [];
+      asArray(record?.abilities).forEach((ability) => {
+        const name = cleanText(ability?.name);
+        if (!name || seen.has(normalizePhrase(name))) {
+          return;
+        }
+        seen.add(normalizePhrase(name));
+        abilities.push(ability);
+      });
+      ["ability1Ref", "ability2Ref", "ability3Ref", "ability4Ref", "ability5Ref", "ability6Ref", "ability7Ref", "ultimateAbilityRef"].forEach((key) => {
+        const ability = record?.[key];
+const name = cleanText(ability?.name);
+        if (!name || seen.has(normalizePhrase(name))) {
+          return;
+        }
+        seen.add(normalizePhrase(name));
+        abilities.push(ability);
+      });
+      return abilities;
+    }
+function getClassProgressSlots(record) {
+      const activeAbilities = getClassAbilityRecords(record);
+const activeLabels = [
+        "Class ability",
+        "Class ability",
+        "Class ability",
+        "Ultimate ability"
+      ];
+const passiveSlots = [
+        {
+          type: "passive",
+          passiveType: "heart",
+          label: "Heart passive",
+          name: "Heart",
+          description: cleanText(record?.heart) || "Class Heart passive bonus."
+        },
+        {
+          type: "passive",
+          passiveType: "soul",
+          label: "Soul passive",
+          name: "Soul",
+          description: cleanText(record?.soul) || "Class Soul passive bonus."
+        },
+        {
+          type: "passive",
+          passiveType: "skills",
+          label: "Class skill passive",
+          name: "Class Skills",
+          description: cleanText(record?.skills) || "Class skill passive bonus."
+        }
+      ];
+
+      return Array.from({ length: CLASS_PURCHASABLE_LEVELS }, (_, index) => {
+        const slotNumber = index + 1;
+        if (slotNumber % 2 === 0) {
+          return passiveSlots[(slotNumber / 2) - 1];
+        }
+const activeIndex = (slotNumber - 1) / 2;
+const ability = activeAbilities[activeIndex] || null;
+        return {
+          type: "ability",
+          ability,
+          label: activeLabels[activeIndex] || "Class ability",
+          name: ability?.name || `Unlisted ${activeLabels[activeIndex] || "class ability"}`,
+          description: ability
+            ? cleanText(ability.descriptionText || ability.description || "")
+            : "The official API has not exposed this class ability record yet."
+        };
+      });
+    }
+export function getClassProgressSlotCount(record) {
+      return record ? CLASS_PURCHASABLE_LEVELS : 0;
+    }
+function isClassPassiveUnlocked(record, passiveType) {
+      const slotNumber = CLASS_PASSIVE_SLOTS[passiveType];
+      return Boolean(slotNumber && getClassPurchasedAbilityCount(record) >= slotNumber);
+    }
+export function getClassPurchasedAbilityCount(record) {
+      if (!record?.id) {
+        return 0;
+      }
+      const abilityCount = getClassProgressSlotCount(record);
+const saved = toNumber(state.builder.classAbilityProgress?.[record.id], 0);
+      return clamp(Math.floor(saved), 0, abilityCount);
+    }
+function setClassPurchasedAbilityCount(classId, count) {
+      const record = getClassDetail(classId);
+      if (!record) {
+        return;
+      }
+const abilityCount = getClassProgressSlotCount(record);
+const nextCount = clamp(Math.floor(toNumber(count, 0)), 0, abilityCount);
+      state.builder.classAbilityProgress = {
+        ...(state.builder.classAbilityProgress || {}),
+        [record.id]: nextCount
+      };
+    }
+export function getClassProgressCost(record, purchasedCount = getClassPurchasedAbilityCount(record)) {
+      return getClassUnlockCost(record) + (Math.max(0, purchasedCount) * 100);
+    }
+function getPurchasedClassAbilities(record) {
+      return getClassProgressSlots(record)
+        .slice(0, getClassPurchasedAbilityCount(record))
+        .filter((slot) => slot.type === "ability" && slot.ability)
+        .map((slot) => slot.ability);
+    }
+function getClassKeyAbilityPlayRecord(record) {
+      const keyAbility = record?.keyAbility;
+      if (!keyAbility?.name) {
+        return null;
+      }
+      const description = [keyAbility.benefit1, keyAbility.benefit2, keyAbility.benefit3, keyAbility.benefit4]
+        .filter(Boolean)
+        .map(cleanText)
+        .join("\n\n");
+      return {
+        id: `${record.id}-key-ability`,
+        name: keyAbility.name,
+        description,
+        descriptionText: description,
+        costLabel: "",
+        range: "",
+        source: `${record.name} key ability`
+      };
+    }
+function isTrackedClassMastered(progressEntry) {
+      if (!progressEntry?.record) {
+        return false;
+      }
+      return progressEntry.abilityCount > 0 && progressEntry.purchasedCount >= progressEntry.abilityCount;
+    }
+function getTrackedLearnedAbilityNames() {
+      const names = new Set();
+const race = getSelectedRaceDetail();
+      asArray(race?.abilities).forEach((ability) => {
+        const name = typeof ability === "string" ? ability : ability?.name;
+        if (name) {
+          names.add(normalizePhrase(name));
+        }
+      });
+
+      getSelectedClassProgress().forEach((entry) => {
+        const record = entry.record;
+const keyAbilityName = record?.keyAbility?.name;
+        if (keyAbilityName) {
+          names.add(normalizePhrase(keyAbilityName));
+        }
+const associated = record?.keyAbilityRef?.associatedAbilityRef?.name;
+        if (associated) {
+          names.add(normalizePhrase(associated));
+        }
+
+        getPurchasedClassAbilities(record).forEach((ability) => {
+          if (ability?.name) {
+            names.add(normalizePhrase(ability.name));
+          }
+        });
+      });
+
+      Object.values(state.abilitySelections || {}).forEach((value) => {
+        const normalized = normalizePhrase(value);
+        if (normalized) {
+          names.add(normalized);
+        }
+      });
+
+      return names;
+    }
+function getTrackedProficiencyText() {
+      const classTexts = getSelectedClassDetails().flatMap((entry) => [
+        entry.skills,
+        entry.proficiencies,
+        entry.keyAbility?.name,
+        entry.keyAbility?.benefit1,
+        entry.keyAbility?.benefit2,
+        entry.keyAbility?.benefit3,
+        entry.keyAbility?.benefit4,
+        entry.keyAbility?.descriptionText,
+        entry.keyAbility?.description
+      ]);
+      return [
+        state.fields.Proficiencies,
+        getSelectedRaceDetail()?.proficiencies,
+        ...classTexts,
+        ...getSelectedBreakthroughEffects().extraProficiencies
+      ].filter(Boolean).map(cleanText).join(" | ");
+    }
+function hasTrackedAnySpell() {
+      const known = Array.from(getTrackedLearnedAbilityNames());
+      return known.some((name) => name.includes("magic") || name.includes("spell"));
+    }
+function hasTrackedDamagingSpell() {
+      const known = Array.from(getTrackedLearnedAbilityNames());
+      return known.some((name) =>
+        name.includes("missile")
+        || name.includes("fire")
+        || name.includes("bolt")
+        || name.includes("blast")
+        || name.includes("lightning")
+        || name.includes("ball")
+      );
+    }
+function hasTrackedMeleeWeaponProficiency() {
+      const text = getTrackedProficiencyText();
+const meleeSignals = [
+        "melee weapon",
+        "light swords",
+        "longsword",
+        "katana",
+        "dueling weapon",
+        "dagger",
+        "spear",
+        "axe",
+        "mace",
+        "hammer",
+        "polearm",
+        "staff",
+        "claw",
+        "gauntlet"
+      ];
+      return meleeSignals.some((phrase) => includesPhrase(text, phrase));
+    }
+function hasTrackedAnyWeaponProficiency() {
+      const text = getTrackedProficiencyText();
+const weaponSignals = [
+        "weapon group",
+        "weapon groups",
+        "common weapons",
+        "common weapon",
+        "melee weapon",
+        "light swords",
+        "longsword",
+        "katana",
+        "dueling weapon",
+        "small weapons",
+        "polearms",
+        "lances",
+        "lance",
+        "dagger",
+        "spear",
+        "axe",
+        "mace",
+        "hammer",
+        "bow",
+        "crossbow",
+        "musket",
+        "pistol",
+        "shotgun",
+        "sniper rifle",
+        "staff",
+        "wand",
+        "sling",
+        "gauntlet"
+      ];
+      return weaponSignals.some((phrase) => includesPhrase(text, phrase));
+    }
+function hasTrackedSpecificProficiency(options) {
+      const text = getTrackedProficiencyText();
+      return options.some((option) => includesPhrase(text, option));
+    }
+function normalizeRequirementClause(clause) {
+      return cleanText(clause)
+        .replace(/^you\s+must\s+/i, "")
+        .replace(/^must\s+/i, "")
+        .replace(/^and\s+/i, "")
+        .replace(/^or\s+/i, "")
+        .replace(/[.]+$/g, "")
+        .trim();
+    }
+function getRequirementCount(value) {
+      const normalized = normalizePhrase(value);
+      const words = {
+        one: 1,
+        two: 2,
+        three: 3,
+        four: 4,
+        five: 5,
+        ten: 10
+      };
+      if (words[normalized]) {
+        return words[normalized];
+      }
+      return Math.max(0, Math.floor(toNumber(cleanText(value).match(/\d+/)?.[0], 0)));
+    }
+function getMasteredClassProgressEntries() {
+      return getSelectedClassProgress().filter((entry) => isTrackedClassMastered(entry));
+    }
+function hasMasteredClassName(options) {
+      const targets = options.map((entry) => normalizePhrase(entry)).filter(Boolean);
+      if (!targets.length) {
+        return false;
+      }
+      return getMasteredClassProgressEntries().some((entry) =>
+        targets.includes(normalizePhrase(entry.record?.name))
+        || targets.includes(normalizePhrase(entry.record?.classId))
+        || targets.includes(normalizePhrase(entry.record?.id))
+      );
+    }
+function hasMasteredClassTier(tier) {
+      const targetTier = Math.max(0, toNumber(tier, 0));
+      return getMasteredClassProgressEntries().some((entry) => toNumber(entry.record?.tier, 0) === targetTier);
+    }
+function hasMasteredClassCount(count) {
+      return getMasteredClassProgressEntries().length >= Math.max(0, count);
+    }
+function hasSelectedClassName(options) {
+      const targets = options.map((entry) => normalizePhrase(entry)).filter(Boolean);
+      if (!targets.length) {
+        return false;
+      }
+      return getSelectedClassProgress().some((entry) =>
+        targets.includes(normalizePhrase(entry.record?.name))
+        || targets.includes(normalizePhrase(entry.record?.classId))
+        || targets.includes(normalizePhrase(entry.record?.id))
+      );
+    }
+function getRequirementListOptions(value) {
+      return cleanText(value)
+        .replace(/\s+or\s+/gi, ",")
+        .split(",")
+        .map((entry) => cleanText(entry)
+          .replace(/^(?:must\s+have|have|be|a|an|the)\s+/i, "")
+          .replace(/\bclass$/i, "")
+          .trim())
+        .filter(Boolean);
+    }
+function hasSelectedLineage(value) {
+      const target = normalizePhrase(value);
+      if (!target) {
+        return false;
+      }
+      const selected = [getSelectedRaceDetail(), getSelectedAncestryDetail()].filter(Boolean);
+      return selected.some((entry) => [
+        entry.name,
+        entry.shortName,
+        entry.primaryRace,
+        entry.lineageCode,
+        entry.clanTitle
+      ].some((candidate) => normalizePhrase(candidate) === target));
+    }
+function hasOpenMysticEyeSlot() {
+      const maxSlots = hasSelectedBreakthroughName("Third Eye") ? 3 : 2;
+      const usedSlots = getSelectedClassDetails().filter((entry) =>
+        /\b(?:evil eye|eyes?|shinigami eyes|mystic eyes)\b/i.test(cleanText(entry?.name))
+      ).length;
+      return usedSlots < maxSlots;
+    }
+function hasTrackedElementalMastery(value) {
+      const target = normalizePhrase(value)
+        .replace(/\b(?:elemental|element|mastery|mastered|have)\b/g, "")
+        .trim();
+      if (!target) {
+        return false;
+      }
+      const candidates = new Set([target]);
+      if (target === "ice") {
+        candidates.add("frost");
+      }
+      if (target === "frost") {
+        candidates.add("ice");
+      }
+      const learned = getTrackedLearnedAbilityNames();
+      if (Array.from(candidates).some((candidate) =>
+        learned.has(normalizePhrase(`Elemental Mastery ${candidate}`))
+        || learned.has(normalizePhrase(`${candidate} Mastery`))
+        || learned.has(normalizePhrase(`${candidate} mastered`))
+      )) {
+        return true;
+      }
+      return Object.entries(state.builder.choiceSelections || {}).some(([id, selectedValue]) =>
+        normalizePhrase(id).includes("elemental mastery") && candidates.has(normalizePhrase(selectedValue))
+      );
+    }
+function hasTrackedAnyElementalMastery() {
+      const elements = ["arcane", "dark", "earth", "fire", "frost", "holy", "ice", "lightning", "water", "wind"];
+      return elements.some((element) => hasTrackedElementalMastery(element));
+    }
+function isKnownClassRequirementOption(value) {
+      const target = normalizePhrase(value);
+      if (!target) {
+        return false;
+      }
+      return lookup.classes.entries.some((entry) =>
+        normalizePhrase(entry.name) === target
+        || normalizePhrase(entry.classId) === target
+        || normalizePhrase(entry.id) === target
+      );
+    }
+function isElementRequirementName(value) {
+      return ["arcane", "dark", "earth", "fire", "frost", "holy", "ice", "lightning", "water", "wind"].includes(
+        normalizePhrase(value).replace(/\belement\b/g, "").trim()
+      );
+    }
+function evaluateClassMasteryRequirement(clause) {
+      const normalizedClause = normalizeRequirementClause(clause);
+      let match = normalizedClause.match(/^(?:at least\s+)?(\d+|one|two|three)\s+classes?\s+mastered(?:,\s*of which\s+(\d+|one|two|three)\s+must\s+be\s+a\s+tier\s+(\d+)\s+class)?$/i);
+      if (match) {
+        const requiredCount = getRequirementCount(match[1]);
+        const requiredTierCount = getRequirementCount(match[2]);
+        const requiredTier = toNumber(match[3], 0);
+        const mastered = getMasteredClassProgressEntries();
+        const met = mastered.length >= requiredCount
+          && (!requiredTierCount || mastered.filter((entry) => toNumber(entry.record?.tier, 0) === requiredTier).length >= requiredTierCount);
+        return { met, trackable: true, label: normalizedClause };
+      }
+
+      match = normalizedClause.match(/^(?:any|one|at least one|at least 1)\s+tier\s+(\d+)(?:\s+class)?\s+mastered$/i);
+      if (match) {
+        return { met: hasMasteredClassTier(match[1]), trackable: true, label: normalizedClause };
+      }
+
+      if (/^(?:any|at least one|at least 1)\s+(?:class\s+mastered|mastered\s+class)$/i.test(normalizedClause)) {
+        return { met: hasMasteredClassCount(1), trackable: true, label: normalizedClause };
+      }
+
+      if (/^(?:have\s+)?(?:one|any)\s+element\s+mastered$/i.test(normalizedClause)) {
+        return { met: hasTrackedAnyElementalMastery(), trackable: true, label: normalizedClause };
+      }
+
+      match = normalizedClause.match(/^(?:at least\s+)?(\d+|one|two|three|five)\s+of\s+(.+?)\s+(?:mastered|maxed)$/i);
+      if (match) {
+        const requiredCount = getRequirementCount(match[1]);
+        const options = getRequirementListOptions(match[2]);
+        const masteredCount = getMasteredClassProgressEntries().filter((entry) =>
+          options.some((option) =>
+            normalizePhrase(entry.record?.name) === normalizePhrase(option)
+            || normalizePhrase(entry.record?.classId) === normalizePhrase(option)
+            || normalizePhrase(entry.record?.id) === normalizePhrase(option)
+          )
+        ).length;
+        return { met: masteredCount >= requiredCount, trackable: true, label: normalizedClause };
+      }
+
+      match = normalizedClause.match(/^(.+?)\s+(?:mastered|maxed)$/i);
+      if (match) {
+        const classText = cleanText(match[1]).replace(/\b(?:have|must have|a|an|the)\b/gi, "").trim();
+        if (/^(?:any|one|at least one|at least 1)\s+tier\s+\d+(?:\s+class)?$/i.test(classText)) {
+          return evaluateClassMasteryRequirement(`${classText} mastered`);
+        }
+        const options = getRequirementListOptions(classText);
+        if (options.length === 1 && isElementRequirementName(options[0]) && !isKnownClassRequirementOption(options[0])) {
+          return { met: hasTrackedElementalMastery(options[0]), trackable: true, label: normalizedClause };
+        }
+        return { met: hasMasteredClassName(options), trackable: true, label: normalizedClause };
+      }
+
+      match = normalizedClause.match(/^(.+?)\s+(?:mastery|element mastered)$/i);
+      if (match) {
+        if (/^(?:one|any)\s+element$/i.test(cleanText(match[1]))) {
+          return { met: hasTrackedAnyElementalMastery(), trackable: true, label: normalizedClause };
+        }
+        return { met: hasTrackedElementalMastery(match[1]), trackable: true, label: normalizedClause };
+      }
+
+      return null;
+    }
+function evaluateClassIdentityRequirement(clause) {
+      const normalizedClause = normalizeRequirementClause(clause);
+      const match = normalizedClause.match(/^be\s+(?:a|an|the)?\s*(.+?)$/i);
+      if (!match) {
+        return null;
+      }
+      const target = cleanText(match[1]).replace(/\s+class$/i, "");
+      if (!isKnownClassRequirementOption(target)) {
+        return null;
+      }
+      return { met: hasSelectedClassName([target]) || hasMasteredClassName([target]), trackable: true, label: normalizedClause };
+    }
+function evaluateLineageRequirement(clause) {
+      const normalizedClause = normalizeRequirementClause(clause);
+      let match = normalizedClause.match(/^(?:must\s+be\s+|be\s+a\s+|be\s+|a\s+)?(.+?)(?:\s+only)?$/i);
+      if (!match) {
+        return null;
+      }
+      const target = cleanText(match[1]).replace(/\.$/, "");
+      const knownRaceNames = lookup.races.entries.map((entry) => normalizePhrase(entry.name));
+      const knownLineageNames = [
+        ...lookup.ancestries.entries.map((entry) => normalizePhrase(entry.name)),
+        ...lookup.ancestries.entries.map((entry) => normalizePhrase(entry.shortName))
+      ];
+      if (!knownRaceNames.includes(normalizePhrase(target)) && !knownLineageNames.includes(normalizePhrase(target))) {
+        return null;
+      }
+      return { met: hasSelectedLineage(target), trackable: true, label: normalizedClause };
+    }
+function evaluateBreakthroughRequirement(clause) {
+      const normalizedClause = normalizeRequirementClause(clause);
+      const match = normalizedClause.match(/^(?:must\s+have|have)\s+(?:the\s+)?["']?(.+?)["']?\s+breakthrough$/i);
+      const shorthandMatch = normalizedClause.match(/^(?:the\s+)?["']?(.+?)["']?\s+breakthrough$/i);
+      if (!match && !shorthandMatch) {
+        return null;
+      }
+      const target = cleanText((match || shorthandMatch)[1]);
+      return { met: hasSelectedBreakthroughName(target), trackable: true, label: normalizedClause };
+    }
+function evaluateAbilityRequirement(clause) {
+      const normalizedClause = normalizeRequirementClause(clause);
+      const match = normalizedClause.match(/^(?:possess|have)\s+(?:the\s+)?(.+?)\s+ability$/i)
+        || normalizedClause.match(/^(.+?)\s+learned$/i);
+      if (!match) {
+        return null;
+      }
+      const targetAbility = normalizePhrase(match[1]).replace(/\bracial\b/g, "").trim();
+      return { met: getTrackedLearnedAbilityNames().has(targetAbility), trackable: true, label: normalizedClause };
+    }
+function evaluateProficiencyRequirement(clause) {
+      const normalizedClause = normalizeRequirementClause(clause);
+      if (/^(?:be\s+)?proficient in at least 1 melee weapon$/i.test(normalizedClause)) {
+        return { met: hasTrackedMeleeWeaponProficiency(), trackable: true, label: normalizedClause };
+      }
+      let match = normalizedClause.match(/^(?:be\s+)?proficient\s+(?:in|with)\s+(.+)$/i)
+        || normalizedClause.match(/^proficiency\s+in\s+(.+)$/i);
+      if (!match) {
+        return null;
+      }
+      const targetText = cleanText(match[1])
+        .replace(/^at least one of\s+/i, "")
+        .replace(/^one of\s+/i, "");
+      if (/^(?:1|one|any|a)\s+weapon$/i.test(targetText) || /^any weapon proficiency$/i.test(targetText)) {
+        return { met: hasTrackedAnyWeaponProficiency(), trackable: true, label: normalizedClause };
+      }
+      if (/^any two-?handed melee weapon$/i.test(targetText)) {
+        return {
+          met: hasTrackedSpecificProficiency(["two-handed melee weapon", "two handed melee weapon", "two-handed weapon", "two handed weapon"]),
+          trackable: true,
+          label: normalizedClause
+        };
+      }
+      if (/^shields?\s+and\s+medium\s+or\s+heavy\s+armor$/i.test(targetText)) {
+        return {
+          met: hasTrackedSpecificProficiency(["shield", "shields"])
+            && hasTrackedSpecificProficiency(["medium armor", "heavy armor"]),
+          trackable: true,
+          label: normalizedClause
+        };
+      }
+      if (/^light\s+(?:and|&)\s+medium\s+armor$/i.test(targetText) || /^light\s+armor\s+(?:and|&)\s+medium\s+armor$/i.test(targetText)) {
+        return {
+          met: hasTrackedSpecificProficiency(["light armor"]) && hasTrackedSpecificProficiency(["medium armor"]),
+          trackable: true,
+          label: normalizedClause
+        };
+      }
+      const options = targetText
+        .split(/,\s*|\s+or\s+/i)
+        .map((entry) => cleanText(entry))
+        .filter(Boolean);
+      return { met: hasTrackedSpecificProficiency(options), trackable: true, label: normalizedClause };
+    }
+function evaluateClassProgressRequirement(clause) {
+      const normalizedClause = normalizeRequirementClause(clause);
+      const match = normalizedClause.match(/^(?:have\s+)?(?:any|some|at least 1|at least one|\d+)\s+points?\s+in\s+(.+)$/i);
+      if (!match) {
+        return null;
+      }
+      const options = getRequirementListOptions(match[1]);
+      return { met: hasSelectedClassName(options), trackable: true, label: normalizedClause };
+    }
+function evaluateSpiritCoreRequirement(clause) {
+      const normalizedClause = normalizeRequirementClause(clause);
+      const match = normalizedClause.match(/^(\d+)\s*\+?\s*spirit\s+core$/i)
+        || normalizedClause.match(/^spirit\s+core\s*(?:at least|>=)\s*(\d+)$/i);
+      if (!match) {
+        return null;
+      }
+      const required = Math.max(0, toNumber(match[1], 0));
+      const current = Math.max(0, toNumber(state.fields["Spirit Core"], 0));
+      return { met: current >= required, trackable: true, label: normalizedClause };
+    }
+function evaluateCharacterCreationRequirement(clause) {
+      const normalizedClause = normalizeRequirementClause(clause);
+      if (/\b(?:chosen|taken)\s+at\s+character\s+creation\b/i.test(normalizedClause)
+        || /^can only be taken at character creation$/i.test(normalizedClause)) {
+        return { met: true, trackable: true, label: normalizedClause };
+      }
+      return null;
+    }
+function evaluateManualRequirement(clause) {
+      const normalizedClause = normalizeRequirementClause(clause);
+      if (/\b(?:gm approval|used at least|visited|follows|believer in a god|after being|after your hp|killed by|dropped below 0)\b/i.test(normalizedClause)) {
+        return { met: false, trackable: false, label: normalizedClause };
+      }
+      return null;
+    }
+function evaluateSpellRequirement(clause) {
+      const normalizedClause = normalizeRequirementClause(clause);
+      if (/^(?:must\s+)?possess at least 1 spell that deals damage$/i.test(normalizedClause)) {
+        return { met: hasTrackedDamagingSpell(), trackable: true, label: normalizedClause };
+      }
+      if (/^have at least 1 spell$/i.test(normalizedClause)) {
+        return { met: hasTrackedAnySpell(), trackable: true, label: normalizedClause };
+      }
+      return null;
+    }
+function evaluateSkillRequirement(clause) {
+      const normalizedClause = normalizeRequirementClause(clause);
+      let match = normalizedClause.match(/^(?:have\s+)?(?:at least\s+)?(\d+|one|two|three|five|ten)\s+skill points?\s+in\s+(?:the\s+)?(.+?)\s+skill$/i);
+      if (match) {
+        const required = getRequirementCount(match[1]);
+        const skillName = cleanText(match[2]).replace(/^the\s+/i, "");
+        const met = getSkillRowsData().some((entry) =>
+          normalizePhrase(entry.name) === normalizePhrase(skillName) && entry.skillPoints >= required
+        );
+        return { met, trackable: true, label: normalizedClause };
+      }
+
+      match = normalizedClause.match(/^(?:have\s+)?(?:at least\s+)?(\d+|one|two|three|five|ten)\s+(?:skill\s+)?points?\s+in\s+(?:the\s+|an\s+)?(.+?)\s+expertise(?:\s+skill|\s+of\s+an\s+instrument)?$/i);
+      if (match) {
+        const required = getRequirementCount(match[1]);
+        const targets = cleanText(match[2])
+          .replace(/\s+expertise\b/gi, "")
+          .split(/,\s*|\s+or\s+/i)
+          .map((entry) => cleanText(entry).replace(/^an\s+/i, ""))
+          .filter(Boolean);
+        const met = targets.some((target) => {
+          const parenthetical = target.match(/^(.+?)\s*\((.+?)\)$/);
+          const skillName = parenthetical ? parenthetical[1] : target;
+          const expertiseName = parenthetical ? parenthetical[2] : "";
+          return getSkillRowsData().some((entry) => {
+            if (normalizePhrase(entry.name) !== normalizePhrase(skillName)) {
+              return false;
+            }
+            return entry.expertiseGroups.some((group) =>
+              group.bonus >= required
+              && (!expertiseName || normalizePhrase(group.name) === normalizePhrase(expertiseName) || normalizePhrase(group.name) === normalizePhrase(target))
+            );
+          });
+        });
+        return { met, trackable: true, label: normalizedClause };
+      }
+
+      return null;
+    }
+function splitCompoundRequirement(clause) {
+      const normalizedClause = normalizeRequirementClause(clause);
+      if (/^proficient\s+(?:in|with)\s+shields?\s+and\s+medium\s+or\s+heavy\s+armor$/i.test(normalizedClause)) {
+        return [normalizedClause];
+      }
+      return normalizedClause
+        .split(/\s+(?:and|plus|\+)\s+(?=(?:any|one|at least|must|have|possess|be|proficient|proficiency|\d+|[A-Z][^,]+?\s+mastered)\b)/i)
+        .map((entry) => normalizeRequirementClause(entry))
+        .filter(Boolean);
+    }
+function evaluateOrRequirement(clause) {
+      const normalizedClause = normalizeRequirementClause(clause);
+      if (!/\s+or\s+/i.test(normalizedClause)) {
+        return null;
+      }
+      const parts = normalizedClause.split(/\s+or\s+/i).map((entry) => normalizeRequirementClause(entry)).filter(Boolean);
+      if (parts.length < 2) {
+        return null;
+      }
+      const results = parts.map((part, index) => {
+        const hasExplicitPredicate = /\b(?:mastered|mastery|breakthrough|proficient|proficiency|ability|spell|skill|class|only)\b/i.test(part);
+        const nextHasMastered = parts.slice(index + 1).some((entry) => /\bmastered\b/i.test(entry));
+        const normalizedPart = !hasExplicitPredicate && nextHasMastered ? `${part} mastered` : part;
+        return evaluateClassRequirementClause(normalizedPart);
+      });
+      if (results.every((entry) => entry.trackable)) {
+        return {
+          met: results.some((entry) => entry.met),
+          trackable: true,
+          label: normalizedClause
+        };
+      }
+      return null;
+    }
+function evaluateClassRequirementClause(clause) {
+      const normalizedClause = normalizeRequirementClause(clause);
+      if (!normalizedClause || /^none$/i.test(normalizedClause)) {
+        return { met: true, trackable: true, label: normalizedClause || "None" };
+      }
+      const directEvaluators = [
+        evaluateCharacterCreationRequirement,
+        evaluateManualRequirement,
+        evaluateSpiritCoreRequirement,
+        evaluateClassIdentityRequirement,
+        evaluateProficiencyRequirement,
+        evaluateBreakthroughRequirement,
+        evaluateSpellRequirement,
+        evaluateSkillRequirement,
+        evaluateClassProgressRequirement,
+        evaluateAbilityRequirement
+      ];
+      for (const evaluator of directEvaluators) {
+        const result = evaluator(normalizedClause);
+        if (result) {
+          return result;
+        }
+      }
+
+      if (/^(?:must\s+)?(?:have\s+)?at least 1 mystic eye slot open$/i.test(normalizedClause)) {
+        return { met: hasOpenMysticEyeSlot(), trackable: true, label: normalizedClause };
+      }
+
+      const compoundParts = splitCompoundRequirement(normalizedClause);
+      if (compoundParts.length > 1) {
+        const results = compoundParts.map(evaluateClassRequirementClause);
+        return {
+          met: results.every((entry) => entry.met),
+          trackable: results.every((entry) => entry.trackable),
+          label: normalizedClause
+        };
+      }
+
+      const orResult = evaluateOrRequirement(normalizedClause);
+      if (orResult) {
+        return orResult;
+      }
+
+      const classMasteryResult = evaluateClassMasteryRequirement(normalizedClause);
+      if (classMasteryResult) {
+        return classMasteryResult;
+      }
+
+      const lineageResult = evaluateLineageRequirement(normalizedClause);
+      if (lineageResult) {
+        return lineageResult;
+      }
+
+      return { met: false, trackable: false, label: normalizedClause };
+    }
+function splitRequirementClauses(text) {
+      return cleanText(text)
+        .replace(/\n+/g, ". ")
+        .split(/\s*[.;]\s+/)
+        .flatMap((entry) =>
+          entry.split(/,\s+(?=(?:any|one|at least|must|have|be|proficient|proficiency|possess|\d+\s+)\b)/i)
+        )
+        .map((entry) => normalizeRequirementClause(entry))
+        .filter(Boolean);
+    }
+function evaluateClassRequirementAlternative(text) {
+      const clauses = splitRequirementClauses(text);
+const results = clauses.map(evaluateClassRequirementClause);
+      return {
+        met: results.every((entry) => entry.met),
+        results
+      };
+    }
+function getClassRequirementStatus(record) {
+      const requirementsText = getClassRequirementsText(record);
+      if (!requirementsText || /^none\.?$/i.test(requirementsText)) {
+        return {
+          met: true,
+          requirementsText: requirementsText || "None.",
+          unmetLabels: [],
+          unsupportedLabels: []
+        };
+      }
+const alternatives = requirementsText
+        .split(/\bAlternatively,?\b/i)
+        .map((entry) => cleanText(entry))
+        .filter(Boolean);
+const evaluations = alternatives.map(evaluateClassRequirementAlternative);
+const met = evaluations.some((entry) => entry.met);
+const firstFailed = evaluations.find((entry) => !entry.met) || evaluations[0] || { results: [] };
+
+      return {
+        met,
+        requirementsText,
+        unmetLabels: firstFailed.results.filter((entry) => entry.trackable && !entry.met).map((entry) => entry.label),
+        unsupportedLabels: firstFailed.results.filter((entry) => !entry.trackable).map((entry) => entry.label)
+      };
+    }
+function previewRace() {
+      const record = getRaceDetail(document.getElementById("race-browser").value);
+      state.librarySelections.race = document.getElementById("race-browser").value;
+const preview = document.getElementById("race-preview");
+      if (!record) {
+        preview.innerHTML = getPreviewText("");
+        return;
+      }
+const meta = [record.attributes, record.skills, record.proficiencies].filter(Boolean).join("\n\n");
+const image = record.imageSmUrl ? `<img src="${record.imageSmUrl}" alt="${escapeHtml(record.name)}" style="width:72px;height:88px;object-fit:cover;border-radius:12px;margin-bottom:10px;">` : "";
+      preview.innerHTML = `${image}<h4>${escapeHtml(record.name)}</h4><p>${escapeHtml(record.descriptionText || record.description || "")}</p><p class="meta">${escapeHtml(meta)}</p>`;
+    }
+function previewAncestry() {
+      const record = getAncestryDetail(document.getElementById("ancestry-browser").value);
+      state.librarySelections.ancestry = document.getElementById("ancestry-browser").value;
+const preview = document.getElementById("ancestry-preview");
+      if (!record) {
+        preview.innerHTML = getPreviewText("");
+        return;
+      }
+const image = record.imageSmUrl ? `<img src="${record.imageSmUrl}" alt="${escapeHtml(record.name)}" style="width:72px;height:88px;object-fit:cover;border-radius:12px;margin-bottom:10px;">` : "";
+const previewText = cleanText(record.descriptionText || record.description || record.clanText) || cleanText(record.traits?.[0]?.descriptionText || "");
+      preview.innerHTML = `${image}<h4>${escapeHtml(record.name)}</h4><p>${escapeHtml(previewText)}</p>`;
+    }
+function previewClass() {
+      const record = getClassDetail(document.getElementById("class-browser").value);
+      state.librarySelections.class = document.getElementById("class-browser").value;
+const preview = document.getElementById("class-preview");
+      if (!record) {
+        preview.innerHTML = getPreviewText("");
+        return;
+      }
+const meta = [`Tier ${record.tier}`, record.role1, record.role2].filter(Boolean).join(" | ");
+const image = record.imageSmUrl ? `<img src="${record.imageSmUrl}" alt="${escapeHtml(record.name)}" style="width:72px;height:88px;object-fit:cover;border-radius:12px;margin-bottom:10px;">` : "";
+      preview.innerHTML = `${image}<h4>${escapeHtml(record.name)}</h4><p>${escapeHtml(meta)}</p><p class="meta">${escapeHtml(getClassCardText(record))}</p>`;
+    }
+function previewItem() {
+      const record = lookup.items.resolve(document.getElementById("item-browser").value);
+      state.librarySelections.item = document.getElementById("item-browser").value;
+const preview = document.getElementById("item-preview");
+      if (!record) {
+        preview.innerHTML = getPreviewText("");
+        return;
+      }
+const meta = [record.type, record.subType, record.cost, record.burden].filter(Boolean).join(" | ");
+      preview.innerHTML = `<h4>${escapeHtml(record.name)}</h4><p>${escapeHtml(meta)}</p><p class="meta">${escapeHtml(record.description)}</p>`;
+    }
+function previewBreakthrough() {
+      const record = lookup.breakthroughs.resolve(document.getElementById("breakthrough-browser").value);
+      state.librarySelections.breakthrough = document.getElementById("breakthrough-browser").value;
+const preview = document.getElementById("breakthrough-preview");
+      if (!record) {
+        preview.innerHTML = getPreviewText("");
+        return;
+      }
+const meta = [record.cost ? `Cost: ${record.cost}` : "", record.requirements].filter(Boolean).join("\n");
+      preview.innerHTML = `<h4>${escapeHtml(record.name)}</h4><p>${escapeHtml(record.description)}</p><p class="meta">${escapeHtml(meta)}</p>`;
+    }
+function previewAbility() {
+      const record = lookup.abilities.resolve(document.getElementById("ability-browser").value);
+      state.librarySelections.ability = document.getElementById("ability-browser").value;
+const preview = document.getElementById("ability-preview");
+      if (!record) {
+        preview.innerHTML = getPreviewText("");
+        return;
+      }
+const meta = [formatCostLabelForDisplay(record.costLabel), record.range, (record.keywords || []).join(", "), record.requirement].filter(Boolean).join("\n");
+      preview.innerHTML = `<h4>${escapeHtml(record.name)}</h4><p>${escapeHtml(record.description)}</p><p class="meta">${escapeHtml(meta)}</p>`;
+    }
+function getClassUnlockCost(record) {
+      const tier = Math.max(1, toNumber(record?.tier, 1));
+      return tier * 100;
+    }
+function getClassRoleOptions() {
+      const dynamicRoles = Array.from(new Set(
+        lookup.classes.entries.flatMap((entry) => [entry.role1, entry.role2]).filter(Boolean)
+      ));
+const ordered = [
+        ...CLASS_GROUP_ROLE_ORDER.filter((role) => dynamicRoles.includes(role)),
+        ...dynamicRoles.filter((role) => !CLASS_GROUP_ROLE_ORDER.includes(role)).sort((a, b) => a.localeCompare(b))
+      ];
+      return ordered;
+    }
+function getClassTierOptions() {
+      return Array.from(new Set(
+        lookup.classes.entries.map((entry) => toNumber(entry.tier, 0)).filter((value) => value > 0)
+      )).sort((a, b) => a - b);
+    }
+function isStackableBuilderItem(entry) {
+      return Boolean(entry?.id);
+    }
+function getBuilderItemQuantity(itemId) {
+      const id = cleanText(itemId);
+      if (!id || !state.builder.selectedItemIds.includes(id)) {
+        return 0;
+      }
+const rawQuantity = state.builder.itemQuantities?.[id];
+      return Math.max(1, Math.floor(toNumber(rawQuantity, 1)));
+    }
+function setBuilderItemQuantity(itemId, quantity) {
+      const id = cleanText(itemId);
+      if (!id) {
+        return 0;
+      }
+      if (!state.builder.itemQuantities || typeof state.builder.itemQuantities !== "object") {
+        state.builder.itemQuantities = {};
+      }
+const nextQuantity = Math.max(0, Math.floor(toNumber(quantity, 0)));
+      if (nextQuantity <= 0) {
+        delete state.builder.itemQuantities[id];
+        state.builder.selectedItemIds = state.builder.selectedItemIds.filter((selectedId) => selectedId !== id);
+        return 0;
+      }
+      if (!state.builder.selectedItemIds.includes(id)) {
+        state.builder.selectedItemIds.push(id);
+      }
+      state.builder.itemQuantities[id] = nextQuantity;
+      return nextQuantity;
+    }
+function getBuilderItemDisplayName(entry) {
+      if (!entry) {
+        return "";
+      }
+      const quantity = getBuilderItemQuantity(entry?.id);
+      return quantity > 1 ? `${entry.name} x${quantity}` : entry.name;
+    }
+export function getSelectedEquipmentCost() {
+      return getSelectedItemRecords().reduce((total, entry) => total + (parseClimCost(entry.cost) * Math.max(1, getBuilderItemQuantity(entry.id))), 0);
+    }
+function createInventoryUid(prefix = "custom") {
+      return `${prefix}:${Date.now().toString(36)}:${Math.random().toString(36).slice(2, 8)}`;
+    }
+function getOfficialInventoryUid(itemId) {
+      return `official:${itemId}`;
+    }
+function createInventoryEntryFromRecord(record, overrides = {}) {
+      return {
+        uid: getOfficialInventoryUid(record.id),
+        itemId: record.id,
+        custom: false,
+        equipped: false,
+        quantity: 1,
+        ...overrides
+      };
+    }
+function createCustomInventoryEntry(draft) {
+      return {
+        uid: createInventoryUid("custom"),
+        itemId: "",
+        custom: true,
+        equipped: false,
+        quantity: 1,
+        name: cleanText(draft.name),
+        type: cleanText(draft.type) || "Custom",
+        subType: "",
+        cost: "",
+        burden: "",
+        imageSmUrl: "assets/lyrian-symbol.png",
+        imageLgUrl: "assets/lyrian-symbol.png",
+        description: cleanText(draft.description)
+      };
+    }
+function mergeInventoryEntryWithRecord(entry = {}) {
+      const record = entry.itemId ? lookup.items.resolve(entry.itemId) : null;
+      return {
+        ...(record || {}),
+        ...entry,
+        id: record?.id || entry.itemId || entry.uid,
+        name: cleanText(entry.name || record?.name || "Custom Item"),
+        type: cleanText(entry.type || record?.type || ""),
+        subType: cleanText(entry.subType || record?.subType || ""),
+        cost: cleanText(entry.cost || record?.cost || ""),
+        burden: cleanText(entry.burden || record?.burden || ""),
+        imageSmUrl: entry.imageSmUrl || record?.imageSmUrl || "assets/lyrian-symbol.png",
+        imageLgUrl: entry.imageLgUrl || record?.imageLgUrl || entry.imageSmUrl || record?.imageSmUrl || "assets/lyrian-symbol.png",
+        description: cleanText(entry.description || record?.description || "")
+      };
+    }
+function ensurePlayInventoryFromBuilder() {
+      state.play = mergePlayState(state.play);
+const selectedIds = new Set(state.builder.selectedItemIds);
+      state.play.inventoryItems = state.play.inventoryItems.filter((entry) =>
+        entry.custom || !entry.itemId || !String(entry.uid || "").startsWith("official:") || selectedIds.has(entry.itemId)
+      );
+const current = state.play.inventoryItems;
+const known = new Set(current.map((entry) => entry.uid));
+      getSelectedItemRecords().forEach((record) => {
+        const uid = getOfficialInventoryUid(record.id);
+        const quantity = Math.max(1, getBuilderItemQuantity(record.id));
+        const existing = current.find((entry) => entry.uid === uid);
+        if (existing) {
+          existing.quantity = quantity;
+        } else if (!known.has(uid)) {
+          current.push(createInventoryEntryFromRecord(record, { quantity }));
+          known.add(uid);
+        }
+      });
+    }
+function getPlayInventoryEntries() {
+      ensurePlayInventoryFromBuilder();
+      return state.play.inventoryItems.map((entry) => mergeInventoryEntryWithRecord(entry));
+    }
+function getEquippedInventoryItems() {
+      return getPlayInventoryEntries().filter((entry) => entry.equipped);
+    }
+function getInventoryBurdenState() {
+      const entries = getPlayInventoryEntries();
+const carriedBurden = entries.reduce((total, entry) =>
+        total + (parseBurdenValue(entry.burden) * Math.max(1, toNumber(entry.quantity, 1))), 0);
+const equippedBurden = entries.filter((entry) => entry.equipped).reduce((total, entry) =>
+        total + (parseBurdenValue(entry.burden) * Math.max(1, toNumber(entry.quantity, 1))), 0);
+      return {
+        carriedBurden,
+        equippedBurden,
+        limit: 10,
+        overLimit: Math.max(0, carriedBurden - 10)
+      };
+    }
+function getBaseItemRulesText(item) {
+      const text = cleanText(item?.description || item?.descriptionText || "");
+      return text
+        .split(/\n\s*(?:Mods?|Modifications?|Crafting):?\s*\n/i)[0]
+        .trim();
+    }
+function isWeaponItem(item) {
+      const haystack = normalizePhrase([item?.name, item?.type, item?.subType].filter(Boolean).join(" "));
+      return /\b(weapon|sword|axe|gun|pistol|rifle|musket|shotgun|bow|crossbow|dagger|blade|mace|hammer|staff|polearm|lance|spear|sling|scythe|katana|gauntlet|missile)\b/.test(haystack);
+    }
+function isRangedWeaponItem(item) {
+      const haystack = normalizePhrase([item?.name, item?.type, item?.subType, getBaseItemRulesText(item)].filter(Boolean).join(" "));
+      return /\b(range:\s*\d|gun|pistol|rifle|musket|shotgun|bow|crossbow|sling|missile|thrown|throwing|ranged)\b/.test(haystack);
+    }
+function isTwoHandedWeaponItem(item) {
+      return /\btwo-handed\b/i.test(item?.name || "") || /\b2h\b/i.test(getBaseItemRulesText(item));
+    }
+function isMeleeWeaponItem(item) {
+      if (isRangedWeaponItem(item)) {
+        return /bayonet|melee weapon range|melee attacks?/i.test(getBaseItemRulesText(item));
+      }
+      return true;
+    }
+function getWeaponRangeLabel(item) {
+      const rangeMatch = getBaseItemRulesText(item).match(/\bRange:\s*([^\n.]+)/i);
+      if (rangeMatch) {
+        return cleanText(rangeMatch[1]);
+      }
+      return isRangedWeaponItem(item) ? "Ranged Weapon Range" : "Melee Weapon Range";
+    }
+function getWeaponDamageType(item) {
+      const text = getBaseItemRulesText(item);
+const match = text.match(/\bdeals?\s+([A-Z][A-Za-z()/-]+)\s+damage\b/i)
+        || text.match(/\bdeal\s+([A-Z][A-Za-z()/-]+)\s+damage\b/i);
+      if (match) {
+        return cleanText(match[1]);
+      }
+      return isRangedWeaponItem(item) && /refractor|arcane/i.test([item?.name, text].join(" ")) ? "Arcane" : "Physical";
+    }
+function canWeaponUseAttack(item, attackKind) {
+      const normalized = normalizePhrase(getBaseItemRulesText(item));
+const attackName = attackKind === "lightAttack" ? "light" : (attackKind === "heavyAttack" ? "heavy" : "precise");
+      if (new RegExp(`\\b(can no longer|cannot|can't) make ${attackName}\\b`).test(normalized)) {
+        return false;
+      }
+      return true;
+    }
+function getWeaponDamageProfile(item, attackKind, derived = getDerivedCombatStats()) {
+      const power = toNumber(state.fields.Power, 0) + (getComputedBonuses().mainStats.Power || 0);
+const damageType = getWeaponDamageType(item);
+      if (attackKind === "lightAttack") {
+        return {
+          label: "Hit Damage",
+          value: `2d4 + ${power}`,
+          rollFormula: `2d4 + ${power}`,
+          diceCount: 2,
+          diceSides: 4,
+          modifier: power,
+          detail: `${damageType} damage`
+        };
+      }
+const versatile = /\bone-handed\/two-handed\b/i.test(item?.name || "");
+const usesTwoHandedMelee = isTwoHandedWeaponItem(item) && isMeleeWeaponItem(item);
+const dice = versatile ? "4d6/5d6" : (usesTwoHandedMelee ? "5d6" : "4d6");
+const rollDiceCount = usesTwoHandedMelee ? 5 : 4;
+const damageModifier = power * 2;
+      return {
+        label: "Hit Damage",
+        value: `${dice} + ${damageModifier}`,
+        rollFormula: `${rollDiceCount}d6 + ${damageModifier}`,
+        diceCount: rollDiceCount,
+        diceSides: 6,
+        modifier: damageModifier,
+        detail: versatile
+          ? `${damageType}; use 5d6 when wielded two-handed`
+          : `${damageType} damage`
+      };
+    }
+function getEquippedWeaponAttackActions() {
+      const derived = getDerivedCombatStats();
+const weapons = getEquippedInventoryItems().filter(isWeaponItem);
+      return weapons.flatMap((weapon) => [
+        { kind: "lightAttack", label: "Light Attack", costLabel: "1 AP" },
+        { kind: "heavyAttack", label: "Heavy Attack", costLabel: "2 AP" },
+        { kind: "preciseAttack", label: "Precise Attack", costLabel: "2 AP" }
+      ].filter((attack) => canWeaponUseAttack(weapon, attack.kind)).map((attack) => {
+        const damage = getWeaponDamageProfile(weapon, attack.kind, derived);
+const range = getWeaponRangeLabel(weapon);
+        return {
+          id: `${attack.kind}:${weapon.uid}`,
+          label: `${attack.label} - ${weapon.name}`,
+          costLabel: attack.costLabel,
+          summary: `${range}. ${getFirstSentence(getBaseItemRulesText(weapon)) || "Equipped weapon attack."}`,
+          rollType: attack.kind,
+          attackKind: attack.kind,
+          weaponUid: weapon.uid,
+          weaponName: weapon.name,
+          damage,
+          tags: ["Attack", "Equipped Weapon"]
+        };
+      }));
+    }
+function getPlayActionCards() {
+      const weaponActions = getEquippedWeaponAttackActions();
+const utilityActions = PLAY_BASIC_ACTIONS.filter((action) => !action.rollType);
+      if (weaponActions.length) {
+        return [...weaponActions, ...utilityActions];
+      }
+      return PLAY_BASIC_ACTIONS;
+    }
+function createComputedBonusBucket() {
+      return {
+        mainStats: Object.fromEntries(MAIN_STATS.map((entry) => [entry.key, 0])),
+        secondaryStats: Object.fromEntries(SECONDARY_STATS.map((entry) => [entry.key, 0])),
+        skillChecks: {},
+        skillPoints: {},
+        skillExpertise: {},
+        derived: {
+          hpMax: 0,
+          manaMax: 0,
+          rpMax: 0,
+          guard: 0,
+          evasion: 0,
+          speed: 0,
+          potency: 0,
+          initiative: 0,
+          saveBonus: 0,
+          lightAttack: 0,
+          heavyAttack: 0,
+          preciseAttack: 0,
+          dodge: 0,
+          block: 0
+        },
+        autoApplied: [],
+        pendingChoices: []
+      };
+    }
+function isPassiveAbilityRecord(record) {
+      return !cleanText(record?.costLabel)
+        && !cleanText(record?.apCost)
+        && !cleanText(record?.rpCost)
+        && !cleanText(record?.manaCost)
+        && !cleanText(record?.otherCosts);
+    }
+function resolveComputedBonusTarget(target) {
+      const baseNormalized = normalizePhrase(target)
+        .replace(/\bskill checks?\b/g, "")
+        .replace(/\bchecks?\b/g, "")
+        .replace(/\bvalue\b/g, "")
+        .replace(/\bbonus\b/g, "")
+        .replace(/\bcurrent\b/g, "")
+        .trim();
+      if (!baseNormalized) {
+        return null;
+      }
+const conditionalTrimmed = baseNormalized
+        .replace(/\b(against|while|when|if|unless|during|after|before|versus|vs)\b.*$/g, "")
+        .trim();
+const variants = Array.from(new Set([baseNormalized, conditionalTrimmed].filter(Boolean)));
+const mainStat = MAIN_STATS.find((entry) => variants.includes(normalizePhrase(entry.key)));
+      if (mainStat) {
+        return { bucket: "mainStats", key: mainStat.key, label: mainStat.key };
+      }
+const secondaryStat = SECONDARY_STATS.find((entry) => variants.includes(normalizePhrase(entry.key)));
+      if (secondaryStat) {
+        return { bucket: "secondaryStats", key: secondaryStat.key, label: secondaryStat.key };
+      }
+const derivedMap = {
+        "hit points": { bucket: "derived", key: "hpMax", label: "HP" },
+        hp: { bucket: "derived", key: "hpMax", label: "HP" },
+        mana: { bucket: "derived", key: "manaMax", label: "Mana" },
+        rp: { bucket: "derived", key: "rpMax", label: "RP" },
+        guard: { bucket: "derived", key: "guard", label: "Guard" },
+        evasion: { bucket: "derived", key: "evasion", label: "Evasion" },
+        speed: { bucket: "derived", key: "speed", label: "Speed" },
+        "movement speed": { bucket: "derived", key: "speed", label: "Speed" },
+        potency: { bucket: "derived", key: "potency", label: "Potency" },
+        initiative: { bucket: "derived", key: "initiative", label: "Initiative" },
+        save: { bucket: "derived", key: "saveBonus", label: "Save" },
+        "saving throws": { bucket: "derived", key: "saveBonus", label: "Save" },
+        "saving throw": { bucket: "derived", key: "saveBonus", label: "Save" },
+        dodge: { bucket: "derived", key: "dodge", label: "Dodge" },
+        block: { bucket: "derived", key: "block", label: "Block" },
+        accuracy: { bucket: "derived", key: "lightAttack", label: "Attack Accuracy" }
+      };
+const derivedTarget = variants.find((entry) => derivedMap[entry]);
+      if (derivedTarget) {
+        return derivedMap[derivedTarget];
+      }
+const skill = SKILL_DEFINITIONS.find((entry) => {
+        const skillName = normalizePhrase(entry.name);
+        return variants.includes(skillName) || variants.some((variant) => variant.startsWith(`${skillName} `));
+      });
+      if (skill) {
+        return { bucket: "skillChecks", key: skill.name, label: skill.name };
+      }
+const aliasedSkill = variants
+        .map((variant) => SKILL_ALIASES.get(variant))
+        .find((name) => SKILL_DEFINITIONS.some((entry) => entry.name === name));
+      if (aliasedSkill) {
+        return { bucket: "skillChecks", key: aliasedSkill, label: aliasedSkill };
+      }
+
+      return null;
+    }
+function pushUniqueNotice(list, message) {
+      if (message && !list.includes(message)) {
+        list.push(message);
+      }
+    }
+function addComputedSkillExpertiseBonus(bucket, skillName, specialtyName, amount, sourceLabel) {
+      const skill = SKILL_DEFINITIONS.find((entry) => entry.name === skillName);
+const specialty = normalizeExpertiseSpecialtyName(specialtyName);
+const bonus = Math.max(0, Math.floor(toNumber(amount, 0)));
+      if (!skill || !canSkillUseExpertise(skill) || !specialty || bonus <= 0) {
+        return false;
+      }
+const entries = bucket.skillExpertise[skill.name] || [];
+const existing = entries.find((entry) =>
+        normalizePhrase(entry.name) === normalizePhrase(specialty)
+        && normalizePhrase(entry.source) === normalizePhrase(sourceLabel)
+      );
+      if (existing) {
+        existing.bonus = Math.max(existing.bonus, bonus);
+      } else {
+        entries.push({
+          name: specialty,
+          bonus,
+          source: cleanText(sourceLabel || "Feature")
+        });
+      }
+      bucket.skillExpertise[skill.name] = entries;
+      return true;
+    }
+function getBuilderChoiceValue(choiceId) {
+      return cleanText(state.builder.choiceSelections?.[choiceId] || "");
+    }
+function setBuilderChoiceValue(choiceId, value) {
+      state.builder.choiceSelections = {
+        ...(state.builder.choiceSelections || {}),
+        [choiceId]: cleanText(value || "")
+      };
+    }
+function clearIrrelevantBuilderChoices() {
+      const validChoiceIds = new Set(getBuilderChoiceDefinitions().map((choice) => choice.id));
+const nextSelections = {};
+      Object.entries(state.builder.choiceSelections || {}).forEach(([key, value]) => {
+        if (validChoiceIds.has(key)) {
+          nextSelections[key] = value;
+        }
+      });
+      state.builder.choiceSelections = nextSelections;
+    }
+function getCanonicalSkillName(value) {
+      const normalized = normalizePhrase(value);
+      if (!normalized) {
+        return "";
+      }
+const alias = SKILL_ALIASES.get(normalized);
+      if (alias && SKILL_DEFINITIONS.some((entry) => entry.name === alias)) {
+        return alias;
+      }
+      return SKILL_DEFINITIONS.find((entry) => normalizePhrase(entry.name) === normalized)?.name || "";
+    }
+function addUniqueSkillChoice(options, skillName) {
+      const canonical = getCanonicalSkillName(skillName);
+      if (canonical && !options.includes(canonical)) {
+        options.push(canonical);
+      }
+    }
+function getSkillTargetText(rawText) {
+      return cleanText(rawText)
+        .replace(/^.*?\bskill points?\s+(?:to spend\s+)?(?:in|to|on)\s+/i, "")
+        .replace(/^.*?\+\d+\s+to\s+/i, "")
+        .replace(/\.\s*You can exchange[\s\S]*$/i, "")
+        .replace(/\bbut must spend[\s\S]*$/i, "")
+        .replace(/[.]+$/g, "")
+        .trim();
+    }
+function splitSkillTargetText(rawText) {
+      return getSkillTargetText(rawText)
+        .replace(/\beither\b/gi, "")
+        .replace(/\bthese skills\b/gi, "")
+        .split(/\s*,\s*|\s+\bor\b\s+|\s+\band\b\s+/i)
+        .map((part) => cleanText(part)
+          .replace(/^(?:any|the|listed)\s+/i, "")
+          .replace(/\s+category skills?$/i, "")
+          .replace(/\s+skills?$/i, "")
+          .trim())
+        .filter(Boolean);
+    }
+function getSkillChoiceOptionsFromText(text) {
+      const options = [];
+      splitSkillTargetText(text).forEach((part) => addUniqueSkillChoice(options, part));
+
+      if (options.length) {
+        return options;
+      }
+const sortedSkills = [...SKILL_DEFINITIONS]
+        .sort((left, right) => right.name.length - left.name.length);
+      sortedSkills.forEach((entry) => {
+        if (includesPhrase(text, entry.name)) {
+          addUniqueSkillChoice(options, entry.name);
+        }
+      });
+      SKILL_ALIASES.forEach((canonical, alias) => {
+        if (includesPhrase(text, alias)) {
+          addUniqueSkillChoice(options, canonical);
+        }
+      });
+      return options;
+    }
+function getClassSkillPoolOptionsFromText(targetText) {
+      const normalized = normalizePhrase(targetText);
+      if (/\bany\s+non\s+crafting\b/.test(normalized)) {
+        return getHumanRaceSkillChoiceOptions();
+      }
+const categoryStats = SECONDARY_STATS
+        .map((entry) => entry.key)
+        .filter((key) => includesPhrase(targetText, key));
+      if (categoryStats.length && /\bcategory skills?\b/.test(normalized)) {
+        return SKILL_DEFINITIONS
+          .filter((entry) => categoryStats.includes(entry.stat))
+          .map((entry) => entry.name);
+      }
+      return getSkillChoiceOptionsFromText(targetText);
+    }
+function getClassSkillPoolChoiceDefinitions(record) {
+      const text = cleanText(record?.skills || "");
+      if (!record || !text) {
+        return [];
+      }
+const allowExpertise = /exchange\s+any\s+skill\s+point\s+for\s+2\s+expertise/i.test(text);
+const matches = Array.from(text.matchAll(/\+?(\d+)\s+(?:skill points?\s+(?:to spend\s+)?(?:in|to|on)|to)\s+([^.\n]+)/gi));
+      return matches.map((match, index) => {
+        const amount = Math.max(0, toNumber(match[1], 0));
+const targetText = cleanText(match[2]).replace(/[.]+$/g, "");
+const options = getClassSkillPoolOptionsFromText(targetText);
+        if (!amount || !options.length) {
+          return null;
+        }
+const targetLabel = options.length === 1 ? options[0] : "the listed class skills";
+const autoAssign = !allowExpertise && options.length === 1 && !/\b(any|choice|either|or)\b/i.test(targetText);
+        return {
+          id: getClassChoiceId(record, `skill-pool-${index + 1}`),
+          source: `${record.name} class`,
+          step: "skills",
+          type: "class-skill-pool",
+          label: `${record.name}: spend ${amount} class skill point${amount === 1 ? "" : "s"}`,
+          amount,
+          options,
+          allowExpertise,
+          autoAssign,
+          pendingText: autoAssign
+            ? `${record.name}: +${amount} class skill point${amount === 1 ? "" : "s"} auto-assigned to ${targetLabel}.`
+            : `${record.name}: assign ${amount} class skill point${amount === 1 ? "" : "s"} in ${targetLabel}${allowExpertise ? ", or exchange points for +2 expertise each" : ""}.`,
+          resolvedText: () => autoAssign
+            ? `${record.name}: +${amount} class skill point${amount === 1 ? "" : "s"} to ${targetLabel}.`
+            : `${record.name}: ${amount} class skill point${amount === 1 ? "" : "s"} assigned.`
+        };
+      }).filter(Boolean);
+    }
+const choiceOptionListCache = new WeakMap();
+const choiceOptionValueSetCache = new WeakMap();
+let builderChoiceDefinitionCacheKey = "";
+let builderChoiceDefinitionCacheValue = null;
+function getChoiceOptionList(choice) {
+      if (!choice || typeof choice !== "object") {
+        return [];
+      }
+const cached = choiceOptionListCache.get(choice);
+      if (cached) {
+        return cached;
+      }
+const options = (choice.options || []).map((entry) => {
+        if (entry && typeof entry === "object") {
+          return entry;
+        }
+        return { value: entry, label: entry };
+      });
+      choiceOptionListCache.set(choice, options);
+      return options;
+    }
+function getChoiceOptionValueSet(choice) {
+      if (!choice || typeof choice !== "object") {
+        return new Set();
+      }
+const cached = choiceOptionValueSetCache.get(choice);
+      if (cached) {
+        return cached;
+      }
+      const values = new Set(getChoiceOptionList(choice).map((entry) => cleanText(entry.value)));
+      choiceOptionValueSetCache.set(choice, values);
+      return values;
+    }
+function isValueInChoiceOptions(choice, value) {
+      const cleanedValue = cleanText(value);
+      if (!cleanedValue) {
+        return false;
+      }
+      return getChoiceOptionValueSet(choice).has(cleanedValue);
+    }
+function isCustomChoiceMarker(value) {
+      return cleanText(value) === "__custom__";
+    }
+function getSelectedDemonClanCode() {
+      const ancestry = getSelectedAncestryDetail();
+      if (!ancestry || ancestry.detailKind !== "demon-clan") {
+        return "";
+      }
+      return normalizeKey(ancestry.lineageCode || ancestry.id.replace(/^demon-clan-/, ""));
+    }
+function getDemonClanSkillOptions() {
+      const code = getSelectedDemonClanCode();
+const options = DEMON_CLAN_SKILL_OPTIONS[code] || [];
+      return options.filter((name) => SKILL_DEFINITIONS.some((entry) => entry.name === name));
+    }
+function getElementChoiceOptions() {
+      return ["Fire", "Water", "Ice", "Frost", "Wind", "Lightning", "Earth", "Holy", "Dark"];
+    }
+function getBreakthroughChoiceId(breakthrough, suffix) {
+      return `breakthrough-${breakthrough.id}-${suffix}`;
+    }
+function getClassChoiceId(record, suffix) {
+      return `class-${record.id}-${suffix}`;
+    }
+function getStatOptionsFromText(text, stats) {
+      const source = cleanText(text);
+      return stats
+        .map((entry) => entry.key)
+        .filter((key) => includesPhrase(source, key));
+    }
+function getHandledBreakthroughNames() {
+      return new Set([
+        "on the draw",
+        "primary stat training",
+        "secondary stat training",
+        "skill training",
+        "universal training",
+        "weapon training",
+        "speciality weapon training",
+        "language training",
+        "elemental affinity",
+        "mixed house demon",
+        "blend in slimefolk",
+        "human chimera hybrid race",
+        "faerie chimera hybrid race"
+      ]);
+    }
+function isBreakthroughHandledByBuilderSystem(entry) {
+      return getHandledBreakthroughNames().has(normalizePhrase(entry?.name));
+    }
+function getSkillTrainingSkillOptions() {
+      return getHumanRaceSkillChoiceOptions();
+    }
+function hasSelectedBreakthroughName(name) {
+      const normalized = normalizePhrase(name);
+      return getSelectedBreakthroughRecords().some((entry) => normalizePhrase(entry.name) === normalized);
+    }
+function buildBuilderChoiceDefinitions() {
+      const race = getSelectedRaceDetail();
+const definitions = [];
+
+      if (race) {
+        const normalizedRace = normalizePhrase(race.name);
+const source = `${race.name} race`;
+
+        if (normalizedRace === "human") {
+          definitions.push(
+            {
+              id: "race-human-main-stat",
+              source,
+              step: "main-stats",
+              type: "main-stat",
+              label: "Human bonus: choose one main stat for +1",
+              amount: 1,
+              options: MAIN_STATS.map((entry) => entry.key),
+              pendingText: "Human race: choose one main stat for +1.",
+              resolvedText: (value) => `Human race: +1 ${value}.`
+            },
+            {
+              id: "race-human-secondary-stat",
+              source,
+              step: "secondary-stats",
+              type: "secondary-stat",
+              label: "Human bonus: choose one sub stat for +1",
+              amount: 1,
+              options: SECONDARY_STATS.map((entry) => entry.key),
+              pendingText: "Human race: choose one sub stat for +1.",
+              resolvedText: (value) => `Human race: +1 ${value}.`
+            },
+            {
+              id: "race-human-skill",
+              source,
+              step: "skills",
+              type: "racial-skill-pool",
+              label: "Human bonus: spend 5 racial skill points",
+              amount: 5,
+              options: getHumanRaceSkillChoiceOptions(),
+              pendingText: "Human race: assign 5 racial skill points among non-crafting, non-gathering skills.",
+              resolvedText: () => "Human race: 5 racial skill points assigned."
+            },
+            {
+              id: "race-human-language",
+              source,
+              step: "profile",
+              type: "text",
+              label: "Human bonus: choose one additional language",
+              options: OFFICIAL_LANGUAGE_OPTIONS.filter((language) => language !== "Common"),
+              allowCustom: true,
+              customLabel: "Custom language",
+              placeholder: "Write a GM-approved language",
+              pendingText: "Human race: choose one additional language.",
+              resolvedText: (value) => `Human race: extra language ${value}.`
+            },
+            {
+              id: "race-human-weapon-group",
+              source,
+              step: "profile",
+              type: "text",
+              label: "Human bonus: choose one common weapon group",
+              options: COMMON_WEAPON_GROUP_OPTIONS,
+              allowCustom: true,
+              customLabel: "Custom common weapon group",
+              placeholder: "Write a GM-approved common weapon group",
+              pendingText: "Human race: choose one common weapon group.",
+              resolvedText: (value) => `Human race: weapon group ${value}.`
+            }
+          );
+        } else {
+          const raceSkillOptions = getSkillChoiceOptionsFromText(race.skills || "");
+          if (raceSkillOptions.length) {
+            definitions.push({
+              id: `race-${race.id}-skill`,
+              source,
+              step: "skills",
+              type: "racial-skill-pool",
+              label: `${race.name} bonus: spend 5 racial skill points`,
+              amount: 5,
+              options: raceSkillOptions,
+              pendingText: `${race.name} race: assign 5 racial skill points among the listed racial skills.`,
+              resolvedText: () => `${race.name} race: 5 racial skill points assigned.`
+            });
+          }
+
+          if (normalizedRace === "demon") {
+            definitions.push(
+              {
+                id: "race-demon-bonus-mode",
+                source,
+                step: "profile",
+                type: "mode",
+                label: "Demon bonus: choose weapon proficiency or clan skill bonus",
+                options: [
+                  { value: "weapon", label: "One common weapon group" },
+                  { value: "skill", label: "+5 skill points in a clan-related skill" }
+                ],
+                pendingText: "Demon race: choose one common weapon group or a +5 clan-related skill bonus.",
+                resolvedText: (value) => value === "weapon"
+                  ? "Demon race: weapon proficiency path chosen."
+                  : "Demon race: clan-related skill bonus path chosen."
+              },
+              {
+                id: "race-demon-weapon-group",
+                source,
+                step: "profile",
+                type: "text",
+                label: "Demon bonus: choose the common weapon group",
+                options: COMMON_WEAPON_GROUP_OPTIONS,
+                allowCustom: true,
+                customLabel: "Custom common weapon group",
+                placeholder: "Write a GM-approved common weapon group",
+                showIf: () => getBuilderChoiceValue("race-demon-bonus-mode") === "weapon",
+                pendingText: "Demon race: choose the common weapon group.",
+                resolvedText: (value) => `Demon race: weapon group ${value}.`
+              },
+              {
+                id: "race-demon-clan-skill",
+                source: getSelectedAncestryDetail()?.shortName ? `${getSelectedAncestryDetail().shortName} clan` : "Demon clan",
+                step: "skills",
+                type: "racial-skill-pool",
+                label: "Demon bonus: spend 5 clan racial skill points",
+                amount: 5,
+                options: getDemonClanSkillOptions(),
+                showIf: () => getBuilderChoiceValue("race-demon-bonus-mode") === "skill" && Boolean(getSelectedDemonClanCode()),
+                pendingText: "Demon race: assign 5 racial skill points among the selected clan's related skills.",
+                resolvedText: () => "Demon race: clan racial skill points assigned."
+              }
+            );
+          }
+        }
+      }
+const ancestry = getSelectedAncestryDetail();
+      if (ancestry && normalizePhrase(ancestry.name) === "ryujin") {
+        const masteryOptions = ["Fire", "Water", "Ice", "Wind", "Lightning", "Earth"];
+        if (hasSelectedBreakthroughName("Celestial Dragon (Ryujin)")) {
+          masteryOptions.push("Holy", "Dark");
+        }
+        definitions.push({
+          id: "ancestry-ryujin-elemental-mastery",
+          source: "Ryujin ancestry",
+          step: "ancestry",
+          type: "text",
+          label: "Ryujin's Mastery: choose one elemental mastery",
+          options: masteryOptions,
+          pendingText: "Ryujin ancestry: choose one elemental mastery.",
+          resolvedText: (value) => `Ryujin ancestry: Elemental Mastery ${value}.`
+        });
+      }
+
+      getSelectedClassProgress().forEach(({ record }) => {
+        const source = `${record.name} class`;
+const heartOptions = getStatOptionsFromText(record.heart, SECONDARY_STATS);
+        if (isClassPassiveUnlocked(record, "heart") && heartOptions.length > 1) {
+          definitions.push({
+            id: getClassChoiceId(record, "heart-stat"),
+            source,
+            step: "secondary-stats",
+            type: "secondary-stat",
+            label: `${record.name}: choose Heart stat bonus`,
+            amount: 1,
+            options: heartOptions,
+            pendingText: `${record.name}: choose one Heart stat for +1.`,
+            resolvedText: (value) => `${record.name}: +1 ${value} from Heart.`
+          });
+        }
+const soulOptions = getStatOptionsFromText(record.soul, MAIN_STATS);
+        if (isClassPassiveUnlocked(record, "soul") && soulOptions.length > 1) {
+          definitions.push({
+            id: getClassChoiceId(record, "soul-stat"),
+            source,
+            step: "main-stats",
+            type: "main-stat",
+            label: `${record.name}: choose Soul stat bonus`,
+            amount: 1,
+            options: soulOptions,
+            pendingText: `${record.name}: choose one Soul stat for +1.`,
+            resolvedText: (value) => `${record.name}: +1 ${value} from Soul.`
+          });
+        }
+
+        if (isClassPassiveUnlocked(record, "skills")) {
+          getClassSkillPoolChoiceDefinitions(record).forEach((choice) => {
+            definitions.push(choice);
+          });
+        }
+      });
+
+      getSelectedBreakthroughRecords().forEach((entry) => {
+        const normalizedName = normalizePhrase(entry.name);
+const source = entry.name;
+const idFor = (suffix) => getBreakthroughChoiceId(entry, suffix);
+
+        if (normalizedName === "primary stat training") {
+          definitions.push({
+            id: idFor("main-stat"),
+            source,
+            step: "main-stats",
+            type: "main-stat",
+            label: "Primary Stat Training: choose the +1 stat",
+            amount: 1,
+            options: MAIN_STATS.map((stat) => stat.key),
+            pendingText: "Primary Stat Training: choose a main stat for +1.",
+            resolvedText: (value) => `Primary Stat Training: +1 ${value}.`
+          });
+        }
+
+        if (normalizedName === "secondary stat training") {
+          definitions.push({
+            id: idFor("secondary-stat"),
+            source,
+            step: "secondary-stats",
+            type: "secondary-stat",
+            label: "Secondary Stat Training: choose the +1 stat",
+            amount: 1,
+            options: SECONDARY_STATS.map((stat) => stat.key),
+            pendingText: "Secondary Stat Training: choose a secondary stat for +1.",
+            resolvedText: (value) => `Secondary Stat Training: +1 ${value}.`
+          });
+        }
+
+        if (normalizedName === "skill training") {
+          definitions.push(
+            {
+              id: idFor("skill-mode"),
+              source,
+              step: "skills",
+              type: "mode",
+              label: "Skill Training: choose skill point or expertise",
+              options: [
+                { value: "skill", label: "+1 skill point" },
+                { value: "expertise", label: "+2 expertise" }
+              ],
+              pendingText: "Skill Training: choose skill point or expertise.",
+              resolvedText: (value) => value === "expertise" ? "Skill Training: expertise path chosen." : "Skill Training: skill point path chosen."
+            },
+            {
+              id: idFor("skill-target"),
+              source,
+              step: "skills",
+              type: "skill-points",
+              label: "Skill Training: choose the skill for +1",
+              amount: 1,
+              options: getSkillTrainingSkillOptions(),
+              showIf: () => getBuilderChoiceValue(idFor("skill-mode")) === "skill",
+              pendingText: "Skill Training: choose a non-crafting, non-gathering skill for +1 skill point.",
+              resolvedText: (value) => `Skill Training: +1 skill point to ${value}.`
+            },
+            {
+              id: idFor("expertise-target"),
+              source,
+              step: "skills",
+              type: "text",
+              label: "Skill Training: choose the skill for +2 expertise",
+              options: getSkillTrainingSkillOptions(),
+              showIf: () => getBuilderChoiceValue(idFor("skill-mode")) === "expertise",
+              pendingText: "Skill Training: choose a non-crafting, non-gathering skill for +2 expertise.",
+              resolvedText: (value) => `Skill Training: expertise skill ${value}.`
+            },
+            {
+              id: idFor("expertise-specialty"),
+              source,
+              step: "skills",
+              type: "text",
+              effectType: "skill-expertise-bonus",
+              skillChoiceId: idFor("expertise-target"),
+              label: "Skill Training: choose the expertise specialty",
+              amount: 2,
+              options: getSkillExpertiseOptionList(getBuilderChoiceValue(idFor("expertise-target"))),
+              allowCustom: true,
+              showIf: () => getBuilderChoiceValue(idFor("skill-mode")) === "expertise" && Boolean(getBuilderChoiceValue(idFor("expertise-target"))),
+              pendingText: "Skill Training: choose the narrow expertise specialty.",
+              resolvedText: (value) => `Skill Training: +2 ${value} expertise.`
+            }
+          );
+        }
+
+        if (normalizedName === "universal training") {
+          definitions.push(
+            {
+              id: idFor("main-stat"),
+              source,
+              step: "main-stats",
+              type: "main-stat",
+              label: "Universal Training: choose the +1 main stat",
+              amount: 1,
+              options: MAIN_STATS.map((stat) => stat.key),
+              pendingText: "Universal Training: choose a main stat for +1.",
+              resolvedText: (value) => `Universal Training: +1 ${value}.`
+            },
+            {
+              id: idFor("secondary-stat"),
+              source,
+              step: "secondary-stats",
+              type: "secondary-stat",
+              label: "Universal Training: choose the +1 secondary stat",
+              amount: 1,
+              options: SECONDARY_STATS.map((stat) => stat.key),
+              pendingText: "Universal Training: choose a secondary stat for +1.",
+              resolvedText: (value) => `Universal Training: +1 ${value}.`
+            },
+            {
+              id: idFor("skill-target"),
+              source,
+              step: "skills",
+              type: "skill-points",
+              label: "Universal Training: assign +5 skill points",
+              amount: 5,
+              options: getSkillTrainingSkillOptions(),
+              pendingText: "Universal Training: choose a non-crafting, non-gathering skill for +5 skill points.",
+              resolvedText: (value) => `Universal Training: +5 skill points to ${value}.`
+            }
+          );
+        }
+
+        if (normalizedName === "language training") {
+          definitions.push({
+            id: idFor("language"),
+            source,
+            step: "profile",
+            type: "text",
+            label: "Language Training: enter the language",
+            options: OFFICIAL_LANGUAGE_OPTIONS,
+            allowCustom: true,
+            customLabel: "Custom language",
+            placeholder: "Write a GM-approved language",
+            pendingText: "Language Training: choose a language.",
+            resolvedText: (value) => `Language Training: ${value}.`
+          });
+        }
+
+        if (normalizedName === "weapon training") {
+          definitions.push({
+            id: idFor("weapon-group"),
+            source,
+            step: "profile",
+            type: "text",
+            label: "Weapon Training: enter the weapon group",
+            options: COMMON_WEAPON_GROUP_OPTIONS,
+            allowCustom: true,
+            customLabel: "Custom common weapon group",
+            placeholder: "Write a GM-approved common weapon group",
+            pendingText: "Weapon Training: choose a weapon group.",
+            resolvedText: (value) => `Weapon Training: ${value}.`
+          });
+        }
+
+        if (normalizedName === "speciality weapon training") {
+          definitions.push({
+            id: idFor("speciality-weapon-group"),
+            source,
+            step: "profile",
+            type: "text",
+            label: "Speciality Weapon Training: enter the weapon group",
+            options: SPECIALITY_WEAPON_GROUP_OPTIONS,
+            allowCustom: true,
+            customLabel: "Custom speciality weapon group",
+            placeholder: "Write a GM-approved speciality weapon group",
+            pendingText: "Speciality Weapon Training: choose a speciality weapon group.",
+            resolvedText: (value) => `Speciality Weapon Training: ${value}.`
+          });
+        }
+
+        if (normalizedName === "elemental affinity") {
+          definitions.push({
+            id: idFor("element"),
+            source,
+            step: "profile",
+            type: "text",
+            label: "Elemental Affinity: choose the element",
+            options: getElementChoiceOptions(),
+            pendingText: "Elemental Affinity: choose an element.",
+            resolvedText: (value) => `Elemental Affinity: Elemental Mastery ${value}.`
+          });
+        }
+
+        if (normalizedName === "mixed house demon") {
+          definitions.push({
+            id: idFor("house"),
+            source,
+            step: "profile",
+            type: "text",
+            label: "Mixed House: enter the second house",
+            placeholder: "Example: D - Soldiers",
+            pendingText: "Mixed House: choose another house.",
+            resolvedText: (value) => `Mixed House: ${value}.`
+          });
+        }
+
+        if (normalizedName === "blend in slimefolk") {
+          definitions.push({
+            id: idFor("disguise-race"),
+            source,
+            step: "profile",
+            type: "text",
+            label: "Blend In: choose the disguised race",
+            placeholder: "Example: Human",
+            pendingText: "Blend In: choose the race appearance.",
+            resolvedText: (value) => `Blend In: disguised as ${value}.`
+          });
+        }
+
+        if (normalizedName === "human chimera hybrid race") {
+          definitions.push({
+            id: idFor("chimera-subrace"),
+            source,
+            step: "ancestry",
+            type: "ancestry-features",
+            label: "Human-Chimera Hybrid: choose the Chimera subrace features gained",
+            options: getAncestryOptionsByPrimaryRace("Chimera"),
+            pendingText: "Human-Chimera Hybrid: choose one Chimera subrace whose features are gained.",
+            resolvedText: (value) => `Human-Chimera Hybrid: gain ${value} subrace features.`
+          });
+        }
+
+        if (normalizedName === "faerie chimera hybrid race") {
+          const primaryRaceName = normalizePhrase(getSelectedRaceDetail()?.name) === "chimera" ? "Fae" : "Chimera";
+          definitions.push({
+            id: idFor("hybrid-subrace"),
+            source,
+            step: "ancestry",
+            type: "ancestry-features",
+            label: `Faerie-Chimera Hybrid: choose the ${primaryRaceName} subrace features gained`,
+            options: getAncestryOptionsByPrimaryRace(primaryRaceName),
+            pendingText: `Faerie-Chimera Hybrid: choose one ${primaryRaceName} subrace whose features are gained.`,
+            resolvedText: (value) => `Faerie-Chimera Hybrid: gain ${value} subrace features.`
+          });
+        }
+      });
+
+      return definitions;
+    }
+function getBuilderChoiceDefinitions() {
+      const cacheKey = getBuilderChoiceDefinitionsCacheKey();
+      if (builderChoiceDefinitionCacheValue && builderChoiceDefinitionCacheKey === cacheKey) {
+        return builderChoiceDefinitionCacheValue;
+      }
+const definitions = buildBuilderChoiceDefinitions();
+      builderChoiceDefinitionCacheKey = cacheKey;
+      builderChoiceDefinitionCacheValue = definitions;
+      return definitions;
+    }
+function isBuilderChoiceVisible(choice) {
+      return choice && (!choice.showIf || choice.showIf());
+    }
+function isBuilderChoiceResolved(choice) {
+      if (!choice || !isBuilderChoiceVisible(choice)) {
+        return true;
+      }
+      if (choice.type === "racial-skill-pool") {
+        return getRacialSkillPoolState(choice).remaining === 0;
+      }
+      if (choice.type === "class-skill-pool") {
+        return getClassSkillPoolState(choice).remaining === 0;
+      }
+const value = getBuilderChoiceValue(choice.id);
+      if (isCustomChoiceMarker(value)) {
+        return false;
+      }
+      return Boolean(value);
+    }
+function getPendingBuilderChoices(stepId = "") {
+      return getBuilderChoiceDefinitions().filter((choice) => {
+        if (stepId && choice.step !== stepId) {
+          return false;
+        }
+        return isBuilderChoiceVisible(choice) && !isBuilderChoiceResolved(choice);
+      });
+    }
+function getResolvedBuilderChoices(stepId = "") {
+      return getBuilderChoiceDefinitions().filter((choice) => {
+        if (stepId && choice.step !== stepId) {
+          return false;
+        }
+        return isBuilderChoiceVisible(choice) && isBuilderChoiceResolved(choice);
+      });
+    }
+function renderBuilderChoiceControl(choice) {
+      const currentValue = getBuilderChoiceValue(choice.id);
+const helpText = choice.amount
+        ? `${choice.source} grants ${choice.amount > 0 ? `+${choice.amount}` : choice.amount} ${choice.type === "skill-points" || choice.type === "racial-skill-pool" || choice.type === "class-skill-pool" ? "skill points" : "bonus"} here.`
+        : choice.source;
+
+      if (choice.type === "racial-skill-pool") {
+        const pool = getRacialSkillPoolState(choice);
+const allowed = getChoiceOptionList(choice).map((entry) => entry.label).join(", ");
+        return `
+          <div class="stat-card">
+            <strong>${escapeHtml(choice.label)}</strong>
+            <p>${escapeHtml(`${pool.spent} / ${pool.budget} racial skill points assigned. Remaining: ${pool.remaining}.`)}</p>
+            <p>${escapeHtml(allowed ? `Eligible skills: ${allowed}.` : "Choose the related lineage option first so eligible skills can be listed.")}</p>
+          </div>
+        `;
+      }
+
+      if (choice.type === "class-skill-pool") {
+        const pool = getClassSkillPoolState(choice);
+const allowed = getChoiceOptionList(choice).map((entry) => entry.label).join(", ");
+        return `
+          <div class="stat-card">
+            <strong>${escapeHtml(choice.label)}</strong>
+            <p>${escapeHtml(`${pool.spent} / ${pool.budget} class skill points assigned. Remaining: ${pool.remaining}.`)}</p>
+            <p>${escapeHtml(allowed ? `Eligible skills: ${allowed}.` : "No tracked sheet skills were found in this class benefit.")}</p>
+            ${choice.allowExpertise ? `<p>${escapeHtml("Each point can stay as +1 skill point or become +2 expertise on an eligible skill.")}</p>` : ""}
+          </div>
+        `;
+      }
+
+      if (choice.type === "text") {
+        if (choice.options?.length) {
+          const optionList = getChoiceOptionList(choice);
+const customMarker = isCustomChoiceMarker(currentValue);
+const effectiveCurrentValue = customMarker ? "" : currentValue;
+const isCustom = choice.allowCustom && (customMarker || (effectiveCurrentValue && !isValueInChoiceOptions(choice, effectiveCurrentValue)));
+const selectValue = isCustom ? "__custom__" : effectiveCurrentValue;
+          return `
+            <label class="stat-card">
+              <strong>${escapeHtml(choice.label)}</strong>
+              <select class="builder-inline-input" data-builder-choice-select="${escapeHtml(choice.id)}">
+                <option value="">Select...</option>
+                ${optionList.map((entry) => `
+                  <option value="${escapeHtml(entry.value)}" ${cleanText(entry.value) === selectValue ? "selected" : ""}>${escapeHtml(entry.label)}</option>
+                `).join("")}
+                ${choice.allowCustom ? `<option value="__custom__" ${isCustom ? "selected" : ""}>Custom...</option>` : ""}
+              </select>
+              ${choice.allowCustom && (isCustom || selectValue === "__custom__") ? `
+                <input
+                  class="builder-inline-input builder-choice-custom-input"
+                  type="text"
+                  data-builder-choice-field="${escapeHtml(choice.id)}"
+                  value="${escapeHtml(isCustom && !customMarker ? effectiveCurrentValue : "")}"
+                  placeholder="${escapeHtml(choice.placeholder || choice.customLabel || "Custom value")}">
+              ` : ""}
+              <p>${escapeHtml(effectiveCurrentValue ? cleanText(choice.resolvedText?.(effectiveCurrentValue) || effectiveCurrentValue) : choice.pendingText || helpText)}</p>
+            </label>
+          `;
+        }
+        return `
+          <label class="stat-card">
+            <strong>${escapeHtml(choice.label)}</strong>
+            <input
+              class="builder-inline-input"
+              type="text"
+              data-builder-choice-field="${escapeHtml(choice.id)}"
+              value="${escapeHtml(currentValue)}"
+              placeholder="${escapeHtml(choice.placeholder || "")}">
+            <p>${escapeHtml(currentValue ? cleanText(choice.resolvedText?.(currentValue) || currentValue) : choice.pendingText || helpText)}</p>
+          </label>
+        `;
+      }
+const optionList = getChoiceOptionList(choice);
+
+      return `
+        <label class="stat-card">
+          <strong>${escapeHtml(choice.label)}</strong>
+          <select class="builder-inline-input" data-builder-choice-field="${escapeHtml(choice.id)}">
+            <option value="">Select...</option>
+            ${optionList.map((entry) => `
+              <option value="${escapeHtml(entry.value)}" ${cleanText(entry.value) === currentValue ? "selected" : ""}>${escapeHtml(entry.label)}</option>
+            `).join("")}
+          </select>
+          <p>${escapeHtml(currentValue ? cleanText(choice.resolvedText?.(currentValue) || currentValue) : choice.pendingText || helpText)}</p>
+        </label>
+      `;
+    }
+function renderBuilderChoiceSection(stepId, title, includeResolved = false) {
+      const pending = getPendingBuilderChoices(stepId);
+const resolved = includeResolved ? getResolvedBuilderChoices(stepId) : [];
+      if (!pending.length && !resolved.length) {
+        return "";
+      }
+
+      return `
+        <div class="review-panel">
+          <strong>${escapeHtml(title)}</strong>
+          <div class="stat-grid">
+            ${pending.map((choice) => renderBuilderChoiceControl(choice)).join("")}
+            ${resolved.map((choice) => renderBuilderChoiceControl(choice)).join("")}
+          </div>
+        </div>
+      `;
+    }
+function renderClassBenefitChoicePanel() {
+      const choices = getBuilderChoiceDefinitions().filter((choice) =>
+        isBuilderChoiceVisible(choice) && cleanText(choice.id).startsWith("class-")
+      );
+      if (!choices.length) {
+        return "";
+      }
+const pending = choices.filter((choice) => !isBuilderChoiceResolved(choice));
+const resolved = choices.filter((choice) => isBuilderChoiceResolved(choice));
+      return `
+        <div class="review-panel">
+          <strong>Class Benefit Choices</strong>
+          <p>These are bonuses granted by selected classes. Stat choices can be picked here; class skill pools are spent on the Skills step where the skill rows live.</p>
+          <div class="stat-grid">
+            ${pending.map((choice) => renderBuilderChoiceControl(choice)).join("")}
+            ${resolved.map((choice) => renderBuilderChoiceControl(choice)).join("")}
+          </div>
+        </div>
+      `;
+    }
+function applyBuilderChoicesToComputedBonuses(bucket) {
+      getBuilderChoiceDefinitions().forEach((choice) => {
+        if (!isBuilderChoiceVisible(choice)) {
+          return;
+        }
+
+        if (choice.type === "racial-skill-pool") {
+          const pool = getRacialSkillPoolState(choice);
+          if (pool.remaining > 0) {
+            pushUniqueNotice(bucket.pendingChoices, `${choice.source}: assign ${pool.remaining} remaining racial skill point${pool.remaining === 1 ? "" : "s"}.`);
+          } else if (pool.remaining < 0) {
+            pushUniqueNotice(bucket.pendingChoices, `${choice.source}: reduce racial skill points by ${Math.abs(pool.remaining)}.`);
+          } else {
+            pushUniqueNotice(bucket.autoApplied, choice.resolvedText?.() || `${choice.source}: racial skill points assigned.`);
+          }
+          return;
+        }
+
+        if (choice.type === "class-skill-pool") {
+          SKILL_DEFINITIONS.forEach((definition, index) => {
+            const row = index + 1;
+            if (!isSkillAllowedForClassPool(choice, definition.name)) {
+              return;
+            }
+const skillSpend = getClassSkillPoolSpend(choice, row, "skill");
+            if (skillSpend > 0) {
+              bucket.skillPoints[definition.name] = (bucket.skillPoints[definition.name] || 0) + skillSpend;
+            }
+          });
+const pool = getClassSkillPoolState(choice);
+          if (pool.remaining > 0) {
+            pushUniqueNotice(bucket.pendingChoices, `${choice.source}: assign ${pool.remaining} remaining class skill point${pool.remaining === 1 ? "" : "s"}.`);
+          } else if (pool.remaining < 0) {
+            pushUniqueNotice(bucket.pendingChoices, `${choice.source}: reduce class skill points by ${Math.abs(pool.remaining)}.`);
+          } else {
+            pushUniqueNotice(bucket.autoApplied, choice.resolvedText?.() || `${choice.source}: class skill points assigned.`);
+          }
+          return;
+        }
+const value = getBuilderChoiceValue(choice.id);
+        if (!value || isCustomChoiceMarker(value)) {
+          pushUniqueNotice(bucket.pendingChoices, choice.pendingText);
+          return;
+        }
+
+        if (choice.effectType === "skill-expertise-bonus") {
+          const skillName = getBuilderChoiceValue(choice.skillChoiceId);
+          if (addComputedSkillExpertiseBonus(bucket, skillName, value, choice.amount || 0, choice.source)) {
+            pushUniqueNotice(bucket.autoApplied, choice.resolvedText?.(value) || `${choice.source}: +${choice.amount || 0} ${value} expertise.`);
+          } else {
+            pushUniqueNotice(bucket.pendingChoices, choice.pendingText);
+          }
+          return;
+        }
+
+        if (choice.type === "main-stat") {
+          if (MAIN_STATS.some((entry) => entry.key === value)) {
+            bucket.mainStats[value] = (bucket.mainStats[value] || 0) + (choice.amount || 0);
+            pushUniqueNotice(bucket.autoApplied, choice.resolvedText(value));
+          }
+          return;
+        }
+
+        if (choice.type === "secondary-stat") {
+          if (SECONDARY_STATS.some((entry) => entry.key === value)) {
+            bucket.secondaryStats[value] = (bucket.secondaryStats[value] || 0) + (choice.amount || 0);
+            pushUniqueNotice(bucket.autoApplied, choice.resolvedText(value));
+          }
+          return;
+        }
+
+        if (choice.type === "skill-points") {
+          const skill = SKILL_DEFINITIONS.find((entry) => entry.name === value);
+          if (skill) {
+            bucket.skillPoints[value] = (bucket.skillPoints[value] || 0) + (choice.amount || 0);
+            pushUniqueNotice(bucket.autoApplied, choice.resolvedText(value));
+          }
+          return;
+        }
+
+        if (choice.type === "ancestry-features") {
+          const ancestry = getAncestryDetail(value);
+          if (ancestry) {
+            pushUniqueNotice(bucket.autoApplied, choice.resolvedText(value));
+          } else {
+            pushUniqueNotice(bucket.pendingChoices, choice.pendingText);
+          }
+          return;
+        }
+
+        pushUniqueNotice(bucket.autoApplied, choice.resolvedText?.(value) || `${choice.source}: ${value}`);
+      });
+    }
+function applyComputedBonus(targetBucket, amount, resolvedTarget) {
+      if (!resolvedTarget || !amount) {
+        return false;
+      }
+      if (resolvedTarget.bucket === "skillChecks") {
+        targetBucket.skillChecks[resolvedTarget.key] = (targetBucket.skillChecks[resolvedTarget.key] || 0) + amount;
+        return true;
+      }
+      if (resolvedTarget.bucket === "mainStats") {
+        targetBucket.mainStats[resolvedTarget.key] += amount;
+        return true;
+      }
+      if (resolvedTarget.bucket === "secondaryStats") {
+        targetBucket.secondaryStats[resolvedTarget.key] += amount;
+        return true;
+      }
+      if (resolvedTarget.bucket === "derived") {
+        targetBucket.derived[resolvedTarget.key] += amount;
+        return true;
+      }
+      return false;
+    }
+function getSentenceAroundMatch(text, matchIndex = 0) {
+      const safeIndex = Math.max(0, Number(matchIndex) || 0);
+const before = text.slice(0, safeIndex);
+const after = text.slice(safeIndex);
+const sentenceStart = Math.max(before.lastIndexOf("."), before.lastIndexOf("\n"));
+const sentenceEndCandidates = [
+        after.indexOf("."),
+        after.indexOf("\n")
+      ].filter((index) => index >= 0);
+const sentenceEnd = sentenceEndCandidates.length ? Math.min(...sentenceEndCandidates) : after.length;
+      return cleanText(text.slice(sentenceStart + 1, safeIndex + sentenceEnd + 1));
+    }
+function isTemporaryOrActiveBonusSentence(sentence) {
+      const normalized = normalizePhrase(sentence);
+      if (!normalized) {
+        return false;
+      }
+      return /\b(while|when|until|before|after|during|next|this attack|this ability|this action|this stance|against that target|for melee attacks against|for ranged attacks against|if you|if the|if they)\b/.test(normalized);
+    }
+function collectComputedTextBonuses(bucket, sourceLabel, rawText, mode = "passive") {
+      const text = cleanText(rawText);
+      if (!text) {
+        return;
+      }
+const skillPointMatches = Array.from(text.matchAll(/\+(\d+)\s+skill points?\s+(?:to spend\s+)?(?:in|to)\s+([^.\n]+)/gi));
+      skillPointMatches.forEach((match) => {
+        const amount = Number(match[1]);
+const targetText = cleanText(match[2]).replace(/[.]+$/g, "");
+        if (!amount || !targetText) {
+          return;
+        }
+const normalized = normalizePhrase(targetText);
+        if (normalized.includes("either") || normalized.includes("choice") || normalized.includes(" or ")) {
+          pushUniqueNotice(bucket.pendingChoices, `${sourceLabel}: assign ${amount} skill points from ${targetText}.`);
+          return;
+        }
+const resolved = resolveComputedBonusTarget(targetText);
+        if (resolved?.bucket === "skillChecks") {
+          bucket.skillPoints[resolved.key] = (bucket.skillPoints[resolved.key] || 0) + amount;
+          pushUniqueNotice(bucket.autoApplied, `${sourceLabel}: +${amount} skill points to ${resolved.label}.`);
+        }
+      });
+const expertisePointMatches = Array.from(text.matchAll(/\+?(\d+)\s+points?\s+(?:to spend\s+)?(?:in|to|on)\s+([^.\n]*\bexpertise(?:\s+skill)?[^.\n]*)/gi));
+      expertisePointMatches.forEach((match) => {
+        const amount = Number(match[1]);
+const targetText = cleanText(match[2]).replace(/[.]+$/g, "");
+      const parsed = parseSkillExpertiseTarget(targetText);
+        if (parsed && addComputedSkillExpertiseBonus(bucket, parsed.skillName, parsed.specialty, amount, sourceLabel)) {
+          pushUniqueNotice(bucket.autoApplied, `${sourceLabel}: +${amount} ${parsed.skillName} (${parsed.specialty}) expertise.`);
+        } else if (/different|choice|of your choice/i.test(targetText)) {
+          pushUniqueNotice(bucket.pendingChoices, `${sourceLabel}: choose ${amount} expertise points from ${targetText}.`);
+        }
+      });
+const explicitExpertisePointMatches = Array.from(text.matchAll(/\+?(\d+)\s+expertise points?\s+(?:to spend\s+)?(?:in|to|on)\s+([^.\n]+)/gi));
+      explicitExpertisePointMatches.forEach((match) => {
+        const amount = Number(match[1]);
+const targetText = cleanText(match[2]).replace(/[.]+$/g, "");
+const parsed = parseSkillExpertiseTarget(targetText);
+        if (parsed && addComputedSkillExpertiseBonus(bucket, parsed.skillName, parsed.specialty, amount, sourceLabel)) {
+          pushUniqueNotice(bucket.autoApplied, `${sourceLabel}: +${amount} ${parsed.skillName} (${parsed.specialty}) expertise.`);
+        } else {
+          pushUniqueNotice(bucket.pendingChoices, `${sourceLabel}: choose ${amount} expertise points from ${targetText}.`);
+        }
+      });
+const expertiseMatches = Array.from(text.matchAll(/\+(\d+)\s+expertise\s+bonus\s+to\s+([^.\n]+)/gi));
+      expertiseMatches.forEach((match) => {
+        const amount = Number(match[1]);
+const targetText = cleanText(match[2]).replace(/[.]+$/g, "");
+const parsed = parseSkillExpertiseTarget(targetText);
+        if (parsed && addComputedSkillExpertiseBonus(bucket, parsed.skillName, parsed.specialty, amount, sourceLabel)) {
+          pushUniqueNotice(bucket.autoApplied, `${sourceLabel}: +${amount} ${parsed.skillName} (${parsed.specialty}) expertise.`);
+        } else {
+          pushUniqueNotice(bucket.pendingChoices, `${sourceLabel}: assign +${amount} expertise bonus from ${targetText}.`);
+        }
+      });
+const directMatches = Array.from(text.matchAll(/\+(\d+)\s+(?:bonus\s+)?(?:to|in)\s+([^.\n]+)/gi));
+      directMatches.forEach((match) => {
+        const amount = Number(match[1]);
+let targetText = cleanText(match[2]).replace(/[.]+$/g, "");
+        if (!amount || !targetText) {
+          return;
+        }
+
+        if (/\bexpertise\b/i.test(targetText)) {
+          const parsed = parseSkillExpertiseTarget(targetText);
+          if (parsed && addComputedSkillExpertiseBonus(bucket, parsed.skillName, parsed.specialty, amount, sourceLabel)) {
+            pushUniqueNotice(bucket.autoApplied, `${sourceLabel}: +${amount} ${parsed.skillName} (${parsed.specialty}) expertise.`);
+          } else {
+            pushUniqueNotice(bucket.pendingChoices, `${sourceLabel}: assign +${amount} expertise from ${targetText}.`);
+          }
+          return;
+        }
+
+        if (normalizePhrase(targetText).includes(" of your choice")) {
+          pushUniqueNotice(bucket.pendingChoices, `${sourceLabel}: choose where to apply +${amount} from "${targetText}".`);
+          return;
+        }
+const normalizedTarget = normalizePhrase(targetText);
+        if (normalizedTarget.includes("either") || normalizedTarget.includes(" or ")) {
+          pushUniqueNotice(bucket.pendingChoices, `${sourceLabel}: choose one of ${targetText} for +${amount}.`);
+          return;
+        }
+
+        targetText
+          .split(/\s+and\s+|,\s*/g)
+          .map((entry) => cleanText(entry).replace(/^[-+]?\d+\s+(?:bonus\s+)?(?:to|in)\s+/i, ""))
+          .filter(Boolean)
+          .forEach((piece) => {
+            const resolved = resolveComputedBonusTarget(piece);
+            if (resolved?.bucket === "derived" && isTemporaryOrActiveBonusSentence(getSentenceAroundMatch(text, match.index))) {
+              return;
+            }
+            if (applyComputedBonus(bucket, amount, resolved)) {
+              pushUniqueNotice(bucket.autoApplied, `${sourceLabel}: +${amount} ${resolved.label}.`);
+            }
+          });
+      });
+const statChangeMatches = Array.from(text.matchAll(/\byour\s+(Power|Focus|Agility|Toughness|Fitness|Cunning|Reason|Awareness|Presence)\s+is\s+(increased|reduced)\s+by\s+(\d+)/gi));
+      statChangeMatches.forEach((match) => {
+        const statName = MAIN_STATS.concat(SECONDARY_STATS).find((entry) => normalizePhrase(entry.key) === normalizePhrase(match[1]))?.key;
+        if (!statName) {
+          return;
+        }
+const amount = Number(match[3]) * (normalizePhrase(match[2]) === "reduced" ? -1 : 1);
+const resolved = resolveComputedBonusTarget(statName);
+        if (applyComputedBonus(bucket, amount, resolved)) {
+          pushUniqueNotice(bucket.autoApplied, `${sourceLabel}: ${formatModifier(amount)} ${resolved.label}.`);
+        }
+      });
+const armorBlockMatch = text.match(/\bincreases\s+your\s+guard\s+by\s+(\d+)\s+and\s+your\s+block\s+by\s+(\d+),?\s+but\s+reduces\s+your\s+initiative\s+by\s+(\d+)\s+and\s+your\s+evasion\s+and\s+dodge\s+by\s+(\d+)/i);
+      if (armorBlockMatch) {
+        [
+          ["guard", Number(armorBlockMatch[1])],
+          ["block", Number(armorBlockMatch[2])],
+          ["initiative", -Number(armorBlockMatch[3])],
+          ["evasion", -Number(armorBlockMatch[4])],
+          ["dodge", -Number(armorBlockMatch[4])]
+        ].forEach(([target, amount]) => {
+          const resolved = resolveComputedBonusTarget(target);
+          if (applyComputedBonus(bucket, amount, resolved)) {
+            pushUniqueNotice(bucket.autoApplied, `${sourceLabel}: ${formatModifier(amount)} ${resolved.label}.`);
+          }
+        });
+      }
+const increaseReduceMatches = Array.from(text.matchAll(/\b(increases?|reduces?)\s+your\s+([^.\n]+?)\s+by\s+(\d+)/gi));
+      increaseReduceMatches.forEach((match) => {
+        if (armorBlockMatch && /guard|block|initiative|evasion|dodge/i.test(match[2])) {
+          return;
+        }
+const sign = normalizePhrase(match[1]).startsWith("reduc") ? -1 : 1;
+const amount = Number(match[3]) * sign;
+        cleanText(match[2])
+          .split(/\s+and\s+|,\s*/g)
+          .map((entry) => entry.replace(/^your\s+/i, "").trim())
+          .filter(Boolean)
+          .forEach((piece) => {
+            const resolved = resolveComputedBonusTarget(piece);
+            if (resolved?.bucket === "derived" && isTemporaryOrActiveBonusSentence(getSentenceAroundMatch(text, match.index))) {
+              return;
+            }
+            if (applyComputedBonus(bucket, amount, resolved)) {
+              pushUniqueNotice(bucket.autoApplied, `${sourceLabel}: ${formatModifier(amount)} ${resolved.label}.`);
+            }
+          });
+      });
+const givesBonusMatches = Array.from(text.matchAll(/\bgives(?:\s+(?:you|the wearer|the armor they are attached to|this armor))?\s+(?:a\s+)?([-+]\d+)\s+(?:[a-z]+\s+){0,3}?bonus\s+to\s+(?:your\s+)?([^.\n]+)/gi));
+      givesBonusMatches.forEach((match) => {
+        const amount = Number(match[1]);
+        cleanText(match[2])
+          .split(/\s+and\s+|,\s*/g)
+          .map((entry) => entry.replace(/^your\s+/i, "").trim())
+          .filter(Boolean)
+          .forEach((piece) => {
+            const resolved = resolveComputedBonusTarget(piece);
+            if (applyComputedBonus(bucket, amount, resolved)) {
+              pushUniqueNotice(bucket.autoApplied, `${sourceLabel}: ${formatModifier(amount)} ${resolved.label}.`);
+            }
+          });
+      });
+const penaltyMatches = Array.from(text.matchAll(/\b(?:a\s+)?(-\d+)\s+penalty\s+to\s+(?:your\s+)?([^.\n]+)/gi));
+      penaltyMatches.forEach((match) => {
+        const amount = Number(match[1]);
+        cleanText(match[2])
+          .split(/\s+and\s+|,\s*/g)
+          .map((entry) => entry.replace(/^your\s+/i, "").trim())
+          .filter(Boolean)
+          .forEach((piece) => {
+            const resolved = resolveComputedBonusTarget(piece);
+            if (applyComputedBonus(bucket, amount, resolved)) {
+              pushUniqueNotice(bucket.autoApplied, `${sourceLabel}: ${formatModifier(amount)} ${resolved.label}.`);
+            }
+          });
+      });
+
+      if (/\bshield bonus\s+is\s+increased\s+to\s+8\b/i.test(text)) {
+        const resolved = resolveComputedBonusTarget("block");
+        if (applyComputedBonus(bucket, 8, resolved)) {
+          pushUniqueNotice(bucket.autoApplied, `${sourceLabel}: +8 Block while using Block.`);
+        }
+      }
+const maxManaMatches = Array.from(text.matchAll(/\bmaximum\s+mana\s+(?:increases|is increased)\s+by\s+(\d+)/gi));
+      maxManaMatches.forEach((match) => {
+        const amount = Number(match[1]);
+        bucket.derived.manaMax += amount;
+        pushUniqueNotice(bucket.autoApplied, `${sourceLabel}: +${amount} Mana.`);
+      });
+const pactManaCostMatches = Array.from(text.matchAll(/\bpact\s+cost:\s*(\d+)\s+maximum\s+mana\b/gi));
+      pactManaCostMatches.forEach((match) => {
+        const amount = Number(match[1]);
+        if (amount) {
+          bucket.derived.manaMax -= amount;
+          pushUniqueNotice(bucket.autoApplied, `${sourceLabel}: -${amount} Mana pact cost.`);
+        }
+      });
+const baseSpeedMatch = text.match(/\bbase\s+movement\s+speed\s+(?:is|becomes)\s+(\d+)\s*ft\b/i);
+      if (baseSpeedMatch && !/\bwhile\s+swimming\b/i.test(text) && !/\bseal\s+form\b/i.test(text)) {
+        const speed = Number(baseSpeedMatch[1]);
+const amount = speed - 20;
+        if (amount) {
+          bucket.derived.speed += amount;
+          pushUniqueNotice(bucket.autoApplied, `${sourceLabel}: base Speed ${speed}.`);
+        }
+      }
+const reducedSpeedMatch = text.match(/\bmovement\s+speed\s+is\s+reduced\s+to\s+(\d+)\s*ft\b/i);
+      if (reducedSpeedMatch) {
+        const speed = Number(reducedSpeedMatch[1]);
+const amount = speed - 20;
+        if (amount) {
+          bucket.derived.speed += amount;
+          pushUniqueNotice(bucket.autoApplied, `${sourceLabel}: walking Speed ${speed}.`);
+        }
+      }
+const baseSpeedIncreaseMatches = Array.from(text.matchAll(/\bbase\s+movement\s+speed\s+increases\s+by\s+(\d+)\s*ft\b/gi));
+      baseSpeedIncreaseMatches.forEach((match) => {
+        if (isTemporaryOrActiveBonusSentence(getSentenceAroundMatch(text, match.index))) {
+          return;
+        }
+const amount = Number(match[1]);
+        if (amount) {
+          bucket.derived.speed += amount;
+          pushUniqueNotice(bucket.autoApplied, `${sourceLabel}: +${amount} Speed.`);
+        }
+      });
+const shorthandMatches = Array.from(text.matchAll(/([-+]\d+)\s+(movement speed|speed|initiative|guard|evasion|dodge|block|potency|save|saving throw|saving throws|hp|hit points|mana|rp)(?:\s+and\s+(movement speed|speed|initiative|guard|evasion|dodge|block|potency|save|saving throw|saving throws|hp|hit points|mana|rp))?\b/gi));
+      shorthandMatches.forEach((match) => {
+        const amount = Number(match[1]);
+const resolved = resolveComputedBonusTarget(match[2]);
+        if (resolved?.bucket === "derived" && isTemporaryOrActiveBonusSentence(getSentenceAroundMatch(text, match.index))) {
+          return;
+        }
+        if (applyComputedBonus(bucket, amount, resolved)) {
+          pushUniqueNotice(bucket.autoApplied, `${sourceLabel}: ${formatModifier(amount)} ${resolved.label}.`);
+        }
+        if (match[3]) {
+          const secondResolved = resolveComputedBonusTarget(match[3]);
+          if (secondResolved?.bucket === "derived" && isTemporaryOrActiveBonusSentence(getSentenceAroundMatch(text, match.index))) {
+            return;
+          }
+          if (applyComputedBonus(bucket, amount, secondResolved)) {
+            pushUniqueNotice(bucket.autoApplied, `${sourceLabel}: ${formatModifier(amount)} ${secondResolved.label}.`);
+          }
+        }
+      });
+
+      if (mode === "passive") {
+        const attackMatches = Array.from(text.matchAll(/\+(\d+)\s+bonus on accuracy checks?/gi));
+        attackMatches.forEach((match) => {
+          const amount = Number(match[1]);
+          if (!amount) {
+            return;
+          }
+          if (isTemporaryOrActiveBonusSentence(getSentenceAroundMatch(text, match.index))) {
+            return;
+          }
+          bucket.derived.lightAttack += amount;
+          bucket.derived.heavyAttack += amount;
+          bucket.derived.preciseAttack += amount;
+          pushUniqueNotice(bucket.autoApplied, `${sourceLabel}: +${amount} attack accuracy.`);
+        });
+      }
+    }
+function collectAncestryFeatureBonuses(bucket, ancestry, sourceLabel) {
+      if (!ancestry) {
+        return;
+      }
+      collectComputedTextBonuses(bucket, `${sourceLabel} ancestry`, ancestry.attributes);
+      asArray(ancestry.traits).forEach((trait) => {
+        collectComputedTextBonuses(bucket, `${sourceLabel}: ${trait.name || "Trait"}`, trait.descriptionText || trait.description || trait.text || "");
+      });
+      asArray(ancestry.abilities).filter(isPassiveAbilityRecord).forEach((ability) => {
+        collectComputedTextBonuses(bucket, `${sourceLabel}: ${ability.name}`, ability.descriptionText || ability.description);
+      });
+    }
+function getSelectedAncestryFeatureChoices() {
+      return getBuilderChoiceDefinitions()
+        .filter((choice) => choice.type === "ancestry-features" && isBuilderChoiceVisible(choice))
+        .map((choice) => {
+          const value = getBuilderChoiceValue(choice.id);
+const ancestry = getAncestryDetail(value);
+          return ancestry ? { choice, ancestry } : null;
+        })
+        .filter(Boolean);
+    }
+export function buildComputedBonuses() {
+      const bucket = createComputedBonusBucket();
+const race = getSelectedRaceDetail();
+const ancestry = getSelectedAncestryDetail();
+
+      if (race) {
+        const raceAttributeText = cleanText(race.attributes);
+const raceSkillText = cleanText(race.skills);
+        if (!includesPhrase(raceAttributeText, "of your choice")) {
+          collectComputedTextBonuses(bucket, `${race.name} race`, race.attributes);
+        }
+        if (!(includesPhrase(raceSkillText, "skill points") && (includesPhrase(raceSkillText, "of your choice") || includesPhrase(raceSkillText, "either")))) {
+          collectComputedTextBonuses(bucket, `${race.name} race`, race.skills);
+        }
+        asArray(race.abilities).filter(isPassiveAbilityRecord).forEach((ability) => {
+          collectComputedTextBonuses(bucket, `${race.name}: ${ability.name}`, ability.descriptionText || ability.description);
+        });
+      }
+
+      if (ancestry) {
+        collectAncestryFeatureBonuses(bucket, ancestry, ancestry.name);
+      }
+
+      getSelectedAncestryFeatureChoices().forEach(({ choice, ancestry: featureAncestry }) => {
+        collectAncestryFeatureBonuses(bucket, featureAncestry, choice.resolvedText?.(featureAncestry.name) || featureAncestry.name);
+      });
+
+      getSelectedClassProgress().forEach(({ record: entry }) => {
+        const classSkillText = cleanText(entry.skills);
+const trackedClassSkillPools = isClassPassiveUnlocked(entry, "skills")
+          ? getClassSkillPoolChoiceDefinitions(entry)
+          : [];
+        if (isClassPassiveUnlocked(entry, "skills") && !trackedClassSkillPools.length) {
+          collectComputedTextBonuses(bucket, `${entry.name} class`, entry.skills);
+        }
+        if (isClassPassiveUnlocked(entry, "heart") && getStatOptionsFromText(entry.heart, SECONDARY_STATS).length <= 1) {
+          collectComputedTextBonuses(bucket, `${entry.name} heart`, entry.heart);
+        }
+        if (isClassPassiveUnlocked(entry, "soul") && getStatOptionsFromText(entry.soul, MAIN_STATS).length <= 1) {
+          collectComputedTextBonuses(bucket, `${entry.name} soul`, entry.soul);
+        }
+const keyAbility = entry.keyAbility || {};
+        [keyAbility.benefit1, keyAbility.benefit2, keyAbility.benefit3, keyAbility.benefit4].forEach((benefit) => {
+          if (classSkillText && cleanText(benefit) === classSkillText) {
+            return;
+          }
+          collectComputedTextBonuses(bucket, `${entry.name} key ability`, benefit);
+        });
+
+        getPurchasedClassAbilities(entry).filter(isPassiveAbilityRecord).forEach((ability) => {
+          collectComputedTextBonuses(bucket, `${entry.name}: ${ability.name}`, ability.descriptionText || ability.description);
+        });
+      });
+
+      getSelectedBreakthroughRecords().forEach((entry) => {
+        if (isBreakthroughHandledByBuilderSystem(entry)) {
+          return;
+        }
+        collectComputedTextBonuses(bucket, entry.name, entry.descriptionText || entry.description || "");
+      });
+
+      getEquippedInventoryItems().forEach((entry) => {
+        collectComputedTextBonuses(bucket, `${entry.name} equipped`, entry.custom ? entry.description : getBaseItemRulesText(entry));
+      });
+
+      applyBuilderChoicesToComputedBonuses(bucket);
+
+      return bucket;
+    }
+function getComputedMainStatValue(key, bonuses = getComputedBonuses()) {
+      const base = toNumber(state.fields[key], 0);
+      return base + (bonuses.mainStats[key] || 0);
+    }
+function getComputedSecondaryStatValue(key, bonuses = getComputedBonuses()) {
+      const base = toNumber(state.fields[key], 0);
+      return base + (bonuses.secondaryStats[key] || 0);
+    }
+export function getSelectedBreakthroughEffects() {
+      const effects = {
+        bonusClim: 0,
+        initiativeBonus: 0,
+        extraProficiencies: [],
+        autoApplied: [],
+        pendingChoices: []
+      };
+
+      getSelectedBreakthroughRecords().forEach((entry) => {
+        const normalizedName = normalizePhrase(entry.name);
+
+        if (normalizedName === "rich parents") {
+          effects.bonusClim += 3000;
+          effects.autoApplied.push("Rich Parents: +3000 Clim to starting funds.");
+          return;
+        }
+
+        if (normalizedName === "on the draw") {
+          effects.initiativeBonus += 1;
+          effects.autoApplied.push("On the draw: +1 initiative.");
+          return;
+        }
+
+        if (normalizedName === "greatshield training") {
+          effects.extraProficiencies.push("Greatshields");
+          effects.autoApplied.push("Greatshield Training: Greatshield proficiency added.");
+          return;
+        }
+
+        if (normalizedName === "heavy armor training") {
+          effects.extraProficiencies.push("Heavy Armor");
+          effects.autoApplied.push("Heavy Armor Training: Heavy Armor proficiency added.");
+          return;
+        }
+
+        if (normalizedName === "medium armor training") {
+          effects.extraProficiencies.push("Medium Armor");
+          effects.autoApplied.push("Medium Armor Training: Medium Armor proficiency added.");
+          return;
+        }
+
+        if (normalizedName === "light armor training") {
+          effects.extraProficiencies.push("Light Armor", "Shields");
+          effects.autoApplied.push("Light Armor Training: Light Armor and shield proficiency added.");
+          return;
+        }
+
+        if (normalizedName === "primary stat training") {
+          return;
+        }
+
+        if (normalizedName === "secondary stat training") {
+          return;
+        }
+
+        if (normalizedName === "skill training") {
+          return;
+        }
+
+        if (normalizedName === "universal training") {
+          return;
+        }
+
+        if (normalizedName === "weapon training") {
+          return;
+        }
+
+        if (normalizedName === "speciality weapon training") {
+          return;
+        }
+
+        if (normalizedName === "elemental affinity") {
+          return;
+        }
+      });
+
+      effects.extraProficiencies = Array.from(new Set(effects.extraProficiencies));
+      effects.autoApplied = Array.from(new Set(effects.autoApplied));
+      effects.pendingChoices = Array.from(new Set(effects.pendingChoices));
+const computedBonuses = getComputedBonuses();
+      effects.autoApplied = Array.from(new Set([...effects.autoApplied, ...computedBonuses.autoApplied]));
+      effects.pendingChoices = Array.from(new Set([...effects.pendingChoices, ...computedBonuses.pendingChoices]));
+      return effects;
+    }
+function getSpiritCoreProtectionState(spiritCoreValue) {
+const spiritCore = Math.max(0, toNumber(spiritCoreValue, 0));
+      const level = Math.floor(spiritCore / 500);
+const nextThreshold = (level + 1) * 500;
+      return {
+        level,
+        nextThreshold,
+        remaining: Math.max(0, nextThreshold - spiritCore)
+      };
+    }
+function getPlayTrackerLabel(fieldName) {
+      if (fieldName === "Earned Clim") {
+        return "Clim";
+      }
+      if (fieldName === "Exp") {
+        return "EXP";
+      }
+      return fieldName;
+    }
+function getPlayTransactionAmount(button) {
+      const card = button.closest(".play-derived-card");
+const input = card ? card.querySelector("[data-play-transaction-amount]") : null;
+const amount = Math.floor(Math.max(0, toNumber(input?.value, 0)));
+      return { input, amount };
+    }
+function markProgressionTrackerManual(fieldName) {
+      if (fieldName === "Exp") {
+        state.builder.autoExpBank = "";
+      }
+      if (fieldName === "Spirit Core") {
+        state.builder.autoSpiritCore = "";
+      }
+    }
+function refreshPlayTrackerViews() {
+      syncReferenceNotes();
+      renderBuilderSummary();
+      renderPlayDashboard();
+    }
+function applyPlayTrackerTransaction(button) {
+      const fieldName = button.dataset.playTransactionField;
+const action = button.dataset.playTransactionAction;
+const { input, amount } = getPlayTransactionAmount(button);
+const label = getPlayTrackerLabel(fieldName);
+
+      if (!amount) {
+        setStatus(`Enter an amount before changing ${label}.`);
+        input?.focus();
+        return;
+      }
+
+      if (action === "spend-exp") {
+        const expBank = Math.max(0, toNumber(cleanText(state.fields.Exp), 0));
+        if (amount > expBank) {
+          setStatus(`Not enough unspent EXP. You have ${expBank} EXP available.`);
+          input?.focus();
+          return;
+        }
+const spiritCore = Math.max(0, toNumber(cleanText(state.fields["Spirit Core"]), 0));
+        updateFieldValue("Exp", String(expBank - amount));
+        updateFieldValue("Spirit Core", String(spiritCore + amount));
+        state.builder.autoExpBank = "";
+        state.builder.autoSpiritCore = "";
+        refreshPlayTrackerViews();
+        setStatus(`Spent ${amount} EXP and added ${amount} to Spirit Core.`);
+        return;
+      }
+const current = toNumber(cleanText(state.fields[fieldName]), 0);
+const signedAmount = action === "subtract" ? -amount : amount;
+const minimumValue = fieldName === "Earned Clim" ? Number.NEGATIVE_INFINITY : 0;
+const nextValue = Math.max(minimumValue, current + signedAmount);
+      updateFieldValue(fieldName, String(nextValue));
+      markProgressionTrackerManual(fieldName);
+      refreshPlayTrackerViews();
+      setStatus(`${action === "subtract" ? "Subtracted" : "Added"} ${amount} ${label}.`);
+    }
+function filteredAncestries() {
+      const search = normalizeKey(state.builder.searches.ancestry);
+const selectedRace = getSelectedRaceDetail();
+const entries = selectedRace && getCurrentSecondaryLineageMode(selectedRace) === "clan"
+        ? getDemonClanOptions(selectedRace)
+        : detailLookup.ancestries.entries.filter((entry) => !selectedRace || normalizeKey(entry.primaryRace) === normalizeKey(selectedRace.name));
+      return entries.filter((entry) => {
+        const haystack = [entry.name, entry.shortName, entry.descriptionText, entry.primaryRace, entry.lineageCode, entry.clanText].map(normalizeKey).join(" ");
+const matchesSearch = !search || haystack.includes(search);
+        return matchesSearch;
+      });
+    }
+function resolveBreakthroughRequirementMention(mention, currentEntryId = "") {
+      const normalizedMention = normalizePhrase(mention);
+      if (!normalizedMention) {
+        return null;
+      }
+const exact = lookup.breakthroughs.entries.find((entry) =>
+        normalizeKey(entry.id) !== normalizeKey(currentEntryId) && normalizePhrase(entry.name) === normalizedMention
+      );
+      if (exact) {
+        return exact;
+      }
+const candidates = lookup.breakthroughs.entries
+        .filter((entry) =>
+          normalizeKey(entry.id) !== normalizeKey(currentEntryId) && normalizePhrase(getBreakthroughStem(entry.name)) === normalizedMention
+        )
+        .sort((left, right) => getBreakthroughPrereqPriority(left) - getBreakthroughPrereqPriority(right));
+
+      return candidates[0] || null;
+    }
+function extractRequiredBreakthroughIds(entry) {
+      const text = cleanText(entry?.requirements);
+      if (!text || text === "-") {
+        return [];
+      }
+const mentions = [];
+const patterns = [
+        /must have purchased ([^.]+?)(?: breakthrough)?(?=[.!]|$)/ig,
+        /must have (?:the )?([^.]+?)(?: breakthrough)?(?=[.!]|$)/ig,
+        /requires? (?:the )?([^.]+?)(?: breakthrough)?(?=[.!]|$)/ig
+      ];
+
+      patterns.forEach((pattern) => {
+        let match;
+        while ((match = pattern.exec(text))) {
+          const phrase = cleanText(match[1]);
+          if (phrase) {
+            mentions.push(...phrase.split(/\s+and\s+/i).map((part) => cleanText(part)).filter(Boolean));
+          }
+        }
+      });
+
+      return Array.from(
+        new Set(
+          mentions
+            .map((mention) => resolveBreakthroughRequirementMention(mention, entry.id)?.id || "")
+            .filter(Boolean)
+        )
+      );
+    }
+function evaluateLineageChoiceRequirement(clause) {
+      const normalizedClause = normalizeRequirementClause(clause)
+        .replace(/^requires?\s+/i, "")
+        .replace(/^choose\s+/i, "choose ");
+      const match = normalizedClause.match(/^choose\s+(.+?)\s+race$/i);
+      if (!match) {
+        return null;
+      }
+      const options = getRequirementListOptions(match[1]);
+      return { met: options.some((option) => hasSelectedLineage(option)), trackable: true, label: normalizedClause };
+    }
+function evaluateBreakthroughUnlockClause(clause) {
+      const normalizedClause = normalizeRequirementClause(clause).replace(/^requires?\s+/i, "");
+      if (!normalizedClause || normalizedClause === "-") {
+        return { met: true, trackable: true, label: normalizedClause || "None" };
+      }
+      const lineageChoice = evaluateLineageChoiceRequirement(normalizedClause);
+      if (lineageChoice) {
+        return lineageChoice;
+      }
+      return evaluateClassRequirementClause(normalizedClause);
+    }
+function getBreakthroughRequirementClauses(requirementText) {
+      return splitRequirementClauses(requirementText)
+        .flatMap((clause) => cleanText(clause)
+          .replace(/\s+and\s+only\s+a\s+/i, " only. ")
+          .replace(/\s+and\s+have\s+/i, ". have ")
+          .replace(/\s+and\s+must\s+/i, ". must ")
+          .split(/\s*\.\s*/g)
+          .map((entry) => normalizeRequirementClause(entry))
+          .filter(Boolean));
+    }
+export function getBreakthroughRequirementStatus(entry, selectedBreakthroughIds = state.builder.selectedBreakthroughIds) {
+      const status = {
+        met: true,
+        reasons: [],
+        raceMismatch: false,
+        ancestryMismatch: false,
+        missingBreakthroughIds: []
+      };
+      if (!entry) {
+        return {
+          ...status,
+          met: false,
+          reasons: ["Breakthrough record could not be found."]
+        };
+      }
+const selectedRace = getSelectedRaceDetail();
+const selectedAncestry = getSelectedAncestryDetail();
+const requirementText = cleanText(entry.requirements);
+
+      if (requirementText && requirementText !== "-") {
+        const requiredRaces = detailLookup.races.entries.filter((race) =>
+          getRaceRequirementPhrases(race).some((phrase) => includesPhrase(requirementText, phrase))
+        );
+        if (requiredRaces.length) {
+          if (!selectedRace || !requiredRaces.some((race) => race.id === selectedRace.id)) {
+            status.met = false;
+            status.raceMismatch = true;
+            status.reasons.push(`Requires race: ${requiredRaces.map((race) => race.name).join(" or ")}.`);
+          }
+        }
+const requiredAncestries = detailLookup.ancestries.entries.filter((ancestry) =>
+          getAncestryRequirementPhrases(ancestry).some((phrase) => includesPhrase(requirementText, phrase))
+        );
+        if (requiredAncestries.length) {
+          if (!selectedAncestry || !requiredAncestries.some((ancestry) => ancestry.id === selectedAncestry.id)) {
+            status.met = false;
+            status.ancestryMismatch = true;
+const label = getSecondaryLineageLabels(selectedRace).short || "Lineage";
+            status.reasons.push(`Requires ${label.toLowerCase()}: ${requiredAncestries.map((ancestry) => ancestry.name).join(" or ")}.`);
+          }
+        }
+const selectedIds = selectedBreakthroughIds instanceof Set ? selectedBreakthroughIds : new Set(selectedBreakthroughIds || []);
+const requiredBreakthroughIds = extractRequiredBreakthroughIds(entry);
+        if (requiredBreakthroughIds.length && !requiredBreakthroughIds.every((id) => selectedIds.has(id))) {
+          const missingIds = requiredBreakthroughIds.filter((id) => !selectedIds.has(id));
+          status.met = false;
+          status.missingBreakthroughIds = missingIds;
+          status.reasons.push(`Requires breakthrough: ${missingIds.map((id) => lookup.breakthroughs.resolve(id)?.name || id).join(" and ")}.`);
+        }
+const clauseResults = getBreakthroughRequirementClauses(requirementText)
+          .map(evaluateBreakthroughUnlockClause)
+          .filter((result) => result && !result.met);
+        clauseResults.forEach((result) => {
+          status.met = false;
+          const reason = result.trackable
+            ? `Requires: ${result.label}.`
+            : `Requires manual confirmation: ${result.label}.`;
+          if (!status.reasons.includes(reason)) {
+            status.reasons.push(reason);
+          }
+        });
+      }
+
+      return status;
+    }
+function isBreakthroughEligible(entry, selectedBreakthroughIds = state.builder.selectedBreakthroughIds) {
+      return getBreakthroughRequirementStatus(entry, selectedBreakthroughIds).met;
+    }
+function eligibleBreakthroughs() {
+      return lookup.breakthroughs.entries.filter((entry) => isBreakthroughEligible(entry));
+    }
+function shouldShowBreakthroughForCurrentLineage(entry) {
+      const status = getBreakthroughRequirementStatus(entry);
+      return !status.raceMismatch && !status.ancestryMismatch;
+    }
+function filteredBreakthroughs() {
+      const search = normalizeKey(state.builder.searches.breakthrough);
+      return lookup.breakthroughs.entries.filter((entry) => shouldShowBreakthroughForCurrentLineage(entry)).filter((entry) => {
+        const haystack = [entry.name, entry.description, entry.requirements].map(normalizeKey).join(" ");
+        return !search || haystack.includes(search);
+      });
+    }
+function pruneIneligibleBreakthroughSelections() {
+      let changed = false;
+
+      do {
+        changed = false;
+const selectedIds = new Set(state.builder.selectedBreakthroughIds);
+const nextIds = state.builder.selectedBreakthroughIds.filter((id) => {
+          const record = lookup.breakthroughs.resolve(id);
+          return record && isBreakthroughEligible(record, selectedIds);
+        });
+
+        if (nextIds.length !== state.builder.selectedBreakthroughIds.length) {
+          state.builder.selectedBreakthroughIds = nextIds;
+          changed = true;
+        }
+      } while (changed);
+const eligibleIds = new Set(eligibleBreakthroughs().map((entry) => entry.id));
+      if (!eligibleIds.has(state.builder.inspected.breakthrough)) {
+        state.builder.inspected.breakthrough = getSelectedBreakthroughRecords()[0]?.id || eligibleBreakthroughs()[0]?.id || "";
+      }
+    }
+export function hydrateBuilderSelectionsFromFields() {
+      if (!state.builder.selectedRaceId && state.fields["Primary Race"]) {
+        const race = detailLookup.races.resolve(state.fields["Primary Race"]);
+        if (race) {
+          state.builder.selectedRaceId = race.id;
+        }
+      }
+
+      if (!state.builder.selectedAncestryId && state.fields["Sub Race"]) {
+        const ancestry = getAncestryDetail(state.fields["Sub Race"]);
+        if (ancestry) {
+          state.builder.selectedAncestryId = ancestry.id;
+        }
+      }
+
+      if (!state.builder.selectedClassIds.length) {
+        state.builder.selectedClassIds = CLASS_ROWS
+          .map((row) => state.fields[`Class${row}`])
+          .filter(Boolean)
+          .map((value) => {
+            const record = getClassDetail(value);
+            return record ? record.id : "";
+          })
+          .filter(Boolean);
+      }
+
+      if (!Object.keys(state.builder.classAbilityProgress || {}).length) {
+        const progress = {};
+        CLASS_ROWS.forEach((row) => {
+          const record = getClassDetail(state.fields[`Class${row}`]);
+          if (!record) {
+            return;
+          }
+const savedLevel = Math.max(1, toNumber(state.fields[`ClassLevel${row}`], 1));
+const savedCost = Math.max(0, toNumber(state.fields[`Cost${row}`], 0));
+const abilityCount = getClassProgressSlotCount(record);
+const countFromLevel = savedLevel > 1 ? savedLevel - 1 : 0;
+const countFromCost = savedCost > getClassUnlockCost(record)
+            ? Math.floor((savedCost - getClassUnlockCost(record)) / 100)
+            : 0;
+          progress[record.id] = clamp(Math.max(countFromLevel, countFromCost), 0, abilityCount);
+        });
+        state.builder.classAbilityProgress = progress;
+      }
+
+      if (!state.builder.selectedItemIds.length) {
+        state.builder.selectedItemIds = INVENTORY_ROWS
+          .map((row) => state.fields[`CombatInventory${row}`])
+          .filter(Boolean)
+          .map((value) => {
+            const record = lookup.items.resolve(value);
+            return record ? record.id : "";
+          })
+          .filter(Boolean);
+      }
+
+      if (!state.builder.itemQuantities || typeof state.builder.itemQuantities !== "object") {
+        state.builder.itemQuantities = {};
+      }
+      INVENTORY_ROWS.forEach((row) => {
+        const record = lookup.items.resolve(state.fields[`CombatInventory${row}`]);
+        if (!record || !state.builder.selectedItemIds.includes(record.id)) {
+          return;
+        }
+        const quantity = Math.max(1, Math.floor(toNumber(state.fields[`Amount${row}`], 1)));
+        state.builder.itemQuantities[record.id] = quantity;
+      });
+
+      if (!state.builder.selectedBreakthroughIds.length && state.fields.BName) {
+        state.builder.selectedBreakthroughIds = cleanText(state.fields.BName)
+          .split(/\n+/)
+          .map((value) => value.trim())
+          .filter(Boolean)
+          .map((value) => {
+            const record = lookup.breakthroughs.resolve(value);
+            return record ? record.id : "";
+          })
+          .filter(Boolean);
+      }
+
+      pruneIneligibleBreakthroughSelections();
+    }
+function seedBuilderInspection() {
+      if (!state.builder.inspected.race) {
+        state.builder.inspected.race = getSelectedRaceDetail()?.id || detailLookup.races.entries[0]?.id || "";
+      }
+
+      if (!state.builder.inspected.ancestry) {
+        state.builder.inspected.ancestry = getSelectedAncestryDetail()?.id || filteredAncestries()[0]?.id || detailLookup.ancestries.entries[0]?.id || "";
+      }
+
+      if (!state.builder.inspected.class) {
+        state.builder.inspected.class = getSelectedClassDetails()[0]?.id || detailLookup.classes.entries[0]?.id || "";
+      }
+
+      if (!state.builder.inspected.item) {
+        state.builder.inspected.item = getSelectedItemRecords()[0]?.id
+          || lookup.items.entries.find((entry) => !entry.hiddenFromBuilderEquipment)?.id
+          || "";
+      }
+
+      if (!state.builder.inspected.breakthrough) {
+        state.builder.inspected.breakthrough = getSelectedBreakthroughRecords()[0]?.id || eligibleBreakthroughs()[0]?.id || "";
+      }
+    }
+function refreshSheetToolbar() {
+      const name = cleanText(state.fields.Name);
+const title = name ? `${escapeHtml(name)} - Character Sheet` : "Interactive Character Sheet";
+      document.getElementById("sheet-toolbar-name").innerHTML = title;
+    }
+export function appendPlayLog(title, lines = []) {
+      state.play = mergePlayState(state.play);
+const entries = Array.isArray(lines) ? lines : [lines];
+      state.play.log.unshift({
+        timestamp: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit", second: "2-digit" }),
+        title,
+        lines: entries.filter(Boolean).map((line) => cleanText(line))
+      });
+      state.play.log = state.play.log.slice(0, 24);
+      renderPlayDashboardIfVisible();
+    }
+export function parseResourceCost(costLabel) {
+      const totals = {
+        AP: 0,
+        RP: 0,
+        Mana: 0,
+        HP: 0,
+        variable: { AP: false, RP: false, Mana: false, HP: false }
+      };
+      cleanText(costLabel)
+        .split(",")
+        .map((part) => part.trim())
+        .filter(Boolean)
+        .forEach((part) => {
+          const rangeMatch = part.match(/^(\d+)\s+or\s+(\d+)\s*(AP|RP|Mana|HP)$/i);
+          const alternateMatch = part.match(/^(\d+)\s*(AP|RP|Mana|HP)\s+or\b/i);
+          const match = part.match(/^(-?\d+)\s*(AP|RP|Mana|HP)$/i);
+          if (rangeMatch) {
+            const resource = rangeMatch[3].toUpperCase();
+            const amount = Math.min(Number(rangeMatch[1]), Number(rangeMatch[2]));
+            if (resource === "MANA") {
+              totals.Mana += amount;
+              totals.variable.Mana = true;
+            } else {
+              totals[resource] += amount;
+              totals.variable[resource] = true;
+            }
+            return;
+          }
+          if (alternateMatch) {
+            const resource = alternateMatch[2].toUpperCase();
+            const amount = Number(alternateMatch[1]);
+            if (resource === "MANA") {
+              totals.Mana += amount;
+              totals.variable.Mana = true;
+            } else {
+              totals[resource] += amount;
+              totals.variable[resource] = true;
+            }
+            return;
+          }
+          if (!match) {
+            return;
+          }
+const rawAmount = Number(match[1]);
+const amount = Math.abs(rawAmount);
+const resource = match[2].toUpperCase();
+const variableCost = rawAmount < 0;
+          if (resource === "MANA") {
+            totals.Mana += amount;
+            totals.variable.Mana = totals.variable.Mana || variableCost;
+          } else {
+            totals[resource] += amount;
+            totals.variable[resource] = totals.variable[resource] || variableCost;
+          }
+        });
+      return totals;
+    }
+export function formatCostLabelForDisplay(costLabel) {
+      return cleanText(costLabel).replace(/-\s*\d+\s*(AP|RP|Mana|HP)\b/gi, "X $1");
+    }
+export function formatTrackedCostSpend(cost) {
+      const parts = [
+        ["AP", cost.AP],
+        ["RP", cost.RP],
+        ["Mana", cost.Mana],
+        ["HP", cost.HP]
+      ]
+        .filter(([, amount]) => amount > 0)
+        .map(([key, amount]) => `${amount} ${key}`);
+      return parts.join(", ");
+    }
+function getAbilityEffectText(ability = {}) {
+      return cleanText([
+        ability.descriptionText,
+        ability.description,
+        ability.benefit1,
+        ability.benefit2,
+        ability.benefit3,
+        ability.benefit4
+      ].filter(Boolean).join("\n"));
+    }
+function normalizeResourceKey(resource) {
+      const key = cleanText(resource).toUpperCase();
+      return key === "MANA" ? "Mana" : key;
+    }
+function parseSimpleResourceCostPart(part) {
+      const match = cleanText(part).match(/^(-?\d+)\s*(AP|RP|Mana|HP)$/i);
+      if (!match) {
+        return null;
+      }
+      return {
+        amount: Math.abs(Number(match[1])),
+        rawAmount: Number(match[1]),
+        resource: normalizeResourceKey(match[2]),
+        variable: Number(match[1]) < 0
+      };
+    }
+function getResourceCostParts(costLabel, excludedResources = []) {
+      const excluded = new Set(excludedResources.map((entry) => normalizeResourceKey(entry)));
+      return cleanText(costLabel)
+        .split(",")
+        .map((part) => part.trim())
+        .filter(Boolean)
+        .map((part) => parseSimpleResourceCostPart(part))
+        .filter((part) => part && !excluded.has(part.resource))
+        .map((part) => `${part.amount} ${part.resource}`);
+    }
+function getSimpleResourceCostAmounts(costLabel) {
+      return getResourceCostParts(costLabel)
+        .map((part) => parseSimpleResourceCostPart(part))
+        .filter(Boolean)
+        .reduce((totals, part) => {
+          totals[part.resource] = part.amount;
+          return totals;
+        }, { AP: 0, RP: 0, Mana: 0, HP: 0 });
+    }
+function composeResourceCostLabel(costParts = []) {
+      const totals = { AP: 0, RP: 0, Mana: 0, HP: 0 };
+      const extras = [];
+      costParts
+        .map((part) => cleanText(part))
+        .filter(Boolean)
+        .forEach((part) => {
+          const parsed = parseSimpleResourceCostPart(part);
+          if (parsed) {
+            totals[parsed.resource] += parsed.amount;
+          } else {
+            extras.push(part);
+          }
+        });
+
+      return [
+        ...["AP", "RP", "Mana", "HP"]
+          .filter((resource) => totals[resource] > 0)
+          .map((resource) => `${totals[resource]} ${resource}`),
+        ...extras
+      ].join(", ");
+    }
+function buildResourceCostLabel(resource, amount, fixedParts = []) {
+      const normalizedResource = normalizeResourceKey(resource);
+      const costParts = [`${Math.max(0, Number(amount) || 0)} ${normalizedResource}`, ...fixedParts];
+      return composeResourceCostLabel(costParts);
+    }
+function replaceResourceCost(costLabel, resource, amount) {
+      return buildResourceCostLabel(resource, amount, getResourceCostParts(costLabel, [resource]));
+    }
+function formatSpendCostButtonLabel(costLabel, fallback = "Spend Cost") {
+      const display = formatCostLabelForDisplay(costLabel);
+      return display ? `Spend ${display.replace(/,\s*/g, " + ")}` : fallback;
+    }
+function dedupeAbilityCostOptions(options) {
+      const seen = new Set();
+      return options
+        .map((option) => ({
+          ...option,
+          costLabel: cleanText(option.costLabel)
+        }))
+        .filter((option) => {
+          if (!option.costLabel) {
+            return false;
+          }
+          const key = normalizePhrase(option.costLabel);
+          if (seen.has(key)) {
+            return false;
+          }
+          seen.add(key);
+          return true;
+        });
+    }
+function getVariableAbilityCostOptions(ability = {}) {
+      const costLabel = cleanText(ability.costLabel || "");
+      const text = getAbilityEffectText(ability);
+      const options = [];
+      const addOption = (nextCostLabel) => {
+        const normalizedCost = cleanText(nextCostLabel);
+        if (normalizedCost && hasTrackedResourceCost(normalizedCost)) {
+          options.push({
+            label: formatSpendCostButtonLabel(normalizedCost),
+            costLabel: normalizedCost
+          });
+        }
+      };
+
+      cleanText(costLabel)
+        .split(",")
+        .map((part) => part.trim())
+        .filter(Boolean)
+        .forEach((part) => {
+          const rangeMatch = part.match(/^(\d+)\s+or\s+(\d+)\s*(AP|RP|Mana|HP)$/i);
+          if (!rangeMatch) {
+            return;
+          }
+          const resource = normalizeResourceKey(rangeMatch[3]);
+          const fixedParts = getResourceCostParts(costLabel, [resource]);
+          [Number(rangeMatch[1]), Number(rangeMatch[2])]
+            .sort((a, b) => a - b)
+            .forEach((amount) => addOption(buildResourceCostLabel(resource, amount, fixedParts)));
+        });
+
+      const explicitChoiceMatch = text.match(/\byou\s+may\s+spend\s+(\d+)\s+or\s+(\d+)\s*(AP|RP|Mana|HP)\b/i);
+      if (explicitChoiceMatch) {
+        const resource = normalizeResourceKey(explicitChoiceMatch[3]);
+        const fixedParts = getResourceCostParts(costLabel, [resource]);
+        [Number(explicitChoiceMatch[1]), Number(explicitChoiceMatch[2])]
+          .sort((a, b) => a - b)
+          .forEach((amount) => addOption(buildResourceCostLabel(resource, amount, fixedParts)));
+      }
+
+      const upToMatch = text.match(/\byou\s+may\s+spend\s+up\s+to\s+(\d+)\s*(AP|RP|Mana|HP)\b/i);
+      if (upToMatch) {
+        const maxAmount = Math.min(8, Math.max(0, Number(upToMatch[1])));
+        const resource = normalizeResourceKey(upToMatch[2]);
+        const fixedParts = getResourceCostParts(costLabel, [resource]);
+        for (let amount = 1; amount <= maxAmount; amount += 1) {
+          addOption(buildResourceCostLabel(resource, amount, fixedParts));
+        }
+      }
+
+      if (/\byou\s+(?:can|may)\s+(?:use|pay)\s+either\b/i.test(text) && /\bAP\b/i.test(text) && /\bRP\b/i.test(text)) {
+        const amounts = getSimpleResourceCostAmounts(costLabel);
+        if (amounts.AP > 0 && amounts.RP > 0) {
+          const sharedParts = getResourceCostParts(costLabel, ["AP", "RP"]);
+          addOption(buildResourceCostLabel("AP", amounts.AP, sharedParts));
+
+          const rpCostParts = [`${amounts.RP} RP`, ...sharedParts];
+          const rpManaIncrease = text.match(/\bif\s+you\s+use\s+an?\s+RP\b[^.]*\bmana\s+cost\s+increases\s+by\s+(\d+)/i);
+          if (rpManaIncrease) {
+            rpCostParts.push(`${Number(rpManaIncrease[1])} Mana`);
+          }
+          addOption(composeResourceCostLabel(rpCostParts));
+        }
+      }
+
+      return dedupeAbilityCostOptions(options);
+    }
+function getAbilitySpendCostOptions(ability = {}) {
+      const costLabel = cleanText(ability.costLabel || "");
+      const variableOptions = getVariableAbilityCostOptions(ability);
+      if (variableOptions.length > 1) {
+        return variableOptions;
+      }
+      if (hasTrackedResourceCost(costLabel)) {
+        return [{
+          label: "Spend Cost",
+          costLabel
+        }];
+      }
+      return [{
+        label: "Manual",
+        costLabel: ""
+      }];
+    }
+function getAttackOptionApCost(text, label) {
+      const kind = cleanText(label).toLowerCase();
+      if (!kind) {
+        return 0;
+      }
+      const match = text.match(new RegExp(`\\b${kind}\\s*(?:attack|damage)?\\s*\\(\\s*(\\d+)\\s*AP\\s*\\)`, "i"));
+      return match ? Number(match[1]) : 0;
+    }
+function getAbilityAttackRollOptions(ability = {}) {
+      const text = getAbilityEffectText(ability);
+      if (!/\b(?:make|makes|attack|attacks)\b/i.test(text)) {
+        return [];
+      }
+      const options = [];
+      if (/\blight(?:\s*\(|\s+attack|\s+damage)\b/i.test(text)) {
+        options.push({ type: "lightAttack", label: "Light" });
+      }
+      if (/\bheavy(?:\s*\(|\s+attack|\s+damage)\b/i.test(text)) {
+        options.push({ type: "heavyAttack", label: "Heavy" });
+      }
+      if (/\bprecise(?:\s*\(|\s+attack|\s+damage)\b/i.test(text)) {
+        options.push({ type: "preciseAttack", label: "Precise" });
+      }
+      return options.map((option) => {
+        const apCost = getAttackOptionApCost(text, option.label);
+        return {
+          ...option,
+          costLabel: apCost > 0 ? replaceResourceCost(ability.costLabel || "", "AP", apCost) : cleanText(ability.costLabel || ""),
+          hasExplicitCost: apCost > 0
+        };
+      });
+    }
+function getAbilityAttackSpendOptions(ability = {}) {
+      const attackOptions = getAbilityAttackRollOptions(ability);
+      if (!attackOptions.length) {
+        return [];
+      }
+      const variableCostOptions = getVariableAbilityCostOptions(ability);
+      if (variableCostOptions.length > 1 && attackOptions.every((option) => !option.hasExplicitCost)) {
+        return attackOptions.flatMap((attackOption) => variableCostOptions.map((costOption) => ({
+          ...attackOption,
+          costLabel: costOption.costLabel,
+          buttonLabel: `${costOption.label} + ${attackOption.label}`
+        })));
+      }
+      return attackOptions.map((option) => ({
+        ...option,
+        buttonLabel: `${formatSpendCostButtonLabel(option.costLabel || ability.costLabel || "", "Spend")} + ${option.label}`
+      }));
+    }
+function hasTrackedResourceCost(costLabel) {
+      const cost = parseResourceCost(costLabel);
+      return ["AP", "RP", "Mana", "HP"].some((key) => cost[key] > 0 || cost.variable?.[key]);
+    }
+function getPlayAbilityLogLines(ability = {}) {
+      return [
+        ability.source ? `Source: ${ability.source}` : "",
+        ability.range ? `Range: ${ability.range}` : "",
+        cleanText(ability.descriptionText || ability.description || "")
+      ].filter(Boolean);
+    }
+function getQuickPlayAbilities() {
+      const abilities = [];
+const race = getSelectedRaceDetail();
+      asArray(race?.abilities).forEach((ability) => {
+        abilities.push({ ...ability, source: `${race.name} race` });
+      });
+
+      getSelectedClassProgress().forEach(({ record: entry }) => {
+        const keyAbility = getClassKeyAbilityPlayRecord(entry);
+        if (keyAbility) {
+          abilities.push(keyAbility);
+        }
+        getPurchasedClassAbilities(entry).forEach((ability) => {
+          abilities.push({ ...ability, source: entry.name });
+        });
+      });
+
+      return abilities;
+    }
+let activePlayReferenceName = "";
+let playReferenceNameCacheKey = "";
+let playReferenceNameCache = [];
+function getPlayReferenceNameOptions() {
+      const cacheKey = [
+        getSelectedGameVersionId(),
+        lookup.abilities.entries.length,
+        detailLookup.abilities.entries.length,
+        SKILL_DEFINITIONS.length
+      ].join("|");
+      if (cacheKey === playReferenceNameCacheKey) {
+        return playReferenceNameCache;
+      }
+const names = new Set();
+      [...detailLookup.abilities.entries, ...lookup.abilities.entries, ...SKILL_DEFINITIONS].forEach((entry) => {
+        const name = cleanText(entry?.name);
+        if (name.length >= 4) {
+          names.add(name);
+        }
+      });
+      playReferenceNameCacheKey = cacheKey;
+      playReferenceNameCache = Array.from(names).sort((a, b) => b.length - a.length || a.localeCompare(b));
+      return playReferenceNameCache;
+    }
+function scorePlayReferenceRecord(record) {
+      return [
+        cleanText(record?.descriptionText || record?.description) ? 100 : 0,
+        record?.range ? 12 : 0,
+        record?.costLabel || record?.cost ? 8 : 0,
+        record?.keywords ? 6 : 0,
+        record?.benefit1 || record?.benefit2 || record?.benefit3 || record?.benefit4 ? 4 : 0
+      ].reduce((total, value) => total + value, 0);
+    }
+function findPlayReferenceRecord(name) {
+      const target = normalizePhrase(name);
+      if (!target) {
+        return null;
+      }
+const abilityCandidates = [...detailLookup.abilities.entries, ...lookup.abilities.entries]
+        .filter((entry) => normalizePhrase(entry?.name) === target)
+        .sort((a, b) => scorePlayReferenceRecord(b) - scorePlayReferenceRecord(a));
+      if (abilityCandidates.length) {
+        return {
+          kind: "Ability",
+          name: cleanText(abilityCandidates[0].name),
+          record: abilityCandidates[0]
+        };
+      }
+const skill = SKILL_DEFINITIONS.find((entry) => normalizePhrase(entry.name) === target);
+      if (skill) {
+        return {
+          kind: "Skill",
+          name: cleanText(skill.name),
+          record: skill
+        };
+      }
+      return null;
+    }
+function findInlineReferenceMatches(text) {
+      const source = cleanText(text);
+      if (!source) {
+        return [];
+      }
+const matches = [];
+      getPlayReferenceNameOptions().forEach((name) => {
+        const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const pattern = new RegExp(`(^|[^A-Za-z0-9])(${escapedName})(?=$|[^A-Za-z0-9])`, "gi");
+let match;
+        while ((match = pattern.exec(source))) {
+          const start = match.index + match[1].length;
+          const end = start + match[2].length;
+          if (!matches.some((entry) => start < entry.end && end > entry.start) && findPlayReferenceRecord(match[2])) {
+            matches.push({ start, end, label: source.slice(start, end) });
+          }
+        }
+      });
+      return matches.sort((a, b) => a.start - b.start || b.end - a.end);
+    }
+function renderLinkedReferenceText(text) {
+      const source = cleanText(text);
+      const matches = findInlineReferenceMatches(source);
+      if (!matches.length) {
+        return escapeHtml(source);
+      }
+let cursor = 0;
+const parts = [];
+      matches.forEach((match) => {
+        parts.push(escapeHtml(source.slice(cursor, match.start)));
+        parts.push(`<button type="button" class="play-reference-link" data-play-reference-name="${escapeHtml(match.label)}">${escapeHtml(match.label)}</button>`);
+        cursor = match.end;
+      });
+      parts.push(escapeHtml(source.slice(cursor)));
+      return parts.join("");
+    }
+function getPlayReferenceDescription(reference) {
+      const record = reference?.record || {};
+      if (reference?.kind === "Skill") {
+        const expertise = SKILL_EXPERTISE_OPTIONS[record.name] || [];
+        return [
+          `${record.name} is linked to ${record.stat}.`,
+          expertise.length ? `Common specialties: ${expertise.join(", ")}.` : ""
+        ].filter(Boolean).join("\n\n");
+      }
+      return firstReadableText(
+        record.descriptionText,
+        record.description,
+        record.benefit1,
+        record.benefit2,
+        record.benefit3,
+        record.benefit4
+      );
+    }
+function renderPlayReferenceDetail() {
+      const node = document.getElementById("play-reference-detail");
+      if (!node) {
+        return;
+      }
+const reference = findPlayReferenceRecord(activePlayReferenceName);
+      if (!reference) {
+        node.hidden = false;
+        node.innerHTML = `
+          <div class="library-card play-reference-card play-reference-placeholder">
+            <p class="eyebrow">Reference Detail</p>
+            <h3>Rules Reference</h3>
+            <div class="library-preview">
+              <p>Click a linked ability, spell, skill, or specialty name to show its pulled rules text here.</p>
+            </div>
+          </div>
+        `;
+        return;
+      }
+const record = reference.record;
+const description = getPlayReferenceDescription(reference);
+const meta = [
+        reference.kind,
+        record.source,
+        record.costLabel || record.cost ? formatCostLabelForDisplay(record.costLabel || record.cost) : "",
+        record.range,
+        Array.isArray(record.keywords) ? record.keywords.join(", ") : record.keywords,
+        record.stat ? `${record.stat} skill` : ""
+      ].filter(Boolean);
+
+      node.hidden = false;
+      node.innerHTML = `
+        <div class="library-card play-reference-card">
+          <div class="play-reference-head">
+            <div>
+              <p class="eyebrow">Reference Detail</p>
+              <h3>${escapeHtml(reference.name)}</h3>
+            </div>
+            <button type="button" class="secondary play-reference-close" data-play-reference-close aria-label="Close reference">Close</button>
+          </div>
+          ${meta.length ? `<div class="play-action-meta">${meta.map((entry) => `<span>${escapeHtml(entry)}</span>`).join("")}</div>` : ""}
+          <div class="library-preview">${paragraphize(description || "No pulled reference text is available for this entry.")}</div>
+        </div>
+      `;
+    }
+function openPlayReference(name) {
+      activePlayReferenceName = cleanText(name);
+      renderPlayReferenceDetail();
+      setStatus(`Opened ${activePlayReferenceName} reference.`);
+    }
+function getPlayHeaderTitle() {
+      return cleanText(state.fields.Name) || "Unnamed character";
+    }
+let playFeedbackTimers = {};
+export function showPlayFeedback(targetId, message) {
+      if (!targetId) {
+        return;
+      }
+const node = document.getElementById(targetId);
+      if (!node) {
+        return;
+      }
+      window.clearTimeout(playFeedbackTimers[targetId]);
+      node.textContent = message;
+      node.hidden = false;
+      playFeedbackTimers[targetId] = window.setTimeout(() => {
+        node.hidden = true;
+        node.textContent = "";
+      }, 3600);
+    }
+export function clearPlayFeedback(targetId) {
+      if (!targetId) {
+        return;
+      }
+const node = document.getElementById(targetId);
+      if (!node) {
+        return;
+      }
+      window.clearTimeout(playFeedbackTimers[targetId]);
+      node.hidden = true;
+      node.textContent = "";
+    }
+let rollOverlayTimer = 0;
+let rollOverlayHideTimer = 0;
+let rollPreviewRefreshToken = 0;
+let diceFlightTimers = [];
+let diceAnimationFrame = 0;
+let diceAudioContext = null;
+let diceNoiseBuffer = null;
+let activeDiceAudioElements = [];
+function normalizeDiceSetId(setId = "") {
+      const key = String(setId || "").trim().toLowerCase();
+      return DICE_SET_ID_ALIASES[key] || key;
+    }
+function getDiceSetDefinition(setId = "") {
+      const normalizedId = normalizeDiceSetId(setId);
+      return DICE_SETS.find((entry) => entry.id === normalizedId) || null;
+    }
+function isDiceSetAvailable(set) {
+      return Boolean(set?.available);
+    }
+export function getDiceSet(setId = "") {
+      const set = getDiceSetDefinition(setId);
+      return isDiceSetAvailable(set) ? set : DICE_SETS.find((entry) => entry.id === DEFAULT_DICE_SET_ID) || DICE_SETS.find(isDiceSetAvailable) || DICE_SETS[0];
+    }
+function getActiveDiceSet() {
+      return getDiceSet(state.play?.diceTray?.selectedSetId);
+    }
+const diceChoicePreviewCache = new Map();
+function getDiceTextureUrl(sides, setId = "") {
+      const set = getDiceSet(setId || state.play?.diceTray?.selectedSetId);
+const safeSides = Math.max(1, toNumber(sides, 20));
+      if (set.id === "new-angelsword") {
+        return "assets/dice/new-angelsword/set-preview.png";
+      }
+      return DICE_PREVIEW_FALLBACK_URL;
+    }
+export function getDiceChoicePreviewUrl(sides, setId = "") {
+      const set = getDiceSet(setId || state.play?.diceTray?.selectedSetId);
+const safeSides = Math.max(1, toNumber(sides, 20));
+const cacheKey = `${set.id}:${safeSides}`;
+      if (set.id === "new-angelsword") {
+        const cached = diceChoicePreviewCache.get(cacheKey);
+        if (cached) {
+          return cached;
+        }
+        try {
+          preloadDiceSetFaceArt(set.id);
+const dataUrl = window.LyrianAccurateDiceRoller?.buildPreviewDataUrl?.({
+            sides: safeSides,
+            value: safeSides === 100 ? 100 : safeSides,
+            setId: set.id,
+            size: 192
+          });
+          if (dataUrl) {
+            diceChoicePreviewCache.set(cacheKey, dataUrl);
+            return dataUrl;
+          }
+        } catch (error) {
+          console.warn("Could not build dice choice preview image.", error);
+        }
+      }
+      return getDiceTextureUrl(safeSides, set.id);
+    }
+export function getDiceSetPreviewUrl(setId = "") {
+      const set = getDiceSetDefinition(setId) || getDiceSet(setId);
+      if (set.previewUrl) {
+        return set.previewUrl;
+      }
+      if (!set.basePath) {
+        return DICE_PREVIEW_FALLBACK_URL;
+      }
+const preview = set.preview || `preview.${set.imageExtension || "png"}`;
+      if (new RegExp("^(?:https?:)?//", "i").test(preview) || preview.startsWith("data:") || preview.startsWith("assets/")) {
+        return preview;
+      }
+      return `${set.basePath}/${set.preview || `preview.${set.imageExtension || "png"}`}`;
+    }
+export function getDiceImageFallbackHandler() {
+      return `this.onerror=null;this.src='${DICE_PREVIEW_FALLBACK_URL}';`;
+    }
+function applyDicePackManifest(manifest = {}) {
+      const packs = Array.isArray(manifest.packs) ? manifest.packs : [];
+      packs.forEach((pack) => {
+        const id = normalizeDiceSetId(pack?.id);
+        if (!id) {
+          return;
+        }
+const existing = getDiceSetDefinition(id);
+const installed = pack.installed === true || pack.available === true;
+const next = existing || {
+          id,
+          name: cleanText(pack.name) || id,
+          description: cleanText(pack.description) || "Downloadable dice pack.",
+          basePath: pack.basePath || "assets/dice",
+          imageExtension: pack.imageExtension || "png",
+          preview: pack.preview || "dice-coming-soon.svg",
+          available: false
+        };
+        next.name = cleanText(pack.name) || next.name;
+        next.description = cleanText(pack.description) || next.description;
+        next.available = Boolean(installed);
+        next.availabilityLabel = pack.availabilityLabel || pack.statusLabel || (pack.downloadUrl ? "Download ready" : next.available ? "" : "Coming soon");
+        next.downloadUrl = pack.downloadUrl || next.downloadUrl || "";
+        next.basePath = pack.basePath || next.basePath;
+        next.preview = pack.preview || next.preview;
+        next.previewUrl = pack.previewUrl || next.previewUrl || "";
+        next.imageExtension = pack.imageExtension || next.imageExtension || "png";
+        if (!existing) {
+          DICE_SETS.push(next);
+        }
+      });
+    }
+async function checkForDicePackUpdates() {
+      if (dicePackRuntime.isChecking) {
+        return;
+      }
+      dicePackRuntime.isChecking = true;
+      renderDiceTray();
+      try {
+        const response = await fetch(DICE_PACK_MANIFEST_URL, { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error("No dice update manifest is available yet.");
+        }
+const manifest = await response.json();
+        dicePackRuntime.lastManifest = manifest;
+        applyDicePackManifest(manifest);
+const packs = Array.isArray(manifest.packs) ? manifest.packs : [];
+const downloadable = packs.filter((pack) => pack?.downloadUrl && !isDiceSetAvailable(getDiceSetDefinition(pack.id)));
+        if (downloadable.length) {
+          setStatus(`Found downloadable dice pack${downloadable.length === 1 ? "" : "s"}: ${downloadable.map((pack) => pack.name || pack.id).join(", ")}.`);
+        } else {
+          setStatus("No downloadable dice packs are available yet.");
+        }
+      } catch (error) {
+        setStatus(error.message || "Could not check dice downloads yet.");
+      } finally {
+        dicePackRuntime.isChecking = false;
+        renderDiceTray();
+      }
+    }
+function normalizeRollResults(results = []) {
+      return (Array.isArray(results) ? results : [])
+        .map((entry) => ({
+          sides: Math.max(1, toNumber(entry.sides, 20)),
+          value: Math.max(1, toNumber(entry.value, 1)),
+          label: cleanText(entry.label) || `d${Math.max(1, toNumber(entry.sides, 20))}`
+        }))
+        .filter((entry) => entry.sides && entry.value);
+    }
+function inferRollResultsFromOverlay(dieType, rollText) {
+      const type = cleanText(dieType);
+const values = cleanText(rollText).match(/\d+/g)?.map(Number).filter((value) => Number.isFinite(value)) || [];
+const formula = type.match(/^(\d*)d(\d+)/i);
+      if (formula && values.length) {
+const count = Number(formula[1]) || 1;
+const sides = Number(formula[2]) || 20;
+        return values.slice(0, count).map((value) => ({ sides, value, label: `d${sides}` }));
+      }
+const single = type.match(/^d(\d+)$/i);
+      if (single && values.length) {
+        const sides = Number(single[1]) || 20;
+        return [{ sides, value: values[0], label: `d${sides}` }];
+      }
+      return [];
+    }
+function expandPercentileRollResults(results = []) {
+      return normalizeRollResults(results).flatMap((entry) => {
+        if (entry.sides !== 100 || cleanText(entry.label).toLowerCase() === "d00") {
+          return [entry];
+        }
+const value = clamp(Math.round(entry.value), 1, 100);
+const tensValue = value === 100 ? 100 : Math.floor(value / 10) * 10;
+const onesValue = value % 10 === 0 ? 10 : value % 10;
+        return [
+          { ...entry, sides: 100, value: tensValue, label: "d00" },
+          { ...entry, sides: 10, value: onesValue, label: "d10" }
+        ];
+      });
+    }
+function getRollPreviewImage(entry, size = 184) {
+      preloadDiceSetFaceArt();
+      try {
+        const dataUrl = window.LyrianAccurateDiceRoller?.buildPreviewDataUrl?.({
+          sides: entry.sides,
+          value: entry.value,
+          setId: state.play?.diceTray?.selectedSetId || DEFAULT_DICE_SET_ID,
+          size
+        });
+        if (dataUrl) {
+          return dataUrl;
+        }
+      } catch (error) {
+        console.warn("Could not build dice tray preview image.", error);
+      }
+      return getDiceTextureUrl(entry.sides);
+    }
+function renderRollPreviewGrid(gridNode, diceResults = [], options = {}) {
+      if (!gridNode) {
+        return false;
+      }
+const entries = (Array.isArray(diceResults) ? diceResults : [])
+        .map((entry) => ({
+          ...entry,
+          sides: Math.max(1, toNumber(entry.sides, entry.die === "d00" ? 100 : 20)),
+          value: Math.max(1, toNumber(entry.value, entry.requested || entry.topFace || 1)),
+          label: cleanText(entry.label || entry.die) || `d${Math.max(1, toNumber(entry.sides, 20))}`
+        }))
+        .filter((entry) => entry.sides && entry.value);
+      gridNode.innerHTML = "";
+      if (!entries.length) {
+        gridNode.classList.add("is-hidden");
+        gridNode.removeAttribute("style");
+        gridNode.parentElement?.style.removeProperty("--roll-preview-min-height");
+        return false;
+      }
+const count = entries.length;
+const columns = count <= 1 ? 1 : count <= 4 ? 2 : Math.min(4, Math.ceil(Math.sqrt(count)));
+const rows = Math.ceil(count / columns);
+const imageSize = options.imageSize || (count > 4 ? 156 : 184);
+const dieSize = count <= 1 ? 112 : count <= 2 ? 98 : count <= 4 ? 86 : 74;
+const gap = count > 4 ? 3 : 6;
+const minHeight = count <= 1
+        ? 120
+        : count <= 2
+          ? 124
+          : Math.max(174, rows * dieSize + Math.max(0, rows - 1) * gap + 18);
+      gridNode.style.setProperty("--roll-preview-columns", String(columns));
+      gridNode.style.setProperty("--roll-preview-die-size", `${dieSize}px`);
+      gridNode.style.setProperty("--roll-preview-gap", `${gap}px`);
+      gridNode.parentElement?.style.setProperty("--roll-preview-min-height", `${minHeight}px`);
+      entries.forEach((entry) => {
+        const image = document.createElement("img");
+        image.src = entry.previewDataUrl || getRollPreviewImage(entry, imageSize);
+        image.alt = `${entry.label || `d${entry.sides}`} ${entry.value}`;
+        gridNode.appendChild(image);
+      });
+      gridNode.classList.remove("is-hidden");
+      return true;
+    }
+function stopActiveDiceSounds() {
+      activeDiceAudioElements.forEach((audio) => {
+        try {
+          audio.pause();
+          audio.currentTime = 0;
+        } catch (error) {
+          // Ignore cleanup errors from browser-managed media state.
+        }
+      });
+      activeDiceAudioElements = [];
+    }
+function clearDiceFlightLayer() {
+      window.LyrianThreeDiceRoller?.clear?.();
+      window.LyrianImageDiceRoller?.clear?.();
+      window.LyrianAccurateDiceRoller?.clear?.();
+      if (diceAnimationFrame) {
+        window.cancelAnimationFrame(diceAnimationFrame);
+        diceAnimationFrame = 0;
+      }
+      diceFlightTimers.forEach((timer) => {
+        window.clearTimeout(timer);
+        window.clearInterval(timer);
+        window.cancelAnimationFrame(timer);
+      });
+      diceFlightTimers = [];
+      stopActiveDiceSounds();
+const layer = document.getElementById("dice-flight-layer");
+      if (layer) {
+        layer.innerHTML = "";
+      }
+    }
+function getDiceAudioContext() {
+      const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextConstructor) {
+        return null;
+      }
+      if (!diceAudioContext) {
+        diceAudioContext = new AudioContextConstructor();
+      }
+      if (diceAudioContext.state === "suspended") {
+        diceAudioContext.resume().catch(() => {});
+      }
+      return diceAudioContext;
+    }
+function getDiceNoiseBuffer(ctx) {
+      if (diceNoiseBuffer && diceNoiseBuffer.sampleRate === ctx.sampleRate) {
+        return diceNoiseBuffer;
+      }
+const duration = 0.08;
+const noiseLength = Math.max(1, Math.floor(ctx.sampleRate * duration));
+      diceNoiseBuffer = ctx.createBuffer(1, noiseLength, ctx.sampleRate);
+const data = diceNoiseBuffer.getChannelData(0);
+      for (let index = 0; index < noiseLength; index += 1) {
+        const fade = 1 - index / noiseLength;
+        data[index] = (Math.random() * 2 - 1) * fade * fade;
+      }
+      return diceNoiseBuffer;
+    }
+function playDiceImpact(ctx, when, panValue, volume, pitch) {
+      const duration = 0.045;
+const noise = ctx.createBufferSource();
+      noise.buffer = getDiceNoiseBuffer(ctx);
+      noise.playbackRate.setValueAtTime(0.82 + Math.random() * 0.55, when);
+const filter = ctx.createBiquadFilter();
+      filter.type = "bandpass";
+      filter.frequency.setValueAtTime(pitch, when);
+      filter.Q.setValueAtTime(8, when);
+const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.0001, when);
+      gain.gain.exponentialRampToValueAtTime(Math.max(0.0001, volume), when + 0.006);
+      gain.gain.exponentialRampToValueAtTime(0.0001, when + duration);
+const pan = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+      if (pan) {
+        pan.pan.setValueAtTime(panValue, when);
+      }
+
+      noise.connect(filter);
+      filter.connect(gain);
+      if (pan) {
+        gain.connect(pan);
+        pan.connect(ctx.destination);
+      } else {
+        gain.connect(ctx.destination);
+      }
+      noise.start(when);
+      noise.stop(when + duration + 0.01);
+    }
+function playDiceAudioElement(src, options = {}) {
+      if (typeof Audio === "undefined" || !src) {
+        return null;
+      }
+const audio = new Audio(src);
+      audio.preload = "auto";
+      audio.loop = Boolean(options.loop);
+      audio.volume = clamp(toNumber(options.volume, 0.34), 0, 1);
+      audio.playbackRate = clamp(toNumber(options.playbackRate, 1), 0.65, 1.35);
+      activeDiceAudioElements.push(audio);
+const removeAudio = () => {
+        activeDiceAudioElements = activeDiceAudioElements.filter((entry) => entry !== audio);
+      };
+      audio.addEventListener("ended", removeAudio, { once: true });
+const startAudio = () => {
+        const playPromise = audio.play();
+        if (playPromise?.catch) {
+          playPromise.catch(removeAudio);
+        }
+      };
+const delayMs = Math.max(0, toNumber(options.delayMs, 0));
+      if (delayMs > 0) {
+        const timer = window.setTimeout(startAudio, delayMs);
+        diceFlightTimers.push(timer);
+      } else {
+        startAudio();
+      }
+      return audio;
+    }
+function fadeOutDiceAudio(audio, startAfterMs, fadeMs) {
+      if (!audio) {
+        return;
+      }
+const fadeTimer = window.setTimeout(() => {
+        const initialVolume = audio.volume;
+const startedAt = performance.now();
+const interval = window.setInterval(() => {
+          const progress = clamp((performance.now() - startedAt) / Math.max(1, fadeMs), 0, 1);
+          audio.volume = initialVolume * (1 - progress);
+          if (progress >= 1) {
+            window.clearInterval(interval);
+            try {
+              audio.pause();
+              audio.currentTime = 0;
+            } catch (error) {
+              // Browser media cleanup can fail harmlessly if playback never started.
+            }
+            activeDiceAudioElements = activeDiceAudioElements.filter((entry) => entry !== audio);
+          }
+        }, 45);
+        diceFlightTimers.push(interval);
+      }, Math.max(0, startAfterMs));
+      diceFlightTimers.push(fadeTimer);
+    }
+function playDiceAssetRollSounds(diceResults = []) {
+      if (typeof Audio === "undefined" || !DICE_SOUND_ASSETS.rollBeds.length) {
+        return false;
+      }
+const diceCount = Math.max(1, diceResults.length);
+const bedSrc = DICE_SOUND_ASSETS.rollBeds[Math.floor(Math.random() * DICE_SOUND_ASSETS.rollBeds.length)];
+const rollDurationMs = clamp(1800 + Math.sqrt(diceCount) * 520, 2300, 4300);
+const bedAudio = playDiceAudioElement(bedSrc, {
+        loop: true,
+        volume: clamp(0.23 + diceCount * 0.012, 0.22, 0.43),
+        playbackRate: 0.96 + Math.random() * 0.08
+      });
+      fadeOutDiceAudio(bedAudio, rollDurationMs - 850, 850);
+const impactSources = DICE_SOUND_ASSETS.impacts.length ? DICE_SOUND_ASSETS.impacts : DICE_SOUND_ASSETS.rollBeds;
+      diceResults.slice(0, 24).forEach((entry, index) => {
+        const hits = clamp(3 + Math.floor(toNumber(entry.sides, 20) / 12), 3, 6);
+const dieOffset = index * 46 + Math.random() * 60;
+        for (let hit = 0; hit < hits; hit += 1) {
+          const src = impactSources[(index + hit) % impactSources.length];
+const delayMs = dieOffset + 140 + hit * (95 + Math.random() * 55);
+const volume = clamp((0.27 / Math.sqrt(diceCount)) * (1 - hit * 0.1) * (0.78 + Math.random() * 0.28), 0.04, 0.28);
+          playDiceAudioElement(src, {
+            delayMs,
+            volume,
+            playbackRate: 0.86 + Math.random() * 0.28
+          });
+        }
+      });
+
+      return true;
+    }
+function playDiceRollSounds(results = []) {
+      const diceResults = normalizeRollResults(results).slice(0, 24);
+      if (!diceResults.length) {
+        return;
+      }
+      if (playDiceAssetRollSounds(diceResults)) {
+        return;
+      }
+const ctx = getDiceAudioContext();
+      if (!ctx) {
+        return;
+      }
+      const now = ctx.currentTime;
+const baseVolume = Math.min(0.13, 0.38 / Math.sqrt(diceResults.length));
+      diceResults.forEach((entry, index) => {
+        const dieOffset = Math.min(0.7, index * 0.055);
+const panValue = diceResults.length === 1 ? 0 : -0.62 + (index % 7) * 0.21;
+const pitchBase = 560 + Math.min(1200, entry.sides * 18);
+        for (let hit = 0; hit < 5; hit += 1) {
+          const hitTime = now + dieOffset + hit * (0.075 + Math.random() * 0.035);
+const volume = baseVolume * (1 - hit * 0.13) * (0.75 + Math.random() * 0.35);
+const pitch = pitchBase + Math.random() * 520 - hit * 44;
+          playDiceImpact(ctx, hitTime, panValue, volume, pitch);
+        }
+      });
+    }
+const diceGeometryCache = new Map();
+function normalizePoint3D(point) {
+      const [x, y, z] = point;
+const length = Math.hypot(x, y, z) || 1;
+      return { x: x / length, y: y / length, z: z / length };
+    }
+function subtractPoint3D(a, b) {
+      return { x: a.x - b.x, y: a.y - b.y, z: a.z - b.z };
+    }
+function dotPoint3D(a, b) {
+      return a.x * b.x + a.y * b.y + a.z * b.z;
+    }
+function crossPoint3D(a, b) {
+      return {
+        x: a.y * b.z - a.z * b.y,
+        y: a.z * b.x - a.x * b.z,
+        z: a.x * b.y - a.y * b.x
+      };
+    }
+function normalizeVector3D(vector) {
+      const length = Math.hypot(vector.x, vector.y, vector.z) || 1;
+      return { x: vector.x / length, y: vector.y / length, z: vector.z / length };
+    }
+function orderFaceIndexes(indexes, vertices, normal) {
+      const center = indexes.reduce((sum, index) => ({
+        x: sum.x + vertices[index].x / indexes.length,
+        y: sum.y + vertices[index].y / indexes.length,
+        z: sum.z + vertices[index].z / indexes.length
+      }), { x: 0, y: 0, z: 0 });
+const u = normalizeVector3D(subtractPoint3D(vertices[indexes[0]], center));
+const v = normalizeVector3D(crossPoint3D(normal, u));
+      return [...indexes].sort((a, b) => {
+        const pointA = subtractPoint3D(vertices[a], center);
+const pointB = subtractPoint3D(vertices[b], center);
+const angleA = Math.atan2(dotPoint3D(pointA, v), dotPoint3D(pointA, u));
+const angleB = Math.atan2(dotPoint3D(pointB, v), dotPoint3D(pointB, u));
+        return angleA - angleB;
+      });
+    }
+function buildConvexFaces(vertices) {
+      const faces = new Map();
+const epsilon = 0.0015;
+      for (let a = 0; a < vertices.length - 2; a += 1) {
+        for (let b = a + 1; b < vertices.length - 1; b += 1) {
+          for (let c = b + 1; c < vertices.length; c += 1) {
+            const normal = getFaceNormal([vertices[a], vertices[b], vertices[c]]);
+            if (!Number.isFinite(normal.x) || !Number.isFinite(normal.y) || !Number.isFinite(normal.z) || Math.hypot(normal.x, normal.y, normal.z) < 0.5) {
+              continue;
+            }
+let positive = 0;
+let negative = 0;
+            vertices.forEach((point, index) => {
+              if (index === a || index === b || index === c) {
+                return;
+              }
+const distance = dotPoint3D(normal, subtractPoint3D(point, vertices[a]));
+              if (distance > epsilon) {
+                positive += 1;
+              } else if (distance < -epsilon) {
+                negative += 1;
+              }
+            });
+            if (positive && negative) {
+              continue;
+            }
+const coplanar = vertices
+              .map((point, index) => ({ index, distance: Math.abs(dotPoint3D(normal, subtractPoint3D(point, vertices[a]))) }))
+              .filter((entry) => entry.distance <= epsilon)
+              .map((entry) => entry.index);
+            if (coplanar.length < 3) {
+              continue;
+            }
+const key = [...coplanar].sort((left, right) => left - right).join("-");
+            if (!faces.has(key)) {
+              faces.set(key, orderFaceIndexes(coplanar, vertices, positive ? normalizeVector3D({ x: -normal.x, y: -normal.y, z: -normal.z }) : normal));
+            }
+          }
+        }
+      }
+      return [...faces.values()];
+    }
+function getDiceFaceLabels(sides, faceCount = sides) {
+      const safeSides = Math.max(1, toNumber(sides, 20));
+const count = Math.max(1, toNumber(faceCount, safeSides));
+      if (safeSides === 100) {
+        return Array.from({ length: count }, (_, index) => index === 0 ? "00" : String((index * 10) % 100).padStart(2, "0"));
+      }
+      return Array.from({ length: count }, (_, index) => String((index % safeSides) + 1));
+    }
+function formatDieFaceValue(sides, value) {
+      const safeSides = Math.max(1, toNumber(sides, 20));
+const safeValue = Math.max(1, toNumber(value, 1));
+      if (safeSides === 100) {
+        return String(safeValue).padStart(safeValue < 100 ? 2 : 3, "0");
+      }
+      return String(safeValue);
+    }
+function getFrontFaceIndexForRotation(geometry, rotation) {
+      const rotated = geometry.vertices.map((vertex) => rotatePoint3D(vertex, rotation));
+let bestIndex = 0;
+let bestDepth = -Infinity;
+      geometry.faces.forEach((face, index) => {
+        const centerZ = face.reduce((sum, vertexIndex) => sum + rotated[vertexIndex].z / face.length, 0);
+        if (centerZ > bestDepth) {
+          bestDepth = centerZ;
+          bestIndex = index;
+        }
+      });
+      return bestIndex;
+    }
+function buildFixedDieFaceLabels(geometry, resultValue, frontFaceIndex) {
+      const labels = [...geometry.labels];
+const resultLabel = formatDieFaceValue(geometry.sides, resultValue);
+const existingIndex = labels.findIndex((label) => label === resultLabel);
+      if (existingIndex >= 0 && existingIndex !== frontFaceIndex) {
+        labels[existingIndex] = labels[frontFaceIndex] || labels[existingIndex];
+      }
+      labels[frontFaceIndex] = resultLabel;
+      return labels;
+    }
+function getPercentileDieVertices() {
+      const radius = 1;
+const upperZ = 0.34;
+const lowerZ = -0.34;
+const top = [{ x: 0, y: 0, z: 1.22 }];
+const upper = Array.from({ length: 5 }, (_, index) => {
+        const angle = -Math.PI / 2 + index * (Math.PI * 2 / 5);
+        return { x: Math.cos(angle) * radius, y: Math.sin(angle) * radius, z: upperZ };
+      });
+const lower = Array.from({ length: 5 }, (_, index) => {
+        const angle = -Math.PI / 2 + Math.PI / 5 + index * (Math.PI * 2 / 5);
+        return { x: Math.cos(angle) * radius, y: Math.sin(angle) * radius, z: lowerZ };
+      });
+      return [...top, ...upper, ...lower, { x: 0, y: 0, z: -1.22 }];
+    }
+function getPercentileDieFaces() {
+      const topIndex = 0;
+const bottomIndex = 11;
+const upperStart = 1;
+const lowerStart = 6;
+const faces = [];
+      for (let index = 0; index < 5; index += 1) {
+        const upper = upperStart + index;
+const upperNext = upperStart + ((index + 1) % 5);
+const lower = lowerStart + index;
+const lowerNext = lowerStart + ((index + 1) % 5);
+        faces.push([topIndex, upper, lower, upperNext]);
+        faces.push([bottomIndex, lowerNext, lower, upperNext]);
+      }
+      return faces;
+    }
+function getDiceGeometry(sides) {
+      const safeSides = Math.max(1, toNumber(sides, 20));
+      if (diceGeometryCache.has(safeSides)) {
+        return diceGeometryCache.get(safeSides);
+      }
+const phi = (1 + Math.sqrt(5)) / 2;
+const inversePhi = 1 / phi;
+let vertices = [];
+let faces = [];
+      if (safeSides === 4) {
+        vertices = [
+          [1, 1, 1], [-1, -1, 1], [-1, 1, -1], [1, -1, -1]
+        ].map(normalizePoint3D);
+        faces = buildConvexFaces(vertices);
+      } else if (safeSides === 6) {
+        vertices = [-1, 1].flatMap((x) => [-1, 1].flatMap((y) => [-1, 1].map((z) => normalizePoint3D([x, y, z]))));
+        faces = buildConvexFaces(vertices);
+      } else if (safeSides === 8) {
+        vertices = [
+          [1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]
+        ].map(normalizePoint3D);
+        faces = buildConvexFaces(vertices);
+      } else if (safeSides === 10 || safeSides === 100) {
+        vertices = getPercentileDieVertices();
+        faces = getPercentileDieFaces();
+      } else if (safeSides === 12) {
+        vertices = [
+          [-1, -1, -1], [-1, -1, 1], [-1, 1, -1], [-1, 1, 1],
+          [1, -1, -1], [1, -1, 1], [1, 1, -1], [1, 1, 1],
+          [0, -inversePhi, -phi], [0, -inversePhi, phi], [0, inversePhi, -phi], [0, inversePhi, phi],
+          [-inversePhi, -phi, 0], [-inversePhi, phi, 0], [inversePhi, -phi, 0], [inversePhi, phi, 0],
+          [-phi, 0, -inversePhi], [phi, 0, -inversePhi], [-phi, 0, inversePhi], [phi, 0, inversePhi]
+        ].map(normalizePoint3D);
+        faces = buildConvexFaces(vertices);
+      } else {
+        vertices = [
+          [-1, phi, 0], [1, phi, 0], [-1, -phi, 0], [1, -phi, 0],
+          [0, -1, phi], [0, 1, phi], [0, -1, -phi], [0, 1, -phi],
+          [phi, 0, -1], [phi, 0, 1], [-phi, 0, -1], [-phi, 0, 1]
+        ].map(normalizePoint3D);
+        faces = [
+          [0, 11, 5], [0, 5, 1], [0, 1, 7], [0, 7, 10], [0, 10, 11],
+          [1, 5, 9], [5, 11, 4], [11, 10, 2], [10, 7, 6], [7, 1, 8],
+          [3, 9, 4], [3, 4, 2], [3, 2, 6], [3, 6, 8], [3, 8, 9],
+          [4, 9, 5], [2, 4, 11], [6, 2, 10], [8, 6, 7], [9, 8, 1]
+        ];
+      }
+const geometry = {
+        sides: safeSides,
+        vertices,
+        faces,
+        labels: getDiceFaceLabels(safeSides, faces.length)
+      };
+      diceGeometryCache.set(safeSides, geometry);
+      return geometry;
+    }
+function get3DDiceTheme() {
+      const set = getActiveDiceSet();
+      if (set.id === "asari") {
+        return {
+          faces: ["#f7f3ec", "#164a9b", "#2432a3", "#5c46b6"],
+          edge: "#f2ca62",
+          number: "#8f1725",
+          gem: "#54d4ff",
+          shadow: "rgba(33, 213, 255, 0.2)"
+        };
+      }
+      if (set.id === "new-angelsword") {
+        return {
+          faces: ["#fff8ea", "#174f9e", "#d8efff", "#255dba"],
+          edge: "#f2ca62",
+          number: "#9b6a24",
+          gem: "#258dd6",
+          shadow: "rgba(113, 209, 255, 0.18)"
+        };
+      }
+      return {
+        faces: ["#fff8ea", "#941b2b", "#1b32a3", "#653381"],
+        edge: "#f4c96b",
+        number: "#8f1725",
+        gem: "#d44bd1",
+        shadow: "rgba(212, 75, 209, 0.16)"
+      };
+    }
+function rotatePoint3D(point, rotation) {
+      let { x, y, z } = point;
+const cx = Math.cos(rotation.x);
+const sx = Math.sin(rotation.x);
+const cy = Math.cos(rotation.y);
+const sy = Math.sin(rotation.y);
+const cz = Math.cos(rotation.z);
+const sz = Math.sin(rotation.z);
+let y1 = y * cx - z * sx;
+let z1 = y * sx + z * cx;
+      y = y1;
+      z = z1;
+let x1 = x * cy + z * sy;
+      z1 = -x * sy + z * cy;
+      x = x1;
+      z = z1;
+
+      x1 = x * cz - y * sz;
+      y1 = x * sz + y * cz;
+      return { x: x1, y: y1, z };
+    }
+function getFaceNormal(points) {
+      const [a, b, c] = points;
+const ux = b.x - a.x;
+const uy = b.y - a.y;
+const uz = b.z - a.z;
+const vx = c.x - a.x;
+const vy = c.y - a.y;
+const vz = c.z - a.z;
+const nx = uy * vz - uz * vy;
+const ny = uz * vx - ux * vz;
+const nz = ux * vy - uy * vx;
+const length = Math.hypot(nx, ny, nz) || 1;
+      return { x: nx / length, y: ny / length, z: nz / length };
+    }
+function projectPoint3D(point, centerX, centerY, size) {
+      const depth = point.z + 3.15;
+const scale = size / Math.max(0.8, depth);
+      return {
+        x: centerX + point.x * scale,
+        y: centerY + point.y * scale,
+        z: point.z
+      };
+    }
+function drawDieOnCanvas(ctx, die, timestamp) {
+      const geometry = getDiceGeometry(die.sides);
+const theme = get3DDiceTheme();
+const localTime = Math.max(0, timestamp - die.startedAt);
+const travelProgress = clamp(localTime / die.travelMs, 0, 1);
+const eased = 1 - Math.pow(1 - travelProgress, 3);
+const fadeProgress = clamp((localTime - die.travelMs - 3000) / 3000, 0, 1);
+const opacity = Math.max(0, 1 - fadeProgress);
+const bounce = Math.abs(Math.sin(travelProgress * Math.PI * 4.2)) * (1 - travelProgress) * die.bounce;
+const x = die.startX + (die.endX - die.startX) * eased;
+const y = die.startY + (die.endY - die.startY) * eased - bounce;
+const size = die.size * (0.88 + Math.sin(Math.min(1, travelProgress) * Math.PI) * 0.16);
+const tumble = Math.pow(1 - travelProgress, 1.42);
+const rotation = {
+        x: die.finalRotation.x + die.spinRotation.x * tumble + Math.sin(localTime * 0.014 + die.spinPhase) * tumble * 0.6,
+        y: die.finalRotation.y + die.spinRotation.y * tumble + Math.cos(localTime * 0.016 + die.spinPhase) * tumble * 0.6,
+        z: die.finalRotation.z + die.spinRotation.z * tumble
+      };
+const rotated = geometry.vertices.map((vertex) => rotatePoint3D(vertex, rotation));
+const projected = rotated.map((point) => projectPoint3D(point, x, y, size));
+const faceData = geometry.faces.map((face, index) => {
+        const rotatedPoints = face.map((vertexIndex) => rotated[vertexIndex]);
+const projectedPoints = face.map((vertexIndex) => projected[vertexIndex]);
+const normal = getFaceNormal(rotatedPoints);
+const center = projectedPoints.reduce((sum, point) => ({
+          x: sum.x + point.x / face.length,
+          y: sum.y + point.y / face.length,
+          z: sum.z + point.z / face.length
+        }), { x: 0, y: 0, z: 0 });
+        return { face, index, projectedPoints, normal, center, depth: center.z };
+      }).sort((a, b) => a.depth - b.depth);
+      if (!faceData.length) {
+        return;
+      }
+const frontFace = faceData.reduce((best, face) => face.center.z > best.center.z ? face : best, faceData[0]);
+      ctx.save();
+      ctx.globalAlpha = opacity;
+      ctx.shadowColor = theme.shadow;
+      ctx.shadowBlur = 20;
+
+      faceData.forEach((face) => {
+        const shade = clamp(0.5 + face.center.z * 0.2 + Math.abs(face.normal.z) * 0.22 - face.normal.y * 0.08, 0.18, 1);
+const baseColor = theme.faces[face.index % theme.faces.length];
+        ctx.beginPath();
+        face.projectedPoints.forEach((point, pointIndex) => {
+          if (pointIndex === 0) {
+            ctx.moveTo(point.x, point.y);
+          } else {
+            ctx.lineTo(point.x, point.y);
+          }
+        });
+        ctx.closePath();
+        ctx.fillStyle = shadeColor(baseColor, shade);
+        ctx.fill();
+        ctx.lineWidth = Math.max(1.5, size * 0.018);
+        ctx.strokeStyle = theme.edge;
+        ctx.stroke();
+const isFrontFace = face.index === frontFace.index;
+const label = die.faceLabels?.[face.index] || geometry.labels[face.index % geometry.labels.length] || "";
+        if (face.center.z > -0.16 || isFrontFace) {
+          ctx.save();
+          ctx.translate(face.center.x, face.center.y);
+const edgeStart = face.projectedPoints[0];
+const edgeEnd = face.projectedPoints[1] || edgeStart;
+          ctx.rotate(Math.atan2(edgeEnd.y - edgeStart.y, edgeEnd.x - edgeStart.x));
+          ctx.font = `900 ${Math.max(14, size * (label.length > 2 ? 0.15 : 0.21))}px Georgia, serif`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.lineWidth = 3;
+          ctx.strokeStyle = "rgba(255, 248, 230, 0.76)";
+          ctx.fillStyle = theme.number;
+          ctx.strokeText(label, 0, 1);
+          ctx.fillText(label, 0, 0);
+          ctx.restore();
+        }
+      });
+
+      ctx.save();
+      ctx.globalAlpha = opacity * 0.34;
+      ctx.fillStyle = "rgba(0, 0, 0, 0.38)";
+      ctx.beginPath();
+      ctx.ellipse(x + size * 0.08, die.endY + size * 0.7, size * 0.72, size * 0.16, -0.1, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      ctx.restore();
+    }
+function shadeColor(hexColor, intensity) {
+      const hex = hexColor.replace("#", "");
+const value = Number.parseInt(hex.length === 3 ? hex.split("").map((char) => char + char).join("") : hex, 16);
+const r = (value >> 16) & 255;
+const g = (value >> 8) & 255;
+const b = value & 255;
+const mix = (channel) => clamp(Math.round(channel * intensity + 255 * Math.max(0, intensity - 0.82) * 0.24), 0, 255);
+      return `rgb(${mix(r)}, ${mix(g)}, ${mix(b)})`;
+    }
+function animate3DDice(layer, diceResults, width, height) {
+      if (!diceResults.length) {
+        return 0;
+      }
+      const canvas = document.createElement("canvas");
+      canvas.className = "dice-3d-canvas";
+      canvas.setAttribute("aria-hidden", "true");
+      layer.appendChild(canvas);
+const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        canvas.remove();
+        return 0;
+      }
+const dpr = Math.min(2, window.devicePixelRatio || 1);
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx.scale(dpr, dpr);
+const now = performance.now();
+const columns = width < 760 ? 3 : diceResults.length > 16 ? 6 : 4;
+const densityScale = diceResults.length > 16 ? 0.74 : diceResults.length > 10 ? 0.86 : 1;
+const dice = diceResults.map((entry, index) => {
+        const row = Math.floor(index / columns);
+const lane = index % columns;
+const size = clamp(Math.min(width, height) * 0.13 * densityScale, 86, 152);
+const geometry = getDiceGeometry(entry.sides);
+const finalRotation = {
+          x: 0.72 + (entry.value % 5) * 0.1,
+          y: -0.45 + (entry.value % 7) * 0.08,
+          z: 0.18 + (entry.value % 3) * 0.1
+        };
+const finalFrontFace = getFrontFaceIndexForRotation(geometry, finalRotation);
+        return {
+          sides: entry.sides,
+          value: entry.value,
+          startedAt: now + index * 115,
+          travelMs: 2250 + index * 60,
+          startX: -size * 1.2,
+          startY: height * (0.74 + row * 0.05),
+          endX: Math.min(width - size, width * 0.3 + lane * size * 1.08),
+          endY: Math.min(height - size * 1.2, height * (0.42 + row * 0.15)),
+          size,
+          bounce: size * (1.25 + Math.random() * 0.55),
+          spinPhase: Math.random() * Math.PI * 2,
+          spinRotation: {
+            x: Math.PI * (5.5 + Math.random() * 2 + index * 0.08),
+            y: Math.PI * (7 + Math.random() * 2 + index * 0.06),
+            z: Math.PI * (4.5 + Math.random() * 2 + index * 0.05)
+          },
+          finalRotation,
+          faceLabels: buildFixedDieFaceLabels(geometry, entry.value, finalFrontFace)
+        };
+      });
+const endAt = Math.max(...dice.map((die) => (die.startedAt - now) + die.travelMs + 6200), 0);
+const drawFrame = (timestamp) => {
+        ctx.clearRect(0, 0, width, height);
+        dice.forEach((die) => {
+          if (timestamp >= die.startedAt) {
+            drawDieOnCanvas(ctx, die, timestamp);
+          }
+        });
+        if (timestamp - now < endAt) {
+          diceAnimationFrame = window.requestAnimationFrame(drawFrame);
+        } else {
+          diceAnimationFrame = 0;
+          canvas.remove();
+        }
+      };
+      diceAnimationFrame = window.requestAnimationFrame(drawFrame);
+      return endAt;
+    }
+function getSettledTopReadDisplay(settledResults = []) {
+      if (!Array.isArray(settledResults) || !settledResults.length) {
+        return "";
+      }
+      return settledResults
+        .map((entry) => {
+          const value = entry.readMode === "vertex" ? (entry.topVertex || entry.topFace) : entry.topFace;
+          if (entry.die === "d00") {
+            return value === "00" ? "00" : String(value || "0").padStart(2, "0");
+          }
+          return String(value || "");
+        })
+        .filter(Boolean)
+        .join(" + ");
+    }
+function animateRollDice(results = [], options = {}) {
+      const layer = document.getElementById("dice-flight-layer");
+const diceResults = normalizeRollResults(results).slice(0, 24);
+      if (!layer || !diceResults.length) {
+        return;
+      }
+
+      clearDiceFlightLayer();
+const width = Math.max(360, window.innerWidth || document.documentElement.clientWidth || 1200);
+const height = Math.max(420, window.innerHeight || document.documentElement.clientHeight || 800);
+let accurateRollDuration = 0;
+      if (ENABLE_ACCURATE_DICE_ROLLS) {
+        try {
+          accurateRollDuration = window.LyrianAccurateDiceRoller?.rollDice?.({
+            layer,
+            results: diceResults,
+            setId: state.play?.diceTray?.selectedSetId || DEFAULT_DICE_SET_ID,
+            width,
+            height,
+            capturePreviews: true,
+            previewSize: 184,
+            onSettle: (settledResults = []) => {
+              const mismatch = settledResults.find((entry) => !entry.matched);
+              if (mismatch) {
+                console.warn("Accurate dice reported a top-face mismatch.", settledResults);
+              }
+              if (typeof options.onSettle === "function") {
+                options.onSettle(settledResults);
+              }
+            }
+          }) || 0;
+        } catch (error) {
+          console.warn("Lyrian accurate 3D dice roll failed; falling back to simple dice.", error);
+          accurateRollDuration = 0;
+        }
+      }
+      if (accurateRollDuration) {
+        setStatus("Accurate 3D dice roll started.");
+        diceFlightTimers.push(window.setTimeout(() => {
+          clearDiceFlightLayer();
+        }, Math.max(7200, accurateRollDuration + 300)));
+        return;
+      }
+let threeRollStarted = false;
+      if (ENABLE_WEBGL_DICE_ROLLS) {
+        try {
+          threeRollStarted = Boolean(window.LyrianThreeDiceRoller?.rollDice?.({
+            layer,
+            results: diceResults,
+            setId: state.play?.diceTray?.selectedSetId || DEFAULT_DICE_SET_ID,
+            width,
+            height
+          }));
+        } catch (error) {
+          console.warn("Lyrian 3D dice roll failed; falling back to canvas dice.", error);
+          threeRollStarted = false;
+        }
+      }
+      if (threeRollStarted) {
+        setStatus("3D dice roll started.");
+        diceFlightTimers.push(window.setTimeout(() => {
+          clearDiceFlightLayer();
+        }, 10600));
+        return;
+      }
+      if (ENABLE_WEBGL_DICE_ROLLS) {
+        const diceStatus = window.LyrianThreeDiceRoller?.getStatus?.();
+        setStatus(`Using fallback dice roller${diceStatus?.lastRollStatus ? ` (${diceStatus.lastRollStatus}).` : "."}`);
+      }
+      const activeSet = getActiveDiceSet();
+const imageAnimationDuration = activeSet.id === "new-angelsword" ? 0 : window.LyrianImageDiceRoller?.rollDice?.({
+        layer,
+        results: diceResults,
+        setId: activeSet.id,
+        width,
+        height
+      });
+const animationDuration = imageAnimationDuration || animate3DDice(layer, diceResults, width, height);
+const cleanupDelay = Math.max(7100, animationDuration || 0);
+
+      diceFlightTimers.push(window.setTimeout(() => {
+        clearDiceFlightLayer();
+      }, cleanupDelay));
+    }
+function showRollOverlay({ label, dieType, rollText, breakdown, totalText, diceResults = [] }) {
+      const overlay = document.getElementById("roll-overlay");
+const die = document.getElementById("roll-die");
+const previewNode = document.getElementById("roll-die-preview");
+const previewGridNode = document.getElementById("roll-dice-preview-grid");
+const labelNode = document.getElementById("roll-overlay-label");
+const typeNode = document.getElementById("roll-overlay-die-type");
+const faceNode = document.getElementById("roll-overlay-face");
+const breakdownNode = document.getElementById("roll-overlay-breakdown");
+const totalNode = document.getElementById("roll-overlay-total");
+
+      if (!overlay || !die || !previewNode || !previewGridNode || !labelNode || !typeNode || !faceNode || !breakdownNode || !totalNode) {
+        return;
+      }
+
+      clearInterval(rollOverlayTimer);
+      clearTimeout(rollOverlayHideTimer);
+const previewRefreshToken = rollPreviewRefreshToken + 1;
+      rollPreviewRefreshToken = previewRefreshToken;
+
+      labelNode.textContent = label;
+      typeNode.textContent = dieType;
+      breakdownNode.textContent = breakdown;
+      totalNode.textContent = totalText;
+      overlay.classList.remove("is-hidden");
+      die.classList.remove("has-preview", "has-multiple-previews", "has-many-previews");
+      previewNode.classList.add("is-hidden");
+      previewNode.removeAttribute("src");
+      previewGridNode.classList.add("is-hidden");
+      previewGridNode.innerHTML = "";
+      previewGridNode.removeAttribute("style");
+      die.style.removeProperty("--roll-preview-min-height");
+const inferredDiceResults = normalizeRollResults(diceResults).length ? diceResults : inferRollResultsFromOverlay(dieType, rollText);
+const visualDiceResults = expandPercentileRollResults(inferredDiceResults);
+const primaryDie = normalizeRollResults(visualDiceResults)[0];
+      preloadDiceSetFaceArt();
+const hasPreviewGrid = renderRollPreviewGrid(previewGridNode, visualDiceResults);
+      [160, 420, 850].forEach((delay) => {
+        window.setTimeout(() => {
+          if (previewRefreshToken !== rollPreviewRefreshToken || overlay.classList.contains("is-hidden")) {
+            return;
+          }
+          renderRollPreviewGrid(previewGridNode, visualDiceResults);
+        }, delay);
+      });
+      if (hasPreviewGrid) {
+        die.classList.add("has-preview");
+        die.classList.toggle("has-multiple-previews", visualDiceResults.length > 1);
+        die.classList.toggle("has-many-previews", visualDiceResults.length > 4);
+        die.classList.remove("has-texture");
+        die.style.backgroundImage = "";
+      } else if (primaryDie) {
+        die.classList.add("has-texture");
+        die.style.backgroundImage = `url("${getDiceTextureUrl(primaryDie.sides)}")`;
+      } else {
+        die.classList.remove("has-texture");
+        die.style.backgroundImage = "";
+      }
+      animateRollDice(visualDiceResults, {
+        onSettle: (settledResults = []) => {
+          const previewResults = settledResults.filter((entry) => entry.previewDataUrl);
+          if (previewResults.length) {
+            previewNode.classList.add("is-hidden");
+            previewNode.removeAttribute("src");
+            renderRollPreviewGrid(previewGridNode, previewResults, { imageSize: 184 });
+            die.classList.remove("has-texture");
+            die.classList.add("has-preview");
+            die.classList.toggle("has-multiple-previews", previewResults.length > 1);
+            die.classList.toggle("has-many-previews", previewResults.length > 4);
+            die.style.backgroundImage = "";
+          }
+const settledDisplay = getSettledTopReadDisplay(settledResults);
+          if (settledDisplay && !previewResults.length) {
+            faceNode.textContent = settledDisplay;
+          }
+        }
+      });
+      playDiceRollSounds(visualDiceResults);
+
+      die.classList.remove("is-rolling");
+      void die.offsetWidth;
+      die.classList.add("is-rolling");
+let frame = 0;
+      rollOverlayTimer = window.setInterval(() => {
+        frame += 1;
+        faceNode.textContent = rollText;
+
+        if (frame >= 10) {
+          clearInterval(rollOverlayTimer);
+          faceNode.textContent = rollText;
+        }
+      }, 70);
+
+      rollOverlayHideTimer = window.setTimeout(() => {
+        overlay.classList.add("is-hidden");
+      }, 10000);
+    }
+export function getDiceTrayState() {
+      state.play = mergePlayState(state.play);
+      state.play.diceTray.selectedSetId = getDiceSet(state.play.diceTray.selectedSetId).id;
+const counts = {};
+      DICE_TRAY_TYPES.forEach((entry) => {
+        counts[entry.sides] = Math.max(0, toNumber(state.play.diceTray.counts?.[entry.sides], 0));
+      });
+      state.play.diceTray.counts = counts;
+      return state.play.diceTray;
+    }
+export function getDiceTrayTotalCount(diceTray = getDiceTrayState()) {
+      return Object.values(diceTray.counts || {}).reduce((sum, value) => sum + toNumber(value, 0), 0);
+    }
+export function renderDiceSetPicker(activeSet) {
+      return `
+        <div class="dice-set-picker">
+          ${DICE_SETS.filter((set) => set.showInPicker !== false).map((set) => {
+            const isAvailable = isDiceSetAvailable(set);
+const isDownloadable = !isAvailable && Boolean(set.downloadUrl);
+const isActive = isAvailable && set.id === activeSet.id;
+const statusMarkup = isActive
+              ? `<span class="dice-set-active-mark">Active</span>`
+              : isAvailable
+                ? ""
+                : isDownloadable
+                  ? `<span class="dice-set-download-mark" style="color: #ffd700; border: 1px solid #ffd700; border-radius: 4px; padding: 2px 6px; font-size: 10px; cursor: pointer;">Download</span>`
+                  : `<span class="dice-set-coming-soon">${escapeHtml(set.availabilityLabel || "Coming soon")}</span>`;
+            return `
+            <button class="dice-set-card${isActive ? " is-active" : ""}${isAvailable ? "" : isDownloadable ? " is-downloadable" : " is-coming-soon"}" type="button"${isAvailable ? ` data-dice-set="${escapeHtml(set.id)}"` : isDownloadable ? ` data-dice-download="${escapeHtml(set.id)}"` : " disabled aria-disabled=\"true\""}>
+              <img src="${escapeHtml(getDiceSetPreviewUrl(set.id))}" alt="" onerror="${getDiceImageFallbackHandler()}">
+              <span>
+                <strong>${escapeHtml(set.name)}</strong>
+                <span>${escapeHtml(set.description)}</span>
+              </span>
+              ${statusMarkup}
+            </button>
+          `;
+          }).join("")}
+          <div class="dice-set-picker-actions">
+            <button class="dice-update-button" type="button" data-dice-check-updates${dicePackRuntime.isChecking ? " disabled" : ""}>
+              ${dicePackRuntime.isChecking ? "Checking Dice..." : "Check Dice Updates"}
+            </button>
+          </div>
+        </div>
+      `;
+    }
+export function getDiceIconSvg() {
+      return `
+        <span class="dice-fab-mark" aria-hidden="true">
+          <span class="dice-fab-die">
+            <img class="dice-fab-symbol" src="assets/lyrian-symbol.png" alt="">
+            <svg class="dice-fab-lines" viewBox="0 0 64 64" focusable="false">
+              <polygon points="32 4 56 18 56 46 32 60 8 46 8 18" fill="none" stroke="currentColor" stroke-width="4" />
+              <path d="M32 4v56M8 18l48 28M56 18L8 46M32 4l24 42M32 4L8 46" fill="none" stroke="currentColor" stroke-width="2.4" opacity="0.72" />
+            </svg>
+          </span>
+        </span>
+      `;
+    }
+function setDiceTrayOpen(isOpen) {
+      state.play = mergePlayState(state.play);
+      state.play.diceTray.isOpen = Boolean(isOpen);
+      renderDiceTray();
+      persistWorkingState();
+    }
+function toggleDiceSetPicker() {
+      state.play = mergePlayState(state.play);
+      state.play.diceTray.showSetPicker = !state.play.diceTray.showSetPicker;
+      renderDiceTray();
+      persistWorkingState();
+    }
+
+        // Load persisted downloaded dice sets on initialization
+    try {
+      const downloaded = JSON.parse(localStorage.getItem("lyrian-downloaded-dice") || "[]");
+      downloaded.forEach((id) => {
+        const set = DICE_SETS.find((s) => s.id === id);
+        if (set) {
+          set.available = true;
+          set.availabilityLabel = "";
+        }
+      });
+    } catch (e) {
+      console.warn("Could not load downloaded dice sets from localStorage:", e);
+    }
+async function downloadDiceSet(setId) {
+      const set = getDiceSetDefinition(setId);
+      if (!set || !set.downloadUrl) {
+        setStatus("This dice set cannot be downloaded.");
+        return;
+      }
+
+      setStatus(`Downloading ${set.name} face textures...`);
+      setVersionProgress(20, `Downloading ${set.name}`);
+
+      try {
+        await loadScriptAsset(set.downloadUrl);
+        set.available = true;
+        set.availabilityLabel = "";
+
+        // Persist in localStorage
+        const downloaded = JSON.parse(localStorage.getItem("lyrian-downloaded-dice") || "[]");
+        if (!downloaded.includes(set.id)) {
+          downloaded.push(set.id);
+          localStorage.setItem("lyrian-downloaded-dice", JSON.stringify(downloaded));
+        }
+
+        setVersionProgress(100, `${set.name} installed`);
+        setStatus(`${set.name} downloaded and ready for use!`);
+        setTimeout(hideVersionProgress, 500);
+        preloadDiceSetFaceArt(set.id);
+        renderDiceTray();
+      } catch (error) {
+        hideVersionProgress();
+        setStatus(`Failed to download ${set.name} textures: ${error.message}`);
+      }
+    }
+function selectDiceSet(setId) {
+      const requestedSet = getDiceSetDefinition(setId);
+      if (!isDiceSetAvailable(requestedSet)) {
+        setStatus(`${requestedSet?.name || "That dice set"} is coming soon.`);
+        renderDiceTray();
+        return;
+      }
+const set = requestedSet;
+      state.play = mergePlayState(state.play);
+      state.play.diceTray.selectedSetId = set.id;
+      state.play.diceTray.showSetPicker = false;
+      preloadDiceSetFaceArt(set.id);
+      renderDiceTray();
+      persistWorkingState();
+      setStatus(`Dice set changed to ${set.name}.`);
+    }
+function addDiceTrayDie(sides) {
+      state.play = mergePlayState(state.play);
+      if (getDiceTrayTotalCount(state.play.diceTray) >= MAX_DICE_TRAY_DICE) {
+        setStatus(`The dice tray can roll up to ${MAX_DICE_TRAY_DICE} dice at once.`);
+        return;
+      }
+const key = String(Math.max(1, toNumber(sides, 20)));
+const nextValue = Math.min(99, Math.max(0, toNumber(state.play.diceTray.counts?.[key], 0)) + 1);
+      state.play.diceTray.counts = {
+        ...(state.play.diceTray.counts || {}),
+        [key]: nextValue
+      };
+      renderDiceTray();
+      persistWorkingState();
+    }
+function resetDiceTrayDice() {
+      state.play = mergePlayState(state.play);
+      state.play.diceTray.counts = {};
+      renderDiceTray();
+      persistWorkingState();
+      setStatus("Reset the dice tray.");
+    }
+function rollDiceTraySelection() {
+      const diceTray = getDiceTrayState();
+const rolls = DICE_TRAY_TYPES.flatMap((entry) =>
+        Array.from({ length: Math.max(0, toNumber(diceTray.counts[entry.sides], 0)) }, () => ({
+          sides: entry.sides,
+          label: entry.label,
+          value: rollDie(entry.sides)
+        }))
+      );
+      if (!rolls.length) {
+        setStatus("Choose at least one die before rolling.");
+        return;
+      }
+      const total = rolls.reduce((sum, entry) => sum + entry.value, 0);
+const formula = DICE_TRAY_TYPES
+        .map((entry) => {
+          const count = toNumber(diceTray.counts[entry.sides], 0);
+          return count ? `${count}${entry.label}` : "";
+        })
+        .filter(Boolean)
+        .join(" + ");
+const breakdown = DICE_TRAY_TYPES
+        .map((entry) => {
+          const values = rolls.filter((roll) => roll.sides === entry.sides).map((roll) => roll.value);
+          return values.length ? `${entry.label}: ${values.join(" + ")}` : "";
+        })
+        .filter(Boolean)
+        .join(" | ");
+
+      appendPlayLog("Dice Tray Roll", [
+        `Dice: ${formula}`,
+        breakdown,
+        `Total: ${total}`
+      ]);
+      showRollOverlay({
+        label: "Dice Tray Roll",
+        dieType: formula,
+        rollText: rolls.map((entry) => entry.value).join(" + "),
+        breakdown,
+        totalText: `Total ${total}`,
+        diceResults: rolls
+      });
+      setStatus(`Rolled dice tray total: ${total}.`);
+    }
+function getPlayActionForRollType(type) {
+      return PLAY_BASIC_ACTIONS.find((action) => action.rollType === type) || null;
+    }
+function getPlayActionFromButton(button, rollAttribute = "playRoll") {
+      if (!button) {
+        return null;
+      }
+      const rollType = button.dataset[rollAttribute] || "";
+      return getPlayActionCards().find((entry) =>
+        entry.rollType === rollType
+        && cleanText(entry.weaponUid) === cleanText(button.dataset.playWeaponUid)
+        && cleanText(entry.attackKind || entry.rollType) === cleanText(button.dataset.playAttackKind || entry.rollType)
+      ) || null;
+    }
+function parseDamageRollFormula(value) {
+      const text = cleanText(value);
+const match = text.match(/(\d+)\s*d\s*(\d+)(?:\s*([+-])\s*(\d+))?/i);
+      if (!match) {
+        return null;
+      }
+const modifier = match[3] ? Number(`${match[3]}${match[4]}`) : 0;
+      return {
+        diceCount: Math.max(1, Number(match[1])),
+        diceSides: Math.max(1, Number(match[2])),
+        modifier
+      };
+    }
+function getDamageRollParts(damage) {
+      if (!damage) {
+        return null;
+      }
+const parsed = Number.isFinite(damage.diceCount) && Number.isFinite(damage.diceSides)
+        ? {
+            diceCount: Math.max(1, Number(damage.diceCount)),
+            diceSides: Math.max(1, Number(damage.diceSides)),
+            modifier: Number(damage.modifier) || 0
+          }
+        : parseDamageRollFormula(damage.rollFormula || damage.value);
+
+      if (!parsed) {
+        return null;
+      }
+const rolls = rollDice(parsed.diceCount, parsed.diceSides);
+const rollTotal = rolls.reduce((sum, value) => sum + value, 0);
+const total = rollTotal + parsed.modifier;
+const formula = damage.rollFormula || `${parsed.diceCount}d${parsed.diceSides}${parsed.modifier ? ` ${parsed.modifier > 0 ? "+" : "-"} ${Math.abs(parsed.modifier)}` : ""}`;
+      return {
+        ...parsed,
+        formula,
+        rolls,
+        rollTotal,
+        total
+      };
+    }
+function rollPlayDamage(action, options = {}) {
+      if (!action?.damage) {
+        const message = "This action does not have a tracked damage roll yet.";
+        setStatus(message);
+        showPlayFeedback(options.feedbackId || "", message);
+        return;
+      }
+const parts = getDamageRollParts(action.damage);
+      if (!parts) {
+        const message = `Could not parse damage formula: ${action.damage.value || "unknown"}.`;
+        setStatus(message);
+        showPlayFeedback(options.feedbackId || "", message);
+        return;
+      }
+
+      clearPlayFeedback(options.feedbackId || "");
+const modifierText = parts.modifier ? ` | Modifier: ${formatModifier(parts.modifier)}` : "";
+const breakdown = `${parts.diceCount}d${parts.diceSides}: ${parts.rolls.join(" + ")}${modifierText}`;
+const damageType = cleanText(action.damage.detail || "");
+
+      appendPlayLog(`${action.label} Damage`, [
+        action.weaponName ? `Weapon: ${action.weaponName}` : "",
+        `Formula: ${parts.formula}`,
+        damageType,
+        breakdown,
+        `Damage Total: ${parts.total}`
+      ].filter(Boolean));
+
+      showRollOverlay({
+        label: `${action.label} Damage`,
+        dieType: parts.formula,
+        rollText: `${parts.rolls.join(" + ")}${parts.modifier ? ` ${parts.modifier > 0 ? "+" : "-"} ${Math.abs(parts.modifier)}` : ""}`,
+        breakdown,
+        totalText: `Damage ${parts.total}`,
+        diceResults: parts.rolls.map((value) => ({ sides: parts.diceSides, value, label: `d${parts.diceSides}` }))
+      });
+      setStatus(`Rolled ${action.label} damage: ${parts.total}.`);
+    }
+function rollPlayCheck(type, options = {}) {
+      const derived = getDerivedCombatStats();
+const costedAction = options.action || getPlayActionForRollType(type);
+      if (costedAction?.costLabel) {
+        const spent = usePlayCost(
+          costedAction.label,
+          costedAction.costLabel,
+          [costedAction.summary, costedAction.damage ? `${costedAction.damage.label}: ${costedAction.damage.value} ${costedAction.damage.detail}` : ""].filter(Boolean),
+          { feedbackId: options.feedbackId || "" }
+        );
+        if (!spent) {
+          return;
+        }
+      } else {
+        clearPlayFeedback(options.feedbackId || "");
+      }
+let label = "";
+let breakdown = "";
+let rollText = "";
+let total = 0;
+let dieType = "d20";
+let diceResults = [];
+
+      if (type === "initiative") {
+        label = "Initiative";
+        const roll = rollDie(20);
+        diceResults = [{ sides: 20, value: roll, label: "d20" }];
+        rollText = String(roll);
+        total = roll + derived.initiative;
+        breakdown = `d20: ${roll} | Agility: ${formatModifier(derived.initiative)}`;
+      } else if (type === "saveBonus") {
+        label = "Saving Throw";
+const rolls = rollDice(2, 10);
+        diceResults = rolls.map((value) => ({ sides: 10, value, label: "d10" }));
+const rollTotal = rolls.reduce((sum, value) => sum + value, 0);
+        dieType = "2d10";
+        rollText = rolls.join(" + ");
+        total = rollTotal + derived.saveBonus;
+        breakdown = `2d10: ${rollText} | Toughness: ${formatModifier(derived.saveBonus)}`;
+      } else if (type === "lightAttack") {
+        label = costedAction?.label || "Light Attack";
+const roll = rollDie(20);
+        diceResults = [{ sides: 20, value: roll, label: "d20" }];
+        rollText = String(roll);
+        total = roll + derived.lightAttack;
+        breakdown = `d20: ${roll} | Light Attack bonus: ${formatModifier(derived.lightAttack)}`;
+      } else if (type === "heavyAttack") {
+        label = costedAction?.label || "Heavy Attack";
+const roll = rollDie(20);
+        diceResults = [{ sides: 20, value: roll, label: "d20" }];
+        rollText = String(roll);
+        total = roll + derived.heavyAttack;
+        breakdown = `d20: ${roll} | Heavy Attack bonus: ${formatModifier(derived.heavyAttack)}`;
+      } else if (type === "preciseAttack") {
+        label = costedAction?.label || "Precise Attack";
+const roll = rollDie(20);
+        diceResults = [{ sides: 20, value: roll, label: "d20" }];
+        rollText = String(roll);
+        total = roll + derived.preciseAttack;
+        breakdown = `d20: ${roll} | Precise Attack bonus: ${formatModifier(derived.preciseAttack)}`;
+      } else {
+        return;
+      }
+
+      appendPlayLog(`${label} Roll`, [
+        breakdown,
+        costedAction?.weaponName ? `Weapon: ${costedAction.weaponName}` : "",
+        costedAction?.damage ? `${costedAction.damage.label}: ${costedAction.damage.value} ${costedAction.damage.detail}` : "",
+        `Total: ${total}`
+      ].filter(Boolean));
+      showRollOverlay({
+        label: `${label} Roll`,
+        dieType,
+        rollText,
+        breakdown,
+        totalText: `Total ${total}`,
+        diceResults
+      });
+      setStatus(`Rolled ${label}: ${total}.`);
+    }
+export function getSkillRowData(index, bonuses = getComputedBonuses()) {
+      const definition = SKILL_DEFINITIONS[index - 1];
+      if (!definition) {
+        return null;
+      }
+      const substatValue = getComputedSecondaryStatValue(definition.stat, bonuses);
+const creationSkillPoints = toNumber(state.fields[`SkillPoint${index}`], 0);
+const featureSkillPoints = bonuses.skillPoints[definition.name] || 0;
+const racialSkillInfo = getRacialSkillPointsForSkill(index);
+const racialSkillPoints = racialSkillInfo.total;
+const skillPoints = creationSkillPoints + racialSkillPoints + featureSkillPoints;
+const expertiseGroups = getSkillExpertiseGroups(index, bonuses);
+const expertiseValue = expertiseGroups.reduce((best, entry) => Math.max(best, entry.bonus), 0);
+const creationExpertiseSpend = getCreationExpertiseSpendForSkill(index);
+const expertiseSpend = getTotalExpertiseSpendForSkill(index);
+const bonusValue = bonuses.skillChecks[definition.name] || 0;
+const total = substatValue + skillPoints + bonusValue;
+const bestExpertiseTotal = total + expertiseValue;
+
+      return {
+        index,
+        name: definition.name,
+        stat: definition.stat,
+        substatValue,
+        creationSkillPoints,
+        racialSkillPoints,
+        racialSkillBreakdown: racialSkillInfo.breakdown,
+        featureSkillPoints,
+        skillPoints,
+        expertiseValue,
+        expertiseGroups,
+        creationExpertiseSpend,
+        expertiseSpend,
+        bonusValue,
+        total,
+        bestExpertiseTotal,
+        expertiseField: state.fields[`Expertise${index}`] || ""
+      };
+    }
+function getTopSkillRows(limit = 5) {
+      return getSkillRowsData()
+        .filter((entry) => entry.skillPoints || entry.expertiseSpend || entry.expertiseGroups.length)
+        .sort((a, b) => b.bestExpertiseTotal - a.bestExpertiseTotal || a.name.localeCompare(b.name))
+        .slice(0, limit);
+    }
+function getEstimatedSkillSpend() {
+      return getSkillBudgetState().spent;
+    }
+function setSkillAllocation(index, type, value) {
+      const row = Number(index);
+      if (!Number.isFinite(row) || row < 1) {
+        return;
+      }
+const optionState = getSkillAllocationOptions(row, type);
+const requestedSpend = Math.max(0, toNumber(value, 0));
+const safeSpend = optionState.choices.includes(requestedSpend) ? requestedSpend : clamp(requestedSpend, 0, optionState.maxSpend);
+
+      if (type === "expertise") {
+        updateFieldValue(`Expertise${row}`, formatExpertiseValueFromSpend(safeSpend));
+      } else {
+        updateFieldValue(`SkillPoint${row}`, safeSpend ? String(safeSpend) : "");
+      }
+
+      syncSkillFields();
+    }
+function adjustSkillAllocation(index, type, delta) {
+      const skill = getSkillRowData(Number(index));
+      if (!skill) {
+        return;
+      }
+const currentSpend = type === "expertise"
+        ? Math.max(0, skill.creationExpertiseSpend)
+        : Math.max(0, skill.creationSkillPoints);
+      setSkillAllocation(skill.index, type, currentSpend + Math.trunc(toNumber(delta, 0)));
+    }
+function getStatArrayState(definitions, expectedArray) {
+      const values = definitions
+        .map((entry) => toNumber(state.fields[entry.key], NaN))
+        .filter((value) => Number.isFinite(value));
+const assigned = values.length ? [...values].sort((a, b) => b - a) : [];
+const expected = [...expectedArray].sort((a, b) => b - a);
+const isComplete = assigned.length === definitions.length;
+const matches = isComplete && assigned.every((value, index) => value === expected[index]);
+
+      return {
+        assigned,
+        expected,
+        isComplete,
+        matches
+      };
+    }
+function getBuilderStatEntryMode(modeKey, fallback = "array") {
+      const normalized = cleanText(state.builder.searches?.[modeKey]);
+      if (normalized === "custom") {
+        return "custom";
+      }
+      return fallback;
+    }
+function syncSkillFields() {
+      SKILL_DEFINITIONS.forEach((definition, index) => {
+        const row = index + 1;
+        updateFieldValue(`Skill${row}`, definition.name);
+        updateFieldValue(`Stat${row}`, definition.stat);
+const skillData = getSkillRowData(row);
+const creationExpertiseBonus = getBestCreationExpertiseBonusForSkill(row);
+        updateFieldValue(`Expertise${row}`, creationExpertiseBonus ? formatModifier(creationExpertiseBonus) : "");
+        updateFieldValue(`Bonus${row}`, formatModifier(skillData ? skillData.total : 0));
+const bonusNode = document.querySelector(`[data-field="${cssEscape(`Bonus${row}`)}"]`);
+        if (bonusNode) {
+          bonusNode.title = `Click to roll ${definition.name}.`;
+        }
+      });
+    }
+function setFieldValueForExport(fieldName, value) {
+      const nextValue = String(value ?? "");
+      state.fields[fieldName] = nextValue;
+const node = document.querySelector(`[data-field="${cssEscape(fieldName)}"]`);
+      if (node && node.value !== nextValue) {
+        node.value = nextValue;
+      }
+    }
+function syncSkillFieldsForExport() {
+      SKILL_DEFINITIONS.forEach((definition, index) => {
+        const row = index + 1;
+        setFieldValueForExport(`Skill${row}`, definition.name);
+        setFieldValueForExport(`Stat${row}`, definition.stat);
+const skillData = getSkillRowData(row);
+const creationExpertiseBonus = getBestCreationExpertiseBonusForSkill(row);
+        setFieldValueForExport(`Expertise${row}`, creationExpertiseBonus ? formatModifier(creationExpertiseBonus) : "");
+        setFieldValueForExport(`Bonus${row}`, formatModifier(skillData ? skillData.total : 0));
+const bonusNode = document.querySelector(`[data-field="${cssEscape(`Bonus${row}`)}"]`);
+        if (bonusNode) {
+          bonusNode.title = `Click to roll ${definition.name}.`;
+        }
+      });
+    }
+function syncExportReadyState() {
+      const derived = getDerivedCombatStats();
+const values = {
+        HP: String(derived.hpMax),
+        Mana: String(derived.manaMax),
+        RP: String(derived.rpMax),
+        Guard: String(derived.guard),
+        Evasion: String(derived.evasion),
+        Dodge: String(derived.dodge),
+        Block: String(derived.block),
+        Potency: String(derived.potency),
+        Initiative: String(derived.initiative),
+        Save: String(derived.saveBonus),
+        Speed: String(derived.speed),
+        Lattack: String(derived.lightAttack),
+        Hattack: String(derived.heavyAttack),
+        Pattack: String(derived.preciseAttack)
+      };
+      Object.entries(values).forEach(([fieldName, value]) => {
+        setFieldValueForExport(fieldName, value);
+      });
+      syncSkillFieldsForExport();
+      syncPlayResourcesFromFields(true);
+    }
+function findSkillExpertiseGroup(skill, name) {
+      const normalized = normalizePhrase(name);
+      if (!skill || !normalized) {
+        return null;
+      }
+      return (skill.expertiseGroups || []).find((entry) => normalizePhrase(entry.name) === normalized) || null;
+    }
+function rollSkillCheck(index, expertiseName = "") {
+      const skill = getSkillRowData(Number(index));
+      if (!skill) {
+        return;
+      }
+let expertiseGroup = findSkillExpertiseGroup(skill, expertiseName);
+const roll = rollDie(20);
+const expertiseBonus = expertiseGroup ? expertiseGroup.bonus : 0;
+const total = roll + skill.total + expertiseBonus;
+const label = expertiseGroup ? `${skill.name} (${expertiseGroup.name}) Check` : `${skill.name} Check`;
+const breakdown = `d20: ${roll} | ${getSkillBreakdownParts(skill, expertiseGroup).join(" | ")}`;
+      appendPlayLog(label, [breakdown, `Total: ${total}`]);
+      showRollOverlay({
+        label,
+        dieType: "d20",
+        rollText: String(roll),
+        breakdown,
+        totalText: `Total ${total}`,
+        diceResults: [{ sides: 20, value: roll, label: "d20" }]
+      });
+      setStatus(`Rolled ${expertiseGroup ? `${skill.name} (${expertiseGroup.name})` : skill.name}: ${total}.`);
+    }
+function restoreTurnResources() {
+      syncPlayResourcesFromFields(true);
+const derived = getDerivedCombatStats();
+      state.play.resources.apCurrent = derived.apMax;
+      appendPlayLog("AP Recovery", [
+        `AP recovered to ${derived.apMax}.`,
+        "Mana and RP are not restored by AP recovery.",
+        "If a rule changes AP recovery, adjust AP manually after using this."
+      ]);
+      renderPlayDashboard();
+      setStatus("Recovered AP for the start of turn.");
+    }
+function fullRestoreResources() {
+      state.play = mergePlayState(state.play);
+      state.play.hpHasManualChange = false;
+      syncPlayResourcesFromFields(false);
+      appendPlayLog("Full Restore", ["HP, Mana, AP, and RP restored to their current maximum values."]);
+      renderPlayDashboard();
+      setStatus("Fully restored tracked resources.");
+    }
+function clearPlayLog() {
+      state.play = mergePlayState(state.play);
+      state.play.log = [];
+      renderPlayDashboard();
+      setStatus("Cleared the combat log.");
+    }
+function adjustPlayHitPoints(mode) {
+      state.play = mergePlayState(state.play);
+      syncPlayResourcesFromFields(true);
+const amount = Math.max(0, toNumber(state.play.hpAdjustAmount, 0));
+
+      if (mode === "temp") {
+        if (!amount) {
+          setStatus("Enter an HP amount first.");
+          return;
+        }
+const resources = state.play.resources;
+const tempHp = Math.max(0, toNumber(resources.tempHp, 0));
+const nextTempHp = clamp(Math.max(tempHp, amount), 0, 9999);
+        resources.tempHp = nextTempHp;
+        appendPlayLog("Temporary HP", [
+          tempHp >= amount
+            ? `Granted ${amount} Temporary HP, but kept existing equal or higher value because Temporary HP does not stack.`
+            : `Temporary HP set to ${amount}.`,
+          `Temporary HP: ${nextTempHp}`
+        ]);
+        renderPlayDashboard();
+        persistWorkingState();
+        setStatus(tempHp >= amount ? `Kept Temporary HP at ${nextTempHp}.` : `Temporary HP set to ${nextTempHp}.`);
+        return;
+      }
+
+      if (!amount) {
+        setStatus(mode === "damage" ? "Enter an HP damage amount first." : "Enter an HP healing amount first.");
+        return;
+      }
+const derived = getDerivedCombatStats();
+const resources = state.play.resources;
+const current = toNumber(resources.hpCurrent, derived.hpMax);
+const tempHp = Math.max(0, toNumber(resources.tempHp, 0));
+const next = mode === "heal"
+        ? clamp(current + amount, 0, Math.max(0, derived.hpMax))
+        : current;
+
+      if (mode === "damage") {
+        const tempDamage = Math.min(tempHp, amount);
+const remainingDamage = Math.max(0, amount - tempDamage);
+const nextTempHp = clamp(tempHp - tempDamage, 0, 9999);
+const nextHp = clamp(current - remainingDamage, 0, Math.max(0, derived.hpMax));
+
+        resources.tempHp = nextTempHp;
+        resources.hpCurrent = nextHp;
+        state.play.hpHasManualChange = nextHp < derived.hpMax;
+        appendPlayLog("Damage", [
+          `Took ${amount} damage.`,
+          tempDamage ? `Temporary HP absorbed ${tempDamage}.` : "No Temporary HP absorbed damage.",
+          `Current HP: ${nextHp} / ${derived.hpMax}`,
+          `Temporary HP: ${nextTempHp}`
+        ]);
+        renderPlayDashboard();
+        persistWorkingState();
+        setStatus(`Applied ${amount} damage.`);
+        return;
+      }
+
+      resources.hpCurrent = next;
+      state.play.hpHasManualChange = next < derived.hpMax;
+      appendPlayLog("Heal", [
+        `Recovered ${amount} HP.`,
+        `Current HP: ${next} / ${derived.hpMax}`
+      ]);
+      renderPlayDashboard();
+      persistWorkingState();
+      setStatus(`Healed ${amount} HP.`);
+    }
+function getSkillRowByName(name) {
+      const index = SKILL_DEFINITIONS.findIndex((entry) => entry.name === name);
+      return index >= 0 ? getSkillRowData(index + 1) : null;
+    }
+function renderPlayCompactRollRow(label, summary, dataset, value) {
+      return `
+        <div class="play-compact-row">
+          <div>
+            <strong>${escapeHtml(label)}</strong>
+            <p>${escapeHtml(summary)}</p>
+          </div>
+          <button type="button" class="play-compact-roll" ${dataset}>${escapeHtml(value)}</button>
+        </div>
+      `;
+    }
+function renderTrainingDetails(title, content) {
+      const cleaned = cleanText(content);
+      if (!cleaned) {
+        return "";
+      }
+      return `
+        <details>
+          <summary>${escapeHtml(title)}</summary>
+          ${paragraphize(cleaned)}
+        </details>
+      `;
+    }
+function renderPlayTabs() {
+      const activeTab = state.ui.sheetTab || "actions";
+      document.querySelectorAll("#play-tab-nav [data-play-tab]").forEach((button) => {
+        button.classList.toggle("is-active", button.dataset.playTab === activeTab);
+      });
+      document.querySelectorAll("[data-play-tab-panel]").forEach((panel) => {
+        panel.classList.toggle("is-hidden", panel.dataset.playTabPanel !== activeTab);
+      });
+    }
+function renderPlayDerivedCard(label, value, summary = "", cardClass = "") {
+      return `
+        <div class="play-derived-card${cardClass ? ` ${escapeHtml(cardClass)}` : ""}">
+          <strong>${escapeHtml(label)}</strong>
+          <div class="play-derived-value">${escapeHtml(String(value))}</div>
+          ${summary ? `<p>${escapeHtml(summary)}</p>` : ""}
+        </div>
+      `;
+    }
+function renderPlayDerivedActionCard(label, value, summary = "", actionMarkup = "", cardClass = "") {
+      return `
+        <div class="play-derived-card${cardClass ? ` ${escapeHtml(cardClass)}` : ""}">
+          <strong>${escapeHtml(label)}</strong>
+          <div class="play-derived-value">${escapeHtml(String(value))}</div>
+          ${summary ? `<p>${escapeHtml(summary)}</p>` : ""}
+          ${actionMarkup ? `<div class="play-derived-actions">${actionMarkup}</div>` : ""}
+        </div>
+      `;
+    }
+function renderPlaySpiritCoreCard(value, cardClass = "") {
+      const protection = getSpiritCoreProtectionState(value);
+const nextText = protection.remaining
+        ? `${protection.remaining} spent EXP until the next protection level.`
+        : `Next protection level begins at ${protection.nextThreshold} spent EXP.`;
+      return `
+        <div class="play-derived-card${cardClass ? ` ${escapeHtml(cardClass)}` : ""}">
+          <strong>Spirit Core</strong>
+          <div class="play-derived-value">${escapeHtml(String(value))}</div>
+          <p>Total EXP already spent through progression.</p>
+          <div class="play-protection-line">
+            <span>${escapeHtml(`Astra Protection Level ${protection.level}`)}</span>
+          </div>
+          <p>${escapeHtml(`Astra resistance +${protection.level}. ${nextText}`)}</p>
+        </div>
+      `;
+    }
+function renderPlayEditableDerivedCard({ label, value, summary = "", fieldName, fieldLabel, spendToSpiritCore = false, cardClass = "" }) {
+      return `
+        <div class="play-derived-card${cardClass ? ` ${escapeHtml(cardClass)}` : ""}">
+          <strong>${escapeHtml(label)}</strong>
+          <div class="play-derived-value">${escapeHtml(String(value))}</div>
+          ${summary ? `<p>${escapeHtml(summary)}</p>` : ""}
+          <div class="play-derived-controls">
+            <input
+              class="play-derived-field"
+              type="number"
+              inputmode="numeric"
+              min="1"
+              step="1"
+              data-play-transaction-amount="${escapeHtml(fieldName)}"
+              aria-label="${escapeHtml(fieldLabel)} amount"
+              placeholder="Amount"
+            >
+            <div class="play-derived-transaction-row">
+              <button
+                type="button"
+                data-play-transaction-field="${escapeHtml(fieldName)}"
+                data-play-transaction-action="subtract"
+              >Subtract</button>
+              <button
+                type="button"
+                data-play-transaction-field="${escapeHtml(fieldName)}"
+                data-play-transaction-action="add"
+              >Add</button>
+              ${spendToSpiritCore ? `
+                <button
+                  type="button"
+                  data-open-exp-spending
+                  title="Open the builder progression steps where EXP is spent"
+                >Spend XP</button>
+              ` : ""}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+function renderPlaySecondaryStatCard(stat) {
+      const baseValue = toNumber(state.fields[stat.key], 0);
+const bonusValue = getComputedBonuses().secondaryStats[stat.key] || 0;
+const value = baseValue + bonusValue;
+      return `
+        <div class="play-secondary-card">
+          <div class="play-secondary-stat-head">
+            <strong>${escapeHtml(stat.key)}</strong>
+            <div class="play-secondary-value">${escapeHtml(String(value))}</div>
+          </div>
+          ${bonusValue ? `<p>${escapeHtml(`Base ${baseValue} ${bonusValue > 0 ? `+ ${bonusValue}` : `- ${Math.abs(bonusValue)}`}`)}</p>` : ""}
+          <p>${escapeHtml(stat.description)}</p>
+        </div>
+      `;
+    }
+function renderPlaySkillRollControls(skill, buttonClass = "play-skill-roll") {
+      const groups = (skill.expertiseGroups || [])
+        .filter((group) => normalizeExpertiseSpecialtyName(group?.name) && !/^unassigned\b/i.test(cleanText(group.name)));
+      return `
+        <div class="play-skill-roll-controls">
+          <button type="button" class="${escapeHtml(buttonClass)}" data-play-roll-skill="${skill.index}">
+            ${escapeHtml(formatModifier(skill.total))}
+          </button>
+          ${groups.length ? `
+            <details class="play-skill-expertise-menu">
+              <summary>Expertise</summary>
+              <div class="play-skill-expertise-options">
+                ${groups.map((group) => `
+                  <button
+                    type="button"
+                    data-play-roll-skill-expertise="${skill.index}"
+                    data-play-expertise-name="${escapeHtml(group.name)}"
+                  >${escapeHtml(`${group.name} ${formatModifier(group.bonus)}`)}</button>
+                `).join("")}
+              </div>
+            </details>
+          ` : ""}
+        </div>
+      `;
+    }
+function renderPlaySkillGroups(skills) {
+      const sections = SECONDARY_STATS.map((stat) => {
+        const entries = skills.filter((skill) => skill.stat === stat.key);
+        if (!entries.length) {
+          return "";
+        }
+        return `
+          <div class="play-skill-group">
+            <div class="play-skill-group-header">
+              <div>
+                <strong>${escapeHtml(stat.key)}</strong>
+              </div>
+              <span>${escapeHtml(`${state.fields[stat.key] || 0} ${stat.key}`)}</span>
+            </div>
+            <div class="play-skill-mini-list">
+              ${entries.map((skill) => `
+                <div class="play-skill-mini-row">
+                  <div class="play-skill-mini-copy">
+                    <strong>${escapeHtml(skill.name)}</strong>
+                    <span>${escapeHtml(getSkillBreakdownParts(skill).join(" | "))}</span>
+                  </div>
+                  ${renderPlaySkillRollControls(skill)}
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        `;
+      }).filter(Boolean).join("");
+
+      return sections || `<p class="play-empty">No skills are available yet.</p>`;
+    }
+function openSheetView() {
+      syncBuilderSelectionsIntoSheet();
+      setMode("sheet");
+      setStatus("Opened the character sheet.");
+    }
+function openSheetViewFromShortcut() {
+      if (!getSelectedRaceDetail()) {
+        setStatus("Choose a primary species before opening the character sheet.");
+        goToBuilderStep(0);
+        return;
+      }
+      openSheetView();
+    }
+function openExpSpending() {
+      const classesStep = BUILDER_STEPS.findIndex((step) => step.id === "classes");
+      state.ui.mode = "builder";
+      state.ui.builderStep = classesStep >= 0 ? classesStep : Math.max(0, BUILDER_STEPS.length - 1);
+      renderBuilder();
+      updateModeVisibility();
+      document.getElementById("builder-view").scrollIntoView({ behavior: "auto", block: "start" });
+      setStatus("Opened class progression. Spend EXP through character upgrades there; spent EXP is what raises Spirit Core.");
+    }
+export function renderPlayDashboard() {
+      state.play = mergePlayState(state.play);
+      syncPlayResourcesFromFields(true);
+const derived = getDerivedCombatStats();
+const computedBonuses = getComputedBonuses();
+const race = getSelectedRaceDetail();
+const ancestry = getSelectedAncestryDetail();
+const classes = getSelectedClassDetails();
+const classProgress = getSelectedClassProgress();
+const breakthroughs = getSelectedBreakthroughRecords();
+const items = getSelectedItemRecords();
+const skills = getSkillRowsData();
+const funds = getStartingFundsState();
+const progress = getCampaignProgressState();
+const portrait = state.builder.portraitDataUrl || "assets/lyrian-symbol.png";
+const resources = state.play.resources;
+const senses = ["Perception", "Insight", "Survival"].map((name) =>
+        skills.find((entry) => normalizePhrase(entry.name) === normalizePhrase(name))
+      ).filter(Boolean);
+const proficienciesMarkup = renderTrainingDetails("Proficiencies", state.fields.Proficiencies);
+const classStripClass = classProgress.length === 1
+        ? "play-header-class-strip is-single"
+        : "play-header-class-strip";
+const classArtMarkup = classProgress.length
+        ? `<div class="${classStripClass}">${classProgress.map((entry) => renderPlayHeaderClassCard(entry)).join("")}</div>`
+        : `<div class="play-header-class-strip play-header-class-strip-empty"><p>Class art will appear here once classes are selected in the builder.</p></div>`;
+
+      document.getElementById("play-header-card").innerHTML = `
+        <div class="play-header-portrait"><img src="${portrait}" alt="${escapeHtml(getPlayHeaderTitle())} portrait"></div>
+        <div class="play-header-copy">
+          <div>
+            <p class="eyebrow">Character</p>
+            <h3>${escapeHtml(getPlayHeaderTitle())}</h3>
+          </div>
+          <div class="tag-list">
+            ${race ? `<span class="detail-pill">${escapeHtml(race.name)}</span>` : ""}
+            ${ancestry ? `<span class="detail-pill">${escapeHtml(ancestry.name)}</span>` : ""}
+            ${state.fields["Spirit Core"] ? `<span class="detail-pill">Spirit Core ${escapeHtml(state.fields["Spirit Core"])}</span>` : ""}
+          </div>
+          <p>${escapeHtml(classes.length ? classes.map((entry) => entry.name).join(", ") : "No classes selected yet.")}</p>
+          <p>${escapeHtml([state.fields.Gender, state.fields.Age ? `Age ${state.fields.Age}` : "", state.fields.Height, state.fields.Weight].filter(Boolean).join(" | ") || "Profile details can be filled in from the builder profile step at any time.")}</p>
+        </div>
+        ${classArtMarkup}
+      `;
+
+      document.getElementById("play-main-stat-strip").innerHTML = MAIN_STATS.map((entry) => {
+        const baseValue = toNumber(state.fields[entry.key], 0);
+const bonusValue = computedBonuses.mainStats[entry.key] || 0;
+const value = baseValue + bonusValue;
+const meta = entry.key === "Power"
+          ? ["Damage stat", `Max Mana ${derived.manaMax}`]
+          : entry.key === "Focus"
+            ? ["Accuracy stat", `Potency ${derived.potency}`]
+            : entry.key === "Agility"
+              ? [`Initiative ${derived.initiative}`, `RP ${derived.rpMax}`]
+              : [`Save ${formatModifier(derived.saveBonus)}`, `HP ${derived.hpMax}`];
+const bonusMeta = bonusValue ? `Base ${baseValue} ${bonusValue > 0 ? `+ ${bonusValue}` : `- ${Math.abs(bonusValue)}`}` : "";
+        return `
+          <div class="play-main-stat-card">
+            <div class="play-main-stat-head">
+              <strong>${escapeHtml(entry.key)}</strong>
+              <div class="play-main-stat-value">${escapeHtml(String(value))}</div>
+            </div>
+            <div class="play-main-stat-meta">
+              ${bonusMeta ? `<span>${escapeHtml(bonusMeta)}</span>` : ""}
+              ${meta.map((line) => `<span>${escapeHtml(line)}</span>`).join("")}
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      document.getElementById("play-secondary-grid").innerHTML = SECONDARY_STATS.map((entry) =>
+        renderPlaySecondaryStatCard(entry)
+      ).join("");
+
+      document.getElementById("play-resource-grid").innerHTML = [
+        renderPlayResourceCard("Mana", "manaCurrent", "manaMax", resources),
+        renderPlayResourceCard("AP", "apCurrent", "apMax", resources),
+        renderPlayResourceCard("RP", "rpCurrent", "rpMax", resources)
+      ].join("");
+
+      document.getElementById("play-derived-grid").innerHTML = [
+        renderPlayEditableDerivedCard({
+          label: "EXP",
+          value: progress.expBank,
+          summary: "Unspent EXP available for progression. Spending it through upgrades increases Spirit Core.",
+          fieldName: "Exp",
+          fieldLabel: "Current EXP",
+          spendToSpiritCore: true,
+          cardClass: "play-tracker-progression"
+        }),
+        renderPlaySpiritCoreCard(progress.spiritCore, "play-tracker-core-total"),
+        renderPlayEditableDerivedCard({
+          label: "Clim",
+          value: funds.availableClim,
+          summary: "",
+          fieldName: "Earned Clim",
+          fieldLabel: "Clim",
+          cardClass: "play-tracker-utility play-tracker-money"
+        })
+      ].join("");
+
+      document.getElementById("play-utility-grid").innerHTML = [
+        renderPlayDerivedCard("Speed", derived.speed, "Current movement distance.", "play-tracker-utility"),
+        renderPlayDerivedCard("Initiative", formatModifier(derived.initiative), "Used for turn order and quick reactions.", "play-tracker-utility")
+      ].join("");
+
+      document.getElementById("play-hit-points").innerHTML = `
+        <div class="play-hit-summary">
+          <p class="eyebrow">Hit Points</p>
+          <h3>Health Tracker</h3>
+          <div class="play-hit-values">
+            <span class="play-hit-current">${escapeHtml(String(resources.hpCurrent))}</span>
+            <span class="play-hit-divider">/</span>
+            <span class="play-hit-max">${escapeHtml(String(resources.hpMax))}</span>
+            <span class="play-hit-temp-inline" aria-live="polite">
+              <span>Temp HP</span>
+              <strong class="play-hit-temp-value">${escapeHtml(String(toNumber(resources.tempHp, 0)))}</strong>
+            </span>
+          </div>
+          <p class="play-hit-rule-note">Current / max normal HP. Healing cannot raise normal HP above max; Temporary HP is tracked separately, does not stack, and absorbs damage first.</p>
+        </div>
+        <div class="play-hit-actions">
+          <input id="play-hp-adjust-amount" type="number" inputmode="numeric" min="0" value="${escapeHtml(String(state.play.hpAdjustAmount || ""))}" placeholder="Amount" aria-label="Hit point amount">
+          <button id="play-temp-hp-button" type="button">Grant Temp HP</button>
+          <button id="play-heal-button" type="button">Heal HP</button>
+          <button id="play-damage-button" type="button">Take Damage</button>
+        </div>
+      `;
+
+      document.getElementById("play-saves").innerHTML = [
+        renderPlayDerivedActionCard("Guard", derived.guard, "Flat mitigation and durability."),
+        renderPlayDerivedActionCard("Evasion", derived.evasion, "Target number enemies must hit."),
+        renderPlayDerivedActionCard("Dodge", derived.dodge, "Current dodge reaction baseline."),
+        renderPlayDerivedActionCard("Block", derived.block, "Current block reaction baseline."),
+        renderPlayDerivedActionCard("Potency", derived.potency, "Difficulty of saves against your effects."),
+        renderPlayDerivedActionCard("Save", formatModifier(derived.saveBonus), "Lyrian 2d10 saving throw bonus.", `<button type="button" class="play-compact-roll" data-play-roll="saveBonus">Roll</button>`)
+      ].join("");
+
+      document.getElementById("play-senses").innerHTML = senses.length
+        ? senses.map((skill) => {
+          const parts = getSkillBreakdownParts(skill);
+          return renderPlayDerivedActionCard(
+            skill.name,
+            formatModifier(skill.total),
+            parts.join(" | "),
+            renderPlaySkillRollControls(skill, "play-compact-roll")
+          );
+        }).join("")
+        : `<p class="play-empty">No awareness skills are available yet.</p>`;
+
+      document.getElementById("play-basic-actions").innerHTML = getPlayActionCards().map((action) => renderPlayActionCard(action)).join("");
+      document.getElementById("play-skills").innerHTML = renderPlaySkillGroups(skills);
+const quickAbilities = getQuickPlayAbilities();
+      document.getElementById("play-quick-abilities").innerHTML = quickAbilities.length
+        ? quickAbilities.map((ability, index) => renderPlayAbilityCard(ability, index)).join("")
+        : `<p class="play-empty">Choose a race or classes in the builder to surface quick-use abilities here.</p>`;
+
+      document.getElementById("play-inventory").innerHTML = renderPlayInventoryPanel(funds);
+
+      document.getElementById("play-crafting").innerHTML = renderPlayCraftingPanel();
+
+      document.getElementById("play-proficiencies").innerHTML = proficienciesMarkup || `<p class="play-empty">No proficiencies have been entered yet.</p>`;
+
+      document.getElementById("play-breakthroughs").innerHTML = `
+        ${funds.effects.autoApplied.length ? `
+          <div class="play-subpanel">
+            <p class="eyebrow">Auto-Applied Builder Effects</p>
+            <div class="play-training-stack">${renderTrainingDetails("Applied", funds.effects.autoApplied.join("\n"))}</div>
+          </div>
+        ` : ""}
+        ${funds.effects.pendingChoices.length ? `
+          <div class="play-subpanel">
+            <p class="eyebrow">Pending Breakthrough Choices</p>
+            <div class="play-training-stack">${renderTrainingDetails("Needs Assignment", funds.effects.pendingChoices.join("\n"))}</div>
+          </div>
+        ` : ""}
+        ${breakthroughs.length
+          ? breakthroughs.map((entry) => `
+            <div class="play-action-card">
+              <div class="play-action-copy">
+                <strong>${escapeHtml(entry.name)}</strong>
+                <div class="play-action-meta">
+                  ${entry.cost ? `<span>${escapeHtml(`Cost ${entry.cost}`)}</span>` : ""}
+                  ${entry.requirements ? `<span>${escapeHtml(entry.requirements)}</span>` : ""}
+                </div>
+                <p>${escapeHtml(cleanText(entry.description))}</p>
+              </div>
+            </div>
+          `).join("")
+          : `<p class="play-empty">No breakthroughs selected yet.</p>`}
+      `;
+
+      document.getElementById("play-notes").innerHTML = [
+        renderTrainingDetails("Personality", state.fields.Personality),
+        renderTrainingDetails("Appearance", state.fields.Appearance),
+        renderTrainingDetails("Items Notes", state.fields.Items),
+        renderTrainingDetails("Breakthrough Notes", state.fields.BDescription)
+      ].filter(Boolean).join("") || `<p class="play-empty">No notes have been filled in yet.</p>`;
+
+      document.getElementById("play-roll-actions").innerHTML = PLAY_ROLLS.map((entry) =>
+        `<button type="button" data-play-roll="${escapeHtml(entry.type)}">${escapeHtml(entry.label)}</button>`
+      ).join("");
+const playerNotesField = document.getElementById("play-player-notes");
+      if (playerNotesField) {
+        playerNotesField.value = state.play.playerNotes || "";
+      }
+
+      document.getElementById("play-log").innerHTML = state.play.log.length
+        ? state.play.log.map((entry) => `
+            <div class="play-log-entry">
+              <strong>${escapeHtml(entry.title)} | ${escapeHtml(entry.timestamp)}</strong>
+              <p>${entry.lines.map((line) => escapeHtml(line)).join("<br>")}</p>
+            </div>
+          `).join("")
+        : `<p class="play-empty">The combat log will collect rolls and resource spends here.</p>`;
+
+      renderPlayReferenceDetail();
+      renderSheetBuildSummary();
+      renderDiceTray();
+      renderPlayTabs();
+    }
+function renderPlayResourceCard(label, currentKey, maxKey, resources) {
+const isApCard = currentKey === "apCurrent";
+      return `
+        <div class="play-resource-card">
+          <div class="play-resource-head">
+            <strong>${escapeHtml(label)}</strong>
+            ${isApCard ? `
+              <button class="play-resource-action" type="button" data-play-recover-ap title="Start-of-turn AP recovery. Mana and RP do not recover from this.">Recover AP</button>
+            ` : ""}
+          </div>
+          <div class="play-resource-inputs">
+            <input class="play-number-input" type="number" inputmode="numeric" data-play-resource="${escapeHtml(currentKey)}" value="${escapeHtml(resources[currentKey])}">
+            <span>/</span>
+            <input class="play-number-input" type="number" inputmode="numeric" data-play-resource="${escapeHtml(maxKey)}" value="${escapeHtml(resources[maxKey])}">
+          </div>
+        </div>
+      `;
+    }
+function renderPlayStatCard(label, value) {
+      return `
+        <div class="play-stat-card">
+          <strong>${escapeHtml(label)}</strong>
+          <div>${escapeHtml(String(value))}</div>
+        </div>
+      `;
+    }
+function renderSheetBuildSummary() {
+      const container = document.getElementById("sheet-build-summary");
+      if (!container) {
+        return;
+      }
+const funds = getStartingFundsState();
+
+      container.innerHTML = [
+        {
+          title: "Starting Funds",
+          body: [
+            `Base Clim: ${funds.baseClim}`,
+            `Breakthrough Bonus: ${funds.bonusClim}`,
+            funds.hasOverride ? `Manual Override: ${funds.overrideValue}` : "",
+            `Earned Clim: ${funds.earnedClim}`,
+            `Equipment Cost: ${funds.selectedEquipmentCost}`,
+            `Remaining Clim: ${funds.availableClim}`
+          ].filter(Boolean).join("\n")
+        },
+        {
+          title: "Auto-Applied Effects",
+          body: funds.effects.autoApplied.length ? funds.effects.autoApplied.join("\n") : "No builder-applied breakthrough effects yet."
+        },
+        {
+              title: "Pending Choices",
+              body: funds.effects.pendingChoices.length ? funds.effects.pendingChoices.join("\n") : "No unresolved builder choices."
+            }
+          ].map((card) => `
+        <div class="library-card">
+          <h3>${escapeHtml(card.title)}</h3>
+          <div class="library-preview">${paragraphize(card.body)}</div>
+        </div>
+      `).join("");
+    }
+function getPlayActionValueDetails(type) {
+      const derived = getDerivedCombatStats();
+      if (type === "speed") {
+        return { label: "Move Distance", value: `${derived.speed} ft.` };
+      }
+      if (type === "speedDouble") {
+        return { label: "Double Move", value: `${derived.speed * 2} ft.` };
+      }
+      if (type === "dodge") {
+        return { label: "Dodge Value", value: String(derived.dodge) };
+      }
+      if (type === "block") {
+        return { label: "Block Value", value: String(derived.block) };
+      }
+      if (type === "guard") {
+        return { label: "Guard Value", value: String(derived.guard) };
+      }
+      if (type === "evasion") {
+        return { label: "Evasion Value", value: String(derived.evasion) };
+      }
+      return null;
+    }
+function renderPlayActionCard(action) {
+      const valueDetails = action.valueType ? getPlayActionValueDetails(action.valueType) : null;
+const actionRollAttributes = action.weaponUid
+        ? ` data-play-weapon-uid="${escapeHtml(action.weaponUid)}" data-play-attack-kind="${escapeHtml(action.attackKind || action.rollType)}"`
+        : "";
+const buttonMarkup = action.rollType
+        ? [
+            `<button type="button" data-play-roll="${escapeHtml(action.rollType)}"${actionRollAttributes}>Roll Attack</button>`,
+            action.damage ? `<button type="button" data-play-roll-damage="${escapeHtml(action.rollType)}"${actionRollAttributes}>Roll Damage</button>` : ""
+          ].filter(Boolean).join("")
+        : action.costLabel
+          ? `<button type="button" data-play-use-basic="${escapeHtml(action.id)}">Use</button>`
+          : "";
+
+      return `
+        <div class="play-action-card">
+          <div class="play-action-copy">
+            <strong>${escapeHtml(action.label)}</strong>
+            <div class="play-action-meta">
+              ${action.costLabel ? `<span>${escapeHtml(formatCostLabelForDisplay(action.costLabel))}</span>` : ""}
+              ${action.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}
+            </div>
+            <p>${escapeHtml(action.summary)}</p>
+          </div>
+          ${valueDetails ? `
+            <div class="play-action-value">
+              <span>${escapeHtml(valueDetails.label)}</span>
+              <strong>${escapeHtml(valueDetails.value)}</strong>
+            </div>
+          ` : ""}
+          ${action.damage ? `
+            <div class="play-weapon-damage">
+              <span>${escapeHtml(action.damage.label)}</span>
+              <strong>${escapeHtml(action.damage.value)}</strong>
+              <span>${escapeHtml(action.damage.detail)}</span>
+            </div>
+          ` : ""}
+          <div class="play-action-buttons">
+            ${buttonMarkup}
+          </div>
+        </div>
+      `;
+    }
+function renderPlayAbilityCard(ability, index) {
+      const costLabel = cleanText(ability.costLabel || "");
+      const attackOptions = getAbilityAttackSpendOptions(ability);
+      const trackedCost = hasTrackedResourceCost(costLabel);
+      const passive = isPassiveAbilityRecord(ability) && !attackOptions.length;
+      const spendOptions = getAbilitySpendCostOptions(ability);
+      const abilityName = cleanText(ability.name || `Ability ${index + 1}`);
+      const hasReference = Boolean(findPlayReferenceRecord(abilityName));
+      const description = cleanText(ability.descriptionText || ability.description || "No pulled description available.").slice(0, 220);
+      const titleMarkup = hasReference
+        ? `<button type="button" class="play-reference-title" data-play-reference-name="${escapeHtml(abilityName)}">${escapeHtml(abilityName)}</button>`
+        : `<strong>${escapeHtml(abilityName)}</strong>`;
+      const actionButtons = passive
+        ? `<span class="play-action-badge">Passive / Reference</span>`
+        : (attackOptions.length
+          ? attackOptions.map((option) => `
+              <button type="button" data-play-use-ability-attack="${escapeHtml(index)}" data-play-ability-attack="${escapeHtml(option.type)}" data-play-ability-cost-label="${escapeHtml(option.costLabel || costLabel)}">
+                ${escapeHtml(option.buttonLabel || `${formatSpendCostButtonLabel(option.costLabel || costLabel, "Spend")} + ${option.label}`)}
+              </button>
+            `).join("")
+          : spendOptions.map((option) => `
+              <button type="button" data-play-use-ability="${escapeHtml(index)}" data-play-ability-cost-label="${escapeHtml(option.costLabel)}">
+                ${escapeHtml(option.label || (trackedCost ? "Spend Cost" : "Manual"))}
+              </button>
+            `).join(""));
+      return `
+        <div class="play-action-card">
+          <div class="play-action-copy">
+            ${titleMarkup}
+            <div class="play-action-meta">
+              ${ability.source ? `<span>${escapeHtml(ability.source)}</span>` : ""}
+              ${ability.costLabel ? `<span>${escapeHtml(formatCostLabelForDisplay(ability.costLabel))}</span>` : ""}
+              ${ability.range ? `<span>${escapeHtml(ability.range)}</span>` : ""}
+            </div>
+            <p>${renderLinkedReferenceText(description)}</p>
+          </div>
+          <div class="play-action-buttons">
+            ${actionButtons}
+          </div>
+        </div>
+      `;
+    }
+function getInventoryCatalogEntries() {
+      const search = normalizeKey(state.play.inventorySearch || "");
+      return lookup.items.entries
+        .filter((entry) => {
+          const haystack = [entry.name, entry.type, entry.subType, entry.description].map(normalizeKey).join(" ");
+          return !search || haystack.includes(search);
+        });
+    }
+function renderCustomItemForm() {
+      if (!state.play.showCustomItemForm) {
+        return "";
+      }
+const draft = state.play.customItemDraft || {};
+      return `
+        <div class="play-subpanel">
+          <p class="eyebrow">Custom Item</p>
+          <div class="play-custom-item-form">
+            <input data-custom-item-field="name" value="${escapeHtml(draft.name || "")}" placeholder="Item name">
+            <input data-custom-item-field="type" value="${escapeHtml(draft.type || "")}" placeholder="Type, tag, or category">
+            <textarea data-custom-item-field="description" placeholder="What does the item do?">${escapeHtml(draft.description || "")}</textarea>
+            <div class="play-inventory-actions">
+              <button type="button" data-inventory-save-custom>Save Custom Item</button>
+              <button type="button" class="secondary" data-inventory-cancel-custom>Cancel</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+function renderInventoryCatalog() {
+      if (!state.play.showInventoryCatalog) {
+        return "";
+      }
+const entries = getInventoryCatalogEntries();
+      return `
+        <div class="play-subpanel">
+          <div class="play-inventory-catalog-head">
+            <p class="eyebrow">Equipment Catalog</p>
+            <button type="button" data-inventory-custom-open>Add Custom Item</button>
+            <button type="button" class="secondary" data-inventory-toggle-catalog>Close Catalog</button>
+          </div>
+          <input class="play-inventory-search" data-inventory-search value="${escapeHtml(state.play.inventorySearch || "")}" placeholder="Search equipment and items">
+          <div class="play-item-catalog-grid">
+            ${entries.map((entry) => `
+              <div class="play-item-catalog-card">
+                <img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl || "assets/lyrian-symbol.png")}" alt="${escapeHtml(entry.name)}">
+                <div>
+                  <strong>${escapeHtml(entry.name)}</strong>
+                  <p>${escapeHtml([entry.type, entry.subType, entry.cost, entry.burden].filter(Boolean).join(" | "))}</p>
+                  <p>${escapeHtml(getFirstSentence(entry.description).slice(0, 170))}</p>
+                </div>
+                <button type="button" data-inventory-add-item="${escapeHtml(entry.id)}">Add</button>
+              </div>
+            `).join("") || `<p class="play-empty">No items match that search.</p>`}
+          </div>
+        </div>
+      `;
+    }
+function renderInventoryItemRow(entry) {
+      const isEquipped = !!entry.equipped;
+      const quantity = Math.max(1, Math.floor(toNumber(entry.quantity, 1)));
+const baseText = entry.custom ? entry.description : getBaseItemRulesText(entry);
+      return `
+        <div class="play-compact-row play-item-row${isEquipped ? " is-equipped" : ""}">
+          <img class="play-item-thumb" src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl || "assets/lyrian-symbol.png")}" alt="${escapeHtml(entry.name)}">
+          <div>
+            <strong>${escapeHtml(entry.name)}${quantity > 1 ? `<span class="play-item-equipped-badge">x${escapeHtml(String(quantity))}</span>` : ""}${isEquipped ? `<span class="play-item-equipped-badge">Equipped</span>` : ""}</strong>
+            <p>${escapeHtml([entry.type, entry.subType, entry.cost, entry.burden].filter(Boolean).join(" | "))}</p>
+            ${isWeaponItem(entry) ? `<p>${escapeHtml(`Weapon attacks: ${getWeaponRangeLabel(entry)} | ${getWeaponDamageType(entry)} damage`)}</p>` : ""}
+            ${baseText ? `<p class="play-item-notes">${escapeHtml(getFirstSentence(baseText).slice(0, 240))}</p>` : ""}
+            <div class="play-inventory-actions">
+              <button type="button" data-inventory-toggle-equip="${escapeHtml(entry.uid)}">${isEquipped ? "Unequip" : "Equip"}</button>
+              <button type="button" class="secondary" data-inventory-remove="${escapeHtml(entry.uid)}">Remove</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+function isCraftingOrGatheringReference(item) {
+      const haystack = normalizePhrase([item?.name, item?.type, item?.subType, item?.description, item?.descriptionText].filter(Boolean).join(" "));
+      return /\b(crafting|craft|materials|mods|modifications|facility|facilities|gathering|gather|forager|foraging|miner|mining|farmer|farming|lumber|alchemy units|food units|core crafting tool)\b/.test(haystack);
+    }
+function isOwnedCraftingSupportItem(item) {
+      const haystack = normalizePhrase([item?.name, item?.type, item?.subType, item?.description, item?.descriptionText].filter(Boolean).join(" "));
+      return /\b(core crafting tool|allows you to craft|materials|crafting|gathering|forager|foraging|miner|mining|farmer|farming|lumber|food bag|botany bag)\b/.test(haystack);
+    }
+function isOfficialItemOwned(itemId) {
+      const id = cleanText(itemId);
+      if (!id) {
+        return false;
+      }
+const carriedItems = Array.isArray(state.play?.inventoryItems) ? state.play.inventoryItems : [];
+      return state.builder.selectedItemIds.includes(id) || carriedItems.some((entry) => entry.itemId === id);
+    }
+function renderPlayCraftingCard(entry, options = {}) {
+      const description = cleanText(entry.descriptionText || entry.description || "");
+const meta = [entry.type, entry.subType, entry.cost, entry.materialUnitLabel || entry.burden].filter(Boolean);
+const purchaseCost = parseClimCost(entry.cost);
+const canPurchase = options.purchase !== false && Boolean(entry.id) && purchaseCost > 0 && Boolean(lookup.items.resolve(entry.id));
+const stackable = isStackableBuilderItem(entry);
+const alreadyOwned = canPurchase && isOfficialItemOwned(entry.id);
+const purchaseLabel = alreadyOwned && !stackable
+        ? "In Inventory"
+        : `${alreadyOwned ? "Purchase Another" : "Purchase Item"} (${purchaseCost} Clim)`;
+      return `
+        <div class="play-action-card">
+          <div class="play-action-copy">
+            <strong>${escapeHtml(entry.name || "Crafting Reference")}</strong>
+            <div class="play-action-meta">
+              ${meta.map((item) => `<span>${escapeHtml(item)}</span>`).join("")}
+              ${options.badge ? `<span>${escapeHtml(options.badge)}</span>` : ""}
+            </div>
+            <p>${escapeHtml((getFirstSentence(description) || description || "No pulled description available.").slice(0, options.long ? 360 : 220))}</p>
+            ${canPurchase ? `
+              <div class="play-inventory-actions">
+                <button type="button" data-crafting-purchase-item="${escapeHtml(entry.id)}" ${alreadyOwned && !stackable ? "disabled" : ""}>${escapeHtml(purchaseLabel)}</button>
+              </div>
+            ` : ""}
+          </div>
+        </div>
+      `;
+    }
+const CRAFTING_NUMERIC_FIELDS = new Set([
+      "diceMax",
+      "diceRemaining",
+      "pointsGenerated",
+      "pointsSpent",
+      "rollBonus",
+      "pendingPointSpend"
+    ]);
+function getCraftingTrackerState() {
+      const defaults = createDefaultState().play.crafting;
+const raw = {
+        ...defaults,
+        ...(state.play?.crafting || {})
+      };
+      CRAFTING_NUMERIC_FIELDS.forEach((field) => {
+        raw[field] = Math.max(0, toNumber(raw[field], 0));
+      });
+      raw.pointsSpent = Math.min(raw.pointsSpent, raw.pointsGenerated);
+      raw.diceRemaining = Math.min(raw.diceRemaining, raw.diceMax);
+      raw.pointsAvailable = Math.max(0, raw.pointsGenerated - raw.pointsSpent);
+      return raw;
+    }
+function setCraftingField(fieldName, value) {
+      state.play = mergePlayState(state.play);
+      if (CRAFTING_NUMERIC_FIELDS.has(fieldName)) {
+        state.play.crafting[fieldName] = Math.max(0, toNumber(value, 0));
+      } else {
+        state.play.crafting[fieldName] = value;
+      }
+      if (fieldName === "diceMax" || fieldName === "diceRemaining") {
+        const diceMax = Math.max(0, toNumber(state.play.crafting.diceMax, 0));
+        state.play.crafting.diceRemaining = Math.min(Math.max(0, toNumber(state.play.crafting.diceRemaining, 0)), diceMax);
+      }
+      if (fieldName === "pointsGenerated" || fieldName === "pointsSpent") {
+        const generated = Math.max(0, toNumber(state.play.crafting.pointsGenerated, 0));
+        state.play.crafting.pointsSpent = Math.min(Math.max(0, toNumber(state.play.crafting.pointsSpent, 0)), generated);
+      }
+      persistWorkingState();
+    }
+function adjustCraftingField(fieldName, amount) {
+      const crafting = getCraftingTrackerState();
+      setCraftingField(fieldName, Math.max(0, toNumber(crafting[fieldName], 0) + amount));
+      renderPlayDashboard();
+    }
+export function renderPlayDashboardIfVisible() {
+      if (state.ui.mode === "sheet") {
+        renderPlayDashboard();
+      }
+    }
+function addCraftingPoints() {
+      const crafting = getCraftingTrackerState();
+const amount = Math.max(0, crafting.pendingPointSpend);
+      if (!amount) {
+        setStatus("Enter a point amount before adding crafting points.");
+        return;
+      }
+      state.play = mergePlayState(state.play);
+      state.play.crafting.pointsGenerated = crafting.pointsGenerated + amount;
+      appendPlayLog("Crafting Points Added", [
+        `Added: ${amount}`,
+        `Generated total: ${state.play.crafting.pointsGenerated}`
+      ]);
+      persistWorkingState();
+      setStatus(`Added ${amount} crafting points.`);
+    }
+function spendCraftingPoints(direction = "spend") {
+      const crafting = getCraftingTrackerState();
+const amount = Math.max(0, crafting.pendingPointSpend);
+      if (!amount) {
+        setStatus("Enter a point amount before spending or refunding crafting points.");
+        return;
+      }
+      state.play = mergePlayState(state.play);
+      if (direction === "refund") {
+        const refund = Math.min(amount, crafting.pointsSpent);
+        state.play.crafting.pointsSpent = Math.max(0, crafting.pointsSpent - refund);
+        appendPlayLog("Crafting Points Refunded", [
+          `Refunded: ${refund}`,
+          `Spent total: ${state.play.crafting.pointsSpent}`
+        ]);
+        setStatus(`Refunded ${refund} crafting points.`);
+      } else {
+        const spend = Math.min(amount, crafting.pointsAvailable);
+        state.play.crafting.pointsSpent = Math.min(crafting.pointsGenerated, crafting.pointsSpent + spend);
+        appendPlayLog("Crafting Points Spent", [
+          `Spent: ${spend}`,
+          `Spent total: ${state.play.crafting.pointsSpent}`,
+          `Remaining: ${Math.max(0, state.play.crafting.pointsGenerated - state.play.crafting.pointsSpent)}`
+        ]);
+        setStatus(`Spent ${spend} crafting points.`);
+      }
+      persistWorkingState();
+    }
+function rollCraftingDie() {
+      const crafting = getCraftingTrackerState();
+      if (crafting.diceRemaining <= 0) {
+        setStatus("No crafting dice remain for this session.");
+        return;
+      }
+const roll = rollDie(10);
+const total = roll + crafting.rollBonus;
+      state.play = mergePlayState(state.play);
+      state.play.crafting.diceRemaining = Math.max(0, crafting.diceRemaining - 1);
+      state.play.crafting.pointsGenerated = crafting.pointsGenerated + total;
+const breakdown = `d10: ${roll} | Crafting bonus: ${formatModifier(crafting.rollBonus)}`;
+      appendPlayLog("Crafting Check", [
+        cleanText(crafting.recipeName) ? `Recipe: ${crafting.recipeName}` : "",
+        breakdown,
+        `Crafting Points gained: ${total}`,
+        `Crafting Dice remaining: ${state.play.crafting.diceRemaining}`,
+        `Generated total: ${state.play.crafting.pointsGenerated}`
+      ].filter(Boolean));
+      showRollOverlay({
+        label: "Crafting Check",
+        dieType: "d10",
+        rollText: String(roll),
+        breakdown,
+        totalText: `+${total} Crafting Points`,
+        diceResults: [{ sides: 10, value: roll, label: "d10" }]
+      });
+      persistWorkingState();
+      setStatus(`Rolled crafting check for ${total} crafting points.`);
+    }
+function resetCraftingSession() {
+      state.play = mergePlayState(state.play);
+      state.play.crafting = {
+        ...state.play.crafting,
+        diceRemaining: state.play.crafting.diceMax || 0,
+        pointsGenerated: 0,
+        pointsSpent: 0,
+        pendingPointSpend: 0,
+        recipeName: "",
+        materialCost: "",
+        selectedMods: "",
+        notes: ""
+      };
+      appendPlayLog("Crafting Session Reset", ["Crafting points, recipe notes, and selected mods/alloys were cleared."]);
+      persistWorkingState();
+      setStatus("Reset the crafting session.");
+    }
+function renderPlayCraftingPanel() {
+      const crafting = getCraftingTrackerState();
+const inventory = getPlayInventoryEntries();
+const ownedSupport = inventory.filter(isOwnedCraftingSupportItem);
+const referenceEntries = lookup.items.entries
+        .filter(isCraftingOrGatheringReference)
+        .filter((entry) => !ownedSupport.some((owned) => normalizePhrase(owned.name) === normalizePhrase(entry.name)));
+const materials = referenceEntries.filter((entry) =>
+        includesPhrase(entry.type, "Crafting") || includesPhrase(entry.subType, "Materials") || includesPhrase(entry.name, "Materials") || includesPhrase(entry.name, "Facilities")
+      ).slice(0, 12);
+const toolsAndGathering = referenceEntries.filter((entry) =>
+        !materials.includes(entry) && (includesPhrase(entry.subType, "Tool") || /gather|forag|mining|farming|lumber|core crafting tool/i.test([entry.name, entry.description].join(" ")))
+      ).slice(0, 8);
+const craftingSkills = getSkillRowsData().filter((skill) =>
+        SKILL_DEFINITIONS[skill.index - 1]?.group
+        || ["Artifice", "Appraise", "Survival", "Animal Husbandry", "Magic", "Medicine"].some((name) => normalizePhrase(skill.name) === normalizePhrase(name))
+      );
+
+      return `
+        <div class="play-subpanel">
+          <p class="eyebrow">Crafting &amp; Gathering</p>
+          <h4>Character Crafting Workspace</h4>
+          <p class="play-field-note">This tab gathers source-backed crafting tools, material references, and useful skill shortcuts from the current builder data. It does not invent missing recipe or downtime rules.</p>
+        </div>
+
+        <div class="play-subpanel">
+          <p class="eyebrow">Crafting Session Tracker</p>
+          <h4>Dice, Points, Materials, and Mods</h4>
+          <div class="play-crafting-tracker-grid">
+            <div class="play-crafting-card">
+              <strong>Crafting Dice</strong>
+              <div class="play-resource-inputs">
+                <input class="play-number-input" type="number" inputmode="numeric" min="0" data-crafting-field="diceRemaining" value="${escapeHtml(String(crafting.diceRemaining))}">
+                <span>/</span>
+                <input class="play-number-input" type="number" inputmode="numeric" min="0" data-crafting-field="diceMax" value="${escapeHtml(String(crafting.diceMax))}">
+              </div>
+            </div>
+            <div class="play-crafting-card">
+              <strong>Generated</strong>
+              <div class="play-crafting-value">${escapeHtml(String(crafting.pointsGenerated))}</div>
+              <p>Crafting Points made this session.</p>
+            </div>
+            <div class="play-crafting-card">
+              <strong>Spent</strong>
+              <div class="play-crafting-value">${escapeHtml(String(crafting.pointsSpent))}</div>
+              <p>Points assigned to mods, alloys, finishes, or gathering difficulty.</p>
+            </div>
+            <div class="play-crafting-card">
+              <strong>Available</strong>
+              <div class="play-crafting-value">${escapeHtml(String(crafting.pointsAvailable))}</div>
+              <p>Generated minus spent.</p>
+            </div>
+          </div>
+
+          <div class="play-crafting-field-grid">
+            <label class="play-crafting-field">
+              <strong>Crafting Bonus</strong>
+              <input type="number" inputmode="numeric" min="0" data-crafting-field="rollBonus" value="${escapeHtml(String(crafting.rollBonus))}">
+            </label>
+            <label class="play-crafting-field">
+              <strong>Point Amount</strong>
+              <input type="number" inputmode="numeric" min="0" data-crafting-field="pendingPointSpend" value="${escapeHtml(String(crafting.pendingPointSpend))}">
+            </label>
+          </div>
+          <div class="play-crafting-actions">
+            <button type="button" data-crafting-action="roll-die">Roll Crafting Die</button>
+            <button type="button" data-crafting-action="add-points">Add Points</button>
+            <button type="button" data-crafting-action="spend-points">Spend Points</button>
+            <button type="button" class="secondary" data-crafting-action="refund-points">Refund Points</button>
+            <button type="button" class="secondary" data-crafting-action="reset-session">Reset Session</button>
+          </div>
+
+          <div class="play-crafting-form">
+            <div class="play-crafting-field-grid">
+              <label class="play-crafting-field">
+                <strong>Recipe / Item</strong>
+                <input data-crafting-field="recipeName" value="${escapeHtml(crafting.recipeName)}" placeholder="What are you crafting or gathering?">
+              </label>
+              <label class="play-crafting-field">
+                <strong>Recipe / Material Cost</strong>
+                <input data-crafting-field="materialCost" value="${escapeHtml(crafting.materialCost)}" placeholder="Example: 1 Iron ingot, 500 units, special herb mix">
+              </label>
+            </div>
+            <label class="play-crafting-field">
+              <strong>Selected Mods / Alloys / Point Spending</strong>
+              <textarea data-crafting-field="selectedMods" placeholder="Track chosen mods, alloys, artisan bonuses, or harvest difficulty here.">${escapeHtml(crafting.selectedMods)}</textarea>
+            </label>
+            <label class="play-crafting-field">
+              <strong>Session Notes</strong>
+              <textarea data-crafting-field="notes" placeholder="Crafting dice used, GM rulings, facility notes, gathered units, or complications.">${escapeHtml(crafting.notes)}</textarea>
+            </label>
+          </div>
+        </div>
+
+        <div class="play-subpanel">
+          <p class="eyebrow">Owned Support</p>
+          <h4>Tools, Materials, and Gathering Gear</h4>
+          <div class="play-action-stack">
+            ${ownedSupport.length
+              ? ownedSupport.map((entry) => renderPlayCraftingCard(entry, { badge: entry.equipped ? "Equipped" : "Inventory" })).join("")
+              : `<p class="play-empty">No crafting tools, material bags, or gathering gear are currently in this character's inventory.</p>`}
+          </div>
+        </div>
+
+        <div class="play-subpanel play-crafting-skill-panel">
+          <p class="eyebrow">Skill Shortcuts</p>
+          <h4>Roll Relevant Checks</h4>
+          <div class="play-skill-mini-list">
+            ${craftingSkills.length
+              ? craftingSkills.map((skill) => `
+                <div class="play-skill-mini-row">
+                  <div class="play-skill-mini-copy">
+                    <strong>${escapeHtml(skill.name)}</strong>
+                    <span>${escapeHtml(getSkillBreakdownParts(skill).join(" | "))}</span>
+                  </div>
+                  ${renderPlaySkillRollControls(skill)}
+                </div>
+              `).join("")
+              : `<p class="play-empty">No matching skill rows are available yet.</p>`}
+          </div>
+        </div>
+
+        <div class="play-subpanel">
+          <p class="eyebrow">Source References</p>
+          <h4>Materials, Facilities, and Mods</h4>
+          <div class="play-action-stack">
+            ${materials.length
+              ? materials.map((entry) => renderPlayCraftingCard(entry, { badge: "Reference", long: true })).join("")
+              : `<p class="play-empty">No crafting material references were found in the loaded rules data.</p>`}
+          </div>
+        </div>
+
+        <div class="play-subpanel">
+          <p class="eyebrow">Gathering &amp; Tools</p>
+          <h4>Related Equipment References</h4>
+          <div class="play-action-stack">
+            ${toolsAndGathering.length
+              ? toolsAndGathering.map((entry) => renderPlayCraftingCard(entry, { badge: "Reference" })).join("")
+              : `<p class="play-empty">No gathering-specific tool references were found in the loaded rules data.</p>`}
+          </div>
+        </div>
+      `;
+    }
+function renderPlayInventoryPanel(funds) {
+      const inventory = getPlayInventoryEntries();
+const burden = getInventoryBurdenState();
+      return `
+        <div class="play-subpanel">
+          <p class="eyebrow">Starting Funds</p>
+          <div class="play-training-stack">
+            ${renderTrainingDetails("Base Clim", String(funds.baseClim))}
+            ${renderTrainingDetails("Breakthrough Bonus", String(funds.bonusClim))}
+            ${funds.hasOverride ? renderTrainingDetails("Manual Override", String(funds.overrideValue)) : ""}
+            ${renderTrainingDetails("Earned Clim", String(funds.earnedClim))}
+            ${renderTrainingDetails("Equipment Cost", String(funds.selectedEquipmentCost))}
+            ${renderTrainingDetails("Remaining Clim", String(funds.availableClim))}
+            ${funds.overBudgetClim ? renderTrainingDetails("Over Budget", `${funds.overBudgetClim} Clim`) : ""}
+            ${renderTrainingDetails("Burden", `${burden.carriedBurden} / ${burden.limit}${burden.overLimit ? " - Rooted risk" : ""}`)}
+          </div>
+        </div>
+        <div class="play-inventory-toolbar">
+          <div>
+            <p class="eyebrow">Inventory Equipment</p>
+            <p>${escapeHtml(inventory.length ? `${inventory.length} item${inventory.length === 1 ? "" : "s"} carried. ${inventory.filter((entry) => entry.equipped).length} equipped.` : "No equipment selected yet.")}</p>
+          </div>
+          <div class="play-inventory-actions">
+            <button type="button" data-inventory-toggle-catalog>${state.play.showInventoryCatalog ? "Hide Equipment List" : "Add Equipment"}</button>
+            <button type="button" class="secondary" data-inventory-custom-open>Add Custom Item</button>
+          </div>
+        </div>
+        ${renderCustomItemForm()}
+        ${renderInventoryCatalog()}
+        ${inventory.length
+          ? inventory.map((entry) => renderInventoryItemRow(entry)).join("")
+          : `<p class="play-empty">No equipment selected yet.</p>`}
+      `;
+    }
+function syncOfficialItemToSheetInventory(record) {
+      if (!state.builder.selectedItemIds.includes(record.id) && state.builder.selectedItemIds.length < INVENTORY_ROWS.length) {
+        setBuilderItemQuantity(record.id, 1);
+      }
+const quantity = Math.max(1, getBuilderItemQuantity(record.id));
+const existingRow = INVENTORY_ROWS.find((row) => lookup.items.resolve(state.fields[`CombatInventory${row}`])?.id === record.id);
+      if (existingRow) {
+        updateFieldValue(`Amount${existingRow}`, String(quantity));
+        if (!cleanText(state.fields[`Bulk${existingRow}`]) && record.burden) {
+          updateFieldValue(`Bulk${existingRow}`, record.burden);
+        }
+        if (!cleanText(state.fields[`Description${existingRow}`])) {
+          updateFieldValue(`Description${existingRow}`, [record.type, record.subType, record.cost, record.materialUnitLabel].filter(Boolean).join(" | "));
+        }
+        return;
+      }
+const emptyRow = INVENTORY_ROWS.find((row) => !cleanText(state.fields[`CombatInventory${row}`]));
+      if (emptyRow) {
+        updateFieldValue(`CombatInventory${emptyRow}`, record.name);
+        updateFieldValue(`Amount${emptyRow}`, String(quantity));
+        updateFieldValue(`Bulk${emptyRow}`, state.fields[`Bulk${emptyRow}`] || record.burden || "");
+        updateFieldValue(`Description${emptyRow}`, state.fields[`Description${emptyRow}`] || [record.type, record.subType, record.cost, record.materialUnitLabel].filter(Boolean).join(" | "));
+      }
+    }
+function addOfficialInventoryItem(itemId, options = {}) {
+      const record = lookup.items.resolve(itemId);
+      if (!record) {
+        setStatus("Could not find that equipment item.");
+        return;
+      }
+const confirmPurchase = Boolean(options.confirmPurchase);
+      state.play = mergePlayState(state.play);
+const stackable = isStackableBuilderItem(record);
+const alreadySelected = state.builder.selectedItemIds.includes(record.id);
+const alreadyCarried = state.play.inventoryItems.some((entry) => entry.itemId === record.id);
+      if (alreadySelected || alreadyCarried) {
+        if (stackable) {
+          const cost = parseClimCost(record.cost);
+          const funds = getStartingFundsState();
+          if (cost > 0 && cost > funds.availableClim) {
+            const message = `${record.name} costs ${cost} Clim, but only ${funds.availableClim} Clim remains.`;
+            if (confirmPurchase && typeof window.alert === "function") {
+              window.alert(`You do not have enough Clim to purchase another ${record.name}.\n\n${message}`);
+            }
+            setStatus(message);
+            return;
+          }
+          if (!alreadySelected && state.builder.selectedItemIds.length >= INVENTORY_ROWS.length) {
+            const message = "No empty combat inventory rows are available. Remove an item before buying another one.";
+            if (confirmPurchase && typeof window.alert === "function") {
+              window.alert(message);
+            }
+            setStatus(message);
+            return;
+          }
+          if (confirmPurchase && cost > 0 && typeof window.confirm === "function") {
+            const confirmed = window.confirm(`Are you sure you wish to purchase another ${record.name} for ${cost} Clim?`);
+            if (!confirmed) {
+              setStatus(`Purchase cancelled for ${record.name}.`);
+              return;
+            }
+          }
+          const carriedEntry = state.play.inventoryItems.find((entry) => entry.itemId === record.id);
+          const currentQuantity = Math.max(getBuilderItemQuantity(record.id), Math.floor(toNumber(carriedEntry?.quantity, 0)));
+          const nextQuantity = setBuilderItemQuantity(record.id, currentQuantity + 1);
+          ensurePlayInventoryFromBuilder();
+          syncOfficialItemToSheetInventory(record);
+          syncBuilderSelectionsIntoSheet();
+          if (confirmPurchase) {
+            const updatedFunds = getStartingFundsState();
+            appendPlayLog("Item Purchased", [
+              `${record.name}: ${cost} Clim`,
+              `Quantity: ${nextQuantity}`,
+              `Remaining Clim: ${updatedFunds.availableClim}`
+            ]);
+          }
+          renderBuilderSummary();
+          renderPlayDashboard();
+          setStatus(confirmPurchase ? `Purchased another ${record.name}. Quantity: ${nextQuantity}.` : `Added another ${record.name}. Quantity: ${nextQuantity}.`);
+          return;
+        }
+        ensurePlayInventoryFromBuilder();
+        if (!alreadySelected && state.builder.selectedItemIds.length < INVENTORY_ROWS.length) {
+          syncOfficialItemToSheetInventory(record);
+          syncBuilderSelectionsIntoSheet();
+        }
+        renderBuilderSummary();
+        renderPlayDashboard();
+        setStatus(`${record.name} is already in inventory.`);
+        return;
+      }
+
+      if (state.builder.selectedItemIds.length >= INVENTORY_ROWS.length) {
+        const message = "No empty combat inventory rows are available. Remove an item before buying another one.";
+        if (confirmPurchase && typeof window.alert === "function") {
+          window.alert(message);
+        }
+        setStatus(message);
+        return;
+      }
+      const cost = parseClimCost(record.cost);
+const funds = getStartingFundsState();
+      if (cost > 0 && cost > funds.availableClim) {
+        const message = `${record.name} costs ${cost} Clim, but only ${funds.availableClim} Clim remains.`;
+        if (confirmPurchase && typeof window.alert === "function") {
+          window.alert(`You do not have enough Clim to purchase ${record.name}.\n\n${message}`);
+        }
+        setStatus(message);
+        return;
+      }
+
+      if (confirmPurchase && cost > 0 && typeof window.confirm === "function") {
+        const confirmed = window.confirm(`Are you sure you wish to purchase ${record.name} for ${cost} Clim?`);
+        if (!confirmed) {
+          setStatus(`Purchase cancelled for ${record.name}.`);
+          return;
+        }
+      }
+
+      if (confirmPurchase && cost <= 0) {
+        const confirmed = typeof window.confirm === "function"
+          ? window.confirm(`Add ${record.name} to inventory? This item has no tracked Clim cost.`)
+          : true;
+        if (!confirmed) {
+          setStatus(`Purchase cancelled for ${record.name}.`);
+          return;
+        }
+      }
+
+      setBuilderItemQuantity(record.id, 1);
+      ensurePlayInventoryFromBuilder();
+const uid = getOfficialInventoryUid(record.id);
+      if (!state.play.inventoryItems.some((entry) => entry.uid === uid)) {
+        state.play.inventoryItems.push(createInventoryEntryFromRecord(record, { quantity: Math.max(1, getBuilderItemQuantity(record.id)) }));
+      }
+      syncOfficialItemToSheetInventory(record);
+      syncBuilderSelectionsIntoSheet();
+      if (confirmPurchase) {
+        const updatedFunds = getStartingFundsState();
+        appendPlayLog("Item Purchased", [
+          `${record.name}: ${cost} Clim`,
+          `Remaining Clim: ${updatedFunds.availableClim}`
+        ]);
+      }
+      renderBuilderSummary();
+      renderPlayDashboard();
+      setStatus(confirmPurchase ? `Purchased ${record.name} for ${cost} Clim.` : `Added ${record.name} to inventory.`);
+    }
+function addCustomInventoryItem() {
+      state.play = mergePlayState(state.play);
+const draft = state.play.customItemDraft || {};
+      if (!cleanText(draft.name)) {
+        setStatus("Name the custom item before adding it.");
+        return;
+      }
+const entry = createCustomInventoryEntry(draft);
+      state.play.inventoryItems.push(entry);
+      state.play.customItemDraft = { name: "", type: "", description: "" };
+      state.play.showCustomItemForm = false;
+      renderPlayDashboard();
+      setStatus(`Added custom item ${entry.name}.`);
+    }
+function toggleInventoryEquipped(uid) {
+      state.play = mergePlayState(state.play);
+const entry = state.play.inventoryItems.find((item) => item.uid === uid);
+      if (!entry) {
+        return;
+      }
+      entry.equipped = !entry.equipped;
+      syncPlayResourcesFromFields(true);
+      renderPlayDashboard();
+      setStatus(`${entry.equipped ? "Equipped" : "Unequipped"} ${mergeInventoryEntryWithRecord(entry).name}.`);
+    }
+function removeInventoryItem(uid) {
+      state.play = mergePlayState(state.play);
+const entry = state.play.inventoryItems.find((item) => item.uid === uid);
+      state.play.inventoryItems = state.play.inventoryItems.filter((item) => item.uid !== uid);
+      if (entry?.itemId) {
+        state.builder.selectedItemIds = state.builder.selectedItemIds.filter((id) => id !== entry.itemId);
+        if (state.builder.itemQuantities) {
+          delete state.builder.itemQuantities[entry.itemId];
+        }
+      }
+      syncBuilderSelectionsIntoSheet();
+      renderBuilderSummary();
+      renderPlayDashboard();
+      setStatus(entry ? `Removed ${mergeInventoryEntryWithRecord(entry).name} from inventory.` : "Removed inventory item.");
+    }
+function refreshBuilderIdentity() {
+      const nameField = document.getElementById("builder-name-header");
+const nameValue = state.fields.Name || "";
+      if (nameField && nameField.value !== nameValue) {
+        nameField.value = nameValue;
+      }
+const raceChip = document.getElementById("builder-race-chip");
+const ancestryChip = document.getElementById("builder-ancestry-chip");
+const race = getSelectedRaceDetail();
+const ancestry = getSelectedAncestryDetail();
+const lineageLabels = getSecondaryLineageLabels(race);
+      raceChip.textContent = race ? race.name : "Primary race pending";
+      ancestryChip.textContent = ancestry ? ancestry.name : `${lineageLabels.short} pending`;
+const portraitImage = document.getElementById("builder-portrait-image");
+const portraitPlaceholder = document.getElementById("builder-portrait-placeholder");
+      if (state.builder.portraitDataUrl) {
+        portraitImage.src = state.builder.portraitDataUrl;
+        portraitImage.classList.remove("is-hidden");
+        portraitPlaceholder.classList.add("is-hidden");
+      } else {
+        portraitImage.removeAttribute("src");
+        portraitImage.classList.add("is-hidden");
+        portraitPlaceholder.classList.remove("is-hidden");
+      }
+    }
+function renderSummaryCard(title, body, cardClass = "") {
+      return `
+        <div class="summary-card${cardClass ? ` ${escapeHtml(cardClass)}` : ""}">
+          <strong>${escapeHtml(title)}</strong>
+          <p>${escapeHtml(body || "Nothing selected yet.")}</p>
+        </div>
+      `;
+    }
+function getEquipmentSummaryText(items, funds, emptyText = "No equipment chosen yet.") {
+      const equipmentText = items.length
+        ? items.map((entry) => getBuilderItemDisplayName(entry)).join(", ")
+        : emptyText;
+      return [`Remaining Clim ${funds.availableClim}`, equipmentText].filter(Boolean).join("\n");
+    }
+function renderBuilderSummary() {
+      const race = getSelectedRaceDetail();
+const ancestry = getSelectedAncestryDetail();
+const classes = getSelectedClassDetails();
+const breakthroughs = getSelectedBreakthroughRecords();
+const items = getSelectedItemRecords();
+const topSkills = getTopSkillRows(4);
+const funds = getStartingFundsState();
+const mainStatText = MAIN_STATS.map((stat) => `${stat.key} ${state.fields[stat.key] || "—"}`).join(" | ");
+const secondaryStatText = SECONDARY_STATS.map((stat) => `${stat.key} ${state.fields[stat.key] || "—"}`).join(" | ");
+
+      document.getElementById("builder-summary").innerHTML = [
+        renderSummaryCard("Identity", [state.fields.Name || "Unnamed character", race?.name || "No primary race", ancestry?.name || `No ${getSecondaryLineageLabels(race).short.toLowerCase()}`].filter(Boolean).join(" | ")),
+        renderSummaryCard("Stats", `${mainStatText}\n${secondaryStatText}`),
+        renderSummaryCard("Skills", topSkills.length ? topSkills.map((entry) => `${entry.name} ${formatModifier(entry.total)}`).join(", ") : "No trained skills yet."),
+        renderSummaryCard("Classes", classes.length ? classes.map((entry) => entry.name).join(", ") : "No classes chosen yet."),
+        renderSummaryCard("Breakthroughs", breakthroughs.length ? breakthroughs.map((entry) => entry.name).join(", ") : "No breakthroughs chosen yet."),
+        renderSummaryCard("Equipment", getEquipmentSummaryText(items, funds), "summary-card-equipment")
+      ].join("");
+    }
+function applyClassExpDelta(delta, budgetBefore = getClassUnlockBudgetState()) {
+      const amount = Math.floor(toNumber(delta, 0));
+      if (!amount) {
+        return;
+      }
+const currentExpText = cleanText(state.fields.Exp);
+const currentExp = currentExpText ? Math.max(0, toNumber(currentExpText, 0)) : Math.max(0, budgetBefore.remainingExp);
+const currentSpiritText = cleanText(state.fields["Spirit Core"]);
+const currentSpirit = currentSpiritText ? Math.max(0, toNumber(currentSpiritText, 0)) : 0;
+const expWasAuto = !currentExpText || currentExpText === cleanText(state.builder.autoExpBank);
+const spiritWasAuto = !currentSpiritText || currentSpiritText === cleanText(state.builder.autoSpiritCore);
+const nextExp = Math.max(0, currentExp - amount);
+const nextSpirit = Math.max(0, currentSpirit + amount);
+      updateFieldValue("Exp", String(nextExp));
+      updateFieldValue("Spirit Core", String(nextSpirit));
+      state.builder.autoExpBank = expWasAuto ? String(nextExp) : "";
+      state.builder.autoSpiritCore = spiritWasAuto ? String(nextSpirit) : "";
+    }
+function syncClassSelectionsToFields() {
+      CLASS_ROWS.forEach((row) => {
+        updateFieldValue(`Class${row}`, "");
+        updateFieldValue(`ClassTier${row}`, "");
+        updateFieldValue(`ClassLevel${row}`, "");
+        updateFieldValue(`Cost${row}`, "");
+      });
+
+      getSelectedClassProgress().slice(0, CLASS_ROWS.length).forEach((progressEntry, index) => {
+        const entry = progressEntry.record;
+const row = CLASS_ROWS[index];
+        updateFieldValue(`Class${row}`, entry.name);
+        updateFieldValue(`ClassTier${row}`, entry.tier ? String(entry.tier) : "");
+        updateFieldValue(`ClassLevel${row}`, String(progressEntry.level));
+        updateFieldValue(`Cost${row}`, String(progressEntry.cost));
+      });
+const budget = getClassUnlockBudgetState();
+const nextSpiritCore = String(budget.spentExp);
+const currentSpiritCore = cleanText(state.fields["Spirit Core"]);
+      if (!currentSpiritCore || currentSpiritCore === cleanText(state.builder.autoSpiritCore)) {
+        updateFieldValue("Spirit Core", nextSpiritCore);
+        state.builder.autoSpiritCore = nextSpiritCore;
+      }
+const nextExpBank = String(budget.remainingExp);
+const currentExpBank = cleanText(state.fields.Exp);
+      if (!currentExpBank || currentExpBank === cleanText(state.builder.autoExpBank)) {
+        updateFieldValue("Exp", nextExpBank);
+        state.builder.autoExpBank = nextExpBank;
+      }
+    }
+function syncItemSelectionsToFields() {
+      INVENTORY_ROWS.forEach((row) => {
+        updateFieldValue(`CombatInventory${row}`, "");
+        updateFieldValue(`Amount${row}`, "");
+        updateFieldValue(`Bulk${row}`, "");
+        updateFieldValue(`Description${row}`, "");
+      });
+
+      getSelectedItemRecords().slice(0, INVENTORY_ROWS.length).forEach((entry, index) => {
+        const row = INVENTORY_ROWS[index];
+        updateFieldValue(`CombatInventory${row}`, entry.name);
+        updateFieldValue(`Amount${row}`, String(Math.max(1, getBuilderItemQuantity(entry.id))));
+        updateFieldValue(`Bulk${row}`, entry.burden || "");
+        updateFieldValue(`Description${row}`, [entry.type, entry.subType, entry.cost, entry.materialUnitLabel].filter(Boolean).join(" | "));
+      });
+    }
+function syncBreakthroughSelectionsToFields() {
+      const selected = getSelectedBreakthroughRecords();
+      updateFieldValue("BName", selected.map((entry) => entry.name).join("\n"));
+      updateFieldValue(
+        "BDescription",
+        selected.map((entry) =>
+          [
+            entry.name,
+            entry.cost ? `Cost: ${entry.cost}` : "",
+            entry.requirements ? `Requirements: ${entry.requirements}` : "",
+            cleanText(entry.description)
+          ].filter(Boolean).join("\n")
+        ).join("\n\n")
+      );
+    }
+function syncReferenceNotes() {
+      const race = getSelectedRaceDetail();
+const ancestry = getSelectedAncestryDetail();
+const classes = getSelectedClassDetails();
+const items = getSelectedItemRecords();
+const funds = getStartingFundsState();
+const breakthroughEffects = funds.effects;
+const profSections = [];
+      if (race) {
+        const raceChoiceNotes = [];
+const extraLanguage = getBuilderChoiceValue("race-human-language");
+const humanWeaponGroup = getBuilderChoiceValue("race-human-weapon-group");
+const demonMode = getBuilderChoiceValue("race-demon-bonus-mode");
+const demonWeaponGroup = getBuilderChoiceValue("race-demon-weapon-group");
+        if (extraLanguage && !isCustomChoiceMarker(extraLanguage)) {
+          raceChoiceNotes.push(`Chosen Extra Language: ${extraLanguage}`);
+        }
+        if (humanWeaponGroup && !isCustomChoiceMarker(humanWeaponGroup)) {
+          raceChoiceNotes.push(`Chosen Common Weapon Group: ${humanWeaponGroup}`);
+        }
+        if (demonMode === "weapon" && demonWeaponGroup && !isCustomChoiceMarker(demonWeaponGroup)) {
+          raceChoiceNotes.push(`Chosen Common Weapon Group: ${demonWeaponGroup}`);
+        }
+        if (demonMode === "skill") {
+          const demonPool = getBuilderChoiceDefinitions().find((choice) => choice.id === "race-demon-clan-skill" && isBuilderChoiceVisible(choice));
+          if (demonPool) {
+            const assigned = SKILL_DEFINITIONS
+              .map((definition, index) => ({ name: definition.name, value: getRacialSkillSpend(demonPool, index + 1) }))
+              .filter((entry) => entry.value > 0)
+              .map((entry) => `${entry.name} +${entry.value}`)
+              .join(", ");
+            if (assigned) {
+              raceChoiceNotes.push(`Chosen Clan Skill Bonus: ${assigned}`);
+            }
+          }
+        }
+        profSections.push([race.name, race.attributes, race.skills, race.proficiencies, ...raceChoiceNotes].filter(Boolean).map(cleanText).join("\n"));
+      }
+      if (ancestry) {
+        const traitNames = ancestry.traits?.length ? `Traits: ${ancestry.traits.map((trait) => trait.name).join(", ")}` : "";
+        profSections.push([ancestry.name, traitNames].filter(Boolean).map(cleanText).join("\n"));
+      }
+      if (classes.length) {
+        const classSections = classes.map((entry) => {
+          return [
+            `${entry.name}${entry.tier ? ` (Tier ${entry.tier})` : ""}`,
+            entry.role1 ? `Roles: ${[entry.role1, entry.role2].filter(Boolean).join(", ")}` : "",
+            entry.heart ? `Heart: ${cleanText(entry.heart)}` : "",
+            entry.soul ? `Soul: ${cleanText(entry.soul)}` : "",
+            entry.skills ? `Skills: ${cleanText(entry.skills)}` : "",
+            entry.keyAbility?.name ? `Key Ability: ${entry.keyAbility.name}` : ""
+          ].filter(Boolean).join("\n");
+        });
+        profSections.push(classSections.join("\n\n"));
+      }
+const resolvedClassChoiceNotes = getResolvedBuilderChoices()
+        .filter((choice) => choice.id.startsWith("class-"))
+        .map((choice) => {
+          if (choice.type === "class-skill-pool") {
+            return getClassSkillPoolSummary(choice);
+          }
+          return choice.resolvedText?.(getBuilderChoiceValue(choice.id)) || "";
+        })
+        .filter(Boolean);
+      if (resolvedClassChoiceNotes.length) {
+        profSections.push(["Resolved Class Benefits", ...Array.from(new Set(resolvedClassChoiceNotes))].join("\n"));
+      }
+      if (breakthroughEffects.extraProficiencies.length) {
+        profSections.push(["Breakthrough Proficiencies", breakthroughEffects.extraProficiencies.join(", ")].join("\n"));
+      }
+const resolvedChoiceNotes = getResolvedBuilderChoices()
+        .filter((choice) => (choice.id.startsWith("breakthrough-") || choice.id.startsWith("ancestry-"))
+          && ["text", "ancestry-features"].includes(choice.type))
+        .map((choice) => choice.resolvedText?.(getBuilderChoiceValue(choice.id)) || "")
+        .filter(Boolean);
+      if (resolvedChoiceNotes.length) {
+        profSections.push(["Resolved Builder Choices", ...Array.from(new Set(resolvedChoiceNotes))].join("\n"));
+      }
+      updateFieldValue("Proficiencies", profSections.join("\n\n"));
+const itemSections = [
+        [
+          "Starting Funds",
+          `Base Clim: ${funds.baseClim}`,
+          `Breakthrough Bonus: ${funds.bonusClim}`,
+          funds.hasOverride ? `Manual Override: ${funds.overrideValue}` : "",
+          `Equipment Cost: ${funds.selectedEquipmentCost}`,
+          `Remaining Clim: ${funds.availableClim}`
+        ].filter(Boolean).join("\n"),
+        ...items.map((entry) => {
+          const quantity = Math.max(1, getBuilderItemQuantity(entry.id));
+          const itemCost = parseClimCost(entry.cost);
+          return [
+            getBuilderItemDisplayName(entry),
+            [entry.type, entry.subType, entry.cost, entry.materialUnitLabel || entry.burden].filter(Boolean).join(" | "),
+            quantity > 1 && itemCost > 0 ? `Quantity: ${quantity} | Total cost: ${itemCost * quantity} Clim` : "",
+            cleanText(entry.description)
+          ].filter(Boolean).join("\n");
+        })
+      ];
+      updateFieldValue("Items", itemSections.join("\n\n"));
+    }
+function syncDerivedBuilderFields() {
+      const funds = getStartingFundsState();
+      updateFieldValue("Base Clim", String(funds.baseClim));
+      updateFieldValue("Breakthrough Clim Bonus", String(funds.bonusClim));
+      updateFieldValue("Available Clim", String(funds.availableClim));
+      updateFieldValue("Equipment Cost", String(funds.selectedEquipmentCost));
+    }
+function syncBuilderSelectionsIntoSheet() {
+      pruneIneligibleBreakthroughSelections();
+      clearIrrelevantBuilderChoices();
+const race = getSelectedRaceDetail();
+const ancestry = getSelectedAncestryDetail();
+
+      updateFieldValue("Primary Race", race ? race.name : "");
+      updateFieldValue("Sub Race", ancestry ? ancestry.name : "");
+
+      syncClassSelectionsToFields();
+      syncItemSelectionsToFields();
+      syncBreakthroughSelectionsToFields();
+      syncDerivedBuilderFields();
+      syncReferenceNotes();
+      syncSkillFields();
+      recalcBasics(false);
+      refreshSheetToolbar();
+      renderBuilderSummary();
+      renderSheetBuildSummary();
+    }
+function recalcBasics(showStatus = true) {
+      const derived = getDerivedCombatStats();
+const values = {
+        HP: String(derived.hpMax),
+        Mana: String(derived.manaMax),
+        RP: String(derived.rpMax),
+        Guard: String(derived.guard),
+        Evasion: String(derived.evasion),
+        Dodge: String(derived.dodge),
+        Block: String(derived.block),
+        Potency: String(derived.potency),
+        Initiative: String(derived.initiative),
+        Save: String(derived.saveBonus),
+        Speed: String(derived.speed),
+        Lattack: String(derived.lightAttack),
+        Hattack: String(derived.heavyAttack),
+        Pattack: String(derived.preciseAttack)
+      };
+
+      Object.entries(values).forEach(([fieldName, value]) => {
+        updateFieldValue(fieldName, value);
+      });
+
+      syncSkillFields();
+      syncPlayResourcesFromFields(true);
+      renderPlayDashboardIfVisible();
+
+      if (showStatus) {
+        setStatus("Recalculated HP, Mana, RP, Guard, Evasion, Dodge, Block, Potency, Initiative, Save, and Speed.");
+      }
+    }
+function currentStep() {
+      return BUILDER_STEPS[state.ui.builderStep] || BUILDER_STEPS[0];
+    }
+function builderBlockMessage() {
+      const step = currentStep().id;
+      if (step === "race") {
+        return getSelectedRaceDetail() ? "" : "Choose a primary race before continuing.";
+      }
+      if (step === "ancestry") {
+        const options = filteredAncestries();
+        return options.length === 0 || Boolean(getSelectedAncestryDetail()) ? "" : `Choose a ${getSecondaryLineageLabels(getSelectedRaceDetail()).short.toLowerCase()} before continuing.`;
+      }
+      return "";
+    }
+function canAdvanceBuilder(showStatus = false) {
+      const message = builderBlockMessage();
+      if (!message) {
+        return true;
+      }
+      if (showStatus) {
+        setStatus(message);
+      }
+      return false;
+    }
+function furthestUnlockedBuilderStep() {
+      if (!getSelectedRaceDetail()) {
+        return 0;
+      }
+      if (filteredAncestries().length && !getSelectedAncestryDetail()) {
+        return 1;
+      }
+      return BUILDER_STEPS.length - 1;
+    }
+function setMode(mode) {
+      state.ui.mode = mode;
+      updateModeVisibility();
+      if (mode === "sheet") {
+        renderPlayDashboard();
+        document.getElementById("sheet-view").scrollIntoView({ behavior: "auto", block: "start" });
+      } else {
+        document.getElementById("builder-view").scrollIntoView({ behavior: "auto", block: "start" });
+      }
+    }
+function updateModeVisibility() {
+      document.getElementById("builder-view").classList.toggle("is-hidden", state.ui.mode !== "builder");
+      document.getElementById("sheet-view").classList.toggle("is-hidden", state.ui.mode !== "sheet");
+      renderDiceTray();
+    }
+function renderDetailImage(url, alt) {
+      const resolved = url || "assets/lyrian-symbol.png";
+      return `
+        <div class="detail-figure">
+          <img src="${resolved}" alt="${escapeHtml(alt)}">
+        </div>
+      `;
+    }
+const BREAKTHROUGH_ART_THEMES = [
+      { label: "Web", mark: "WEB", terms: ["spider", "arachne", "eight eyes", "8 eyes", "web"], colors: ["#24324f", "#94d4ea", "#fff1b5"] },
+      { label: "Halo", mark: "HALO", terms: ["angel", "kari", "celestial", "blessed", "divine"], colors: ["#6f8fcf", "#fff1b5", "#ffffff"] },
+      { label: "Flame", mark: "FIRE", terms: ["fire", "flame", "salamander", "burn"], colors: ["#8c2d20", "#f2a341", "#fff1b5"] },
+      { label: "Frost", mark: "ICE", terms: ["ice", "frost", "yuki", "snow"], colors: ["#2a6c8f", "#bdefff", "#ffffff"] },
+      { label: "Storm", mark: "BOLT", terms: ["lightning", "raijin", "storm", "static", "thunder"], colors: ["#533b8f", "#f5dd55", "#ffffff"] },
+      { label: "Mask", mark: "MASK", terms: ["slime", "blend", "disguise", "hidden"], colors: ["#2c7b6f", "#9be7d0", "#fff1b5"] },
+      { label: "Dragon", mark: "DRGN", terms: ["dragon", "ryujin", "scale", "drake"], colors: ["#78321e", "#e0b45d", "#fff1b5"] },
+      { label: "Horn", mark: "HORN", terms: ["demon", "fallen", "fiend", "devil", "infernal"], colors: ["#4b1d2a", "#c74d65", "#ffd6df"] },
+      { label: "Coin", mark: "COIN", terms: ["rich", "parents", "money", "clim", "merchant", "noble"], colors: ["#6d4b16", "#ffd76f", "#fff3c4"] },
+      { label: "Blade", mark: "EDGE", terms: ["weapon", "blade", "sword", "draw", "attack", "strike"], colors: ["#1e425c", "#9ed7ff", "#fff1b5"] },
+      { label: "Ward", mark: "WARD", terms: ["armor", "guard", "shield", "tough", "resist", "defense"], colors: ["#263f3b", "#8fd0b8", "#fff1b5"] },
+      { label: "Arcane", mark: "ARC", terms: ["magic", "mana", "spell", "arcane", "mystic"], colors: ["#44215f", "#b58be8", "#fff1b5"] },
+      { label: "Skill", mark: "SKIL", terms: ["skill", "expert", "training", "study", "proficiency"], colors: ["#2f5270", "#8bc9e8", "#fff1b5"] },
+      { label: "Beast", mark: "BEAST", terms: ["rabbit", "hare", "cat", "fox", "wolf", "bird", "wing", "flight", "animal"], colors: ["#5d3d25", "#d6a45e", "#fff1b5"] }
+    ];
+const BREAKTHROUGH_FALLBACK_ART = [
+      ["#224b68", "#94d4ea", "#fff1b5"],
+      ["#4d315f", "#d3a5ee", "#fff1b5"],
+      ["#5d3d25", "#d6a45e", "#fff1b5"],
+      ["#234f3d", "#8ed7a8", "#fff1b5"],
+      ["#5f2634", "#e18a94", "#fff1b5"]
+    ];
+function getTextHash(value) {
+      return String(value || "").split("").reduce((hash, char) => ((hash << 5) - hash + char.charCodeAt(0)) | 0, 0);
+    }
+function getBreakthroughArtMeta(entry) {
+      const source = [entry?.name, entry?.requirements, entry?.descriptionText, entry?.description].filter(Boolean).join(" ");
+const theme = BREAKTHROUGH_ART_THEMES.find((candidate) => candidate.terms.some((term) => includesPhrase(source, term)));
+const nameWords = cleanText(entry?.name || "Breakthrough")
+        .replace(/\([^)]*\)/g, " ")
+        .split(/\s+/)
+        .filter((word) => word && !/^[ivx]+$/i.test(word) && !/restricted/i.test(word));
+const fallbackColors = BREAKTHROUGH_FALLBACK_ART[Math.abs(getTextHash(entry?.name || "")) % BREAKTHROUGH_FALLBACK_ART.length];
+const mark = theme?.mark || nameWords.slice(0, 2).map((word) => word[0]).join("").toUpperCase().slice(0, 4) || "SIG";
+const label = theme?.label || nameWords.slice(0, 2).join(" ") || "Break";
+const colors = theme?.colors || fallbackColors;
+      return { mark, label, colors };
+    }
+function renderBreakthroughArt(entry, detail = false) {
+      const meta = getBreakthroughArtMeta(entry);
+const style = `--art-a:${meta.colors[0]};--art-b:${meta.colors[1]};--art-c:${meta.colors[2]};`;
+      return `
+        <div class="builder-breakthrough-art${detail ? " is-detail" : ""}" style="${style}" aria-hidden="true">
+          <span class="breakthrough-art-mark">${escapeHtml(meta.mark)}</span>
+          <span class="breakthrough-art-label">${escapeHtml(meta.label)}</span>
+        </div>
+      `;
+    }
+function renderBreakthroughDetailArt(entry) {
+      return `<div class="detail-figure breakthrough-detail-figure">${renderBreakthroughArt(entry, true)}</div>`;
+    }
+function getImageObjectPosition(alignment) {
+      const normalized = normalizePhrase(alignment || "");
+      if (normalized === "top") {
+        return "center top";
+      }
+      if (normalized === "bottom") {
+        return "center bottom";
+      }
+      return "center center";
+    }
+function renderPlayHeaderClassCard(progressEntry) {
+      const record = progressEntry?.record || progressEntry;
+const level = Math.max(1, toNumber(progressEntry?.level, 1));
+const image = record?.imageLgUrl || record?.imageSmUrl || "assets/lyrian-symbol.png";
+const position = getImageObjectPosition(record?.imageAlignment);
+const className = record?.name || "Class";
+const classId = record?.id || className;
+      return `
+        <button type="button" class="play-header-class-card" data-play-class-reference="${escapeHtml(classId)}" title="${escapeHtml(`Open ${className} class reference - Level ${level}`)}" aria-label="${escapeHtml(`Open ${className} class reference, level ${level}`)}">
+          <img src="${escapeHtml(image)}" alt="${escapeHtml(className)} art" style="object-position:${position};">
+          <div class="play-header-class-info">
+            <span class="play-header-class-level">Lv ${escapeHtml(String(level))}</span>
+            <span class="play-header-class-name">${escapeHtml(className)}</span>
+            <span class="play-header-class-action">View details</span>
+          </div>
+        </button>
+      `;
+    }
+function renderDetailList(items) {
+      const list = asArray(items);
+      if (!list.length) {
+        return "";
+      }
+      return `<ul class="detail-list">${list.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+    }
+function renderDetailHighlight(label, value) {
+      const text = cleanText(value);
+      if (!text) {
+        return "";
+      }
+      return `
+        <div class="detail-highlight-card">
+          <span class="detail-highlight-label">${escapeHtml(label)}</span>
+          <p class="detail-highlight-value">${escapeHtml(text)}</p>
+        </div>
+      `;
+    }
+function getRuleKeywordList(value) {
+      if (Array.isArray(value)) {
+        return value.map((entry) => cleanText(entry)).filter(Boolean);
+      }
+const text = cleanText(value);
+      return text ? text.split(",").map((entry) => cleanText(entry)).filter(Boolean) : [];
+    }
+function renderRuleCard(record, options = {}) {
+      const title = cleanText(options.title || record?.name);
+      if (!title) {
+        return "";
+      }
+const code = cleanText(options.code || record?.lineageCode);
+const note = cleanText(options.note || record?.clanNote || "");
+const description = cleanText(options.description || record?.descriptionText || record?.description || "");
+const requirement = cleanText(options.requirement || record?.requirement || "");
+const meta = [];
+const costLabel = cleanText(options.costLabel || record?.costLabel || "");
+      if (costLabel) {
+        meta.push(`Cost: ${costLabel}`);
+      }
+const range = cleanText(options.range || record?.range || "");
+      if (range) {
+        meta.push(`Range: ${range}`);
+      }
+const keywords = getRuleKeywordList(options.keywords || record?.keywords);
+      if (keywords.length) {
+        meta.push(`Keywords: ${keywords.join(", ")}`);
+      }
+
+      return `
+        <article class="detail-rule-card">
+          <div class="detail-rule-head">
+            <div class="detail-rule-title-row">
+              <strong>${escapeHtml(title)}</strong>
+              ${code ? `<span class="detail-rule-code">${escapeHtml(code)}</span>` : ""}
+            </div>
+            ${meta.length ? `<div class="detail-rule-meta">${meta.map((item) => `<span>${escapeHtml(item)}</span>`).join("")}</div>` : ""}
+          </div>
+          ${note ? `<p class="detail-rule-note">${escapeHtml(note)}</p>` : ""}
+          <div class="detail-rule-body">
+            ${description ? paragraphize(description) : ""}
+            ${requirement ? `<p><strong>Requirement:</strong> ${escapeHtml(requirement)}</p>` : ""}
+          </div>
+        </article>
+      `;
+    }
+function renderRuleCardSection(title, records, options = {}) {
+      const items = asArray(records).filter(Boolean);
+      if (!items.length) {
+        return "";
+      }
+      return `
+        <div class="detail-section">
+          <h4>${escapeHtml(title)}</h4>
+          <div class="detail-rule-grid">
+            ${items.map((item) => renderRuleCard(item, typeof options.mapRecord === "function" ? options.mapRecord(item) : options)).join("")}
+          </div>
+        </div>
+      `;
+    }
+function renderDemonClanSection(race) {
+      const clanOptions = getDemonClanOptions(race);
+      if (!clanOptions.length) {
+        return "";
+      }
+      return renderRuleCardSection("Demon Clans", clanOptions, {
+        mapRecord(entry) {
+          const technique = entry.traits?.[0];
+          return {
+            title: entry.shortName || entry.name,
+            code: entry.lineageCode,
+            note: entry.clanNote,
+            description: [technique?.name ? `Clan Technique: ${technique.name}` : "", technique?.descriptionText || ""].filter(Boolean).join("\n\n"),
+            costLabel: technique?.costLabel || "",
+            range: technique?.range || "",
+            keywords: technique?.keywords || "",
+            requirement: technique?.requirement || ""
+          };
+        }
+      });
+    }
+function renderRaceDetailCard(record) {
+      if (!record) {
+        return `<div class="detail-copy"><h3>Choose a primary race</h3><p>Select one of the Lyrian races to load its pulled description, bonuses, and core abilities here.</p></div>`;
+      }
+
+      return `
+        ${renderDetailImage(record.imageLgUrl || record.imageSmUrl, record.name)}
+        <div class="detail-copy detail-copy-scroll">
+          <div class="detail-section">
+            <h3>${escapeHtml(record.name)}</h3>
+            ${paragraphize(record.descriptionText)}
+          </div>
+          <div class="detail-highlight-grid">
+            ${renderDetailHighlight("Attributes", record.attributes)}
+            ${renderDetailHighlight("Skill Bonus", record.skills)}
+            ${renderDetailHighlight("Proficiencies", record.proficiencies)}
+          </div>
+          ${renderRuleCardSection("Race Abilities", record.abilities)}
+          ${renderDemonClanSection(record)}
+        </div>
+      `;
+    }
+function renderAncestryDetailCard(record) {
+      if (!record) {
+        const labels = getSecondaryLineageLabels();
+        return `<div class="detail-copy"><h3>${escapeHtml(labels.title)}</h3><p>Pick a ${escapeHtml(labels.short.toLowerCase())} option to load its image and the pulled Lyrian write-up here.</p></div>`;
+      }
+const secondaryLabel = "Primary Race";
+
+      return `
+        ${renderDetailImage(record.imageLgUrl || record.imageSmUrl, record.name)}
+        <div class="detail-copy detail-copy-scroll">
+          <div class="detail-section">
+            <h3>${escapeHtml(record.name)}</h3>
+            <p><strong>${escapeHtml(secondaryLabel)}:</strong> ${escapeHtml(record.primaryRace || "Unspecified")}</p>
+            ${record.lineageCode ? `<p><strong>Clan Code:</strong> ${escapeHtml(record.lineageCode)}</p>` : ""}
+            ${record.detailKind === "demon-clan" && record.clanTitle ? `<p><strong>Clan Role:</strong> ${escapeHtml(record.clanTitle)}</p>` : ""}
+            ${cleanText(record.descriptionText) ? paragraphize(record.descriptionText) : ""}
+          </div>
+          ${renderRuleCardSection(record.detailSectionTitle || "Traits", record.traits)}
+        </div>
+      `;
+    }
+function renderClassDetailCard(record) {
+      if (!record) {
+        return `<div class="detail-copy"><h3>Choose a class</h3><p>The detail panel will show the class description, roles, requirements, and pulled key ability information from the site bundle.</p></div>`;
+      }
+const requirementsText = getClassRequirementsText(record);
+const keyAbilityLines = record.keyAbility
+        ? [record.keyAbility.name, record.keyAbility.benefit1, record.keyAbility.benefit2, record.keyAbility.benefit3, record.keyAbility.benefit4].filter(Boolean)
+        : [];
+const leadText = getClassLeadText(record) || getClassFallbackSummary(record);
+const guideText = getClassGuideText(record);
+
+      return `
+        ${renderDetailImage(record.imageLgUrl || record.imageSmUrl, record.name)}
+        <div class="detail-copy detail-copy-scroll">
+          <div class="detail-section">
+            <h3>${escapeHtml(record.name)}</h3>
+            <p>${escapeHtml([record.tier ? `Tier ${record.tier}` : "", record.role1, record.role2, record.difficulty ? `Difficulty ${record.difficulty}` : ""].filter(Boolean).join(" | "))}</p>
+            <p><strong>Unlock Cost:</strong> 1 Interlude Point + ${getClassUnlockCost(record)} EXP</p>
+            ${paragraphize(leadText)}
+          </div>
+          ${requirementsText ? `<div class="detail-section"><h4>Requirements</h4><p>${escapeHtml(requirementsText)}</p></div>` : ""}
+          ${record.heart || record.soul ? `<div class="detail-section"><h4>Heart / Soul</h4>${renderDetailList([record.heart, record.soul].filter(Boolean))}</div>` : ""}
+          ${record.skills ? `<div class="detail-section"><h4>Class Skills</h4><p>${escapeHtml(record.skills)}</p></div>` : ""}
+          ${guideText ? `<div class="detail-section"><h4>How It Plays</h4>${paragraphize(guideText)}</div>` : ""}
+          ${keyAbilityLines.length ? `<div class="detail-section"><h4>Key Ability</h4>${renderDetailList(keyAbilityLines)}</div>` : ""}
+          ${renderRuleCardSection("Signature Abilities", record.abilities)}
+        </div>
+      `;
+    }
+function renderPlayClassReferenceContent(progressEntry) {
+      const record = progressEntry?.record || null;
+      if (!record) {
+        return `<div class="sheet-class-reference">${renderClassDetailCard(null)}</div>`;
+      }
+const abilityCount = getClassProgressSlotCount(record);
+const purchasedCount = clamp(toNumber(progressEntry?.purchasedCount, getClassPurchasedAbilityCount(record)), 0, abilityCount);
+const level = Math.max(1, toNumber(progressEntry?.level, 1 + purchasedCount));
+const totalCost = Math.max(0, toNumber(progressEntry?.cost, getClassProgressCost(record, purchasedCount)));
+const mastered = isTrackedClassMastered({
+        ...progressEntry,
+        record,
+        purchasedCount,
+        abilityCount
+      });
+const learnedAbilities = getPurchasedClassAbilities(record).map((ability) => ability?.name).filter(Boolean);
+const progressItems = [
+        `Current level: ${level}`,
+        `Class levels purchased: ${purchasedCount} / ${abilityCount}`,
+        `Active abilities learned: ${learnedAbilities.length} / ${getClassAbilityRecords(record).length}`,
+        `Total class investment: ${totalCost} EXP plus 1 Interlude Point`,
+        mastered ? "Mastery status: mastered" : "Mastery status: still progressing"
+      ];
+
+      return `
+        <div class="sheet-class-reference">
+          ${renderClassDetailCard(record)}
+          <div class="detail-copy sheet-class-reference-progress">
+            <div class="detail-section">
+              <h4>Current Sheet Progress</h4>
+              <div class="detail-highlight-grid">
+                ${renderDetailHighlight("Level", `Level ${level}`)}
+                ${renderDetailHighlight("Class Levels", `${purchasedCount} / ${abilityCount}`)}
+                ${renderDetailHighlight("Status", mastered ? "Mastered" : "In Progress")}
+              </div>
+              ${renderDetailList(progressItems)}
+            </div>
+            ${learnedAbilities.length ? `<div class="detail-section"><h4>Learned From This Class</h4>${renderDetailList(learnedAbilities)}</div>` : ""}
+          </div>
+        </div>
+      `;
+    }
+function openPlayClassReference(classId) {
+      const selectedProgress = getSelectedClassProgress();
+const progressEntry = selectedProgress.find((entry) => entry.record?.id === classId || normalizePhrase(entry.record?.name) === normalizePhrase(classId));
+const record = progressEntry?.record || getClassDetail(classId);
+      if (!record) {
+        setStatus("Could not find that class reference.");
+        return;
+      }
+const level = Math.max(1, toNumber(progressEntry?.level, 1 + getClassPurchasedAbilityCount(record)));
+const meta = [
+        record.tier ? `Tier ${record.tier}` : "",
+        [record.role1, record.role2].filter(Boolean).join(" / "),
+        `Level ${level}`
+      ].filter(Boolean).join(" | ");
+
+      openSheetModal({
+        eyebrow: "Class Reference",
+        title: record.name || "Class Reference",
+        lead: meta || "Class description, perks, requirements, and abilities.",
+        content: renderPlayClassReferenceContent(progressEntry || {
+          record,
+          purchasedCount: getClassPurchasedAbilityCount(record),
+          abilityCount: getClassProgressSlotCount(record),
+          level
+        })
+      });
+    }
+function renderBreakthroughDetailCard(record) {
+      if (!record) {
+        return `<div class="detail-copy"><h3>Choose a breakthrough</h3><p>Breakthrough details, requirements, and costs appear here when you select one from the list.</p></div>`;
+      }
+const media = record.imageLgUrl || record.imageSmUrl
+        ? renderDetailImage(record.imageLgUrl || record.imageSmUrl, record.name)
+        : renderBreakthroughDetailArt(record);
+
+      return `
+        ${media}
+        <div class="detail-copy detail-copy-scroll">
+          <div class="detail-section">
+            <h3>${escapeHtml(record.name)}</h3>
+            ${record.cost ? `<p><strong>Cost:</strong> ${escapeHtml(record.cost)}</p>` : ""}
+            ${record.requirements ? `<p><strong>Requirements:</strong> ${escapeHtml(record.requirements)}</p>` : ""}
+            ${paragraphize(record.description)}
+          </div>
+        </div>
+      `;
+    }
+function renderItemDetailCard(record) {
+      if (!record) {
+        return `<div class="detail-copy"><h3>Choose an item</h3><p>Item details, cost, burden, and usage notes appear here when you select one from the list.</p></div>`;
+      }
+
+      return `
+        ${renderDetailImage(record.imageLgUrl || record.imageSmUrl, record.name)}
+        <div class="detail-copy detail-copy-scroll">
+          <div class="detail-section">
+            <h3>${escapeHtml(record.name)}</h3>
+            <p>${escapeHtml([record.type, record.subType, record.cost, record.materialUnitLabel || record.burden].filter(Boolean).join(" | "))}</p>
+            ${paragraphize(record.description)}
+          </div>
+        </div>
+      `;
+    }
+function renderReviewDetailCard() {
+      const sections = [
+        getSelectedRaceDetail()?.name || "No primary race selected yet.",
+        getSelectedAncestryDetail()?.name || `No ${getSecondaryLineageLabels(getSelectedRaceDetail()).short.toLowerCase()} selected yet.`,
+        getSelectedClassDetails().length ? `${getSelectedClassDetails().length} classes chosen.` : "No classes chosen yet.",
+        getTopSkillRows(3).length ? `Top skills: ${getTopSkillRows(3).map((entry) => `${entry.name} ${formatModifier(entry.total)}`).join(", ")}.` : "No trained skills yet.",
+        getSelectedBreakthroughRecords().length ? `${getSelectedBreakthroughRecords().length} breakthroughs chosen.` : "No breakthroughs chosen yet.",
+        getSelectedItemRecords().length ? `${getSelectedItemRecords().length} items chosen.` : "No items chosen yet."
+      ];
+
+      return `
+        ${renderDetailImage("assets/lyrian-symbol.png", "Lyrian symbol")}
+        <div class="detail-copy">
+          <div class="detail-section">
+            <h3>Ready to Continue</h3>
+            <p>The builder has written its selections into the same character state the live sheet uses. When you continue, the play dashboard opens with the current build already filled in.</p>
+          </div>
+          <div class="detail-section">
+            <h4>What Carries Forward</h4>
+            ${renderDetailList(sections)}
+          </div>
+        </div>
+      `;
+    }
+function renderBuilderDetail() {
+      seedBuilderInspection();
+const stepId = currentStep().id;
+let html = "";
+
+      if (stepId === "race") {
+        const record = detailLookup.races.resolve(state.builder.inspected.race) || getSelectedRaceDetail() || detailLookup.races.entries[0];
+        html = renderRaceDetailCard(record);
+      } else if (stepId === "ancestry") {
+        const record = getAncestryDetail(state.builder.inspected.ancestry) || getSelectedAncestryDetail() || filteredAncestries()[0];
+        html = renderAncestryDetailCard(record);
+      } else if (stepId === "classes") {
+        const record = getClassDetail(state.builder.inspected.class) || getSelectedClassDetails()[0] || detailLookup.classes.entries[0];
+        html = renderClassDetailCard(record);
+      } else if (stepId === "skills") {
+        const budget = getSkillBudgetState();
+        html = `
+          ${renderDetailImage("assets/lyrian-symbol.png", "Lyrian skills")}
+          <div class="detail-copy">
+            <div class="detail-section">
+              <h3>Lyrian Skill Checks</h3>
+              <p>The rulebook formula is <strong>d20 + affiliated sub stat + main skill + expertise</strong>. Spend from the shared 10-point creation pool here and the builder, live play panel, and clickable total bonuses all stay in sync automatically.</p>
+            </div>
+            <div class="detail-section">
+              <h4>Top Trained Skills</h4>
+              ${getTopSkillRows(8).length
+                ? renderDetailList(
+                  getTopSkillRows(8).map((entry) =>
+                    `${entry.name}: ${formatModifier(entry.total)} (${getSkillBreakdownParts(entry).join(", ")})`
+                  )
+                )
+                : "<p>No skill points or expertise have been assigned yet.</p>"}
+            </div>
+            <div class="detail-section">
+              <h4>Creation Budget</h4>
+              <p>Skill points spent: ${escapeHtml(String(budget.spent))} / ${budget.budget}</p>
+              <p>Remaining: ${escapeHtml(String(budget.remaining))}</p>
+            </div>
+          </div>
+        `;
+      } else if (stepId === "breakthroughs") {
+        const record = lookup.breakthroughs.resolve(state.builder.inspected.breakthrough)
+          || getSelectedBreakthroughRecords()[0]
+          || eligibleBreakthroughs()[0]
+          || null;
+        html = renderBreakthroughDetailCard(record);
+      } else if (stepId === "equipment") {
+        const record = lookup.items.resolve(state.builder.inspected.item)
+          || getSelectedItemRecords()[0]
+          || lookup.items.entries.find((entry) => !entry.hiddenFromBuilderEquipment)
+          || null;
+        html = renderItemDetailCard(record);
+      } else if (stepId === "review") {
+        html = renderReviewDetailCard();
+      } else if (stepId === "profile") {
+        html = `
+          ${renderDetailImage(state.builder.portraitDataUrl || "assets/lyrian-symbol.png", state.fields.Name || "Lyrian portrait placeholder")}
+          <div class="detail-copy">
+            <div class="detail-section">
+              <h3>${escapeHtml(state.fields.Name || "Character identity")}</h3>
+              ${paragraphize(getProfileIdentitySummary())}
+            </div>
+            <div class="detail-section">
+              <h4>Current Profile</h4>
+              ${renderDetailList([
+                state.fields["Spirit Core"] ? `Spirit Core: ${state.fields["Spirit Core"]}` : "",
+                state.fields.Gender ? `Gender: ${state.fields.Gender}` : "",
+                state.fields.Age ? `Age: ${state.fields.Age}` : "",
+                state.fields.Height ? `Height: ${state.fields.Height}` : "",
+                state.fields.Weight ? `Weight: ${state.fields.Weight}` : ""
+              ].filter(Boolean))}
+            </div>
+          </div>
+        `;
+      } else {
+        const presentation = getBuilderStepPresentation();
+        html = `
+          ${renderDetailImage("assets/lyrian-symbol.png", "Lyrian symbol")}
+          <div class="detail-copy">
+            <div class="detail-section">
+              <h3>${escapeHtml(presentation.title)}</h3>
+              <p>${escapeHtml(presentation.lead)}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      document.getElementById("builder-detail-card").innerHTML = html;
+    }
+function renderCardMeta(labels) {
+      return labels.length ? `<div class="builder-option-meta">${labels.map((label) => `<span class="builder-pill">${escapeHtml(label)}</span>`).join("")}</div>` : "";
+    }
+function renderOptionCard({ id, image, mediaHtml = "", title, description, labels = [], selected = false, action, locked = false, note = "", statusText = "", cardClass = "" }) {
+      const cardClasses = [
+        "builder-option-card",
+        cardClass,
+        selected ? "selected" : "",
+        locked ? "locked" : ""
+      ].filter(Boolean).join(" ");
+const media = mediaHtml || `<img src="${escapeHtml(image || "assets/lyrian-symbol.png")}" alt="${escapeHtml(title)}">`;
+
+      return `
+        <button type="button" class="${cardClasses}" data-builder-action="${action}" data-id="${escapeHtml(id)}">
+          ${media}
+          <div class="builder-option-copy">
+            <div class="builder-option-header">
+              <strong>${escapeHtml(title)}</strong>
+              ${statusText ? `<span class="builder-option-status${selected ? " is-selected" : ""}${locked ? " is-locked" : ""}">${escapeHtml(statusText)}</span>` : ""}
+            </div>
+            ${renderCardMeta(labels)}
+            <p>${escapeHtml(description)}</p>
+            ${note ? `<p class="builder-option-note">${escapeHtml(note)}</p>` : ""}
+          </div>
+        </button>
+      `;
+    }
+function renderEquipmentOptionCard(entry, selectedIds, funds) {
+      const stackable = isStackableBuilderItem(entry);
+      const quantity = getBuilderItemQuantity(entry.id);
+      const selected = quantity > 0 || selectedIds.has(entry.id);
+      const itemCost = parseClimCost(entry.cost);
+      const metaLabels = [entry.type, entry.subType, entry.cost, entry.materialUnitLabel || entry.burden].filter(Boolean);
+      const inventoryFull = !selected && state.builder.selectedItemIds.length >= INVENTORY_ROWS.length;
+      const canAdd = (stackable || !selected)
+        && !inventoryFull
+        && (!itemCost || itemCost <= funds.availableClim);
+      const cardClasses = [
+        "builder-option-card",
+        "builder-equipment-card",
+        selected ? "selected" : "",
+        state.builder.inspected.item === entry.id ? "inspected" : ""
+      ].filter(Boolean).join(" ");
+      const statusText = selected ? (stackable && quantity > 1 ? `Purchased x${quantity}` : "Purchased") : "";
+      const addTitle = selected && !stackable
+        ? "Item already purchased."
+        : (inventoryFull
+          ? "All inventory rows are already filled."
+          : (itemCost > funds.availableClim
+            ? `${entry.name} costs ${itemCost} Clim, but only ${funds.availableClim} Clim remains.`
+            : `${selected ? "Purchase another" : "Purchase"} ${entry.name}.`));
+
+      return `
+        <div class="${cardClasses}">
+          <button type="button" class="builder-equipment-inspect" data-builder-action="inspect-item" data-id="${escapeHtml(entry.id)}">
+            <img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl || "assets/lyrian-symbol.png")}" alt="${escapeHtml(entry.name)}">
+            <div class="builder-option-copy">
+              <div class="builder-option-header">
+                <strong>${escapeHtml(entry.name)}</strong>
+                ${statusText ? `<span class="builder-option-status is-selected">${escapeHtml(statusText)}</span>` : ""}
+              </div>
+              ${renderCardMeta(metaLabels)}
+              <p>${escapeHtml(cleanText(entry.description).slice(0, 190))}</p>
+            </div>
+          </button>
+          <div class="builder-equipment-actions" aria-label="${escapeHtml(`${entry.name} purchase controls`)}">
+            <button type="button" class="builder-icon-stepper" data-builder-action="remove-item" data-id="${escapeHtml(entry.id)}" ${selected ? "" : "disabled"} title="${escapeHtml(selected ? `Remove ${entry.name}.` : "Item is not purchased.")}" aria-label="${escapeHtml(`Remove ${entry.name}`)}">-</button>
+            <div class="builder-equipment-add-stack">
+              <span class="builder-equipment-quantity-count${selected ? "" : " is-empty"}" aria-label="${escapeHtml(`${quantity} purchased`)}">${selected ? escapeHtml(String(quantity)) : ""}</span>
+              <button type="button" class="builder-icon-stepper" data-builder-action="add-item" data-id="${escapeHtml(entry.id)}" ${canAdd ? "" : "disabled"} title="${escapeHtml(addTitle)}" aria-label="${escapeHtml(`Purchase ${entry.name}`)}">+</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+function renderEquipmentEntryList(entries, selectedIds, funds) {
+      const materialCounts = entries.reduce((counts, entry) => {
+        const category = cleanText(entry.materialCategory);
+        if (category) {
+          counts.set(category, (counts.get(category) || 0) + 1);
+        }
+        return counts;
+      }, new Map());
+      let activeCategory = "";
+      return entries.map((entry) => {
+        const category = cleanText(entry.materialCategory);
+        const header = category && category !== activeCategory
+          ? `<div class="builder-group-heading builder-equipment-group-heading"><strong>${escapeHtml(category)}</strong><span>${materialCounts.get(category)} material${materialCounts.get(category) === 1 ? "" : "s"}</span></div>`
+          : "";
+        activeCategory = category;
+        return `${header}${renderEquipmentOptionCard(entry, selectedIds, funds)}`;
+      }).join("");
+    }
+function getPrimaryClassRole(entry) {
+      return cleanText(entry?.role1 || entry?.role2 || "Other");
+    }
+function compareClassEntries(a, b, sortMode = "role") {
+      const roleOrder = getClassRoleOptions();
+const roleIndex = (value) => {
+        const index = roleOrder.indexOf(getPrimaryClassRole(value));
+        return index === -1 ? roleOrder.length + 1 : index;
+      };
+
+      if (sortMode === "tier") {
+        return (toNumber(a?.tier, 999) - toNumber(b?.tier, 999))
+          || (roleIndex(a) - roleIndex(b))
+          || cleanText(a?.name).localeCompare(cleanText(b?.name));
+      }
+
+      if (sortMode === "name") {
+        return cleanText(a?.name).localeCompare(cleanText(b?.name))
+          || (toNumber(a?.tier, 999) - toNumber(b?.tier, 999));
+      }
+
+      return (roleIndex(a) - roleIndex(b))
+        || (toNumber(a?.tier, 999) - toNumber(b?.tier, 999))
+        || cleanText(a?.name).localeCompare(cleanText(b?.name));
+    }
+function renderClassGroup(title, entries, selectedIds) {
+      return `
+        <section class="builder-group-section">
+          <div class="builder-group-heading">
+            <strong>${escapeHtml(title)}</strong>
+            <span>${entries.length} class${entries.length === 1 ? "" : "es"}</span>
+          </div>
+          <div class="builder-option-list">
+            ${entries.map((entry) => {
+              const requirementStatus = getClassRequirementStatus(entry);
+const locked = !requirementStatus.met && !selectedIds.has(entry.id);
+const note = locked
+                ? `Prerequisites not met. ${requirementStatus.requirementsText}`
+                : (!requirementStatus.met && selectedIds.has(entry.id)
+                  ? `Currently selected, but the tracked build no longer meets: ${requirementStatus.requirementsText}`
+                  : "");
+              return renderOptionCard({
+                id: entry.id,
+                image: entry.imageSmUrl || entry.imageLgUrl,
+                title: entry.name,
+                description: getClassCardText(entry).slice(0, 190),
+                labels: [
+                  entry.tier ? `Tier ${entry.tier}` : "",
+                  entry.role1,
+                  entry.role2,
+                  `Unlock ${getClassUnlockCost(entry)} EXP`,
+                  locked ? "Locked" : "Available"
+                ].filter(Boolean),
+                selected: selectedIds.has(entry.id),
+                locked,
+                note,
+                statusText: selectedIds.has(entry.id) ? "Class Taken" : "",
+                action: "toggle-class"
+              });
+            }).join("")}
+          </div>
+        </section>
+      `;
+    }
+function renderRaceStep() {
+      const selected = getSelectedRaceDetail();
+      return `
+        <div class="builder-content-grid">
+          <p class="builder-note">Choose a race to anchor the rest of the build. Clicking a card selects it and updates the right-side detail panel with the richer site pull.</p>
+          <div class="builder-option-list">
+            ${detailLookup.races.entries.map((entry) => renderOptionCard({
+              id: entry.id,
+              image: entry.imageSmUrl || entry.imageLgUrl,
+              title: entry.name,
+              description: cleanText(entry.attributes || entry.descriptionText).slice(0, 180),
+              labels: [entry.skills, entry.proficiencies].filter(Boolean),
+              selected: selected?.id === entry.id,
+              action: "pick-race"
+            })).join("")}
+          </div>
+        </div>
+      `;
+    }
+function renderAncestryStep() {
+      const entries = filteredAncestries();
+const race = getSelectedRaceDetail();
+const labels = getSecondaryLineageLabels(race);
+const mode = getCurrentSecondaryLineageMode(race);
+const selected = mode === "none" ? null : getSelectedAncestryDetail();
+      return `
+        <div class="builder-content-grid">
+          <div class="builder-search-row">
+            <input class="builder-search-input" type="text" autocomplete="off" data-builder-search="ancestry" placeholder="${escapeHtml(labels.searchPlaceholder)}" value="${escapeHtml(state.builder.searches.ancestry)}">
+            <p>${mode === "clan"
+              ? `Showing official Demon clan options for ${race?.name || "Demon"}.`
+              : (mode === "none"
+                ? labels.empty
+                : (race ? `Showing ancestries for ${race.name}.` : "Choose a primary race first for cleaner filtering."))}</p>
+          </div>
+          ${normalizePhrase(race?.name) === "human" ? `
+            <div class="review-panel">
+              <strong>Human Ancestry Note</strong>
+              <p>Humans do not choose a separate ancestry in the official character creation flow. Instead, their racial perks are assigned across the next steps: +1 main stat, +1 sub stat, 5 racial skill points, one additional language, and one common weapon group.</p>
+            </div>
+          ` : ""}
+          ${selected ? `<div class="selected-chip-list"><span class="selected-chip">${escapeHtml(labels.selectedLabel)}: ${escapeHtml(selected.name)}</span></div>` : ""}
+          ${renderBuilderChoiceSection("ancestry", "Lineage Choices")}
+          ${entries.length ? `
+            <div class="builder-option-list">
+              ${entries.map((entry) => renderOptionCard({
+                id: entry.id,
+                image: entry.imageSmUrl || entry.imageLgUrl,
+                title: entry.name,
+                description: cleanText(entry.clanNote || entry.descriptionText || entry.traits?.[0]?.descriptionText).slice(0, 200),
+                labels: [entry.primaryRace, entry.lineageCode].filter(Boolean),
+                selected: selected?.id === entry.id,
+                action: "pick-ancestry"
+              })).join("")}
+            </div>
+          ` : `<p class="builder-empty">${escapeHtml(mode === "none" ? labels.empty : `No ${labels.short.toLowerCase()} records matched the current race and search filter.`)}</p>`}
+        </div>
+      `;
+    }
+function renderProfileStep() {
+      return `
+        <div class="builder-content-grid">
+          <p class="builder-note">The profile fields below feed directly into the corresponding PDF-backed fields on page 1.</p>
+          <p class="builder-note"><strong>Spirit Core:</strong> Spirit Core tracks EXP spent. It starts at 0, but a fresh character normally spends 1000 EXP on starting classes during creation, so most finished starting characters will usually land at Spirit Core 1000. The separate 300 breakthrough-only EXP from character creation does not count toward Spirit Core. <strong>These are awarded at the correct points already; do not add additional Spirit Cores unless you have a special start condition (such as higher-level campaign starts).</strong></p>
+          ${renderBuilderChoiceSection("profile", "Profile Choices")}
+          <div class="stat-grid">
+            ${[
+              { field: "Name", label: "Character Name" },
+              { field: "Spirit Core", label: "Spirit Core" },
+              { field: "Gender", label: "Gender" },
+              { field: "Age", label: "Age" },
+              { field: "Height", label: "Height" },
+              { field: "Weight", label: "Weight" }
+            ].map((entry) => `
+              <div class="stat-card">
+                <strong>${escapeHtml(entry.label)}</strong>
+                <input class="builder-inline-input" type="text" data-profile-field="${escapeHtml(entry.field)}" value="${escapeHtml(state.fields[entry.field] || "")}" placeholder="${escapeHtml(entry.label)}">
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+function renderStatStep(definitions, config = {}) {
+      const hasCreationArray = Boolean(config.creationArray && config.creationArray.length);
+const entryMode = hasCreationArray
+        ? getBuilderStatEntryMode(config.modeKey, "array")
+        : "custom";
+const arrayState = getStatArrayState(definitions, config.creationArray || []);
+let statusText = config.statusFallback || "";
+      if (hasCreationArray) {
+        if (entryMode === "custom") {
+          statusText = config.customStatus || "Custom values are enabled here. Type any manual numbers you want and the sheet will recalculate from those values immediately.";
+        } else if (arrayState.matches) {
+          statusText = "Current values match the standard Lyrian creation array.";
+        } else if (arrayState.isComplete) {
+          statusText = "One or more saved values do not match the standard creation array. Choose from the legal remaining numbers to bring the build back in line with the rules.";
+        } else {
+          statusText = "Choose from the remaining legal numbers in the standard array. The builder only offers values that are still unused.";
+        }
+      }
+const noteText = typeof config.note === "function"
+        ? config.note(entryMode)
+        : (config.note || "These values feed the visible stat boxes on the character sheet immediately.");
+
+      return `
+        <div class="builder-content-grid">
+          <p class="builder-note">${escapeHtml(noteText)}</p>
+          ${renderBuilderChoiceSection(config.stepId || "", "Unspent Choices On This Step")}
+          ${hasCreationArray ? `
+            <div class="builder-filter-row">
+              <label class="builder-filter-field">
+                <span>Entry Mode</span>
+                <select class="builder-inline-input" data-builder-mode="${escapeHtml(config.modeKey || "")}">
+                  <option value="array" ${entryMode === "array" ? "selected" : ""}>Standard Array</option>
+                  <option value="custom" ${entryMode === "custom" ? "selected" : ""}>Custom Values</option>
+                </select>
+              </label>
+            </div>
+            <div class="selected-chip-list">
+              <span class="selected-chip">Creation Array: ${escapeHtml(config.creationArray.join(", "))}</span>
+              <span class="selected-chip">Current Values: ${escapeHtml(arrayState.assigned.length ? arrayState.assigned.join(", ") : "Not set yet")}</span>
+              <span class="selected-chip">Custom Values: ${entryMode === "custom" ? "Enabled" : "Disabled"}</span>
+            </div>
+          ` : ""}
+          ${statusText ? `<p class="builder-note">${escapeHtml(statusText)}</p>` : ""}
+          <div class="stat-grid">
+            ${definitions.map((entry) => `
+              <div class="stat-card">
+                <strong>${escapeHtml(entry.key)}</strong>
+                <p>${escapeHtml(entry.description)}</p>
+                ${hasCreationArray && entryMode === "array" ? (() => {
+                  const optionState = getRemainingStatArrayOptions(definitions, config.creationArray, entry.key);
+const current = optionState.currentValue;
+const helperText = optionState.choices.length
+                    ? `Remaining legal picks here: ${optionState.choices.join(", ")}`
+                    : "All array values are currently assigned.";
+                  return `
+                    <select class="stat-select stat-input" data-stat-field="${escapeHtml(entry.key)}">
+                      <option value="">Choose value</option>
+                      ${optionState.choices.map((value) => `
+                        <option value="${value}" ${String(current) === String(value) ? "selected" : ""}>${value}</option>
+                      `).join("")}
+                      ${current !== "" && !optionState.currentValid ? `<option value="${escapeHtml(String(current))}" selected>Current saved value ${escapeHtml(String(current))} (not in standard array)</option>` : ""}
+                    </select>
+                    <p class="play-main-stat-meta">${escapeHtml(helperText)}</p>
+                  `;
+                })() : `
+                  <input class="stat-input" type="number" inputmode="numeric" data-stat-field="${escapeHtml(entry.key)}" value="${escapeHtml(state.fields[entry.key] || "")}" placeholder="0">
+                  ${hasCreationArray ? `<p class="play-main-stat-meta">Manual entry mode. The standard array is currently bypassed for this field.</p>` : ""}
+                `}
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+function renderBreakthroughStep() {
+      const selectedIds = new Set(state.builder.selectedBreakthroughIds);
+const entries = filteredBreakthroughs();
+const budget = getBreakthroughBudgetState();
+const effects = getSelectedBreakthroughEffects();
+const funds = getStartingFundsState();
+
+      return `
+        <div class="builder-content-grid">
+          <div class="builder-search-row">
+            <input class="builder-search-input" type="text" autocomplete="off" data-builder-search="breakthrough" placeholder="Search breakthroughs" value="${escapeHtml(state.builder.searches.breakthrough)}">
+            <p>Only breakthroughs that fit the current race, ancestry, and already-selected prerequisite breakthroughs are shown here.</p>
+          </div>
+          <div class="selected-chip-list">
+            <span class="selected-chip">Breakthrough EXP: ${budget.spent} / ${budget.budget}</span>
+            <span class="selected-chip">Remaining: ${budget.remaining}</span>
+            <span class="selected-chip">Remaining Clim: ${funds.availableClim}</span>
+          </div>
+          ${renderBuilderChoiceSection("breakthroughs", "Breakthrough Choices")}
+          ${effects.autoApplied.length ? `<div class="review-panel"><strong>Auto-applied builder effects</strong><p>${escapeHtml(effects.autoApplied.join(" | "))}</p></div>` : ""}
+          ${effects.pendingChoices.length ? `<div class="review-panel"><strong>Needs a follow-up choice</strong><p>${escapeHtml(effects.pendingChoices.join(" | "))}</p></div>` : ""}
+          ${selectedIds.size ? `<div class="selected-chip-list">${getSelectedBreakthroughRecords().map((entry) => `<span class="selected-chip">${escapeHtml(entry.name)}</span>`).join("")}</div>` : ""}
+          ${entries.length ? `<div class="builder-option-list">
+            ${entries.map((entry) => {
+              const selected = selectedIds.has(entry.id);
+const requirementStatus = getBreakthroughRequirementStatus(entry, selectedIds);
+const cost = Math.max(0, parseNumericCost(entry.cost));
+const overBudget = !selected && cost > budget.remaining;
+const locked = !selected && (!requirementStatus.met || overBudget);
+const note = !requirementStatus.met
+                ? `Prerequisites not met. ${requirementStatus.reasons.join(" ")}`
+                : (overBudget ? `Unavailable: costs ${cost} breakthrough EXP, but only ${budget.remaining} remains.` : "");
+const statusText = selected
+                ? "Selected"
+                : (!requirementStatus.met ? "Prerequisites not met" : (overBudget ? "Not enough EXP" : ""));
+              return renderOptionCard({
+                id: entry.id,
+                mediaHtml: (entry.imageSmUrl || entry.imageLgUrl)
+                  ? `<img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl)}" alt="${escapeHtml(entry.name)}">`
+                  : renderBreakthroughArt(entry),
+                title: entry.name,
+                description: cleanText(entry.description).slice(0, 180),
+                labels: [entry.cost ? `Cost ${entry.cost}` : "", entry.requirements].filter(Boolean),
+                selected,
+                locked,
+                note,
+                statusText,
+                cardClass: "breakthrough-option-card",
+                action: "toggle-breakthrough"
+              });
+            }).join("")}
+          </div>` : `<p class="builder-empty">No breakthroughs currently match this character's race, ancestry, prerequisite breakthroughs, and search filter.</p>`}
+        </div>
+      `;
+    }
+function renderClassesStep() {
+      const search = normalizeKey(state.builder.searches.class);
+const roleFilter = cleanText(state.builder.searches.classRole);
+const tierFilter = cleanText(state.builder.searches.classTier);
+const sortMode = cleanText(state.builder.searches.classSort) || "role";
+const selectedIds = new Set(state.builder.selectedClassIds);
+const budget = getClassUnlockBudgetState();
+const roleOptions = getClassRoleOptions();
+const tierOptions = getClassTierOptions();
+const entries = lookup.classes.entries
+        .map((entry) => getClassDetail(entry.id) || entry)
+        .filter((entry) => {
+          const haystack = [entry.name, entry.role1, entry.role2, getClassCardText(entry), entry.requirements].map(normalizeKey).join(" ");
+const matchesSearch = !search || haystack.includes(search);
+const matchesRole = !roleFilter || cleanText(entry.role1) === roleFilter || cleanText(entry.role2) === roleFilter;
+const matchesTier = !tierFilter || String(toNumber(entry.tier, 0)) === tierFilter;
+          return matchesSearch && matchesRole && matchesTier;
+        });
+const groupedEntries = new Map();
+      [...entries].sort((a, b) => compareClassEntries(a, b, sortMode)).forEach((entry) => {
+        const groupKey = sortMode === "tier"
+          ? `Tier ${entry.tier || "—"}`
+          : (sortMode === "name" ? "Available Classes" : getPrimaryClassRole(entry));
+        if (!groupedEntries.has(groupKey)) {
+          groupedEntries.set(groupKey, []);
+        }
+        groupedEntries.get(groupKey).push(entry);
+      });
+
+      return `
+        <div class="builder-content-grid">
+          <p class="builder-note">Class creation starts with <strong>${STARTING_CLASS_EXP} EXP</strong> and <strong>${STARTING_INTERLUDE_POINTS} Interlude Points</strong>. EXP added on the character sheet is also available here. Unlocking a class costs <strong>1 Interlude Point + 100 EXP per tier</strong>, and the class key ability comes online as soon as that class is unlocked.</p>
+          <div class="builder-search-row">
+            <input class="builder-search-input" type="text" autocomplete="off" data-builder-search="class" placeholder="Search classes" value="${escapeHtml(state.builder.searches.class)}">
+            <p>Classes are grouped by role by default. Locked cards stay grayed out until the tracked build meets their official prerequisites.</p>
+          </div>
+          <div class="selected-chip-list">
+            <span class="selected-chip">Class EXP: ${budget.spentExp} / ${budget.expBudget}</span>
+            <span class="selected-chip">Interlude: ${budget.spentInterlude} / ${budget.interludeBudget}</span>
+            <span class="selected-chip">Remaining EXP: ${budget.remainingExp}</span>
+            <span class="selected-chip">Remaining IP: ${budget.remainingInterlude}</span>
+          </div>
+          ${selectedIds.size ? `<div class="selected-chip-list">${getSelectedClassDetails().map((entry) => `<button type="button" class="selected-chip selected-chip-button" data-builder-action="toggle-class" data-id="${escapeHtml(entry.id)}" aria-label="Remove ${escapeHtml(entry.name)} from your character">${escapeHtml(entry.name)}</button>`).join("")}</div>` : ""}
+          ${renderSelectedClassProgressPanel(budget)}
+          ${renderClassBenefitChoicePanel()}
+          <div class="builder-filter-row">
+            <label class="builder-filter-field">
+              <span>Group / Sort</span>
+              <select class="builder-inline-input" data-builder-search="classSort">
+                <option value="role" ${sortMode === "role" ? "selected" : ""}>Role Groups</option>
+                <option value="tier" ${sortMode === "tier" ? "selected" : ""}>Tier Groups</option>
+                <option value="name" ${sortMode === "name" ? "selected" : ""}>Alphabetical</option>
+              </select>
+            </label>
+            <label class="builder-filter-field">
+              <span>Role Filter</span>
+              <select class="builder-inline-input" data-builder-search="classRole">
+                <option value="">All Roles</option>
+                ${roleOptions.map((role) => `<option value="${escapeHtml(role)}" ${roleFilter === role ? "selected" : ""}>${escapeHtml(role)}</option>`).join("")}
+              </select>
+            </label>
+            <label class="builder-filter-field">
+              <span>Tier Filter</span>
+              <select class="builder-inline-input" data-builder-search="classTier">
+                <option value="">All Tiers</option>
+                ${tierOptions.map((tier) => `<option value="${tier}" ${tierFilter === String(tier) ? "selected" : ""}>Tier ${tier}</option>`).join("")}
+              </select>
+            </label>
+          </div>
+          ${entries.length
+            ? Array.from(groupedEntries.entries()).map(([groupTitle, groupEntries]) => renderClassGroup(groupTitle, groupEntries, selectedIds)).join("")
+            : `<p class="builder-empty">No classes matched the current search, role, and tier filters.</p>`}
+        </div>
+      `;
+    }
+function formatSkillPointLeftLabel(count, noun = "skill point") {
+      const amount = Math.trunc(toNumber(count, 0));
+      if (amount < 0) {
+        return `${Math.abs(amount)} over`;
+      }
+      return `${amount} ${noun}${amount === 1 ? "" : "s"} left`;
+    }
+function getPoolDisplayName(choice, suffixPattern) {
+      return cleanText(choice?.source || "")
+        .replace(suffixPattern, "")
+        .trim();
+    }
+function renderBuilderSkillStepper({ label, value, minusAttributes, plusAttributes, minusDisabled = false, plusDisabled = false, note = "", remainingLabel = "" }) {
+      return `
+        <div class="builder-skill-stepper">
+          <div class="builder-skill-stepper-label">
+            <span>${escapeHtml(label)}</span>
+            ${remainingLabel ? `<em>${escapeHtml(remainingLabel)}</em>` : ""}
+          </div>
+          <div class="builder-skill-stepper-controls">
+            <button type="button" ${minusAttributes} ${minusDisabled ? "disabled" : ""} aria-label="${escapeHtml(`Subtract ${label}`)}">-</button>
+            <strong>${escapeHtml(String(value))}</strong>
+            <button type="button" ${plusAttributes} ${plusDisabled ? "disabled" : ""} aria-label="${escapeHtml(`Add ${label}`)}">+</button>
+          </div>
+          ${note ? `<small>${escapeHtml(note)}</small>` : ""}
+        </div>
+      `;
+    }
+function renderRacialSkillAllocationFields(entry) {
+      const applicablePools = getVisibleRacialSkillPoolChoices()
+        .filter((choice) => isSkillAllowedForRacialPool(choice, entry.name));
+      if (!applicablePools.length) {
+        return `<div class="builder-skill-racial-fields"></div>`;
+      }
+
+      return `
+        <div class="builder-skill-racial-fields">
+          ${applicablePools.map((choice) => {
+        const options = getRacialSkillAllocationOptions(choice, entry.index);
+const label = applicablePools.length > 1
+          ? getPoolDisplayName(choice, /\s+race$/i)
+          : "Racial Skill";
+const pool = getRacialSkillPoolState(choice);
+        return renderBuilderSkillStepper({
+          label,
+          value: options.currentSpend,
+          minusAttributes: `data-adjust-racial-skill="-1" data-racial-skill-choice="${escapeHtml(choice.id)}" data-racial-skill-index="${entry.index}"`,
+          plusAttributes: `data-adjust-racial-skill="1" data-racial-skill-choice="${escapeHtml(choice.id)}" data-racial-skill-index="${entry.index}"`,
+          minusDisabled: options.currentSpend <= 0,
+          plusDisabled: options.currentSpend >= options.maxSpend,
+          remainingLabel: formatSkillPointLeftLabel(pool.remaining),
+          note: options.currentValid ? "" : "Saved value is over this pool."
+        });
+      }).join("")}
+        </div>
+      `;
+    }
+function renderClassSkillAllocationFields(entry) {
+      const visiblePools = getVisibleClassSkillPoolChoices();
+      if (!visiblePools.length) {
+        return `<div class="builder-skill-class-fields"></div>`;
+      }
+const applicablePools = visiblePools.filter((choice) => isSkillAllowedForClassPool(choice, entry.name));
+      if (!applicablePools.length) {
+        return `<div class="builder-skill-class-fields"></div>`;
+      }
+
+      return `
+        <div class="builder-skill-class-fields">
+          ${applicablePools.map((choice) => {
+            const pool = getClassSkillPoolState(choice);
+const baseLabel = applicablePools.length > 1
+              ? getPoolDisplayName(choice, /\s+class$/i)
+              : "Class Benefit";
+const skillOptions = getClassSkillAllocationOptions(choice, entry.index, "skill");
+            if (isFixedClassSkillPool(choice)) {
+              return `
+                <div class="builder-skill-stepper is-fixed">
+                  <div class="builder-skill-stepper-label">
+                    <span>${escapeHtml(`${baseLabel} Skill`)}</span>
+                  </div>
+                  <strong>${escapeHtml(`+${skillOptions.currentSpend} auto`)}</strong>
+                </div>
+              `;
+            }
+            return renderBuilderSkillStepper({
+              label: `${baseLabel} Skill`,
+              value: skillOptions.currentSpend,
+              minusAttributes: `data-adjust-class-skill="-1" data-class-skill-choice="${escapeHtml(choice.id)}" data-class-skill-index="${entry.index}" data-class-skill-kind="skill"`,
+              plusAttributes: `data-adjust-class-skill="1" data-class-skill-choice="${escapeHtml(choice.id)}" data-class-skill-index="${entry.index}" data-class-skill-kind="skill"`,
+              minusDisabled: skillOptions.currentSpend <= 0,
+              plusDisabled: skillOptions.currentSpend >= skillOptions.maxSpend,
+              remainingLabel: formatSkillPointLeftLabel(pool.remaining),
+              note: skillOptions.currentValid ? "" : "Saved value is over this pool."
+            });
+          }).join("")}
+        </div>
+      `;
+    }
+function getSkillExpertiseSourceOptions(entry) {
+      const definition = SKILL_DEFINITIONS[entry.index - 1];
+      if (!canSkillUseExpertise(definition)) {
+        return [];
+      }
+const creationBudget = getSkillBudgetState();
+const options = [{
+        value: "creation",
+        label: "skill point",
+        sourceLabel: "Skill points",
+        remaining: creationBudget.remaining,
+        canAdd: creationBudget.remaining > 0
+      }];
+      getVisibleClassSkillPoolChoices()
+        .filter((choice) => choice.allowExpertise && isSkillAllowedForClassPool(choice, entry.name))
+        .forEach((choice) => {
+          const pool = getClassSkillPoolState(choice);
+const className = getPoolDisplayName(choice, /\s+class$/i);
+          options.push({
+            value: `class:${choice.id}`,
+            label: `${className || "Class"} skill point`,
+            sourceLabel: `${className || "Class"} skill points`,
+            remaining: pool.remaining,
+            canAdd: pool.remaining > 0
+          });
+        });
+      return options;
+    }
+function getSkillExpertiseSourceLabel(sourceSpec, entry) {
+      const parsed = parseExpertiseSourceSpec(sourceSpec);
+      if (parsed.source !== "class") {
+        return "Skill points";
+      }
+const choice = getVisibleClassSkillPoolChoices().find((entryChoice) => entryChoice.id === parsed.choiceId);
+const className = getPoolDisplayName(choice, /\s+class$/i);
+      return className
+        ? `${className} skill points`
+        : entry?.expertiseGroups?.find((group) => group.sources[sourceSpec])?.label
+        || "Class skill points";
+    }
+function renderSkillExpertisePanelBody(entry) {
+      const sourceOptions = getSkillExpertiseSourceOptions(entry);
+const groups = entry.expertiseGroups || [];
+const expertiseOptions = getSkillExpertiseOptionList(entry.name);
+const defaultSpecialty = expertiseOptions.length ? "" : "__custom__";
+      return `
+        <p>Exchange 1 eligible skill point for +2 in one narrow specialty. The exchanged point does not also increase the broad skill. Only the relevant owned specialty applies to a roll.</p>
+        ${sourceOptions.length ? `
+          <div class="builder-skill-expertise-form">
+            <select class="builder-skill-input" data-skill-expertise-name>
+              <option value="" ${defaultSpecialty ? "" : "selected"}>Select expertise...</option>
+              ${expertiseOptions.map((option) => `
+                <option value="${escapeHtml(option)}">${escapeHtml(option)}</option>
+              `).join("")}
+              <option value="__custom__" ${defaultSpecialty ? "selected" : ""}>Custom / DM-approved...</option>
+            </select>
+            <input class="builder-skill-input" type="text" maxlength="80" data-skill-expertise-custom placeholder="Custom specialty">
+            <div class="builder-skill-expertise-source-actions" aria-label="Available skill point sources">
+              ${sourceOptions.map((option) => `
+                <button type="button" class="builder-skill-expertise-button" data-add-skill-expertise="${entry.index}" data-skill-expertise-source="${escapeHtml(option.value)}" ${option.canAdd ? "" : "disabled"}>
+                  ${escapeHtml(`Use ${option.label} (${formatSkillPointLeftLabel(option.remaining)})`)}
+                </button>
+              `).join("")}
+            </div>
+          </div>
+        ` : ""}
+        ${groups.length ? `
+          <div class="builder-skill-expertise-list">
+            ${groups.map((group) => `
+              <div class="builder-skill-expertise-chip">
+                <div>
+                  <strong>${escapeHtml(group.name)}</strong>
+                  <span>${escapeHtml(group.points
+                    ? `${group.points} exchanged point${group.points === 1 ? "" : "s"}${group.fixedSources?.length ? " plus feature expertise" : ""} = ${formatModifier(group.bonus)}`
+                    : `Feature expertise ${formatModifier(group.bonus)}`)}</span>
+                </div>
+                <div class="builder-skill-expertise-actions">
+                  ${(group.fixedSources || []).map((fixedSource) => `
+                    <span>${escapeHtml(`${fixedSource.source}: ${formatModifier(fixedSource.bonus)}`)}</span>
+                  `).join("")}
+                  ${Object.entries(group.sources).map(([sourceSpec, points]) => {
+                    const option = sourceOptions.find((entryOption) => entryOption.value === sourceSpec);
+const label = option?.sourceLabel || getSkillExpertiseSourceLabel(sourceSpec, entry);
+                    return `
+                      <span>${escapeHtml(`${label}: ${points}`)}</span>
+                      <button type="button" data-adjust-skill-expertise="-1" data-skill-expertise-index="${entry.index}" data-skill-expertise-source="${escapeHtml(sourceSpec)}" data-skill-expertise-name="${escapeHtml(group.name)}">-</button>
+                      <button type="button" data-adjust-skill-expertise="1" data-skill-expertise-index="${entry.index}" data-skill-expertise-source="${escapeHtml(sourceSpec)}" data-skill-expertise-name="${escapeHtml(group.name)}" ${option?.canAdd ? "" : "disabled"}>+</button>
+                    `;
+                  }).join("")}
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        ` : `<p class="builder-skill-expertise-empty">Only owned expertise will appear on the character sheet.</p>`}
+      `;
+    }
+function renderSkillExpertisePanel(entry) {
+      const definition = SKILL_DEFINITIONS[entry.index - 1];
+      if (!canSkillUseExpertise(definition)) {
+        return "";
+      }
+const groups = entry.expertiseGroups || [];
+const eagerRender = groups.length > 0;
+      return `
+        <details class="builder-skill-expertise-panel" data-skill-expertise-panel="${entry.index}" ${eagerRender ? "open data-skill-expertise-loaded=\"true\"" : ""}>
+          <summary class="builder-skill-expertise-summary">
+            <span>Expertise</span>
+            <strong>${escapeHtml(groups.length ? `${groups.length} owned` : "Add specialty")}</strong>
+          </summary>
+          <div class="builder-skill-expertise-lazy-body">
+            ${eagerRender ? renderSkillExpertisePanelBody(entry) : ""}
+          </div>
+        </details>
+      `;
+    }
+function loadBuilderSkillExpertisePanel(panel) {
+      if (!panel || panel.dataset.skillExpertiseLoaded === "true") {
+        return;
+      }
+const index = Number(panel.dataset.skillExpertisePanel || 0);
+const entry = getSkillRowsData().find((skill) => skill.index === index);
+const body = panel.querySelector(".builder-skill-expertise-lazy-body");
+      if (!entry || !body) {
+        return;
+      }
+      body.innerHTML = renderSkillExpertisePanelBody(entry);
+      panel.dataset.skillExpertiseLoaded = "true";
+    }
+function renderSelectedClassProgressPanel(budget) {
+      const progress = budget.classProgress || getSelectedClassProgress();
+      if (!progress.length) {
+        return "";
+      }
+
+      return `
+        <div class="review-panel">
+          <strong>Class EXP Spending</strong>
+          <p>Unlocking a class grants its key ability. Each class has 7 purchasable levels after unlock; active abilities and passive Heart, Soul, and class skill increases must be learned in order.</p>
+          <div class="class-progress-grid">
+            ${progress.map((entry) => {
+              const slots = getClassProgressSlots(entry.record);
+const nextSlot = slots[entry.purchasedCount];
+const canLearnNext = Boolean(nextSlot) && budget.remainingExp >= 100;
+const mastered = isTrackedClassMastered(entry);
+              return `
+                <div class="class-progress-card">
+                  <header>
+                    <div>
+                      <h4>${escapeHtml(entry.record.name)}</h4>
+                      <p>${escapeHtml([`Tier ${entry.record.tier || "?"}`, getPrimaryClassRole(entry.record), `Level ${entry.level}`].filter(Boolean).join(" | "))}</p>
+                    </div>
+                    <span class="selected-chip">${escapeHtml(mastered ? "Mastered" : `${entry.cost} EXP`)}</span>
+                  </header>
+                  ${entry.record.keyAbility?.name ? `<p><strong>Key:</strong> ${escapeHtml(entry.record.keyAbility.name)}</p>` : ""}
+                  <ul class="class-progress-list">
+                    ${slots.length ? slots.map((slot, index) => `
+                      <li class="${index >= entry.purchasedCount ? "is-locked" : ""}">
+                        <span>${escapeHtml(`Level ${index + 2}: ${slot.name || slot.label}`)}</span>
+                        <span>${index < entry.purchasedCount ? "Learned" : "100 EXP"}</span>
+                      </li>
+                    `).join("") : `<li><span>No purchasable class progression slots are available.</span></li>`}
+                  </ul>
+                  <div class="class-progress-actions">
+                    <button type="button" data-builder-action="learn-class-ability" data-id="${escapeHtml(entry.record.id)}" ${canLearnNext ? "" : "disabled"}>${nextSlot ? `Learn ${escapeHtml(nextSlot.name || nextSlot.label)}` : "Class Mastered"}</button>
+                    <button type="button" class="secondary" data-builder-action="refund-class-ability" data-id="${escapeHtml(entry.record.id)}" ${entry.purchasedCount > 0 ? "" : "disabled"}>Refund Last Class Level</button>
+                    <button type="button" class="secondary" data-builder-action="toggle-class" data-id="${escapeHtml(entry.record.id)}">Remove Class</button>
+                  </div>
+                  ${nextSlot && !canLearnNext ? `<p>${escapeHtml(`Needs 100 EXP, but only ${budget.remainingExp} EXP is available.`)}</p>` : ""}
+                </div>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      `;
+    }
+function renderSkillsStep() {
+      const budget = getSkillBudgetState();
+const racialPools = getVisibleRacialSkillPoolChoices().map((choice) => ({
+        choice,
+        state: getRacialSkillPoolState(choice)
+      }));
+const classPools = getVisibleClassSkillPoolChoices().map((choice) => ({
+        choice,
+        state: getClassSkillPoolState(choice)
+      }));
+let statusText = "Use + or - to assign broad skill points. Use Expertise to exchange 1 eligible point for +2 in a narrow specialty instead of +1 to the broad skill.";
+      if (budget.remaining === 0) {
+        statusText = "All 10 skill points are currently assigned.";
+      } else if (budget.remaining < 0) {
+        statusText = "The saved skill values currently exceed the 10-point creation pool. Reduce one or more allocations until the remaining points return to 0 or higher.";
+      }
+
+      return `
+        <div class="builder-content-grid">
+          <p class="builder-note">A normal skill roll is <strong>d20 + affiliated sub stat + main skill</strong>. Instead of assigning a point to the broad skill, you may exchange an eligible point for <strong>+2 expertise</strong> in one narrow specialty. That exchanged point does not also increase the broad skill, and only the relevant owned expertise applies to a roll.</p>
+          ${renderBuilderChoiceSection("skills", "Skill Choices")}
+          <div class="selected-chip-list">
+            <span class="selected-chip">Skill Points Spent: ${escapeHtml(String(budget.spent))} / ${budget.budget}</span>
+            <span class="selected-chip">Remaining Skill Points: ${escapeHtml(String(budget.remaining))}</span>
+            ${racialPools.map(({ choice, state: poolState }) => `
+              <span class="selected-chip">${escapeHtml(getPoolDisplayName(choice, /\s+race$/i) || "Racial")} skill points: ${escapeHtml(String(poolState.spent))} / ${escapeHtml(String(poolState.budget))}</span>
+            `).join("")}
+            ${classPools.map(({ choice, state: poolState }) => `
+              <span class="selected-chip">${escapeHtml(getPoolDisplayName(choice, /\s+class$/i) || "Class")} skill points: ${escapeHtml(String(poolState.spent))} / ${escapeHtml(String(poolState.budget))}</span>
+            `).join("")}
+          </div>
+          <p class="builder-note">${escapeHtml(statusText)}</p>
+          ${racialPools.length ? `<p class="builder-note">Racial skill points are tracked separately from the normal 10-point creation pool and can only be spent on the eligible skills listed by that race, clan, or lineage choice.</p>` : ""}
+          ${classPools.length ? `<p class="builder-note">Class skill benefits are also tracked separately from the normal creation pool. If a class allows expertise exchange, each class skill point can become +2 named expertise on an eligible class skill.</p>` : ""}
+          <div class="builder-skill-grid">
+            ${getSkillRowsData().map((entry) => `
+              <div class="builder-skill-row">
+                <div class="builder-skill-copy">
+                  <strong>${escapeHtml(entry.name)}</strong>
+                  <span>${escapeHtml(entry.stat)} linked skill</span>
+                </div>
+                ${(() => {
+                  const skillOptions = getSkillAllocationOptions(entry.index, "skill");
+                  return renderBuilderSkillStepper({
+                    label: "Creation Skill",
+                    value: skillOptions.currentSpend,
+                    minusAttributes: `data-adjust-skill-allocation="-1" data-skill-allocation-index="${entry.index}" data-skill-allocation-type="skill"`,
+                    plusAttributes: `data-adjust-skill-allocation="1" data-skill-allocation-index="${entry.index}" data-skill-allocation-type="skill"`,
+                    minusDisabled: skillOptions.currentSpend <= 0,
+                    plusDisabled: skillOptions.currentSpend >= skillOptions.maxSpend,
+                    remainingLabel: formatSkillPointLeftLabel(budget.remaining),
+                    note: skillOptions.currentValid ? "" : "Saved value is over budget."
+                  });
+                })()}
+                ${renderRacialSkillAllocationFields(entry)}
+                ${renderClassSkillAllocationFields(entry)}
+                <div class="builder-skill-total">
+                  <span>Base Roll</span>
+                  <strong>${escapeHtml(formatModifier(entry.total))}</strong>
+                </div>
+                ${renderSkillExpertisePanel(entry)}
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+function renderEquipmentStep() {
+      const search = normalizeKey(state.builder.searches.item);
+const selectedIds = new Set(state.builder.selectedItemIds);
+const entries = lookup.items.entries.filter((entry) => {
+        if (entry.hiddenFromBuilderEquipment) {
+          return false;
+        }
+        const haystack = [entry.name, entry.type, entry.subType, entry.cost, entry.materialUnitLabel, entry.materialCategory, entry.description].map(normalizeKey).join(" ");
+        return !search || haystack.includes(search);
+      });
+const funds = getStartingFundsState();
+
+      return `
+        <div class="builder-content-grid">
+          <p class="builder-note">Each character starts with 3000 Clim they can spend on basic equipment and items. Breakthrough bonuses update that pool here automatically, and you can use the manual override if the GM starts the character with a different amount.</p>
+          <div class="review-grid">
+            <div class="review-panel">
+              <strong>Base Clim</strong>
+              <p>${funds.baseClim}</p>
+            </div>
+            <div class="review-panel">
+              <strong>Breakthrough Bonus</strong>
+              <p>${funds.bonusClim}</p>
+            </div>
+            <div class="review-panel">
+              <strong>Suggested Total</strong>
+              <p>${funds.suggestedTotal}</p>
+            </div>
+            <div class="review-panel">
+              <strong>Equipment Cost</strong>
+              <p>${funds.selectedEquipmentCost}</p>
+            </div>
+            <div class="review-panel">
+              <strong>Remaining Clim</strong>
+              <p>${funds.availableClim}</p>
+            </div>
+          </div>
+          ${funds.overBudgetClim ? `<div class="review-panel"><strong>Over Budget</strong><p>${escapeHtml(`Selected equipment is ${funds.overBudgetClim} Clim over the current available funds.`)}</p></div>` : ""}
+          <label class="stat-card">
+            <strong>Manual Clim Override</strong>
+            <input class="builder-inline-input" type="number" inputmode="numeric" min="0" data-currency-field="Clim Override" value="${escapeHtml(state.fields["Clim Override"] || "")}" placeholder="Optional GM-set total">
+            <p>${escapeHtml(funds.hasOverride ? "The override is currently setting the available total shown above." : "Leave blank to use the standard total plus any breakthrough bonuses.")}</p>
+          </label>
+          <div class="builder-search-row">
+            <input class="builder-search-input" type="text" autocomplete="off" data-builder-search="item" placeholder="Search items" value="${escapeHtml(state.builder.searches.item)}">
+            <p>Selected items seed the combat inventory rows and the items page notes.</p>
+          </div>
+          ${selectedIds.size ? `<div class="selected-chip-list">${getSelectedItemRecords().map((entry) => `<span class="selected-chip">${escapeHtml(getBuilderItemDisplayName(entry))}</span>`).join("")}</div>` : ""}
+          <div class="builder-option-list">
+            ${renderEquipmentEntryList(entries, selectedIds, funds)}
+          </div>
+        </div>
+      `;
+    }
+function renderReviewStep() {
+      const classes = getSelectedClassDetails();
+const breakthroughs = getSelectedBreakthroughRecords();
+const items = getSelectedItemRecords();
+const topSkills = getTopSkillRows(6);
+const funds = getStartingFundsState();
+
+      return `
+        <div class="builder-content-grid">
+          <p class="builder-note">This is the point where the guided builder hands off into the final interactive sheet. The live dashboard is the default play surface.</p>
+          ${renderBuilderChoiceSection("", "Choices Pending / Resolved", true)}
+          <div class="review-grid">
+            <div class="review-panel">
+              <strong>Identity</strong>
+              <p>${escapeHtml(state.fields.Name || "Unnamed character")}</p>
+              <p>${escapeHtml([getSelectedRaceDetail()?.name || "", getSelectedAncestryDetail()?.name || "", state.fields["Spirit Core"] || ""].filter(Boolean).join(" | "))}</p>
+            </div>
+            <div class="review-panel">
+              <strong>Main Stats</strong>
+              <p>${escapeHtml(MAIN_STATS.map((entry) => `${entry.key}: ${state.fields[entry.key] || "—"}`).join(" | "))}</p>
+            </div>
+            <div class="review-panel">
+              <strong>Secondary Stats</strong>
+              <p>${escapeHtml(SECONDARY_STATS.map((entry) => `${entry.key}: ${state.fields[entry.key] || "—"}`).join(" | "))}</p>
+            </div>
+            <div class="review-panel">
+              <strong>Classes</strong>
+              <p>${escapeHtml(classes.length ? classes.map((entry) => entry.name).join(", ") : "None selected yet.")}</p>
+            </div>
+            <div class="review-panel">
+              <strong>Skills</strong>
+              <p>${escapeHtml(topSkills.length ? topSkills.map((entry) => `${entry.name} ${formatModifier(entry.total)}`).join(", ") : "No trained skills yet.")}</p>
+            </div>
+            <div class="review-panel">
+              <strong>Breakthroughs</strong>
+              <p>${escapeHtml(breakthroughs.length ? breakthroughs.map((entry) => entry.name).join(", ") : "None selected yet.")}</p>
+            </div>
+          </div>
+          <div class="review-panel review-equipment-panel">
+            <strong>Equipment</strong>
+            <p>${escapeHtml(getEquipmentSummaryText(items, funds, "None selected yet."))}</p>
+          </div>
+        </div>
+      `;
+    }
+function renderBuilderStepContent() {
+      const step = currentStep();
+const content = document.getElementById("builder-step-content");
+let html = "";
+
+      if (step.id === "race") {
+        html = renderRaceStep();
+      } else if (step.id === "ancestry") {
+        html = renderAncestryStep();
+      } else if (step.id === "profile") {
+        html = renderProfileStep();
+      } else if (step.id === "main-stats") {
+        html = renderStatStep(MAIN_STATS, {
+          creationArray: MAIN_STAT_CREATION_ARRAY,
+          stepId: "main-stats",
+          modeKey: "mainStatMode",
+          note: (entryMode) => entryMode === "custom"
+            ? "Main stats are the base values that drive your combat math. Custom mode lets you type whatever manual Power, Focus, Agility, and Toughness values you want instead of using the standard array, and the sheet recalculates the derived combat numbers from those values immediately."
+            : "Main stats are base values you assign during character creation. The standard Lyrian array is 5, 4, 4, 3 for Power, Focus, Agility, and Toughness, and array mode only offers those legal remaining values. You can switch Entry Mode to Custom Values any time if you want a manual build instead."
+        });
+      } else if (step.id === "secondary-stats") {
+        html = renderStatStep(SECONDARY_STATS, {
+          creationArray: SECONDARY_STAT_CREATION_ARRAY,
+          stepId: "secondary-stats",
+          modeKey: "secondaryStatMode",
+          note: (entryMode) => entryMode === "custom"
+            ? "Secondary stats feed the whole skill board. Custom mode lets you type manual Fitness, Cunning, Reason, Awareness, and Presence values instead of following the standard array."
+            : "Secondary stats are also assigned directly during character creation. The standard Lyrian array is 5, 4, 3, 2, 1 for Fitness, Cunning, Reason, Awareness, and Presence, and array mode only offers the legal remaining values. You can switch Entry Mode to Custom Values any time if you want a manual setup instead."
+        });
+      } else if (step.id === "breakthroughs") {
+        html = renderBreakthroughStep();
+      } else if (step.id === "classes") {
+        html = renderClassesStep();
+      } else if (step.id === "skills") {
+        html = renderSkillsStep();
+      } else if (step.id === "equipment") {
+        html = renderEquipmentStep();
+      } else {
+        html = renderReviewStep();
+      }
+
+      content.innerHTML = html;
+      renderBuilderDetail();
+    }
+function renderBuilderStepNav() {
+      const container = document.getElementById("builder-step-nav");
+      container.innerHTML = BUILDER_STEPS.map((step, index) => `
+        <button
+          type="button"
+          class="builder-step-button${index === state.ui.builderStep ? " active" : ""}"
+          data-step-index="${index}"
+        >
+          <strong>${index + 1}. ${escapeHtml(step.short)}</strong>
+          <span>${escapeHtml(step.label)}</span>
+        </button>
+      `).join("");
+    }
+function updateBuilderControls() {
+      const back = document.getElementById("builder-back");
+const next = document.getElementById("builder-next");
+const nextTop = document.getElementById("builder-next-top");
+const sheetShortcutTop = document.getElementById("builder-sheet-shortcut-top");
+const startOverSidebar = document.getElementById("builder-start-over-sidebar");
+const disabled = !canAdvanceBuilder(false);
+const isReviewStep = state.ui.builderStep === BUILDER_STEPS.length - 1;
+const label = isReviewStep ? "Continue to Character Sheet" : "Continue";
+      back.disabled = state.ui.builderStep === 0;
+      next.disabled = disabled;
+      next.textContent = label;
+      if (nextTop) {
+        nextTop.disabled = disabled;
+        nextTop.textContent = label;
+      }
+      if (sheetShortcutTop) {
+        sheetShortcutTop.classList.toggle("is-hidden", isReviewStep);
+        sheetShortcutTop.disabled = !getSelectedRaceDetail();
+        sheetShortcutTop.title = getSelectedRaceDetail()
+          ? "Jump straight to the live character sheet with the current build."
+          : "Choose a primary species before opening the character sheet.";
+      }
+      if (startOverSidebar) {
+        startOverSidebar.classList.remove("is-hidden");
+      }
+    }
+function getBuilderStepPresentation(step = currentStep()) {
+      if (step.id !== "ancestry") {
+        return step;
+      }
+const race = getSelectedRaceDetail();
+const mode = getCurrentSecondaryLineageMode(race);
+      if (mode === "clan") {
+        return {
+          ...step,
+          title: "Choose a Demon Clan",
+          lead: "Demons choose one of the official Sorthen clan lineages here. Each clan grants the listed family role details and a specific clan technique from the source data."
+        };
+      }
+      if (mode === "none") {
+        return {
+          ...step,
+          title: "Secondary Lineage",
+          lead: race ? `${race.name} does not have a separate ancestry choice during official character creation, so you can continue once you've reviewed this step.` : step.lead
+        };
+      }
+      return step;
+    }
+function renderBuilderHeader() {
+      const step = getBuilderStepPresentation();
+      document.getElementById("builder-step-title").textContent = step.title;
+      document.getElementById("builder-step-lead").textContent = step.lead;
+      document.getElementById("builder-progress-text").textContent = `Step ${state.ui.builderStep + 1} of ${BUILDER_STEPS.length}`;
+    }
+export function renderBuilder() {
+      seedBuilderInspection();
+      refreshBuilderIdentity();
+      renderBuilderHeader();
+      renderBuilderStepNav();
+      renderBuilderSummary();
+      renderBuilderStepContent();
+      updateBuilderControls();
+    }
+function renderBuilderWithSearchFocus(searchKey) {
+      renderBuilder();
+const input = document.querySelector(`[data-builder-search="${cssEscape(searchKey)}"]`);
+      if (input) {
+        const value = state.builder.searches[searchKey] || "";
+        input.value = value;
+        input.focus();
+        input.setSelectionRange(value.length, value.length);
+      }
+    }
+function scheduleBuilderSearchRender(searchKey) {
+      window.clearTimeout(builderSearchRenderTimer);
+      builderSearchRenderTimer = window.setTimeout(() => {
+        builderSearchRenderTimer = 0;
+        renderBuilderWithSearchFocus(searchKey);
+      }, 90);
+    }
+function setBuilderRace(id) {
+      const race = detailLookup.races.resolve(id);
+      if (!race) {
+        return;
+      }
+      state.builder.selectedRaceId = race.id;
+      state.builder.inspected.race = race.id;
+      updateFieldValue("Primary Race", race.name);
+const ancestry = getSelectedAncestryDetail();
+      if (getCurrentSecondaryLineageMode(race) === "none" || (ancestry && normalizeKey(ancestry.primaryRace) !== normalizeKey(race.name))) {
+        state.builder.selectedAncestryId = "";
+        state.builder.inspected.ancestry = "";
+        updateFieldValue("Sub Race", "");
+      }
+
+      syncBuilderSelectionsIntoSheet();
+      setStatus(`Primary race set to ${race.name}.`);
+      renderBuilder();
+    }
+function setBuilderAncestry(id) {
+      const ancestry = getAncestryDetail(id);
+      if (!ancestry) {
+        return;
+      }
+      state.builder.selectedAncestryId = ancestry.id;
+      state.builder.inspected.ancestry = ancestry.id;
+      updateFieldValue("Sub Race", ancestry.name);
+      syncBuilderSelectionsIntoSheet();
+      setStatus(`${getSecondaryLineageLabels(getSelectedRaceDetail()).browseLabel} set to ${ancestry.name}.`);
+      renderBuilder();
+    }
+function toggleSelection(listName, id, limit, label) {
+      const list = state.builder[listName];
+const index = list.indexOf(id);
+      if (index >= 0) {
+        list.splice(index, 1);
+      } else {
+        if (limit && list.length >= limit) {
+          setStatus(`You have reached the current ${label} limit of ${limit}.`);
+          return false;
+        }
+        list.push(id);
+      }
+      return true;
+    }
+function toggleBuilderBreakthrough(id) {
+      state.builder.inspected.breakthrough = id;
+const alreadySelected = state.builder.selectedBreakthroughIds.includes(id);
+const record = lookup.breakthroughs.resolve(id);
+const requirementStatus = getBreakthroughRequirementStatus(record);
+      if (!alreadySelected && !requirementStatus.met) {
+        setStatus(`Cannot select ${record?.name || "that breakthrough"} yet. ${requirementStatus.reasons.join(" ")}`);
+        renderBuilder();
+        return;
+      }
+      if (!alreadySelected && record) {
+        const budget = getBreakthroughBudgetState();
+const nextCost = Math.max(0, parseNumericCost(record.cost));
+        if (nextCost > budget.remaining) {
+          setStatus(`${record.name} costs ${nextCost} breakthrough EXP, but only ${budget.remaining} remains in the creation pool.`);
+          renderBuilder();
+          return;
+        }
+      }
+      toggleSelection("selectedBreakthroughIds", id, 0, "breakthrough");
+      syncBuilderSelectionsIntoSheet();
+      setStatus("Updated breakthrough selections.");
+      renderBuilder();
+    }
+function toggleBuilderClass(id) {
+      state.builder.inspected.class = id;
+const alreadySelected = state.builder.selectedClassIds.includes(id);
+const record = getClassDetail(id);
+const requirementStatus = getClassRequirementStatus(record);
+      if (!alreadySelected && !requirementStatus.met) {
+        setStatus(`Cannot select ${record?.name || "that class"} yet. Requirements: ${requirementStatus.requirementsText}`);
+        renderBuilder();
+        return;
+      }
+      if (!alreadySelected && record) {
+        const budget = getClassUnlockBudgetState();
+const unlockCost = getClassUnlockCost(record);
+        if (budget.remainingInterlude <= 0) {
+          setStatus(`You have already committed all ${STARTING_INTERLUDE_POINTS} starting Interlude Points to class unlocks.`);
+          renderBuilder();
+          return;
+        }
+        if (unlockCost > budget.remainingExp) {
+          setStatus(`${record.name} costs ${unlockCost} class EXP to unlock, but only ${budget.remainingExp} EXP is available.`);
+          renderBuilder();
+          return;
+        }
+      }
+const budgetBefore = getClassUnlockBudgetState();
+const expDelta = alreadySelected && record ? -getClassProgressCost(record) : (record ? getClassUnlockCost(record) : 0);
+      if (!toggleSelection("selectedClassIds", id, STARTING_INTERLUDE_POINTS, "class unlock")) {
+        return;
+      }
+      if (alreadySelected && record?.id && state.builder.classAbilityProgress) {
+        delete state.builder.classAbilityProgress[record.id];
+      }
+      applyClassExpDelta(expDelta, budgetBefore);
+      syncBuilderSelectionsIntoSheet();
+      setStatus("Updated class selections.");
+      renderBuilder();
+    }
+function learnNextClassAbility(id) {
+      state.builder.inspected.class = id;
+const record = getClassDetail(id);
+      if (!record || !state.builder.selectedClassIds.includes(record.id)) {
+        setStatus("Select the class before learning its abilities.");
+        renderBuilder();
+        return;
+      }
+const slots = getClassProgressSlots(record);
+const current = getClassPurchasedAbilityCount(record);
+const nextSlot = slots[current];
+      if (!nextSlot) {
+        setStatus(`${record.name} is already mastered.`);
+        renderBuilder();
+        return;
+      }
+const budget = getClassUnlockBudgetState();
+      if (budget.remainingExp < 100) {
+        setStatus(`${nextSlot.name || nextSlot.label} costs 100 EXP, but only ${budget.remainingExp} EXP is available.`);
+        renderBuilder();
+        return;
+      }
+
+      setClassPurchasedAbilityCount(record.id, current + 1);
+      applyClassExpDelta(100, budget);
+      syncBuilderSelectionsIntoSheet();
+      setStatus(`Learned ${nextSlot.name || nextSlot.label} from ${record.name}.`);
+      renderBuilder();
+    }
+function refundLastClassAbility(id) {
+      state.builder.inspected.class = id;
+const record = getClassDetail(id);
+      if (!record || !state.builder.selectedClassIds.includes(record.id)) {
+        return;
+      }
+const current = getClassPurchasedAbilityCount(record);
+      if (current <= 0) {
+        setStatus(`${record.name} has no purchased class levels to refund.`);
+        renderBuilder();
+        return;
+      }
+      const slot = getClassProgressSlots(record)[current - 1];
+      applyClassExpDelta(-100, getClassUnlockBudgetState());
+      setClassPurchasedAbilityCount(record.id, current - 1);
+      syncBuilderSelectionsIntoSheet();
+      setStatus(`Refunded ${slot?.name || slot?.label || "the last class level"} from ${record.name}.`);
+      renderBuilder();
+    }
+function inspectBuilderItem(id) {
+      state.builder.inspected.item = id;
+const record = lookup.items.resolve(id);
+      if (!record) {
+        setStatus("Could not find that equipment item.");
+        return;
+      }
+      renderBuilderDetail();
+      setStatus(`Viewing ${record.name}. Use + to purchase it.`);
+    }
+function addBuilderItem(id) {
+      state.builder.inspected.item = id;
+const record = lookup.items.resolve(id);
+      if (!record) {
+        setStatus("Could not find that equipment item.");
+        return;
+      }
+      const stackable = isStackableBuilderItem(record);
+      const currentQuantity = getBuilderItemQuantity(record.id);
+      if (!stackable && currentQuantity > 0) {
+        setStatus(`${record.name} is already purchased.`);
+        renderBuilder();
+        return;
+      }
+      if (currentQuantity <= 0 && state.builder.selectedItemIds.length >= INVENTORY_ROWS.length) {
+        setStatus(`All ${INVENTORY_ROWS.length} inventory rows are already filled.`);
+        renderBuilder();
+        return;
+      }
+const cost = parseClimCost(record.cost);
+const funds = getStartingFundsState();
+      if (cost > 0 && cost > funds.availableClim) {
+        setStatus(`${record.name} costs ${cost} Clim, but only ${funds.availableClim} Clim remains. Use the manual override if the GM is granting extra funds.`);
+        renderBuilder();
+        return;
+      }
+
+      const nextQuantity = setBuilderItemQuantity(record.id, currentQuantity + 1);
+      syncBuilderSelectionsIntoSheet();
+      setStatus(stackable && nextQuantity > 1 ? `Purchased another ${record.name}. Quantity: ${nextQuantity}.` : `Purchased ${record.name}.`);
+      renderBuilder();
+    }
+function removeBuilderItem(id) {
+      state.builder.inspected.item = id;
+const record = lookup.items.resolve(id);
+      if (!record) {
+        setStatus("Could not find that equipment item.");
+        return;
+      }
+      const stackable = isStackableBuilderItem(record);
+      const currentQuantity = getBuilderItemQuantity(record.id);
+      if (currentQuantity <= 0) {
+        setStatus(`${record.name} is not currently purchased.`);
+        renderBuilder();
+        return;
+      }
+      const nextQuantity = stackable ? setBuilderItemQuantity(record.id, currentQuantity - 1) : setBuilderItemQuantity(record.id, 0);
+      syncBuilderSelectionsIntoSheet();
+      setStatus(nextQuantity > 0 ? `Reduced ${record.name} to quantity ${nextQuantity}.` : `Removed ${record.name}.`);
+      renderBuilder();
+    }
+function goToBuilderStep(index) {
+      const target = Math.min(BUILDER_STEPS.length - 1, Math.max(0, index));
+const maxAllowed = Math.max(state.ui.builderStep, furthestUnlockedBuilderStep());
+      if (target > maxAllowed) {
+        const message = builderBlockMessage() || "Finish the required earlier builder steps first.";
+        setStatus(message);
+        state.ui.builderStep = maxAllowed;
+      } else {
+        state.ui.builderStep = target;
+      }
+      renderBuilder();
+    }
+export function createStateSnapshot() {
+      return JSON.parse(JSON.stringify(state));
+    }
+export function serializeCurrentState() {
+      return JSON.stringify(state);
+    }
+function removeEmptyExportValues(value) {
+      if (Array.isArray(value)) {
+        return value.map((entry) => removeEmptyExportValues(entry)).filter((entry) => {
+          if (Array.isArray(entry)) {
+            return entry.length > 0;
+          }
+          if (entry && typeof entry === "object") {
+            return Object.keys(entry).length > 0;
+          }
+          return entry !== "" && entry != null;
+        });
+      }
+      if (value && typeof value === "object") {
+        return Object.fromEntries(
+          Object.entries(value)
+            .map(([key, entry]) => [key, removeEmptyExportValues(entry)])
+            .filter(([, entry]) => {
+              if (Array.isArray(entry)) {
+                return entry.length > 0;
+              }
+              if (entry && typeof entry === "object") {
+                return Object.keys(entry).length > 0;
+              }
+              return entry !== "" && entry != null;
+            })
+        );
+      }
+      return value;
+    }
+function createCompactSnapshotFromStateSnapshot(snapshot) {
+      const builder = snapshot.builder || {};
+const searches = builder.searches || {};
+      return removeEmptyExportValues({
+        fields: snapshot.fields || {},
+        abilitySelections: snapshot.abilitySelections || {},
+        builder: {
+          portraitDataUrl: builder.portraitDataUrl || "",
+          selectedRaceId: builder.selectedRaceId || "",
+          selectedAncestryId: builder.selectedAncestryId || "",
+          selectedClassIds: builder.selectedClassIds || [],
+          selectedItemIds: builder.selectedItemIds || [],
+          itemQuantities: builder.itemQuantities || {},
+          selectedBreakthroughIds: builder.selectedBreakthroughIds || [],
+          skillExpertiseEntries: builder.skillExpertiseEntries || [],
+          choiceSelections: builder.choiceSelections || {},
+          searches: {
+            mainStatMode: searches.mainStatMode || "array",
+            secondaryStatMode: searches.secondaryStatMode || "array"
+          }
+        },
+        play: {
+          resources: snapshot.play?.resources || {},
+          hpAdjustAmount: snapshot.play?.hpAdjustAmount || "",
+          hpHasManualChange: Boolean(snapshot.play?.hpHasManualChange),
+          playerNotes: snapshot.play?.playerNotes || "",
+          inventoryItems: snapshot.play?.inventoryItems || [],
+          inventorySearch: snapshot.play?.inventorySearch || "",
+          showInventoryCatalog: snapshot.play?.showInventoryCatalog || false,
+          showCustomItemForm: snapshot.play?.showCustomItemForm || false,
+          customItemDraft: snapshot.play?.customItemDraft || {},
+          crafting: snapshot.play?.crafting || {},
+          diceTray: snapshot.play?.diceTray || {},
+          log: snapshot.play?.log || []
+        }
+      });
+    }
+function createCompactExportSnapshot() {
+      return createCompactSnapshotFromStateSnapshot(createStateSnapshot());
+    }
+function createStorableSnapshotFromStateSnapshot(sourceSnapshot) {
+      const snapshot = createCompactSnapshotFromStateSnapshot(sourceSnapshot);
+const portraitDataUrl = cleanText(snapshot.builder?.portraitDataUrl);
+      if (portraitDataUrl.length > SAVE_SNAPSHOT_PORTRAIT_LIMIT) {
+        snapshot.builder = snapshot.builder || {};
+        snapshot.builder.portraitDataUrl = "";
+        snapshot.builder.portraitStorageNote = "Portrait was too large for browser storage and was omitted from this browser save.";
+      }
+      return snapshot;
+    }
+export function createStorableStateSnapshot() {
+      return createStorableSnapshotFromStateSnapshot(createStateSnapshot());
+    }
+export function compactSaveSlotEntry(entry) {
+      if (!entry || !entry.id || !entry.snapshot) {
+        return null;
+      }
+      return {
+        ...entry,
+        snapshot: createStorableSnapshotFromStateSnapshot(entry.snapshot)
+      };
+    }
+function readBlobAsDataUrl(blob) {
+      return new Promise((resolve, reject) => {
+const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ""));
+        reader.onerror = () => reject(reader.error || new Error("Could not read the image data."));
+        reader.readAsDataURL(blob);
+      });
+    }
+function loadImageFromDataUrl(dataUrl) {
+      return new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = () => reject(new Error("Could not load portrait image for resizing."));
+        image.src = dataUrl;
+      });
+    }
+async function resizePortraitDataUrl(dataUrl) {
+      const image = await loadImageFromDataUrl(dataUrl);
+const sourceWidth = image.naturalWidth || image.width || PORTRAIT_MAX_DIMENSION;
+const sourceHeight = image.naturalHeight || image.height || PORTRAIT_MAX_DIMENSION;
+const scale = Math.min(1, PORTRAIT_MAX_DIMENSION / Math.max(sourceWidth, sourceHeight));
+const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(sourceWidth * scale));
+      canvas.height = Math.max(1, Math.round(sourceHeight * scale));
+const context = canvas.getContext("2d");
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+const blob = await new Promise((resolve, reject) => {
+        canvas.toBlob((nextBlob) => {
+          if (nextBlob) {
+            resolve(nextBlob);
+          } else {
+            reject(new Error("Could not compress portrait image."));
+          }
+        }, "image/jpeg", PORTRAIT_JPEG_QUALITY);
+      });
+      return readBlobAsDataUrl(blob);
+    }
+export async function normalizeCurrentPortraitDataUrl() {
+      const portraitDataUrl = cleanText(state.builder?.portraitDataUrl);
+      if (!portraitDataUrl || portraitDataUrl.length <= PORTRAIT_NORMALIZE_THRESHOLD || !portraitDataUrl.startsWith("data:image/")) {
+        return false;
+      }
+      try {
+        const resized = await resizePortraitDataUrl(portraitDataUrl);
+        if (resized && resized.length < portraitDataUrl.length) {
+          state.builder.portraitDataUrl = resized;
+          refreshBuilderIdentity();
+          renderPlayDashboardIfVisible();
+          scheduleWorkingStatePersist(false);
+          return true;
+        }
+      } catch (error) {
+        console.warn("Portrait normalization failed; export/save will fall back to compact storage safeguards.", error);
+      }
+      return false;
+    }
+function isStorageQuotaError(error) {
+      return error?.name === "QuotaExceededError"
+        || error?.code === 22
+        || /quota|storage/i.test(String(error?.message || ""));
+    }
+export function getStorageFailureMessage(error) {
+      if (isStorageQuotaError(error)) {
+        return "Browser storage is full for this character. I compacted the save as much as possible, but the portrait/notes/log may still be too large.";
+      }
+      return error?.message || "Browser storage failed.";
+    }
+function bytesToBase64(bytes) {
+      let binary = "";
+      for (let index = 0; index < bytes.length; index += 0x8000) {
+        binary += String.fromCharCode(...bytes.subarray(index, index + 0x8000));
+      }
+      return btoa(binary);
+    }
+export function base64ToBytes(base64Text) {
+      const binary = atob(String(base64Text || ""));
+const bytes = new Uint8Array(binary.length);
+      for (let index = 0; index < binary.length; index += 1) {
+        bytes[index] = binary.charCodeAt(index);
+      }
+      return bytes;
+    }
+function chunkText(text, chunkSize = EMBEDDED_STATE_CHUNK_SIZE) {
+      const chunks = [];
+      for (let index = 0; index < text.length; index += chunkSize) {
+        chunks.push(text.slice(index, index + chunkSize));
+      }
+      return chunks.length ? chunks : [""];
+    }
+function encodePlainEmbeddedStateBytes(bytes) {
+      return {
+        encoding: "plain-base64",
+        data: bytesToBase64(bytes)
+      };
+    }
+async function compressEmbeddedStateBytes(bytes) {
+      const stream = new CompressionStream("gzip");
+const writer = stream.writable.getWriter();
+      await writer.write(bytes);
+      await writer.close();
+      return new Uint8Array(await new Response(stream.readable).arrayBuffer());
+    }
+export async function withTimeout(promise, timeoutMs, message) {
+      let timeoutId = 0;
+      try {
+        return await Promise.race([
+          promise,
+          new Promise((_, reject) => {
+            timeoutId = window.setTimeout(() => reject(new Error(message)), timeoutMs);
+          })
+        ]);
+      } finally {
+        window.clearTimeout(timeoutId);
+      }
+    }
+async function encodeEmbeddedStateText(text) {
+      const bytes = new TextEncoder().encode(text);
+      if (!window.CompressionStream) {
+        return encodePlainEmbeddedStateBytes(bytes);
+      }
+      try {
+        const compressed = await withTimeout(
+          compressEmbeddedStateBytes(bytes),
+          1800,
+          "Embedded character data compression timed out."
+        );
+        return {
+          encoding: "gzip-base64",
+          data: bytesToBase64(compressed)
+        };
+      } catch (error) {
+        console.warn("Embedded character data compression failed; using plain chunked metadata instead.", error);
+        return encodePlainEmbeddedStateBytes(bytes);
+      }
+    }
+export async function decodeEmbeddedStateText(data, encoding) {
+      const bytes = base64ToBytes(data);
+      if (encoding === "plain-base64") {
+        return new TextDecoder().decode(bytes);
+      }
+      if (encoding !== "gzip-base64") {
+        throw new Error("Unsupported embedded character encoding.");
+      }
+      if (!window.DecompressionStream) {
+        throw new Error("This browser cannot decompress the embedded character data.");
+      }
+const stream = new DecompressionStream("gzip");
+const writer = stream.writable.getWriter();
+      await writer.write(bytes);
+      await writer.close();
+const decompressed = await new Response(stream.readable).arrayBuffer();
+      return new TextDecoder().decode(decompressed);
+    }
+async function buildEmbeddedStatePackage() {
+      const json = JSON.stringify(createCompactExportSnapshot());
+const encoded = await encodeEmbeddedStateText(json);
+const chunks = chunkText(encoded.data);
+      return {
+        format: EMBEDDED_STATE_FORMAT,
+        encoding: encoded.encoding,
+        originalLength: json.length,
+        chunkSize: EMBEDDED_STATE_CHUNK_SIZE,
+        chunkCount: chunks.length,
+        chunks
+      };
+    }
+function getExportCacheKey() {
+      return JSON.stringify(createCompactExportSnapshot());
+    }
+function clearScheduledExportCachePrep() {
+      if (exportPrepCache.timer) {
+        window.clearTimeout(exportPrepCache.timer);
+        exportPrepCache.timer = 0;
+      }
+    }
+export function invalidateExportCache() {
+      exportPrepCache.key = "";
+      exportPrepCache.payload = null;
+      clearScheduledExportCachePrep();
+    }
+function scheduleExportCachePrep(delay = 900) {
+      clearScheduledExportCachePrep();
+      exportPrepCache.timer = window.setTimeout(() => {
+        exportPrepCache.timer = 0;
+        prepareExportCache().catch((error) => {
+          console.warn("Background export preparation failed; it will be rebuilt during export.", error);
+        });
+      }, delay);
+    }
+async function buildExportCachePayload() {
+      syncExportReadyState();
+const key = getExportCacheKey();
+const embeddedStatePackage = await buildEmbeddedStatePackage();
+const payload = {
+        key,
+        fileStem: buildExportFileStem(),
+        pdfFieldValues: buildPdfExportFieldMap(),
+        embeddedStatePackage,
+        spreadsheet: {
+          computedBonuses: getComputedBonuses(),
+          classRows: CLASS_ROWS.slice(0, 12),
+          selectedBreakthroughs: getSelectedBreakthroughRecords(),
+          selectedItems: getSelectedItemRecords()
+        }
+      };
+const finalKey = getExportCacheKey();
+      if (finalKey !== key) {
+        return buildExportCachePayload();
+      }
+      return payload;
+    }
+export async function prepareExportCache({ force = false } = {}) {
+      clearScheduledExportCachePrep();
+      syncExportReadyState();
+const currentKey = getExportCacheKey();
+      if (!force && exportPrepCache.payload && exportPrepCache.key === currentKey) {
+        return exportPrepCache.payload;
+      }
+      if (!force && exportPrepCache.promise) {
+        const payload = await exportPrepCache.promise;
+        syncExportReadyState();
+        return exportPrepCache.key === getExportCacheKey() ? payload : prepareExportCache({ force: true });
+      }
+
+      exportPrepCache.promise = buildExportCachePayload()
+        .then((payload) => {
+          exportPrepCache.key = payload.key;
+          exportPrepCache.payload = payload;
+          exportPrepCache.preparedAt = Date.now();
+          return payload;
+        })
+        .finally(() => {
+          exportPrepCache.promise = null;
+        });
+      return exportPrepCache.promise;
+    }
+export function buildSlotId() {
+      return `slot-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    }
+function waitForSheetModalPaint() {
+      return new Promise((resolve) => {
+        requestAnimationFrame(() => setTimeout(resolve, 0));
+      });
+    }
+function setSheetModalProgress(message, percent = null, detail = "") {
+      const modal = document.getElementById("sheet-modal");
+      if (!modal || modal.hidden) {
+        return;
+      }
+      const lead = document.getElementById("sheet-modal-lead");
+      if (lead) {
+        lead.textContent = message;
+      }
+      if (percent == null) {
+        return;
+      }
+const safePercent = clamp(Math.round(percent), 0, 100);
+const content = document.getElementById("sheet-modal-content");
+      if (!content) {
+        return;
+      }
+      content.innerHTML = `
+        <div class="sheet-modal-progress" role="status" aria-live="polite">
+          <div class="sheet-modal-progress-top">
+            <span>Export progress</span>
+            <span class="sheet-modal-progress-percent">${safePercent}%</span>
+          </div>
+          <div class="sheet-modal-progress-track" aria-hidden="true">
+            <div class="sheet-modal-progress-fill" style="width: ${safePercent}%"></div>
+          </div>
+          <p class="sheet-modal-progress-detail">${escapeHtml(detail || message)}</p>
+        </div>
+      `;
+    }
+export async function updateSheetModalProgress(message, percent, detail = "") {
+      setSheetModalProgress(message, percent, detail);
+      await waitForSheetModalPaint();
+    }
+export function showExportSuccessModal(formatLabel, fileName) {
+      openSheetModal({
+        eyebrow: "Export Complete",
+        title: `${formatLabel} Ready`,
+        lead: "The download has been started.",
+        content: `
+          <div class="sheet-modal-success">
+            <strong>Success</strong>
+            <p>${escapeHtml(fileName)} has been generated and sent to your browser downloads.</p>
+            <button type="button" class="sheet-modal-action" data-sheet-modal-close>Close</button>
+          </div>
+        `
+      });
+    }
+export function showExportFailureModal(formatLabel, error) {
+      const message = error?.message || "Unknown export error.";
+      openSheetModal({
+        eyebrow: "Export Failed",
+        title: `${formatLabel} Could Not Finish`,
+        lead: "The export stopped before the file could be downloaded.",
+        content: `
+          <div class="sheet-modal-success">
+            <strong>What happened</strong>
+            <p>${escapeHtml(message)}</p>
+            <p>If this repeats, try compressing or replacing the portrait, then export again. Oversized image data is the most common cause.</p>
+            <button type="button" class="sheet-modal-action" data-sheet-modal-close>Close</button>
+          </div>
+        `
+      });
+    }
+function renderSaveSlotCard(slot, options = {}) {
+      const savedAt = slot.savedAt ? new Date(slot.savedAt).toLocaleString() : "Unknown time";
+const summary = [
+        cleanText(slot.snapshot?.fields?.Name) || "Unnamed character",
+        cleanText(slot.snapshot?.fields?.["Primary Race"]) || cleanText(slot.snapshot?.fields?.Race) || "No race",
+        cleanText(slot.snapshot?.fields?.["Sub Race"]) || "No ancestry"
+      ].join(" | ");
+const actions = options.actions || [];
+const isCurrent = (options.highlightSlotId && slot.id === options.highlightSlotId)
+        || (!options.highlightSlotId && state.ui.activeSaveSlotId && slot.id === state.ui.activeSaveSlotId);
+      return `
+        <article class="save-slot-card${isCurrent ? " is-current" : ""}">
+          <div class="save-slot-copy">
+            <strong>${escapeHtml(slot.name || "Saved Character")}</strong>
+            <p>${escapeHtml(summary)}</p>
+            <p>Last saved: ${escapeHtml(savedAt)}</p>
+            ${isCurrent ? `<p class="meta">Current active save slot.</p>` : ""}
+          </div>
+          <div class="save-slot-actions">
+            ${actions.map((action) => `<button type="button" class="${action.type === "delete" ? "danger" : ""}" data-slot-action="${escapeHtml(action.type)}" data-slot-id="${escapeHtml(slot.id)}">${escapeHtml(action.label)}</button>`).join("")}
+          </div>
+        </article>
+      `;
+    }
+function getSaveSlotManagerActions() {
+      return [
+        { type: "overwrite", label: "Overwrite" },
+        { type: "load", label: "Load" },
+        { type: "delete", label: "Delete" }
+      ];
+    }
+function renderSaveSlotListHtml(slots = getSavedSlots(), highlightSlotId = "") {
+      return slots.length
+        ? slots.map((slot) => renderSaveSlotCard(slot, {
+          actions: getSaveSlotManagerActions(),
+          highlightSlotId
+        })).join("")
+        : `<p class="play-empty">No saved character slots yet.</p>`;
+    }
+export function refreshSaveSlotList(highlightSlotId = "", feedback = "", isError = false) {
+      const slotList = document.getElementById("save-slot-list");
+      if (slotList) {
+        slotList.innerHTML = renderSaveSlotListHtml(getSavedSlots(), highlightSlotId);
+      }
+const feedbackNode = document.getElementById("save-slot-feedback");
+      if (feedbackNode) {
+        feedbackNode.textContent = feedback;
+        feedbackNode.classList.toggle("is-error", Boolean(isError));
+      }
+const activeButton = document.getElementById("save-active-slot-button");
+      if (activeButton) {
+        activeButton.classList.toggle("is-hidden", !state.ui.activeSaveSlotId);
+      }
+    }
+export function openSaveSlotModal() {
+      const slots = getSavedSlots();
+const activeSlot = slots.find((entry) => entry.id === state.ui.activeSaveSlotId);
+const content = `
+        <div class="play-subpanel">
+          <p class="eyebrow">Save Current Character</p>
+          <div class="save-slot-form">
+            <label class="sheet-modal-form-label" for="save-slot-name-input">
+              <span>Slot Name</span>
+              <input id="save-slot-name-input" class="library-input" type="text" value="${escapeHtml(deriveSaveSlotName())}" placeholder="Character slot name">
+            </label>
+            <div class="sheet-modal-form-actions">
+              <button type="button" class="sheet-modal-action" data-save-slot-submit="new">Save New Slot</button>
+              <button id="save-active-slot-button" type="button" class="sheet-modal-action${activeSlot ? "" : " is-hidden"}" data-save-mode="active">
+                Update Active Slot
+              </button>
+            </div>
+            <p class="play-field-note">Create a fresh browser slot with the entered name, or update the currently active slot if you want to overwrite it.</p>
+            <p class="play-field-note" style="color: #d8a441; margin-top: 8px;"><strong>Note:</strong> Browser slots save your data locally. Clearing your internet cookies or site cache will erase these characters. For permanent backups, use the <strong>Export Character</strong> feature.</p>
+            <p id="save-slot-feedback" class="save-slot-feedback" aria-live="polite"></p>
+          </div>
+        </div>
+        <div class="play-subpanel">
+          <p class="eyebrow">Existing Saved Characters</p>
+          <div id="save-slot-list" class="save-slot-list" aria-live="polite">
+            ${renderSaveSlotListHtml(slots)}
+          </div>
+        </div>
+      `;
+      openSheetModal({
+        eyebrow: "Save Character",
+        title: "Browser Save Slots",
+        lead: "Save the current character into its own browser slot or overwrite an existing one.",
+        content
+      });
+const saveNameInput = document.getElementById("save-slot-name-input");
+      if (saveNameInput) {
+        saveNameInput.focus();
+        saveNameInput.select();
+      }
+    }
+export function openLoadSavedModal() {
+      const slots = getSavedSlots();
+      openSheetModal({
+        eyebrow: "Load Character",
+        title: "Saved Characters",
+        lead: "Choose any saved browser slot and load it into the interactive sheet.",
+        content: slots.length
+          ? `<div class="save-slot-list">${slots.map((slot) => renderSaveSlotCard(slot, {
+              actions: [
+                { type: "load", label: "Load" },
+                { type: "delete", label: "Delete" }
+              ]
+            })).join("")}</div>
+            <p class="play-field-note" style="color: #d8a441; margin-top: 16px;"><strong>Note:</strong> Browser saves are local. Clearing cookies or site cache will erase these characters. Export your character regularly as a backup.</p>`
+          : `<p class="play-empty">No saved character slots were found in this browser yet.</p>
+            <p class="play-field-note" style="color: #d8a441; margin-top: 16px;"><strong>Note:</strong> Browser saves are local. Clearing cookies or site cache will erase these characters.</p>`
+      });
+    }
+export function promptForSlotName(defaultName) {
+      const proposed = window.prompt("Save character as:", defaultName || deriveSaveSlotName());
+      return proposed === null ? "" : cleanText(proposed);
+    }
+export function buildExportFileStem() {
+      return normalizeKey(cleanText(state.fields.Name) || "lyrian-character") || "lyrian-character";
+    }
+function buildPdfExportFieldMap() {
+      const derived = getDerivedCombatStats();
+      state.play = mergePlayState(state.play);
+      syncPlayResourcesFromFields(true);
+const resources = state.play.resources;
+const progress = getCampaignProgressState();
+const map = {};
+
+      window.LYRIAN_FORM_MAP.pages.forEach((pageConfig) => {
+        pageConfig.fields.forEach((field) => {
+          map[field.name] = cleanText(state.fields[field.name]);
+        });
+      });
+const displayName = cleanText(state.fields.Name);
+      if (displayName) {
+        NAME_FIELDS.forEach((fieldName) => {
+          map[fieldName] = displayName;
+        });
+      }
+
+      map.HP = cleanText(resources.hpCurrent) || String(derived.hpMax);
+      map.THP = cleanText(resources.hpMax) || String(derived.hpMax);
+      map.RP = cleanText(resources.rpCurrent) || String(derived.rpMax);
+      map.TRP = cleanText(resources.rpMax) || String(derived.rpMax);
+      map.Mana = cleanText(resources.manaCurrent) || String(derived.manaMax);
+      map.TMana = cleanText(resources.manaMax) || String(derived.manaMax);
+      map["Spirit Core"] = cleanText(state.fields["Spirit Core"]) || String(progress.spiritCore);
+      map.Exp = cleanText(state.fields.Exp) || String(progress.expBank);
+      map.Power = String(getComputedMainStatValue("Power"));
+      map.Focus = String(getComputedMainStatValue("Focus"));
+      map.Agility = String(getComputedMainStatValue("Agility"));
+      map.Toughness = String(getComputedMainStatValue("Toughness"));
+      map.Fitness = String(getComputedSecondaryStatValue("Fitness"));
+      map.Cunning = String(getComputedSecondaryStatValue("Cunning"));
+      map.Reason = String(getComputedSecondaryStatValue("Reason"));
+      map.Awareness = String(getComputedSecondaryStatValue("Awareness"));
+      map.Presence = String(getComputedSecondaryStatValue("Presence"));
+      map.Lattack = cleanText(state.fields.Lattack) || formatModifier(derived.lightAttack);
+      map.Hattack = cleanText(state.fields.Hattack) || formatModifier(derived.heavyAttack);
+      map.Pattack = cleanText(state.fields.Pattack) || formatModifier(derived.preciseAttack);
+      map.Evasion = cleanText(state.fields.Evasion) || String(derived.evasion);
+      map.Dodge = cleanText(state.fields.Dodge) || String(derived.dodge);
+      map.Speed = cleanText(state.fields.Speed) || String(derived.speed);
+      map.Guard = cleanText(state.fields.Guard) || String(derived.guard);
+      map.Block = cleanText(state.fields.Block) || String(derived.block);
+
+      return map;
+    }
+export async function buildSpreadsheetMetadataSheet(preparedPackage = null) {
+      const packageData = preparedPackage || await buildEmbeddedStatePackage();
+      return window.XLSX.utils.aoa_to_sheet([
+        [EMBEDDED_STATE_FORMAT],
+        ["encoding", packageData.encoding],
+        ["chunkCount", packageData.chunkCount],
+        ["chunkSize", packageData.chunkSize],
+        ["originalLength", packageData.originalLength],
+        [],
+        ["chunkIndex", "chunk"],
+        ...packageData.chunks.map((chunk, index) => [index + 1, chunk])
+      ]);
+    }
+export function buildSpreadsheetExportCellMap(preparedExport) {
+      const cellMap = {};
+const computedBonuses = preparedExport.spreadsheet.computedBonuses;
+const classRows = preparedExport.spreadsheet.classRows;
+const selectedBreakthroughs = preparedExport.spreadsheet.selectedBreakthroughs;
+const selectedItems = preparedExport.spreadsheet.selectedItems;
+
+      setSpreadsheetExportCell(cellMap, "Core", "B2", cleanText(state.fields.Name));
+      setSpreadsheetExportCell(cellMap, "Core", "D2", cleanText(state.fields["Primary Race"]));
+      setSpreadsheetExportCell(cellMap, "Core", "B3", cleanText(state.fields.Gender));
+      setSpreadsheetExportCell(cellMap, "Core", "D3", cleanText(state.fields["Sub Race"]));
+      setSpreadsheetExportCell(cellMap, "Core", "B4", cleanText(state.fields.Age));
+      setSpreadsheetExportCell(cellMap, "Core", "D4", Math.max(0, toNumber(state.fields.Exp, 0)));
+      setSpreadsheetExportCell(cellMap, "Core", "D5", Math.max(0, toNumber(state.fields["Spirit Core"], 0)));
+      setSpreadsheetExportCell(cellMap, "Core", "B5", cleanText(state.fields.Height));
+      setSpreadsheetExportCell(cellMap, "Core", "B6", cleanText(state.fields.Weight));
+      setSpreadsheetExportCell(cellMap, "Core", "B7", cleanText(state.fields.Worships));
+
+      Object.entries(SPREADSHEET_MAIN_STAT_ROWS).forEach(([stat, row]) => {
+        setSpreadsheetExportCell(cellMap, "Core", `A${row}`, Math.max(0, toNumber(state.fields[stat], 0)));
+        setSpreadsheetExportCell(cellMap, "Core", `F${row}`, computedBonuses.mainStats[stat] || 0);
+      });
+
+      Object.entries(SPREADSHEET_SECONDARY_STAT_ROWS).forEach(([stat, row]) => {
+        setSpreadsheetExportCell(cellMap, "Core", `C${row}`, Math.max(0, toNumber(state.fields[stat], 0)));
+        setSpreadsheetExportCell(cellMap, "Core", `H${row}`, computedBonuses.secondaryStats[stat] || 0);
+      });
+
+      for (let index = 0; index < 27; index += 1) {
+        const row = 9 + index;
+        setSpreadsheetExportCell(cellMap, "Core", `H${row}`, Math.max(0, toNumber(state.fields[`SkillPoint${index + 1}`], 0)));
+        setSpreadsheetExportCell(cellMap, "Core", `I${row}`, Math.max(0, toNumber(state.fields[`Expertise${index + 1}`], 0)));
+      }
+
+      classRows.forEach((classRow, index) => {
+        const row = 15 + index;
+        setSpreadsheetExportCell(cellMap, "Core", `A${row}`, cleanText(state.fields[`Class${classRow}`]));
+        setSpreadsheetExportCell(cellMap, "Core", `C${row}`, Math.max(0, toNumber(state.fields[`ClassLevel${classRow}`], 0)));
+        setSpreadsheetExportCell(cellMap, "Core", `D${row}`, Math.max(0, toNumber(state.fields[`Cost${classRow}`], 0)));
+      });
+
+      for (let index = 0; index < 24; index += 1) {
+        const abilityName = state.abilitySelections[`Ability${index + 1}`]
+          ? lookup.abilities.resolve(state.abilitySelections[`Ability${index + 1}`])?.name
+          : "";
+        setSpreadsheetExportCell(cellMap, "Abilities", `A${index + 2}`, cleanText(abilityName || extractAbilityHeading(state.fields[`Ability${index + 1}`])));
+      }
+
+      selectedBreakthroughs.forEach((entry, index) => {
+        const row = 2 + index;
+        setSpreadsheetExportCell(cellMap, "Breakthrough", `A${row}`, entry.name);
+        setSpreadsheetExportCell(cellMap, "Breakthrough", `B${row}`, Math.max(0, parseNumericCost(entry.cost)));
+      });
+
+      for (let index = 0; index < 25; index += 1) {
+        const row = 2 + index;
+const fieldRow = index + 1;
+const name = cleanText(state.fields[`CombatInventory${fieldRow}`]);
+const record = selectedItems.find((entry) => normalizePhrase(entry.name) === normalizePhrase(name)) || lookup.items.resolve(name);
+        setSpreadsheetExportCell(cellMap, "Inventory", `A${row}`, name);
+        setSpreadsheetExportCell(cellMap, "Inventory", `B${row}`, Math.max(0, toNumber(state.fields[`Amount${fieldRow}`], name ? 1 : 0)));
+        setSpreadsheetExportCell(cellMap, "Inventory", `C${row}`, cleanText(state.fields[`Bulk${fieldRow}`]) || cleanText(record?.burden));
+        setSpreadsheetExportCell(cellMap, "Inventory", `D${row}`, cleanText(record?.cost));
+        setSpreadsheetExportCell(cellMap, "Inventory", `F${row}`, cleanText(state.fields[`Description${fieldRow}`]) || cleanText(record?.descriptionText || record?.description));
+      }
+
+      setSpreadsheetExportCell(cellMap, "Journals", "A1", "Player Notes");
+      setSpreadsheetExportCell(cellMap, "Journals", "A2", cleanText(state.play.playerNotes));
+      return cellMap;
+    }
+export function buildPdfImportPayload(pdfFields) {
+      const payload = {
+        fields: {},
+        play: {
+          resources: {}
+        }
+      };
+      Object.entries(pdfFields).forEach(([name, value]) => {
+        const text = cleanText(value);
+        if (!text || name === "_LyrianState" || name === PDF_STATE_MANIFEST_FIELD || name.startsWith(PDF_STATE_CHUNK_FIELD_PREFIX)) {
+          return;
+        }
+        if (/^Name\d+$/.test(name)) {
+          if (!payload.fields.Name) {
+            payload.fields.Name = text;
+          }
+          return;
+        }
+        if (["HP", "THP", "Mana", "TMana", "RP", "TRP"].includes(name)) {
+          return;
+        }
+        payload.fields[name] = text;
+      });
+      if (cleanText(pdfFields.HP)) {
+        payload.play.resources.hpCurrent = cleanText(pdfFields.HP);
+      }
+      if (cleanText(pdfFields.THP)) {
+        payload.play.resources.hpMax = cleanText(pdfFields.THP);
+      }
+const importedHpCurrent = toNumber(payload.play.resources.hpCurrent, NaN);
+const importedHpMax = toNumber(payload.play.resources.hpMax, NaN);
+      if (Number.isFinite(importedHpCurrent) && Number.isFinite(importedHpMax) && importedHpCurrent < importedHpMax) {
+        payload.play.hpHasManualChange = true;
+      }
+      if (cleanText(pdfFields.Mana)) {
+        payload.play.resources.manaCurrent = cleanText(pdfFields.Mana);
+      }
+      if (cleanText(pdfFields.TMana)) {
+        payload.play.resources.manaMax = cleanText(pdfFields.TMana);
+      }
+      if (cleanText(pdfFields.RP)) {
+        payload.play.resources.rpCurrent = cleanText(pdfFields.RP);
+      }
+      if (cleanText(pdfFields.TRP)) {
+        payload.play.resources.rpMax = cleanText(pdfFields.TRP);
+      }
+      return payload;
+    }
+export function buildSpreadsheetImportPayload(workbook) {
+      const core = workbook.Sheets.Core || {};
+const abilities = workbook.Sheets.Abilities || {};
+const breakthroughs = workbook.Sheets.Breakthrough || {};
+const inventory = workbook.Sheets.Inventory || {};
+const journals = workbook.Sheets.Journals || {};
+const payload = {
+        fields: {},
+        play: {
+          playerNotes: getWorksheetText(journals, "A2"),
+          resources: {}
+        }
+      };
+
+      payload.fields.Name = getWorksheetText(core, "B2");
+      payload.fields["Primary Race"] = getWorksheetText(core, "D2");
+      payload.fields.Gender = getWorksheetText(core, "B3");
+      payload.fields["Sub Race"] = getWorksheetText(core, "D3");
+      payload.fields.Age = getWorksheetText(core, "B4");
+      payload.fields.Height = getWorksheetText(core, "B5");
+      payload.fields.Weight = getWorksheetText(core, "B6");
+      payload.fields.Worships = getWorksheetText(core, "B7");
+      payload.fields.Exp = getWorksheetNumberText(core, "D4");
+      payload.fields["Spirit Core"] = getWorksheetNumberText(core, "D5");
+
+      Object.entries(SPREADSHEET_MAIN_STAT_ROWS).forEach(([stat, row]) => {
+        payload.fields[stat] = getWorksheetNumberText(core, `A${row}`);
+      });
+
+      Object.entries(SPREADSHEET_SECONDARY_STAT_ROWS).forEach(([stat, row]) => {
+        payload.fields[stat] = getWorksheetNumberText(core, `C${row}`);
+      });
+
+      for (let index = 0; index < 27; index += 1) {
+        const row = 9 + index;
+        payload.fields[`SkillPoint${index + 1}`] = getWorksheetNumberText(core, `H${row}`);
+        payload.fields[`Expertise${index + 1}`] = getWorksheetNumberText(core, `I${row}`);
+      }
+
+      for (let index = 0; index < 12; index += 1) {
+        const row = 15 + index;
+const className = getWorksheetText(core, `A${row}`);
+        if (className) {
+          payload.fields[`Class${index + 1}`] = className;
+        }
+const classLevel = getWorksheetNumberText(core, `C${row}`);
+        if (classLevel) {
+          payload.fields[`ClassLevel${index + 1}`] = classLevel;
+        }
+const classCost = getWorksheetNumberText(core, `D${row}`);
+        if (classCost) {
+          payload.fields[`Cost${index + 1}`] = classCost;
+        }
+      }
+const breakthroughNames = [];
+      for (let index = 0; index < 40; index += 1) {
+        const name = getWorksheetText(breakthroughs, `A${index + 2}`);
+        if (name) {
+          breakthroughNames.push(name);
+        }
+      }
+      if (breakthroughNames.length) {
+        payload.fields.BName = breakthroughNames.join("\n");
+      }
+
+      for (let index = 0; index < 24; index += 1) {
+        const abilityName = getWorksheetText(abilities, `A${index + 2}`);
+const description = getWorksheetText(abilities, `F${index + 2}`);
+        if (abilityName || description) {
+          payload.fields[`Ability${index + 1}`] = [abilityName, description].filter(Boolean).join("\n");
+        }
+      }
+
+      for (let index = 0; index < 25; index += 1) {
+        const row = 2 + index;
+const name = getWorksheetText(inventory, `A${row}`);
+        if (!name) {
+          continue;
+        }
+        payload.fields[`CombatInventory${index + 1}`] = name;
+        payload.fields[`Amount${index + 1}`] = getWorksheetNumberText(inventory, `B${row}`);
+        payload.fields[`Bulk${index + 1}`] = getWorksheetText(inventory, `C${row}`);
+        payload.fields[`Description${index + 1}`] = getWorksheetText(inventory, `F${row}`);
+      }
+
+      return payload;
+    }
+function confirmResetCharacter() {
+      closeSheetModal();
+      clearSheet();
+      setStatus("Character reset. Choose a primary race to begin again.");
+    }
+function startOverCharacter() {
+      openSheetModal({
+        eyebrow: "Reset Character",
+        title: "Reset Character?",
+        lead: "Are you sure you wish to Reset the character?",
+        content: `
+          <div class="sheet-modal-success">
+            <strong>This will clear the current builder and sheet data.</strong>
+            <p>If you clicked by accident, choose No and nothing will be erased.</p>
+            <div class="sheet-modal-form-actions">
+              <button type="button" class="sheet-modal-action" data-reset-character-confirm>Yes, Reset</button>
+              <button type="button" class="sheet-modal-action" data-sheet-modal-close>No</button>
+            </div>
+          </div>
+        `
+      });
+    }
+function setPrimaryRaceFromBrowser() {
+      const race = getRaceDetail(document.getElementById("race-browser").value);
+      if (!race) {
+        return;
+      }
+      state.builder.selectedRaceId = race.id;
+      state.builder.inspected.race = race.id;
+      syncBuilderSelectionsIntoSheet();
+      renderBuilder();
+      setStatus(`Primary race set to ${race.name}.`);
+    }
+function appendRaceProficiencies() {
+      const race = getRaceDetail(document.getElementById("race-browser").value);
+      if (!race) {
+        return;
+      }
+      const block = [race.name, race.attributes, race.skills, race.proficiencies].filter(Boolean).map(cleanText).join("\n");
+      appendFieldText("Proficiencies", block);
+    }
+function setSubRaceFromBrowser() {
+      const ancestry = getAncestryDetail(document.getElementById("ancestry-browser").value);
+      if (!ancestry) {
+        return;
+      }
+      state.builder.selectedAncestryId = ancestry.id;
+      state.builder.inspected.ancestry = ancestry.id;
+      syncBuilderSelectionsIntoSheet();
+      renderBuilder();
+      setStatus(`${getSecondaryLineageLabels(getSelectedRaceDetail()).browseLabel} set to ${ancestry.name}.`);
+    }
+export async function bindEvents() {
+      document.addEventListener("input", () => {
+        invalidateExportCache();
+      });
+
+      document.addEventListener("change", () => {
+        invalidateExportCache();
+      });
+
+      document.getElementById("game-version-select")?.addEventListener("change", async (event) => {
+        if (versionRuntime.isLoading) {
+          return;
+        }
+        await applyGameVersion(event.target.value);
+      });
+
+      document.getElementById("version-check-button")?.addEventListener("click", checkForVersionUpdates);
+      document.getElementById("version-download-button")?.addEventListener("click", downloadVersionUpdate);
+
+      ["save-browser", "builder-save-browser"].forEach((id) => {
+        document.getElementById(id).addEventListener("click", saveToBrowser);
+      });
+
+      ["load-browser", "builder-load-browser"].forEach((id) => {
+        document.getElementById(id).addEventListener("click", loadFromBrowser);
+      });
+
+      ["export-json", "builder-export-character"].forEach((id) => {
+        document.getElementById(id).addEventListener("click", exportState);
+      });
+
+      ["import-json", "builder-import-character"].forEach((id) => {
+        document.getElementById(id).addEventListener("click", () => document.getElementById("import-file").click());
+      });
+
+      document.getElementById("recalc-basics").addEventListener("click", () => recalcBasics(true));
+      document.getElementById("clear-sheet").addEventListener("click", clearSheet);
+
+      document.getElementById("sheet-dice-tray").addEventListener("click", (event) => {
+        if (event.target.closest("[data-dice-toggle]")) {
+          const diceTray = getDiceTrayState();
+          setDiceTrayOpen(!diceTray.isOpen);
+          return;
+        }
+
+        if (event.target.closest("[data-dice-close]")) {
+          setDiceTrayOpen(false);
+          return;
+        }
+
+        if (event.target.closest("[data-dice-change]")) {
+          toggleDiceSetPicker();
+          return;
+        }
+
+        if (event.target.closest("[data-dice-check-updates]")) {
+          checkForDicePackUpdates();
+          return;
+        }
+const downloadButton = event.target.closest("[data-dice-download]");
+        if (downloadButton) {
+          downloadDiceSet(downloadButton.dataset.diceDownload);
+          return;
+        }
+const setButton = event.target.closest("[data-dice-set]");
+        if (setButton) {
+          selectDiceSet(setButton.dataset.diceSet);
+          return;
+        }
+const addButton = event.target.closest("[data-dice-add]");
+        if (addButton) {
+          addDiceTrayDie(addButton.dataset.diceAdd);
+          return;
+        }
+
+        if (event.target.closest("[data-dice-reset]")) {
+          resetDiceTrayDice();
+          return;
+        }
+
+        if (event.target.closest("[data-dice-roll]")) {
+          rollDiceTraySelection();
+        }
+      });
+
+      document.getElementById("sheet-modal").addEventListener("click", async (event) => {
+        if (event.target.closest("[data-sheet-modal-close]") || event.target.closest("#sheet-modal-close")) {
+          closeSheetModal();
+          return;
+        }
+
+        if (event.target.closest("[data-reset-character-confirm]")) {
+          confirmResetCharacter();
+          return;
+        }
+const saveSlotSubmitButton = event.target.closest("[data-save-slot-submit]");
+        if (saveSlotSubmitButton) {
+          if (saveSlotSubmitButton.dataset.saveSlotSubmit === "new") {
+            const input = document.getElementById("save-slot-name-input");
+            await saveCurrentCharacterToNewSlot(input ? input.value : "");
+          }
+          return;
+        }
+const saveModeButton = event.target.closest("[data-save-mode]");
+        if (saveModeButton) {
+          if (saveModeButton.dataset.saveMode === "new") {
+            await saveCurrentCharacterToNewSlot();
+          } else if (saveModeButton.dataset.saveMode === "active") {
+            await saveCurrentCharacterToActiveSlot();
+          }
+          return;
+        }
+const slotActionButton = event.target.closest("[data-slot-action]");
+        if (slotActionButton) {
+          await handleSaveSlotAction(slotActionButton.dataset.slotAction, slotActionButton.dataset.slotId);
+          return;
+        }
+const exportModeButton = event.target.closest("[data-export-mode]");
+        if (exportModeButton) {
+          if (exportModeButton.dataset.exportMode === "json") {
+            exportJsonState();
+          } else if (exportModeButton.dataset.exportMode === "pdf") {
+            await exportPdfState();
+          } else if (exportModeButton.dataset.exportMode === "spreadsheet") {
+            await exportSpreadsheetState();
+          }
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && !document.getElementById("sheet-modal").hidden) {
+          closeSheetModal();
+          return;
+        }
+
+        if (event.key === "Enter" && !document.getElementById("sheet-modal").hidden) {
+          const activeElement = document.activeElement;
+          if (activeElement && activeElement.id === "save-slot-name-input") {
+            event.preventDefault();
+            saveCurrentCharacterToNewSlot(activeElement.value);
+          }
+        }
+      });
+
+      document.getElementById("import-file").addEventListener("change", async (event) => {
+        const [file] = event.target.files;
+        if (!file) {
+          return;
+        }
+        try {
+          await handleImportedCharacterFile(file);
+        } catch (error) {
+          console.error(error);
+          setStatus(`Could not import ${file.name}.`);
+        }
+        event.target.value = "";
+      });
+
+      document.getElementById("portrait-trigger").addEventListener("click", () => {
+        document.getElementById("portrait-file").click();
+      });
+
+      document.getElementById("portrait-file").addEventListener("change", (event) => {
+        const [file] = event.target.files;
+        if (!file) {
+          return;
+        }
+const reader = new FileReader();
+        reader.onload = async () => {
+          state.builder.portraitDataUrl = String(reader.result || "");
+const portraitWasNormalized = await normalizeCurrentPortraitDataUrl();
+          refreshBuilderIdentity();
+          renderPlayDashboardIfVisible();
+          scheduleWorkingStatePersist(false);
+          setStatus(`Loaded portrait ${file.name}${portraitWasNormalized ? " and compressed it for browser saves." : ""}.`);
+        };
+        reader.readAsDataURL(file);
+        event.target.value = "";
+      });
+
+      document.getElementById("builder-name-header").addEventListener("input", (event) => {
+        syncNameFields(event.target.value, "Name");
+      });
+
+      document.getElementById("builder-back").addEventListener("click", () => {
+        goToBuilderStep(state.ui.builderStep - 1);
+      });
+const advanceBuilder = () => {
+        if (state.ui.builderStep === BUILDER_STEPS.length - 1) {
+          openSheetView();
+          return;
+        }
+
+        if (!canAdvanceBuilder(true)) {
+          return;
+        }
+
+        goToBuilderStep(state.ui.builderStep + 1);
+      };
+
+      document.getElementById("builder-next").addEventListener("click", advanceBuilder);
+      document.getElementById("builder-next-top").addEventListener("click", advanceBuilder);
+      document.getElementById("builder-sheet-shortcut-top").addEventListener("click", openSheetViewFromShortcut);
+      document.getElementById("builder-start-over-sidebar").addEventListener("click", startOverCharacter);
+
+      document.getElementById("builder-step-nav").addEventListener("click", (event) => {
+const button = event.target.closest("[data-step-index]");
+        if (!button) {
+          return;
+        }
+        goToBuilderStep(Number(button.dataset.stepIndex));
+      });
+
+      document.getElementById("builder-step-content").addEventListener("click", (event) => {
+        const expertiseSummary = event.target.closest(".builder-skill-expertise-summary");
+        if (expertiseSummary) {
+          loadBuilderSkillExpertisePanel(expertiseSummary.closest(".builder-skill-expertise-panel"));
+        }
+const addExpertise = event.target.closest("[data-add-skill-expertise]");
+        if (addExpertise) {
+          const panel = addExpertise.closest(".builder-skill-expertise-panel");
+const source = addExpertise.dataset.skillExpertiseSource || "creation";
+const nameInput = panel?.querySelector("[data-skill-expertise-name]");
+const customInput = panel?.querySelector("[data-skill-expertise-custom]");
+const didAdd = addSkillExpertisePoint(addExpertise.dataset.addSkillExpertise, source, getSkillExpertiseInputValue(panel));
+          if (didAdd) {
+            if (nameInput) {
+              nameInput.value = "";
+            }
+            if (customInput) {
+              customInput.value = "";
+            }
+          }
+          renderBuilderStepContent();
+          renderBuilderDetail();
+          renderBuilderSummary();
+          renderPlayDashboardIfVisible();
+          scheduleWorkingStatePersist();
+          return;
+        }
+const adjustExpertise = event.target.closest("[data-adjust-skill-expertise]");
+        if (adjustExpertise) {
+          adjustSkillExpertisePoint(
+            adjustExpertise.dataset.skillExpertiseIndex,
+            adjustExpertise.dataset.skillExpertiseSource,
+            adjustExpertise.dataset.skillExpertiseName,
+            adjustExpertise.dataset.adjustSkillExpertise
+          );
+          renderBuilderStepContent();
+          renderBuilderDetail();
+          renderBuilderSummary();
+          renderPlayDashboardIfVisible();
+          scheduleWorkingStatePersist();
+          return;
+        }
+const adjustSkill = event.target.closest("[data-adjust-skill-allocation]");
+        if (adjustSkill) {
+          adjustSkillAllocation(
+            adjustSkill.dataset.skillAllocationIndex,
+            adjustSkill.dataset.skillAllocationType,
+            adjustSkill.dataset.adjustSkillAllocation
+          );
+          renderBuilderStepContent();
+          renderBuilderDetail();
+          renderBuilderSummary();
+          renderPlayDashboardIfVisible();
+          scheduleWorkingStatePersist();
+          return;
+        }
+const adjustRacialSkill = event.target.closest("[data-adjust-racial-skill]");
+        if (adjustRacialSkill) {
+          adjustRacialSkillAllocation(
+            adjustRacialSkill.dataset.racialSkillChoice,
+            adjustRacialSkill.dataset.racialSkillIndex,
+            adjustRacialSkill.dataset.adjustRacialSkill
+          );
+          renderBuilderStepContent();
+          renderBuilderDetail();
+          renderBuilderSummary();
+          renderPlayDashboardIfVisible();
+          scheduleWorkingStatePersist();
+          return;
+        }
+const adjustClassSkill = event.target.closest("[data-adjust-class-skill]");
+        if (adjustClassSkill) {
+          adjustClassSkillPoolAllocation(
+            adjustClassSkill.dataset.classSkillChoice,
+            adjustClassSkill.dataset.classSkillIndex,
+            adjustClassSkill.dataset.classSkillKind,
+            adjustClassSkill.dataset.adjustClassSkill
+          );
+          renderBuilderStepContent();
+          renderBuilderDetail();
+          renderBuilderSummary();
+          renderPlayDashboardIfVisible();
+          scheduleWorkingStatePersist();
+          return;
+        }
+const trigger = event.target.closest("[data-builder-action]");
+        if (!trigger) {
+          return;
+        }
+const action = trigger.dataset.builderAction;
+const id = trigger.dataset.id;
+
+        if (action === "pick-race") {
+          setBuilderRace(id);
+        } else if (action === "pick-ancestry") {
+          setBuilderAncestry(id);
+        } else if (action === "toggle-breakthrough") {
+          toggleBuilderBreakthrough(id);
+        } else if (action === "toggle-class") {
+          toggleBuilderClass(id);
+        } else if (action === "learn-class-ability") {
+          learnNextClassAbility(id);
+        } else if (action === "refund-class-ability") {
+          refundLastClassAbility(id);
+        } else if (action === "inspect-item") {
+          inspectBuilderItem(id);
+        } else if (action === "add-item") {
+          addBuilderItem(id);
+        } else if (action === "remove-item") {
+          removeBuilderItem(id);
+        } else if (action === "start-over-builder") {
+          startOverCharacter();
+        } else if (action === "finish-builder") {
+          openSheetView();
+        }
+      });
+
+      document.getElementById("builder-step-content").addEventListener("input", (event) => {
+        if (event.target.dataset.builderSearch) {
+          const key = event.target.dataset.builderSearch;
+          state.builder.searches[key] = event.target.value;
+          scheduleBuilderSearchRender(key);
+          return;
+        }
+
+        if (event.target.dataset.profileField) {
+          const fieldName = event.target.dataset.profileField;
+          if (fieldName === "Name") {
+            syncNameFields(event.target.value, "Name");
+          } else {
+            updateFieldValue(fieldName, event.target.value);
+            renderBuilderDetail();
+            renderBuilderSummary();
+          }
+          return;
+        }
+
+        if (event.target.dataset.racialSkillChoice) {
+          setRacialSkillAllocation(event.target.dataset.racialSkillChoice, event.target.dataset.racialSkillIndex, event.target.value);
+          renderBuilderStepContent();
+          renderBuilderDetail();
+          renderBuilderSummary();
+          renderPlayDashboardIfVisible();
+          scheduleWorkingStatePersist();
+          return;
+        }
+
+        if (event.target.dataset.classSkillChoice) {
+          setClassSkillPoolAllocation(
+            event.target.dataset.classSkillChoice,
+            event.target.dataset.classSkillIndex,
+            event.target.dataset.classSkillKind,
+            event.target.value
+          );
+          renderBuilderStepContent();
+          renderBuilderDetail();
+          renderBuilderSummary();
+          renderPlayDashboardIfVisible();
+          scheduleWorkingStatePersist();
+          return;
+        }
+
+        if (event.target.dataset.builderChoiceSelect) {
+          const choiceId = event.target.dataset.builderChoiceSelect;
+          if (event.target.value === "__custom__") {
+            setBuilderChoiceValue(choiceId, "__custom__");
+          } else {
+            setBuilderChoiceValue(choiceId, event.target.value);
+          }
+          syncBuilderSelectionsIntoSheet();
+          renderBuilderStepContent();
+          renderBuilderSummary();
+          renderPlayDashboardIfVisible();
+          scheduleWorkingStatePersist();
+          return;
+        }
+
+        if (event.target.dataset.builderChoiceField) {
+          setBuilderChoiceValue(event.target.dataset.builderChoiceField, event.target.value);
+          syncBuilderSelectionsIntoSheet();
+          renderBuilderSummary();
+          renderPlayDashboardIfVisible();
+          scheduleWorkingStatePersist();
+          return;
+        }
+
+        if (event.target.dataset.statField) {
+          const fieldName = event.target.dataset.statField;
+          updateFieldValue(fieldName, event.target.value);
+          recalcBasics(false);
+          renderBuilderSummary();
+          return;
+        }
+
+        if (event.target.dataset.currencyField) {
+          updateFieldValue(event.target.dataset.currencyField, event.target.value);
+          syncDerivedBuilderFields();
+          syncReferenceNotes();
+          renderBuilderSummary();
+          renderSheetBuildSummary();
+          renderPlayDashboardIfVisible();
+        }
+      });
+
+      document.getElementById("builder-step-content").addEventListener("change", (event) => {
+        if (event.target.dataset.builderMode) {
+          const key = event.target.dataset.builderMode;
+          state.builder.searches[key] = cleanText(event.target.value) === "custom" ? "custom" : "array";
+          renderBuilderStepContent();
+          renderBuilderSummary();
+          return;
+        }
+
+        if (event.target.dataset.skillAllocationIndex) {
+          setSkillAllocation(event.target.dataset.skillAllocationIndex, event.target.dataset.skillAllocationType, event.target.value);
+          renderBuilderStepContent();
+          renderBuilderSummary();
+          renderPlayDashboardIfVisible();
+          scheduleWorkingStatePersist();
+          return;
+        }
+
+        if (event.target.dataset.racialSkillChoice) {
+          setRacialSkillAllocation(event.target.dataset.racialSkillChoice, event.target.dataset.racialSkillIndex, event.target.value);
+          renderBuilderStepContent();
+          renderBuilderSummary();
+          renderPlayDashboardIfVisible();
+          scheduleWorkingStatePersist();
+          return;
+        }
+
+        if (event.target.dataset.classSkillChoice) {
+          setClassSkillPoolAllocation(
+            event.target.dataset.classSkillChoice,
+            event.target.dataset.classSkillIndex,
+            event.target.dataset.classSkillKind,
+            event.target.value
+          );
+          renderBuilderStepContent();
+          renderBuilderSummary();
+          renderPlayDashboardIfVisible();
+          scheduleWorkingStatePersist();
+          return;
+        }
+
+        if (event.target.dataset.builderChoiceSelect) {
+          const choiceId = event.target.dataset.builderChoiceSelect;
+          setBuilderChoiceValue(choiceId, event.target.value === "__custom__" ? "__custom__" : event.target.value);
+          syncBuilderSelectionsIntoSheet();
+          renderBuilderSummary();
+          renderPlayDashboardIfVisible();
+          renderBuilderStepContent();
+          scheduleWorkingStatePersist();
+          return;
+        }
+
+        if (event.target.dataset.builderChoiceField) {
+          setBuilderChoiceValue(event.target.dataset.builderChoiceField, event.target.value);
+          syncBuilderSelectionsIntoSheet();
+          renderBuilderSummary();
+          renderPlayDashboardIfVisible();
+          renderBuilderStepContent();
+          scheduleWorkingStatePersist();
+          return;
+        }
+
+        if (event.target.dataset.currencyField) {
+          updateFieldValue(event.target.dataset.currencyField, event.target.value);
+          syncDerivedBuilderFields();
+          syncReferenceNotes();
+          renderBuilderSummary();
+          renderPlayDashboardIfVisible();
+          renderBuilderStepContent();
+          return;
+        }
+
+        if (!event.target.dataset.statField) {
+          return;
+        }
+        updateFieldValue(event.target.dataset.statField, event.target.value);
+        recalcBasics(false);
+        renderBuilderSummary();
+        renderBuilderStepContent();
+      });
+
+      document.getElementById("return-to-builder").addEventListener("click", () => {
+        setMode("builder");
+        setStatus("Returned to the builder.");
+      });
+
+      document.getElementById("play-resource-grid").addEventListener("input", (event) => {
+        if (!event.target.dataset.playResource) {
+          return;
+        }
+        state.play = mergePlayState(state.play);
+        state.play.resources[event.target.dataset.playResource] = event.target.value;
+      });
+
+      document.getElementById("play-resource-grid").addEventListener("click", (event) => {
+        if (!event.target.closest("[data-play-recover-ap]")) {
+          return;
+        }
+        restoreTurnResources();
+      });
+
+      document.getElementById("play-derived-grid").addEventListener("click", (event) => {
+        const expSpendingButton = event.target.closest("[data-open-exp-spending]");
+        if (expSpendingButton) {
+          openExpSpending();
+          return;
+        }
+const button = event.target.closest("[data-play-transaction-field]");
+        if (!button) {
+          return;
+        }
+        applyPlayTrackerTransaction(button);
+      });
+
+      document.getElementById("play-hit-points").addEventListener("input", (event) => {
+        if (event.target.id !== "play-hp-adjust-amount") {
+          return;
+        }
+        state.play = mergePlayState(state.play);
+        state.play.hpAdjustAmount = event.target.value;
+      });
+
+      document.getElementById("play-player-notes").addEventListener("input", (event) => {
+        state.play = mergePlayState(state.play);
+        state.play.playerNotes = event.target.value;
+        window.clearTimeout(playerNotesAutosaveTimer);
+        playerNotesAutosaveTimer = window.setTimeout(() => {
+          persistWorkingState();
+        }, 500);
+      });
+
+      document.getElementById("play-hit-points").addEventListener("click", (event) => {
+        if (event.target.closest("#play-heal-button")) {
+          adjustPlayHitPoints("heal");
+          return;
+        }
+        if (event.target.closest("#play-temp-hp-button")) {
+          adjustPlayHitPoints("temp");
+          return;
+        }
+        if (event.target.closest("#play-damage-button")) {
+          adjustPlayHitPoints("damage");
+        }
+      });
+
+      document.getElementById("play-basic-actions").addEventListener("click", (event) => {
+        const useButton = event.target.closest("[data-play-use-basic]");
+        if (useButton) {
+          const action = getPlayActionCards().find((entry) => entry.id === useButton.dataset.playUseBasic);
+          if (action) {
+            usePlayCost(action.label, action.costLabel, [action.summary], { feedbackId: "play-action-feedback" });
+          }
+        }
+      });
+
+      document.getElementById("play-quick-abilities").addEventListener("click", (event) => {
+        const referenceButton = event.target.closest("[data-play-reference-name]");
+        if (referenceButton) {
+          event.preventDefault();
+          openPlayReference(referenceButton.dataset.playReferenceName);
+          return;
+        }
+        const attackButton = event.target.closest("[data-play-use-ability-attack]");
+        if (attackButton) {
+          const ability = getQuickPlayAbilities()[Number(attackButton.dataset.playUseAbilityAttack)];
+          if (!ability) {
+            return;
+          }
+          const selectedCostLabel = cleanText(attackButton.dataset.playAbilityCostLabel || ability.costLabel || "");
+          const spent = usePlayCost(
+            ability.name,
+            selectedCostLabel,
+            getPlayAbilityLogLines(ability),
+            {
+              feedbackId: "play-action-feedback",
+              effectText: getAbilityEffectText(ability),
+              logManualEffects: false
+            }
+          );
+          if (spent) {
+            rollPlayCheck(attackButton.dataset.playAbilityAttack, {
+              feedbackId: "play-action-feedback",
+              action: {
+                label: ability.name,
+                costLabel: "",
+                summary: cleanText(ability.descriptionText || ability.description || "")
+              }
+            });
+          }
+          return;
+        }
+        const useButton = event.target.closest("[data-play-use-ability]");
+        if (!useButton) {
+          return;
+        }
+const ability = getQuickPlayAbilities()[Number(useButton.dataset.playUseAbility)];
+        if (!ability) {
+          return;
+        }
+        const selectedCostLabel = cleanText(useButton.dataset.playAbilityCostLabel || ability.costLabel || "");
+        usePlayCost(
+          ability.name,
+          selectedCostLabel,
+          getPlayAbilityLogLines(ability),
+          {
+            feedbackId: "play-action-feedback",
+            effectText: getAbilityEffectText(ability)
+          }
+        );
+      });
+
+      document.getElementById("play-reference-detail").addEventListener("click", (event) => {
+        if (!event.target.closest("[data-play-reference-close]")) {
+          return;
+        }
+        activePlayReferenceName = "";
+        renderPlayReferenceDetail();
+      });
+
+      document.getElementById("play-header-card").addEventListener("click", (event) => {
+        const classReferenceButton = event.target.closest("[data-play-class-reference]");
+        if (!classReferenceButton) {
+          return;
+        }
+        event.preventDefault();
+        openPlayClassReference(classReferenceButton.dataset.playClassReference);
+      });
+const handlePlaySkillRollClick = (event) => {
+        const expertiseButton = event.target.closest("[data-play-roll-skill-expertise]");
+        if (expertiseButton) {
+          rollSkillCheck(expertiseButton.dataset.playRollSkillExpertise, expertiseButton.dataset.playExpertiseName || "");
+          return true;
+        }
+const rollButton = event.target.closest("[data-play-roll-skill]");
+        if (rollButton) {
+          rollSkillCheck(rollButton.dataset.playRollSkill);
+          return true;
+        }
+        return false;
+      };
+
+      document.getElementById("play-skills").addEventListener("click", (event) => {
+        handlePlaySkillRollClick(event);
+      });
+
+      document.getElementById("play-crafting").addEventListener("click", (event) => {
+        if (handlePlaySkillRollClick(event)) {
+          return;
+        }
+const purchaseButton = event.target.closest("[data-crafting-purchase-item]");
+        if (purchaseButton) {
+          addOfficialInventoryItem(purchaseButton.dataset.craftingPurchaseItem, { confirmPurchase: true });
+          return;
+        }
+const actionButton = event.target.closest("[data-crafting-action]");
+        if (!actionButton) {
+          return;
+        }
+const action = actionButton.dataset.craftingAction;
+        if (action === "roll-die") {
+          rollCraftingDie();
+        } else if (action === "add-points") {
+          addCraftingPoints();
+        } else if (action === "spend-points") {
+          spendCraftingPoints("spend");
+        } else if (action === "refund-points") {
+          spendCraftingPoints("refund");
+        } else if (action === "reset-session") {
+          resetCraftingSession();
+        }
+      });
+
+      document.getElementById("play-crafting").addEventListener("input", (event) => {
+        const fieldName = event.target.dataset.craftingField;
+        if (!fieldName) {
+          return;
+        }
+
+        setCraftingField(fieldName, event.target.value);
+      });
+
+      document.getElementById("play-senses").addEventListener("click", (event) => {
+        handlePlaySkillRollClick(event);
+      });
+
+      document.getElementById("play-saves").addEventListener("click", (event) => {
+        const rollButton = event.target.closest("[data-play-roll]");
+        if (rollButton) {
+          rollPlayCheck(rollButton.dataset.playRoll, { feedbackId: "play-action-feedback" });
+        }
+      });
+
+      document.getElementById("play-roll-actions").addEventListener("click", (event) => {
+        const rollButton = event.target.closest("[data-play-roll]");
+        if (!rollButton) {
+          return;
+        }
+        rollPlayCheck(rollButton.dataset.playRoll, { feedbackId: "play-quick-roll-feedback" });
+      });
+
+      document.getElementById("play-basic-actions").addEventListener("click", (event) => {
+        const damageButton = event.target.closest("[data-play-roll-damage]");
+        if (damageButton) {
+          const action = getPlayActionFromButton(damageButton, "playRollDamage");
+          rollPlayDamage(action, { feedbackId: "play-action-feedback" });
+          return;
+        }
+const rollButton = event.target.closest("[data-play-roll]");
+        if (!rollButton) {
+          return;
+        }
+const action = getPlayActionFromButton(rollButton);
+        rollPlayCheck(rollButton.dataset.playRoll, { feedbackId: "play-action-feedback", action });
+      });
+
+      document.getElementById("play-inventory").addEventListener("click", (event) => {
+        const toggleCatalog = event.target.closest("[data-inventory-toggle-catalog]");
+        if (toggleCatalog) {
+          state.play = mergePlayState(state.play);
+          state.play.showInventoryCatalog = !state.play.showInventoryCatalog;
+          renderPlayDashboard();
+          return;
+        }
+const customOpen = event.target.closest("[data-inventory-custom-open]");
+        if (customOpen) {
+          state.play = mergePlayState(state.play);
+          state.play.showCustomItemForm = true;
+          state.play.showInventoryCatalog = true;
+          renderPlayDashboard();
+          return;
+        }
+const saveCustom = event.target.closest("[data-inventory-save-custom]");
+        if (saveCustom) {
+          addCustomInventoryItem();
+          return;
+        }
+const cancelCustom = event.target.closest("[data-inventory-cancel-custom]");
+        if (cancelCustom) {
+          state.play = mergePlayState(state.play);
+          state.play.showCustomItemForm = false;
+          state.play.customItemDraft = { name: "", type: "", description: "" };
+          renderPlayDashboard();
+          return;
+        }
+const addItem = event.target.closest("[data-inventory-add-item]");
+        if (addItem) {
+          addOfficialInventoryItem(addItem.dataset.inventoryAddItem);
+          return;
+        }
+const equipButton = event.target.closest("[data-inventory-toggle-equip]");
+        if (equipButton) {
+          toggleInventoryEquipped(equipButton.dataset.inventoryToggleEquip);
+          return;
+        }
+const removeButton = event.target.closest("[data-inventory-remove]");
+        if (removeButton) {
+          removeInventoryItem(removeButton.dataset.inventoryRemove);
+        }
+      });
+
+      document.getElementById("play-inventory").addEventListener("input", (event) => {
+        if (event.target.matches("[data-inventory-search]")) {
+          state.play = mergePlayState(state.play);
+          state.play.inventorySearch = event.target.value;
+          renderPlayDashboard();
+          return;
+        }
+        if (event.target.matches("[data-custom-item-field]")) {
+          state.play = mergePlayState(state.play);
+          state.play.customItemDraft[event.target.dataset.customItemField] = event.target.value;
+        }
+      });
+
+      document.getElementById("play-restore-turn").addEventListener("click", restoreTurnResources);
+      document.getElementById("play-full-restore").addEventListener("click", fullRestoreResources);
+      document.getElementById("play-sync-derived").addEventListener("click", () => {
+        syncPlayResourcesFromFields(true);
+        renderPlayDashboard();
+        setStatus("Synced the live dashboard to the current sheet values.");
+      });
+      document.getElementById("play-clear-log").addEventListener("click", clearPlayLog);
+      document.getElementById("play-tab-nav").addEventListener("click", (event) => {
+        const button = event.target.closest("[data-play-tab]");
+        if (!button) {
+          return;
+        }
+        state.ui.sheetTab = button.dataset.playTab;
+        renderPlayTabs();
+      });
+
+      document.querySelectorAll("[data-jump]").forEach((button) => {
+        button.addEventListener("click", () => {
+          document.getElementById(button.dataset.jump).scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
+    }
+

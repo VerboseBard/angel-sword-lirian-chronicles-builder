@@ -1,16 +1,16 @@
 Lyrian Chronicles Character Builder
-Angels Sword Beta 1.3 Web Package
+Angels Sword Beta 1.4 Web Release
 
 PUBLIC LINK
 
-Beta 1.3 is intended to be opened directly in a web browser from the public site link.
+Beta 1.4 updates the existing public web build.
 No ZIP download, local installer, or launcher window is required.
 
-The final GitHub Pages link will be listed in the project README and release notes once deployment is live.
+The existing GitHub Pages link stays stable for this update.
 
 QUICK START
 
-1. Open the public site link.
+1. Open the public site link or local development URL.
 2. Build or load a character.
 3. Export a JSON, PDF, or spreadsheet copy when you want a backup.
 4. Refresh the page after a new deployment if you are told an update was published.
