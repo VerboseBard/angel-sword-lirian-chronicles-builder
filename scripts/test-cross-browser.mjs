@@ -1656,6 +1656,48 @@ const browsers = [
     await page.click('[data-play-effect-detail-clear]');
     await page.waitForFunction(() => Number(document.querySelector('[data-play-resource="apCurrent"]')?.value || 0) === 4);
 
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'sheet', sheetTab: 'actions', gameVersion: '0.13.0' },
+        fields: {
+          Name: 'Regrowth Tester',
+          Power: '4',
+          Focus: '3',
+          Agility: '4',
+          Toughness: '5'
+        },
+        play: {
+          resources: {
+            hpCurrent: 70,
+            hpMax: 70,
+            tempHp: 0,
+            manaCurrent: 10,
+            manaMax: 10,
+            rpCurrent: 6,
+            rpMax: 6,
+            apCurrent: 4,
+            apMax: 4
+          }
+        }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-open-effect-picker="positive"]');
+    await page.waitForSelector('[data-manual-effect-option="regrowth"]', { timeout: 5000 });
+    await page.check('[data-manual-effect-option="regrowth"]');
+    await page.click('[data-manual-effect-confirm]');
+    await page.locator('#play-derived-grid .play-effect-chip')
+      .filter({ hasText: 'Regrowth' })
+      .first()
+      .click();
+    await page.waitForFunction(() => {
+      const text = document.querySelector('#sheet-modal')?.textContent || '';
+      return text.includes('3 + Focus 3 = 6 HP') && text.includes('Resolved healing reminder: 6 HP');
+    });
+    await page.click('[data-play-effect-detail-clear]');
+    await page.waitForFunction(() => !(document.querySelector('#play-derived-grid .play-tracker-effects')?.textContent || '').includes('Regrowth'));
+
     await page.click('[data-open-effect-picker="positive"]');
     await page.waitForSelector('[data-manual-effect-option="inspired"]', { timeout: 5000 });
     await page.check('[data-manual-effect-option="inspired"]');

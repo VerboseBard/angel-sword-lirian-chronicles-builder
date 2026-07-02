@@ -8171,11 +8171,20 @@ const MANUAL_PLAY_EFFECT_OPTIONS = {
           name: "Regrowth",
           summary: "Official keyword: heal for 3 + applier Focus at the start of your turn.",
           defaultDuration: "Until start of your next turn",
-          buildRules: () => buildOfficialEffectRules({
-            id: "regrowth",
-            detailLines: ["You heal for 3 + Focus of the one who applied it at the start of your turn."],
-            automationLines: ["No automatic healing is applied yet because the applier's Focus must be known."]
-          })
+          buildRules: () => {
+            const focus = getComputedMainStatValue("Focus");
+            const healing = 3 + focus;
+            return buildOfficialEffectRules({
+              id: "regrowth",
+              value: String(healing),
+              valueLabel: "Healing",
+              detailLines: [
+                "You heal for 3 + Focus of the one who applied it at the start of your turn.",
+                `This sheet used the current character's Focus as the applier Focus: 3 + Focus ${focus} = ${healing} HP.`
+              ],
+              automationLines: [`Resolved healing reminder: ${healing} HP at the start of your turn.`]
+            });
+          }
         },
         {
           id: "hiding",
