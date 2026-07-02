@@ -502,6 +502,13 @@ const cell = ensureXlsxCell(xmlDoc, row, address);
         cell.appendChild(valueElement);
         return;
       }
+      if (typeof value === "boolean") {
+        cell.setAttribute("t", "b");
+        const valueElement = xmlDoc.createElementNS(XLSX_MAIN_NS, "v");
+        valueElement.textContent = value ? "1" : "0";
+        cell.appendChild(valueElement);
+        return;
+      }
       cell.setAttribute("t", "inlineStr");
 const inlineString = xmlDoc.createElementNS(XLSX_MAIN_NS, "is");
 const textElement = xmlDoc.createElementNS(XLSX_MAIN_NS, "t");

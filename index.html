@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lyrian Chronicles Character Builder - Beta 1.4</title>
+  <title>Lyrian Chronicles Character Builder - Beta 1.5</title>
   <link rel="icon" type="image/png" href="assets/lyrian-symbol.png">
   <script src="assets/lyrian-form-map.js"></script>
   <script src="assets/lyrian-data.js"></script>
@@ -12,7 +12,7 @@
   <script src="assets/pdf-lib.min.js"></script>
   <script src="assets/xlsx.full.min.js"></script>
   <script src="assets/jszip.min.js"></script>
-  <link rel="stylesheet" href="./src/css/main.css?v=1.4.0">
+  <link rel="stylesheet" href="./src/css/main.css?v=1.5.0">
 </head>
 <body>
   <section id="builder-view" class="builder-view">
@@ -23,7 +23,7 @@
           <section class="version-manager" aria-label="Game version manager">
             <div class="builder-build-version" aria-label="Builder build version">
               <span>Builder build</span>
-              <strong>Beta 1.4</strong>
+              <strong>Beta 1.5</strong>
             </div>
             <label for="game-version-select">Select game version</label>
             <select id="game-version-select"></select>
@@ -276,6 +276,10 @@
           <div class="play-quick-roll-controls">
             <div id="play-quick-roll-feedback" class="play-inline-warning" hidden></div>
             <div id="play-roll-actions" class="play-roll-actions"></div>
+            <div class="play-quick-roll-tools" aria-label="Sheet tools">
+              <button id="play-full-restore" type="button">Full Restore</button>
+              <button id="play-sync-derived" type="button">Sync Derived Stats</button>
+            </div>
           </div>
         </section>
 
@@ -309,8 +313,6 @@
             <section class="play-tab-panel" data-play-tab-panel="actions">
               <div class="play-inline-actions">
                 <button id="play-restore-turn" type="button">Recover AP</button>
-                <button id="play-full-restore" type="button">Full Restore</button>
-                <button id="play-sync-derived" type="button">Sync Derived Stats</button>
                 <button id="play-clear-log" type="button">Clear Log</button>
               </div>
               <div id="play-action-feedback" class="play-inline-warning" hidden></div>
@@ -388,7 +390,7 @@
           <h3 id="sheet-modal-title">Sheet Actions</h3>
           <p id="sheet-modal-lead">Choose how you want to save, load, export, or manage the current character.</p>
         </div>
-        <button id="sheet-modal-close" class="sheet-modal-close" type="button" aria-label="Close modal">×</button>
+        <button id="sheet-modal-close" class="sheet-modal-close" type="button" aria-label="Close modal">&times;</button>
       </div>
       <div id="sheet-modal-content" class="sheet-modal-content"></div>
     </div>
@@ -404,7 +406,7 @@
   <script src="assets/dice-3d/dice-3d-embedded.js"></script>
   <script src="assets/dice-3d/new-angelsword-dice-face-art.384-webp.js?v=new-angelsword-384-webp-test-1"></script>
   <script src="assets/dice-3d/lyrian-accurate-dice.js?v=alpha4-new-angelsword-sidecar-27-d4-triangle-pivot"></script>
-  <script src="assets/app.bundle.js?v=1.4.0"></script>
+  <script src="assets/app.bundle.js?v=1.5.0"></script>
 </body>
 </html>
 

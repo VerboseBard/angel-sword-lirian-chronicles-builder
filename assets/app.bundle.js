@@ -866,6 +866,13 @@ var LyrianApp = (() => {
       cell.appendChild(valueElement);
       return;
     }
+    if (typeof value === "boolean") {
+      cell.setAttribute("t", "b");
+      const valueElement = xmlDoc.createElementNS(XLSX_MAIN_NS, "v");
+      valueElement.textContent = value ? "1" : "0";
+      cell.appendChild(valueElement);
+      return;
+    }
     cell.setAttribute("t", "inlineStr");
     const inlineString = xmlDoc.createElementNS(XLSX_MAIN_NS, "is");
     const textElement = xmlDoc.createElementNS(XLSX_MAIN_NS, "t");
@@ -1434,6 +1441,10 @@ var LyrianApp = (() => {
   var computedBonusesCacheValue = null;
   var lookup = buildLookup(window.LYRIAN_DATA);
   var detailLookup = buildLookup(window.LYRIAN_DETAIL_DATA);
+  function refreshGameDataRuntime() {
+    lookup = buildLookup(window.LYRIAN_DATA);
+    detailLookup = buildLookup(window.LYRIAN_DETAIL_DATA);
+  }
   var versionRuntime = {
     serverAvailable: false,
     latestCheck: null,
@@ -1531,8 +1542,7 @@ var LyrianApp = (() => {
         setVersionProgress(55, `Loading ${version.id} detail data`);
         await loadScriptAsset(version.detailPath);
       }
-      lookup = buildLookup(window.LYRIAN_DATA);
-      detailLookup = buildLookup(window.LYRIAN_DETAIL_DATA);
+      refreshGameDataRuntime();
       state.ui.gameVersion = version.id;
       if (options.persistSelection !== false) {
         persistSelectedGameVersion(version.id);
@@ -1644,6 +1654,9 @@ var LyrianApp = (() => {
       return direct;
     }
     const key = normalizeKey(value);
+    if (!key) {
+      return null;
+    }
     return getAllSecondaryLineageOptions().find(
       (entry) => normalizeKey(entry.id) === key || normalizeKey(entry.name) === key || normalizeKey(entry.shortName) === key || normalizeKey(entry.lineageCode) === key
     ) || null;
@@ -1780,34 +1793,89 @@ var LyrianApp = (() => {
       spiritCore: Math.max(0, toNumber(cleanText(state.fields["Spirit Core"]), 0))
     };
   }
+  function getActivePlayEffectModifierSummary() {
+    const summary = {
+      stat: { Power: 0, Focus: 0, Agility: 0, Toughness: 0 },
+      derived: {},
+      speedMultiplier: 1,
+      speedSet: null,
+      dodgeSet: null
+    };
+    const effects = Array.isArray(state.play?.activeEffects) ? state.play.activeEffects : [];
+    effects.forEach((effect) => {
+      const modifiers = effect?.rules?.modifiers && typeof effect.rules.modifiers === "object" ? effect.rules.modifiers : {};
+      Object.entries(modifiers).forEach(([key, rawValue]) => {
+        if (key === "speedMultiplier") {
+          summary.speedMultiplier *= Number.isFinite(Number(rawValue)) ? Number(rawValue) : 1;
+          return;
+        }
+        if (key === "speedSet") {
+          const value = Number(rawValue);
+          if (Number.isFinite(value)) {
+            summary.speedSet = summary.speedSet == null ? value : Math.min(summary.speedSet, value);
+          }
+          return;
+        }
+        if (key === "dodgeSet") {
+          const value = Number(rawValue);
+          if (Number.isFinite(value)) {
+            summary.dodgeSet = summary.dodgeSet == null ? value : Math.min(summary.dodgeSet, value);
+          }
+          return;
+        }
+        if (Object.prototype.hasOwnProperty.call(summary.stat, key)) {
+          summary.stat[key] += toNumber(rawValue, 0);
+          return;
+        }
+        summary.derived[key] = (summary.derived[key] || 0) + toNumber(rawValue, 0);
+      });
+    });
+    return summary;
+  }
+  function getActivePlayEffectCurrentAllowance(resourceKey) {
+    const effects = Array.isArray(state.play?.activeEffects) ? state.play.activeEffects : [];
+    return effects.reduce((total, effect) => {
+      const grant = effect?.rules?.resourceGrant && typeof effect.rules.resourceGrant === "object" ? toNumber(effect.rules.resourceGrant[resourceKey], 0) : 0;
+      return total + Math.max(0, grant);
+    }, 0);
+  }
   function getDerivedCombatStats() {
     const bonuses = getComputedBonuses();
-    const power = toNumber(state.fields.Power, 0) + (bonuses.mainStats.Power || 0);
-    const focus = toNumber(state.fields.Focus, 0) + (bonuses.mainStats.Focus || 0);
-    const agility = toNumber(state.fields.Agility, 0) + (bonuses.mainStats.Agility || 0);
-    const toughness = toNumber(state.fields.Toughness, 0) + (bonuses.mainStats.Toughness || 0);
+    const activeEffectModifiers = getActivePlayEffectModifierSummary();
+    const power = toNumber(state.fields.Power, 0) + (bonuses.mainStats.Power || 0) + activeEffectModifiers.stat.Power;
+    const focus = toNumber(state.fields.Focus, 0) + (bonuses.mainStats.Focus || 0) + activeEffectModifiers.stat.Focus;
+    const agility = toNumber(state.fields.Agility, 0) + (bonuses.mainStats.Agility || 0) + activeEffectModifiers.stat.Agility;
+    const toughness = toNumber(state.fields.Toughness, 0) + (bonuses.mainStats.Toughness || 0) + activeEffectModifiers.stat.Toughness;
     const breakthroughEffects = getSelectedBreakthroughEffects();
     const hpMax = 20 + toughness * 10 + (bonuses.derived.hpMax || 0);
     const manaMax = 6 + power + (bonuses.derived.manaMax || 0);
     const rpMax = 2 + agility + (bonuses.derived.rpMax || 0);
     const apMaxText = cleanText(state.play?.resources?.apMax);
     const apMax = apMaxText ? Math.max(0, toNumber(apMaxText, 4)) : 4;
+    const derivedBonuses = {
+      ...bonuses.derived,
+      ...Object.fromEntries(Object.entries(activeEffectModifiers.derived).map(([key, value]) => [key, (bonuses.derived[key] || 0) + value]))
+    };
+    const speedBeforeSet = Math.max(0, Math.floor((20 + (derivedBonuses.speed || 0)) * activeEffectModifiers.speedMultiplier));
+    const speed = activeEffectModifiers.speedSet == null ? speedBeforeSet : Math.max(0, activeEffectModifiers.speedSet);
+    const dodgeBeforeSet = 20 + agility + (derivedBonuses.dodge || 0);
+    const dodge = activeEffectModifiers.dodgeSet == null ? dodgeBeforeSet : activeEffectModifiers.dodgeSet;
     return {
       hpMax,
       manaMax,
       rpMax,
       apMax,
-      guard: toughness + (bonuses.derived.guard || 0),
-      evasion: 7 + agility + (bonuses.derived.evasion || 0),
-      speed: 20 + (bonuses.derived.speed || 0),
-      potency: 11 + focus + (bonuses.derived.potency || 0),
-      initiative: agility + breakthroughEffects.initiativeBonus + (bonuses.derived.initiative || 0),
-      saveBonus: toughness + (bonuses.derived.saveBonus || 0),
-      lightAttack: focus + (bonuses.derived.lightAttack || 0),
-      heavyAttack: focus + (bonuses.derived.heavyAttack || 0),
-      preciseAttack: focus * 2 + (bonuses.derived.preciseAttack || 0),
-      dodge: 20 + agility + (bonuses.derived.dodge || 0),
-      block: toughness * 2 + (bonuses.derived.block || 0)
+      guard: toughness + (derivedBonuses.guard || 0),
+      evasion: 7 + agility + (derivedBonuses.evasion || 0),
+      speed,
+      potency: 11 + focus + (derivedBonuses.potency || 0),
+      initiative: agility + breakthroughEffects.initiativeBonus + (derivedBonuses.initiative || 0),
+      saveBonus: toughness + (derivedBonuses.saveBonus || 0),
+      lightAttack: focus + (derivedBonuses.lightAttack || 0),
+      heavyAttack: focus + (derivedBonuses.heavyAttack || 0),
+      preciseAttack: focus * 2 + (derivedBonuses.preciseAttack || 0),
+      dodge,
+      block: toughness * 2 + (derivedBonuses.block || 0)
     };
   }
   function hasManualHpHistory(play = {}) {
@@ -1868,8 +1936,8 @@ var LyrianApp = (() => {
       state.play.hpHasManualChange = false;
     }
     resources.manaCurrent = clamp(toNumber(resources.manaCurrent, derived.manaMax), 0, Math.max(0, derived.manaMax));
-    resources.rpCurrent = clamp(toNumber(resources.rpCurrent, derived.rpMax), 0, Math.max(0, derived.rpMax));
-    resources.apCurrent = clamp(toNumber(resources.apCurrent, derived.apMax), 0, Math.max(0, derived.apMax));
+    resources.rpCurrent = clamp(toNumber(resources.rpCurrent, derived.rpMax), 0, Math.max(0, derived.rpMax + getActivePlayEffectCurrentAllowance("rpCurrent")));
+    resources.apCurrent = clamp(toNumber(resources.apCurrent, derived.apMax), 0, Math.max(0, derived.apMax + getActivePlayEffectCurrentAllowance("apCurrent")));
   }
   function applyTrackedPlayUseEffects(label, effectText, cost, options = {}) {
     const resources = state.play.resources;
@@ -1905,17 +1973,49 @@ var LyrianApp = (() => {
       lines.push(`${reason}: healed ${healing} HP.`);
       lines.push(`Current HP: ${nextHp} / ${derived.hpMax}`);
     };
-    const restoreMana = (amount, reason = "Tracked effect") => {
+    const damageHp = (amount, reason = "Tracked effect") => {
+      const damage = Math.max(0, Math.floor(amount));
+      if (!damage) {
+        return;
+      }
+      const currentHp = toNumber(resources.hpCurrent, derived.hpMax);
+      const nextHp = clamp(currentHp - damage, 0, Math.max(0, derived.hpMax));
+      resources.hpCurrent = nextHp;
+      state.play.resources.hpCurrent = nextHp;
+      state.play.hpHasManualChange = nextHp < derived.hpMax;
+      lines.push(`${reason}: took ${damage} HP damage.`);
+      lines.push(`Current HP: ${nextHp} / ${derived.hpMax}`);
+    };
+    const restoreResource = (resource, amount, reason = "Tracked effect") => {
       const gain = Math.max(0, Math.floor(amount));
       if (!gain) {
         return;
       }
-      const currentMana = toNumber(resources.manaCurrent, derived.manaMax);
-      const nextMana = clamp(currentMana + gain, 0, Math.max(0, derived.manaMax));
-      resources.manaCurrent = nextMana;
-      state.play.resources.manaCurrent = nextMana;
-      lines.push(`${reason}: restored ${gain} Mana.`);
-      lines.push(`Mana: ${nextMana} / ${derived.manaMax}`);
+      const resourceConfig = {
+        Mana: { currentKey: "manaCurrent", max: derived.manaMax },
+        RP: { currentKey: "rpCurrent", max: derived.rpMax },
+        AP: { currentKey: "apCurrent", max: derived.apMax }
+      }[resource];
+      if (!resourceConfig) {
+        return;
+      }
+      const current = toNumber(resources[resourceConfig.currentKey], resourceConfig.max);
+      const next = clamp(current + gain, 0, Math.max(0, resourceConfig.max));
+      resources[resourceConfig.currentKey] = next;
+      state.play.resources[resourceConfig.currentKey] = next;
+      lines.push(`${reason}: restored ${gain} ${resource}.`);
+      lines.push(`${resource}: ${next} / ${resourceConfig.max}`);
+    };
+    const restoreDirectResourceSentence = (sentence) => {
+      if (/\b(?:target|ally|enemy|creature)\b/i.test(sentence) || /\bstart of your turn\b/i.test(sentence)) {
+        return;
+      }
+      const directResourceMatch = sentence.match(/\byou(?:\s+immediately)?\s+(?:regain|gain|recover)\s+(\d+)\s*(mana|rp|ap)\b/i);
+      if (!directResourceMatch) {
+        return;
+      }
+      const resource = directResourceMatch[2].toLowerCase() === "mana" ? "Mana" : directResourceMatch[2].toUpperCase();
+      restoreResource(resource, Number(directResourceMatch[1]));
     };
     const selfTempHpExpression = text.match(/\byou gain temporary (?:hit points|hp) equal to (?:your\s+)?(toughness|focus|power)\s*\+\s*(\d+)/i);
     if (selfTempHpExpression && !/\bon damage\b/i.test(text)) {
@@ -1932,16 +2032,31 @@ var LyrianApp = (() => {
     if (normalizedLabel === "spiritual sync" || /temporary hp equal to 8x/i.test(text)) {
       addTemporaryHp(cost.Mana * 8, "Tracked mana conversion");
     }
+    const directTemporaryHp = text.match(/\byou gain (\d+) temporary (?:hit points|hp)\b/i);
+    if (directTemporaryHp && !/\b(?:target|ally|enemy|creature)\b/i.test(text)) {
+      addTemporaryHp(Number(directTemporaryHp[1]));
+    }
     const manaHealing = text.match(/\byou regain hp equal to (\d+) times the mana spent/i);
     if (manaHealing) {
       healHp(Number(manaHealing[1]) * cost.Mana);
     }
-    const manaRecovery = text.match(/\byou regain (\d+) mana\b/i);
-    if (manaRecovery && !/\btarget\b/i.test(text)) {
-      restoreMana(Number(manaRecovery[1]));
+    const directDamage = text.match(/\byou take (\d+) true damage\b/i);
+    if (directDamage && !/\btarget\b/i.test(text)) {
+      damageHp(Number(directDamage[1]));
     }
+    const statDamage = text.match(/\byou take true damage equal to (?:your\s+)?(toughness|focus|power)\s*x\s*(\d+)/i);
+    if (statDamage && !/\btarget\b/i.test(text)) {
+      const stat = statDamage[1].toLowerCase();
+      const bonuses = getComputedBonuses();
+      const base = stat === "toughness" ? toNumber(state.fields.Toughness, 0) + (bonuses.mainStats.Toughness || 0) : stat === "focus" ? toNumber(state.fields.Focus, 0) + (bonuses.mainStats.Focus || 0) : toNumber(state.fields.Power, 0) + (bonuses.mainStats.Power || 0);
+      damageHp(base * Number(statDamage[2]));
+    }
+    cleanText(text).split(/(?<=[.!?])\s+/).forEach((sentence) => restoreDirectResourceSentence(sentence));
     if (!lines.length && options.logManualEffects !== false && /\btemporary (?:hit points|hp)\b/i.test(text)) {
       lines.push("Manual effect: this ability mentions Temporary HP, but the target, trigger, or formula needs player/GM handling.");
+    }
+    if (/\bmaximum (?:hp|mana|ap|rp)\b/i.test(text) && !lines.some((line) => /maximum/i.test(line))) {
+      lines.push("Manual effect: this use mentions a temporary maximum-resource change; adjust the max field manually if it applies.");
     }
     return lines;
   }
@@ -2121,6 +2236,77 @@ var LyrianApp = (() => {
     Awareness: 48,
     Presence: 49
   };
+  var SPREADSHEET_VISIBLE_MAIN_STAT_RANGE = {
+    labelColumn: "A",
+    valueColumn: "B",
+    startRow: 9,
+    endRow: 12
+  };
+  var SPREADSHEET_VISIBLE_SECONDARY_STAT_RANGE = {
+    labelColumn: "C",
+    valueColumn: "D",
+    startRow: 9,
+    endRow: 13
+  };
+  var SPREADSHEET_VISIBLE_RESOURCE_RANGE = {
+    labelColumn: "E",
+    valueColumn: "F",
+    startRow: 2,
+    endRow: 7
+  };
+  var SPREADSHEET_VISIBLE_WEAPON_RANGE = {
+    nameColumn: "A",
+    startRow: 37,
+    endRow: 41
+  };
+  var SPREADSHEET_VISIBLE_EQUIPMENT_RANGE = {
+    nameColumn: "F",
+    equippedColumn: "L",
+    startRow: 37,
+    endRow: 41
+  };
+  var SPREADSHEET_VISIBLE_EQUIPMENT_MODIFIER_COLUMNS = {
+    guard: "G",
+    evasion: "H",
+    dodge: "I",
+    block: "J",
+    initiativePenalty: "K"
+  };
+  var SPREADSHEET_ITEM_NAME_ALIASES = /* @__PURE__ */ new Map([
+    ["heavy armour", "Armor (Heavy)"],
+    ["heavy armor", "Armor (Heavy)"],
+    ["medium armour", "Armor (Medium)"],
+    ["medium armor", "Armor (Medium)"],
+    ["light armour", "Armor (Light)"],
+    ["light armor", "Armor (Light)"],
+    ["armour plates", "Armor Plates"],
+    ["armor plates", "Armor Plates"],
+    ["greatshield", "Shield (Great)"],
+    ["great shield", "Shield (Great)"]
+  ]);
+  var SPREADSHEET_SKILL_EXPORT_ROWS = /* @__PURE__ */ new Map([
+    ["Athletics", 9],
+    ["Riding", 10],
+    ["Stealth", 11],
+    ["Deception", 12],
+    ["Roguecraft", 13],
+    ["Medicine", 14],
+    ["Common Knowledge", 15],
+    ["Linguistics", 16],
+    ["Magic", 17],
+    ["Religion", 18],
+    ["Appraise", 19],
+    ["History", 20],
+    ["Flight", 21],
+    ["Artifice", 22],
+    ["Perception", 23],
+    ["Insight", 24],
+    ["Survival", 25],
+    ["Animal Husbandry", 26],
+    ["Art", 27],
+    ["Negotiation", 28],
+    ["Intimidation", 29]
+  ]);
   var playerNotesAutosaveTimer = 0;
   var builderSearchRenderTimer = 0;
   var versionProgressTicker = 0;
@@ -2256,7 +2442,7 @@ var LyrianApp = (() => {
   async function checkForVersionUpdates() {
     const connected = versionRuntime.serverAvailable || await detectVersionServer();
     if (!connected) {
-      setStatus("This web build is updated by published site deployments. Refresh after a new Beta 1.4 update is pushed.");
+      setStatus("This web build is updated by published site deployments. Refresh after a new Beta 1.5 update is pushed.");
       renderVersionManager();
       return;
     }
@@ -3531,6 +3717,7 @@ var LyrianApp = (() => {
   }
   function getClassFallbackSummary(record) {
     const requirementsText = getClassRequirementsText(record);
+    const keyAbility = getClassKeyAbilityRecord(record);
     const tierRole = [
       record?.tier ? `Tier ${record.tier}` : "",
       [record?.role1, record?.role2].filter(Boolean).join(" / ")
@@ -3538,7 +3725,7 @@ var LyrianApp = (() => {
     const parts = [
       tierRole,
       requirementsText && !/^none\.?$/i.test(requirementsText) ? `Requires: ${cleanText(requirementsText).replace(/[.]+$/g, "")}` : "",
-      record?.keyAbility?.name ? `Key ability: ${record.keyAbility.name}` : ""
+      keyAbility?.name ? `Key ability: ${keyAbility.name}` : ""
     ].filter(Boolean);
     return parts.join(". ");
   }
@@ -3553,6 +3740,46 @@ var LyrianApp = (() => {
       stripSimpleHtml(record?.requirements),
       record?.requirements
     );
+  }
+  function getReferencedAbilityRecords(record = {}) {
+    const seen = /* @__PURE__ */ new Set();
+    const abilities = [];
+    const push = (ability) => {
+      if (!ability) {
+        return;
+      }
+      const name = cleanText(typeof ability === "string" ? ability : ability.name);
+      if (!name) {
+        return;
+      }
+      const id = cleanText(ability.id || ability.indexId || ability.trueAbilityId || ability.abilityId || "");
+      const key = id || normalizePhrase(name);
+      if (seen.has(key)) {
+        return;
+      }
+      seen.add(key);
+      abilities.push(typeof ability === "string" ? { name } : ability);
+    };
+    asArray(record?.abilities).forEach(push);
+    [
+      "ability1Ref",
+      "ability2Ref",
+      "ability3Ref",
+      "ability4Ref",
+      "ability5Ref",
+      "ability6Ref",
+      "ability7Ref",
+      "ultimateAbilityRef",
+      "trait1Ref",
+      "trait2Ref",
+      "trait3Ref",
+      "trait4Ref",
+      "trait5Ref",
+      "trait6Ref",
+      "trait7Ref",
+      "trait8Ref"
+    ].forEach((key) => push(record?.[key]));
+    return abilities;
   }
   function getClassAbilityRecords(record) {
     const seen = /* @__PURE__ */ new Set();
@@ -3619,7 +3846,7 @@ var LyrianApp = (() => {
         ability,
         label: activeLabels[activeIndex] || "Class ability",
         name: ability?.name || `Unlisted ${activeLabels[activeIndex] || "class ability"}`,
-        description: ability ? cleanText(ability.descriptionText || ability.description || "") : "The official API has not exposed this class ability record yet."
+        description: ability ? cleanText(ability.descriptionText || ability.description || "") : "The current source data has not exposed this class ability record yet."
       };
     });
   }
@@ -3656,6 +3883,102 @@ var LyrianApp = (() => {
   function getPurchasedClassAbilities(record) {
     return getClassProgressSlots(record).slice(0, getClassPurchasedAbilityCount(record)).filter((slot) => slot.type === "ability" && slot.ability).map((slot) => slot.ability);
   }
+  function getSelectedAncestryAbilitySources(options = {}) {
+    const sources = [];
+    const seen = /* @__PURE__ */ new Set();
+    const add = (ancestry) => {
+      if (!ancestry) {
+        return;
+      }
+      const key = cleanText(ancestry.id || ancestry.name || ancestry.shortName || "");
+      if (key && seen.has(key)) {
+        return;
+      }
+      if (key) {
+        seen.add(key);
+      }
+      sources.push(ancestry);
+    };
+    add(getSelectedAncestryDetail());
+    if (options.includeFeatureChoices !== false) {
+      getSelectedAncestryFeatureChoices().forEach(({ ancestry }) => add(ancestry));
+    }
+    return sources;
+  }
+  function pushTrackedAbilityRecord(records, record, sourceLabel = "") {
+    if (!record) {
+      return;
+    }
+    const name = cleanText(typeof record === "string" ? record : record.name);
+    if (!name) {
+      return;
+    }
+    const id = cleanText(record.id || record.indexId || record.trueAbilityId || record.abilityId || "");
+    const key = `${id || normalizePhrase(name)}::${sourceLabel}`;
+    if (records.seen.has(key)) {
+      return;
+    }
+    records.seen.add(key);
+    records.entries.push(typeof record === "string" ? { name, sourceLabel } : { ...record, sourceLabel });
+  }
+  function getTrackedLearnedAbilityRecords() {
+    const records = { entries: [], seen: /* @__PURE__ */ new Set() };
+    const race = getSelectedRaceDetail();
+    getReferencedAbilityRecords(race).forEach((ability) => pushTrackedAbilityRecord(records, ability, race?.name || "Race"));
+    getSelectedAncestryAbilitySources().forEach((ancestry) => {
+      asArray(ancestry.traits).forEach((trait) => pushTrackedAbilityRecord(records, trait, ancestry.name || ancestry.shortName || "Lineage"));
+      asArray(ancestry.abilities).forEach((ability) => pushTrackedAbilityRecord(records, ability, ancestry.name || ancestry.shortName || "Lineage"));
+      getReferencedAbilityRecords(ancestry).forEach((ability) => pushTrackedAbilityRecord(records, ability, ancestry.name || ancestry.shortName || "Lineage"));
+    });
+    getSelectedClassProgress().forEach((entry) => {
+      const record = entry.record;
+      const keyAbility = getClassKeyAbilityRecord(record);
+      if (keyAbility?.name) {
+        pushTrackedAbilityRecord(records, keyAbility, record?.name || "Class");
+      }
+      if (keyAbility?.associatedAbilityRef?.name) {
+        pushTrackedAbilityRecord(records, keyAbility.associatedAbilityRef, record?.name || "Class");
+      }
+      getPurchasedClassAbilities(record).forEach((ability) => pushTrackedAbilityRecord(records, ability, record?.name || "Class"));
+    });
+    Object.values(state.abilitySelections || {}).forEach((value) => {
+      const name = cleanText(value);
+      if (name) {
+        pushTrackedAbilityRecord(records, { name }, "Manual selection");
+      }
+    });
+    return records.entries;
+  }
+  function getTrackedAbilityEffectText(record = {}) {
+    return [
+      record.name,
+      record.keywords,
+      record.benefit1,
+      record.benefit2,
+      record.benefit3,
+      record.benefit4,
+      record.descriptionText,
+      record.description
+    ].filter(Boolean).map(cleanText).join(" ");
+  }
+  function getTrackedAbilityKeywordSet(record = {}) {
+    return new Set(cleanText(record.keywords).split(/\s*,\s*/).map((entry) => normalizePhrase(entry)).filter(Boolean));
+  }
+  function isTrackedSpellAbility(record = {}) {
+    const keywords = getTrackedAbilityKeywordSet(record);
+    if (keywords.has("spell")) {
+      return true;
+    }
+    const text = getTrackedAbilityEffectText(record);
+    return /\bthis\s+spell\b/i.test(text) || /\bspell\s+does\s+not\s+provoke\b/i.test(text);
+  }
+  function isTrackedDamagingSpellAbility(record = {}) {
+    if (!isTrackedSpellAbility(record)) {
+      return false;
+    }
+    const text = getTrackedAbilityEffectText(record);
+    return /\b(?:make|makes|making)\s+(?:a|an|the|one|single)?\s*(?:single\s+|ranged\s+|melee\s+|basic\s+|light\s+|heavy\s+|precise\s+|blanketing\s+|scatter\s+)*attack\b/i.test(text) || /\b(?:deals?|take|takes|taking|suffer|suffers|suffering)\s+[^.]*\bdamage\b/i.test(text) || /\b(?:missile|blast|bolt|fireball|downburst|icicle|nail)\b/i.test(cleanText(record.name));
+  }
   function getClassKeyAbilityPlayRecord(record) {
     const keyAbility = record?.keyAbility;
     if (!keyAbility?.name) {
@@ -3679,66 +4002,129 @@ var LyrianApp = (() => {
     return progressEntry.abilityCount > 0 && progressEntry.purchasedCount >= progressEntry.abilityCount;
   }
   function getTrackedLearnedAbilityNames() {
-    const names = /* @__PURE__ */ new Set();
-    const race = getSelectedRaceDetail();
-    asArray(race?.abilities).forEach((ability) => {
-      const name = typeof ability === "string" ? ability : ability?.name;
-      if (name) {
-        names.add(normalizePhrase(name));
+    return new Set(getTrackedLearnedAbilityRecords().map((record) => normalizePhrase(record.name)).filter(Boolean));
+  }
+  function getClassKeyAbilityRecord(record = {}) {
+    if (record?.keyAbilityRef && typeof record.keyAbilityRef === "object") {
+      return record.keyAbilityRef;
+    }
+    if (record?.keyAbility && typeof record.keyAbility === "object") {
+      return record.keyAbility;
+    }
+    return {};
+  }
+  function stripClassRequirementExcludedProficiencyText(text) {
+    return cleanText(text).split(/\s*\|\s*|\n+/).map((entry) => cleanText(entry)).filter((entry) => entry && !/\bdoes\s+not\s+count\s+as\s+being\s+proficient\s+for\s+class\s+requirements\b/i.test(entry)).join(" | ");
+  }
+  function getSelectedLineageProficiencyTexts() {
+    const texts = [];
+    const push = (text) => {
+      const cleaned = cleanText(text);
+      if (/\bproficien(?:cy|cies|t)\b/i.test(cleaned)) {
+        texts.push(cleaned);
       }
-    });
-    getSelectedClassProgress().forEach((entry) => {
-      const record = entry.record;
-      const keyAbilityName = record?.keyAbility?.name;
-      if (keyAbilityName) {
-        names.add(normalizePhrase(keyAbilityName));
-      }
-      const associated = record?.keyAbilityRef?.associatedAbilityRef?.name;
-      if (associated) {
-        names.add(normalizePhrase(associated));
-      }
-      getPurchasedClassAbilities(record).forEach((ability) => {
-        if (ability?.name) {
-          names.add(normalizePhrase(ability.name));
-        }
+    };
+    getSelectedAncestryAbilitySources().forEach((ancestry) => {
+      [
+        ancestry.proficiencies,
+        ancestry.skills,
+        ancestry.clanText,
+        ancestry.clanNote
+      ].forEach(push);
+      asArray(ancestry.traits).forEach((trait) => {
+        [
+          trait.name,
+          trait.benefit1,
+          trait.benefit2,
+          trait.benefit3,
+          trait.benefit4,
+          trait.descriptionText,
+          trait.description,
+          trait.text
+        ].forEach(push);
+      });
+      asArray(ancestry.abilities).forEach((ability) => {
+        [
+          ability.name,
+          ability.benefit1,
+          ability.benefit2,
+          ability.benefit3,
+          ability.benefit4,
+          ability.descriptionText,
+          ability.description
+        ].forEach(push);
+      });
+      getReferencedAbilityRecords(ancestry).forEach((ability) => {
+        [
+          ability.name,
+          ability.benefit1,
+          ability.benefit2,
+          ability.benefit3,
+          ability.benefit4,
+          ability.descriptionText,
+          ability.description
+        ].forEach(push);
       });
     });
-    Object.values(state.abilitySelections || {}).forEach((value) => {
-      const normalized = normalizePhrase(value);
-      if (normalized) {
-        names.add(normalized);
+    return Array.from(new Set(texts));
+  }
+  function getTrackedProficiencyChoiceTexts() {
+    const texts = [];
+    getBuilderChoiceDefinitions().forEach((choice) => {
+      if (choice.showIf && !choice.showIf()) {
+        return;
+      }
+      const value = getBuilderChoiceValue(choice.id);
+      if (!value) {
+        return;
+      }
+      const resolvedText = cleanText(choice.resolvedText?.(value) || value);
+      const searchText = [
+        choice.id,
+        choice.label,
+        choice.type,
+        resolvedText
+      ].filter(Boolean).map(cleanText).join(" ");
+      const isProficiencyChoice = /\bproficien(?:cy|cies|t)\b/i.test(searchText) || /\bweapon\s+group\b/i.test(searchText);
+      if (!isProficiencyChoice) {
+        return;
+      }
+      texts.push(resolvedText);
+      if (/\bweapon\s+group\b/i.test(searchText)) {
+        texts.push(`${value} proficiency`);
       }
     });
-    return names;
+    return Array.from(new Set(texts));
   }
   function getTrackedProficiencyText() {
-    const classTexts = getSelectedClassDetails().flatMap((entry) => [
-      entry.skills,
-      entry.proficiencies,
-      entry.keyAbility?.name,
-      entry.keyAbility?.benefit1,
-      entry.keyAbility?.benefit2,
-      entry.keyAbility?.benefit3,
-      entry.keyAbility?.benefit4,
-      entry.keyAbility?.descriptionText,
-      entry.keyAbility?.description
-    ]);
+    const classTexts = getSelectedClassDetails().flatMap((entry) => {
+      const keyAbility = getClassKeyAbilityRecord(entry);
+      return [
+        entry.skills,
+        entry.proficiencies,
+        keyAbility.name,
+        keyAbility.benefit1,
+        keyAbility.benefit2,
+        keyAbility.benefit3,
+        keyAbility.benefit4,
+        keyAbility.descriptionText,
+        keyAbility.description
+      ];
+    });
     return [
       state.fields.Proficiencies,
       getSelectedRaceDetail()?.proficiencies,
+      ...getSelectedLineageProficiencyTexts(),
+      ...getTrackedProficiencyChoiceTexts(),
       ...classTexts,
       ...getSelectedBreakthroughEffects().extraProficiencies
-    ].filter(Boolean).map(cleanText).join(" | ");
+    ].filter(Boolean).map(stripClassRequirementExcludedProficiencyText).filter(Boolean).join(" | ");
   }
   function hasTrackedAnySpell() {
-    const known = Array.from(getTrackedLearnedAbilityNames());
-    return known.some((name) => name.includes("magic") || name.includes("spell"));
+    return getTrackedLearnedAbilityRecords().some((record) => isTrackedSpellAbility(record));
   }
   function hasTrackedDamagingSpell() {
-    const known = Array.from(getTrackedLearnedAbilityNames());
-    return known.some(
-      (name) => name.includes("missile") || name.includes("fire") || name.includes("bolt") || name.includes("blast") || name.includes("lightning") || name.includes("ball")
-    );
+    return getTrackedLearnedAbilityRecords().some((record) => isTrackedDamagingSpellAbility(record));
   }
   function hasTrackedMeleeWeaponProficiency() {
     const text = getTrackedProficiencyText();
@@ -3820,12 +4206,12 @@ var LyrianApp = (() => {
     return getSelectedClassProgress().filter((entry) => isTrackedClassMastered(entry));
   }
   function hasMasteredClassName(options) {
-    const targets = options.map((entry) => normalizePhrase(entry)).filter(Boolean);
-    if (!targets.length) {
+    const targets = getClassRequirementTargetSet(options);
+    if (!targets.size) {
       return false;
     }
     return getMasteredClassProgressEntries().some(
-      (entry) => targets.includes(normalizePhrase(entry.record?.name)) || targets.includes(normalizePhrase(entry.record?.classId)) || targets.includes(normalizePhrase(entry.record?.id))
+      (entry) => targets.has(normalizePhrase(entry.record?.name)) || targets.has(normalizePhrase(entry.record?.classId)) || targets.has(normalizePhrase(entry.record?.id))
     );
   }
   function hasMasteredClassTier(tier) {
@@ -3835,13 +4221,20 @@ var LyrianApp = (() => {
   function hasMasteredClassCount(count) {
     return getMasteredClassProgressEntries().length >= Math.max(0, count);
   }
+  function hasEarlyAscensionClassMasteryCredit(record) {
+    return toNumber(record?.tier, 0) === 2 && hasSelectedBreakthroughName("Early Ascension");
+  }
+  function hasGenericClassMasteryCredit(count, record) {
+    const required = Math.max(0, count);
+    return hasMasteredClassCount(required) || required <= 1 && hasEarlyAscensionClassMasteryCredit(record);
+  }
   function hasSelectedClassName(options) {
-    const targets = options.map((entry) => normalizePhrase(entry)).filter(Boolean);
-    if (!targets.length) {
+    const targets = getClassRequirementTargetSet(options);
+    if (!targets.size) {
       return false;
     }
     return getSelectedClassProgress().some(
-      (entry) => targets.includes(normalizePhrase(entry.record?.name)) || targets.includes(normalizePhrase(entry.record?.classId)) || targets.includes(normalizePhrase(entry.record?.id))
+      (entry) => targets.has(normalizePhrase(entry.record?.name)) || targets.has(normalizePhrase(entry.record?.classId)) || targets.has(normalizePhrase(entry.record?.id))
     );
   }
   function getRequirementListOptions(value) {
@@ -3861,6 +4254,84 @@ var LyrianApp = (() => {
       entry.clanTitle
     ].some((candidate) => normalizePhrase(candidate) === target));
   }
+  function getSelectedClassAccessRuleSources() {
+    const sources = [];
+    const push = (sourceType, sourceLabel, text) => {
+      const cleaned = cleanText(text);
+      if (cleaned) {
+        sources.push({ sourceType, sourceLabel, text: cleaned });
+      }
+    };
+    getSelectedAncestryAbilitySources({ includeFeatureChoices: false }).forEach((ancestry) => {
+      const label = ancestry.name || ancestry.shortName || "Lineage";
+      push("lineage", label, ancestry.clanText);
+      push("lineage", label, ancestry.clanNote);
+      asArray(ancestry.traits).forEach((trait) => {
+        push("lineage", label, trait.name);
+        push("lineage", label, trait.descriptionText || trait.description || trait.text);
+      });
+      asArray(ancestry.abilities).forEach((ability) => {
+        push("lineage", label, ability.name);
+        push("lineage", label, ability.descriptionText || ability.description);
+      });
+      getReferencedAbilityRecords(ancestry).forEach((ability) => {
+        push("lineage", label, ability.name);
+        push("lineage", label, ability.descriptionText || ability.description);
+      });
+    });
+    getSelectedBreakthroughRecords().forEach((entry) => {
+      const label = entry.name || "Breakthrough";
+      push("breakthrough", label, entry.name);
+      push("breakthrough", label, entry.descriptionText || entry.description);
+    });
+    getSelectedItemRecords().forEach((entry) => {
+      const label = entry.name || "Item";
+      push("item", label, entry.name);
+      push("item", label, entry.descriptionText || getBaseItemRulesText(entry) || entry.description);
+    });
+    return sources;
+  }
+  function classNameMatchesRequirementText(record, value) {
+    const targets = getClassRequirementTargetSet([normalizePhrase(value).replace(/\s+class$/i, "")]);
+    if (!targets.size || !record) {
+      return false;
+    }
+    return [
+      record.name,
+      record.classId,
+      record.id
+    ].some((candidate) => targets.has(normalizePhrase(candidate)));
+  }
+  function getClassAccessOverride(record) {
+    if (!record) {
+      return null;
+    }
+    const result = {
+      bypassRequirements: false,
+      costOverride: null,
+      costReduction: 0,
+      sources: []
+    };
+    getSelectedClassAccessRuleSources().forEach((source) => {
+      const sentences = cleanText(source.text).split(/(?<=[.!?])\s+/).filter(Boolean);
+      sentences.forEach((sentence) => {
+        const match = sentence.match(/\b(?:enter|unlock)\s+(?:the\s+)?(.+?)\s+class\b/i);
+        if (!match || !classNameMatchesRequirementText(record, match[1])) {
+          return;
+        }
+        result.bypassRequirements = true;
+        if (/\b(?:no\s+experience\s+cost|0\s*exp)\b/i.test(sentence)) {
+          result.costOverride = 0;
+        }
+        const reduction = sentence.match(/\breduced\s+by\s+(\d+)\s*exp\b/i);
+        if (reduction) {
+          result.costReduction = Math.max(result.costReduction, toNumber(reduction[1], 0));
+        }
+        result.sources.push(sentence);
+      });
+    });
+    return result.bypassRequirements || result.costOverride !== null || result.costReduction > 0 ? result : null;
+  }
   function hasOpenMysticEyeSlot() {
     const maxSlots = hasSelectedBreakthroughName("Third Eye") ? 3 : 2;
     const usedSlots = getSelectedClassDetails().filter(
@@ -3868,39 +4339,423 @@ var LyrianApp = (() => {
     ).length;
     return usedSlots < maxSlots;
   }
-  function hasTrackedElementalMastery(value) {
+  var ELEMENTAL_MASTERY_ALIASES = {
+    arcane: ["arcane", "magic", "magical"],
+    dark: ["dark"],
+    earth: ["earth"],
+    fire: ["fire"],
+    frost: ["frost", "ice"],
+    holy: ["holy"],
+    ice: ["ice", "frost"],
+    lightning: ["lightning", "electric", "electrical"],
+    water: ["water"],
+    wind: ["wind"]
+  };
+  var ELEMENTAL_AFFINITY_ELEMENTS_CHOICE_ID = "breakthrough-elemental-affinity-elements";
+  var REPEATABLE_UNIQUE_BREAKTHROUGH_CONFIGS = {
+    "blend in ii slimefolk": {
+      storageId: "breakthrough-blend-in-ii-slimefolk-disguise-races",
+      label: "Blend In II",
+      selectLabel: "Disguise race",
+      addLabel: "Add Disguise",
+      emptyOption: "Choose race...",
+      customLabel: "Custom race",
+      allowCustom: true,
+      options: () => detailLookup.races.entries.map((entry) => entry.name).filter(Boolean),
+      excludedValues: () => {
+        const blendIn = lookup.breakthroughs.entries.find((entry) => normalizePhrase(entry.name) === "blend in slimefolk");
+        return blendIn ? [getBuilderChoiceValue(getBreakthroughChoiceId(blendIn, "disguise-race"))] : [];
+      },
+      legacySuffixes: [],
+      displayName: (entry, value) => `${entry.name}: ${value}`,
+      resolvedText: (value) => `Blend In II: disguised as ${value}.`
+    },
+    "language training": {
+      storageId: "breakthrough-language-training-languages",
+      label: "Language Training",
+      selectLabel: "Language",
+      addLabel: "Add Language",
+      emptyOption: "Choose language...",
+      customLabel: "Custom language",
+      allowCustom: true,
+      options: () => OFFICIAL_LANGUAGE_OPTIONS,
+      legacySuffixes: ["language"],
+      displayName: (entry, value) => `${entry.name}: ${value}`,
+      resolvedText: (value) => `Language Training: ${value}.`
+    },
+    "weapon training": {
+      storageId: "breakthrough-weapon-training-groups",
+      label: "Weapon Training",
+      selectLabel: "Common weapon group",
+      addLabel: "Add Weapon Group",
+      emptyOption: "Choose weapon group...",
+      customLabel: "Custom weapon group",
+      allowCustom: true,
+      options: () => COMMON_WEAPON_GROUP_OPTIONS,
+      legacySuffixes: ["weapon-group"],
+      displayName: (entry, value) => `${entry.name}: ${value}`,
+      resolvedText: (value) => `Weapon Training: ${value}.`
+    },
+    "speciality weapon training": {
+      storageId: "breakthrough-speciality-weapon-training-groups",
+      label: "Speciality Weapon Training",
+      selectLabel: "Speciality weapon group",
+      addLabel: "Add Weapon Group",
+      emptyOption: "Choose speciality group...",
+      customLabel: "Custom speciality group",
+      allowCustom: true,
+      options: () => SPECIALITY_WEAPON_GROUP_OPTIONS,
+      legacySuffixes: ["speciality-weapon-group"],
+      displayName: (entry, value) => `${entry.name}: ${value}`,
+      resolvedText: (value) => `Speciality Weapon Training: ${value}.`
+    }
+  };
+  var STACKABLE_BREAKTHROUGH_NAMES = /* @__PURE__ */ new Set([
+    "primary stat training",
+    "secondary stat training",
+    "skill training",
+    "universal training",
+    "wide circuits iv"
+  ]);
+  var UNKNOWN_PALADIN_DIVINE_OPTIONS = [
+    { value: "Kari", label: "Kari - Holy", damageType: "Holy" },
+    { value: "Heira", label: "Heira - Astra", damageType: "Astra" },
+    { value: "Pandora", label: "Pandora - Arcane", damageType: "Arcane" },
+    { value: "Makai", label: "Makai - Water", damageType: "Water" },
+    { value: "Ayuzi Kirara", label: "Ayuzi Kirara - Fire", damageType: "Fire" },
+    { value: "Eisen", label: "Eisen - Physical", damageType: "Physical" },
+    { value: "Athena", label: "Athena - Lightning", damageType: "Lightning" },
+    { value: "Clio", label: "Clio - Arcane", damageType: "Arcane" },
+    { value: "Yggdrasil", label: "Yggdrasil - Earth", damageType: "Earth" }
+  ];
+  function getElementalMasteryKeys(value) {
     const target = normalizePhrase(value).replace(/\b(?:elemental|element|mastery|mastered|have)\b/g, "").trim();
     if (!target) {
-      return false;
+      return [];
     }
-    const candidates = /* @__PURE__ */ new Set([target]);
-    if (target === "ice") {
-      candidates.add("frost");
+    const keys = Object.entries(ELEMENTAL_MASTERY_ALIASES).filter(([, aliases]) => aliases.includes(target)).map(([key]) => key);
+    return keys.length ? keys : [target];
+  }
+  function getElementalMasteryCanonicalKey(value) {
+    const keys = getElementalMasteryKeys(value);
+    if (keys.includes("frost") || keys.includes("ice")) {
+      return "frost";
     }
-    if (target === "frost") {
-      candidates.add("ice");
+    return keys[0] || normalizePhrase(value);
+  }
+  function getElementalAffinityRecord() {
+    return lookup.breakthroughs.entries.find((entry) => normalizePhrase(entry.name) === "elemental affinity") || null;
+  }
+  function normalizeElementChoiceLabel(value) {
+    const direct = getElementChoiceOptions().find((entry) => normalizePhrase(entry) === normalizePhrase(value));
+    if (direct) {
+      return direct;
     }
-    const learned = getTrackedLearnedAbilityNames();
-    if (Array.from(candidates).some(
-      (candidate) => learned.has(normalizePhrase(`Elemental Mastery ${candidate}`)) || learned.has(normalizePhrase(`${candidate} Mastery`)) || learned.has(normalizePhrase(`${candidate} mastered`))
-    )) {
-      return true;
+    const canonical = getElementalMasteryCanonicalKey(value);
+    return getElementChoiceOptions().find((entry) => getElementalMasteryCanonicalKey(entry) === canonical) || "";
+  }
+  function getSelectedElementalAffinityElements() {
+    const selected = [];
+    const seen = /* @__PURE__ */ new Set();
+    const add = (value) => {
+      const label = normalizeElementChoiceLabel(value);
+      const key = getElementalMasteryCanonicalKey(label);
+      if (!label || seen.has(key)) {
+        return;
+      }
+      seen.add(key);
+      selected.push(label);
+    };
+    cleanText(state.builder.choiceSelections?.[ELEMENTAL_AFFINITY_ELEMENTS_CHOICE_ID] || "").split("|").map((entry) => cleanText(entry)).filter(Boolean).forEach(add);
+    const record = getElementalAffinityRecord();
+    if (record) {
+      add(getBuilderChoiceValue(getBreakthroughChoiceId(record, "element")));
     }
-    return Object.entries(state.builder.choiceSelections || {}).some(
-      ([id, selectedValue]) => normalizePhrase(id).includes("elemental mastery") && candidates.has(normalizePhrase(selectedValue))
+    return selected;
+  }
+  function setSelectedElementalAffinityElements(elements) {
+    const normalized = [];
+    const seen = /* @__PURE__ */ new Set();
+    elements.forEach((value) => {
+      const label = normalizeElementChoiceLabel(value);
+      const key = getElementalMasteryCanonicalKey(label);
+      if (!label || seen.has(key)) {
+        return;
+      }
+      seen.add(key);
+      normalized.push(label);
+    });
+    state.builder.choiceSelections = {
+      ...state.builder.choiceSelections || {},
+      [ELEMENTAL_AFFINITY_ELEMENTS_CHOICE_ID]: normalized.join("|")
+    };
+    const record = getElementalAffinityRecord();
+    if (record) {
+      delete state.builder.choiceSelections[getBreakthroughChoiceId(record, "element")];
+      state.builder.selectedBreakthroughIds = [
+        ...(state.builder.selectedBreakthroughIds || []).filter((id) => id !== record.id),
+        ...Array.from({ length: normalized.length }, () => record.id)
+      ];
+    }
+  }
+  function normalizeElementalAffinitySelections() {
+    setSelectedElementalAffinityElements(getSelectedElementalAffinityElements());
+  }
+  function getAvailableElementalAffinityOptions() {
+    const selectedKeys = new Set(getSelectedElementalAffinityElements().map(getElementalMasteryCanonicalKey));
+    return getElementChoiceOptions().filter((entry) => !selectedKeys.has(getElementalMasteryCanonicalKey(entry)));
+  }
+  function getRepeatableUniqueBreakthroughConfig(value) {
+    const normalized = typeof value === "string" ? normalizePhrase(value) : normalizePhrase(value?.name);
+    return REPEATABLE_UNIQUE_BREAKTHROUGH_CONFIGS[normalized] || null;
+  }
+  function getRepeatableUniqueBreakthroughRecord(config) {
+    if (!config) {
+      return null;
+    }
+    return lookup.breakthroughs.entries.find((entry) => getRepeatableUniqueBreakthroughConfig(entry) === config) || null;
+  }
+  function getRepeatableChoiceOptions(config) {
+    return typeof config?.options === "function" ? config.options() : asArray(config?.options);
+  }
+  function normalizeRepeatableChoiceValue(config, value) {
+    const cleaned = cleanText(value);
+    if (!config || !cleaned || cleaned === "__custom__") {
+      return "";
+    }
+    const direct = getRepeatableChoiceOptions(config).find((entry) => normalizePhrase(entry) === normalizePhrase(cleaned));
+    if (direct) {
+      return cleanText(direct);
+    }
+    return config.allowCustom ? cleaned : "";
+  }
+  function getRepeatableExcludedChoiceKeys(config) {
+    const excluded = typeof config?.excludedValues === "function" ? config.excludedValues() : asArray(config?.excludedValues);
+    return new Set(excluded.map((value) => normalizeRepeatableChoiceValue(config, value)).filter(Boolean).map(normalizePhrase));
+  }
+  function getSelectedRepeatableBreakthroughChoices(config) {
+    const selected = [];
+    const seen = /* @__PURE__ */ new Set();
+    const add = (value) => {
+      const normalized = normalizeRepeatableChoiceValue(config, value);
+      const key = normalizePhrase(normalized);
+      if (!normalized || seen.has(key)) {
+        return;
+      }
+      seen.add(key);
+      selected.push(normalized);
+    };
+    cleanText(state.builder.choiceSelections?.[config.storageId] || "").split("|").map((entry) => cleanText(entry)).filter(Boolean).forEach(add);
+    const record = getRepeatableUniqueBreakthroughRecord(config);
+    if (record) {
+      asArray(config.legacySuffixes).forEach((suffix) => add(getBuilderChoiceValue(getBreakthroughChoiceId(record, suffix))));
+    }
+    return selected;
+  }
+  function setSelectedRepeatableBreakthroughChoices(config, choices) {
+    const normalized = [];
+    const seen = /* @__PURE__ */ new Set();
+    choices.forEach((value) => {
+      const choice = normalizeRepeatableChoiceValue(config, value);
+      const key = normalizePhrase(choice);
+      if (!choice || seen.has(key)) {
+        return;
+      }
+      seen.add(key);
+      normalized.push(choice);
+    });
+    state.builder.choiceSelections = {
+      ...state.builder.choiceSelections || {},
+      [config.storageId]: normalized.join("|")
+    };
+    const record = getRepeatableUniqueBreakthroughRecord(config);
+    if (record) {
+      asArray(config.legacySuffixes).forEach((suffix) => {
+        delete state.builder.choiceSelections[getBreakthroughChoiceId(record, suffix)];
+      });
+      state.builder.selectedBreakthroughIds = [
+        ...(state.builder.selectedBreakthroughIds || []).filter((id) => id !== record.id),
+        ...Array.from({ length: normalized.length }, () => record.id)
+      ];
+    }
+  }
+  function normalizeRepeatableUniqueBreakthroughSelections() {
+    Object.values(REPEATABLE_UNIQUE_BREAKTHROUGH_CONFIGS).forEach((config) => {
+      setSelectedRepeatableBreakthroughChoices(config, getSelectedRepeatableBreakthroughChoices(config));
+    });
+  }
+  function getAvailableRepeatableBreakthroughChoices(config) {
+    const selectedKeys = new Set(getSelectedRepeatableBreakthroughChoices(config).map(normalizePhrase));
+    const excludedKeys = getRepeatableExcludedChoiceKeys(config);
+    return getRepeatableChoiceOptions(config).filter((option) => {
+      const key = normalizePhrase(option);
+      return key && !selectedKeys.has(key) && !excludedKeys.has(key);
+    });
+  }
+  function getRepeatableBreakthroughChoiceSummaries() {
+    return Object.values(REPEATABLE_UNIQUE_BREAKTHROUGH_CONFIGS).flatMap(
+      (config) => getSelectedRepeatableBreakthroughChoices(config).map((value) => config.resolvedText?.(value) || `${config.label}: ${value}.`)
     );
   }
+  function isStackableBreakthrough(record) {
+    return STACKABLE_BREAKTHROUGH_NAMES.has(normalizePhrase(record?.name));
+  }
+  function getSelectedBreakthroughCount(record) {
+    if (!record?.id) {
+      return 0;
+    }
+    return (state.builder.selectedBreakthroughIds || []).filter((id) => id === record.id).length;
+  }
+  function getBreakthroughOccurrenceSuffix(suffix, occurrence) {
+    return occurrence > 1 ? `${suffix}-${occurrence}` : suffix;
+  }
+  function addElementalMasteriesFromText(masteries, text) {
+    const cleaned = cleanText(text);
+    if (!cleaned) {
+      return;
+    }
+    Object.entries(ELEMENTAL_MASTERY_ALIASES).forEach(([key, aliases]) => {
+      const matched = aliases.some((alias) => {
+        const escaped = alias.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const patterns = [
+          new RegExp(`\\bgain(?:s|ed)?\\s+elemental\\s+mastery\\s*:?\\s*${escaped}\\b`, "i"),
+          new RegExp(`\\b(?:gain(?:s|ed)?|grants?|granted|possess(?:es)?|have|has)\\s+(?:${escaped}\\s+)?(?:elemental\\s+)?mastery\\s*:?\\s*${escaped}\\b`, "i"),
+          new RegExp(`\\b(?:gain(?:s|ed)?|grants?|granted|possess(?:es)?|have|has)\\s+${escaped}\\s+(?:elemental\\s+)?mastery\\b`, "i"),
+          new RegExp(`\\b${escaped}\\s+(?:elemental\\s+)?mastery\\b`, "i"),
+          new RegExp(`\\b${escaped}\\s+(?:element\\s+)?mastered\\b`, "i")
+        ];
+        return patterns.some((pattern) => pattern.test(cleaned));
+      });
+      if (matched) {
+        masteries.add(key);
+      }
+    });
+  }
+  function getTrackedElementalMasteries() {
+    const masteries = /* @__PURE__ */ new Set();
+    getTrackedLearnedAbilityRecords().forEach((ability) => {
+      [
+        ability.name,
+        ability.benefit1,
+        ability.benefit2,
+        ability.benefit3,
+        ability.benefit4,
+        ability.descriptionText,
+        ability.description
+      ].forEach((text) => addElementalMasteriesFromText(masteries, text));
+    });
+    getSelectedElementalAffinityElements().forEach((element) => {
+      getElementalMasteryKeys(element).forEach((key) => masteries.add(key));
+    });
+    Object.entries(state.builder.choiceSelections || {}).forEach(([id, selectedValue]) => {
+      if (id === ELEMENTAL_AFFINITY_ELEMENTS_CHOICE_ID) {
+        return;
+      }
+      const selectedKeys = getElementalMasteryKeys(selectedValue);
+      if (!selectedKeys.length) {
+        return;
+      }
+      const normalizedId = normalizePhrase(id);
+      if (normalizedId.includes("elemental mastery") || normalizedId.endsWith(" element") || normalizedId.includes("elemental affinity")) {
+        selectedKeys.forEach((key) => masteries.add(key));
+      }
+    });
+    getSelectedBreakthroughRecords().forEach((entry) => {
+      if (normalizePhrase(entry.name) === "elemental affinity") {
+        getElementalMasteryKeys(getBuilderChoiceValue(getBreakthroughChoiceId(entry, "element"))).forEach((key) => masteries.add(key));
+        return;
+      }
+      addElementalMasteriesFromText(masteries, entry.descriptionText || entry.description || "");
+    });
+    const ancestryMasterySources = [getSelectedAncestryDetail()];
+    getSelectedAncestryFeatureChoices().forEach(({ ancestry }) => {
+      if (ancestry && !ancestryMasterySources.some((entry) => entry?.id === ancestry.id)) {
+        ancestryMasterySources.push(ancestry);
+      }
+    });
+    ancestryMasterySources.filter(Boolean).forEach((ancestry) => {
+      asArray(ancestry.traits).forEach((trait) => {
+        [
+          trait.name,
+          trait.descriptionText,
+          trait.description,
+          trait.text
+        ].forEach((text) => addElementalMasteriesFromText(masteries, text));
+      });
+    });
+    getSelectedClassProgress().forEach((entry) => {
+      const record = entry.record || {};
+      const keyAbility = getClassKeyAbilityRecord(record);
+      [
+        keyAbility.name,
+        keyAbility.benefit1,
+        keyAbility.benefit2,
+        keyAbility.benefit3,
+        keyAbility.benefit4,
+        keyAbility.descriptionText,
+        keyAbility.description
+      ].forEach((text) => addElementalMasteriesFromText(masteries, text));
+      if (isTrackedClassMastered(entry)) {
+        const choiceValue = getBuilderChoiceValue(getClassChoiceId(record, "elemental-mastery"));
+        getElementalMasteryKeys(choiceValue).forEach((key) => masteries.add(key));
+      }
+      getPurchasedClassAbilities(record).forEach((ability) => {
+        [
+          ability.name,
+          ability.descriptionText,
+          ability.description
+        ].forEach((text) => addElementalMasteriesFromText(masteries, text));
+      });
+    });
+    getSelectedItemRecords().forEach((entry) => {
+      addElementalMasteriesFromText(masteries, entry.descriptionText || entry.description || "");
+    });
+    (state.play?.inventoryItems || []).forEach((entry) => {
+      const item = mergeInventoryEntryWithRecord(entry);
+      addElementalMasteriesFromText(masteries, item.custom ? item.description : getBaseItemRulesText(item));
+    });
+    if (masteries.has("ice")) {
+      masteries.add("frost");
+    }
+    if (masteries.has("frost")) {
+      masteries.add("ice");
+    }
+    return masteries;
+  }
+  function hasSelectableElementalMasteryChoice(text) {
+    return /\bmaster\s+an\s+additional\s+element\s+of\s+your\s+choice\b/i.test(cleanText(text)) || /\belemental\s+mastery\s+in\s+an\s+element\s+of\s+your\s+choice\b/i.test(cleanText(text));
+  }
+  function hasTrackedElementalMastery(value) {
+    const targets = getElementalMasteryKeys(value);
+    if (!targets.length) {
+      return false;
+    }
+    const masteries = getTrackedElementalMasteries();
+    return targets.some((target) => masteries.has(target));
+  }
   function hasTrackedAnyElementalMastery() {
-    const elements = ["arcane", "dark", "earth", "fire", "frost", "holy", "ice", "lightning", "water", "wind"];
-    return elements.some((element) => hasTrackedElementalMastery(element));
+    return getTrackedElementalMasteries().size > 0;
+  }
+  var CLASS_REQUIREMENT_ALIASES = {
+    "iaido style": ["iai style"]
+  };
+  function getClassRequirementTargetKeys(value) {
+    const key = normalizePhrase(value);
+    if (!key) {
+      return [];
+    }
+    return [key, ...CLASS_REQUIREMENT_ALIASES[key] || []];
+  }
+  function getClassRequirementTargetSet(options) {
+    return new Set(options.flatMap((entry) => getClassRequirementTargetKeys(entry)).filter(Boolean));
   }
   function isKnownClassRequirementOption(value) {
-    const target = normalizePhrase(value);
-    if (!target) {
+    const targets = getClassRequirementTargetSet([value]);
+    if (!targets.size) {
       return false;
     }
     return lookup.classes.entries.some(
-      (entry) => normalizePhrase(entry.name) === target || normalizePhrase(entry.classId) === target || normalizePhrase(entry.id) === target
+      (entry) => targets.has(normalizePhrase(entry.name)) || targets.has(normalizePhrase(entry.classId)) || targets.has(normalizePhrase(entry.id))
     );
   }
   function isElementRequirementName(value) {
@@ -3908,7 +4763,7 @@ var LyrianApp = (() => {
       normalizePhrase(value).replace(/\belement\b/g, "").trim()
     );
   }
-  function evaluateClassMasteryRequirement(clause) {
+  function evaluateClassMasteryRequirement(clause, context = {}) {
     const normalizedClause = normalizeRequirementClause(clause);
     let match = normalizedClause.match(/^(?:at least\s+)?(\d+|one|two|three)\s+classes?\s+mastered(?:,\s*of which\s+(\d+|one|two|three)\s+must\s+be\s+a\s+tier\s+(\d+)\s+class)?$/i);
     if (match) {
@@ -3916,7 +4771,8 @@ var LyrianApp = (() => {
       const requiredTierCount = getRequirementCount(match[2]);
       const requiredTier = toNumber(match[3], 0);
       const mastered = getMasteredClassProgressEntries();
-      const met = mastered.length >= requiredCount && (!requiredTierCount || mastered.filter((entry) => toNumber(entry.record?.tier, 0) === requiredTier).length >= requiredTierCount);
+      const actualMasteryMet = mastered.length >= requiredCount && (!requiredTierCount || mastered.filter((entry) => toNumber(entry.record?.tier, 0) === requiredTier).length >= requiredTierCount);
+      const met = actualMasteryMet || !requiredTierCount && hasGenericClassMasteryCredit(requiredCount, context.record);
       return { met, trackable: true, label: normalizedClause };
     }
     match = normalizedClause.match(/^(?:any|one|at least one|at least 1)\s+tier\s+(\d+)(?:\s+class)?\s+mastered$/i);
@@ -3924,7 +4780,7 @@ var LyrianApp = (() => {
       return { met: hasMasteredClassTier(match[1]), trackable: true, label: normalizedClause };
     }
     if (/^(?:any|at least one|at least 1)\s+(?:class\s+mastered|mastered\s+class)$/i.test(normalizedClause)) {
-      return { met: hasMasteredClassCount(1), trackable: true, label: normalizedClause };
+      return { met: hasGenericClassMasteryCredit(1, context.record), trackable: true, label: normalizedClause };
     }
     if (/^(?:have\s+)?(?:one|any)\s+element\s+mastered$/i.test(normalizedClause)) {
       return { met: hasTrackedAnyElementalMastery(), trackable: true, label: normalizedClause };
@@ -3975,7 +4831,7 @@ var LyrianApp = (() => {
   }
   function evaluateLineageRequirement(clause) {
     const normalizedClause = normalizeRequirementClause(clause);
-    let match = normalizedClause.match(/^(?:must\s+be\s+|be\s+a\s+|be\s+|a\s+)?(.+?)(?:\s+only)?$/i);
+    let match = normalizedClause.match(/^(?:must\s+be\s+(?:an|a|the)?\s*|be\s+(?:an|a|the)?\s*|an\s+|a\s+)?(.+?)(?:\s+only)?$/i);
     if (!match) {
       return null;
     }
@@ -4128,7 +4984,7 @@ var LyrianApp = (() => {
     }
     return normalizedClause.split(/\s+(?:and|plus|\+)\s+(?=(?:any|one|at least|must|have|possess|be|proficient|proficiency|\d+|[A-Z][^,]+?\s+mastered)\b)/i).map((entry) => normalizeRequirementClause(entry)).filter(Boolean);
   }
-  function evaluateOrRequirement(clause) {
+  function evaluateOrRequirement(clause, context = {}) {
     const normalizedClause = normalizeRequirementClause(clause);
     if (!/\s+or\s+/i.test(normalizedClause)) {
       return null;
@@ -4141,7 +4997,7 @@ var LyrianApp = (() => {
       const hasExplicitPredicate = /\b(?:mastered|mastery|breakthrough|proficient|proficiency|ability|spell|skill|class|only)\b/i.test(part);
       const nextHasMastered = parts.slice(index + 1).some((entry) => /\bmastered\b/i.test(entry));
       const normalizedPart = !hasExplicitPredicate && nextHasMastered ? `${part} mastered` : part;
-      return evaluateClassRequirementClause(normalizedPart);
+      return evaluateClassRequirementClause(normalizedPart, context);
     });
     if (results.every((entry) => entry.trackable)) {
       return {
@@ -4152,7 +5008,7 @@ var LyrianApp = (() => {
     }
     return null;
   }
-  function evaluateClassRequirementClause(clause) {
+  function evaluateClassRequirementClause(clause, context = {}) {
     const normalizedClause = normalizeRequirementClause(clause);
     if (!normalizedClause || /^none$/i.test(normalizedClause)) {
       return { met: true, trackable: true, label: normalizedClause || "None" };
@@ -4180,18 +5036,18 @@ var LyrianApp = (() => {
     }
     const compoundParts = splitCompoundRequirement(normalizedClause);
     if (compoundParts.length > 1) {
-      const results = compoundParts.map(evaluateClassRequirementClause);
+      const results = compoundParts.map((part) => evaluateClassRequirementClause(part, context));
       return {
         met: results.every((entry) => entry.met),
         trackable: results.every((entry) => entry.trackable),
         label: normalizedClause
       };
     }
-    const orResult = evaluateOrRequirement(normalizedClause);
+    const orResult = evaluateOrRequirement(normalizedClause, context);
     if (orResult) {
       return orResult;
     }
-    const classMasteryResult = evaluateClassMasteryRequirement(normalizedClause);
+    const classMasteryResult = evaluateClassMasteryRequirement(normalizedClause, context);
     if (classMasteryResult) {
       return classMasteryResult;
     }
@@ -4206,9 +5062,9 @@ var LyrianApp = (() => {
       (entry) => entry.split(/,\s+(?=(?:any|one|at least|must|have|be|proficient|proficiency|possess|\d+\s+)\b)/i)
     ).map((entry) => normalizeRequirementClause(entry)).filter(Boolean);
   }
-  function evaluateClassRequirementAlternative(text) {
+  function evaluateClassRequirementAlternative(text, context = {}) {
     const clauses = splitRequirementClauses(text);
-    const results = clauses.map(evaluateClassRequirementClause);
+    const results = clauses.map((clause) => evaluateClassRequirementClause(clause, context));
     return {
       met: results.every((entry) => entry.met),
       results
@@ -4216,6 +5072,16 @@ var LyrianApp = (() => {
   }
   function getClassRequirementStatus(record) {
     const requirementsText = getClassRequirementsText(record);
+    const accessOverride = getClassAccessOverride(record);
+    if (accessOverride?.bypassRequirements) {
+      return {
+        met: true,
+        requirementsText: requirementsText || "None.",
+        unmetLabels: [],
+        unsupportedLabels: [],
+        accessOverride
+      };
+    }
     if (!requirementsText || /^none\.?$/i.test(requirementsText)) {
       return {
         met: true,
@@ -4225,7 +5091,7 @@ var LyrianApp = (() => {
       };
     }
     const alternatives = requirementsText.split(/\bAlternatively,?\b/i).map((entry) => cleanText(entry)).filter(Boolean);
-    const evaluations = alternatives.map(evaluateClassRequirementAlternative);
+    const evaluations = alternatives.map((entry) => evaluateClassRequirementAlternative(entry, { record }));
     const met = evaluations.some((entry) => entry.met);
     const firstFailed = evaluations.find((entry) => !entry.met) || evaluations[0] || { results: [] };
     return {
@@ -4237,7 +5103,15 @@ var LyrianApp = (() => {
   }
   function getClassUnlockCost(record) {
     const tier = Math.max(1, toNumber(record?.tier, 1));
-    return tier * 100;
+    let cost = tier * 100;
+    const accessOverride = getClassAccessOverride(record);
+    if (accessOverride?.costOverride !== null && accessOverride?.costOverride !== void 0) {
+      cost = Math.min(cost, Math.max(0, toNumber(accessOverride.costOverride, cost)));
+    }
+    if (accessOverride?.costReduction) {
+      cost = Math.max(0, cost - accessOverride.costReduction);
+    }
+    return cost;
   }
   function getClassRoleOptions() {
     const dynamicRoles = Array.from(new Set(
@@ -4385,6 +5259,27 @@ var LyrianApp = (() => {
   function getBaseItemRulesText(item) {
     const text = cleanText(item?.description || item?.descriptionText || "");
     return text.split(/\n\s*(?:Mods?|Modifications?|Crafting):?\s*\n/i)[0].trim();
+  }
+  function addUniqueRuleLabel(collection, label, kind = "neutral") {
+    const cleaned = cleanText(label);
+    if (!cleaned || collection.some((entry) => normalizePhrase(entry.label) === normalizePhrase(cleaned))) {
+      return;
+    }
+    collection.push({ label: cleaned, kind });
+  }
+  function getInventoryItemRuleCorpus(item = {}) {
+    const category = cleanText([item.name, item.type, item.subType].filter(Boolean).join(" "));
+    const text = cleanText([
+      item.name,
+      item.type,
+      item.subType,
+      item.activationCost,
+      item.fuelUsage,
+      item.custom ? item.description : getBaseItemRulesText(item),
+      item.descriptionText,
+      item.description
+    ].filter(Boolean).join(" "));
+    return { category, text, normalized: normalizePhrase(`${category} ${text}`) };
   }
   function isWeaponItem(item) {
     const haystack = normalizePhrase([item?.name, item?.type, item?.subType].filter(Boolean).join(" "));
@@ -4606,6 +5501,8 @@ var LyrianApp = (() => {
   }
   function clearIrrelevantBuilderChoices() {
     const validChoiceIds = new Set(getBuilderChoiceDefinitions().map((choice) => choice.id));
+    validChoiceIds.add(ELEMENTAL_AFFINITY_ELEMENTS_CHOICE_ID);
+    Object.values(REPEATABLE_UNIQUE_BREAKTHROUGH_CONFIGS).forEach((config) => validChoiceIds.add(config.storageId));
     const nextSelections = {};
     Object.entries(state.builder.choiceSelections || {}).forEach(([key, value]) => {
       if (validChoiceIds.has(key)) {
@@ -4779,8 +5676,10 @@ var LyrianApp = (() => {
       "elemental affinity",
       "mixed house demon",
       "blend in slimefolk",
+      "blend in ii slimefolk",
       "human chimera hybrid race",
-      "faerie chimera hybrid race"
+      "faerie chimera hybrid race",
+      "the unknown paladin"
     ]);
   }
   function isBreakthroughHandledByBuilderSystem(entry) {
@@ -4938,7 +5837,8 @@ var LyrianApp = (() => {
         resolvedText: (value) => `Ryujin ancestry: Elemental Mastery ${value}.`
       });
     }
-    getSelectedClassProgress().forEach(({ record }) => {
+    getSelectedClassProgress().forEach((progressEntry) => {
+      const { record } = progressEntry;
       const source = `${record.name} class`;
       const heartOptions = getStatOptionsFromText(record.heart, SECONDARY_STATS);
       if (isClassPassiveUnlocked(record, "heart") && heartOptions.length > 1) {
@@ -4973,11 +5873,38 @@ var LyrianApp = (() => {
           definitions.push(choice);
         });
       }
+      const keyAbility = getClassKeyAbilityRecord(record);
+      const keyAbilityText = [
+        keyAbility.benefit1,
+        keyAbility.benefit2,
+        keyAbility.benefit3,
+        keyAbility.benefit4,
+        keyAbility.descriptionText,
+        keyAbility.description
+      ].filter(Boolean).join(" ");
+      if (isTrackedClassMastered(progressEntry) && hasSelectableElementalMasteryChoice(keyAbilityText)) {
+        definitions.push({
+          id: getClassChoiceId(record, "elemental-mastery"),
+          source,
+          step: "classes",
+          type: "text",
+          label: `${record.name}: choose mastered element`,
+          options: getElementChoiceOptions(),
+          pendingText: `${record.name}: choose the additional elemental mastery from class mastery.`,
+          resolvedText: (value) => `${record.name}: Elemental Mastery ${value}.`
+        });
+      }
     });
+    const breakthroughOccurrenceCounts = /* @__PURE__ */ new Map();
     getSelectedBreakthroughRecords().forEach((entry) => {
       const normalizedName = normalizePhrase(entry.name);
-      const source = entry.name;
-      const idFor = (suffix) => getBreakthroughChoiceId(entry, suffix);
+      const occurrence = (breakthroughOccurrenceCounts.get(entry.id) || 0) + 1;
+      breakthroughOccurrenceCounts.set(entry.id, occurrence);
+      const source = occurrence > 1 ? `${entry.name} #${occurrence}` : entry.name;
+      const idFor = (suffix) => getBreakthroughChoiceId(entry, getBreakthroughOccurrenceSuffix(suffix, occurrence));
+      if (getRepeatableUniqueBreakthroughConfig(entry)) {
+        return;
+      }
       if (normalizedName === "primary stat training") {
         definitions.push({
           id: idFor("main-stat"),
@@ -5142,15 +6069,21 @@ var LyrianApp = (() => {
         });
       }
       if (normalizedName === "elemental affinity") {
+        return;
+      }
+      if (normalizedName === "the unknown paladin") {
         definitions.push({
-          id: idFor("element"),
+          id: idFor("divine"),
           source,
-          step: "profile",
+          step: "breakthroughs",
           type: "text",
-          label: "Elemental Affinity: choose the element",
-          options: getElementChoiceOptions(),
-          pendingText: "Elemental Affinity: choose an element.",
-          resolvedText: (value) => `Elemental Affinity: Elemental Mastery ${value}.`
+          label: "The Unknown Paladin: choose Divine",
+          options: UNKNOWN_PALADIN_DIVINE_OPTIONS,
+          pendingText: "The Unknown Paladin: choose the Divine that sets Smite and Holy Weapon damage.",
+          resolvedText: (value) => {
+            const option = UNKNOWN_PALADIN_DIVINE_OPTIONS.find((entryOption) => entryOption.value === value);
+            return option ? `The Unknown Paladin: ${option.value} damage type ${option.damageType}.` : `The Unknown Paladin: ${value}.`;
+          }
         });
       }
       if (normalizedName === "mixed house demon") {
@@ -5420,6 +6353,9 @@ var LyrianApp = (() => {
         return;
       }
       if (choice.type === "main-stat") {
+        if (state.builder?.importedFinalStats) {
+          return;
+        }
         if (MAIN_STATS.some((entry) => entry.key === value)) {
           bucket.mainStats[value] = (bucket.mainStats[value] || 0) + (choice.amount || 0);
           pushUniqueNotice(bucket.autoApplied, choice.resolvedText(value));
@@ -5427,6 +6363,9 @@ var LyrianApp = (() => {
         return;
       }
       if (choice.type === "secondary-stat") {
+        if (state.builder?.importedFinalStats) {
+          return;
+        }
         if (SECONDARY_STATS.some((entry) => entry.key === value)) {
           bucket.secondaryStats[value] = (bucket.secondaryStats[value] || 0) + (choice.amount || 0);
           pushUniqueNotice(bucket.autoApplied, choice.resolvedText(value));
@@ -5455,6 +6394,9 @@ var LyrianApp = (() => {
   }
   function applyComputedBonus(targetBucket, amount, resolvedTarget) {
     if (!resolvedTarget || !amount) {
+      return false;
+    }
+    if (state.builder?.importedFinalStats && (resolvedTarget.bucket === "mainStats" || resolvedTarget.bucket === "secondaryStats")) {
       return false;
     }
     if (resolvedTarget.bucket === "skillChecks") {
@@ -5575,9 +6517,10 @@ var LyrianApp = (() => {
         pushUniqueNotice(bucket.pendingChoices, `${sourceLabel}: choose one of ${targetText} for +${amount}.`);
         return;
       }
+      const isConditionalBonus = isTemporaryOrActiveBonusSentence(getSentenceAroundMatch(text, match.index));
       targetText.split(/\s+and\s+|,\s*/g).map((entry) => cleanText(entry).replace(/^[-+]?\d+\s+(?:bonus\s+)?(?:to|in)\s+/i, "")).filter(Boolean).forEach((piece) => {
         const resolved = resolveComputedBonusTarget(piece);
-        if (resolved?.bucket === "derived" && isTemporaryOrActiveBonusSentence(getSentenceAroundMatch(text, match.index))) {
+        if (resolved && isConditionalBonus) {
           return;
         }
         if (applyComputedBonus(bucket, amount, resolved)) {
@@ -5589,6 +6532,9 @@ var LyrianApp = (() => {
     statChangeMatches.forEach((match) => {
       const statName = MAIN_STATS.concat(SECONDARY_STATS).find((entry) => normalizePhrase(entry.key) === normalizePhrase(match[1]))?.key;
       if (!statName) {
+        return;
+      }
+      if (isTemporaryOrActiveBonusSentence(getSentenceAroundMatch(text, match.index))) {
         return;
       }
       const amount = Number(match[3]) * (normalizePhrase(match[2]) === "reduced" ? -1 : 1);
@@ -5619,9 +6565,10 @@ var LyrianApp = (() => {
       }
       const sign = normalizePhrase(match[1]).startsWith("reduc") ? -1 : 1;
       const amount = Number(match[3]) * sign;
+      const isConditionalBonus = isTemporaryOrActiveBonusSentence(getSentenceAroundMatch(text, match.index));
       cleanText(match[2]).split(/\s+and\s+|,\s*/g).map((entry) => entry.replace(/^your\s+/i, "").trim()).filter(Boolean).forEach((piece) => {
         const resolved = resolveComputedBonusTarget(piece);
-        if (resolved?.bucket === "derived" && isTemporaryOrActiveBonusSentence(getSentenceAroundMatch(text, match.index))) {
+        if (resolved && isConditionalBonus) {
           return;
         }
         if (applyComputedBonus(bucket, amount, resolved)) {
@@ -5639,7 +6586,7 @@ var LyrianApp = (() => {
         }
       });
     });
-    const penaltyMatches = Array.from(text.matchAll(/\b(?:a\s+)?(-\d+)\s+penalty\s+to\s+(?:your\s+)?([^.\n]+)/gi));
+    const penaltyMatches = Array.from(text.matchAll(/\b(?:a\s+)?(-\d+)\s+penalty\s+to\s+(?:your\s+)?(.+?)(?=\s+and\s+a\s+-?\d+\s+penalty\s+to\b|[.\n]|$)/gi));
     penaltyMatches.forEach((match) => {
       const amount = Number(match[1]);
       cleanText(match[2]).split(/\s+and\s+|,\s*/g).map((entry) => entry.replace(/^your\s+/i, "").trim()).filter(Boolean).forEach((piece) => {
@@ -5789,7 +6736,7 @@ var LyrianApp = (() => {
       if (isClassPassiveUnlocked(entry, "soul") && getStatOptionsFromText(entry.soul, MAIN_STATS).length <= 1) {
         collectComputedTextBonuses(bucket, `${entry.name} soul`, entry.soul);
       }
-      const keyAbility = entry.keyAbility || {};
+      const keyAbility = getClassKeyAbilityRecord(entry);
       [keyAbility.benefit1, keyAbility.benefit2, keyAbility.benefit3, keyAbility.benefit4].forEach((benefit) => {
         if (classSkillText && cleanText(benefit) === classSkillText) {
           return;
@@ -5881,6 +6828,16 @@ var LyrianApp = (() => {
       if (normalizedName === "elemental affinity") {
         return;
       }
+    });
+    const weaponTrainingConfig = REPEATABLE_UNIQUE_BREAKTHROUGH_CONFIGS["weapon training"];
+    const specialityWeaponTrainingConfig = REPEATABLE_UNIQUE_BREAKTHROUGH_CONFIGS["speciality weapon training"];
+    getSelectedRepeatableBreakthroughChoices(weaponTrainingConfig).forEach((group) => {
+      effects.extraProficiencies.push(group);
+      effects.autoApplied.push(`Weapon Training: ${group} proficiency added.`);
+    });
+    getSelectedRepeatableBreakthroughChoices(specialityWeaponTrainingConfig).forEach((group) => {
+      effects.extraProficiencies.push(group);
+      effects.autoApplied.push(`Speciality Weapon Training: ${group} proficiency added.`);
     });
     effects.extraProficiencies = Array.from(new Set(effects.extraProficiencies));
     effects.autoApplied = Array.from(new Set(effects.autoApplied));
@@ -6504,30 +7461,196 @@ var LyrianApp = (() => {
   }
   function getQuickPlayAbilities() {
     const abilities = [];
+    const seen = /* @__PURE__ */ new Set();
+    const push = (ability, source) => {
+      if (!ability?.name) {
+        return;
+      }
+      const key = cleanText(ability.id || ability.indexId || ability.trueAbilityId || ability.abilityId || ability.name);
+      if (key && seen.has(key)) {
+        return;
+      }
+      if (key) {
+        seen.add(key);
+      }
+      abilities.push({ ...ability, source });
+    };
     const race = getSelectedRaceDetail();
-    asArray(race?.abilities).forEach((ability) => {
-      abilities.push({ ...ability, source: `${race.name} race` });
+    getReferencedAbilityRecords(race).forEach((ability) => push(ability, `${race.name} race`));
+    getSelectedAncestryAbilitySources().forEach((ancestry) => {
+      const source = `${ancestry.name || ancestry.shortName || "Lineage"} lineage`;
+      asArray(ancestry.traits).forEach((trait) => push(trait, source));
+      asArray(ancestry.abilities).forEach((ability) => push(ability, source));
+      getReferencedAbilityRecords(ancestry).forEach((ability) => push(ability, source));
     });
     getSelectedClassProgress().forEach(({ record: entry }) => {
       const keyAbility = getClassKeyAbilityPlayRecord(entry);
       if (keyAbility) {
-        abilities.push(keyAbility);
+        push(keyAbility, keyAbility.source);
       }
       getPurchasedClassAbilities(entry).forEach((ability) => {
-        abilities.push({ ...ability, source: entry.name });
+        push(ability, entry.name);
       });
     });
     return abilities;
   }
   var activePlayReferenceName = "";
+  var activePlayReferenceOffsetPx = 0;
   var playReferenceNameCacheKey = "";
   var playReferenceNameCache = [];
+  function getBuiltInPlayReferenceRecords() {
+    return [
+      {
+        kind: "Action",
+        name: "Light Attack",
+        aliases: ["Roll Light Attack", "lightAttack"],
+        costLabel: "1 AP",
+        keywords: ["Attack", "Combat"],
+        descriptionText: "Spend 1 AP to make a light attack with an available weapon, spell, or ability attack source. Roll d20 plus the current Light Attack bonus. Use the selected source for range, damage, proficiency, readiness, and any extra rider text."
+      },
+      {
+        kind: "Action",
+        name: "Heavy Attack",
+        aliases: ["Roll Heavy Attack", "heavyAttack"],
+        costLabel: "2 AP",
+        keywords: ["Attack", "Combat"],
+        descriptionText: "Spend 2 AP to make a heavier offensive action. Roll d20 plus the current Heavy Attack bonus, then resolve damage and riders from the readied weapon, spell, or ability source."
+      },
+      {
+        kind: "Action",
+        name: "Precise Attack",
+        aliases: ["Roll Precise Attack", "preciseAttack"],
+        costLabel: "2 AP",
+        keywords: ["Attack", "Combat"],
+        descriptionText: "Spend 2 AP for an accuracy-focused attack. Roll d20 plus the current Precise Attack bonus. This is the place to check source-specific limits such as weapon readiness, range, ammunition, and whether the attack type is allowed."
+      },
+      {
+        kind: "Action",
+        name: "Move",
+        costLabel: "1 AP",
+        keywords: ["Movement", "Combat"],
+        descriptionText: "Spend 1 AP to move up to your current Speed. Terrain, climbing, swimming, flight, difficult ground, forced movement, engagement, and GM scene rules can change how far this actually carries you."
+      },
+      {
+        kind: "Action",
+        name: "Double Move",
+        costLabel: "2 AP",
+        keywords: ["Movement", "Combat"],
+        descriptionText: "Spend 2 AP to move twice your current Speed during the turn. Apply the same terrain, mode, and encounter restrictions that affect normal movement."
+      },
+      {
+        kind: "Reaction",
+        name: "Dodge",
+        costLabel: "1 RP",
+        keywords: ["Defense", "Reaction"],
+        descriptionText: "Spend 1 RP when a rule allows a dodge reaction. Use the current Dodge value as the defensive target/baseline. Effects, armor, conditions, and timing rules can modify whether Dodge is available."
+      },
+      {
+        kind: "Reaction",
+        name: "Block",
+        costLabel: "1 RP",
+        keywords: ["Defense", "Reaction"],
+        descriptionText: "Spend 1 RP when a rule allows a block reaction. Use the current Block value as the defensive baseline. Shield, armor, weapon, hand state, and effect rules can change whether a block is legal or improved."
+      },
+      {
+        kind: "Derived Stat",
+        name: "Guard",
+        keywords: ["Defense"],
+        descriptionText: "Guard is flat mitigation and durability support shown from the current sheet values and equipment-derived bonuses."
+      },
+      {
+        kind: "Derived Stat",
+        name: "Evasion",
+        keywords: ["Defense"],
+        descriptionText: "Evasion is the target number enemies usually need to meet or beat when attacking this character. Armor, conditions, and effects can adjust it."
+      },
+      {
+        kind: "Derived Stat",
+        name: "Potency",
+        keywords: ["Effects", "Save Difficulty"],
+        descriptionText: "Potency is the difficulty of saves against this character's effects. It updates from the current sheet values and active builder-derived modifiers."
+      },
+      {
+        kind: "Roll",
+        name: "Save",
+        aliases: ["Roll Saving Throw", "Saving Throw", "saveBonus"],
+        keywords: ["Defense", "Roll"],
+        descriptionText: "Roll the character's saving throw bonus when a rule calls for a save. The sheet uses the current save bonus shown in the defense strip."
+      },
+      {
+        kind: "Roll",
+        name: "Initiative",
+        aliases: ["Roll Initiative", "initiative"],
+        keywords: ["Turn Order", "Roll"],
+        descriptionText: "Roll initiative to establish turn order. The sheet uses the current Initiative bonus from the character's derived stats."
+      },
+      {
+        kind: "Turn Tool",
+        name: "Recover AP",
+        aliases: ["AP Recovery"],
+        keywords: ["Turn Reset"],
+        descriptionText: "Start-of-turn recovery that restores current AP to maximum AP. It does not restore Mana or RP; adjust AP manually afterward if a rule changes the normal recovery amount."
+      },
+      {
+        kind: "Rest",
+        name: "Floor Rest",
+        keywords: ["Rest", "Downtime"],
+        descriptionText: "A rest option that heals by 1x Toughness, clears rest-duration effects, and makes food-based mana recovery available again."
+      },
+      {
+        kind: "Rest",
+        name: "Camp / Basic Rest",
+        aliases: ["Camp Rest", "Basic Rest"],
+        keywords: ["Rest", "Downtime"],
+        descriptionText: "A rest option that heals by 2x Toughness, clears rest-duration effects, and makes food-based mana recovery available again."
+      },
+      {
+        kind: "Rest",
+        name: "Luxury Rest",
+        keywords: ["Rest", "Downtime"],
+        descriptionText: "A rest option that heals by 3x Toughness, clears rest-duration effects, and makes food-based mana recovery available again."
+      },
+      {
+        kind: "Sheet Tool",
+        name: "Full Restore",
+        aliases: ["Full Reset"],
+        keywords: ["Maintenance"],
+        descriptionText: "Restores tracked HP, Mana, AP, and RP to current maximum values, clears food-use lockout, and clears active effects. This is a sheet maintenance control, not a normal combat action."
+      },
+      {
+        kind: "Sheet Tool",
+        name: "Sync Derived Stats",
+        keywords: ["Maintenance"],
+        descriptionText: "Syncs the live play dashboard to the current character sheet values after stats, equipment, classes, or builder choices have changed."
+      },
+      {
+        kind: "Sheet Tool",
+        name: "Clear Log",
+        keywords: ["Maintenance"],
+        descriptionText: "Clears the visible play log. It does not change HP, Mana, AP, RP, inventory, active effects, or character build choices."
+      }
+    ];
+  }
+  function findBuiltInPlayReferenceRecord(name) {
+    const target = normalizePhrase(name).replace(/^roll\s+/, "");
+    if (!target) {
+      return null;
+    }
+    return getBuiltInPlayReferenceRecords().find((entry) => {
+      const labels = [entry.name, ...entry.aliases || []];
+      return labels.some((label) => {
+        const normalized = normalizePhrase(label).replace(/^roll\s+/, "");
+        return normalized === target;
+      });
+    }) || null;
+  }
   function getPlayReferenceNameOptions() {
     const cacheKey = [
       getSelectedGameVersionId(),
       lookup.abilities.entries.length,
       detailLookup.abilities.entries.length,
-      SKILL_DEFINITIONS.length
+      SKILL_DEFINITIONS.length,
+      (state.play?.inventoryItems || []).map((entry) => cleanText(mergeInventoryEntryWithRecord(entry).name)).join("|")
     ].join("|");
     if (cacheKey === playReferenceNameCacheKey) {
       return playReferenceNameCache;
@@ -6536,6 +7659,20 @@ var LyrianApp = (() => {
     [...detailLookup.abilities.entries, ...lookup.abilities.entries, ...SKILL_DEFINITIONS].forEach((entry) => {
       const name = cleanText(entry?.name);
       if (name.length >= 4) {
+        names.add(name);
+      }
+    });
+    getBuiltInPlayReferenceRecords().forEach((entry) => {
+      names.add(entry.name);
+      (entry.aliases || []).forEach((alias) => {
+        if (cleanText(alias).length >= 4) {
+          names.add(alias);
+        }
+      });
+    });
+    (state.play?.inventoryItems || []).map((entry) => mergeInventoryEntryWithRecord(entry)).forEach((entry) => {
+      const name = cleanText(entry?.name);
+      if (name.length >= 2) {
         names.add(name);
       }
     });
@@ -6563,6 +7700,25 @@ var LyrianApp = (() => {
         kind: "Ability",
         name: cleanText(abilityCandidates[0].name),
         record: abilityCandidates[0]
+      };
+    }
+    const itemCandidates = [
+      ...(state.play?.inventoryItems || []).map((entry) => mergeInventoryEntryWithRecord(entry)),
+      ...lookup.items.entries
+    ].filter((entry) => normalizePhrase(entry?.name) === target).sort((a, b) => scorePlayReferenceRecord(b) - scorePlayReferenceRecord(a));
+    if (itemCandidates.length) {
+      return {
+        kind: "Item",
+        name: cleanText(itemCandidates[0].name),
+        record: itemCandidates[0]
+      };
+    }
+    const builtInReference = findBuiltInPlayReferenceRecord(name);
+    if (builtInReference) {
+      return {
+        kind: builtInReference.kind,
+        name: builtInReference.name,
+        record: builtInReference
       };
     }
     const skill = SKILL_DEFINITIONS.find((entry) => normalizePhrase(entry.name) === target);
@@ -6620,6 +7776,17 @@ var LyrianApp = (() => {
         expertise.length ? `Common specialties: ${expertise.join(", ")}.` : ""
       ].filter(Boolean).join("\n\n");
     }
+    if (reference?.kind === "Item") {
+      return firstReadableText(
+        getBaseItemRulesText(record),
+        record.descriptionText,
+        record.description,
+        record.benefit1,
+        record.benefit2,
+        record.benefit3,
+        record.benefit4
+      );
+    }
     return firstReadableText(
       record.descriptionText,
       record.description,
@@ -6634,6 +7801,9 @@ var LyrianApp = (() => {
     if (!node) {
       return;
     }
+    const referenceOffset = Math.max(0, activePlayReferenceOffsetPx);
+    node.style.setProperty("--play-reference-offset", `${referenceOffset}px`);
+    node.style.transform = referenceOffset ? `translateY(${referenceOffset}px)` : "";
     const reference = findPlayReferenceRecord(activePlayReferenceName);
     if (!reference) {
       node.hidden = false;
@@ -6653,7 +7823,10 @@ var LyrianApp = (() => {
     const meta = [
       reference.kind,
       record.source,
+      record.type,
+      record.subType,
       record.costLabel || record.cost ? formatCostLabelForDisplay(record.costLabel || record.cost) : "",
+      record.burden ? `Burden ${record.burden}` : "",
       record.range,
       Array.isArray(record.keywords) ? record.keywords.join(", ") : record.keywords,
       record.stat ? `${record.stat} skill` : ""
@@ -6673,7 +7846,25 @@ var LyrianApp = (() => {
         </div>
       `;
   }
-  function openPlayReference(name) {
+  function setPlayReferenceAlignmentFromTrigger(trigger) {
+    activePlayReferenceOffsetPx = 0;
+    const source = trigger?.closest?.(".play-action-card") || trigger;
+    const detailNode = document.getElementById("play-reference-detail");
+    const column = detailNode?.closest?.(".play-reference-column");
+    if (!source || !column || window.matchMedia("(max-width: 1280px)").matches) {
+      return;
+    }
+    const sourceRect = source.getBoundingClientRect();
+    const columnRect = column.getBoundingClientRect();
+    if (columnRect.left <= sourceRect.right) {
+      return;
+    }
+    const columnStyles = window.getComputedStyle(column);
+    const columnTopPadding = Number.parseFloat(columnStyles.paddingTop) || 0;
+    activePlayReferenceOffsetPx = Math.max(0, Math.round(sourceRect.top - columnRect.top - columnTopPadding));
+  }
+  function openPlayReference(name, trigger = null) {
+    setPlayReferenceAlignmentFromTrigger(trigger);
     activePlayReferenceName = cleanText(name);
     renderPlayReferenceDetail();
     setStatus(`Opened ${activePlayReferenceName} reference.`);
@@ -8339,10 +9530,617 @@ var LyrianApp = (() => {
   function fullRestoreResources() {
     state.play = mergePlayState(state.play);
     state.play.hpHasManualChange = false;
+    state.play.foodUsedSinceRest = false;
+    state.play.activeEffects = [];
     syncPlayResourcesFromFields(false);
-    appendPlayLog("Full Restore", ["HP, Mana, AP, and RP restored to their current maximum values."]);
+    appendPlayLog("Full Restore", [
+      "HP, Mana, AP, and RP restored to their current maximum values.",
+      "Food-use and active-effect trackers reset."
+    ]);
     renderPlayDashboard();
     setStatus("Fully restored tracked resources.");
+  }
+  function getCurrentToughnessValue() {
+    const bonuses = getComputedBonuses();
+    return Math.max(0, toNumber(state.fields.Toughness, 0) + (bonuses.mainStats.Toughness || 0));
+  }
+  function performPlayRest(restType) {
+    const restOptions = {
+      floor: { label: "Floor Rest", multiplier: 1 },
+      camp: { label: "Camp / Basic Rest", multiplier: 2 },
+      luxury: { label: "Luxury Rest", multiplier: 3 }
+    };
+    const option = restOptions[restType] || restOptions.camp;
+    state.play = mergePlayState(state.play);
+    syncPlayResourcesFromFields(true);
+    const derived = getDerivedCombatStats();
+    const resources = state.play.resources;
+    const toughness = getCurrentToughnessValue();
+    const healing = toughness * option.multiplier;
+    const currentHp = toNumber(resources.hpCurrent, derived.hpMax);
+    const nextHp = clamp(currentHp + healing, 0, Math.max(0, derived.hpMax));
+    const removedRestEffects = state.play.activeEffects.filter((entry) => /next rest|until rest|rest ends/i.test(`${entry.summary} ${entry.duration}`)).length;
+    resources.hpCurrent = nextHp;
+    state.play.hpHasManualChange = nextHp < derived.hpMax;
+    state.play.foodUsedSinceRest = false;
+    state.play.activeEffects = state.play.activeEffects.filter((entry) => !/next rest|until rest|rest ends/i.test(`${entry.summary} ${entry.duration}`));
+    appendPlayLog(option.label, [
+      `Recovered ${healing} HP (${option.multiplier}x Toughness ${toughness}).`,
+      `Current HP: ${nextHp} / ${derived.hpMax}`,
+      "Food mana recovery is available again.",
+      removedRestEffects ? `${removedRestEffects} rest-duration active effect removed.` : ""
+    ]);
+    renderPlayDashboard();
+    persistWorkingState();
+    setStatus(`${option.label} applied.`);
+  }
+  function createPlayActiveEffectId() {
+    return `effect-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+  }
+  function clonePlayEffectRules(rules = {}) {
+    if (!rules || typeof rules !== "object") {
+      return {};
+    }
+    return {
+      id: cleanText(rules.id),
+      sourceType: cleanText(rules.sourceType),
+      value: cleanText(rules.value),
+      valueLabel: cleanText(rules.valueLabel),
+      detail: cleanText(rules.detail),
+      automation: cleanText(rules.automation),
+      detailLines: Array.isArray(rules.detailLines) ? rules.detailLines.map(cleanText).filter(Boolean) : [],
+      automationLines: Array.isArray(rules.automationLines) ? rules.automationLines.map(cleanText).filter(Boolean) : [],
+      modifiers: rules.modifiers && typeof rules.modifiers === "object" ? { ...rules.modifiers } : {},
+      resourceGrant: rules.resourceGrant && typeof rules.resourceGrant === "object" ? { ...rules.resourceGrant } : {}
+    };
+  }
+  function applyPlayEffectResourceGrant(effect) {
+    const grant = effect?.rules?.resourceGrant && typeof effect.rules.resourceGrant === "object" ? effect.rules.resourceGrant : {};
+    if (!Object.keys(grant).length) {
+      return [];
+    }
+    syncPlayResourcesFromFields(true);
+    const resources = state.play.resources;
+    const lines = [];
+    const resourceConfigs = {
+      apCurrent: { label: "AP", maxKey: "apMax" },
+      rpCurrent: { label: "RP", maxKey: "rpMax" },
+      manaCurrent: { label: "Mana", maxKey: "manaMax" },
+      hpCurrent: { label: "HP", maxKey: "hpMax" }
+    };
+    Object.entries(resourceConfigs).forEach(([currentKey, config]) => {
+      const amount = Math.max(0, Math.floor(toNumber(grant[currentKey], 0)));
+      if (!amount) {
+        return;
+      }
+      const current = toNumber(resources[currentKey], 0);
+      const max = toNumber(resources[config.maxKey], current + amount) + amount;
+      const next = clamp(current + amount, 0, Math.max(0, max));
+      resources[currentKey] = next;
+      lines.push(`${config.label} +${amount} (${next}${currentKey === "hpCurrent" ? ` / ${resources[config.maxKey]}` : ""}).`);
+    });
+    return lines;
+  }
+  function addPlayActiveEffect(effect) {
+    const name = cleanText(effect?.name || "");
+    if (!name) {
+      return;
+    }
+    state.play = mergePlayState(state.play);
+    const nextEffect = {
+      id: createPlayActiveEffectId(),
+      name,
+      source: cleanText(effect.source || ""),
+      summary: cleanText(effect.summary || ""),
+      duration: cleanText(effect.duration || ""),
+      tone: cleanText(effect.tone || ""),
+      createdAt: (/* @__PURE__ */ new Date()).toLocaleTimeString([], { hour: "numeric", minute: "2-digit", second: "2-digit" }),
+      rules: clonePlayEffectRules(effect.rules)
+    };
+    const nextKey = [nextEffect.name, nextEffect.source, nextEffect.duration].map(normalizePhrase).join("|");
+    const hadMatchingEffect = state.play.activeEffects.some((entry) => [entry.name, entry.source, entry.duration].map(normalizePhrase).join("|") === nextKey);
+    state.play.activeEffects = [
+      nextEffect,
+      ...state.play.activeEffects.filter((entry) => [entry.name, entry.source, entry.duration].map(normalizePhrase).join("|") !== nextKey)
+    ].slice(0, 20);
+    const grantLines = hadMatchingEffect ? [] : applyPlayEffectResourceGrant(nextEffect);
+    return { effect: nextEffect, grantLines, replaced: hadMatchingEffect };
+  }
+  function removePlayActiveEffect(effectId) {
+    state.play = mergePlayState(state.play);
+    const id = cleanText(effectId);
+    const removed = state.play.activeEffects.find((entry) => entry.id === id);
+    state.play.activeEffects = state.play.activeEffects.filter((entry) => entry.id !== id);
+    syncPlayResourcesFromFields(true);
+    appendPlayLog("Active Effect Cleared", [removed ? removed.name : "Effect removed."]);
+    renderPlayDashboard();
+    persistWorkingState();
+    setStatus(removed ? `Cleared ${removed.name}.` : "Cleared active effect.");
+  }
+  function buildOfficialEffectRules({ id, detailLines = [], automationLines = [], modifiers = {}, resourceGrant = {}, value = "", valueLabel = "" }) {
+    return {
+      id,
+      sourceType: "official",
+      value: cleanText(value),
+      valueLabel: cleanText(valueLabel),
+      detailLines,
+      automationLines,
+      modifiers,
+      resourceGrant
+    };
+  }
+  function buildManualOnlyEffectRules(id, detail) {
+    return {
+      id,
+      sourceType: "manual",
+      detailLines: [
+        detail,
+        "This is not a universal rules condition in the bundled data. Add the exact source, value, or GM ruling in the custom note if it should change the sheet."
+      ],
+      automationLines: ["No automatic stat changes are applied for this manual reminder."]
+    };
+  }
+  function valuedRuleOption({ id, name, summary, detailTemplate, automationTemplate = "", modifiersFactory = () => ({}) }) {
+    return {
+      id,
+      name,
+      summary,
+      requiresValue: true,
+      buildRules: (value) => {
+        const safeValue = Math.max(1, Math.floor(toNumber(value, 1)));
+        return buildOfficialEffectRules({
+          id,
+          value: String(safeValue),
+          valueLabel: "X",
+          detailLines: [detailTemplate.split("{X}").join(String(safeValue))],
+          automationLines: automationTemplate ? [automationTemplate.split("{X}").join(String(safeValue))] : [],
+          modifiers: modifiersFactory(safeValue)
+        });
+      }
+    };
+  }
+  var MANUAL_PLAY_EFFECT_OPTIONS = {
+    positive: [
+      {
+        id: "haste",
+        name: "Haste",
+        summary: "Official: +2 AP for the rest of this turn; once per target per turn.",
+        defaultDuration: "Rest of this turn",
+        buildRules: () => buildOfficialEffectRules({
+          id: "haste",
+          detailLines: [
+            "Grants the target Haste, granting them 2 AP for the rest of this turn.",
+            "A target can only be affected by Haste once per turn."
+          ],
+          automationLines: ["Adds +2 current AP while the Haste chip remains active. Clearing Haste clamps AP back to the normal active limit."],
+          resourceGrant: { apCurrent: 2 }
+        })
+      },
+      {
+        id: "regrowth",
+        name: "Regrowth",
+        summary: "Official keyword: heal for 3 + applier Focus at the start of your turn.",
+        defaultDuration: "Until start of your next turn",
+        buildRules: () => buildOfficialEffectRules({
+          id: "regrowth",
+          detailLines: ["You heal for 3 + Focus of the one who applied it at the start of your turn."],
+          automationLines: ["No automatic healing is applied yet because the applier's Focus must be known."]
+        })
+      },
+      {
+        id: "hiding",
+        name: "Hiding",
+        summary: "Official: enemies cannot see/target you until you break hiding.",
+        defaultDuration: "Until broken",
+        buildRules: () => buildOfficialEffectRules({
+          id: "hiding",
+          detailLines: [
+            "While in Hiding, enemies cannot see or target you and even if they are aware of your presence, they cannot pinpoint your exact location.",
+            "You lose Hiding if you move, attack or use any other ability that does not have the Stealth keyword unless that movement or attack says otherwise."
+          ],
+          automationLines: ["No numeric stat changes are applied; use this as a targeting/visibility reminder."]
+        })
+      },
+      {
+        id: "presence-concealment",
+        name: "Presence Concealment",
+        summary: "Official: spirit core counts as 0 for detection/aura; +5 Stealth.",
+        defaultDuration: "Until ended",
+        buildRules: () => buildOfficialEffectRules({
+          id: "presence-concealment",
+          detailLines: [
+            "You hide your mana output and aura, causing your spirit core to be considered 0 for the purposes of detection and aura abilities.",
+            "In addition you gain a +5 bonus to Stealth."
+          ],
+          automationLines: ["Stealth automation is not wired into active effects yet; the rule is tracked as a reminder."]
+        })
+      },
+      { id: "blessed", name: "Blessed", summary: "Manual: blessing/boon needs a source and exact value.", buildRules: () => buildManualOnlyEffectRules("blessed", "Blessed is not a generic condition in the bundled rules data. The closest named entry is the Blessed by Kari breakthrough, which modifies Divine Providence rather than applying a universal status.") },
+      { id: "inspired", name: "Inspired", summary: "Manual: morale/song/command bonus needs a source and exact value.", buildRules: () => buildManualOnlyEffectRules("inspired", "Inspired is not a universal rules condition in the bundled data. Track the source ability, song, or GM value here.") },
+      { id: "focused", name: "Focused", summary: "Manual: focus/concentration bonus needs a source and exact value.", buildRules: () => buildManualOnlyEffectRules("focused", "Focused appears in source-specific abilities, not as one universal sheet condition.") },
+      { id: "shielded", name: "Shielded", summary: "Manual: shield/barrier value depends on the source.", buildRules: () => buildManualOnlyEffectRules("shielded", "Shield effects vary by ability or item. Use the source text or Temporary HP tracker for the exact shield value.") },
+      { id: "empowered", name: "Empowered", summary: "Manual: damage/potency/attack bonus needs a source and exact value.", buildRules: () => buildManualOnlyEffectRules("empowered", "Empowered effects are source-specific and do not have one universal modifier.") },
+      { id: "resistant", name: "Resistant", summary: "Manual: resistance type and amount must be specified.", buildRules: () => buildManualOnlyEffectRules("resistant", "Resistance depends on damage type, condition type, and source value. Add the exact resistance in the custom note.") },
+      { id: "concealed", name: "Concealed", summary: "Manual: cover/hidden/targeting details depend on source.", buildRules: () => buildManualOnlyEffectRules("concealed", "Concealment effects depend on the scene, cover, or ability text. Use Hiding when the official Hiding state applies.") },
+      { id: "flying", name: "Flying", summary: "Manual: flight mode and limits depend on source.", buildRules: () => buildManualOnlyEffectRules("flying", "Flight rules vary by source, altitude, mount, stance, or item. Add the exact source text in the custom note.") }
+    ],
+    negative: [
+      valuedRuleOption({
+        id: "burning",
+        name: "Burning X",
+        summary: "Official: take X damage at end of turn; spend 1 AP to remove.",
+        detailTemplate: "A Burning character takes {X} damage at the end of their turn. They may spend 1 AP to remove this effect.",
+        automationTemplate: "No automatic damage is applied yet; this chip keeps the end-turn damage and AP-removal rule visible."
+      }),
+      {
+        id: "bleeding",
+        name: "Bleeding",
+        summary: "Official: take 1d6 true damage at the start of your turn.",
+        defaultDuration: "Until cleared",
+        buildRules: () => buildOfficialEffectRules({
+          id: "bleeding",
+          detailLines: ["You take 1d6 true damage at the start of your turn."],
+          automationLines: ["No automatic damage is applied yet; this chip keeps the start-turn damage reminder visible."]
+        })
+      },
+      valuedRuleOption({
+        id: "blinded",
+        name: "Blinded X",
+        summary: "Official: -X accuracy; at 3+ ranged targeting limits; at 5+ no Sure Hit.",
+        detailTemplate: "Blinded characters suffer a -{X} penalty to their accuracy rolls. If Blinded is 3 or higher, they cannot make ranged attacks without locating a target through another means than sight. If Blinded is 5 or higher, they also cannot gain Sure Hit on their attacks.",
+        automationTemplate: "Light, Heavy, and Precise attack bonuses are reduced by {X} while active.",
+        modifiersFactory: (value) => ({ lightAttack: -value, heavyAttack: -value, preciseAttack: -value })
+      }),
+      {
+        id: "slow",
+        name: "Slow",
+        summary: "Official: movement speed is halved.",
+        defaultDuration: "Until cleared",
+        buildRules: () => buildOfficialEffectRules({
+          id: "slow",
+          detailLines: ["Your movement speed is halved."],
+          automationLines: ["Speed is recalculated at half while this chip remains active."],
+          modifiers: { speedMultiplier: 0.5 }
+        })
+      },
+      {
+        id: "root",
+        name: "Root",
+        summary: "Official: cannot move; Dodge reaction evasion becomes 13 + Agility.",
+        defaultDuration: "Until cleared",
+        buildRules: () => buildOfficialEffectRules({
+          id: "root",
+          detailLines: ["You cannot move and your evasion when taking the Dodge reaction is changed to 13 + Agility."],
+          automationLines: ["Speed is set to 0. Dodge is shown as 13 + current Agility."],
+          modifiers: { speedSet: 0, dodgeSet: 13 + toNumber(state.fields.Agility, 0) }
+        })
+      },
+      valuedRuleOption({
+        id: "sunder",
+        name: "Sunder X",
+        summary: "Official: Guard reduced by X.",
+        detailTemplate: "A character inflicted with Sunder has their guard reduced by {X}.",
+        automationTemplate: "Guard is reduced by {X} while active.",
+        modifiersFactory: (value) => ({ guard: -value })
+      }),
+      valuedRuleOption({
+        id: "stagger",
+        name: "Stagger X",
+        summary: "Official: Evasion reduced by X.",
+        detailTemplate: "A character inflicted with Stagger has their evasion reduced by {X}.",
+        automationTemplate: "Evasion is reduced by {X} while active.",
+        modifiersFactory: (value) => ({ evasion: -value })
+      }),
+      {
+        id: "stun",
+        name: "Stun",
+        summary: "Official: AP, AP recovery, and RP are set to 0.",
+        defaultDuration: "Until cleared",
+        buildRules: () => buildOfficialEffectRules({
+          id: "stun",
+          detailLines: ["Your AP, AP recovery and RP is set to 0 when afflicted by this. When it ends, you regain any unused RP lost from this effect."],
+          automationLines: ["Tracked as an exact rule reminder. Max-resource automation is deferred so the editable AP/RP max boxes are not permanently overwritten."]
+        })
+      },
+      {
+        id: "weakened",
+        name: "Weakened",
+        summary: "Official: max AP 2 and max RP 1 while active.",
+        defaultDuration: "Until cleared",
+        buildRules: () => buildOfficialEffectRules({
+          id: "weakened",
+          detailLines: ["Your maximum AP goes down to 2 and maximum RP goes down to 1. When it ends, you regain any unused RP lost from this effect."],
+          automationLines: ["Tracked as an exact rule reminder. Max-resource automation is deferred so the editable AP/RP max boxes are not permanently overwritten."]
+        })
+      },
+      {
+        id: "shaken",
+        name: "Shaken",
+        summary: "Official: maximum AP is reduced by 1.",
+        defaultDuration: "Until cleared",
+        buildRules: () => buildOfficialEffectRules({
+          id: "shaken",
+          detailLines: ["The target's maximum AP is reduced by 1."],
+          automationLines: ["Tracked as an exact rule reminder. Max-resource automation is deferred so the editable AP max box is not permanently overwritten."]
+        })
+      },
+      {
+        id: "prone",
+        name: "Prone",
+        summary: "Official: non-Prone attacks cost +1 AP and RP while prone.",
+        defaultDuration: "Until cleared",
+        buildRules: () => buildOfficialEffectRules({
+          id: "prone",
+          detailLines: ["An ability with the Prone keyword can be used while Prone with no penalty. All attacks without the Prone keyword cost +1 AP and RP while prone."],
+          automationLines: ["No AP/RP costs are automatically rewritten yet; check action costs while this chip is active."]
+        })
+      },
+      {
+        id: "disarm",
+        name: "Disarm",
+        summary: "Official: cannot make weapon attacks with the disarmed weapon until redrawn.",
+        defaultDuration: "Until redrawn / cleared",
+        buildRules: () => buildOfficialEffectRules({
+          id: "disarm",
+          detailLines: ["When disarmed, you cannot make weapon attacks with the weapon you were wielding when you got disarmed. You must draw the weapon again to use it when the Disarm ends. Unarmed attacks are unaffected by Disarm."],
+          automationLines: ["No weapon action blocking is applied yet; this remains a combat-readiness reminder."]
+        })
+      },
+      {
+        id: "toxic",
+        name: "Toxic",
+        summary: "Official: take 1d6 Full Pierce Poison damage at start of turn.",
+        defaultDuration: "Until cleared",
+        buildRules: () => buildOfficialEffectRules({
+          id: "toxic",
+          detailLines: ["A character suffering from Toxic takes 1d6 Full Pierce Poison damage at the start of their turn."],
+          automationLines: ["No automatic damage is applied yet; this chip keeps the start-turn damage reminder visible."]
+        })
+      },
+      { id: "poisoned", name: "Poisoned", summary: "Manual: poison source needs exact damage, save, or removal rule.", buildRules: () => buildManualOnlyEffectRules("poisoned", "Poison is source-specific in the bundled data. Use Toxic or a custom note when the exact poison rule is known.") },
+      { id: "restrained", name: "Restrained", summary: "Manual: movement/physical restrictions need a source.", buildRules: () => buildManualOnlyEffectRules("restrained", "Restrained is not a universal keyword condition in the bundled data. Use Root or Slow if those official rules apply.") },
+      { id: "frightened", name: "Frightened", summary: "Manual: fear penalty/removal depends on source.", buildRules: () => buildManualOnlyEffectRules("frightened", "Fear effects are source-specific in the bundled data. Add the exact penalty or removal rule in the custom note.") },
+      { id: "cursed", name: "Cursed", summary: "Manual: curse effect needs exact source text.", buildRules: () => buildManualOnlyEffectRules("cursed", "Curse effects are source-specific and do not have one universal modifier.") },
+      { id: "diseased", name: "Diseased", summary: "Manual: disease progression/recovery depends on source.", buildRules: () => buildManualOnlyEffectRules("diseased", "Disease effects need their exact source text, progression, and recovery rule.") }
+    ]
+  };
+  function getManualPlayEffectOptions(tone) {
+    return MANUAL_PLAY_EFFECT_OPTIONS[tone === "negative" ? "negative" : "positive"];
+  }
+  function renderManualPlayEffectPicker(tone = "positive") {
+    const safeTone = tone === "negative" ? "negative" : "positive";
+    const options = getManualPlayEffectOptions(safeTone);
+    return `
+        <div class="manual-effect-picker" data-manual-effect-tone="${escapeHtml(safeTone)}">
+          <div class="manual-effect-grid">
+            ${options.map((entry) => `
+              <label class="manual-effect-option">
+                <input type="checkbox" data-manual-effect-option="${escapeHtml(entry.id)}">
+                <span>
+                  <strong>${escapeHtml(entry.name)}</strong>
+                  <small>${escapeHtml(entry.summary)}</small>
+                </span>
+              </label>
+            `).join("")}
+          </div>
+          <div class="manual-effect-custom">
+            <label>
+              <span>Custom ${safeTone === "negative" ? "condition" : "effect"}</span>
+              <input type="text" data-manual-effect-custom-name placeholder="Optional custom name">
+            </label>
+            <label>
+              <span>Custom note</span>
+              <textarea data-manual-effect-custom-summary placeholder="Optional rule reminder, penalty, bonus, or GM note"></textarea>
+            </label>
+            <label>
+              <span>Duration</span>
+              <input type="text" data-manual-effect-duration value="Manual / until cleared">
+            </label>
+            <label>
+              <span>Rule value X</span>
+              <input type="number" inputmode="numeric" min="1" data-manual-effect-value value="1">
+            </label>
+          </div>
+          <p class="save-slot-feedback" data-manual-effect-feedback></p>
+          <div class="sheet-modal-form-actions">
+            <button type="button" class="sheet-modal-action" data-manual-effect-confirm>OK</button>
+            <button type="button" class="sheet-modal-action" data-sheet-modal-close>Cancel</button>
+          </div>
+        </div>
+      `;
+  }
+  function openManualPlayEffectPicker(tone = "positive") {
+    const safeTone = tone === "negative" ? "negative" : "positive";
+    openSheetModal({
+      eyebrow: "Effects & Conditions",
+      title: safeTone === "negative" ? "Add Negative / Conditions" : "Add Positive Effects",
+      lead: "Select one or more entries, optionally add a custom entry or duration, then press OK.",
+      content: renderManualPlayEffectPicker(safeTone)
+    });
+  }
+  function confirmManualPlayEffectPicker(button) {
+    const picker = button.closest("[data-manual-effect-tone]");
+    if (!picker) {
+      return;
+    }
+    const tone = picker.dataset.manualEffectTone === "negative" ? "negative" : "positive";
+    const options = getManualPlayEffectOptions(tone);
+    const selectedIds = new Set(Array.from(picker.querySelectorAll("[data-manual-effect-option]:checked")).map((input) => input.dataset.manualEffectOption));
+    const durationInput = cleanText(picker.querySelector("[data-manual-effect-duration]")?.value);
+    const ruleValue = Math.max(1, Math.floor(toNumber(picker.querySelector("[data-manual-effect-value]")?.value, 1)));
+    const customName = cleanText(picker.querySelector("[data-manual-effect-custom-name]")?.value);
+    const customSummary = cleanText(picker.querySelector("[data-manual-effect-custom-summary]")?.value);
+    const selected = options.filter((entry) => selectedIds.has(entry.id));
+    if (customName) {
+      selected.push({
+        id: "custom",
+        name: customName,
+        summary: customSummary || (tone === "negative" ? "Custom condition. Track the specific penalty manually." : "Custom positive effect. Track the specific bonus manually."),
+        buildRules: () => buildManualOnlyEffectRules("custom", customSummary || "Custom manual reminder.")
+      });
+    }
+    if (!selected.length) {
+      const feedback = picker.querySelector("[data-manual-effect-feedback]");
+      if (feedback) {
+        feedback.textContent = "Select an entry or enter a custom name first.";
+        feedback.classList.add("is-error");
+      }
+      return;
+    }
+    const appliedLines = [];
+    selected.forEach((entry) => {
+      const entryRules = typeof entry.buildRules === "function" ? entry.buildRules(entry.requiresValue ? ruleValue : "") : buildManualOnlyEffectRules(entry.id, entry.summary);
+      const entryDuration = durationInput || entry.defaultDuration || "Manual / until cleared";
+      const result = addPlayActiveEffect({
+        name: entry.name,
+        source: entryRules.sourceType === "official" ? "Official rules" : tone === "negative" ? "Manual condition" : "Manual effect",
+        summary: entry.summary,
+        duration: entryDuration,
+        tone,
+        rules: entryRules
+      });
+      appliedLines.push(`${entry.name}: ${entryDuration}`);
+      if (result?.grantLines?.length) {
+        appliedLines.push(...result.grantLines);
+      }
+    });
+    syncPlayResourcesFromFields(true);
+    appendPlayLog(tone === "negative" ? "Conditions Added" : "Effects Added", appliedLines);
+    closeSheetModal();
+    renderPlayDashboard();
+    persistWorkingState();
+    setStatus(`Added ${selected.length} ${tone === "negative" ? "condition" : "effect"}${selected.length === 1 ? "" : "s"}.`);
+  }
+  function getPlayEffectTone(entry = {}) {
+    const explicitTone = cleanText(entry.tone).toLowerCase();
+    if (explicitTone === "positive" || explicitTone === "negative") {
+      return explicitTone;
+    }
+    const text = normalizePhrase([entry.name, entry.summary, entry.duration, entry.source].filter(Boolean).join(" "));
+    if (/\b(condition|poison|poisoned|bleed|bleeding|burn|burning|stun|stunned|slow|slowed|root|rooted|restrain|restrained|blind|blinded|deaf|deafened|fear|frightened|curse|cursed|disease|diseased|exhaust|exhausted|penalty|reduced|cannot|blocked|unavailable|take damage|true damage|vulnerable)\b/.test(text)) {
+      return "negative";
+    }
+    return "positive";
+  }
+  function getCurrentPlayEffectGroups() {
+    state.play = mergePlayState(state.play);
+    const activeEffects = Array.isArray(state.play.activeEffects) ? state.play.activeEffects : [];
+    const positive = [];
+    const negative = [];
+    activeEffects.forEach((entry) => {
+      if (getPlayEffectTone(entry) === "negative") {
+        negative.push(entry);
+      } else {
+        positive.push(entry);
+      }
+    });
+    if (state.play.foodUsedSinceRest) {
+      negative.push({
+        name: "Food Recovery Used",
+        summary: "Food-based mana recovery is unavailable until the next rest.",
+        duration: "Until rest",
+        source: "Food tracker",
+        fixed: true
+      });
+    }
+    return { positive, negative };
+  }
+  function renderPlayEffectRows(effects = [], emptyText = "None tracked.") {
+    return effects.length ? effects.map((entry) => `
+          <button type="button" class="play-effect-chip${entry.fixed ? " is-fixed" : ""}" data-play-effect-detail="${escapeHtml(entry.id || entry.name)}">
+            ${escapeHtml(entry.name)}
+          </button>
+        `).join("") : `<p class="play-empty">${escapeHtml(emptyText)}</p>`;
+  }
+  function findPlayEffectByDetailKey(key) {
+    const target = cleanText(key);
+    if (!target) {
+      return null;
+    }
+    const groups = getCurrentPlayEffectGroups();
+    return [...groups.positive, ...groups.negative].find((entry) => cleanText(entry.id || entry.name) === target) || null;
+  }
+  function openPlayEffectDetail(effectKey) {
+    const effect = findPlayEffectByDetailKey(effectKey);
+    if (!effect) {
+      return;
+    }
+    const meta = [effect.duration, effect.source, effect.createdAt ? `Added ${effect.createdAt}` : ""].filter(Boolean);
+    const rules = clonePlayEffectRules(effect.rules);
+    const detailLines = rules.detailLines.length ? rules.detailLines : [effect.summary || "No additional details are available for this effect."];
+    const automationLines = rules.automationLines.length ? rules.automationLines : [];
+    openSheetModal({
+      eyebrow: getPlayEffectTone(effect) === "negative" ? "Negative / Conditions" : "Positive Effects",
+      title: effect.name,
+      lead: "Tracked sheet reminder.",
+      content: `
+          <div class="play-effect-detail-modal">
+            ${meta.length ? `<div class="play-action-meta">${meta.map((entry) => `<span>${escapeHtml(entry)}</span>`).join("")}</div>` : ""}
+            <div class="library-preview">
+              <h4>Rule Text</h4>
+              ${detailLines.map((line) => `<p>${escapeHtml(line)}</p>`).join("")}
+              ${automationLines.length ? `<h4>Sheet Automation</h4>${automationLines.map((line) => `<p>${escapeHtml(line)}</p>`).join("")}` : ""}
+            </div>
+            <div class="sheet-modal-form-actions">
+              ${effect.id ? `<button type="button" class="sheet-modal-action" data-play-effect-detail-clear="${escapeHtml(effect.id)}">Clear</button>` : ""}
+              <button type="button" class="sheet-modal-action" data-sheet-modal-close>Close</button>
+            </div>
+          </div>
+        `
+    });
+  }
+  function renderPlayEffectsConditionCard() {
+    const groups = getCurrentPlayEffectGroups();
+    const total = groups.positive.length + groups.negative.length;
+    return `
+        <div class="play-derived-card play-tracker-effects">
+          <div class="play-effects-card-head">
+            <div>
+              <strong>Effects & Conditions</strong>
+              <p>Current bonuses, penalties, food lockouts, and condition-style reminders.</p>
+            </div>
+            <span>${escapeHtml(String(total))}</span>
+          </div>
+          <div class="play-effects-columns">
+            <div class="play-effects-column">
+              <button type="button" class="play-effects-picker-trigger" data-open-effect-picker="positive">
+                <span>Positive Effects</span>
+                <small>Add</small>
+              </button>
+              <div class="play-effect-list">${renderPlayEffectRows(groups.positive, "No positive effects tracked.")}</div>
+            </div>
+            <div class="play-effects-column">
+              <button type="button" class="play-effects-picker-trigger" data-open-effect-picker="negative">
+                <span>Negative / Conditions</span>
+                <small>Add</small>
+              </button>
+              <div class="play-effect-list">${renderPlayEffectRows(groups.negative, "No negative conditions tracked.")}</div>
+            </div>
+          </div>
+        </div>
+      `;
+  }
+  function renderPlayRestAndEffectsPanel() {
+    state.play = mergePlayState(state.play);
+    const foodStatus = state.play.foodUsedSinceRest ? "Used until next rest" : "Available";
+    return `
+        <div class="play-action-card play-rest-card">
+          <div class="play-action-copy">
+            <strong>Rest and Turn Reset</strong>
+            <div class="play-action-meta">
+              <span>AP resets each turn</span>
+              <span>Food mana recovery: ${escapeHtml(foodStatus)}</span>
+            </div>
+            <p>Use AP Recovery at the start of your turn. Use Rest when the GM calls for rest; it heals by Toughness and makes food-based mana recovery available again.</p>
+          </div>
+          <div class="play-action-buttons">
+            <button type="button" data-play-recover-ap>Recover AP</button>
+            <button type="button" data-play-rest="floor">Floor Rest</button>
+            <button type="button" data-play-rest="camp">Camp / Basic Rest</button>
+            <button type="button" data-play-rest="luxury">Luxury Rest</button>
+          </div>
+        </div>
+      `;
   }
   function clearPlayLog() {
     state.play = mergePlayState(state.play);
@@ -8441,8 +10239,10 @@ var LyrianApp = (() => {
       `;
   }
   function renderPlayDerivedActionCard(label, value, summary = "", actionMarkup = "", cardClass = "") {
+    const hasReference = Boolean(findBuiltInPlayReferenceRecord(label));
+    const classes = ["play-derived-card", cardClass, hasReference ? "is-reference-clickable" : ""].filter(Boolean).join(" ");
     return `
-        <div class="play-derived-card${cardClass ? ` ${escapeHtml(cardClass)}` : ""}">
+        <div class="${escapeHtml(classes)}" ${hasReference ? `data-play-reference-name="${escapeHtml(label)}"` : ""}>
           <strong>${escapeHtml(label)}</strong>
           <div class="play-derived-value">${escapeHtml(String(value))}</div>
           ${summary ? `<p>${escapeHtml(summary)}</p>` : ""}
@@ -8450,9 +10250,10 @@ var LyrianApp = (() => {
         </div>
       `;
   }
-  function renderPlaySpiritCoreCard(value, cardClass = "") {
+  function renderPlaySpiritCoreCard(value, funds, cardClass = "") {
     const protection = getSpiritCoreProtectionState(value);
     const nextText = protection.remaining ? `${protection.remaining} spent EXP until the next protection level.` : `Next protection level begins at ${protection.nextThreshold} spent EXP.`;
+    const climValue = funds?.availableClim ?? getStartingFundsState().availableClim;
     return `
         <div class="play-derived-card${cardClass ? ` ${escapeHtml(cardClass)}` : ""}">
           <strong>Spirit Core</strong>
@@ -8462,6 +10263,34 @@ var LyrianApp = (() => {
             <span>${escapeHtml(`Astra Protection Level ${protection.level}`)}</span>
           </div>
           <p>${escapeHtml(`Astra resistance +${protection.level}. ${nextText}`)}</p>
+          <div class="play-spirit-clim-tracker">
+            <div class="play-spirit-clim-head">
+              <span>Clim</span>
+              <strong>${escapeHtml(String(climValue))}</strong>
+            </div>
+            <div class="play-spirit-clim-controls">
+              <input
+                class="play-derived-field"
+                type="number"
+                inputmode="numeric"
+                min="1"
+                step="1"
+                data-play-transaction-amount="Earned Clim"
+                aria-label="Clim amount"
+                placeholder="Amount"
+              >
+              <button
+                type="button"
+                data-play-transaction-field="Earned Clim"
+                data-play-transaction-action="subtract"
+              >Subtract</button>
+              <button
+                type="button"
+                data-play-transaction-field="Earned Clim"
+                data-play-transaction-action="add"
+              >Add</button>
+            </div>
+          </div>
         </div>
       `;
   }
@@ -8672,15 +10501,8 @@ var LyrianApp = (() => {
         spendToSpiritCore: true,
         cardClass: "play-tracker-progression"
       }),
-      renderPlaySpiritCoreCard(progress.spiritCore, "play-tracker-core-total"),
-      renderPlayEditableDerivedCard({
-        label: "Clim",
-        value: funds.availableClim,
-        summary: "",
-        fieldName: "Earned Clim",
-        fieldLabel: "Clim",
-        cardClass: "play-tracker-utility play-tracker-money"
-      })
+      renderPlaySpiritCoreCard(progress.spiritCore, funds, "play-tracker-core-total"),
+      renderPlayEffectsConditionCard()
     ].join("");
     document.getElementById("play-utility-grid").innerHTML = [
       renderPlayDerivedCard("Speed", derived.speed, "Current movement distance.", "play-tracker-utility"),
@@ -8725,7 +10547,10 @@ var LyrianApp = (() => {
         renderPlaySkillRollControls(skill, "play-compact-roll")
       );
     }).join("") : `<p class="play-empty">No awareness skills are available yet.</p>`;
-    document.getElementById("play-basic-actions").innerHTML = getPlayActionCards().map((action) => renderPlayActionCard(action)).join("");
+    document.getElementById("play-basic-actions").innerHTML = [
+      renderPlayRestAndEffectsPanel(),
+      ...getPlayActionCards().map((action) => renderPlayActionCard(action))
+    ].join("");
     document.getElementById("play-skills").innerHTML = renderPlaySkillGroups(skills);
     const quickAbilities = getQuickPlayAbilities();
     document.getElementById("play-quick-abilities").innerHTML = quickAbilities.length ? quickAbilities.map((ability, index) => renderPlayAbilityCard(ability, index)).join("") : `<p class="play-empty">Choose a race or classes in the builder to surface quick-use abilities here.</p>`;
@@ -8857,13 +10682,14 @@ var LyrianApp = (() => {
   }
   function renderPlayActionCard(action) {
     const valueDetails = action.valueType ? getPlayActionValueDetails(action.valueType) : null;
+    const referenceName = action.referenceName || action.label.split(" - ")[0];
     const actionRollAttributes = action.weaponUid ? ` data-play-weapon-uid="${escapeHtml(action.weaponUid)}" data-play-attack-kind="${escapeHtml(action.attackKind || action.rollType)}"` : "";
     const buttonMarkup = action.rollType ? [
       `<button type="button" data-play-roll="${escapeHtml(action.rollType)}"${actionRollAttributes}>Roll Attack</button>`,
       action.damage ? `<button type="button" data-play-roll-damage="${escapeHtml(action.rollType)}"${actionRollAttributes}>Roll Damage</button>` : ""
     ].filter(Boolean).join("") : action.costLabel ? `<button type="button" data-play-use-basic="${escapeHtml(action.id)}">Use</button>` : "";
     return `
-        <div class="play-action-card">
+        <div class="play-action-card is-reference-clickable" data-play-reference-name="${escapeHtml(referenceName)}">
           <div class="play-action-copy">
             <strong>${escapeHtml(action.label)}</strong>
             <div class="play-action-meta">
@@ -8911,7 +10737,10 @@ var LyrianApp = (() => {
               </button>
             `).join("");
     return `
-        <div class="play-action-card">
+        <div
+          class="play-action-card${hasReference ? " is-reference-clickable" : ""}"
+          ${hasReference ? `data-play-reference-name="${escapeHtml(abilityName)}"` : ""}
+        >
           <div class="play-action-copy">
             ${titleMarkup}
             <div class="play-action-meta">
@@ -8969,7 +10798,7 @@ var LyrianApp = (() => {
           <input class="play-inventory-search" data-inventory-search value="${escapeHtml(state.play.inventorySearch || "")}" placeholder="Search equipment and items">
           <div class="play-item-catalog-grid">
             ${entries.map((entry) => `
-              <div class="play-item-catalog-card">
+              <div class="play-item-catalog-card is-reference-clickable" data-play-reference-name="${escapeHtml(entry.name)}">
                 <img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl || "assets/lyrian-symbol.png")}" alt="${escapeHtml(entry.name)}">
                 <div>
                   <strong>${escapeHtml(entry.name)}</strong>
@@ -8983,19 +10812,218 @@ var LyrianApp = (() => {
         </div>
       `;
   }
+  function getInventoryItemActivationCost(item = {}) {
+    return cleanText(item.activationCost || item.costLabel || "");
+  }
+  function hasInventoryItemActivationCost(value = "") {
+    const normalizedCost = cleanText(value).toLowerCase().replace(/[^a-z0-9/]+/g, "");
+    return Boolean(normalizedCost && normalizedCost !== "none" && normalizedCost !== "na");
+  }
+  function getInventoryItemUseEffectText(item = {}) {
+    return cleanText([item.descriptionText, item.description].filter(Boolean).join("\n"));
+  }
+  function hasItemUseEffectText(item = {}) {
+    const text = getInventoryItemUseEffectText(item);
+    return /\b(?:when\s+(?:drunk|eaten|used)|drink|eat|food buff|temporary (?:hp|hit points)|regain|recover|heal|gain\s+\d+\s*(?:mana|rp|ap)|take\s+(?:\d+\s+)?true damage)\b/i.test(text);
+  }
+  function canUseInventoryItem(item = {}) {
+    const activationCost = getInventoryItemActivationCost(item);
+    const hasActivation = hasInventoryItemActivationCost(activationCost);
+    if (hasActivation) {
+      return true;
+    }
+    if (isCraftingOrGatheringReference(item) && !/\b(?:potion|elixir|flask|food|meal|ration|drink)\b/i.test([item.name, item.type, item.subType].filter(Boolean).join(" "))) {
+      return false;
+    }
+    return hasItemUseEffectText(item);
+  }
+  function getInventoryItemReadinessProfile(item = {}) {
+    const { category, normalized } = getInventoryItemRuleCorpus(item);
+    const badges = [];
+    const notes = [];
+    const warnings = [];
+    const addBadge = (label, kind = "neutral") => addUniqueRuleLabel(badges, label, kind);
+    const addNote = (label, kind = "note") => addUniqueRuleLabel(notes, label, kind);
+    const addWarning = (label) => addUniqueRuleLabel(warnings, label, "warning");
+    const activationCost = getInventoryItemActivationCost(item);
+    const hasActivation = hasInventoryItemActivationCost(activationCost);
+    const flags = {
+      combatReadyStorage: false,
+      nonCombatStorage: false,
+      quickAccess: false,
+      requiresHeld: false,
+      drawOrStow: false,
+      reloadOrAmmo: false,
+      consumable: false,
+      crafting: false,
+      gathering: false,
+      trackedUse: canUseInventoryItem(item)
+    };
+    if (hasActivation) {
+      addBadge(`Use ${formatCostLabelForDisplay(activationCost)}`, "action");
+    }
+    if (isConsumableInventoryItem(item)) {
+      flags.consumable = true;
+      addBadge("Consumable", "consumable");
+    }
+    if (/\beasy access\b/.test(normalized)) {
+      flags.quickAccess = true;
+      addBadge("Quick Access", "ready");
+      addNote("Rules text grants easy access; assign carried consumables here once container slots exist.");
+    }
+    if (/\bcombat ready state\b|\bcombat inventory\b|\bcombat ready\b/.test(normalized)) {
+      flags.combatReadyStorage = true;
+      addBadge("Combat Ready", "ready");
+    }
+    if (/\bnon combat storage\b|\bnon-combat storage\b/.test(normalized)) {
+      flags.nonCombatStorage = true;
+      addBadge("Non-combat Storage", "blocked");
+      addWarning("Items stored here should not be assumed usable during combat.");
+    }
+    if (/\bheld in (?:your|the) hand\b|\bin your hands\b|\bheld item\b|\bheld in hand\b|\bmust be in (?:your|the) hand\b/.test(normalized)) {
+      flags.requiresHeld = true;
+      addBadge("Requires Held", "warning");
+      addWarning("Held-item requirements are not yet enforced by hand slots.");
+    }
+    if (/\bdraw\b|\bdrawn\b|\bsheathe\b|\bsheath\b|\bstow\b|\bstowed\b|\binteract with object\b/.test(normalized)) {
+      flags.drawOrStow = true;
+      addBadge("Draw/Stow Rule", "warning");
+      if (/\b0 ap\b.*\b(?:draw|sheathe|sheath|stow)\b|\b(?:draw|sheathe|sheath|stow)\b.*\b0 ap\b|\bquickdraw\b/.test(normalized)) {
+        addBadge("0 AP Access", "ready");
+      }
+      addWarning("Drawn, sheathed, stowed, and per-turn access are not tracked yet.");
+    }
+    if (/\breload\b|\bloaded\b|\bammo\b|\bammunition\b|\barrow\b|\bbolt\b|\bbullet\b|\bshell\b|\bcartridge\b|\bfuel\b|\bcapacity\b|\bbarrel\b/.test(normalized)) {
+      flags.reloadOrAmmo = true;
+      addBadge(/\bshell\b|\bcartridge\b|\bfuel\b/.test(normalized) ? "Fuel/Reload" : "Ammo/Reload", "warning");
+      addWarning("Loaded state, capacity, ammo pools, and shell use are not tracked yet.");
+    }
+    if (/\bone .* equip\b|\bonly equip one\b|\bcan only equip one\b/.test(normalized)) {
+      addBadge("Equip Limit", "warning");
+      addWarning("Exclusive equip limits are advisory until loadout slots exist.");
+    }
+    if (/\bcore crafting tool\b|\ballows you to craft\b|\bcrafting\b|\bcraft\b|\bmaterials?\b|\bmods?\b|\bmodifications?\b|\bfacilit(?:y|ies)\b|\brecipe\b/.test(normalized)) {
+      flags.crafting = true;
+      addBadge(/\bcore crafting tool\b|\ballows you to craft\b/.test(normalized) ? "Crafting Tool" : "Crafting", "crafting");
+    }
+    if (/\bgathering\b|\bgather\b|\bforag(?:e|ing|er|ers)\b|\bmining\b|\bminer\b|\bfarming\b|\bfarmer\b|\bharvest\b|\bnode points?\b|\blucky points?\b|\bstrike dice\b/.test(normalized)) {
+      flags.gathering = true;
+      addBadge("Gathering", "crafting");
+      if (/\btool\b|\bused by\b|\bcan be used as\b/.test(normalized)) {
+        addNote("This can matter for Foraging, Farming, Mining, or gathering-session checks.");
+      }
+    }
+    if (/\bstores? up to\b|\bstorage\b|\bbag\b|\bpack\b|\bbackpack\b|\bcarrier\b|\bkit\b/.test(normalized)) {
+      addBadge("Storage", flags.nonCombatStorage ? "blocked" : "storage");
+    }
+    if (flags.trackedUse && !badges.some((entry) => entry.kind === "action")) {
+      addBadge("Tracked Use", "action");
+    }
+    if (!badges.length && category) {
+      addBadge("Inventory", "neutral");
+    }
+    return { badges, notes, warnings, flags };
+  }
+  function renderInventoryReadinessProfile(profile) {
+    if (!profile) {
+      return "";
+    }
+    const badgeMarkup = profile.badges?.length ? `<div class="play-item-readiness-badges">${profile.badges.map((badge) => `<span class="play-item-readiness-badge is-${escapeHtml(badge.kind || "neutral")}">${escapeHtml(badge.label)}</span>`).join("")}</div>` : "";
+    const messageMarkup = [...profile.warnings || [], ...profile.notes || []].length ? `<div class="play-item-readiness-notes">${[
+      ...profile.warnings || [],
+      ...profile.notes || []
+    ].map((entry) => `<p class="is-${escapeHtml(entry.kind || "note")}">${escapeHtml(entry.label)}</p>`).join("")}</div>` : "";
+    return `${badgeMarkup}${messageMarkup}`;
+  }
+  function getInventoryReadinessSummary(inventory = []) {
+    const profiles = inventory.map((entry) => getInventoryItemReadinessProfile(entry));
+    const count = (predicate) => profiles.filter(predicate).length;
+    return {
+      usable: count((profile) => profile.flags.trackedUse),
+      attention: count((profile) => profile.warnings.length),
+      quickAccess: count((profile) => profile.flags.quickAccess || profile.flags.combatReadyStorage),
+      packed: count((profile) => profile.flags.nonCombatStorage),
+      reload: count((profile) => profile.flags.reloadOrAmmo),
+      crafting: count((profile) => profile.flags.crafting || profile.flags.gathering)
+    };
+  }
+  function renderInventoryReadinessSummary(inventory = []) {
+    const summary = getInventoryReadinessSummary(inventory);
+    const cards = [
+      ["Use actions", summary.usable],
+      ["Access warnings", summary.attention],
+      ["Quick-ready storage", summary.quickAccess],
+      ["Packed away", summary.packed],
+      ["Reload/ammo flags", summary.reload],
+      ["Craft/gather flags", summary.crafting]
+    ];
+    return `
+        <div class="play-subpanel play-combat-access-summary">
+          <p class="eyebrow">Combat Access</p>
+          <h4>Readiness Snapshot</h4>
+          <div class="play-readiness-summary-grid">
+            ${cards.map(([label, value]) => `
+              <div class="play-readiness-summary-card">
+                <strong>${escapeHtml(String(value))}</strong>
+                <span>${escapeHtml(label)}</span>
+              </div>
+            `).join("")}
+          </div>
+          <p class="play-field-note">Readiness flags are advisory in this build. They identify items that need loadout slots, hand state, container assignment, or reload tracking next.</p>
+        </div>
+      `;
+  }
+  function isConsumableInventoryItem(item = {}) {
+    const haystack = normalizePhrase([item.name, item.type, item.subType, getInventoryItemUseEffectText(item)].filter(Boolean).join(" "));
+    const categoryText = normalizePhrase([item.name, item.type, item.subType].filter(Boolean).join(" "));
+    if (!/\b(potion|elixir|flask|food|meal|ration|drink|salve|poison)\b/.test(haystack)) {
+      return false;
+    }
+    return !/\b(weapon|armor|armour|staff|gun|kit|rig|bag|tool|device|materials|material|ingot|units)\b/.test(categoryText);
+  }
+  function getInventoryItemUseOptions(item = {}) {
+    if (!canUseInventoryItem(item)) {
+      return [];
+    }
+    const costLabel = getInventoryItemActivationCost(item);
+    const variableOptions = getVariableAbilityCostOptions({
+      costLabel,
+      description: getInventoryItemUseEffectText(item)
+    });
+    if (variableOptions.length > 1) {
+      return variableOptions.map((option) => ({
+        ...option,
+        label: option.label.replace(/^Spend\b/i, "Use")
+      }));
+    }
+    if (hasTrackedResourceCost(costLabel)) {
+      return [{
+        label: formatSpendCostButtonLabel(costLabel, "Use").replace(/^Spend\b/i, "Use"),
+        costLabel
+      }];
+    }
+    return [{
+      label: "Use",
+      costLabel: ""
+    }];
+  }
   function renderInventoryItemRow(entry) {
     const isEquipped = !!entry.equipped;
     const quantity = Math.max(1, Math.floor(toNumber(entry.quantity, 1)));
     const baseText = entry.custom ? entry.description : getBaseItemRulesText(entry);
+    const useOptions = getInventoryItemUseOptions(entry);
+    const readinessProfile = getInventoryItemReadinessProfile(entry);
     return `
-        <div class="play-compact-row play-item-row${isEquipped ? " is-equipped" : ""}">
+        <div class="play-compact-row play-item-row is-reference-clickable${isEquipped ? " is-equipped" : ""}" data-play-reference-name="${escapeHtml(entry.name)}">
           <img class="play-item-thumb" src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl || "assets/lyrian-symbol.png")}" alt="${escapeHtml(entry.name)}">
           <div>
             <strong>${escapeHtml(entry.name)}${quantity > 1 ? `<span class="play-item-equipped-badge">x${escapeHtml(String(quantity))}</span>` : ""}${isEquipped ? `<span class="play-item-equipped-badge">Equipped</span>` : ""}</strong>
-            <p>${escapeHtml([entry.type, entry.subType, entry.cost, entry.burden].filter(Boolean).join(" | "))}</p>
+            <p>${escapeHtml([entry.type, entry.subType, entry.cost, entry.burden, getInventoryItemActivationCost(entry) ? `Use: ${formatCostLabelForDisplay(getInventoryItemActivationCost(entry))}` : ""].filter(Boolean).join(" | "))}</p>
+            ${renderInventoryReadinessProfile(readinessProfile)}
             ${isWeaponItem(entry) ? `<p>${escapeHtml(`Weapon attacks: ${getWeaponRangeLabel(entry)} | ${getWeaponDamageType(entry)} damage`)}</p>` : ""}
             ${baseText ? `<p class="play-item-notes">${escapeHtml(getFirstSentence(baseText).slice(0, 240))}</p>` : ""}
             <div class="play-inventory-actions">
+              ${useOptions.map((option) => `<button type="button" data-inventory-use="${escapeHtml(entry.uid)}" data-inventory-use-cost-label="${escapeHtml(option.costLabel)}">${escapeHtml(option.label)}</button>`).join("")}
               <button type="button" data-inventory-toggle-equip="${escapeHtml(entry.uid)}">${isEquipped ? "Unequip" : "Equip"}</button>
               <button type="button" class="secondary" data-inventory-remove="${escapeHtml(entry.uid)}">Remove</button>
             </div>
@@ -9328,6 +11356,7 @@ var LyrianApp = (() => {
             ${renderTrainingDetails("Burden", `${burden.carriedBurden} / ${burden.limit}${burden.overLimit ? " - Rooted risk" : ""}`)}
           </div>
         </div>
+        ${renderInventoryReadinessSummary(inventory)}
         <div class="play-inventory-toolbar">
           <div>
             <p class="eyebrow">Inventory Equipment</p>
@@ -9529,6 +11558,165 @@ ${message}`);
     renderPlayDashboard();
     setStatus(entry ? `Removed ${mergeInventoryEntryWithRecord(entry).name} from inventory.` : "Removed inventory item.");
   }
+  function consumeInventoryItemUse(uid, item) {
+    if (!isConsumableInventoryItem(item)) {
+      return "";
+    }
+    state.play = mergePlayState(state.play);
+    const entry = state.play.inventoryItems.find((inventoryItem) => inventoryItem.uid === uid);
+    if (!entry) {
+      return "";
+    }
+    const quantity = Math.max(1, Math.floor(toNumber(entry.quantity, 1)));
+    if (quantity > 1) {
+      entry.quantity = quantity - 1;
+      if (entry.itemId) {
+        setBuilderItemQuantity(entry.itemId, quantity - 1);
+      }
+      syncBuilderSelectionsIntoSheet2();
+      return `${item.name}: consumed one use. ${quantity - 1} remaining.`;
+    }
+    state.play.inventoryItems = state.play.inventoryItems.filter((inventoryItem) => inventoryItem.uid !== uid);
+    if (entry.itemId) {
+      state.builder.selectedItemIds = state.builder.selectedItemIds.filter((id) => id !== entry.itemId);
+      if (state.builder.itemQuantities) {
+        delete state.builder.itemQuantities[entry.itemId];
+      }
+    }
+    syncBuilderSelectionsIntoSheet2();
+    return `${item.name}: consumed and removed from inventory.`;
+  }
+  function isFoodBenefitInventoryItem(item = {}) {
+    const name = normalizePhrase(item.name || "");
+    const category = normalizePhrase([item.type, item.subType].filter(Boolean).join(" "));
+    const text = normalizePhrase(getInventoryItemUseEffectText(item));
+    if (name === "bull potion") {
+      return true;
+    }
+    if (/\b(food|meal|ration)\b/.test(category) && /\b(regain|recover|restore|mana|food benefit|food buff)\b/.test(text)) {
+      return true;
+    }
+    return /\b(one food buff|food benefit|benefit of consuming food|eat one food item|counts as.*food)\b/.test(text);
+  }
+  function buildInventoryActiveEffect(item = {}) {
+    const name = cleanText(item.name || "");
+    const text = getInventoryItemUseEffectText(item);
+    const normalizedName = normalizePhrase(name);
+    const normalizedText = normalizePhrase(text);
+    if (!name || !text) {
+      return null;
+    }
+    if (/shielding potion/.test(normalizedName) || /\btemporary hp\b.*\bstart of (?:your )?next turn\b/.test(normalizedText)) {
+      return {
+        name,
+        source: "Inventory",
+        summary: `${name} is granting Temporary HP. Clear this at the start of your next turn after the shield expires.`,
+        duration: "Until start of your next turn"
+      };
+    }
+    if (/bear elixir/.test(normalizedName)) {
+      return {
+        name,
+        source: "Inventory",
+        summary: "Gain 1 RP and increase max RP by 1 until the encounter ends. RP gain is tracked; max RP is still a manual adjustment.",
+        duration: "Until end of encounter"
+      };
+    }
+    if (/axolotl elixir/.test(normalizedName)) {
+      return {
+        name,
+        source: "Inventory",
+        summary: "At the start of each turn, regain HP equal to Toughness. Clear this if the encounter ends or the initial true damage dropped HP to 0.",
+        duration: "Until end of encounter"
+      };
+    }
+    if (/\belixir\b/.test(normalizedName) && /\buntil (?:the )?(?:end of )?(?:combat|encounter)\b/.test(normalizedText)) {
+      return {
+        name,
+        source: "Inventory",
+        summary: getFirstSentence(text).slice(0, 180) || "Temporary elixir effect; apply its bonus manually until the encounter ends.",
+        duration: "Until end of encounter"
+      };
+    }
+    if (/\buntil (?:your )?next rest\b|\buntil rest\b/i.test(text)) {
+      return {
+        name,
+        source: "Inventory",
+        summary: getFirstSentence(text).slice(0, 180) || "This item lasts until rest.",
+        duration: "Until next rest"
+      };
+    }
+    return null;
+  }
+  function markInventoryPostUseRules(item = {}) {
+    const notes = [];
+    if (isFoodBenefitInventoryItem(item)) {
+      state.play.foodUsedSinceRest = true;
+      notes.push("Food mana recovery is now used until your next rest.");
+    }
+    const activeEffect = buildInventoryActiveEffect(item);
+    if (activeEffect) {
+      addPlayActiveEffect(activeEffect);
+      notes.push(`Active effect tracked: ${activeEffect.name}.`);
+    }
+    return notes;
+  }
+  function useInventoryItem(uid, selectedCostLabel = "") {
+    state.play = mergePlayState(state.play);
+    const entry = state.play.inventoryItems.find((item2) => item2.uid === uid);
+    if (!entry) {
+      setStatus("Could not find that inventory item.");
+      return;
+    }
+    const item = mergeInventoryEntryWithRecord(entry);
+    if (!canUseInventoryItem(item)) {
+      setStatus(`${item.name} does not have a tracked use action yet.`);
+      return;
+    }
+    const costLabel = cleanText(selectedCostLabel || getInventoryItemActivationCost(item));
+    const effectText = getInventoryItemUseEffectText(item);
+    const consumed = isConsumableInventoryItem(item);
+    const readinessProfile = getInventoryItemReadinessProfile(item);
+    const readinessWarnings = (readinessProfile.warnings || []).map((entry2) => `Readiness: ${entry2.label}`);
+    if (isFoodBenefitInventoryItem(item) && state.play.foodUsedSinceRest) {
+      const message = `${item.name} gives no mana benefit because this character has already used food recovery since the last rest.`;
+      appendPlayLog(`${item.name} Blocked`, [
+        message,
+        "Use a Rest button to make food mana recovery available again."
+      ]);
+      showPlayFeedback("play-action-feedback", message);
+      renderPlayDashboard();
+      persistWorkingState();
+      setStatus(message);
+      return;
+    }
+    const used = usePlayCost(
+      item.name,
+      costLabel,
+      [
+        item.type || item.subType ? `Item: ${[item.type, item.subType].filter(Boolean).join(" | ")}` : "",
+        consumed ? "Inventory: one use consumed." : "",
+        ...readinessWarnings,
+        effectText
+      ],
+      {
+        feedbackId: "play-action-feedback",
+        effectText
+      }
+    );
+    if (!used) {
+      return;
+    }
+    const consumeMessage = consumeInventoryItemUse(uid, item);
+    const postUseNotes = markInventoryPostUseRules(item);
+    if (postUseNotes.length) {
+      appendPlayLog("Use Tracker", postUseNotes);
+    }
+    renderBuilderSummary();
+    renderPlayDashboard();
+    persistWorkingState();
+    setStatus(consumeMessage || `Used ${item.name}.`);
+  }
   function refreshBuilderIdentity() {
     const nameField = document.getElementById("builder-name-header");
     const nameValue = state.fields.Name || "";
@@ -9562,15 +11750,59 @@ ${message}`);
         </div>
       `;
   }
+  function getCustomEquipmentSummaryNames() {
+    return (state.play?.inventoryItems || []).filter((entry) => entry?.custom).map((entry) => mergeInventoryEntryWithRecord(entry)).filter((entry) => {
+      const type = normalizePhrase(entry.type);
+      return entry.equipped || type === "weapon" || type === "equipment";
+    }).map((entry) => cleanText(entry.name)).filter(Boolean);
+  }
   function getEquipmentSummaryText(items, funds, emptyText = "No equipment chosen yet.") {
-    const equipmentText = items.length ? items.map((entry) => getBuilderItemDisplayName(entry)).join(", ") : emptyText;
+    const equipmentNames = [
+      ...items.map((entry) => getBuilderItemDisplayName(entry)),
+      ...getCustomEquipmentSummaryNames()
+    ];
+    const equipmentText = equipmentNames.length ? Array.from(new Set(equipmentNames)).join(", ") : emptyText;
     return [`Remaining Clim ${funds.availableClim}`, equipmentText].filter(Boolean).join("\n");
+  }
+  function getSelectedBreakthroughDisplayEntries() {
+    const elementalAffinityElements = getSelectedElementalAffinityElements();
+    let elementalAffinityIndex = 0;
+    const repeatableChoiceIndexes = /* @__PURE__ */ new Map();
+    const stackableIndexes = /* @__PURE__ */ new Map();
+    return getSelectedBreakthroughRecords().map((entry) => {
+      const repeatableConfig = getRepeatableUniqueBreakthroughConfig(entry);
+      if (repeatableConfig) {
+        const index = repeatableChoiceIndexes.get(entry.id) || 0;
+        repeatableChoiceIndexes.set(entry.id, index + 1);
+        const choice = getSelectedRepeatableBreakthroughChoices(repeatableConfig)[index] || "";
+        return {
+          ...entry,
+          displayName: choice ? repeatableConfig.displayName(entry, choice) : `${entry.name}: choose ${repeatableConfig.selectLabel}`,
+          displayDescription: choice ? `${repeatableConfig.resolvedText?.(choice) || choice} ${cleanText(entry.description)}` : cleanText(entry.description)
+        };
+      }
+      if (normalizePhrase(entry.name) !== "elemental affinity") {
+        const occurrence = (stackableIndexes.get(entry.id) || 0) + 1;
+        stackableIndexes.set(entry.id, occurrence);
+        return {
+          ...entry,
+          displayName: occurrence > 1 ? `${entry.name} #${occurrence}` : entry.name,
+          displayDescription: cleanText(entry.description)
+        };
+      }
+      const element = elementalAffinityElements[elementalAffinityIndex++] || "";
+      return {
+        ...entry,
+        displayName: element ? `${entry.name}: ${element}` : `${entry.name}: choose element`,
+        displayDescription: element ? `Elemental Mastery ${element}. ${cleanText(entry.description)}` : cleanText(entry.description)
+      };
+    });
   }
   function renderBuilderSummary() {
     const race = getSelectedRaceDetail();
     const ancestry = getSelectedAncestryDetail();
     const classes = getSelectedClassDetails();
-    const breakthroughs = getSelectedBreakthroughRecords();
+    const breakthroughs = getSelectedBreakthroughDisplayEntries();
     const items = getSelectedItemRecords();
     const topSkills = getTopSkillRows(4);
     const funds = getStartingFundsState();
@@ -9582,7 +11814,7 @@ ${message}`);
 ${secondaryStatText}`),
       renderSummaryCard("Skills", topSkills.length ? topSkills.map((entry) => `${entry.name} ${formatModifier(entry.total)}`).join(", ") : "No trained skills yet."),
       renderSummaryCard("Classes", classes.length ? classes.map((entry) => entry.name).join(", ") : "No classes chosen yet."),
-      renderSummaryCard("Breakthroughs", breakthroughs.length ? breakthroughs.map((entry) => entry.name).join(", ") : "No breakthroughs chosen yet."),
+      renderSummaryCard("Breakthroughs", breakthroughs.length ? breakthroughs.map((entry) => entry.displayName).join(", ") : "No breakthroughs chosen yet."),
       renderSummaryCard("Equipment", getEquipmentSummaryText(items, funds), "summary-card-equipment")
     ].join("");
   }
@@ -9649,16 +11881,18 @@ ${secondaryStatText}`),
     });
   }
   function syncBreakthroughSelectionsToFields() {
-    const selected = getSelectedBreakthroughRecords();
-    updateFieldValue("BName", selected.map((entry) => entry.name).join("\n"));
+    normalizeElementalAffinitySelections();
+    normalizeRepeatableUniqueBreakthroughSelections();
+    const selected = getSelectedBreakthroughDisplayEntries();
+    updateFieldValue("BName", selected.map((entry) => entry.displayName).join("\n"));
     updateFieldValue(
       "BDescription",
       selected.map(
         (entry) => [
-          entry.name,
+          entry.displayName,
           entry.cost ? `Cost: ${entry.cost}` : "",
           entry.requirements ? `Requirements: ${entry.requirements}` : "",
-          cleanText(entry.description)
+          entry.displayDescription
         ].filter(Boolean).join("\n")
       ).join("\n\n")
     );
@@ -9703,13 +11937,14 @@ ${secondaryStatText}`),
     }
     if (classes.length) {
       const classSections = classes.map((entry) => {
+        const keyAbility = getClassKeyAbilityRecord(entry);
         return [
           `${entry.name}${entry.tier ? ` (Tier ${entry.tier})` : ""}`,
           entry.role1 ? `Roles: ${[entry.role1, entry.role2].filter(Boolean).join(", ")}` : "",
           entry.heart ? `Heart: ${cleanText(entry.heart)}` : "",
           entry.soul ? `Soul: ${cleanText(entry.soul)}` : "",
           entry.skills ? `Skills: ${cleanText(entry.skills)}` : "",
-          entry.keyAbility?.name ? `Key Ability: ${entry.keyAbility.name}` : ""
+          keyAbility?.name ? `Key Ability: ${keyAbility.name}` : ""
         ].filter(Boolean).join("\n");
       });
       profSections.push(classSections.join("\n\n"));
@@ -9727,6 +11962,7 @@ ${secondaryStatText}`),
       profSections.push(["Breakthrough Proficiencies", breakthroughEffects.extraProficiencies.join(", ")].join("\n"));
     }
     const resolvedChoiceNotes = getResolvedBuilderChoices().filter((choice) => (choice.id.startsWith("breakthrough-") || choice.id.startsWith("ancestry-")) && ["text", "ancestry-features"].includes(choice.type)).map((choice) => choice.resolvedText?.(getBuilderChoiceValue(choice.id)) || "").filter(Boolean);
+    getRepeatableBreakthroughChoiceSummaries().forEach((summary) => resolvedChoiceNotes.push(summary));
     if (resolvedChoiceNotes.length) {
       profSections.push(["Resolved Builder Choices", ...Array.from(new Set(resolvedChoiceNotes))].join("\n"));
     }
@@ -9762,6 +11998,7 @@ ${secondaryStatText}`),
   }
   function syncBuilderSelectionsIntoSheet2() {
     pruneIneligibleBreakthroughSelections();
+    normalizeElementalAffinitySelections();
     clearIrrelevantBuilderChoices();
     const race = getSelectedRaceDetail();
     const ancestry = getSelectedAncestryDetail();
@@ -10085,7 +12322,8 @@ ${secondaryStatText}`),
       return `<div class="detail-copy"><h3>Choose a class</h3><p>The detail panel will show the class description, roles, requirements, and pulled key ability information from the site bundle.</p></div>`;
     }
     const requirementsText = getClassRequirementsText(record);
-    const keyAbilityLines = record.keyAbility ? [record.keyAbility.name, record.keyAbility.benefit1, record.keyAbility.benefit2, record.keyAbility.benefit3, record.keyAbility.benefit4].filter(Boolean) : [];
+    const keyAbility = getClassKeyAbilityRecord(record);
+    const keyAbilityLines = keyAbility ? [keyAbility.name, keyAbility.benefit1, keyAbility.benefit2, keyAbility.benefit3, keyAbility.benefit4].filter(Boolean) : [];
     const leadText = getClassLeadText(record) || getClassFallbackSummary(record);
     const guideText = getClassGuideText(record);
     return `
@@ -10331,6 +12569,154 @@ ${secondaryStatText}`),
             ${note ? `<p class="builder-option-note">${escapeHtml(note)}</p>` : ""}
           </div>
         </button>
+      `;
+  }
+  function renderElementalAffinityBreakthroughCard(entry, { budget, requirementStatus }) {
+    const selectedElements = getSelectedElementalAffinityElements();
+    const availableOptions = getAvailableElementalAffinityOptions();
+    const cost = Math.max(0, parseNumericCost(entry.cost));
+    const overBudget = cost > budget.remaining;
+    const locked = !requirementStatus.met || overBudget || !availableOptions.length;
+    const note = !requirementStatus.met ? `Prerequisites not met. ${requirementStatus.reasons.join(" ")}` : overBudget ? `Unavailable: costs ${cost} breakthrough EXP, but only ${budget.remaining} remains.` : !availableOptions.length ? "Every available element has already been chosen." : "Choose an element, then add this breakthrough purchase.";
+    const statusText = selectedElements.length ? `Selected x${selectedElements.length}` : locked ? "Locked" : "";
+    const cardClasses = [
+      "builder-option-card",
+      "breakthrough-option-card",
+      "builder-elemental-affinity-card",
+      selectedElements.length ? "selected" : "",
+      locked ? "locked" : ""
+    ].filter(Boolean).join(" ");
+    const selectId = "elemental-affinity-pick";
+    return `
+        <div class="${cardClasses}">
+          <div class="builder-equipment-inspect">
+            ${entry.imageSmUrl || entry.imageLgUrl ? `<img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl)}" alt="${escapeHtml(entry.name)}">` : renderBreakthroughArt(entry)}
+            <div class="builder-option-copy">
+              <div class="builder-option-header">
+                <strong>${escapeHtml(entry.name)}</strong>
+                ${statusText ? `<span class="builder-option-status${selectedElements.length ? " is-selected" : ""}${locked ? " is-locked" : ""}">${escapeHtml(statusText)}</span>` : ""}
+              </div>
+              ${renderCardMeta([entry.cost ? `Cost ${entry.cost}` : "", entry.requirements].filter(Boolean))}
+              <p>${escapeHtml(cleanText(entry.description).slice(0, 180))}</p>
+              ${note ? `<p class="builder-option-note">${escapeHtml(note)}</p>` : ""}
+              ${selectedElements.length ? `
+                <div class="selected-chip-list">
+                  ${selectedElements.map((element) => `
+                    <span class="selected-chip">
+                      ${escapeHtml(element)}
+                      <button type="button" class="builder-chip-remove" data-builder-action="remove-elemental-affinity" data-element="${escapeHtml(element)}" aria-label="${escapeHtml(`Remove Elemental Affinity ${element}`)}">x</button>
+                    </span>
+                  `).join("")}
+                </div>
+              ` : ""}
+              <div class="builder-inline-action-row">
+                <label class="builder-filter-field" for="${selectId}">
+                  <span>Element</span>
+                  <select id="${selectId}" class="builder-inline-input" data-elemental-affinity-select ${availableOptions.length ? "" : "disabled"}>
+                    <option value="">Choose element...</option>
+                    ${availableOptions.map((element) => `<option value="${escapeHtml(element)}">${escapeHtml(element)}</option>`).join("")}
+                  </select>
+                </label>
+                <button type="button" data-builder-action="add-elemental-affinity" data-id="${escapeHtml(entry.id)}" ${locked ? "disabled" : ""}>Add Elemental Affinity</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+  }
+  function renderRepeatableUniqueBreakthroughCard(entry, { budget, requirementStatus }) {
+    const config = getRepeatableUniqueBreakthroughConfig(entry);
+    const selectedChoices = getSelectedRepeatableBreakthroughChoices(config);
+    const availableOptions = getAvailableRepeatableBreakthroughChoices(config);
+    const cost = Math.max(0, parseNumericCost(entry.cost));
+    const overBudget = cost > budget.remaining;
+    const locked = !requirementStatus.met || overBudget || !availableOptions.length && !config.allowCustom;
+    const note = !requirementStatus.met ? `Prerequisites not met. ${requirementStatus.reasons.join(" ")}` : overBudget ? `Unavailable: costs ${cost} breakthrough EXP, but only ${budget.remaining} remains.` : !availableOptions.length && !config.allowCustom ? "Every available option has already been chosen." : "Choose an option, then add this breakthrough purchase.";
+    const statusText = selectedChoices.length ? `Selected x${selectedChoices.length}` : locked ? "Locked" : "";
+    const cardClasses = [
+      "builder-option-card",
+      "breakthrough-option-card",
+      "builder-repeatable-choice-card",
+      selectedChoices.length ? "selected" : "",
+      locked ? "locked" : ""
+    ].filter(Boolean).join(" ");
+    const selectId = `${entry.id}-repeatable-pick`;
+    return `
+        <div class="${cardClasses}">
+          <div class="builder-equipment-inspect">
+            ${entry.imageSmUrl || entry.imageLgUrl ? `<img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl)}" alt="${escapeHtml(entry.name)}">` : renderBreakthroughArt(entry)}
+            <div class="builder-option-copy">
+              <div class="builder-option-header">
+                <strong>${escapeHtml(entry.name)}</strong>
+                ${statusText ? `<span class="builder-option-status${selectedChoices.length ? " is-selected" : ""}${locked ? " is-locked" : ""}">${escapeHtml(statusText)}</span>` : ""}
+              </div>
+              ${renderCardMeta([entry.cost ? `Cost ${entry.cost}` : "", entry.requirements].filter(Boolean))}
+              <p>${escapeHtml(cleanText(entry.description).slice(0, 180))}</p>
+              ${note ? `<p class="builder-option-note">${escapeHtml(note)}</p>` : ""}
+              ${selectedChoices.length ? `
+                <div class="selected-chip-list">
+                  ${selectedChoices.map((choice) => `
+                    <span class="selected-chip">
+                      ${escapeHtml(choice)}
+                      <button type="button" class="builder-chip-remove" data-builder-action="remove-repeatable-breakthrough-choice" data-id="${escapeHtml(entry.id)}" data-value="${escapeHtml(choice)}" aria-label="${escapeHtml(`Remove ${entry.name} ${choice}`)}">x</button>
+                    </span>
+                  `).join("")}
+                </div>
+              ` : ""}
+              <div class="builder-inline-action-row">
+                <label class="builder-filter-field" for="${selectId}">
+                  <span>${escapeHtml(config.selectLabel)}</span>
+                  <select id="${selectId}" class="builder-inline-input" data-repeatable-breakthrough-select ${availableOptions.length || config.allowCustom ? "" : "disabled"}>
+                    <option value="">${escapeHtml(config.emptyOption || "Choose option...")}</option>
+                    ${availableOptions.map((option) => `<option value="${escapeHtml(option)}">${escapeHtml(option)}</option>`).join("")}
+                    ${config.allowCustom ? `<option value="__custom__">Custom...</option>` : ""}
+                  </select>
+                </label>
+                ${config.allowCustom ? `
+                  <label class="builder-filter-field">
+                    <span>${escapeHtml(config.customLabel || "Custom value")}</span>
+                    <input class="builder-inline-input" data-repeatable-breakthrough-custom placeholder="${escapeHtml(config.customLabel || "Custom value")}">
+                  </label>
+                ` : ""}
+                <button type="button" data-builder-action="add-repeatable-breakthrough-choice" data-id="${escapeHtml(entry.id)}" ${locked ? "disabled" : ""}>${escapeHtml(config.addLabel || `Add ${entry.name}`)}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+  }
+  function renderStackableBreakthroughCard(entry, { budget, requirementStatus }) {
+    const count = getSelectedBreakthroughCount(entry);
+    const cost = Math.max(0, parseNumericCost(entry.cost));
+    const overBudget = cost > budget.remaining;
+    const locked = !requirementStatus.met || overBudget;
+    const note = !requirementStatus.met ? `Prerequisites not met. ${requirementStatus.reasons.join(" ")}` : overBudget ? `Unavailable: costs ${cost} breakthrough EXP, but only ${budget.remaining} remains.` : "Add another purchase of this repeatable breakthrough.";
+    const cardClasses = [
+      "builder-option-card",
+      "breakthrough-option-card",
+      "builder-repeatable-choice-card",
+      count ? "selected" : "",
+      locked && !count ? "locked" : ""
+    ].filter(Boolean).join(" ");
+    return `
+        <div class="${cardClasses}">
+          <div class="builder-equipment-inspect">
+            ${entry.imageSmUrl || entry.imageLgUrl ? `<img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl)}" alt="${escapeHtml(entry.name)}">` : renderBreakthroughArt(entry)}
+            <div class="builder-option-copy">
+              <div class="builder-option-header">
+                <strong>${escapeHtml(entry.name)}</strong>
+                ${count ? `<span class="builder-option-status is-selected">Selected x${count}</span>` : locked ? `<span class="builder-option-status is-locked">Locked</span>` : ""}
+              </div>
+              ${renderCardMeta([entry.cost ? `Cost ${entry.cost}` : "", entry.requirements].filter(Boolean))}
+              <p>${escapeHtml(cleanText(entry.description).slice(0, 180))}</p>
+              ${note ? `<p class="builder-option-note">${escapeHtml(note)}</p>` : ""}
+              <div class="builder-inline-action-row">
+                <button type="button" data-builder-action="remove-stackable-breakthrough" data-id="${escapeHtml(entry.id)}" ${count ? "" : "disabled"}>Remove One</button>
+                <button type="button" data-builder-action="add-stackable-breakthrough" data-id="${escapeHtml(entry.id)}" ${locked ? "disabled" : ""}>Add ${escapeHtml(entry.name)}</button>
+              </div>
+            </div>
+          </div>
+        </div>
       `;
   }
   function renderEquipmentOptionCard(entry, selectedIds, funds) {
@@ -10587,6 +12973,8 @@ ${secondaryStatText}`),
       `;
   }
   function renderBreakthroughStep() {
+    normalizeElementalAffinitySelections();
+    normalizeRepeatableUniqueBreakthroughSelections();
     const selectedIds = new Set(state.builder.selectedBreakthroughIds);
     const entries = filteredBreakthroughs();
     const budget = getBreakthroughBudgetState();
@@ -10606,9 +12994,27 @@ ${secondaryStatText}`),
           ${renderBuilderChoiceSection("breakthroughs", "Breakthrough Choices")}
           ${effects.autoApplied.length ? `<div class="review-panel"><strong>Auto-applied builder effects</strong><p>${escapeHtml(effects.autoApplied.join(" | "))}</p></div>` : ""}
           ${effects.pendingChoices.length ? `<div class="review-panel"><strong>Needs a follow-up choice</strong><p>${escapeHtml(effects.pendingChoices.join(" | "))}</p></div>` : ""}
-          ${selectedIds.size ? `<div class="selected-chip-list">${getSelectedBreakthroughRecords().map((entry) => `<span class="selected-chip">${escapeHtml(entry.name)}</span>`).join("")}</div>` : ""}
+          ${selectedIds.size ? `<div class="selected-chip-list">${getSelectedBreakthroughDisplayEntries().map((entry) => `<span class="selected-chip">${escapeHtml(entry.displayName)}</span>`).join("")}</div>` : ""}
           ${entries.length ? `<div class="builder-option-list">
             ${entries.map((entry) => {
+      if (normalizePhrase(entry.name) === "elemental affinity") {
+        return renderElementalAffinityBreakthroughCard(entry, {
+          budget,
+          requirementStatus: getBreakthroughRequirementStatus(entry, selectedIds)
+        });
+      }
+      if (getRepeatableUniqueBreakthroughConfig(entry)) {
+        return renderRepeatableUniqueBreakthroughCard(entry, {
+          budget,
+          requirementStatus: getBreakthroughRequirementStatus(entry, selectedIds)
+        });
+      }
+      if (isStackableBreakthrough(entry)) {
+        return renderStackableBreakthroughCard(entry, {
+          budget,
+          requirementStatus: getBreakthroughRequirementStatus(entry, selectedIds)
+        });
+      }
       const selected = selectedIds.has(entry.id);
       const requirementStatus = getBreakthroughRequirementStatus(entry, selectedIds);
       const cost = Math.max(0, parseNumericCost(entry.cost));
@@ -10937,7 +13343,7 @@ ${secondaryStatText}`),
                     </div>
                     <span class="selected-chip">${escapeHtml(mastered ? "Mastered" : `${entry.cost} EXP`)}</span>
                   </header>
-                  ${entry.record.keyAbility?.name ? `<p><strong>Key:</strong> ${escapeHtml(entry.record.keyAbility.name)}</p>` : ""}
+                  ${getClassKeyAbilityRecord(entry.record)?.name ? `<p><strong>Key:</strong> ${escapeHtml(getClassKeyAbilityRecord(entry.record).name)}</p>` : ""}
                   <ul class="class-progress-list">
                     ${slots.length ? slots.map((slot, index) => `
                       <li class="${index >= entry.purchasedCount ? "is-locked" : ""}">
@@ -11300,6 +13706,20 @@ ${secondaryStatText}`),
     state.builder.inspected.breakthrough = id;
     const alreadySelected = state.builder.selectedBreakthroughIds.includes(id);
     const record = lookup.breakthroughs.resolve(id);
+    if (record && normalizePhrase(record.name) === "elemental affinity") {
+      setStatus("Choose an element on the Elemental Affinity card, then add it. Each element can only be chosen once.");
+      renderBuilder();
+      return;
+    }
+    if (record && getRepeatableUniqueBreakthroughConfig(record)) {
+      setStatus(`Choose an option on the ${record.name} card, then add it. Each option can only be chosen once.`);
+      renderBuilder();
+      return;
+    }
+    if (record && isStackableBreakthrough(record)) {
+      addStackableBreakthroughPurchase(id);
+      return;
+    }
     const requirementStatus = getBreakthroughRequirementStatus(record);
     if (!alreadySelected && !requirementStatus.met) {
       setStatus(`Cannot select ${record?.name || "that breakthrough"} yet. ${requirementStatus.reasons.join(" ")}`);
@@ -11318,6 +13738,141 @@ ${secondaryStatText}`),
     toggleSelection("selectedBreakthroughIds", id, 0, "breakthrough");
     syncBuilderSelectionsIntoSheet2();
     setStatus("Updated breakthrough selections.");
+    renderBuilder();
+  }
+  function addElementalAffinitySelection(elementValue) {
+    const record = getElementalAffinityRecord();
+    const element = normalizeElementChoiceLabel(elementValue);
+    if (!record || !element) {
+      setStatus("Choose an element before adding Elemental Affinity.");
+      renderBuilder();
+      return;
+    }
+    const requirementStatus = getBreakthroughRequirementStatus(record);
+    if (!requirementStatus.met) {
+      setStatus(`Cannot select ${record.name} yet. ${requirementStatus.reasons.join(" ")}`);
+      renderBuilder();
+      return;
+    }
+    const selected = getSelectedElementalAffinityElements();
+    const selectedKeys = new Set(selected.map(getElementalMasteryCanonicalKey));
+    if (selectedKeys.has(getElementalMasteryCanonicalKey(element))) {
+      setStatus(`Elemental Affinity ${element} is already selected.`);
+      renderBuilder();
+      return;
+    }
+    const nextCost = Math.max(0, parseNumericCost(record.cost));
+    const budget = getBreakthroughBudgetState();
+    if (nextCost > budget.remaining) {
+      setStatus(`${record.name} costs ${nextCost} breakthrough EXP, but only ${budget.remaining} remains in the creation pool.`);
+      renderBuilder();
+      return;
+    }
+    setSelectedElementalAffinityElements([...selected, element]);
+    syncBuilderSelectionsIntoSheet2();
+    setStatus(`Added Elemental Affinity: ${element}.`);
+    renderBuilder();
+  }
+  function removeElementalAffinitySelection(elementValue) {
+    const element = normalizeElementChoiceLabel(elementValue);
+    if (!element) {
+      return;
+    }
+    const removeKey = getElementalMasteryCanonicalKey(element);
+    const nextElements = getSelectedElementalAffinityElements().filter((entry) => getElementalMasteryCanonicalKey(entry) !== removeKey);
+    setSelectedElementalAffinityElements(nextElements);
+    syncBuilderSelectionsIntoSheet2();
+    setStatus(`Removed Elemental Affinity: ${element}.`);
+    renderBuilder();
+  }
+  function addRepeatableBreakthroughChoice(id, selectedValue, customValue = "") {
+    const record = lookup.breakthroughs.resolve(id);
+    const config = getRepeatableUniqueBreakthroughConfig(record);
+    const value = normalizeRepeatableChoiceValue(config, selectedValue === "__custom__" ? customValue : selectedValue);
+    if (!record || !config || !value) {
+      setStatus("Choose a valid option before adding that breakthrough.");
+      renderBuilder();
+      return;
+    }
+    const requirementStatus = getBreakthroughRequirementStatus(record);
+    if (!requirementStatus.met) {
+      setStatus(`Cannot select ${record.name} yet. ${requirementStatus.reasons.join(" ")}`);
+      renderBuilder();
+      return;
+    }
+    const selected = getSelectedRepeatableBreakthroughChoices(config);
+    if (selected.some((entry) => normalizePhrase(entry) === normalizePhrase(value))) {
+      setStatus(`${record.name} already includes ${value}. Choose a different option.`);
+      renderBuilder();
+      return;
+    }
+    if (getRepeatableExcludedChoiceKeys(config).has(normalizePhrase(value))) {
+      setStatus(`${value} is already used by the base choice for this breakthrough chain.`);
+      renderBuilder();
+      return;
+    }
+    const nextCost = Math.max(0, parseNumericCost(record.cost));
+    const budget = getBreakthroughBudgetState();
+    if (nextCost > budget.remaining) {
+      setStatus(`${record.name} costs ${nextCost} breakthrough EXP, but only ${budget.remaining} remains in the creation pool.`);
+      renderBuilder();
+      return;
+    }
+    setSelectedRepeatableBreakthroughChoices(config, [...selected, value]);
+    syncBuilderSelectionsIntoSheet2();
+    setStatus(`Added ${record.name}: ${value}.`);
+    renderBuilder();
+  }
+  function removeRepeatableBreakthroughChoice(id, value) {
+    const record = lookup.breakthroughs.resolve(id);
+    const config = getRepeatableUniqueBreakthroughConfig(record);
+    if (!record || !config) {
+      return;
+    }
+    const removeKey = normalizePhrase(value);
+    const nextChoices = getSelectedRepeatableBreakthroughChoices(config).filter((entry) => normalizePhrase(entry) !== removeKey);
+    setSelectedRepeatableBreakthroughChoices(config, nextChoices);
+    syncBuilderSelectionsIntoSheet2();
+    setStatus(`Removed ${record.name}: ${value}.`);
+    renderBuilder();
+  }
+  function addStackableBreakthroughPurchase(id) {
+    const record = lookup.breakthroughs.resolve(id);
+    if (!record || !isStackableBreakthrough(record)) {
+      return;
+    }
+    const selectedIds = new Set(state.builder.selectedBreakthroughIds);
+    const requirementStatus = getBreakthroughRequirementStatus(record, selectedIds);
+    if (!requirementStatus.met) {
+      setStatus(`Cannot select ${record.name} yet. ${requirementStatus.reasons.join(" ")}`);
+      renderBuilder();
+      return;
+    }
+    const nextCost = Math.max(0, parseNumericCost(record.cost));
+    const budget = getBreakthroughBudgetState();
+    if (nextCost > budget.remaining) {
+      setStatus(`${record.name} costs ${nextCost} breakthrough EXP, but only ${budget.remaining} remains in the creation pool.`);
+      renderBuilder();
+      return;
+    }
+    state.builder.selectedBreakthroughIds = [...state.builder.selectedBreakthroughIds || [], record.id];
+    syncBuilderSelectionsIntoSheet2();
+    setStatus(`Added ${record.name}.`);
+    renderBuilder();
+  }
+  function removeStackableBreakthroughPurchase(id) {
+    const record = lookup.breakthroughs.resolve(id);
+    if (!record || !isStackableBreakthrough(record)) {
+      return;
+    }
+    const index = [...state.builder.selectedBreakthroughIds || []].lastIndexOf(record.id);
+    if (index < 0) {
+      return;
+    }
+    state.builder.selectedBreakthroughIds.splice(index, 1);
+    clearIrrelevantBuilderChoices();
+    syncBuilderSelectionsIntoSheet2();
+    setStatus(`Removed one ${record.name}.`);
     renderBuilder();
   }
   function toggleBuilderClass(id) {
@@ -11523,6 +14078,7 @@ ${secondaryStatText}`),
         selectedItemIds: builder.selectedItemIds || [],
         itemQuantities: builder.itemQuantities || {},
         selectedBreakthroughIds: builder.selectedBreakthroughIds || [],
+        importedFinalStats: Boolean(builder.importedFinalStats),
         skillExpertiseEntries: builder.skillExpertiseEntries || [],
         choiceSelections: builder.choiceSelections || {},
         searches: {
@@ -12025,12 +14581,38 @@ ${secondaryStatText}`),
     map.Block = cleanText(state.fields.Block) || String(derived.block);
     return map;
   }
+  function getSpreadsheetExportInventoryEntries() {
+    return getPlayInventoryEntries().slice(0, INVENTORY_ROWS.length);
+  }
+  function getSpreadsheetExportItemDescription(entry) {
+    return cleanText(entry?.custom ? entry.description : getBaseItemRulesText(entry)) || cleanText(entry?.descriptionText || entry?.description);
+  }
+  function getSpreadsheetEquipmentExportModifiers(entry) {
+    const bucket = createComputedBonusBucket();
+    collectComputedTextBonuses(bucket, `${entry?.name || "Item"} export`, getSpreadsheetExportItemDescription(entry));
+    return bucket.derived;
+  }
+  function isSpreadsheetEquipmentGridItem(entry) {
+    if (!entry || isWeaponItem(entry)) {
+      return false;
+    }
+    const haystack = normalizePhrase([entry.name, entry.type, entry.subType, getSpreadsheetExportItemDescription(entry)].filter(Boolean).join(" "));
+    return Boolean(entry.equipped) || /\b(equipment|armor|armour|shield|barrier|chainlink|plate|mail|helm)\b/.test(haystack);
+  }
+  function getSpreadsheetExportWeaponEntries() {
+    return getPlayInventoryEntries().filter(isWeaponItem).slice(0, SPREADSHEET_VISIBLE_WEAPON_RANGE.endRow - SPREADSHEET_VISIBLE_WEAPON_RANGE.startRow + 1);
+  }
+  function getSpreadsheetExportEquipmentEntries() {
+    return getPlayInventoryEntries().filter(isSpreadsheetEquipmentGridItem).sort((left, right) => Number(Boolean(right.equipped)) - Number(Boolean(left.equipped))).slice(0, SPREADSHEET_VISIBLE_EQUIPMENT_RANGE.endRow - SPREADSHEET_VISIBLE_EQUIPMENT_RANGE.startRow + 1);
+  }
   function buildSpreadsheetExportCellMap(preparedExport) {
     const cellMap = {};
     const computedBonuses = preparedExport.spreadsheet.computedBonuses;
     const classRows = preparedExport.spreadsheet.classRows;
     const selectedBreakthroughs = preparedExport.spreadsheet.selectedBreakthroughs;
-    const selectedItems = preparedExport.spreadsheet.selectedItems;
+    const inventoryEntries = getSpreadsheetExportInventoryEntries();
+    const weaponEntries = getSpreadsheetExportWeaponEntries();
+    const equipmentEntries = getSpreadsheetExportEquipmentEntries();
     setSpreadsheetExportCell(cellMap, "Core", "B2", cleanText(state.fields.Name));
     setSpreadsheetExportCell(cellMap, "Core", "D2", cleanText(state.fields["Primary Race"]));
     setSpreadsheetExportCell(cellMap, "Core", "B3", cleanText(state.fields.Gender));
@@ -12049,11 +14631,15 @@ ${secondaryStatText}`),
       setSpreadsheetExportCell(cellMap, "Core", `C${row}`, Math.max(0, toNumber(state.fields[stat], 0)));
       setSpreadsheetExportCell(cellMap, "Core", `H${row}`, computedBonuses.secondaryStats[stat] || 0);
     });
-    for (let index = 0; index < 27; index += 1) {
-      const row = 9 + index;
-      setSpreadsheetExportCell(cellMap, "Core", `H${row}`, Math.max(0, toNumber(state.fields[`SkillPoint${index + 1}`], 0)));
-      setSpreadsheetExportCell(cellMap, "Core", `I${row}`, Math.max(0, toNumber(state.fields[`Expertise${index + 1}`], 0)));
-    }
+    SPREADSHEET_SKILL_EXPORT_ROWS.forEach((row, skillName) => {
+      const index = SKILL_DEFINITIONS.findIndex((definition) => definition.name === skillName);
+      if (index < 0) {
+        return;
+      }
+      const fieldIndex = index + 1;
+      setSpreadsheetExportCell(cellMap, "Core", `H${row}`, Math.max(0, toNumber(state.fields[`SkillPoint${fieldIndex}`], 0)));
+      setSpreadsheetExportCell(cellMap, "Core", `I${row}`, cleanText(state.fields[`Expertise${fieldIndex}`]));
+    });
     classRows.forEach((classRow, index) => {
       const row = 15 + index;
       setSpreadsheetExportCell(cellMap, "Core", `A${row}`, cleanText(state.fields[`Class${classRow}`]));
@@ -12068,17 +14654,32 @@ ${secondaryStatText}`),
       const row = 2 + index;
       setSpreadsheetExportCell(cellMap, "Breakthrough", `A${row}`, entry.name);
       setSpreadsheetExportCell(cellMap, "Breakthrough", `B${row}`, Math.max(0, parseNumericCost(entry.cost)));
+      setSpreadsheetExportCell(cellMap, "Breakthrough", `C${row}`, cleanText(entry.requirements));
     });
-    for (let index = 0; index < 25; index += 1) {
+    weaponEntries.forEach((entry, index) => {
+      const row = SPREADSHEET_VISIBLE_WEAPON_RANGE.startRow + index;
+      setSpreadsheetExportCell(cellMap, "Core", `${SPREADSHEET_VISIBLE_WEAPON_RANGE.nameColumn}${row}`, entry.name);
+    });
+    equipmentEntries.forEach((entry, index) => {
+      const row = SPREADSHEET_VISIBLE_EQUIPMENT_RANGE.startRow + index;
+      const modifiers = getSpreadsheetEquipmentExportModifiers(entry);
+      setSpreadsheetExportCell(cellMap, "Core", `${SPREADSHEET_VISIBLE_EQUIPMENT_RANGE.nameColumn}${row}`, entry.name);
+      setSpreadsheetExportCell(cellMap, "Core", `${SPREADSHEET_VISIBLE_EQUIPMENT_MODIFIER_COLUMNS.guard}${row}`, modifiers.guard || "");
+      setSpreadsheetExportCell(cellMap, "Core", `${SPREADSHEET_VISIBLE_EQUIPMENT_MODIFIER_COLUMNS.evasion}${row}`, modifiers.evasion || "");
+      setSpreadsheetExportCell(cellMap, "Core", `${SPREADSHEET_VISIBLE_EQUIPMENT_MODIFIER_COLUMNS.dodge}${row}`, modifiers.dodge || "");
+      setSpreadsheetExportCell(cellMap, "Core", `${SPREADSHEET_VISIBLE_EQUIPMENT_MODIFIER_COLUMNS.block}${row}`, modifiers.block || "");
+      setSpreadsheetExportCell(cellMap, "Core", `${SPREADSHEET_VISIBLE_EQUIPMENT_MODIFIER_COLUMNS.initiativePenalty}${row}`, modifiers.initiative < 0 ? Math.abs(modifiers.initiative) : modifiers.initiative || "");
+      setSpreadsheetExportCell(cellMap, "Core", `${SPREADSHEET_VISIBLE_EQUIPMENT_RANGE.equippedColumn}${row}`, Boolean(entry.equipped));
+    });
+    for (let index = 0; index < INVENTORY_ROWS.length; index += 1) {
       const row = 2 + index;
-      const fieldRow = index + 1;
-      const name = cleanText(state.fields[`CombatInventory${fieldRow}`]);
-      const record = selectedItems.find((entry) => normalizePhrase(entry.name) === normalizePhrase(name)) || lookup.items.resolve(name);
+      const entry = inventoryEntries[index];
+      const name = cleanText(entry?.name);
       setSpreadsheetExportCell(cellMap, "Inventory", `A${row}`, name);
-      setSpreadsheetExportCell(cellMap, "Inventory", `B${row}`, Math.max(0, toNumber(state.fields[`Amount${fieldRow}`], name ? 1 : 0)));
-      setSpreadsheetExportCell(cellMap, "Inventory", `C${row}`, cleanText(state.fields[`Bulk${fieldRow}`]) || cleanText(record?.burden));
-      setSpreadsheetExportCell(cellMap, "Inventory", `D${row}`, cleanText(record?.cost));
-      setSpreadsheetExportCell(cellMap, "Inventory", `F${row}`, cleanText(state.fields[`Description${fieldRow}`]) || cleanText(record?.descriptionText || record?.description));
+      setSpreadsheetExportCell(cellMap, "Inventory", `B${row}`, name ? Math.max(1, Math.floor(toNumber(entry?.quantity, 1))) : "");
+      setSpreadsheetExportCell(cellMap, "Inventory", `C${row}`, cleanText(entry?.burden));
+      setSpreadsheetExportCell(cellMap, "Inventory", `D${row}`, cleanText(entry?.cost));
+      setSpreadsheetExportCell(cellMap, "Inventory", `F${row}`, getSpreadsheetExportItemDescription(entry));
     }
     setSpreadsheetExportCell(cellMap, "Journals", "A1", "Player Notes");
     setSpreadsheetExportCell(cellMap, "Journals", "A2", cleanText(state.play.playerNotes));
@@ -12132,6 +14733,190 @@ ${secondaryStatText}`),
     }
     return payload;
   }
+  function getWorksheetLabeledNumberText(sheet, range, targetLabel) {
+    const normalizedTarget = normalizePhrase(targetLabel);
+    for (let row = range.startRow; row <= range.endRow; row += 1) {
+      const label = normalizePhrase(getWorksheetText(sheet, `${range.labelColumn}${row}`));
+      if (label === normalizedTarget) {
+        return getWorksheetNumberText(sheet, `${range.valueColumn}${row}`);
+      }
+    }
+    return "";
+  }
+  function getWorksheetBoolean(sheet, address) {
+    const rawValue = sheet?.[address]?.v;
+    if (rawValue === true || rawValue === 1) {
+      return true;
+    }
+    const text = normalizePhrase(getWorksheetText(sheet, address));
+    return ["true", "yes", "checked", "x", "1"].includes(text);
+  }
+  function resolveSpreadsheetItemRecord(name) {
+    const direct = lookup.items.resolve(name);
+    if (direct) {
+      return direct;
+    }
+    const normalized = normalizePhrase(name).replace(/\barmour\b/g, "armor");
+    const alias = SPREADSHEET_ITEM_NAME_ALIASES.get(normalized);
+    return alias ? lookup.items.resolve(alias) : null;
+  }
+  function getSpreadsheetSkillDefinitionIndex(name) {
+    const normalized = normalizePhrase(name);
+    if (!normalized) {
+      return -1;
+    }
+    const alias = normalizePhrase(SKILL_ALIASES.get(normalized));
+    return SKILL_DEFINITIONS.findIndex(
+      (definition) => normalizePhrase(definition.name) === normalized || alias && normalizePhrase(definition.name) === alias
+    );
+  }
+  function getSpreadsheetNumericCell(sheet, address) {
+    const text = getWorksheetNumberText(sheet, address);
+    const value = toNumber(text, NaN);
+    return Number.isFinite(value) ? value : NaN;
+  }
+  function getSpreadsheetModifierSentence(label, amount) {
+    if (!Number.isFinite(amount) || !amount) {
+      return "";
+    }
+    const verb = amount < 0 ? "Reduces" : "Increases";
+    return `${verb} your ${label} by ${Math.abs(amount)}.`;
+  }
+  function getSpreadsheetVisibleEquipmentModifierText(core, row) {
+    const columns = SPREADSHEET_VISIBLE_EQUIPMENT_MODIFIER_COLUMNS;
+    const guard = getSpreadsheetNumericCell(core, `${columns.guard}${row}`);
+    const evasion = getSpreadsheetNumericCell(core, `${columns.evasion}${row}`);
+    const dodge = getSpreadsheetNumericCell(core, `${columns.dodge}${row}`);
+    const block = getSpreadsheetNumericCell(core, `${columns.block}${row}`);
+    const initiativePenalty = getSpreadsheetNumericCell(core, `${columns.initiativePenalty}${row}`);
+    return [
+      getSpreadsheetModifierSentence("Guard", guard),
+      getSpreadsheetModifierSentence("Evasion", evasion),
+      getSpreadsheetModifierSentence("Dodge", dodge),
+      getSpreadsheetModifierSentence("Block", block),
+      getSpreadsheetModifierSentence("Initiative", initiativePenalty > 0 ? -initiativePenalty : initiativePenalty)
+    ].filter(Boolean).join(" ");
+  }
+  function getSpreadsheetVisibleEquipmentInfo(core) {
+    const info = /* @__PURE__ */ new Map();
+    for (let row = SPREADSHEET_VISIBLE_EQUIPMENT_RANGE.startRow; row <= SPREADSHEET_VISIBLE_EQUIPMENT_RANGE.endRow; row += 1) {
+      const name = getWorksheetText(core, `${SPREADSHEET_VISIBLE_EQUIPMENT_RANGE.nameColumn}${row}`);
+      const key = normalizePhrase(name);
+      if (!key) {
+        continue;
+      }
+      info.set(key, {
+        equipped: getWorksheetBoolean(core, `${SPREADSHEET_VISIBLE_EQUIPMENT_RANGE.equippedColumn}${row}`),
+        modifierText: getSpreadsheetVisibleEquipmentModifierText(core, row)
+      });
+    }
+    return info;
+  }
+  function inferSpreadsheetInventoryType(entry) {
+    const haystack = normalizePhrase([entry.name, entry.description].filter(Boolean).join(" "));
+    if (/\b(armor|armour|shield|barrier|chainlink|plates|helm|mail)\b/.test(haystack)) {
+      return "Equipment";
+    }
+    if (/\b(sword|blade|bow|gun|spear|axe|dagger|kunai|weapon|ugs)\b/.test(haystack)) {
+      return "Weapon";
+    }
+    return "Inventory";
+  }
+  function getSpreadsheetInventoryDescription(entry, visibleInfo) {
+    const parts = [
+      cleanText(entry.description),
+      cleanText(visibleInfo?.modifierText)
+    ].filter(Boolean);
+    return parts.length ? parts.join("\n") : "Imported from the spreadsheet inventory.";
+  }
+  function createSpreadsheetInventoryImportContext(core) {
+    return {
+      visibleEquipment: getSpreadsheetVisibleEquipmentInfo(core),
+      seenOfficialIds: /* @__PURE__ */ new Set(),
+      seenCustomNames: /* @__PURE__ */ new Set(),
+      fieldIndex: 1,
+      customIndex: 1
+    };
+  }
+  function addSpreadsheetImportedInventoryEntry(payload, entry, context) {
+    const name = cleanText(entry.name);
+    if (!name) {
+      return false;
+    }
+    payload.play.inventoryItems = Array.isArray(payload.play.inventoryItems) ? payload.play.inventoryItems : [];
+    const visibleInfo = context.visibleEquipment.get(normalizePhrase(name));
+    const amountText = cleanText(entry.amount) || "1";
+    const quantity = Math.max(1, Math.floor(toNumber(amountText, 1)));
+    const equipped = Boolean(entry.equipped) || Boolean(visibleInfo?.equipped);
+    const record = resolveSpreadsheetItemRecord(name);
+    if (record) {
+      if (!context.seenOfficialIds.has(record.id)) {
+        context.seenOfficialIds.add(record.id);
+        payload.fields[`CombatInventory${context.fieldIndex}`] = record.name;
+        payload.fields[`Amount${context.fieldIndex}`] = amountText;
+        payload.fields[`Bulk${context.fieldIndex}`] = cleanText(entry.burden) || cleanText(record.burden);
+        payload.fields[`Description${context.fieldIndex}`] = cleanText(entry.description) || [record.type, record.subType, record.cost, record.materialUnitLabel].filter(Boolean).join(" | ");
+        payload.play.inventoryItems.push({
+          uid: getOfficialInventoryUid(record.id),
+          itemId: record.id,
+          custom: false,
+          quantity,
+          equipped
+        });
+        context.fieldIndex += 1;
+      }
+      return true;
+    }
+    const customKey = normalizePhrase(name);
+    if (!customKey || context.seenCustomNames.has(customKey)) {
+      return false;
+    }
+    context.seenCustomNames.add(customKey);
+    payload.play.inventoryItems.push({
+      uid: `custom:spreadsheet:${context.customIndex}:${normalizeKey(name)}`,
+      itemId: "",
+      custom: true,
+      name,
+      type: cleanText(entry.type) || inferSpreadsheetInventoryType(entry),
+      subType: "Imported",
+      cost: "",
+      burden: cleanText(entry.burden),
+      quantity,
+      equipped,
+      description: getSpreadsheetInventoryDescription(entry, visibleInfo)
+    });
+    context.customIndex += 1;
+    return true;
+  }
+  function addSpreadsheetVisibleInventoryFallback(payload, core) {
+    const context = createSpreadsheetInventoryImportContext(core);
+    for (let row = SPREADSHEET_VISIBLE_WEAPON_RANGE.startRow; row <= SPREADSHEET_VISIBLE_WEAPON_RANGE.endRow; row += 1) {
+      const name = getWorksheetText(core, `${SPREADSHEET_VISIBLE_WEAPON_RANGE.nameColumn}${row}`);
+      if (name) {
+        addSpreadsheetImportedInventoryEntry(payload, {
+          name,
+          type: "Weapon",
+          amount: "1",
+          burden: "",
+          description: "Imported from the visible spreadsheet weapon grid.",
+          equipped: true
+        }, context);
+      }
+    }
+    for (let row = SPREADSHEET_VISIBLE_EQUIPMENT_RANGE.startRow; row <= SPREADSHEET_VISIBLE_EQUIPMENT_RANGE.endRow; row += 1) {
+      const name = getWorksheetText(core, `${SPREADSHEET_VISIBLE_EQUIPMENT_RANGE.nameColumn}${row}`);
+      if (name) {
+        addSpreadsheetImportedInventoryEntry(payload, {
+          name,
+          type: "Equipment",
+          amount: "1",
+          burden: "",
+          description: "Imported from the visible spreadsheet equipment grid.",
+          equipped: getWorksheetBoolean(core, `${SPREADSHEET_VISIBLE_EQUIPMENT_RANGE.equippedColumn}${row}`)
+        }, context);
+      }
+    }
+  }
   function buildSpreadsheetImportPayload(workbook) {
     const core = workbook.Sheets.Core || {};
     const abilities = workbook.Sheets.Abilities || {};
@@ -12140,6 +14925,7 @@ ${secondaryStatText}`),
     const journals = workbook.Sheets.Journals || {};
     const payload = {
       fields: {},
+      builder: {},
       play: {
         playerNotes: getWorksheetText(journals, "A2"),
         resources: {}
@@ -12155,30 +14941,62 @@ ${secondaryStatText}`),
     payload.fields.Worships = getWorksheetText(core, "B7");
     payload.fields.Exp = getWorksheetNumberText(core, "D4");
     payload.fields["Spirit Core"] = getWorksheetNumberText(core, "D5");
+    let importedVisibleFinalStats = false;
     Object.entries(SPREADSHEET_MAIN_STAT_ROWS).forEach(([stat, row]) => {
-      payload.fields[stat] = getWorksheetNumberText(core, `A${row}`);
+      const visibleValue = getWorksheetLabeledNumberText(core, SPREADSHEET_VISIBLE_MAIN_STAT_RANGE, stat);
+      if (visibleValue) {
+        importedVisibleFinalStats = true;
+      }
+      payload.fields[stat] = visibleValue || getWorksheetNumberText(core, `A${row}`);
     });
     Object.entries(SPREADSHEET_SECONDARY_STAT_ROWS).forEach(([stat, row]) => {
-      payload.fields[stat] = getWorksheetNumberText(core, `C${row}`);
+      const visibleValue = getWorksheetLabeledNumberText(core, SPREADSHEET_VISIBLE_SECONDARY_STAT_RANGE, stat);
+      if (visibleValue) {
+        importedVisibleFinalStats = true;
+      }
+      payload.fields[stat] = visibleValue || getWorksheetNumberText(core, `C${row}`);
     });
-    for (let index = 0; index < 27; index += 1) {
-      const row = 9 + index;
-      payload.fields[`SkillPoint${index + 1}`] = getWorksheetNumberText(core, `H${row}`);
-      payload.fields[`Expertise${index + 1}`] = getWorksheetNumberText(core, `I${row}`);
+    if (importedVisibleFinalStats) {
+      payload.builder.importedFinalStats = true;
+    }
+    const importedHp = getWorksheetLabeledNumberText(core, SPREADSHEET_VISIBLE_RESOURCE_RANGE, "HP");
+    if (importedHp) {
+      payload.play.resources.hpCurrent = importedHp;
+      payload.play.resources.hpMax = importedHp;
+    }
+    const importedMana = getWorksheetLabeledNumberText(core, SPREADSHEET_VISIBLE_RESOURCE_RANGE, "Mana");
+    if (importedMana) {
+      payload.play.resources.manaCurrent = importedMana;
+      payload.play.resources.manaMax = importedMana;
+    }
+    const importedRp = getWorksheetLabeledNumberText(core, SPREADSHEET_VISIBLE_RESOURCE_RANGE, "RP");
+    if (importedRp) {
+      payload.play.resources.rpCurrent = importedRp;
+      payload.play.resources.rpMax = importedRp;
+    }
+    for (let row = 9; row <= 35; row += 1) {
+      const skillIndex = getSpreadsheetSkillDefinitionIndex(getWorksheetText(core, `E${row}`));
+      if (skillIndex < 0) {
+        continue;
+      }
+      const fieldIndex = skillIndex + 1;
+      payload.fields[`SkillPoint${fieldIndex}`] = getWorksheetNumberText(core, `H${row}`);
+      payload.fields[`Expertise${fieldIndex}`] = getWorksheetText(core, `I${row}`);
     }
     for (let index = 0; index < 12; index += 1) {
       const row = 15 + index;
       const className = getWorksheetText(core, `A${row}`);
-      if (className) {
-        payload.fields[`Class${index + 1}`] = className;
-      }
       const classLevel = getWorksheetNumberText(core, `C${row}`);
-      if (classLevel) {
-        payload.fields[`ClassLevel${index + 1}`] = classLevel;
-      }
       const classCost = getWorksheetNumberText(core, `D${row}`);
-      if (classCost) {
-        payload.fields[`Cost${index + 1}`] = classCost;
+      const hasClassProgress = classLevel !== "" || toNumber(classCost, 0) > 0;
+      if (className && hasClassProgress) {
+        payload.fields[`Class${index + 1}`] = className;
+        if (classLevel) {
+          payload.fields[`ClassLevel${index + 1}`] = classLevel;
+        }
+        if (classCost) {
+          payload.fields[`Cost${index + 1}`] = classCost;
+        }
       }
     }
     const breakthroughNames = [];
@@ -12198,16 +15016,24 @@ ${secondaryStatText}`),
         payload.fields[`Ability${index + 1}`] = [abilityName, description].filter(Boolean).join("\n");
       }
     }
+    let importedInventorySheetRows = 0;
+    const inventoryImportContext = createSpreadsheetInventoryImportContext(core);
     for (let index = 0; index < 25; index += 1) {
       const row = 2 + index;
       const name = getWorksheetText(inventory, `A${row}`);
       if (!name) {
         continue;
       }
-      payload.fields[`CombatInventory${index + 1}`] = name;
-      payload.fields[`Amount${index + 1}`] = getWorksheetNumberText(inventory, `B${row}`);
-      payload.fields[`Bulk${index + 1}`] = getWorksheetText(inventory, `C${row}`);
-      payload.fields[`Description${index + 1}`] = getWorksheetText(inventory, `F${row}`);
+      importedInventorySheetRows += 1;
+      addSpreadsheetImportedInventoryEntry(payload, {
+        name,
+        amount: getWorksheetNumberText(inventory, `B${row}`),
+        burden: getWorksheetText(inventory, `C${row}`),
+        description: getWorksheetText(inventory, `F${row}`)
+      }, inventoryImportContext);
+    }
+    if (!importedInventorySheetRows) {
+      addSpreadsheetVisibleInventoryFallback(payload, core);
     }
     return payload;
   }
@@ -12332,6 +15158,17 @@ ${secondaryStatText}`),
       const slotActionButton = event.target.closest("[data-slot-action]");
       if (slotActionButton) {
         await handleSaveSlotAction(slotActionButton.dataset.slotAction, slotActionButton.dataset.slotId);
+        return;
+      }
+      const manualEffectConfirmButton = event.target.closest("[data-manual-effect-confirm]");
+      if (manualEffectConfirmButton) {
+        confirmManualPlayEffectPicker(manualEffectConfirmButton);
+        return;
+      }
+      const effectDetailClearButton = event.target.closest("[data-play-effect-detail-clear]");
+      if (effectDetailClearButton) {
+        closeSheetModal();
+        removePlayActiveEffect(effectDetailClearButton.dataset.playEffectDetailClear);
         return;
       }
       const exportModeButton = event.target.closest("[data-export-mode]");
@@ -12515,6 +15352,23 @@ ${secondaryStatText}`),
         setBuilderAncestry(id);
       } else if (action === "toggle-breakthrough") {
         toggleBuilderBreakthrough(id);
+      } else if (action === "add-elemental-affinity") {
+        const card = trigger.closest(".builder-elemental-affinity-card");
+        const select = card?.querySelector("[data-elemental-affinity-select]");
+        addElementalAffinitySelection(select?.value || "");
+      } else if (action === "remove-elemental-affinity") {
+        removeElementalAffinitySelection(trigger.dataset.element || "");
+      } else if (action === "add-repeatable-breakthrough-choice") {
+        const card = trigger.closest(".builder-repeatable-choice-card");
+        const select = card?.querySelector("[data-repeatable-breakthrough-select]");
+        const custom = card?.querySelector("[data-repeatable-breakthrough-custom]");
+        addRepeatableBreakthroughChoice(id, select?.value || "", custom?.value || "");
+      } else if (action === "remove-repeatable-breakthrough-choice") {
+        removeRepeatableBreakthroughChoice(id, trigger.dataset.value || "");
+      } else if (action === "add-stackable-breakthrough") {
+        addStackableBreakthroughPurchase(id);
+      } else if (action === "remove-stackable-breakthrough") {
+        removeStackableBreakthroughPurchase(id);
       } else if (action === "toggle-class") {
         toggleBuilderClass(id);
       } else if (action === "learn-class-ability") {
@@ -12700,9 +15554,25 @@ ${secondaryStatText}`),
       if (!event.target.closest("[data-play-recover-ap]")) {
         return;
       }
+      openPlayReference("Recover AP", event.target.closest("[data-play-recover-ap]"));
       restoreTurnResources();
     });
     document.getElementById("play-derived-grid").addEventListener("click", (event) => {
+      const effectPickerButton = event.target.closest("[data-open-effect-picker]");
+      if (effectPickerButton) {
+        openManualPlayEffectPicker(effectPickerButton.dataset.openEffectPicker);
+        return;
+      }
+      const effectDetailButton = event.target.closest("[data-play-effect-detail]");
+      if (effectDetailButton) {
+        openPlayEffectDetail(effectDetailButton.dataset.playEffectDetail);
+        return;
+      }
+      const clearEffectButton = event.target.closest("[data-play-clear-effect]");
+      if (clearEffectButton) {
+        removePlayActiveEffect(clearEffectButton.dataset.playClearEffect);
+        return;
+      }
       const expSpendingButton = event.target.closest("[data-open-exp-spending]");
       if (expSpendingButton) {
         openExpSpending();
@@ -12743,19 +15613,50 @@ ${secondaryStatText}`),
       }
     });
     document.getElementById("play-basic-actions").addEventListener("click", (event) => {
+      const recoverApButton = event.target.closest("[data-play-recover-ap]");
+      if (recoverApButton) {
+        openPlayReference("Recover AP", recoverApButton);
+        restoreTurnResources();
+        return;
+      }
+      const restButton = event.target.closest("[data-play-rest]");
+      if (restButton) {
+        const restReferenceNames = {
+          floor: "Floor Rest",
+          camp: "Camp / Basic Rest",
+          luxury: "Luxury Rest"
+        };
+        openPlayReference(restReferenceNames[restButton.dataset.playRest] || "Camp / Basic Rest", restButton);
+        performPlayRest(restButton.dataset.playRest);
+        return;
+      }
+      const clearEffectButton = event.target.closest("[data-play-clear-effect]");
+      if (clearEffectButton) {
+        removePlayActiveEffect(clearEffectButton.dataset.playClearEffect);
+        return;
+      }
       const useButton = event.target.closest("[data-play-use-basic]");
       if (useButton) {
         const action = getPlayActionCards().find((entry) => entry.id === useButton.dataset.playUseBasic);
         if (action) {
+          openPlayReference(action.referenceName || action.label.split(" - ")[0], useButton);
           usePlayCost(action.label, action.costLabel, [action.summary], { feedbackId: "play-action-feedback" });
         }
+        return;
+      }
+      const referenceButton = event.target.closest("[data-play-reference-name]");
+      if (referenceButton && !event.target.closest("button, input, select, textarea, summary")) {
+        openPlayReference(referenceButton.dataset.playReferenceName, referenceButton);
       }
     });
     document.getElementById("play-quick-abilities").addEventListener("click", (event) => {
       const referenceButton = event.target.closest("[data-play-reference-name]");
-      if (referenceButton) {
+      const explicitReferenceControl = event.target.closest(".play-reference-title, .play-reference-link");
+      const actionControl = event.target.closest("[data-play-use-ability], [data-play-use-ability-attack]");
+      const nonReferenceControl = event.target.closest("button, input, select, textarea, summary");
+      if (referenceButton && !actionControl && (explicitReferenceControl || !nonReferenceControl)) {
         event.preventDefault();
-        openPlayReference(referenceButton.dataset.playReferenceName);
+        openPlayReference(referenceButton.dataset.playReferenceName, referenceButton);
         return;
       }
       const attackButton = event.target.closest("[data-play-use-ability-attack]");
@@ -12876,7 +15777,16 @@ ${secondaryStatText}`),
     document.getElementById("play-saves").addEventListener("click", (event) => {
       const rollButton = event.target.closest("[data-play-roll]");
       if (rollButton) {
+        const builtInReference = findBuiltInPlayReferenceRecord(rollButton.dataset.playRoll);
+        if (builtInReference) {
+          openPlayReference(builtInReference.name, rollButton);
+        }
         rollPlayCheck(rollButton.dataset.playRoll, { feedbackId: "play-action-feedback" });
+        return;
+      }
+      const referenceButton = event.target.closest("[data-play-reference-name]");
+      if (referenceButton && !event.target.closest("button, input, select, textarea, summary")) {
+        openPlayReference(referenceButton.dataset.playReferenceName, referenceButton);
       }
     });
     document.getElementById("play-roll-actions").addEventListener("click", (event) => {
@@ -12884,12 +15794,19 @@ ${secondaryStatText}`),
       if (!rollButton) {
         return;
       }
+      const builtInReference = findBuiltInPlayReferenceRecord(rollButton.dataset.playRoll);
+      if (builtInReference) {
+        openPlayReference(builtInReference.name, rollButton);
+      }
       rollPlayCheck(rollButton.dataset.playRoll, { feedbackId: "play-quick-roll-feedback" });
     });
     document.getElementById("play-basic-actions").addEventListener("click", (event) => {
       const damageButton = event.target.closest("[data-play-roll-damage]");
       if (damageButton) {
         const action2 = getPlayActionFromButton(damageButton, "playRollDamage");
+        if (action2) {
+          openPlayReference(action2.referenceName || action2.label.split(" - ")[0], damageButton);
+        }
         rollPlayDamage(action2, { feedbackId: "play-action-feedback" });
         return;
       }
@@ -12898,6 +15815,9 @@ ${secondaryStatText}`),
         return;
       }
       const action = getPlayActionFromButton(rollButton);
+      if (action) {
+        openPlayReference(action.referenceName || action.label.split(" - ")[0], rollButton);
+      }
       rollPlayCheck(rollButton.dataset.playRoll, { feedbackId: "play-action-feedback", action });
     });
     document.getElementById("play-inventory").addEventListener("click", (event) => {
@@ -12934,6 +15854,11 @@ ${secondaryStatText}`),
         addOfficialInventoryItem(addItem.dataset.inventoryAddItem);
         return;
       }
+      const useItem = event.target.closest("[data-inventory-use]");
+      if (useItem) {
+        useInventoryItem(useItem.dataset.inventoryUse, useItem.dataset.inventoryUseCostLabel || "");
+        return;
+      }
       const equipButton = event.target.closest("[data-inventory-toggle-equip]");
       if (equipButton) {
         toggleInventoryEquipped(equipButton.dataset.inventoryToggleEquip);
@@ -12942,6 +15867,11 @@ ${secondaryStatText}`),
       const removeButton = event.target.closest("[data-inventory-remove]");
       if (removeButton) {
         removeInventoryItem(removeButton.dataset.inventoryRemove);
+        return;
+      }
+      const referenceButton = event.target.closest("[data-play-reference-name]");
+      if (referenceButton && !event.target.closest("button, input, select, textarea, summary")) {
+        openPlayReference(referenceButton.dataset.playReferenceName, referenceButton);
       }
     });
     document.getElementById("play-inventory").addEventListener("input", (event) => {
@@ -12956,14 +15886,24 @@ ${secondaryStatText}`),
         state.play.customItemDraft[event.target.dataset.customItemField] = event.target.value;
       }
     });
-    document.getElementById("play-restore-turn").addEventListener("click", restoreTurnResources);
-    document.getElementById("play-full-restore").addEventListener("click", fullRestoreResources);
+    document.getElementById("play-restore-turn").addEventListener("click", (event) => {
+      openPlayReference("Recover AP", event.currentTarget);
+      restoreTurnResources();
+    });
+    document.getElementById("play-full-restore").addEventListener("click", (event) => {
+      openPlayReference("Full Restore", event.currentTarget);
+      fullRestoreResources();
+    });
     document.getElementById("play-sync-derived").addEventListener("click", () => {
+      openPlayReference("Sync Derived Stats", document.getElementById("play-sync-derived"));
       syncPlayResourcesFromFields(true);
       renderPlayDashboard();
       setStatus("Synced the live dashboard to the current sheet values.");
     });
-    document.getElementById("play-clear-log").addEventListener("click", clearPlayLog);
+    document.getElementById("play-clear-log").addEventListener("click", (event) => {
+      openPlayReference("Clear Log", event.currentTarget);
+      clearPlayLog();
+    });
     document.getElementById("play-tab-nav").addEventListener("click", (event) => {
       const button = event.target.closest("[data-play-tab]");
       if (!button) {
@@ -13310,6 +16250,8 @@ ${secondaryStatText}`),
         },
         hpAdjustAmount: "",
         hpHasManualChange: false,
+        foodUsedSinceRest: false,
+        activeEffects: [],
         playerNotes: "",
         inventoryItems: [],
         inventorySearch: "",
@@ -13398,6 +16340,23 @@ ${secondaryStatText}`),
       scheduleWorkingStatePersist();
     }
   }
+  function clonePlayEffectRules2(rules = {}) {
+    if (!rules || typeof rules !== "object") {
+      return {};
+    }
+    return {
+      id: cleanText(rules.id),
+      sourceType: cleanText(rules.sourceType),
+      value: cleanText(rules.value),
+      valueLabel: cleanText(rules.valueLabel),
+      detail: cleanText(rules.detail),
+      automation: cleanText(rules.automation),
+      detailLines: Array.isArray(rules.detailLines) ? rules.detailLines.map(cleanText).filter(Boolean) : [],
+      automationLines: Array.isArray(rules.automationLines) ? rules.automationLines.map(cleanText).filter(Boolean) : [],
+      modifiers: rules.modifiers && typeof rules.modifiers === "object" ? { ...rules.modifiers } : {},
+      resourceGrant: rules.resourceGrant && typeof rules.resourceGrant === "object" ? { ...rules.resourceGrant } : {}
+    };
+  }
   function mergePlayState(source = {}) {
     const defaults = createDefaultState().play;
     const sourceHasHpFlag = Object.prototype.hasOwnProperty.call(source, "hpHasManualChange");
@@ -13426,6 +16385,17 @@ ${secondaryStatText}`),
         }
       },
       inventoryItems: Array.isArray(source.inventoryItems) ? source.inventoryItems : defaults.inventoryItems,
+      activeEffects: Array.isArray(source.activeEffects) ? source.activeEffects.map((entry) => ({
+        id: cleanText(entry.id),
+        name: cleanText(entry.name),
+        source: cleanText(entry.source),
+        summary: cleanText(entry.summary),
+        duration: cleanText(entry.duration),
+        tone: cleanText(entry.tone),
+        createdAt: cleanText(entry.createdAt),
+        rules: clonePlayEffectRules2(entry.rules)
+      })).filter((entry) => entry.id && entry.name) : defaults.activeEffects,
+      foodUsedSinceRest: Boolean(source.foodUsedSinceRest),
       log: Array.isArray(source.log) ? source.log : defaults.log
     };
   }

@@ -1,12 +1,10 @@
-Lyrian Chronicles Character Builder
-Angels Sword Beta 1.4 Web Release
+Angels Sword Beta 1.5 Static Parity Build
 
 PUBLIC LINK
 
-Beta 1.4 updates the existing public web build.
-No ZIP download, local installer, or launcher window is required.
+Beta 1.5 is the static/public working copy. It now includes the non-API fixes and play-sheet improvements from the later 1.6 work, but it does not include the 1.6 API provider layer.
 
-The existing GitHub Pages link stays stable for this update.
+The existing GitHub Pages link stays stable until this work is intentionally pushed later.
 
 QUICK START
 
@@ -25,6 +23,7 @@ WHAT IS INCLUDED
 - PDF export/import with embedded character data.
 - Spreadsheet export/import with embedded character data.
 - Static web hosting for browser access.
+- Updated workbook import/export behavior checked with Roland and Masaru style fixtures.
 
 SAVE DATA WARNING
 
@@ -40,3 +39,6 @@ When reporting a bug, include:
 - What actually happened.
 - Which browser you used.
 - Whether you were using the public site or a local development copy.
+
+---
+Lyrian Chronicles Character Builder - Beta Version 1.5 Static Parity Build

@@ -34,6 +34,10 @@ let computedBonusesCacheValue = null;
 
     export let lookup = buildLookup(window.LYRIAN_DATA);
 export let detailLookup = buildLookup(window.LYRIAN_DETAIL_DATA);
+export function refreshGameDataRuntime() {
+      lookup = buildLookup(window.LYRIAN_DATA);
+      detailLookup = buildLookup(window.LYRIAN_DETAIL_DATA);
+    }
 export const versionRuntime = {
       serverAvailable: false,
       latestCheck: null,
@@ -135,8 +139,7 @@ export async function applyGameVersion(versionId, options = {}) {
           setVersionProgress(55, `Loading ${version.id} detail data`);
           await loadScriptAsset(version.detailPath);
         }
-        lookup = buildLookup(window.LYRIAN_DATA);
-        detailLookup = buildLookup(window.LYRIAN_DETAIL_DATA);
+        refreshGameDataRuntime();
         state.ui.gameVersion = version.id;
         if (options.persistSelection !== false) {
           persistSelectedGameVersion(version.id);
@@ -253,6 +256,9 @@ export function getAncestryDetail(value) {
         return direct;
       }
 const key = normalizeKey(value);
+      if (!key) {
+        return null;
+      }
       return getAllSecondaryLineageOptions().find((entry) =>
         normalizeKey(entry.id) === key
         || normalizeKey(entry.name) === key
@@ -406,35 +412,92 @@ export function getCampaignProgressState() {
         spiritCore: Math.max(0, toNumber(cleanText(state.fields["Spirit Core"]), 0))
       };
     }
+function getActivePlayEffectModifierSummary() {
+      const summary = {
+        stat: { Power: 0, Focus: 0, Agility: 0, Toughness: 0 },
+        derived: {},
+        speedMultiplier: 1,
+        speedSet: null,
+        dodgeSet: null
+      };
+      const effects = Array.isArray(state.play?.activeEffects) ? state.play.activeEffects : [];
+      effects.forEach((effect) => {
+        const modifiers = effect?.rules?.modifiers && typeof effect.rules.modifiers === "object" ? effect.rules.modifiers : {};
+        Object.entries(modifiers).forEach(([key, rawValue]) => {
+          if (key === "speedMultiplier") {
+            summary.speedMultiplier *= Number.isFinite(Number(rawValue)) ? Number(rawValue) : 1;
+            return;
+          }
+          if (key === "speedSet") {
+            const value = Number(rawValue);
+            if (Number.isFinite(value)) {
+              summary.speedSet = summary.speedSet == null ? value : Math.min(summary.speedSet, value);
+            }
+            return;
+          }
+          if (key === "dodgeSet") {
+            const value = Number(rawValue);
+            if (Number.isFinite(value)) {
+              summary.dodgeSet = summary.dodgeSet == null ? value : Math.min(summary.dodgeSet, value);
+            }
+            return;
+          }
+          if (Object.prototype.hasOwnProperty.call(summary.stat, key)) {
+            summary.stat[key] += toNumber(rawValue, 0);
+            return;
+          }
+          summary.derived[key] = (summary.derived[key] || 0) + toNumber(rawValue, 0);
+        });
+      });
+      return summary;
+    }
+function getActivePlayEffectCurrentAllowance(resourceKey) {
+      const effects = Array.isArray(state.play?.activeEffects) ? state.play.activeEffects : [];
+      return effects.reduce((total, effect) => {
+        const grant = effect?.rules?.resourceGrant && typeof effect.rules.resourceGrant === "object"
+          ? toNumber(effect.rules.resourceGrant[resourceKey], 0)
+          : 0;
+        return total + Math.max(0, grant);
+      }, 0);
+    }
 export function getDerivedCombatStats() {
       const bonuses = getComputedBonuses();
-const power = toNumber(state.fields.Power, 0) + (bonuses.mainStats.Power || 0);
-const focus = toNumber(state.fields.Focus, 0) + (bonuses.mainStats.Focus || 0);
-const agility = toNumber(state.fields.Agility, 0) + (bonuses.mainStats.Agility || 0);
-const toughness = toNumber(state.fields.Toughness, 0) + (bonuses.mainStats.Toughness || 0);
+const activeEffectModifiers = getActivePlayEffectModifierSummary();
+const power = toNumber(state.fields.Power, 0) + (bonuses.mainStats.Power || 0) + activeEffectModifiers.stat.Power;
+const focus = toNumber(state.fields.Focus, 0) + (bonuses.mainStats.Focus || 0) + activeEffectModifiers.stat.Focus;
+const agility = toNumber(state.fields.Agility, 0) + (bonuses.mainStats.Agility || 0) + activeEffectModifiers.stat.Agility;
+const toughness = toNumber(state.fields.Toughness, 0) + (bonuses.mainStats.Toughness || 0) + activeEffectModifiers.stat.Toughness;
 const breakthroughEffects = getSelectedBreakthroughEffects();
 const hpMax = 20 + toughness * 10 + (bonuses.derived.hpMax || 0);
 const manaMax = 6 + power + (bonuses.derived.manaMax || 0);
 const rpMax = 2 + agility + (bonuses.derived.rpMax || 0);
 const apMaxText = cleanText(state.play?.resources?.apMax);
 const apMax = apMaxText ? Math.max(0, toNumber(apMaxText, 4)) : 4;
+const derivedBonuses = {
+        ...bonuses.derived,
+        ...Object.fromEntries(Object.entries(activeEffectModifiers.derived).map(([key, value]) => [key, (bonuses.derived[key] || 0) + value]))
+      };
+const speedBeforeSet = Math.max(0, Math.floor((20 + (derivedBonuses.speed || 0)) * activeEffectModifiers.speedMultiplier));
+const speed = activeEffectModifiers.speedSet == null ? speedBeforeSet : Math.max(0, activeEffectModifiers.speedSet);
+const dodgeBeforeSet = 20 + agility + (derivedBonuses.dodge || 0);
+const dodge = activeEffectModifiers.dodgeSet == null ? dodgeBeforeSet : activeEffectModifiers.dodgeSet;
 
       return {
         hpMax,
         manaMax,
         rpMax,
         apMax,
-        guard: toughness + (bonuses.derived.guard || 0),
-        evasion: 7 + agility + (bonuses.derived.evasion || 0),
-        speed: 20 + (bonuses.derived.speed || 0),
-        potency: 11 + focus + (bonuses.derived.potency || 0),
-        initiative: agility + breakthroughEffects.initiativeBonus + (bonuses.derived.initiative || 0),
-        saveBonus: toughness + (bonuses.derived.saveBonus || 0),
-        lightAttack: focus + (bonuses.derived.lightAttack || 0),
-        heavyAttack: focus + (bonuses.derived.heavyAttack || 0),
-        preciseAttack: (focus * 2) + (bonuses.derived.preciseAttack || 0),
-        dodge: 20 + agility + (bonuses.derived.dodge || 0),
-        block: (toughness * 2) + (bonuses.derived.block || 0)
+        guard: toughness + (derivedBonuses.guard || 0),
+        evasion: 7 + agility + (derivedBonuses.evasion || 0),
+        speed,
+        potency: 11 + focus + (derivedBonuses.potency || 0),
+        initiative: agility + breakthroughEffects.initiativeBonus + (derivedBonuses.initiative || 0),
+        saveBonus: toughness + (derivedBonuses.saveBonus || 0),
+        lightAttack: focus + (derivedBonuses.lightAttack || 0),
+        heavyAttack: focus + (derivedBonuses.heavyAttack || 0),
+        preciseAttack: (focus * 2) + (derivedBonuses.preciseAttack || 0),
+        dodge,
+        block: (toughness * 2) + (derivedBonuses.block || 0)
       };
     }
 export function hasManualHpHistory(play = {}) {
@@ -504,8 +567,8 @@ const oldHpMax = previousHpMax;
         state.play.hpHasManualChange = false;
       }
       resources.manaCurrent = clamp(toNumber(resources.manaCurrent, derived.manaMax), 0, Math.max(0, derived.manaMax));
-      resources.rpCurrent = clamp(toNumber(resources.rpCurrent, derived.rpMax), 0, Math.max(0, derived.rpMax));
-      resources.apCurrent = clamp(toNumber(resources.apCurrent, derived.apMax), 0, Math.max(0, derived.apMax));
+      resources.rpCurrent = clamp(toNumber(resources.rpCurrent, derived.rpMax), 0, Math.max(0, derived.rpMax + getActivePlayEffectCurrentAllowance("rpCurrent")));
+      resources.apCurrent = clamp(toNumber(resources.apCurrent, derived.apMax), 0, Math.max(0, derived.apMax + getActivePlayEffectCurrentAllowance("apCurrent")));
     }
 function applyTrackedPlayUseEffects(label, effectText, cost, options = {}) {
       const resources = state.play.resources;
@@ -544,17 +607,51 @@ const nextHp = clamp(currentHp + healing, 0, Math.max(0, derived.hpMax));
         lines.push(`${reason}: healed ${healing} HP.`);
         lines.push(`Current HP: ${nextHp} / ${derived.hpMax}`);
       };
-const restoreMana = (amount, reason = "Tracked effect") => {
+const damageHp = (amount, reason = "Tracked effect") => {
+        const damage = Math.max(0, Math.floor(amount));
+        if (!damage) {
+          return;
+        }
+const currentHp = toNumber(resources.hpCurrent, derived.hpMax);
+const nextHp = clamp(currentHp - damage, 0, Math.max(0, derived.hpMax));
+        resources.hpCurrent = nextHp;
+        state.play.resources.hpCurrent = nextHp;
+        state.play.hpHasManualChange = nextHp < derived.hpMax;
+        lines.push(`${reason}: took ${damage} HP damage.`);
+        lines.push(`Current HP: ${nextHp} / ${derived.hpMax}`);
+      };
+const restoreResource = (resource, amount, reason = "Tracked effect") => {
         const gain = Math.max(0, Math.floor(amount));
         if (!gain) {
           return;
         }
-const currentMana = toNumber(resources.manaCurrent, derived.manaMax);
-const nextMana = clamp(currentMana + gain, 0, Math.max(0, derived.manaMax));
-        resources.manaCurrent = nextMana;
-        state.play.resources.manaCurrent = nextMana;
-        lines.push(`${reason}: restored ${gain} Mana.`);
-        lines.push(`Mana: ${nextMana} / ${derived.manaMax}`);
+const resourceConfig = {
+          Mana: { currentKey: "manaCurrent", max: derived.manaMax },
+          RP: { currentKey: "rpCurrent", max: derived.rpMax },
+          AP: { currentKey: "apCurrent", max: derived.apMax }
+        }[resource];
+        if (!resourceConfig) {
+          return;
+        }
+const current = toNumber(resources[resourceConfig.currentKey], resourceConfig.max);
+const next = clamp(current + gain, 0, Math.max(0, resourceConfig.max));
+        resources[resourceConfig.currentKey] = next;
+        state.play.resources[resourceConfig.currentKey] = next;
+        lines.push(`${reason}: restored ${gain} ${resource}.`);
+        lines.push(`${resource}: ${next} / ${resourceConfig.max}`);
+      };
+const restoreDirectResourceSentence = (sentence) => {
+        if (/\b(?:target|ally|enemy|creature)\b/i.test(sentence) || /\bstart of your turn\b/i.test(sentence)) {
+          return;
+        }
+const directResourceMatch = sentence.match(/\byou(?:\s+immediately)?\s+(?:regain|gain|recover)\s+(\d+)\s*(mana|rp|ap)\b/i);
+        if (!directResourceMatch) {
+          return;
+        }
+        const resource = directResourceMatch[2].toLowerCase() === "mana"
+          ? "Mana"
+          : directResourceMatch[2].toUpperCase();
+        restoreResource(resource, Number(directResourceMatch[1]));
       };
 const selfTempHpExpression = text.match(/\byou gain temporary (?:hit points|hp) equal to (?:your\s+)?(toughness|focus|power)\s*\+\s*(\d+)/i);
       if (selfTempHpExpression && !/\bon damage\b/i.test(text)) {
@@ -577,17 +674,39 @@ const focus = toNumber(state.fields.Focus, 0) + (bonuses.mainStats.Focus || 0);
       if (normalizedLabel === "spiritual sync" || /temporary hp equal to 8x/i.test(text)) {
         addTemporaryHp(cost.Mana * 8, "Tracked mana conversion");
       }
+const directTemporaryHp = text.match(/\byou gain (\d+) temporary (?:hit points|hp)\b/i);
+      if (directTemporaryHp && !/\b(?:target|ally|enemy|creature)\b/i.test(text)) {
+        addTemporaryHp(Number(directTemporaryHp[1]));
+      }
 const manaHealing = text.match(/\byou regain hp equal to (\d+) times the mana spent/i);
       if (manaHealing) {
         healHp(Number(manaHealing[1]) * cost.Mana);
       }
-const manaRecovery = text.match(/\byou regain (\d+) mana\b/i);
-      if (manaRecovery && !/\btarget\b/i.test(text)) {
-        restoreMana(Number(manaRecovery[1]));
+const directDamage = text.match(/\byou take (\d+) true damage\b/i);
+      if (directDamage && !/\btarget\b/i.test(text)) {
+        damageHp(Number(directDamage[1]));
       }
+const statDamage = text.match(/\byou take true damage equal to (?:your\s+)?(toughness|focus|power)\s*x\s*(\d+)/i);
+      if (statDamage && !/\btarget\b/i.test(text)) {
+        const stat = statDamage[1].toLowerCase();
+const bonuses = getComputedBonuses();
+const base = stat === "toughness"
+          ? toNumber(state.fields.Toughness, 0) + (bonuses.mainStats.Toughness || 0)
+          : stat === "focus"
+            ? toNumber(state.fields.Focus, 0) + (bonuses.mainStats.Focus || 0)
+            : toNumber(state.fields.Power, 0) + (bonuses.mainStats.Power || 0);
+        damageHp(base * Number(statDamage[2]));
+      }
+      cleanText(text)
+        .split(/(?<=[.!?])\s+/)
+        .forEach((sentence) => restoreDirectResourceSentence(sentence));
 
       if (!lines.length && options.logManualEffects !== false && /\btemporary (?:hit points|hp)\b/i.test(text)) {
         lines.push("Manual effect: this ability mentions Temporary HP, but the target, trigger, or formula needs player/GM handling.");
+      }
+
+      if (/\bmaximum (?:hp|mana|ap|rp)\b/i.test(text) && !lines.some((line) => /maximum/i.test(line))) {
+        lines.push("Manual effect: this use mentions a temporary maximum-resource change; adjust the max field manually if it applies.");
       }
 
       return lines;

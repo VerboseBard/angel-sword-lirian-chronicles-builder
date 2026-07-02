@@ -79,6 +79,8 @@ export function createDefaultState() {
           },
           hpAdjustAmount: "",
           hpHasManualChange: false,
+          foodUsedSinceRest: false,
+          activeEffects: [],
           playerNotes: "",
           inventoryItems: [],
           inventorySearch: "",
@@ -181,6 +183,23 @@ const node = document.querySelector(`[data-field="${cssEscape(fieldName)}"]`);
         scheduleWorkingStatePersist();
       }
     }
+function clonePlayEffectRules(rules = {}) {
+      if (!rules || typeof rules !== "object") {
+        return {};
+      }
+      return {
+        id: cleanText(rules.id),
+        sourceType: cleanText(rules.sourceType),
+        value: cleanText(rules.value),
+        valueLabel: cleanText(rules.valueLabel),
+        detail: cleanText(rules.detail),
+        automation: cleanText(rules.automation),
+        detailLines: Array.isArray(rules.detailLines) ? rules.detailLines.map(cleanText).filter(Boolean) : [],
+        automationLines: Array.isArray(rules.automationLines) ? rules.automationLines.map(cleanText).filter(Boolean) : [],
+        modifiers: rules.modifiers && typeof rules.modifiers === "object" ? { ...rules.modifiers } : {},
+        resourceGrant: rules.resourceGrant && typeof rules.resourceGrant === "object" ? { ...rules.resourceGrant } : {}
+      };
+    }
 export function mergePlayState(source = {}) {
       const defaults = createDefaultState().play;
 const sourceHasHpFlag = Object.prototype.hasOwnProperty.call(source, "hpHasManualChange");
@@ -209,6 +228,21 @@ const sourceHasHpFlag = Object.prototype.hasOwnProperty.call(source, "hpHasManua
           }
         },
         inventoryItems: Array.isArray(source.inventoryItems) ? source.inventoryItems : defaults.inventoryItems,
+        activeEffects: Array.isArray(source.activeEffects)
+          ? source.activeEffects
+            .map((entry) => ({
+              id: cleanText(entry.id),
+              name: cleanText(entry.name),
+              source: cleanText(entry.source),
+              summary: cleanText(entry.summary),
+              duration: cleanText(entry.duration),
+              tone: cleanText(entry.tone),
+              createdAt: cleanText(entry.createdAt),
+              rules: clonePlayEffectRules(entry.rules)
+            }))
+            .filter((entry) => entry.id && entry.name)
+          : defaults.activeEffects,
+        foodUsedSinceRest: Boolean(source.foodUsedSinceRest),
         log: Array.isArray(source.log) ? source.log : defaults.log
       };
     }

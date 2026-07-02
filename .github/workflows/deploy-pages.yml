@@ -1,4 +1,4 @@
-name: Deploy Beta 1.4 Web
+name: Deploy Beta 1.5 Web
 
 on:
   push:
@@ -27,23 +27,10 @@ jobs:
       - name: Prepare static site
         shell: bash
         run: |
-          mkdir -p dist
-          rsync -a \
-            --exclude '.git' \
-            --exclude '.github' \
-            --exclude 'node_modules' \
-            --exclude 'dist' \
-            --exclude 'qa-test-results' \
-            --exclude 'scripts' \
-            --exclude 'vite.config.js' \
-            --exclude 'package.json' \
-            --exclude 'package-lock.json' \
-            --exclude 'runtime' \
-            --exclude 'diagnostics' \
-            --exclude '*.zip' \
-            --exclude '*.7z' \
-            --exclude '*.rar' \
-            ./ dist/
+          mkdir -p dist/src/css
+          rsync -a index.html dist/
+          rsync -a assets/ dist/assets/
+          rsync -a src/css/main.css dist/src/css/main.css
           touch dist/.nojekyll
 
       - name: Configure Pages

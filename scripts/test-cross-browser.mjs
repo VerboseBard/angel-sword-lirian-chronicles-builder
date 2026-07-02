@@ -10,28 +10,6 @@ const QA_DIR = path.join(PROJECT_ROOT, 'qa-test-results');
 const DEPLOY_TEMP_DIR = path.join(PROJECT_ROOT, 'deploy-temp-dist');
 const PORT = 4199; // Use a dedicated test port to avoid conflict with running instances
 
-// Exclusions list matching deploy-pages.yml
-const EXCLUDED_NAMES = new Set([
-  '.git',
-  '.github',
-  'node_modules',
-  'dist',
-  'qa-test-results',
-  'scripts',
-  'deploy-temp-dist',
-  'vite.config.js',
-  'package.json',
-  'package-lock.json',
-  'runtime',
-  'diagnostics'
-]);
-
-const EXCLUDED_EXTENSIONS = new Set([
-  '.zip',
-  '.7z',
-  '.rar'
-]);
-
 async function copyDirectory(src, dest) {
   await fs.mkdir(dest, { recursive: true });
   const entries = await fs.readdir(src, { withFileTypes: true });
@@ -40,20 +18,23 @@ async function copyDirectory(src, dest) {
     const srcPath = path.join(src, entry.name);
     const destPath = path.join(dest, entry.name);
 
-    if (EXCLUDED_NAMES.has(entry.name)) {
-      continue;
-    }
-    const ext = path.extname(entry.name).toLowerCase();
-    if (EXCLUDED_EXTENSIONS.has(ext)) {
-      continue;
-    }
-
     if (entry.isDirectory()) {
       await copyDirectory(srcPath, destPath);
     } else {
       await fs.copyFile(srcPath, destPath);
     }
   }
+}
+
+async function copyDeploymentArtifact() {
+  await fs.rm(DEPLOY_TEMP_DIR, { recursive: true, force: true });
+  await fs.mkdir(path.join(DEPLOY_TEMP_DIR, 'src', 'css'), { recursive: true });
+  await fs.copyFile(path.join(PROJECT_ROOT, 'index.html'), path.join(DEPLOY_TEMP_DIR, 'index.html'));
+  await copyDirectory(path.join(PROJECT_ROOT, 'assets'), path.join(DEPLOY_TEMP_DIR, 'assets'));
+  await fs.copyFile(
+    path.join(PROJECT_ROOT, 'src', 'css', 'main.css'),
+    path.join(DEPLOY_TEMP_DIR, 'src', 'css', 'main.css')
+  );
 }
 
 async function assertDiceRollerHasNoPageDimmingPlane() {
@@ -116,7 +97,7 @@ async function runDirectFileStartupAssertion() {
       && result.cardCount > 0
       && result.navCount > 0
       && result.summaryText.includes('Identity')
-      && result.buildLabel.includes('Beta 1.4');
+      && result.buildLabel.includes('Beta 1.5');
 
     if (!startupIsValid || errors.length || failedFileRequests.length) {
       throw new Error(`Direct file startup regression failed: ${JSON.stringify({ result, errors, failedFileRequests }, null, 2)}`);
@@ -126,6 +107,18 @@ async function runDirectFileStartupAssertion() {
   }
 }
 
+function isLocalTestUrl(url) {
+  return url.includes(`127.0.0.1:${PORT}`) || url.includes(`localhost:${PORT}`);
+}
+
+function isIgnorableLocalMediaAbort(request) {
+  const url = request.url();
+  const failureText = request.failure()?.errorText || '';
+  return isLocalTestUrl(url)
+    && /\.mp3(?:[?#]|$)/i.test(url)
+    && /abort|cancel/i.test(failureText);
+}
+
 async function main() {
   console.log('--- Initializing Cross-Browser Testing against Deployment Artifact ---');
   await fs.mkdir(QA_DIR, { recursive: true });
@@ -133,8 +126,7 @@ async function main() {
 
   // 1. Replicate the GitHub Pages deployment artifact copy
   console.log(`Replicating deployment artifact in ${DEPLOY_TEMP_DIR}...`);
-  await fs.rm(DEPLOY_TEMP_DIR, { recursive: true, force: true }).catch(() => {});
-  await copyDirectory(PROJECT_ROOT, DEPLOY_TEMP_DIR);
+  await copyDeploymentArtifact();
   await fs.writeFile(path.join(DEPLOY_TEMP_DIR, '.nojekyll'), '', 'utf8');
 
   let testFailedGlobal = false;
@@ -176,6 +168,8 @@ const browsers = [
   ];
 
   async function runRulesRegressionAssertions(page) {
+    await runSpreadsheetVisibleGridImportAssertion(page);
+
     await page.locator('[data-builder-action="pick-race"]').filter({ hasText: 'Human' }).first().click();
     await page.click('[data-step-index="7"]');
     await page.waitForSelector('.builder-skill-expertise-panel', { timeout: 5000 });
@@ -738,6 +732,459 @@ const browsers = [
     await page.evaluate(() => {
       localStorage.clear();
       localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'builder', gameVersion: '0.13.0' },
+        fields: { Name: 'Mage Cascade Tester' },
+        builder: {
+          selectedRaceId: 'human',
+          selectedClassIds: ['mage'],
+          classAbilityProgress: { mage: 4 },
+          choiceSelections: {
+            'race-human-weapon-group': 'Light Swords'
+          }
+        }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-step-index="6"]');
+    await page.waitForSelector('.builder-option-card', { timeout: 5000 });
+
+    const mageCascadeRequirementResult = await page.evaluate(() => {
+      const getClassCardState = (name) => {
+        const card = [...document.querySelectorAll('.builder-option-card')]
+          .find((entry) => entry.querySelector('strong')?.textContent?.trim() === name);
+        return card ? {
+          found: true,
+          locked: card.classList.contains('locked'),
+          labels: card.querySelector('.builder-option-meta')?.textContent?.replace(/\s+/g, ' ').trim() || '',
+          note: card.querySelector('.builder-option-note')?.textContent?.replace(/\s+/g, ' ').trim() || ''
+        } : { found: false };
+      };
+      return {
+        battleMage: getClassCardState('Battle Mage'),
+        abjurer: getClassCardState('Abjurer')
+      };
+    });
+
+    if (
+      !mageCascadeRequirementResult.battleMage.found ||
+      mageCascadeRequirementResult.battleMage.locked ||
+      !mageCascadeRequirementResult.abjurer.found ||
+      !mageCascadeRequirementResult.abjurer.locked
+    ) {
+      throw new Error(`Mage/Battle Mage/Abjurer cascade regression failed: ${JSON.stringify(mageCascadeRequirementResult)}`);
+    }
+
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'builder', gameVersion: '0.13.0' },
+        fields: { Name: 'Battle Mage Cascade Tester' },
+        builder: {
+          selectedRaceId: 'human',
+          selectedClassIds: ['mage', 'battle-mage'],
+          classAbilityProgress: { mage: 4, 'battle-mage': 2 },
+          choiceSelections: {
+            'race-human-weapon-group': 'Light Swords'
+          }
+        }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-step-index="6"]');
+    await page.waitForSelector('.builder-option-card', { timeout: 5000 });
+
+    const battleMageCascadeRequirementResult = await page.evaluate(() => {
+      const card = [...document.querySelectorAll('.builder-option-card')]
+        .find((entry) => entry.querySelector('strong')?.textContent?.trim() === 'Abjurer');
+      return card ? {
+        found: true,
+        locked: card.classList.contains('locked'),
+        labels: card.querySelector('.builder-option-meta')?.textContent?.replace(/\s+/g, ' ').trim() || '',
+        note: card.querySelector('.builder-option-note')?.textContent?.replace(/\s+/g, ' ').trim() || ''
+      } : { found: false };
+    });
+
+    if (!battleMageCascadeRequirementResult.found || battleMageCascadeRequirementResult.locked) {
+      throw new Error(`Battle Mage to Abjurer cascade regression failed: ${JSON.stringify(battleMageCascadeRequirementResult)}`);
+    }
+
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'builder', gameVersion: '0.13.0' },
+        fields: { Name: 'Early Ascension Tester' },
+        builder: {
+          selectedRaceId: 'human',
+          selectedBreakthroughIds: ['early-ascension']
+        }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-step-index="6"]');
+    await page.waitForSelector('.builder-option-card', { timeout: 5000 });
+
+    const earlyAscensionResult = await page.evaluate(() => {
+      const getClassCardState = (name) => {
+        const card = [...document.querySelectorAll('.builder-option-card')]
+          .find((entry) => entry.querySelector('strong')?.textContent?.trim() === name);
+        return card ? {
+          found: true,
+          locked: card.classList.contains('locked'),
+          labels: card.querySelector('.builder-option-meta')?.textContent?.replace(/\s+/g, ' ').trim() || '',
+          note: card.querySelector('.builder-option-note')?.textContent?.replace(/\s+/g, ' ').trim() || ''
+        } : { found: false };
+      };
+      return {
+        aetherie: getClassCardState('Aetherie'),
+        bloodbinder: getClassCardState('Bloodbinder'),
+        bodyguard: getClassCardState('Bodyguard')
+      };
+    });
+
+    if (
+      !earlyAscensionResult.aetherie.found ||
+      earlyAscensionResult.aetherie.locked ||
+      !earlyAscensionResult.bloodbinder.found ||
+      earlyAscensionResult.bloodbinder.locked ||
+      !earlyAscensionResult.bodyguard.found ||
+      !earlyAscensionResult.bodyguard.locked
+    ) {
+      throw new Error(`Early Ascension generic class mastery regression failed: ${JSON.stringify(earlyAscensionResult)}`);
+    }
+
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'builder', gameVersion: '0.13.0' },
+        fields: { Name: 'Repeatable Elemental Affinity Tester' },
+        builder: {
+          selectedRaceId: 'human'
+        }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-step-index="5"]');
+    await page.waitForSelector('.builder-elemental-affinity-card', { timeout: 5000 });
+    await page.selectOption('[data-elemental-affinity-select]', 'Fire');
+    await page.click('[data-builder-action="add-elemental-affinity"]');
+    await page.waitForFunction(() => {
+      const card = document.querySelector('.builder-elemental-affinity-card');
+      return card?.textContent.includes('Fire') && ![...card.querySelectorAll('[data-elemental-affinity-select] option')].some((option) => option.value === 'Fire');
+    });
+    await page.selectOption('[data-elemental-affinity-select]', 'Lightning');
+    await page.click('[data-builder-action="add-elemental-affinity"]');
+    await page.waitForFunction(() => {
+      const card = document.querySelector('.builder-elemental-affinity-card');
+      const options = [...card?.querySelectorAll('[data-elemental-affinity-select] option') || []].map((option) => option.value);
+      return card?.textContent.includes('Selected x2')
+        && card.textContent.includes('Fire')
+        && card.textContent.includes('Lightning')
+        && !options.includes('Fire')
+        && !options.includes('Lightning');
+    });
+
+    const repeatableElementalAffinityResult = await page.evaluate(() => {
+      const card = document.querySelector('.builder-elemental-affinity-card');
+      return {
+        cardText: card?.textContent?.replace(/\s+/g, ' ').trim() || '',
+        selectedBreakthroughChips: [...document.querySelectorAll('.selected-chip-list .selected-chip')].map((entry) => entry.textContent.replace(/\s+/g, ' ').trim()),
+        summaryText: document.querySelector('#builder-summary')?.textContent?.replace(/\s+/g, ' ').trim() || ''
+      };
+    });
+
+    if (
+      !repeatableElementalAffinityResult.cardText.includes('Selected x2') ||
+      !repeatableElementalAffinityResult.cardText.includes('Fire') ||
+      !repeatableElementalAffinityResult.cardText.includes('Lightning') ||
+      !repeatableElementalAffinityResult.summaryText.includes('Elemental Affinity: Fire') ||
+      !repeatableElementalAffinityResult.summaryText.includes('Elemental Affinity: Lightning')
+    ) {
+      throw new Error(`Repeatable Elemental Affinity UI regression failed: ${JSON.stringify(repeatableElementalAffinityResult)}`);
+    }
+
+    await page.click('[data-step-index="6"]');
+    await page.waitForSelector('.builder-option-card', { timeout: 5000 });
+
+    const repeatableElementalUnlockResult = await page.evaluate(() => {
+      const getClassCardState = (name) => {
+        const card = [...document.querySelectorAll('.builder-option-card')]
+          .find((entry) => entry.querySelector('strong')?.textContent?.trim() === name);
+        return card ? {
+          found: true,
+          locked: card.classList.contains('locked'),
+          labels: card.querySelector('.builder-option-meta')?.textContent?.replace(/\s+/g, ' ').trim() || '',
+          note: card.querySelector('.builder-option-note')?.textContent?.replace(/\s+/g, ' ').trim() || ''
+        } : { found: false };
+      };
+      return {
+        pyromancer: getClassCardState('Pyromancer'),
+        flameSentinel: getClassCardState('Flame Sentinel'),
+        electromancer: getClassCardState('Electromancer')
+      };
+    });
+
+    if (
+      !repeatableElementalUnlockResult.pyromancer.found ||
+      repeatableElementalUnlockResult.pyromancer.locked ||
+      !repeatableElementalUnlockResult.flameSentinel.found ||
+      repeatableElementalUnlockResult.flameSentinel.locked ||
+      !repeatableElementalUnlockResult.electromancer.found ||
+      repeatableElementalUnlockResult.electromancer.locked
+    ) {
+      throw new Error(`Repeatable Elemental Affinity unlock regression failed: ${JSON.stringify(repeatableElementalUnlockResult)}`);
+    }
+
+    const elementalAffinityId = 'elemental-affinity';
+    await page.evaluate((breakthroughId) => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'builder', gameVersion: '0.13.0' },
+        fields: { Name: 'Elemental Affinity Tester' },
+        builder: {
+          selectedRaceId: 'human',
+          selectedBreakthroughIds: [breakthroughId],
+          choiceSelections: {
+            [`breakthrough-${breakthroughId}-element`]: 'Fire'
+          }
+        }
+      }));
+    }, elementalAffinityId);
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-step-index="6"]');
+    await page.waitForSelector('.builder-option-card', { timeout: 5000 });
+
+    const elementalAffinityResult = await page.evaluate(() => {
+      const getClassCardState = (name) => {
+        const card = [...document.querySelectorAll('.builder-option-card')]
+          .find((entry) => entry.querySelector('strong')?.textContent?.trim() === name);
+        return card ? {
+          found: true,
+          locked: card.classList.contains('locked'),
+          labels: card.querySelector('.builder-option-meta')?.textContent?.replace(/\s+/g, ' ').trim() || '',
+          note: card.querySelector('.builder-option-note')?.textContent?.replace(/\s+/g, ' ').trim() || ''
+        } : { found: false };
+      };
+      return {
+        pyromancer: getClassCardState('Pyromancer'),
+        flameSentinel: getClassCardState('Flame Sentinel'),
+        electromancer: getClassCardState('Electromancer')
+      };
+    });
+
+    if (
+      !elementalAffinityResult.pyromancer.found ||
+      elementalAffinityResult.pyromancer.locked ||
+      !elementalAffinityResult.flameSentinel.found ||
+      elementalAffinityResult.flameSentinel.locked ||
+      !elementalAffinityResult.electromancer.found ||
+      !elementalAffinityResult.electromancer.locked
+    ) {
+      throw new Error(`Elemental Affinity mastery unlock regression failed: ${JSON.stringify(elementalAffinityResult)}`);
+    }
+
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'builder', gameVersion: '0.13.0' },
+        fields: { Name: 'Key Ability Mastery Tester' },
+        builder: {
+          selectedRaceId: 'human',
+          selectedClassIds: ['pyromancer'],
+          classAbilityProgress: { pyromancer: 0 }
+        }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-step-index="6"]');
+    await page.waitForSelector('.builder-option-card', { timeout: 5000 });
+
+    const pyromancerMasteryResult = await page.evaluate(() => {
+      const card = [...document.querySelectorAll('.builder-option-card')]
+        .find((entry) => entry.querySelector('strong')?.textContent?.trim() === 'Flame Sentinel');
+      return card ? {
+        found: true,
+        locked: card.classList.contains('locked'),
+        labels: card.querySelector('.builder-option-meta')?.textContent?.replace(/\s+/g, ' ').trim() || '',
+        note: card.querySelector('.builder-option-note')?.textContent?.replace(/\s+/g, ' ').trim() || ''
+      } : { found: false };
+    });
+
+    if (!pyromancerMasteryResult.found || pyromancerMasteryResult.locked) {
+      throw new Error(`Key ability elemental mastery unlock regression failed: ${JSON.stringify(pyromancerMasteryResult)}`);
+    }
+
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'builder', gameVersion: '0.13.0' },
+        fields: { Name: 'Chosen Element Mastery Tester' },
+        builder: {
+          selectedRaceId: 'human',
+          selectedClassIds: ['sorcerer'],
+          classAbilityProgress: { sorcerer: 7 },
+          choiceSelections: {
+            'class-sorcerer-elemental-mastery': 'Lightning'
+          }
+        }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-step-index="6"]');
+    await page.waitForSelector('.builder-option-card', { timeout: 5000 });
+
+    const sorcererChoiceMasteryResult = await page.evaluate(() => {
+      const card = [...document.querySelectorAll('.builder-option-card')]
+        .find((entry) => entry.querySelector('strong')?.textContent?.trim() === 'Electromancer');
+      return card ? {
+        found: true,
+        locked: card.classList.contains('locked'),
+        labels: card.querySelector('.builder-option-meta')?.textContent?.replace(/\s+/g, ' ').trim() || '',
+        note: card.querySelector('.builder-option-note')?.textContent?.replace(/\s+/g, ' ').trim() || ''
+      } : { found: false };
+    });
+
+    if (!sorcererChoiceMasteryResult.found || sorcererChoiceMasteryResult.locked) {
+      throw new Error(`Chosen class elemental mastery unlock regression failed: ${JSON.stringify(sorcererChoiceMasteryResult)}`);
+    }
+
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'builder', gameVersion: '0.13.0' },
+        fields: { Name: 'Ancestry Mastery Tester' },
+        builder: {
+          selectedRaceId: 'chimera',
+          selectedAncestryId: 'phoenix'
+        }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-step-index="6"]');
+    await page.waitForSelector('.builder-option-card', { timeout: 5000 });
+
+    const phoenixMasteryResult = await page.evaluate(() => {
+      const getClassCardState = (name) => {
+        const card = [...document.querySelectorAll('.builder-option-card')]
+          .find((entry) => entry.querySelector('strong')?.textContent?.trim() === name);
+        return card ? {
+          found: true,
+          locked: card.classList.contains('locked'),
+          labels: card.querySelector('.builder-option-meta')?.textContent?.replace(/\s+/g, ' ').trim() || '',
+          note: card.querySelector('.builder-option-note')?.textContent?.replace(/\s+/g, ' ').trim() || ''
+        } : { found: false };
+      };
+      return {
+        pyromancer: getClassCardState('Pyromancer'),
+        flameSentinel: getClassCardState('Flame Sentinel'),
+        electromancer: getClassCardState('Electromancer')
+      };
+    });
+
+    if (
+      !phoenixMasteryResult.pyromancer.found ||
+      phoenixMasteryResult.pyromancer.locked ||
+      !phoenixMasteryResult.flameSentinel.found ||
+      phoenixMasteryResult.flameSentinel.locked ||
+      !phoenixMasteryResult.electromancer.found ||
+      !phoenixMasteryResult.electromancer.locked
+    ) {
+      throw new Error(`Ancestry trait elemental mastery unlock regression failed: ${JSON.stringify(phoenixMasteryResult)}`);
+    }
+
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'load' });
+    await page.locator('[data-builder-action="pick-race"]').filter({ hasText: 'Human' }).first().click();
+    await page.click('[data-step-index="5"]');
+    await page.waitForSelector('.builder-repeatable-choice-card', { timeout: 5000 });
+
+    const languageTrainingCard = page.locator('.builder-repeatable-choice-card').filter({ has: page.locator('strong', { hasText: /^Language Training$/ }) }).first();
+    await languageTrainingCard.locator('[data-repeatable-breakthrough-select]').selectOption('Sorthen');
+    await languageTrainingCard.locator('[data-builder-action="add-repeatable-breakthrough-choice"]').click();
+    await page.waitForFunction(() => {
+      const card = [...document.querySelectorAll('.builder-repeatable-choice-card')]
+        .find((entry) => entry.querySelector('strong')?.textContent?.trim() === 'Language Training');
+      return card?.textContent.includes('Sorthen')
+        && ![...card.querySelectorAll('[data-repeatable-breakthrough-select] option')].some((option) => option.value === 'Sorthen');
+    });
+    await languageTrainingCard.locator('[data-repeatable-breakthrough-select]').selectOption('Sylvan');
+    await languageTrainingCard.locator('[data-builder-action="add-repeatable-breakthrough-choice"]').click();
+    await page.waitForFunction(() => {
+      const card = [...document.querySelectorAll('.builder-repeatable-choice-card')]
+        .find((entry) => entry.querySelector('strong')?.textContent?.trim() === 'Language Training');
+      return card?.textContent.includes('Selected x2')
+        && card.textContent.includes('Sorthen')
+        && card.textContent.includes('Sylvan');
+    });
+
+    const weaponTrainingCard = page.locator('.builder-repeatable-choice-card').filter({ has: page.locator('strong', { hasText: /^Weapon Training$/ }) }).first();
+    await weaponTrainingCard.locator('[data-repeatable-breakthrough-select]').selectOption('Small Weapons');
+    await weaponTrainingCard.locator('[data-builder-action="add-repeatable-breakthrough-choice"]').click();
+    await page.waitForFunction(() => {
+      const card = [...document.querySelectorAll('.builder-repeatable-choice-card')]
+        .find((entry) => entry.querySelector('strong')?.textContent?.trim() === 'Weapon Training');
+      return card?.textContent.includes('Small Weapons')
+        && ![...card.querySelectorAll('[data-repeatable-breakthrough-select] option')].some((option) => option.value === 'Small Weapons');
+    });
+    await weaponTrainingCard.locator('[data-repeatable-breakthrough-select]').selectOption('Polearms');
+    await weaponTrainingCard.locator('[data-builder-action="add-repeatable-breakthrough-choice"]').click();
+    await page.waitForFunction(() => {
+      const card = [...document.querySelectorAll('.builder-repeatable-choice-card')]
+        .find((entry) => entry.querySelector('strong')?.textContent?.trim() === 'Weapon Training');
+      return card?.textContent.includes('Selected x2')
+        && card.textContent.includes('Small Weapons')
+        && card.textContent.includes('Polearms');
+    });
+
+    const repeatableChoiceResult = await page.evaluate(() => ({
+      summaryText: document.querySelector('#builder-summary')?.textContent?.replace(/\s+/g, ' ').trim() || '',
+      selectedChips: [...document.querySelectorAll('.selected-chip-list .selected-chip')].map((entry) => entry.textContent.replace(/\s+/g, ' ').trim())
+    }));
+
+    if (
+      !repeatableChoiceResult.summaryText.includes('Language Training: Sorthen') ||
+      !repeatableChoiceResult.summaryText.includes('Language Training: Sylvan') ||
+      !repeatableChoiceResult.summaryText.includes('Weapon Training: Small Weapons') ||
+      !repeatableChoiceResult.summaryText.includes('Weapon Training: Polearms')
+    ) {
+      throw new Error(`Repeatable unique breakthrough choice regression failed: ${JSON.stringify(repeatableChoiceResult)}`);
+    }
+
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'load' });
+    await page.locator('[data-builder-action="pick-race"]').filter({ hasText: 'Human' }).first().click();
+    await page.click('[data-step-index="5"]');
+    await page.waitForSelector('.builder-repeatable-choice-card', { timeout: 5000 });
+    const skillTrainingCard = page.locator('.builder-repeatable-choice-card').filter({ has: page.locator('strong', { hasText: /^Skill Training$/ }) }).first();
+    await skillTrainingCard.locator('[data-builder-action="add-stackable-breakthrough"]').click();
+    await page.waitForFunction(() => document.body.textContent.includes('Selected x1'));
+    await skillTrainingCard.locator('[data-builder-action="add-stackable-breakthrough"]').click();
+    await page.waitForFunction(() => {
+      const card = [...document.querySelectorAll('.builder-repeatable-choice-card')]
+        .find((entry) => entry.querySelector('strong')?.textContent?.trim() === 'Skill Training');
+      return card?.textContent.includes('Selected x2');
+    });
+    await page.click('[data-step-index="7"]');
+    await page.waitForSelector('[data-builder-choice-field]', { timeout: 5000 });
+
+    const stackableTrainingResult = await page.evaluate(() => ({
+      ids: [
+        ...[...document.querySelectorAll('[data-builder-choice-select]')].map((entry) => entry.dataset.builderChoiceSelect),
+        ...[...document.querySelectorAll('[data-builder-choice-field]')].map((entry) => entry.dataset.builderChoiceField)
+      ],
+      summaryText: document.querySelector('#builder-summary')?.textContent?.replace(/\s+/g, ' ').trim() || ''
+    }));
+
+    if (
+      !stackableTrainingResult.ids.includes('breakthrough-skill-training-skill-mode') ||
+      !stackableTrainingResult.ids.includes('breakthrough-skill-training-skill-mode-2') ||
+      !stackableTrainingResult.summaryText.includes('Skill Training #2')
+    ) {
+      throw new Error(`Stackable breakthrough purchase regression failed: ${JSON.stringify(stackableTrainingResult)}`);
+    }
+
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
         ui: { mode: 'sheet', sheetTab: 'abilities', gameVersion: '0.13.0' },
         fields: { Name: 'Reference Tester' },
         builder: {
@@ -942,6 +1389,285 @@ const browsers = [
     await page.evaluate(() => {
       localStorage.clear();
       localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'sheet', sheetTab: 'inventory', gameVersion: '0.13.0' },
+        fields: {
+          Name: 'Inventory Use Tester',
+          Power: '0',
+          Toughness: '0',
+          Agility: '0'
+        },
+        builder: {
+          selectedRaceId: 'human',
+          selectedItemIds: ['bull-potion'],
+          itemQuantities: { 'bull-potion': 2 }
+        },
+        play: {
+          resources: {
+            hpCurrent: 20,
+            hpMax: 20,
+            tempHp: 0,
+            manaCurrent: 2,
+            manaMax: 6,
+            rpCurrent: 2,
+            rpMax: 2,
+            apCurrent: 4,
+            apMax: 4
+          }
+        }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-play-tab="inventory"]');
+    await page.waitForSelector('#play-inventory [data-inventory-use]', { timeout: 5000 });
+
+    const inventoryUseInitial = await page.evaluate(() => {
+      const row = [...document.querySelectorAll('#play-inventory .play-item-row')]
+        .find((entry) => entry.textContent.includes('Bull Potion'));
+      return {
+        hasBullPotion: Boolean(row),
+        quantityBadge: row?.querySelector('.play-item-equipped-badge')?.textContent.trim() || '',
+        mana: Number(document.querySelector('[data-play-resource="manaCurrent"]')?.value || 0),
+        useButtons: [...(row?.querySelectorAll('[data-inventory-use]') || [])].map((button) => button.textContent.trim())
+      };
+    });
+
+    if (
+      !inventoryUseInitial.hasBullPotion ||
+      inventoryUseInitial.quantityBadge !== 'x2' ||
+      inventoryUseInitial.mana !== 2 ||
+      !inventoryUseInitial.useButtons.includes('Use')
+    ) {
+      throw new Error(`Inventory use setup failed: ${JSON.stringify(inventoryUseInitial)}`);
+    }
+
+    await page.locator('#play-inventory .play-item-row')
+      .filter({ hasText: 'Bull Potion' })
+      .locator('[data-inventory-use]')
+      .first()
+      .click();
+    await page.waitForFunction(() => Number(document.querySelector('[data-play-resource="manaCurrent"]')?.value || 0) === 4);
+
+    const inventoryUseFirstResult = await page.evaluate(() => {
+      const row = [...document.querySelectorAll('#play-inventory .play-item-row')]
+        .find((entry) => entry.textContent.includes('Bull Potion'));
+      const logText = document.querySelector('#play-log')?.textContent || '';
+      return {
+        hasBullPotion: Boolean(row),
+        quantityBadge: row?.querySelector('.play-item-equipped-badge')?.textContent.trim() || '',
+        mana: Number(document.querySelector('[data-play-resource="manaCurrent"]')?.value || 0),
+        loggedUse: logText.includes('Bull Potion') && logText.includes('restored 2 Mana'),
+        loggedConsumption: logText.includes('Inventory: one use consumed.')
+      };
+    });
+
+    if (
+      !inventoryUseFirstResult.hasBullPotion ||
+      inventoryUseFirstResult.quantityBadge ||
+      inventoryUseFirstResult.mana !== 4 ||
+      !inventoryUseFirstResult.loggedUse ||
+      !inventoryUseFirstResult.loggedConsumption
+    ) {
+      throw new Error(`Inventory item use failed: ${JSON.stringify(inventoryUseFirstResult)}`);
+    }
+
+    await page.locator('#play-inventory .play-item-row')
+      .filter({ hasText: 'Bull Potion' })
+      .locator('[data-inventory-use]')
+      .first()
+      .click();
+    await page.waitForFunction(() => (document.querySelector('#play-log')?.textContent || '').includes('Bull Potion Blocked'));
+
+    const inventoryUseBlockedResult = await page.evaluate(() => {
+      const row = [...document.querySelectorAll('#play-inventory .play-item-row')]
+        .find((entry) => entry.textContent.includes('Bull Potion'));
+      const logText = document.querySelector('#play-log')?.textContent || '';
+      return {
+        hasBullPotion: Boolean(row),
+        quantityBadge: row?.querySelector('.play-item-equipped-badge')?.textContent.trim() || '',
+        mana: Number(document.querySelector('[data-play-resource="manaCurrent"]')?.value || 0),
+        blockedUse: logText.includes('Bull Potion Blocked') && logText.includes('already used food recovery')
+      };
+    });
+
+    if (
+      !inventoryUseBlockedResult.hasBullPotion ||
+      inventoryUseBlockedResult.quantityBadge ||
+      inventoryUseBlockedResult.mana !== 4 ||
+      !inventoryUseBlockedResult.blockedUse
+    ) {
+      throw new Error(`Food benefit lockout failed: ${JSON.stringify(inventoryUseBlockedResult)}`);
+    }
+
+    await page.click('[data-play-tab="actions"]');
+    await page.click('[data-play-rest="camp"]');
+    await page.waitForFunction(() => (document.querySelector('#play-log')?.textContent || '').includes('Food mana recovery is available again.'));
+    await page.click('[data-play-tab="inventory"]');
+    await page.locator('#play-inventory .play-item-row')
+      .filter({ hasText: 'Bull Potion' })
+      .locator('[data-inventory-use]')
+      .first()
+      .click();
+    await page.waitForFunction(() => ![...document.querySelectorAll('#play-inventory .play-item-row')]
+      .some((entry) => entry.textContent.includes('Bull Potion')));
+
+    const inventoryUseFinalResult = await page.evaluate(() => ({
+      hasBullPotion: [...document.querySelectorAll('#play-inventory .play-item-row')]
+        .some((entry) => entry.textContent.includes('Bull Potion')),
+      mana: Number(document.querySelector('[data-play-resource="manaCurrent"]')?.value || 0),
+      resetLogged: (document.querySelector('#play-log')?.textContent || '').includes('Food mana recovery is available again.'),
+      itemsText: document.querySelector('#play-inventory')?.textContent || ''
+    }));
+
+    if (
+      inventoryUseFinalResult.hasBullPotion ||
+      inventoryUseFinalResult.mana !== 6 ||
+      !inventoryUseFinalResult.resetLogged ||
+      !inventoryUseFinalResult.itemsText.includes('No equipment selected yet.')
+    ) {
+      throw new Error(`Inventory item consumption after rest failed: ${JSON.stringify(inventoryUseFinalResult)}`);
+    }
+
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'sheet', sheetTab: 'inventory', gameVersion: '0.13.0' },
+        fields: {
+          Name: 'Shielding Potion Tester',
+          Power: '0',
+          Toughness: '0',
+          Agility: '0'
+        },
+        builder: {
+          selectedRaceId: 'human',
+          selectedItemIds: ['shielding-potion'],
+          itemQuantities: { 'shielding-potion': 1 }
+        },
+        play: {
+          resources: {
+            hpCurrent: 20,
+            hpMax: 20,
+            tempHp: 0,
+            manaCurrent: 6,
+            manaMax: 6,
+            rpCurrent: 2,
+            rpMax: 2,
+            apCurrent: 4,
+            apMax: 4
+          }
+        }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-play-tab="inventory"]');
+    await page.waitForSelector('#play-inventory [data-inventory-use]', { timeout: 5000 });
+    await page.locator('#play-inventory .play-item-row')
+      .filter({ hasText: 'Shielding Potion' })
+      .locator('[data-inventory-use]')
+      .first()
+      .click();
+    await page.waitForFunction(() => Number(document.querySelector('.play-hit-temp-value')?.textContent || 0) === 15);
+    await page.click('[data-play-tab="actions"]');
+    await page.waitForFunction(() => (document.querySelector('#play-derived-grid .play-tracker-effects')?.textContent || '').includes('Shielding Potion'));
+
+    const shieldingPotionResult = await page.evaluate(() => ({
+      tempHp: Number(document.querySelector('.play-hit-temp-value')?.textContent || 0),
+      activeEffectsText: document.querySelector('#play-derived-grid .play-tracker-effects')?.textContent || '',
+      logText: document.querySelector('#play-log')?.textContent || ''
+    }));
+
+    if (
+      shieldingPotionResult.tempHp !== 15 ||
+      !shieldingPotionResult.activeEffectsText.includes('Shielding Potion') ||
+      shieldingPotionResult.activeEffectsText.includes('Until start of your next turn') ||
+      !shieldingPotionResult.logText.includes('Temporary HP set to 15')
+    ) {
+      throw new Error(`Shielding Potion tracking failed: ${JSON.stringify(shieldingPotionResult)}`);
+    }
+    await page.locator('#play-derived-grid .play-effect-chip')
+      .filter({ hasText: 'Shielding Potion' })
+      .first()
+      .click();
+    await page.waitForFunction(() => (document.querySelector('#sheet-modal')?.textContent || '').includes('Until start of your next turn'));
+    await page.locator('#sheet-modal-close').click();
+
+    await page.click('[data-open-effect-picker="negative"]');
+    await page.waitForSelector('[data-manual-effect-option="poisoned"]', { timeout: 5000 });
+    await page.check('[data-manual-effect-option="poisoned"]');
+    await page.click('[data-manual-effect-confirm]');
+    await page.waitForFunction(() => (document.querySelector('#play-derived-grid .play-tracker-effects')?.textContent || '').includes('Poisoned'));
+    const manualConditionResult = await page.evaluate(() => ({
+      effectsText: document.querySelector('#play-derived-grid .play-tracker-effects')?.textContent || '',
+      logText: document.querySelector('#play-log')?.textContent || ''
+    }));
+    if (
+      !manualConditionResult.effectsText.includes('Negative / Conditions') ||
+      !manualConditionResult.effectsText.includes('Poisoned') ||
+      manualConditionResult.effectsText.includes('Poison effect is active') ||
+      !manualConditionResult.logText.includes('Conditions Added')
+    ) {
+      throw new Error(`Manual condition picker failed: ${JSON.stringify(manualConditionResult)}`);
+    }
+    await page.locator('#play-derived-grid .play-effect-chip')
+      .filter({ hasText: 'Poisoned' })
+      .first()
+      .click();
+    await page.waitForFunction(() => (document.querySelector('#sheet-modal')?.textContent || '').includes('Poison is source-specific'));
+    await page.click('[data-play-effect-detail-clear]');
+    await page.waitForFunction(() => !(document.querySelector('#play-derived-grid .play-tracker-effects')?.textContent || '').includes('Poisoned'));
+
+    await page.click('[data-open-effect-picker="negative"]');
+    await page.waitForSelector('[data-manual-effect-option="slow"]', { timeout: 5000 });
+    await page.check('[data-manual-effect-option="slow"]');
+    await page.click('[data-manual-effect-confirm]');
+    await page.waitForFunction(() => (document.querySelector('#play-utility-grid')?.textContent || '').includes('Speed') && (document.querySelector('#play-utility-grid')?.textContent || '').includes('10'));
+    await page.locator('#play-derived-grid .play-effect-chip')
+      .filter({ hasText: 'Slow' })
+      .first()
+      .click();
+    await page.waitForFunction(() => (document.querySelector('#sheet-modal')?.textContent || '').includes('Your movement speed is halved'));
+    await page.click('[data-play-effect-detail-clear]');
+    await page.waitForFunction(() => (document.querySelector('#play-utility-grid')?.textContent || '').includes('Speed') && (document.querySelector('#play-utility-grid')?.textContent || '').includes('20'));
+
+    await page.click('[data-open-effect-picker="positive"]');
+    await page.waitForSelector('[data-manual-effect-option="haste"]', { timeout: 5000 });
+    await page.check('[data-manual-effect-option="haste"]');
+    await page.click('[data-manual-effect-confirm]');
+    await page.waitForFunction(() => Number(document.querySelector('[data-play-resource="apCurrent"]')?.value || 0) === 6);
+    await page.locator('#play-derived-grid .play-effect-chip')
+      .filter({ hasText: 'Haste' })
+      .first()
+      .click();
+    await page.waitForFunction(() => (document.querySelector('#sheet-modal')?.textContent || '').includes('granting them 2 AP'));
+    await page.click('[data-play-effect-detail-clear]');
+    await page.waitForFunction(() => Number(document.querySelector('[data-play-resource="apCurrent"]')?.value || 0) === 4);
+
+    await page.click('[data-open-effect-picker="positive"]');
+    await page.waitForSelector('[data-manual-effect-option="inspired"]', { timeout: 5000 });
+    await page.check('[data-manual-effect-option="inspired"]');
+    await page.click('[data-manual-effect-confirm]');
+    await page.waitForFunction(() => (document.querySelector('#play-derived-grid .play-tracker-effects')?.textContent || '').includes('Inspired'));
+    const manualEffectResult = await page.evaluate(() => ({
+      effectsText: document.querySelector('#play-derived-grid .play-tracker-effects')?.textContent || '',
+      logText: document.querySelector('#play-log')?.textContent || ''
+    }));
+    if (
+      !manualEffectResult.effectsText.includes('Positive Effects') ||
+      !manualEffectResult.effectsText.includes('Inspired') ||
+      manualEffectResult.effectsText.includes('morale/song/command') ||
+      !manualEffectResult.logText.includes('Effects Added')
+    ) {
+      throw new Error(`Manual positive effect picker failed: ${JSON.stringify(manualEffectResult)}`);
+    }
+    await page.locator('#play-derived-grid .play-effect-chip')
+      .filter({ hasText: 'Inspired' })
+      .first()
+      .click();
+    await page.waitForFunction(() => (document.querySelector('#sheet-modal')?.textContent || '').includes('not a universal rules condition'));
+    await page.locator('#sheet-modal-close').click();
+
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
         ui: { mode: 'sheet', sheetTab: 'abilities', gameVersion: '0.13.0' },
         fields: { Name: 'Hydromancer Cost Tester' },
         builder: {
@@ -1020,6 +1746,417 @@ const browsers = [
     }
   }
 
+  async function runSpreadsheetVisibleGridImportAssertion(page) {
+    const storageKey = 'lyrian-chronicles-character-suite-v2';
+    await page.evaluate(() => {
+      localStorage.clear();
+      const core = {};
+      const setCell = (address, value) => {
+        core[address] = {
+          v: value,
+          t: typeof value === 'number' ? 'n' : (typeof value === 'boolean' ? 'b' : 's')
+        };
+      };
+
+      setCell('B2', 'Roland Beaumont');
+      setCell('D2', 'Human');
+      setCell('B3', 'Male');
+      setCell('B4', 28);
+      setCell('B5', "6'");
+      setCell('B6', '210lbs');
+      setCell('B7', 'Kari');
+      setCell('D4', 25);
+      setCell('D5', 1950);
+
+      setCell('A9', 'Focus');
+      setCell('B9', 4);
+      setCell('A10', 'Power');
+      setCell('B10', 5);
+      setCell('A11', 'Agility');
+      setCell('B11', 4);
+      setCell('A12', 'Toughness');
+      setCell('B12', 6);
+      setCell('C9', 'Fitness');
+      setCell('D9', 6);
+      setCell('C10', 'Cunning');
+      setCell('D10', 2);
+      setCell('C11', 'Reason');
+      setCell('D11', 4);
+      setCell('C12', 'Awareness');
+      setCell('D12', 5);
+      setCell('C13', 'Presence');
+      setCell('D13', 1);
+
+      setCell('A45', 5);
+      setCell('A46', 4);
+      setCell('A47', 4);
+      setCell('A48', 3);
+      setCell('C45', 5);
+      setCell('C46', 4);
+      setCell('C47', 3);
+      setCell('C48', 2);
+      setCell('C49', 1);
+
+      setCell('E2', 'HP');
+      setCell('F2', 85);
+      setCell('E3', 'Mana');
+      setCell('F3', 11);
+      setCell('E7', 'RP');
+      setCell('F7', 6);
+
+      setCell('A15', 'Acolyte');
+      setCell('C15', 1);
+      setCell('D15', 100);
+      setCell('A16', 'Shield Paladin');
+      setCell('C16', 8);
+      setCell('D16', 900);
+      setCell('A17', 'Fighter');
+      setCell('C17', 8);
+      setCell('D17', 800);
+      setCell('A18', 'Guardian');
+      setCell('D18', 0);
+      setCell('A19', 'Exalted Shield');
+      setCell('D19', 0);
+      setCell('A37', 'Holy Justice');
+      setCell('A38', 'Silvered Spiked Shield');
+      setCell('A39', 'Kunai');
+      setCell('F37', 'Heavy Armour');
+      setCell('L37', true);
+      setCell('F38', 'Greatshield');
+      setCell('L38', true);
+      setCell('F39', 'Holy Shield');
+      setCell('L39', false);
+      setCell('F40', 'Armour plates');
+      setCell('L40', false);
+      core['!ref'] = 'A1:L60';
+
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, core, 'Core');
+      XLSX.utils.book_append_sheet(workbook, {}, 'Abilities');
+      XLSX.utils.book_append_sheet(workbook, {}, 'Breakthrough');
+      XLSX.utils.book_append_sheet(workbook, {}, 'Inventory');
+      XLSX.utils.book_append_sheet(workbook, {}, 'Journals');
+      const bytes = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const file = new File([bytes], 'roland-visible-grid.xlsx', {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      });
+      const input = document.getElementById('import-file');
+      const transfer = new DataTransfer();
+      transfer.items.add(file);
+      input.files = transfer.files;
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    await page.waitForFunction((key) => {
+      const saved = JSON.parse(localStorage.getItem(key) || '{}');
+      return saved?.fields?.Name === 'Roland Beaumont' && saved?.fields?.Toughness === '6';
+    }, storageKey, { timeout: 10000 });
+    await page.click('#builder-sheet-shortcut-top');
+    await page.waitForSelector('.play-hit-max', { timeout: 5000 });
+
+    const result = await page.evaluate((key) => {
+      const saved = JSON.parse(localStorage.getItem(key) || '{}');
+      return {
+        subRace: saved.fields?.['Sub Race'] || '',
+        selectedAncestryId: saved.builder?.selectedAncestryId || '',
+        selectedClassIds: saved.builder?.selectedClassIds || [],
+        power: saved.fields?.Power || '',
+        focus: saved.fields?.Focus || '',
+        toughness: saved.fields?.Toughness || '',
+        fitness: saved.fields?.Fitness || '',
+        cunning: saved.fields?.Cunning || '',
+        awareness: saved.fields?.Awareness || '',
+        hpCurrent: document.querySelector('.play-hit-current')?.textContent?.trim() || '',
+        hpMax: document.querySelector('.play-hit-max')?.textContent?.trim() || '',
+        selectedItemIds: saved.builder?.selectedItemIds || [],
+        inventoryFields: [1, 2, 3, 4, 5].map((index) => saved.fields?.[`CombatInventory${index}`] || '').filter(Boolean),
+        customInventoryNames: (saved.play?.inventoryItems || []).filter((entry) => entry.custom).map((entry) => entry.name || ''),
+        equippedInventoryKeys: (saved.play?.inventoryItems || []).filter((entry) => entry.equipped).map((entry) => entry.name || entry.itemId || ''),
+        summaryText: document.querySelector('#builder-summary')?.textContent?.replace(/\s+/g, ' ').trim() || ''
+      };
+    }, storageKey);
+
+    const classesMatch = result.selectedClassIds.join(',') === 'acolyte,shield-paladin,fighter';
+    const selectedItemIds = new Set(result.selectedItemIds);
+    const inventoryFields = new Set(result.inventoryFields);
+    const customNames = new Set(result.customInventoryNames);
+    const equippedKeys = new Set(result.equippedInventoryKeys);
+    const equipmentImported = selectedItemIds.has('armor--heavy-')
+      && selectedItemIds.has('shield--great-')
+      && selectedItemIds.has('armor-plates')
+      && inventoryFields.has('Armor (Heavy)')
+      && inventoryFields.has('Shield (Great)')
+      && inventoryFields.has('Armor Plates')
+      && customNames.has('Holy Justice')
+      && customNames.has('Silvered Spiked Shield')
+      && customNames.has('Kunai')
+      && customNames.has('Holy Shield')
+      && equippedKeys.has('Holy Justice')
+      && equippedKeys.has('Silvered Spiked Shield')
+      && equippedKeys.has('Kunai')
+      && equippedKeys.has('armor--heavy-')
+      && equippedKeys.has('shield--great-');
+    if (
+      result.subRace !== '' ||
+      result.selectedAncestryId !== '' ||
+      !classesMatch ||
+      !equipmentImported ||
+      result.power !== '5' ||
+      result.focus !== '4' ||
+      result.toughness !== '6' ||
+      result.fitness !== '6' ||
+      result.cunning !== '2' ||
+      result.awareness !== '5' ||
+      result.hpCurrent !== '85' ||
+      result.hpMax !== '85' ||
+      result.summaryText.includes('Ancient Marionette')
+    ) {
+      throw new Error(`Visible spreadsheet import regression failed: ${JSON.stringify(result)}`);
+    }
+
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'load' });
+    await page.waitForTimeout(500);
+
+    await page.evaluate(() => {
+      const core = {};
+      const breakthroughs = {};
+      const inventory = {};
+      const setCell = (sheet, address, value) => {
+        sheet[address] = {
+          v: value,
+          t: typeof value === 'number' ? 'n' : (typeof value === 'boolean' ? 'b' : 's')
+        };
+      };
+
+      setCell(core, 'B2', 'Masaru');
+      setCell(core, 'D2', 'Youkai');
+      setCell(core, 'D3', 'Oni');
+      setCell(core, 'B3', 'Male');
+      setCell(core, 'B4', 34);
+      setCell(core, 'B5', '6\' 2"');
+      setCell(core, 'B6', '240 lbs');
+      setCell(core, 'D4', 0);
+      setCell(core, 'D5', 2100);
+
+      setCell(core, 'A9', 'Focus');
+      setCell(core, 'B9', 4);
+      setCell(core, 'A10', 'Power');
+      setCell(core, 'B10', 7);
+      setCell(core, 'A11', 'Agility');
+      setCell(core, 'B11', 4);
+      setCell(core, 'A12', 'Toughness');
+      setCell(core, 'B12', 4);
+      setCell(core, 'C9', 'Fitness');
+      setCell(core, 'D9', 6);
+      setCell(core, 'C10', 'Cunning');
+      setCell(core, 'D10', 1);
+      setCell(core, 'C11', 'Reason');
+      setCell(core, 'D11', 2);
+      setCell(core, 'C12', 'Awareness');
+      setCell(core, 'D12', 3);
+      setCell(core, 'C13', 'Presence');
+      setCell(core, 'D13', 5);
+
+      setCell(core, 'E2', 'HP');
+      setCell(core, 'F2', 65);
+      setCell(core, 'E3', 'Mana');
+      setCell(core, 'F3', 13);
+      setCell(core, 'E7', 'RP');
+      setCell(core, 'F7', 6);
+
+      setCell(core, 'A15', 'Fighter');
+      setCell(core, 'C15', 8);
+      setCell(core, 'D15', 800);
+      setCell(core, 'A16', 'Highlander');
+      setCell(core, 'C16', 8);
+      setCell(core, 'D16', 900);
+      setCell(core, 'A17', 'Reaver');
+      setCell(core, 'C17', 2);
+      setCell(core, 'D17', 400);
+
+      setCell(core, 'E9', 'Athletics');
+      setCell(core, 'H9', 10);
+      setCell(core, 'E28', 'Negotiation');
+      setCell(core, 'H28', 0);
+      setCell(core, 'E29', 'Intimidation');
+      setCell(core, 'H29', 15);
+      setCell(core, 'I29', 'Ceremonial (+10)');
+
+      setCell(core, 'F37', 'Ceremonial Barrier Chainlinks Armor');
+      setCell(core, 'J37', 12);
+      setCell(core, 'L37', true);
+      core['!ref'] = 'A1:L60';
+
+      setCell(breakthroughs, 'A2', 'In Sync (Youkai)');
+      setCell(breakthroughs, 'A3', 'Powerful Ki (Oni)');
+      breakthroughs['!ref'] = 'A1:C5';
+
+      setCell(inventory, 'A2', 'Ceremonial Barrier Chainlinks Armor');
+      setCell(inventory, 'B2', 1);
+      setCell(inventory, 'C2', 2);
+      setCell(inventory, 'F2', 'Ceremonial, Barrier, Chainlink');
+      setCell(inventory, 'A3', 'Blued Overwhelming UGS');
+      setCell(inventory, 'B3', 1);
+      setCell(inventory, 'C3', 2);
+      setCell(inventory, 'F3', 'Tama (+1 Power) Overwhelming Edge');
+      inventory['!ref'] = 'A1:F5';
+
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, core, 'Core');
+      XLSX.utils.book_append_sheet(workbook, {}, 'Abilities');
+      XLSX.utils.book_append_sheet(workbook, breakthroughs, 'Breakthrough');
+      XLSX.utils.book_append_sheet(workbook, inventory, 'Inventory');
+      XLSX.utils.book_append_sheet(workbook, {}, 'Journals');
+      const bytes = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const file = new File([bytes], 'masaru-visible-grid.xlsx', {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      });
+      const input = document.getElementById('import-file');
+      const transfer = new DataTransfer();
+      transfer.items.add(file);
+      input.files = transfer.files;
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    await page.waitForFunction((key) => {
+      const saved = JSON.parse(localStorage.getItem(key) || '{}');
+      return saved?.fields?.Name === 'Masaru' && saved?.fields?.Mana === '13';
+    }, storageKey, { timeout: 10000 });
+    await page.click('#builder-sheet-shortcut-top');
+    await page.waitForSelector('.play-hit-max', { timeout: 5000 });
+
+    const masaruResult = await page.evaluate((key) => {
+      const saved = JSON.parse(localStorage.getItem(key) || '{}');
+      return {
+        importedFinalStats: Boolean(saved.builder?.importedFinalStats),
+        selectedBreakthroughIds: saved.builder?.selectedBreakthroughIds || [],
+        hp: saved.fields?.HP || '',
+        mana: saved.fields?.Mana || '',
+        rp: saved.fields?.RP || '',
+        block: saved.fields?.Block || '',
+        potency: saved.fields?.Potency || '',
+        athleticsSP: saved.fields?.SkillPoint1 || '',
+        intimidationSP: saved.fields?.SkillPoint20 || '',
+        negotiationSP: saved.fields?.SkillPoint21 || '',
+        customInventory: (saved.play?.inventoryItems || []).filter((entry) => entry.custom).map((entry) => ({
+          name: entry.name || '',
+          equipped: Boolean(entry.equipped),
+          description: entry.description || ''
+        })),
+        summaryText: document.querySelector('#builder-summary')?.textContent?.replace(/\s+/g, ' ').trim() || '',
+        hpCurrent: document.querySelector('.play-hit-current')?.textContent?.trim() || '',
+        hpMax: document.querySelector('.play-hit-max')?.textContent?.trim() || ''
+      };
+    }, storageKey);
+
+    const masaruBreakthroughs = new Set(masaruResult.selectedBreakthroughIds);
+    const customArmor = masaruResult.customInventory.find((entry) => entry.name === 'Ceremonial Barrier Chainlinks Armor');
+    if (
+      !masaruResult.importedFinalStats ||
+      !masaruBreakthroughs.has('in-sync--youkai-') ||
+      !masaruBreakthroughs.has('powerful-ki--oni-') ||
+      masaruResult.hp !== '65' ||
+      masaruResult.mana !== '13' ||
+      masaruResult.rp !== '6' ||
+      masaruResult.block !== '20' ||
+      masaruResult.potency !== '15' ||
+      masaruResult.athleticsSP !== '10' ||
+      masaruResult.intimidationSP !== '15' ||
+      masaruResult.negotiationSP !== '0' ||
+      !customArmor?.equipped ||
+      !customArmor.description.includes('Increases your Block by 12') ||
+      !masaruResult.summaryText.includes('Intimidation +20') ||
+      !masaruResult.summaryText.includes('Athletics +16') ||
+      !masaruResult.summaryText.includes('Ceremonial Barrier Chainlinks Armor') ||
+      masaruResult.summaryText.includes('Negotiation +21') ||
+      masaruResult.hpCurrent !== '65' ||
+      masaruResult.hpMax !== '65'
+    ) {
+      throw new Error(`Masaru spreadsheet import regression failed: ${JSON.stringify(masaruResult)}`);
+    }
+
+    await page.click('#export-json');
+    const downloadPromise = page.waitForEvent('download', { timeout: 30000 });
+    await page.click('[data-export-mode="spreadsheet"]');
+    const download = await downloadPromise;
+    const exportPath = path.join(QA_DIR, 'masaru-spreadsheet-export-regression.xlsx');
+    await download.saveAs(exportPath);
+    const exportBytes = Array.from(await fs.readFile(exportPath));
+    const exportResult = await page.evaluate((bytes) => {
+      const workbook = XLSX.read(new Uint8Array(bytes), { type: 'array', cellFormula: false, cellText: true });
+      const read = (sheetName, address) => workbook.Sheets[sheetName]?.[address]?.v;
+      const type = (sheetName, address) => workbook.Sheets[sheetName]?.[address]?.t;
+      return {
+        core: {
+          B2: read('Core', 'B2'),
+          D2: read('Core', 'D2'),
+          D3: read('Core', 'D3'),
+          H9: read('Core', 'H9'),
+          H28: read('Core', 'H28'),
+          H29: read('Core', 'H29'),
+          I29: read('Core', 'I29'),
+          A37: read('Core', 'A37'),
+          F37: read('Core', 'F37'),
+          J37: read('Core', 'J37'),
+          L37: read('Core', 'L37'),
+          L37Type: type('Core', 'L37')
+        },
+        breakthrough: {
+          A2: read('Breakthrough', 'A2'),
+          C2: read('Breakthrough', 'C2'),
+          A3: read('Breakthrough', 'A3'),
+          C3: read('Breakthrough', 'C3')
+        },
+        inventory: {
+          A2: read('Inventory', 'A2'),
+          B2: read('Inventory', 'B2'),
+          C2: read('Inventory', 'C2'),
+          F2: read('Inventory', 'F2'),
+          A3: read('Inventory', 'A3'),
+          B3: read('Inventory', 'B3'),
+          C3: read('Inventory', 'C3'),
+          F3: read('Inventory', 'F3')
+        },
+        metadataPresent: Boolean(workbook.Sheets._LyrianState)
+      };
+    }, exportBytes);
+
+    if (
+      exportResult.core.B2 !== 'Masaru' ||
+      exportResult.core.D2 !== 'Youkai' ||
+      exportResult.core.D3 !== 'Oni' ||
+      exportResult.core.H9 !== 10 ||
+      exportResult.core.H28 !== 0 ||
+      exportResult.core.H29 !== 15 ||
+      exportResult.core.I29 !== '+10' ||
+      exportResult.core.A37 !== 'Blued Overwhelming UGS' ||
+      exportResult.core.F37 !== 'Ceremonial Barrier Chainlinks Armor' ||
+      exportResult.core.J37 !== 12 ||
+      exportResult.core.L37 !== true ||
+      exportResult.core.L37Type !== 'b' ||
+      exportResult.breakthrough.A2 !== 'In Sync (Youkai)' ||
+      exportResult.breakthrough.C2 !== 'Must be a Youkai.' ||
+      exportResult.breakthrough.A3 !== 'Powerful Ki (Oni)' ||
+      exportResult.breakthrough.C3 !== 'Must be an Oni.' ||
+      exportResult.inventory.A2 !== 'Ceremonial Barrier Chainlinks Armor' ||
+      exportResult.inventory.B2 !== 1 ||
+      String(exportResult.inventory.C2) !== '2' ||
+      !String(exportResult.inventory.F2 || '').includes('Increases your Block by 12') ||
+      exportResult.inventory.A3 !== 'Blued Overwhelming UGS' ||
+      exportResult.inventory.B3 !== 1 ||
+      String(exportResult.inventory.C3) !== '2' ||
+      exportResult.inventory.F3 !== 'Tama (+1 Power) Overwhelming Edge' ||
+      !exportResult.metadataPresent
+    ) {
+      throw new Error(`Masaru spreadsheet export regression failed: ${JSON.stringify(exportResult)}`);
+    }
+
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'load' });
+    await page.waitForTimeout(1500);
+  }
+
   async function runWideDashboardLayoutAssertions(page) {
     await page.locator('[data-builder-action="pick-race"]').filter({ hasText: 'Human' }).first().click();
     await page.click('#builder-sheet-shortcut-top');
@@ -1051,7 +2188,7 @@ const browsers = [
       const health = box('#play-hit-points');
       const animation = box('.play-resource-animation');
       const utility = box('#play-utility-grid');
-      const money = box('#play-derived-grid .play-tracker-money');
+      const effects = box('#play-derived-grid .play-tracker-effects');
       const resources = box('#play-resource-grid');
       const senses = box('.play-senses-section');
       const mainStat = box('.play-main-stat-card');
@@ -1084,14 +2221,14 @@ const browsers = [
         health,
         animation,
         utility,
-        money,
+        effects,
         resources,
         senses,
         mainStat,
         secondaryStat,
         healthIsWideAndThin: Boolean(health && health.width >= 600 && health.height <= 210),
         healthSitsRightOfResources: Boolean(health && resources && health.x >= resources.right + 8),
-        moneySitsAboveResources: Boolean(money && resources && money.bottom <= resources.y - 8 && Math.abs(money.x - resources.x) <= 8 && Math.abs(money.right - resources.right) <= 8),
+        effectsSitAboveResources: Boolean(effects && resources && effects.bottom <= resources.y - 8 && Math.abs(effects.x - resources.x) <= 8 && Math.abs(effects.right - resources.right) <= 8),
         resourcesRegainedWidth: Boolean(resources && resources.width >= 680),
         animationSitsUnderResources: Boolean(animation && resources && animation.y >= resources.bottom + 8 && Math.abs(animation.x - resources.x) <= 8 && Math.abs(animation.right - resources.right) <= 8),
         animationCompact: Boolean(animation && animation.height <= 130),
@@ -1111,7 +2248,7 @@ const browsers = [
         )),
         speedMovedToUtility: utilityText.includes('Speed') && utilityText.includes('Initiative'),
         speedRemovedFromTracker: !trackerText.includes('Speed') && !trackerText.includes('Initiative'),
-        healthAvoidsMoney: !overlaps(health, money),
+        healthAvoidsEffects: !overlaps(health, effects),
         utilityAvoidsSenses: !overlaps(utility, senses)
       };
     });
@@ -1119,7 +2256,7 @@ const browsers = [
     if (
       !layout.healthIsWideAndThin ||
       !layout.healthSitsRightOfResources ||
-      !layout.moneySitsAboveResources ||
+      !layout.effectsSitAboveResources ||
       !layout.resourcesRegainedWidth ||
       !layout.animationSitsUnderResources ||
       !layout.animationCompact ||
@@ -1134,7 +2271,7 @@ const browsers = [
       !layout.healthControlsFit ||
       !layout.speedMovedToUtility ||
       !layout.speedRemovedFromTracker ||
-      !layout.healthAvoidsMoney ||
+      !layout.healthAvoidsEffects ||
       !layout.utilityAvoidsSenses
     ) {
       throw new Error(`Wide dashboard layout regression failed: ${JSON.stringify(layout)}`);
@@ -1156,6 +2293,7 @@ const browsers = [
       for (const vp of viewports) {
         console.log(` Testing ${vp.name} viewport (${vp.width}x${vp.height})...`);
         const context = await browser.newContext({
+          acceptDownloads: true,
           viewport: { width: vp.width, height: vp.height }
         });
         const page = await context.newPage();
@@ -1172,8 +2310,12 @@ const browsers = [
         // Track request failures (e.g. DNS or network dropouts)
         page.on('requestfailed', (req) => {
           const url = req.url();
-          if (url.includes(`127.0.0.1:${PORT}`) || url.includes(`localhost:${PORT}`)) {
-            console.error(`   [REQUEST FAILED] [${browserInfo.name} - ${vp.name}]:`, url);
+          if (isIgnorableLocalMediaAbort(req)) {
+            return;
+          }
+          if (isLocalTestUrl(url)) {
+            const failureText = req.failure()?.errorText || 'unknown failure';
+            console.error(`   [REQUEST FAILED] [${browserInfo.name} - ${vp.name}]:`, `${url} (${failureText})`);
             missingResources.push(url);
           }
         });
@@ -1182,7 +2324,7 @@ const browsers = [
         page.on('response', (response) => {
           const status = response.status();
           const url = response.url();
-          if (status >= 400 && (url.includes(`127.0.0.1:${PORT}`) || url.includes(`localhost:${PORT}`))) {
+          if (status >= 400 && isLocalTestUrl(url)) {
             console.error(`   [HTTP ERROR ${status}] [${browserInfo.name} - ${vp.name}]:`, url);
             missingResources.push(url);
           }
@@ -1203,7 +2345,7 @@ const browsers = [
             const contentValid = stepContent && stepContent.children.length > 0 && stepContent.textContent.trim().length > 0;
             const navValid = stepNav && stepNav.querySelectorAll('button').length > 0;
             const versionsValid = versionSelect && versionSelect.querySelectorAll('option').length > 0;
-            const builderBuildValid = builderBuildVersion && builderBuildVersion.textContent.includes('Beta 1.4');
+            const builderBuildValid = builderBuildVersion && builderBuildVersion.textContent.includes('Beta 1.5');
 
             return {
               contentValid,
@@ -1260,6 +2402,9 @@ const browsers = [
           }
         } catch (pageError) {
           console.error(`   Error during ${browserInfo.name} ${vp.name} test:`, pageError.message);
+          if (pageError.stack) {
+            console.error(pageError.stack);
+          }
           testFailedGlobal = true;
         } finally {
           await context.close();
