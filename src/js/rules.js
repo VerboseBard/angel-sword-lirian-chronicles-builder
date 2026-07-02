@@ -460,6 +460,9 @@ function getActivePlayEffectCurrentAllowance(resourceKey) {
         return total + Math.max(0, grant);
       }, 0);
     }
+export function getActivePlayResourceCurrentLimit(resourceKey, baseMax = 0) {
+      return Math.max(0, toNumber(baseMax, 0) + getActivePlayEffectCurrentAllowance(resourceKey));
+    }
 export function getDerivedCombatStats() {
       const bonuses = getComputedBonuses();
 const activeEffectModifiers = getActivePlayEffectModifierSummary();
@@ -566,9 +569,9 @@ const oldHpMax = previousHpMax;
       if (resources.hpCurrent >= derived.hpMax) {
         state.play.hpHasManualChange = false;
       }
-      resources.manaCurrent = clamp(toNumber(resources.manaCurrent, derived.manaMax), 0, Math.max(0, derived.manaMax));
-      resources.rpCurrent = clamp(toNumber(resources.rpCurrent, derived.rpMax), 0, Math.max(0, derived.rpMax + getActivePlayEffectCurrentAllowance("rpCurrent")));
-      resources.apCurrent = clamp(toNumber(resources.apCurrent, derived.apMax), 0, Math.max(0, derived.apMax + getActivePlayEffectCurrentAllowance("apCurrent")));
+      resources.manaCurrent = clamp(toNumber(resources.manaCurrent, derived.manaMax), 0, getActivePlayResourceCurrentLimit("manaCurrent", derived.manaMax));
+      resources.rpCurrent = clamp(toNumber(resources.rpCurrent, derived.rpMax), 0, getActivePlayResourceCurrentLimit("rpCurrent", derived.rpMax));
+      resources.apCurrent = clamp(toNumber(resources.apCurrent, derived.apMax), 0, getActivePlayResourceCurrentLimit("apCurrent", derived.apMax));
     }
 function applyTrackedPlayUseEffects(label, effectText, cost, options = {}) {
       const resources = state.play.resources;
@@ -626,9 +629,9 @@ const restoreResource = (resource, amount, reason = "Tracked effect") => {
           return;
         }
 const resourceConfig = {
-          Mana: { currentKey: "manaCurrent", max: derived.manaMax },
-          RP: { currentKey: "rpCurrent", max: derived.rpMax },
-          AP: { currentKey: "apCurrent", max: derived.apMax }
+          Mana: { currentKey: "manaCurrent", max: getActivePlayResourceCurrentLimit("manaCurrent", derived.manaMax) },
+          RP: { currentKey: "rpCurrent", max: getActivePlayResourceCurrentLimit("rpCurrent", derived.rpMax) },
+          AP: { currentKey: "apCurrent", max: getActivePlayResourceCurrentLimit("apCurrent", derived.apMax) }
         }[resource];
         if (!resourceConfig) {
           return;
@@ -718,10 +721,10 @@ const resources = state.play.resources;
 const cost = parseResourceCost(costLabel);
 const feedbackId = options.feedbackId || "";
 const checks = [
-        { key: "AP", currentKey: "apCurrent", amount: cost.AP, max: derived.apMax },
-        { key: "RP", currentKey: "rpCurrent", amount: cost.RP, max: derived.rpMax },
-        { key: "Mana", currentKey: "manaCurrent", amount: cost.Mana, max: derived.manaMax },
-        { key: "HP", currentKey: "hpCurrent", amount: cost.HP, max: derived.hpMax }
+        { key: "AP", currentKey: "apCurrent", amount: cost.AP, max: getActivePlayResourceCurrentLimit("apCurrent", derived.apMax) },
+        { key: "RP", currentKey: "rpCurrent", amount: cost.RP, max: getActivePlayResourceCurrentLimit("rpCurrent", derived.rpMax) },
+        { key: "Mana", currentKey: "manaCurrent", amount: cost.Mana, max: getActivePlayResourceCurrentLimit("manaCurrent", derived.manaMax) },
+        { key: "HP", currentKey: "hpCurrent", amount: cost.HP, max: getActivePlayResourceCurrentLimit("hpCurrent", derived.hpMax) }
       ];
 const blocked = checks.find((entry) => entry.amount > 0 && toNumber(resources[entry.currentKey], entry.max) < entry.amount);
       if (blocked) {

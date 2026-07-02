@@ -1633,6 +1633,21 @@ const browsers = [
     await page.check('[data-manual-effect-option="haste"]');
     await page.click('[data-manual-effect-confirm]');
     await page.waitForFunction(() => Number(document.querySelector('[data-play-resource="apCurrent"]')?.value || 0) === 6);
+    await page.locator('#play-basic-actions .play-action-card')
+      .filter({ hasText: 'Light Attack' })
+      .locator('button[data-play-roll="lightAttack"]')
+      .first()
+      .click();
+    await page.waitForFunction(() => Number(document.querySelector('[data-play-resource="apCurrent"]')?.value || 0) === 5);
+    if (await page.locator('#sheet-modal').isVisible()) {
+      await page.locator('#sheet-modal-close').click();
+    }
+    await page.fill('[data-play-resource="apCurrent"]', '1');
+    await page.click('#play-resource-grid [data-play-recover-ap]');
+    await page.waitForFunction(() => Number(document.querySelector('[data-play-resource="apCurrent"]')?.value || 0) === 6);
+    if (await page.locator('#sheet-modal').isVisible()) {
+      await page.locator('#sheet-modal-close').click();
+    }
     await page.locator('#play-derived-grid .play-effect-chip')
       .filter({ hasText: 'Haste' })
       .first()

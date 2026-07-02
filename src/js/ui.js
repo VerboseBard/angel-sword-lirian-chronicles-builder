@@ -1,7 +1,7 @@
 import { BUILDER_STEPS, CLASS_GROUP_ROLE_ORDER, CLASS_PASSIVE_SLOTS, CLASS_PURCHASABLE_LEVELS, CLASS_ROWS, CLICKABLE_ROLL_FIELDS, COMMON_WEAPON_GROUP_OPTIONS, CREATION_SKILL_POINT_BUDGET, DEFAULT_DICE_SET_ID, DEMON_CLAN_SKILL_OPTIONS, DICE_PREVIEW_FALLBACK_URL, DICE_SETS, DICE_SET_ID_ALIASES, DICE_SOUND_ASSETS, DICE_TRAY_TYPES, EMBEDDED_STATE_CHUNK_SIZE, EMBEDDED_STATE_FORMAT, ENABLE_ACCURATE_DICE_ROLLS, ENABLE_WEBGL_DICE_ROLLS, INVENTORY_ROWS, MAIN_STATS, MAIN_STAT_CREATION_ARRAY, MAX_DICE_TRAY_DICE, MULTILINE_FIELDS, NAME_FIELDS, OFFICIAL_LANGUAGE_OPTIONS, PAGE_BACKGROUNDS, PASSIVE_READ_ONLY_FIELDS, PDF_STATE_CHUNK_FIELD_PREFIX, PDF_STATE_MANIFEST_FIELD, PLAY_BASIC_ACTIONS, PLAY_ROLLS, PORTRAIT_JPEG_QUALITY, PORTRAIT_MAX_DIMENSION, PORTRAIT_NORMALIZE_THRESHOLD, SAVE_SNAPSHOT_PORTRAIT_LIMIT, SECONDARY_STATS, SECONDARY_STAT_CREATION_ARRAY, SKILL_ALIASES, SKILL_DEFINITIONS, SKILL_EXPERTISE_OPTIONS, SKILL_OPTIONS, SPECIALITY_WEAPON_GROUP_OPTIONS, STARTING_CLASS_EXP, STARTING_INTERLUDE_POINTS, SUBSTAT_OPTIONS, VERSION_CHECK_ENDPOINT, VERSION_DOWNLOAD_ENDPOINT, VERSION_LOCAL_ENDPOINT, VERSION_STATUS_ENDPOINT } from "./constants.js";
 import { asArray, clamp, cleanText, cssEscape, escapeHtml, formatModifier, normalizeKey, normalizePhrase, toNumber } from "./utils.js";
 import { clearSheet, createDefaultState, getSavedSlots, mergePlayState, persistWorkingState, scheduleWorkingStatePersist, state, updateFieldValue } from "./state.js";
-import { applyGameVersion, detailLookup, exportPrepCache, getAncestryDetail, getAncestryOptionsByPrimaryRace, getAncestryRequirementPhrases, getBreakthroughBudgetState, getBuilderChoiceDefinitionsCacheKey, getCampaignProgressState, getClassDetail, getClassUnlockBudgetState, getComputedBonuses, getCurrentSecondaryLineageMode, getDemonClanOptions, getDerivedCombatStats, getHumanRaceSkillChoiceOptions, getRaceDetail, getRaceRequirementPhrases, getSecondaryLineageLabels, getSelectedAncestryDetail, getSelectedBreakthroughRecords, getSelectedClassDetails, getSelectedClassProgress, getSelectedGameVersionId, getSelectedItemRecords, getSelectedRaceDetail, getSkillBreakdownParts, getSkillRowsData, getStartingFundsState, getVersionManifest, getVersionRecord, getVersionRecords, lookup, persistSelectedGameVersion, syncPlayResourcesFromFields, usePlayCost, versionRuntime } from "./rules.js";
+import { applyGameVersion, detailLookup, exportPrepCache, getActivePlayResourceCurrentLimit, getAncestryDetail, getAncestryOptionsByPrimaryRace, getAncestryRequirementPhrases, getBreakthroughBudgetState, getBuilderChoiceDefinitionsCacheKey, getCampaignProgressState, getClassDetail, getClassUnlockBudgetState, getComputedBonuses, getCurrentSecondaryLineageMode, getDemonClanOptions, getDerivedCombatStats, getHumanRaceSkillChoiceOptions, getRaceDetail, getRaceRequirementPhrases, getSecondaryLineageLabels, getSelectedAncestryDetail, getSelectedBreakthroughRecords, getSelectedClassDetails, getSelectedClassProgress, getSelectedGameVersionId, getSelectedItemRecords, getSelectedRaceDetail, getSkillBreakdownParts, getSkillRowsData, getStartingFundsState, getVersionManifest, getVersionRecord, getVersionRecords, lookup, persistSelectedGameVersion, syncPlayResourcesFromFields, usePlayCost, versionRuntime } from "./rules.js";
 import { dicePackRuntime, preloadDiceSetFaceArt, renderDiceTray } from "./dice.js";
 import { closeSheetModal, deriveSaveSlotName, exportJsonState, exportPdfState, exportSpreadsheetState, exportState, extractAbilityHeading, getWorksheetNumberText, getWorksheetText, handleImportedCharacterFile, handleSaveSlotAction, loadFromBrowser, openSheetModal, parseClimCost, parseNumericCost, saveCurrentCharacterToActiveSlot, saveCurrentCharacterToNewSlot, saveToBrowser, setSpreadsheetExportCell } from "./io.js";
 
@@ -7966,12 +7966,14 @@ const breakdown = `d20: ${roll} | ${getSkillBreakdownParts(skill, expertiseGroup
 function restoreTurnResources() {
       syncPlayResourcesFromFields(true);
 const derived = getDerivedCombatStats();
-      state.play.resources.apCurrent = derived.apMax;
+const apLimit = getActivePlayResourceCurrentLimit("apCurrent", derived.apMax);
+      state.play.resources.apCurrent = apLimit;
       appendPlayLog("AP Recovery", [
-        `AP recovered to ${derived.apMax}.`,
+        `AP recovered to ${apLimit}.`,
+        apLimit !== derived.apMax ? `Active effects currently raise AP above the normal ${derived.apMax} limit.` : "",
         "Mana and RP are not restored by AP recovery.",
         "If a rule changes AP recovery, adjust AP manually after using this."
-      ]);
+      ].filter(Boolean));
       renderPlayDashboard();
       setStatus("Recovered AP for the start of turn.");
     }
@@ -8062,7 +8064,7 @@ function applyPlayEffectResourceGrant(effect) {
           return;
         }
         const current = toNumber(resources[currentKey], 0);
-        const max = toNumber(resources[config.maxKey], current + amount) + amount;
+        const max = getActivePlayResourceCurrentLimit(currentKey, toNumber(resources[config.maxKey], current + amount));
         const next = clamp(current + amount, 0, Math.max(0, max));
         resources[currentKey] = next;
         lines.push(`${config.label} +${amount} (${next}${currentKey === "hpCurrent" ? ` / ${resources[config.maxKey]}` : ""}).`);
