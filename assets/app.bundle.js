@@ -1797,14 +1797,20 @@ var LyrianApp = (() => {
     const summary = {
       stat: { Power: 0, Focus: 0, Agility: 0, Toughness: 0 },
       derived: {},
+      resourceMaxDelta: {},
+      resourceMaxSet: {},
       speedMultiplier: 1,
       speedSet: null,
       dodgeSet: null
     };
+    const resourceMaxKeys = /* @__PURE__ */ new Set(["hpMax", "manaMax", "rpMax", "apMax"]);
     const effects = Array.isArray(state.play?.activeEffects) ? state.play.activeEffects : [];
     effects.forEach((effect) => {
       const modifiers = effect?.rules?.modifiers && typeof effect.rules.modifiers === "object" ? effect.rules.modifiers : {};
       Object.entries(modifiers).forEach(([key, rawValue]) => {
+        if (key === "skillChecks" || key === "resourceGrant") {
+          return;
+        }
         if (key === "speedMultiplier") {
           summary.speedMultiplier *= Number.isFinite(Number(rawValue)) ? Number(rawValue) : 1;
           return;
@@ -1820,6 +1826,18 @@ var LyrianApp = (() => {
           const value = Number(rawValue);
           if (Number.isFinite(value)) {
             summary.dodgeSet = summary.dodgeSet == null ? value : Math.min(summary.dodgeSet, value);
+          }
+          return;
+        }
+        if (resourceMaxKeys.has(key)) {
+          summary.resourceMaxDelta[key] = (summary.resourceMaxDelta[key] || 0) + toNumber(rawValue, 0);
+          return;
+        }
+        if (/MaxSet$/.test(key)) {
+          const resourceKey = key.replace(/Set$/, "");
+          const value = Number(rawValue);
+          if (resourceMaxKeys.has(resourceKey) && Number.isFinite(value)) {
+            summary.resourceMaxSet[resourceKey] = summary.resourceMaxSet[resourceKey] == null ? value : Math.min(summary.resourceMaxSet[resourceKey], value);
           }
           return;
         }
@@ -1839,6 +1857,14 @@ var LyrianApp = (() => {
       return total + Math.max(0, grant);
     }, 0);
   }
+  function hasActivePlayResourceMaxModifier(resourceKey) {
+    const setKey = `${resourceKey}Set`;
+    const effects = Array.isArray(state.play?.activeEffects) ? state.play.activeEffects : [];
+    return effects.some((effect) => {
+      const modifiers = effect?.rules?.modifiers && typeof effect.rules.modifiers === "object" ? effect.rules.modifiers : {};
+      return Object.prototype.hasOwnProperty.call(modifiers, resourceKey) || Object.prototype.hasOwnProperty.call(modifiers, setKey);
+    });
+  }
   function getActivePlayResourceCurrentLimit(resourceKey, baseMax = 0) {
     return Math.max(0, toNumber(baseMax, 0) + getActivePlayEffectCurrentAllowance(resourceKey));
   }
@@ -1850,11 +1876,17 @@ var LyrianApp = (() => {
     const agility = toNumber(state.fields.Agility, 0) + (bonuses.mainStats.Agility || 0) + activeEffectModifiers.stat.Agility;
     const toughness = toNumber(state.fields.Toughness, 0) + (bonuses.mainStats.Toughness || 0) + activeEffectModifiers.stat.Toughness;
     const breakthroughEffects = getSelectedBreakthroughEffects();
-    const hpMax = 20 + toughness * 10 + (bonuses.derived.hpMax || 0);
-    const manaMax = 6 + power + (bonuses.derived.manaMax || 0);
-    const rpMax = 2 + agility + (bonuses.derived.rpMax || 0);
+    const hpMaxBeforeSet = Math.max(0, 20 + toughness * 10 + (bonuses.derived.hpMax || 0) + (activeEffectModifiers.resourceMaxDelta.hpMax || 0));
+    const manaMaxBeforeSet = Math.max(0, 6 + power + (bonuses.derived.manaMax || 0) + (activeEffectModifiers.resourceMaxDelta.manaMax || 0));
+    const rpMaxBeforeSet = Math.max(0, 2 + agility + (bonuses.derived.rpMax || 0) + (activeEffectModifiers.resourceMaxDelta.rpMax || 0));
     const apMaxText = cleanText(state.play?.resources?.apMax);
-    const apMax = apMaxText ? Math.max(0, toNumber(apMaxText, 4)) : 4;
+    const apBaseMaxText = cleanText(state.play?.resources?.apBaseMax);
+    const normalApMax = apBaseMaxText ? Math.max(0, toNumber(apBaseMaxText, 4)) : apMaxText ? Math.max(0, toNumber(apMaxText, 4)) : 4;
+    const apMaxBeforeSet = Math.max(0, normalApMax + (activeEffectModifiers.resourceMaxDelta.apMax || 0));
+    const hpMax = activeEffectModifiers.resourceMaxSet.hpMax == null ? hpMaxBeforeSet : Math.max(0, activeEffectModifiers.resourceMaxSet.hpMax);
+    const manaMax = activeEffectModifiers.resourceMaxSet.manaMax == null ? manaMaxBeforeSet : Math.max(0, activeEffectModifiers.resourceMaxSet.manaMax);
+    const rpMax = activeEffectModifiers.resourceMaxSet.rpMax == null ? rpMaxBeforeSet : Math.max(0, activeEffectModifiers.resourceMaxSet.rpMax);
+    const apMax = activeEffectModifiers.resourceMaxSet.apMax == null ? apMaxBeforeSet : Math.max(0, activeEffectModifiers.resourceMaxSet.apMax);
     const derivedBonuses = {
       ...bonuses.derived,
       ...Object.fromEntries(Object.entries(activeEffectModifiers.derived).map(([key, value]) => [key, (bonuses.derived[key] || 0) + value]))
@@ -1908,6 +1940,7 @@ var LyrianApp = (() => {
     const resources = state.play.resources;
     const previousHpCurrent = toNumber(resources.hpCurrent, NaN);
     const previousHpMax = toNumber(resources.hpMax, NaN);
+    const previousApMax = toNumber(resources.apMax, NaN);
     const hasHpCurrent = cleanText(resources.hpCurrent) !== "";
     const wasAtPreviousHpMax = Number.isFinite(previousHpCurrent) && Number.isFinite(previousHpMax) && previousHpCurrent >= previousHpMax;
     const isBuilderMode = state.ui?.mode === "builder";
@@ -1916,6 +1949,13 @@ var LyrianApp = (() => {
     resources.hpMax = derived.hpMax;
     resources.manaMax = derived.manaMax;
     resources.rpMax = derived.rpMax;
+    if (hasActivePlayResourceMaxModifier("apMax")) {
+      if (!cleanText(resources.apBaseMax)) {
+        resources.apBaseMax = Number.isFinite(previousApMax) ? previousApMax : derived.apMax;
+      }
+    } else {
+      resources.apBaseMax = "";
+    }
     resources.apMax = derived.apMax;
     if (shouldSyncHpToMax) {
       resources.hpCurrent = derived.hpMax;
@@ -2118,8 +2158,11 @@ var LyrianApp = (() => {
     if (expertiseGroup) {
       parts.push(`${expertiseGroup.name} Expertise ${formatModifier(expertiseGroup.bonus)}`);
     }
-    if (skill.bonusValue) {
-      parts.push(`Feature ${formatModifier(skill.bonusValue)}`);
+    if (skill.featureBonusValue) {
+      parts.push(`Feature ${formatModifier(skill.featureBonusValue)}`);
+    }
+    if (skill.activeEffectBonusValue) {
+      parts.push(`Active Effects ${formatModifier(skill.activeEffectBonusValue)}`);
     }
     return parts;
   }
@@ -6770,6 +6813,20 @@ var LyrianApp = (() => {
     const base = toNumber(state.fields[key], 0);
     return base + (bonuses.secondaryStats[key] || 0);
   }
+  function getActivePlaySkillCheckModifier(skillName) {
+    const target = normalizePhrase(skillName);
+    if (!target) {
+      return 0;
+    }
+    const effects = Array.isArray(state.play?.activeEffects) ? state.play.activeEffects : [];
+    return effects.reduce((total, effect) => {
+      const skillChecks = effect?.rules?.modifiers?.skillChecks;
+      if (!skillChecks || typeof skillChecks !== "object") {
+        return total;
+      }
+      return total + Object.entries(skillChecks).reduce((skillTotal, [name, value]) => normalizePhrase(name) === target ? skillTotal + toNumber(value, 0) : skillTotal, 0);
+    }, 0);
+  }
   function getSelectedBreakthroughEffects() {
     const effects = {
       bonusClim: 0,
@@ -9358,7 +9415,9 @@ var LyrianApp = (() => {
     const expertiseValue = expertiseGroups.reduce((best, entry) => Math.max(best, entry.bonus), 0);
     const creationExpertiseSpend = getCreationExpertiseSpendForSkill(index);
     const expertiseSpend = getTotalExpertiseSpendForSkill(index);
-    const bonusValue = bonuses.skillChecks[definition.name] || 0;
+    const featureBonusValue = bonuses.skillChecks[definition.name] || 0;
+    const activeEffectBonusValue = getActivePlaySkillCheckModifier(definition.name);
+    const bonusValue = featureBonusValue + activeEffectBonusValue;
     const total = substatValue + skillPoints + bonusValue;
     const bestExpertiseTotal = total + expertiseValue;
     return {
@@ -9375,6 +9434,8 @@ var LyrianApp = (() => {
       expertiseGroups,
       creationExpertiseSpend,
       expertiseSpend,
+      featureBonusValue,
+      activeEffectBonusValue,
       bonusValue,
       total,
       bestExpertiseTotal,
@@ -9537,6 +9598,7 @@ var LyrianApp = (() => {
     state.play.hpHasManualChange = false;
     state.play.foodUsedSinceRest = false;
     state.play.activeEffects = [];
+    syncSkillFields();
     syncPlayResourcesFromFields(false);
     appendPlayLog("Full Restore", [
       "HP, Mana, AP, and RP restored to their current maximum values.",
@@ -9599,6 +9661,10 @@ var LyrianApp = (() => {
       resourceGrant: rules.resourceGrant && typeof rules.resourceGrant === "object" ? { ...rules.resourceGrant } : {}
     };
   }
+  function playEffectHasSkillCheckModifiers(effect) {
+    const skillChecks = effect?.rules?.modifiers?.skillChecks;
+    return Boolean(skillChecks && typeof skillChecks === "object" && Object.keys(skillChecks).length);
+  }
   function applyPlayEffectResourceGrant(effect) {
     const grant = effect?.rules?.resourceGrant && typeof effect.rules.resourceGrant === "object" ? effect.rules.resourceGrant : {};
     if (!Object.keys(grant).length) {
@@ -9649,6 +9715,9 @@ var LyrianApp = (() => {
       ...state.play.activeEffects.filter((entry) => [entry.name, entry.source, entry.duration].map(normalizePhrase).join("|") !== nextKey)
     ].slice(0, 20);
     const grantLines = hadMatchingEffect ? [] : applyPlayEffectResourceGrant(nextEffect);
+    if (playEffectHasSkillCheckModifiers(nextEffect)) {
+      syncSkillFields();
+    }
     return { effect: nextEffect, grantLines, replaced: hadMatchingEffect };
   }
   function removePlayActiveEffect(effectId) {
@@ -9656,6 +9725,9 @@ var LyrianApp = (() => {
     const id = cleanText(effectId);
     const removed = state.play.activeEffects.find((entry) => entry.id === id);
     state.play.activeEffects = state.play.activeEffects.filter((entry) => entry.id !== id);
+    if (playEffectHasSkillCheckModifiers(removed)) {
+      syncSkillFields();
+    }
     syncPlayResourcesFromFields(true);
     appendPlayLog("Active Effect Cleared", [removed ? removed.name : "Effect removed."]);
     renderPlayDashboard();
@@ -9766,7 +9838,8 @@ var LyrianApp = (() => {
             "You hide your mana output and aura, causing your spirit core to be considered 0 for the purposes of detection and aura abilities.",
             "In addition you gain a +5 bonus to Stealth."
           ],
-          automationLines: ["Stealth automation is not wired into active effects yet; the rule is tracked as a reminder."]
+          automationLines: ["Stealth checks receive +5 while this chip remains active."],
+          modifiers: { skillChecks: { Stealth: 5 } }
         })
       },
       { id: "blessed", name: "Blessed", summary: "Manual: blessing/boon needs a source and exact value.", buildRules: () => buildManualOnlyEffectRules("blessed", "Blessed is not a generic condition in the bundled rules data. The closest named entry is the Blessed by Kari breakthrough, which modifies Divine Providence rather than applying a universal status.") },
@@ -9822,12 +9895,21 @@ var LyrianApp = (() => {
         name: "Root",
         summary: "Official: cannot move; Dodge reaction evasion becomes 13 + Agility.",
         defaultDuration: "Until cleared",
-        buildRules: () => buildOfficialEffectRules({
-          id: "root",
-          detailLines: ["You cannot move and your evasion when taking the Dodge reaction is changed to 13 + Agility."],
-          automationLines: ["Speed is set to 0. Dodge is shown as 13 + current Agility."],
-          modifiers: { speedSet: 0, dodgeSet: 13 + toNumber(state.fields.Agility, 0) }
-        })
+        buildRules: () => {
+          const agility = getComputedMainStatValue("Agility");
+          const dodge = 13 + agility;
+          return buildOfficialEffectRules({
+            id: "root",
+            value: String(dodge),
+            valueLabel: "Dodge",
+            detailLines: [
+              "You cannot move and your evasion when taking the Dodge reaction is changed to 13 + Agility.",
+              `This sheet used the current character's Agility: 13 + Agility ${agility} = Dodge ${dodge}.`
+            ],
+            automationLines: [`Speed is set to 0. Dodge is shown as ${dodge} while this chip remains active.`],
+            modifiers: { speedSet: 0, dodgeSet: dodge }
+          });
+        }
       },
       valuedRuleOption({
         id: "sunder",
@@ -9853,7 +9935,8 @@ var LyrianApp = (() => {
         buildRules: () => buildOfficialEffectRules({
           id: "stun",
           detailLines: ["Your AP, AP recovery and RP is set to 0 when afflicted by this. When it ends, you regain any unused RP lost from this effect."],
-          automationLines: ["Tracked as an exact rule reminder. Max-resource automation is deferred so the editable AP/RP max boxes are not permanently overwritten."]
+          automationLines: ["AP max/recovery and RP max are set to 0 while this chip remains active. Clearing Stun restores the normal calculated limits."],
+          modifiers: { apMaxSet: 0, rpMaxSet: 0 }
         })
       },
       {
@@ -9864,7 +9947,8 @@ var LyrianApp = (() => {
         buildRules: () => buildOfficialEffectRules({
           id: "weakened",
           detailLines: ["Your maximum AP goes down to 2 and maximum RP goes down to 1. When it ends, you regain any unused RP lost from this effect."],
-          automationLines: ["Tracked as an exact rule reminder. Max-resource automation is deferred so the editable AP/RP max boxes are not permanently overwritten."]
+          automationLines: ["AP max is set to 2 and RP max is set to 1 while this chip remains active. Clearing Weakened restores the normal calculated limits."],
+          modifiers: { apMaxSet: 2, rpMaxSet: 1 }
         })
       },
       {
@@ -9875,7 +9959,8 @@ var LyrianApp = (() => {
         buildRules: () => buildOfficialEffectRules({
           id: "shaken",
           detailLines: ["The target's maximum AP is reduced by 1."],
-          automationLines: ["Tracked as an exact rule reminder. Max-resource automation is deferred so the editable AP max box is not permanently overwritten."]
+          automationLines: ["AP max is reduced by 1 while this chip remains active. Clearing Shaken restores the normal calculated limit."],
+          modifiers: { apMax: -1 }
         })
       },
       {

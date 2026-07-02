@@ -5075,6 +5075,22 @@ function getComputedSecondaryStatValue(key, bonuses = getComputedBonuses()) {
       const base = toNumber(state.fields[key], 0);
       return base + (bonuses.secondaryStats[key] || 0);
     }
+function getActivePlaySkillCheckModifier(skillName) {
+      const target = normalizePhrase(skillName);
+      if (!target) {
+        return 0;
+      }
+      const effects = Array.isArray(state.play?.activeEffects) ? state.play.activeEffects : [];
+      return effects.reduce((total, effect) => {
+        const skillChecks = effect?.rules?.modifiers?.skillChecks;
+        if (!skillChecks || typeof skillChecks !== "object") {
+          return total;
+        }
+        return total + Object.entries(skillChecks).reduce((skillTotal, [name, value]) => (
+          normalizePhrase(name) === target ? skillTotal + toNumber(value, 0) : skillTotal
+        ), 0);
+      }, 0);
+    }
 export function getSelectedBreakthroughEffects() {
       const effects = {
         bonusClim: 0,
@@ -7789,7 +7805,9 @@ const expertiseGroups = getSkillExpertiseGroups(index, bonuses);
 const expertiseValue = expertiseGroups.reduce((best, entry) => Math.max(best, entry.bonus), 0);
 const creationExpertiseSpend = getCreationExpertiseSpendForSkill(index);
 const expertiseSpend = getTotalExpertiseSpendForSkill(index);
-const bonusValue = bonuses.skillChecks[definition.name] || 0;
+const featureBonusValue = bonuses.skillChecks[definition.name] || 0;
+const activeEffectBonusValue = getActivePlaySkillCheckModifier(definition.name);
+const bonusValue = featureBonusValue + activeEffectBonusValue;
 const total = substatValue + skillPoints + bonusValue;
 const bestExpertiseTotal = total + expertiseValue;
 
@@ -7807,6 +7825,8 @@ const bestExpertiseTotal = total + expertiseValue;
         expertiseGroups,
         creationExpertiseSpend,
         expertiseSpend,
+        featureBonusValue,
+        activeEffectBonusValue,
         bonusValue,
         total,
         bestExpertiseTotal,
@@ -7982,6 +8002,7 @@ function fullRestoreResources() {
       state.play.hpHasManualChange = false;
       state.play.foodUsedSinceRest = false;
       state.play.activeEffects = [];
+      syncSkillFields();
       syncPlayResourcesFromFields(false);
       appendPlayLog("Full Restore", [
         "HP, Mana, AP, and RP restored to their current maximum values.",
@@ -8044,6 +8065,10 @@ function clonePlayEffectRules(rules = {}) {
         resourceGrant: rules.resourceGrant && typeof rules.resourceGrant === "object" ? { ...rules.resourceGrant } : {}
       };
     }
+function playEffectHasSkillCheckModifiers(effect) {
+      const skillChecks = effect?.rules?.modifiers?.skillChecks;
+      return Boolean(skillChecks && typeof skillChecks === "object" && Object.keys(skillChecks).length);
+    }
 function applyPlayEffectResourceGrant(effect) {
       const grant = effect?.rules?.resourceGrant && typeof effect.rules.resourceGrant === "object" ? effect.rules.resourceGrant : {};
       if (!Object.keys(grant).length) {
@@ -8094,6 +8119,9 @@ const hadMatchingEffect = state.play.activeEffects.some((entry) => [entry.name, 
         ...state.play.activeEffects.filter((entry) => [entry.name, entry.source, entry.duration].map(normalizePhrase).join("|") !== nextKey)
       ].slice(0, 20);
       const grantLines = hadMatchingEffect ? [] : applyPlayEffectResourceGrant(nextEffect);
+      if (playEffectHasSkillCheckModifiers(nextEffect)) {
+        syncSkillFields();
+      }
       return { effect: nextEffect, grantLines, replaced: hadMatchingEffect };
     }
 function removePlayActiveEffect(effectId) {
@@ -8101,6 +8129,9 @@ function removePlayActiveEffect(effectId) {
 const id = cleanText(effectId);
 const removed = state.play.activeEffects.find((entry) => entry.id === id);
       state.play.activeEffects = state.play.activeEffects.filter((entry) => entry.id !== id);
+      if (playEffectHasSkillCheckModifiers(removed)) {
+        syncSkillFields();
+      }
       syncPlayResourcesFromFields(true);
       appendPlayLog("Active Effect Cleared", [removed ? removed.name : "Effect removed."]);
       renderPlayDashboard();
@@ -8211,7 +8242,8 @@ const MANUAL_PLAY_EFFECT_OPTIONS = {
               "You hide your mana output and aura, causing your spirit core to be considered 0 for the purposes of detection and aura abilities.",
               "In addition you gain a +5 bonus to Stealth."
             ],
-            automationLines: ["Stealth automation is not wired into active effects yet; the rule is tracked as a reminder."]
+            automationLines: ["Stealth checks receive +5 while this chip remains active."],
+            modifiers: { skillChecks: { Stealth: 5 } }
           })
         },
         { id: "blessed", name: "Blessed", summary: "Manual: blessing/boon needs a source and exact value.", buildRules: () => buildManualOnlyEffectRules("blessed", "Blessed is not a generic condition in the bundled rules data. The closest named entry is the Blessed by Kari breakthrough, which modifies Divine Providence rather than applying a universal status.") },
@@ -8267,12 +8299,21 @@ const MANUAL_PLAY_EFFECT_OPTIONS = {
           name: "Root",
           summary: "Official: cannot move; Dodge reaction evasion becomes 13 + Agility.",
           defaultDuration: "Until cleared",
-          buildRules: () => buildOfficialEffectRules({
-            id: "root",
-            detailLines: ["You cannot move and your evasion when taking the Dodge reaction is changed to 13 + Agility."],
-            automationLines: ["Speed is set to 0. Dodge is shown as 13 + current Agility."],
-            modifiers: { speedSet: 0, dodgeSet: 13 + toNumber(state.fields.Agility, 0) }
-          })
+          buildRules: () => {
+            const agility = getComputedMainStatValue("Agility");
+            const dodge = 13 + agility;
+            return buildOfficialEffectRules({
+              id: "root",
+              value: String(dodge),
+              valueLabel: "Dodge",
+              detailLines: [
+                "You cannot move and your evasion when taking the Dodge reaction is changed to 13 + Agility.",
+                `This sheet used the current character's Agility: 13 + Agility ${agility} = Dodge ${dodge}.`
+              ],
+              automationLines: [`Speed is set to 0. Dodge is shown as ${dodge} while this chip remains active.`],
+              modifiers: { speedSet: 0, dodgeSet: dodge }
+            });
+          }
         },
         valuedRuleOption({
           id: "sunder",
@@ -8298,7 +8339,8 @@ const MANUAL_PLAY_EFFECT_OPTIONS = {
           buildRules: () => buildOfficialEffectRules({
             id: "stun",
             detailLines: ["Your AP, AP recovery and RP is set to 0 when afflicted by this. When it ends, you regain any unused RP lost from this effect."],
-            automationLines: ["Tracked as an exact rule reminder. Max-resource automation is deferred so the editable AP/RP max boxes are not permanently overwritten."]
+            automationLines: ["AP max/recovery and RP max are set to 0 while this chip remains active. Clearing Stun restores the normal calculated limits."],
+            modifiers: { apMaxSet: 0, rpMaxSet: 0 }
           })
         },
         {
@@ -8309,7 +8351,8 @@ const MANUAL_PLAY_EFFECT_OPTIONS = {
           buildRules: () => buildOfficialEffectRules({
             id: "weakened",
             detailLines: ["Your maximum AP goes down to 2 and maximum RP goes down to 1. When it ends, you regain any unused RP lost from this effect."],
-            automationLines: ["Tracked as an exact rule reminder. Max-resource automation is deferred so the editable AP/RP max boxes are not permanently overwritten."]
+            automationLines: ["AP max is set to 2 and RP max is set to 1 while this chip remains active. Clearing Weakened restores the normal calculated limits."],
+            modifiers: { apMaxSet: 2, rpMaxSet: 1 }
           })
         },
         {
@@ -8320,7 +8363,8 @@ const MANUAL_PLAY_EFFECT_OPTIONS = {
           buildRules: () => buildOfficialEffectRules({
             id: "shaken",
             detailLines: ["The target's maximum AP is reduced by 1."],
-            automationLines: ["Tracked as an exact rule reminder. Max-resource automation is deferred so the editable AP max box is not permanently overwritten."]
+            automationLines: ["AP max is reduced by 1 while this chip remains active. Clearing Shaken restores the normal calculated limit."],
+            modifiers: { apMax: -1 }
           })
         },
         {

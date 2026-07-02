@@ -1698,6 +1698,127 @@ const browsers = [
     await page.click('[data-play-effect-detail-clear]');
     await page.waitForFunction(() => !(document.querySelector('#play-derived-grid .play-tracker-effects')?.textContent || '').includes('Regrowth'));
 
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'sheet', sheetTab: 'actions', gameVersion: '0.13.0' },
+        fields: {
+          Name: 'Linked Effect Tester',
+          Power: '4',
+          Focus: '3',
+          Agility: '4',
+          Toughness: '5',
+          Fitness: '5',
+          Cunning: '4',
+          Reason: '3',
+          Awareness: '2',
+          Presence: '1'
+        },
+        play: {
+          resources: {
+            hpCurrent: 70,
+            hpMax: 70,
+            tempHp: 0,
+            manaCurrent: 10,
+            manaMax: 10,
+            rpCurrent: 6,
+            rpMax: 6,
+            apCurrent: 4,
+            apMax: 4
+          }
+        }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-open-effect-picker="positive"]');
+    await page.waitForSelector('[data-manual-effect-option="presence-concealment"]', { timeout: 5000 });
+    await page.check('[data-manual-effect-option="presence-concealment"]');
+    await page.click('[data-manual-effect-confirm]');
+    await page.waitForFunction(() => {
+      const row = [...document.querySelectorAll('#play-skills .play-skill-mini-row')]
+        .find((entry) => entry.querySelector('strong')?.textContent?.trim() === 'Stealth');
+      return row?.textContent.includes('Active Effects +5') && row?.querySelector('[data-play-roll-skill]')?.textContent?.trim() === '+9';
+    });
+    await page.locator('#play-derived-grid .play-effect-chip')
+      .filter({ hasText: 'Presence Concealment' })
+      .first()
+      .click();
+    await page.waitForFunction(() => (document.querySelector('#sheet-modal')?.textContent || '').includes('Stealth checks receive +5'));
+    await page.click('[data-play-effect-detail-clear]');
+    await page.waitForFunction(() => {
+      const row = [...document.querySelectorAll('#play-skills .play-skill-mini-row')]
+        .find((entry) => entry.querySelector('strong')?.textContent?.trim() === 'Stealth');
+      return row && !row.textContent.includes('Active Effects +5') && row.querySelector('[data-play-roll-skill]')?.textContent?.trim() === '+4';
+    });
+
+    await page.click('[data-open-effect-picker="negative"]');
+    await page.waitForSelector('[data-manual-effect-option="root"]', { timeout: 5000 });
+    await page.check('[data-manual-effect-option="root"]');
+    await page.click('[data-manual-effect-confirm]');
+    await page.waitForFunction(() => {
+      const utility = document.querySelector('#play-utility-grid')?.textContent || '';
+      const saves = document.querySelector('#play-saves')?.textContent || '';
+      return utility.includes('Speed') && utility.includes('0') && saves.includes('Dodge') && saves.includes('17');
+    });
+    await page.locator('#play-derived-grid .play-effect-chip')
+      .filter({ hasText: 'Root' })
+      .first()
+      .click();
+    await page.waitForFunction(() => (document.querySelector('#sheet-modal')?.textContent || '').includes('13 + Agility 4 = Dodge 17'));
+    await page.click('[data-play-effect-detail-clear]');
+    await page.waitForFunction(() => {
+      const utility = document.querySelector('#play-utility-grid')?.textContent || '';
+      const saves = document.querySelector('#play-saves')?.textContent || '';
+      return utility.includes('Speed') && utility.includes('20') && saves.includes('Dodge') && saves.includes('24');
+    });
+
+    await page.click('[data-open-effect-picker="negative"]');
+    await page.waitForSelector('[data-manual-effect-option="shaken"]', { timeout: 5000 });
+    await page.check('[data-manual-effect-option="shaken"]');
+    await page.click('[data-manual-effect-confirm]');
+    await page.waitForFunction(() =>
+      Number(document.querySelector('[data-play-resource="apCurrent"]')?.value || 0) === 3 &&
+      Number(document.querySelector('[data-play-resource="apMax"]')?.value || 0) === 3
+    );
+    await page.locator('#play-derived-grid .play-effect-chip').filter({ hasText: 'Shaken' }).first().click();
+    await page.waitForFunction(() => (document.querySelector('#sheet-modal')?.textContent || '').includes('AP max is reduced by 1'));
+    await page.click('[data-play-effect-detail-clear]');
+    await page.waitForFunction(() => Number(document.querySelector('[data-play-resource="apMax"]')?.value || 0) === 4);
+
+    await page.click('[data-open-effect-picker="negative"]');
+    await page.waitForSelector('[data-manual-effect-option="weakened"]', { timeout: 5000 });
+    await page.check('[data-manual-effect-option="weakened"]');
+    await page.click('[data-manual-effect-confirm]');
+    await page.waitForFunction(() =>
+      Number(document.querySelector('[data-play-resource="apMax"]')?.value || 0) === 2 &&
+      Number(document.querySelector('[data-play-resource="rpMax"]')?.value || 0) === 1
+    );
+    await page.locator('#play-derived-grid .play-effect-chip').filter({ hasText: 'Weakened' }).first().click();
+    await page.waitForFunction(() => (document.querySelector('#sheet-modal')?.textContent || '').includes('AP max is set to 2 and RP max is set to 1'));
+    await page.click('[data-play-effect-detail-clear]');
+    await page.waitForFunction(() =>
+      Number(document.querySelector('[data-play-resource="apMax"]')?.value || 0) === 4 &&
+      Number(document.querySelector('[data-play-resource="rpMax"]')?.value || 0) === 6
+    );
+
+    await page.click('[data-open-effect-picker="negative"]');
+    await page.waitForSelector('[data-manual-effect-option="stun"]', { timeout: 5000 });
+    await page.check('[data-manual-effect-option="stun"]');
+    await page.click('[data-manual-effect-confirm]');
+    await page.waitForFunction(() =>
+      Number(document.querySelector('[data-play-resource="apCurrent"]')?.value || 0) === 0 &&
+      Number(document.querySelector('[data-play-resource="apMax"]')?.value || 0) === 0 &&
+      Number(document.querySelector('[data-play-resource="rpCurrent"]')?.value || 0) === 0 &&
+      Number(document.querySelector('[data-play-resource="rpMax"]')?.value || 0) === 0
+    );
+    await page.locator('#play-derived-grid .play-effect-chip').filter({ hasText: 'Stun' }).first().click();
+    await page.waitForFunction(() => (document.querySelector('#sheet-modal')?.textContent || '').includes('AP max/recovery and RP max are set to 0'));
+    await page.click('[data-play-effect-detail-clear]');
+    await page.waitForFunction(() =>
+      Number(document.querySelector('[data-play-resource="apMax"]')?.value || 0) === 4 &&
+      Number(document.querySelector('[data-play-resource="rpMax"]')?.value || 0) === 6
+    );
+
     await page.click('[data-open-effect-picker="positive"]');
     await page.waitForSelector('[data-manual-effect-option="inspired"]', { timeout: 5000 });
     await page.check('[data-manual-effect-option="inspired"]');
