@@ -622,6 +622,8 @@ const derived = getDerivedCombatStats();
 const text = cleanText(effectText);
 const lines = [];
 const normalizedLabel = normalizePhrase(label);
+const handledByActiveEffect = normalizedLabel === "bear elixir"
+        || /\byou(?:\s+immediately)?\s+gain\s+1\s*rp\b[\s\S]*\bmaximum\s+rp\s+increases\s+by\s+1\b/i.test(text);
 
       if (!text) {
         return lines;
@@ -690,6 +692,10 @@ const restoreDirectResourceSentence = (sentence) => {
         if (/\b(?:target|ally|enemy|creature)\b/i.test(sentence) || /\bstart of your turn\b/i.test(sentence)) {
           return;
         }
+        if (handledByActiveEffect && /\bmaximum\s+rp\s+increases\s+by\s+1\b/i.test(sentence)) {
+          lines.push("Tracked effect: Bear Elixir active effect will increase maximum RP by 1 and grant 1 RP.");
+          return;
+        }
 const directResourceMatch = sentence.match(/\byou(?:\s+immediately)?\s+(?:regain|gain|recover)\s+(\d+)\s*(mana|rp|ap)\b/i);
         if (!directResourceMatch) {
           return;
@@ -751,7 +757,7 @@ const base = stat === "toughness"
         lines.push("Manual effect: this ability mentions Temporary HP, but the target, trigger, or formula needs player/GM handling.");
       }
 
-      if (/\bmaximum (?:hp|mana|ap|rp)\b/i.test(text) && !lines.some((line) => /maximum/i.test(line))) {
+      if (!handledByActiveEffect && /\bmaximum (?:hp|mana|ap|rp)\b/i.test(text) && !lines.some((line) => /maximum/i.test(line))) {
         lines.push("Manual effect: this use mentions a temporary maximum-resource change; adjust the max field manually if it applies.");
       }
 

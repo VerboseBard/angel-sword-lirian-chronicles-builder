@@ -1988,6 +1988,7 @@ var LyrianApp = (() => {
     const text = cleanText(effectText);
     const lines = [];
     const normalizedLabel = normalizePhrase(label);
+    const handledByActiveEffect = normalizedLabel === "bear elixir" || /\byou(?:\s+immediately)?\s+gain\s+1\s*rp\b[\s\S]*\bmaximum\s+rp\s+increases\s+by\s+1\b/i.test(text);
     if (!text) {
       return lines;
     }
@@ -2053,6 +2054,10 @@ var LyrianApp = (() => {
       if (/\b(?:target|ally|enemy|creature)\b/i.test(sentence) || /\bstart of your turn\b/i.test(sentence)) {
         return;
       }
+      if (handledByActiveEffect && /\bmaximum\s+rp\s+increases\s+by\s+1\b/i.test(sentence)) {
+        lines.push("Tracked effect: Bear Elixir active effect will increase maximum RP by 1 and grant 1 RP.");
+        return;
+      }
       const directResourceMatch = sentence.match(/\byou(?:\s+immediately)?\s+(?:regain|gain|recover)\s+(\d+)\s*(mana|rp|ap)\b/i);
       if (!directResourceMatch) {
         return;
@@ -2098,7 +2103,7 @@ var LyrianApp = (() => {
     if (!lines.length && options.logManualEffects !== false && /\btemporary (?:hit points|hp)\b/i.test(text)) {
       lines.push("Manual effect: this ability mentions Temporary HP, but the target, trigger, or formula needs player/GM handling.");
     }
-    if (/\bmaximum (?:hp|mana|ap|rp)\b/i.test(text) && !lines.some((line) => /maximum/i.test(line))) {
+    if (!handledByActiveEffect && /\bmaximum (?:hp|mana|ap|rp)\b/i.test(text) && !lines.some((line) => /maximum/i.test(line))) {
       lines.push("Manual effect: this use mentions a temporary maximum-resource change; adjust the max field manually if it applies.");
     }
     return lines;
@@ -11717,16 +11722,36 @@ ${message}`);
       return {
         name,
         source: "Inventory",
-        summary: "Gain 1 RP and increase max RP by 1 until the encounter ends. RP gain is tracked; max RP is still a manual adjustment.",
-        duration: "Until end of encounter"
+        summary: "Gain 1 RP and increase max RP by 1 until the encounter ends.",
+        duration: "Until end of encounter",
+        rules: {
+          id: "inventory-bear-elixir",
+          sourceType: "inventory",
+          detailLines: ["Gain 1 RP and increase maximum RP by 1 until the encounter ends."],
+          automationLines: ["RP max is increased by 1 while this chip remains active. One current RP is granted when the chip is first applied."],
+          modifiers: { rpMax: 1 },
+          resourceGrant: { rpCurrent: 1 }
+        }
       };
     }
     if (/axolotl elixir/.test(normalizedName)) {
+      const toughness = getCurrentToughnessValue();
       return {
         name,
         source: "Inventory",
-        summary: "At the start of each turn, regain HP equal to Toughness. Clear this if the encounter ends or the initial true damage dropped HP to 0.",
-        duration: "Until end of encounter"
+        summary: `At the start of each turn, regain HP equal to Toughness (${toughness}). Clear this if the encounter ends or the initial true damage dropped HP to 0.`,
+        duration: "Until end of encounter",
+        rules: {
+          id: "inventory-axolotl-elixir",
+          sourceType: "inventory",
+          detailLines: [
+            "At the start of each turn, regain HP equal to Toughness.",
+            `This sheet used the current character's Toughness: Toughness ${toughness} = ${toughness} HP.`
+          ],
+          automationLines: [`Resolved healing reminder: ${toughness} HP at the start of your turn.`],
+          modifiers: {},
+          resourceGrant: {}
+        }
       };
     }
     if (/\belixir\b/.test(normalizedName) && /\buntil (?:the )?(?:end of )?(?:combat|encounter)\b/.test(normalizedText)) {

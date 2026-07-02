@@ -1590,6 +1590,134 @@ const browsers = [
     await page.waitForFunction(() => (document.querySelector('#sheet-modal')?.textContent || '').includes('Until start of your next turn'));
     await page.locator('#sheet-modal-close').click();
 
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'sheet', sheetTab: 'inventory', gameVersion: '0.13.0' },
+        fields: {
+          Name: 'Bear Elixir Tester',
+          Power: '4',
+          Focus: '3',
+          Agility: '4',
+          Toughness: '5'
+        },
+        builder: {
+          selectedRaceId: 'human',
+          selectedItemIds: ['bear-elixir'],
+          itemQuantities: { 'bear-elixir': 1 }
+        },
+        play: {
+          resources: {
+            hpCurrent: 70,
+            hpMax: 70,
+            tempHp: 0,
+            manaCurrent: 10,
+            manaMax: 10,
+            rpCurrent: 6,
+            rpMax: 6,
+            apCurrent: 4,
+            apMax: 4
+          }
+        }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-play-tab="inventory"]');
+    await page.waitForSelector('#play-inventory [data-inventory-use]', { timeout: 5000 });
+    await page.locator('#play-inventory .play-item-row')
+      .filter({ hasText: 'Bear Elixir' })
+      .locator('[data-inventory-use]')
+      .first()
+      .click();
+    await page.waitForFunction(() =>
+      Number(document.querySelector('[data-play-resource="rpCurrent"]')?.value || 0) === 7 &&
+      Number(document.querySelector('[data-play-resource="rpMax"]')?.value || 0) === 7 &&
+      (document.querySelector('#play-derived-grid .play-tracker-effects')?.textContent || '').includes('Bear Elixir')
+    );
+    const bearElixirResult = await page.evaluate(() => ({
+      hp: Number(document.querySelector('.play-hit-current')?.textContent?.trim() || 0),
+      rp: Number(document.querySelector('[data-play-resource="rpCurrent"]')?.value || 0),
+      rpMax: Number(document.querySelector('[data-play-resource="rpMax"]')?.value || 0),
+      logText: document.querySelector('#play-log')?.textContent || ''
+    }));
+    if (
+      bearElixirResult.hp !== 59 ||
+      bearElixirResult.rp !== 7 ||
+      bearElixirResult.rpMax !== 7 ||
+      !bearElixirResult.logText.includes('active effect will increase maximum RP by 1 and grant 1 RP') ||
+      bearElixirResult.logText.includes('adjust the max field manually')
+    ) {
+      throw new Error(`Bear Elixir linked resource effect failed: ${JSON.stringify(bearElixirResult)}`);
+    }
+    await page.locator('#play-derived-grid .play-effect-chip')
+      .filter({ hasText: 'Bear Elixir' })
+      .first()
+      .click();
+    await page.waitForFunction(() => {
+      const text = document.querySelector('#sheet-modal')?.textContent || '';
+      return text.includes('RP max is increased by 1') && text.includes('One current RP is granted');
+    });
+    await page.click('[data-play-effect-detail-clear]');
+    await page.waitForFunction(() =>
+      Number(document.querySelector('[data-play-resource="rpCurrent"]')?.value || 0) === 6 &&
+      Number(document.querySelector('[data-play-resource="rpMax"]')?.value || 0) === 6
+    );
+
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'sheet', sheetTab: 'inventory', gameVersion: '0.13.0' },
+        fields: {
+          Name: 'Axolotl Elixir Tester',
+          Power: '4',
+          Focus: '3',
+          Agility: '4',
+          Toughness: '5'
+        },
+        builder: {
+          selectedRaceId: 'human',
+          selectedItemIds: ['axolotl-elixir'],
+          itemQuantities: { 'axolotl-elixir': 1 }
+        },
+        play: {
+          resources: {
+            hpCurrent: 70,
+            hpMax: 70,
+            tempHp: 0,
+            manaCurrent: 10,
+            manaMax: 10,
+            rpCurrent: 6,
+            rpMax: 6,
+            apCurrent: 4,
+            apMax: 4
+          }
+        }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-play-tab="inventory"]');
+    await page.waitForSelector('#play-inventory [data-inventory-use]', { timeout: 5000 });
+    await page.locator('#play-inventory .play-item-row')
+      .filter({ hasText: 'Axolotl Elixir' })
+      .locator('[data-inventory-use]')
+      .first()
+      .click();
+    await page.waitForFunction(() =>
+      Number(document.querySelector('.play-hit-current')?.textContent?.trim() || 0) === 45 &&
+      (document.querySelector('#play-derived-grid .play-tracker-effects')?.textContent || '').includes('Axolotl Elixir')
+    );
+    await page.locator('#play-derived-grid .play-effect-chip')
+      .filter({ hasText: 'Axolotl Elixir' })
+      .first()
+      .click();
+    await page.waitForFunction(() => {
+      const text = document.querySelector('#sheet-modal')?.textContent || '';
+      return text.includes('Toughness 5 = 5 HP') && text.includes('Resolved healing reminder: 5 HP');
+    });
+    await page.click('[data-play-effect-detail-clear]');
+    await page.click('[data-play-tab="actions"]');
+    await page.waitForSelector('#play-basic-actions .play-action-card', { timeout: 5000 });
+
     await page.click('[data-open-effect-picker="negative"]');
     await page.waitForSelector('[data-manual-effect-option="poisoned"]', { timeout: 5000 });
     await page.check('[data-manual-effect-option="poisoned"]');
