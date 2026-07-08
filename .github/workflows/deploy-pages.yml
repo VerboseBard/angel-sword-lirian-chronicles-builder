@@ -1,4 +1,4 @@
-name: Deploy Beta 1.5 Web
+name: Deploy Beta 1.9 Web
 
 on:
   push:
