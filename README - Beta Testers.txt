@@ -1,8 +1,8 @@
-Angels Sword Beta 1.5 Static Parity Build
+Angels Sword Beta 1.7 Crafting Workstream
 
 PUBLIC LINK
 
-Beta 1.5 is the static/public working copy. It now includes the non-API fixes and play-sheet improvements from the later 1.6 work, but it does not include the 1.6 API provider layer.
+Beta 1.7 is the static/public working copy for crafting, item usage, and related live sheet interaction work. It starts from the clean Beta 1.5 baseline and does not include the 1.6 API provider layer.
 
 The existing GitHub Pages link stays stable until this work is intentionally pushed later.
 
@@ -41,4 +41,4 @@ When reporting a bug, include:
 - Whether you were using the public site or a local development copy.
 
 ---
-Lyrian Chronicles Character Builder - Beta Version 1.5 Static Parity Build
+Lyrian Chronicles Character Builder - Beta Version 1.7 Crafting Workstream

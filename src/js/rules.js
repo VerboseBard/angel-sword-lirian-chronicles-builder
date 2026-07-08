@@ -198,10 +198,21 @@ const phrases = [name];
 export function getBreakthroughBudgetState(excludeId = "") {
       const selected = getSelectedBreakthroughRecords().filter((entry) => entry.id !== excludeId);
 const spent = selected.reduce((total, entry) => total + Math.max(0, parseNumericCost(entry.cost)), 0);
-const remaining = BREAKTHROUGH_CREATION_BUDGET - spent;
+const creationSpent = Math.min(BREAKTHROUGH_CREATION_BUDGET, spent);
+const creationRemaining = Math.max(0, BREAKTHROUGH_CREATION_BUDGET - spent);
+const generalSpent = Math.max(0, spent - BREAKTHROUGH_CREATION_BUDGET);
+const expBankText = cleanText(state.fields.Exp);
+const generalRemaining = expBankText
+        ? Math.max(0, toNumber(expBankText, 0))
+        : Math.max(0, STARTING_CLASS_EXP - getSelectedClassProgress().reduce((total, entry) => total + entry.cost, 0));
+const remaining = creationRemaining + generalRemaining;
       return {
         budget: BREAKTHROUGH_CREATION_BUDGET,
         spent,
+        creationSpent,
+        creationRemaining,
+        generalSpent,
+        generalRemaining,
         remaining,
         selected
       };
@@ -416,20 +427,14 @@ function getActivePlayEffectModifierSummary() {
       const summary = {
         stat: { Power: 0, Focus: 0, Agility: 0, Toughness: 0 },
         derived: {},
-        resourceMaxDelta: {},
-        resourceMaxSet: {},
         speedMultiplier: 1,
         speedSet: null,
         dodgeSet: null
       };
-      const resourceMaxKeys = new Set(["hpMax", "manaMax", "rpMax", "apMax"]);
       const effects = Array.isArray(state.play?.activeEffects) ? state.play.activeEffects : [];
       effects.forEach((effect) => {
         const modifiers = effect?.rules?.modifiers && typeof effect.rules.modifiers === "object" ? effect.rules.modifiers : {};
         Object.entries(modifiers).forEach(([key, rawValue]) => {
-          if (key === "skillChecks" || key === "resourceGrant") {
-            return;
-          }
           if (key === "speedMultiplier") {
             summary.speedMultiplier *= Number.isFinite(Number(rawValue)) ? Number(rawValue) : 1;
             return;
@@ -445,20 +450,6 @@ function getActivePlayEffectModifierSummary() {
             const value = Number(rawValue);
             if (Number.isFinite(value)) {
               summary.dodgeSet = summary.dodgeSet == null ? value : Math.min(summary.dodgeSet, value);
-            }
-            return;
-          }
-          if (resourceMaxKeys.has(key)) {
-            summary.resourceMaxDelta[key] = (summary.resourceMaxDelta[key] || 0) + toNumber(rawValue, 0);
-            return;
-          }
-          if (/MaxSet$/.test(key)) {
-            const resourceKey = key.replace(/Set$/, "");
-            const value = Number(rawValue);
-            if (resourceMaxKeys.has(resourceKey) && Number.isFinite(value)) {
-              summary.resourceMaxSet[resourceKey] = summary.resourceMaxSet[resourceKey] == null
-                ? value
-                : Math.min(summary.resourceMaxSet[resourceKey], value);
             }
             return;
           }
@@ -480,18 +471,6 @@ function getActivePlayEffectCurrentAllowance(resourceKey) {
         return total + Math.max(0, grant);
       }, 0);
     }
-function hasActivePlayResourceMaxModifier(resourceKey) {
-      const setKey = `${resourceKey}Set`;
-      const effects = Array.isArray(state.play?.activeEffects) ? state.play.activeEffects : [];
-      return effects.some((effect) => {
-        const modifiers = effect?.rules?.modifiers && typeof effect.rules.modifiers === "object" ? effect.rules.modifiers : {};
-        return Object.prototype.hasOwnProperty.call(modifiers, resourceKey)
-          || Object.prototype.hasOwnProperty.call(modifiers, setKey);
-      });
-    }
-export function getActivePlayResourceCurrentLimit(resourceKey, baseMax = 0) {
-      return Math.max(0, toNumber(baseMax, 0) + getActivePlayEffectCurrentAllowance(resourceKey));
-    }
 export function getDerivedCombatStats() {
       const bonuses = getComputedBonuses();
 const activeEffectModifiers = getActivePlayEffectModifierSummary();
@@ -500,17 +479,11 @@ const focus = toNumber(state.fields.Focus, 0) + (bonuses.mainStats.Focus || 0) +
 const agility = toNumber(state.fields.Agility, 0) + (bonuses.mainStats.Agility || 0) + activeEffectModifiers.stat.Agility;
 const toughness = toNumber(state.fields.Toughness, 0) + (bonuses.mainStats.Toughness || 0) + activeEffectModifiers.stat.Toughness;
 const breakthroughEffects = getSelectedBreakthroughEffects();
-const hpMaxBeforeSet = Math.max(0, 20 + toughness * 10 + (bonuses.derived.hpMax || 0) + (activeEffectModifiers.resourceMaxDelta.hpMax || 0));
-const manaMaxBeforeSet = Math.max(0, 6 + power + (bonuses.derived.manaMax || 0) + (activeEffectModifiers.resourceMaxDelta.manaMax || 0));
-const rpMaxBeforeSet = Math.max(0, 2 + agility + (bonuses.derived.rpMax || 0) + (activeEffectModifiers.resourceMaxDelta.rpMax || 0));
+const hpMax = 20 + toughness * 10 + (bonuses.derived.hpMax || 0);
+const manaMax = 6 + power + (bonuses.derived.manaMax || 0);
+const rpMax = 2 + agility + (bonuses.derived.rpMax || 0);
 const apMaxText = cleanText(state.play?.resources?.apMax);
-const apBaseMaxText = cleanText(state.play?.resources?.apBaseMax);
-const normalApMax = apBaseMaxText ? Math.max(0, toNumber(apBaseMaxText, 4)) : apMaxText ? Math.max(0, toNumber(apMaxText, 4)) : 4;
-const apMaxBeforeSet = Math.max(0, normalApMax + (activeEffectModifiers.resourceMaxDelta.apMax || 0));
-const hpMax = activeEffectModifiers.resourceMaxSet.hpMax == null ? hpMaxBeforeSet : Math.max(0, activeEffectModifiers.resourceMaxSet.hpMax);
-const manaMax = activeEffectModifiers.resourceMaxSet.manaMax == null ? manaMaxBeforeSet : Math.max(0, activeEffectModifiers.resourceMaxSet.manaMax);
-const rpMax = activeEffectModifiers.resourceMaxSet.rpMax == null ? rpMaxBeforeSet : Math.max(0, activeEffectModifiers.resourceMaxSet.rpMax);
-const apMax = activeEffectModifiers.resourceMaxSet.apMax == null ? apMaxBeforeSet : Math.max(0, activeEffectModifiers.resourceMaxSet.apMax);
+const apMax = apMaxText ? Math.max(0, toNumber(apMaxText, 4)) : 4;
 const derivedBonuses = {
         ...bonuses.derived,
         ...Object.fromEntries(Object.entries(activeEffectModifiers.derived).map(([key, value]) => [key, (bonuses.derived[key] || 0) + value]))
@@ -565,7 +538,6 @@ const derived = getDerivedCombatStats();
 const resources = state.play.resources;
 const previousHpCurrent = toNumber(resources.hpCurrent, NaN);
 const previousHpMax = toNumber(resources.hpMax, NaN);
-const previousApMax = toNumber(resources.apMax, NaN);
 const hasHpCurrent = cleanText(resources.hpCurrent) !== "";
 const wasAtPreviousHpMax = Number.isFinite(previousHpCurrent)
         && Number.isFinite(previousHpMax)
@@ -580,13 +552,6 @@ const oldHpMax = previousHpMax;
       resources.hpMax = derived.hpMax;
       resources.manaMax = derived.manaMax;
       resources.rpMax = derived.rpMax;
-      if (hasActivePlayResourceMaxModifier("apMax")) {
-        if (!cleanText(resources.apBaseMax)) {
-          resources.apBaseMax = Number.isFinite(previousApMax) ? previousApMax : derived.apMax;
-        }
-      } else {
-        resources.apBaseMax = "";
-      }
       resources.apMax = derived.apMax;
 
       if (shouldSyncHpToMax) {
@@ -598,13 +563,13 @@ const oldHpMax = previousHpMax;
         resources.hpCurrent = clamp(toNumber(resources.hpCurrent, derived.hpMax), 0, Math.max(0, derived.hpMax));
       }
 
-      if (!preserveCurrent || resources.manaCurrent === "") {
+      if (!preserveCurrent || isBuilderMode || resources.manaCurrent === "") {
         resources.manaCurrent = derived.manaMax;
       }
-      if (!preserveCurrent || resources.rpCurrent === "") {
+      if (!preserveCurrent || isBuilderMode || resources.rpCurrent === "") {
         resources.rpCurrent = derived.rpMax;
       }
-      if (!preserveCurrent || resources.apCurrent === "") {
+      if (!preserveCurrent || isBuilderMode || resources.apCurrent === "") {
         resources.apCurrent = derived.apMax;
       }
 
@@ -612,9 +577,9 @@ const oldHpMax = previousHpMax;
       if (resources.hpCurrent >= derived.hpMax) {
         state.play.hpHasManualChange = false;
       }
-      resources.manaCurrent = clamp(toNumber(resources.manaCurrent, derived.manaMax), 0, getActivePlayResourceCurrentLimit("manaCurrent", derived.manaMax));
-      resources.rpCurrent = clamp(toNumber(resources.rpCurrent, derived.rpMax), 0, getActivePlayResourceCurrentLimit("rpCurrent", derived.rpMax));
-      resources.apCurrent = clamp(toNumber(resources.apCurrent, derived.apMax), 0, getActivePlayResourceCurrentLimit("apCurrent", derived.apMax));
+      resources.manaCurrent = clamp(toNumber(resources.manaCurrent, derived.manaMax), 0, Math.max(0, derived.manaMax));
+      resources.rpCurrent = clamp(toNumber(resources.rpCurrent, derived.rpMax), 0, Math.max(0, derived.rpMax + getActivePlayEffectCurrentAllowance("rpCurrent")));
+      resources.apCurrent = clamp(toNumber(resources.apCurrent, derived.apMax), 0, Math.max(0, derived.apMax + getActivePlayEffectCurrentAllowance("apCurrent")));
     }
 function applyTrackedPlayUseEffects(label, effectText, cost, options = {}) {
       const resources = state.play.resources;
@@ -622,8 +587,6 @@ const derived = getDerivedCombatStats();
 const text = cleanText(effectText);
 const lines = [];
 const normalizedLabel = normalizePhrase(label);
-const handledByActiveEffect = normalizedLabel === "bear elixir"
-        || /\byou(?:\s+immediately)?\s+gain\s+1\s*rp\b[\s\S]*\bmaximum\s+rp\s+increases\s+by\s+1\b/i.test(text);
 
       if (!text) {
         return lines;
@@ -674,9 +637,9 @@ const restoreResource = (resource, amount, reason = "Tracked effect") => {
           return;
         }
 const resourceConfig = {
-          Mana: { currentKey: "manaCurrent", max: getActivePlayResourceCurrentLimit("manaCurrent", derived.manaMax) },
-          RP: { currentKey: "rpCurrent", max: getActivePlayResourceCurrentLimit("rpCurrent", derived.rpMax) },
-          AP: { currentKey: "apCurrent", max: getActivePlayResourceCurrentLimit("apCurrent", derived.apMax) }
+          Mana: { currentKey: "manaCurrent", max: derived.manaMax },
+          RP: { currentKey: "rpCurrent", max: derived.rpMax },
+          AP: { currentKey: "apCurrent", max: derived.apMax }
         }[resource];
         if (!resourceConfig) {
           return;
@@ -690,10 +653,6 @@ const next = clamp(current + gain, 0, Math.max(0, resourceConfig.max));
       };
 const restoreDirectResourceSentence = (sentence) => {
         if (/\b(?:target|ally|enemy|creature)\b/i.test(sentence) || /\bstart of your turn\b/i.test(sentence)) {
-          return;
-        }
-        if (handledByActiveEffect && /\bmaximum\s+rp\s+increases\s+by\s+1\b/i.test(sentence)) {
-          lines.push("Tracked effect: Bear Elixir active effect will increase maximum RP by 1 and grant 1 RP.");
           return;
         }
 const directResourceMatch = sentence.match(/\byou(?:\s+immediately)?\s+(?:regain|gain|recover)\s+(\d+)\s*(mana|rp|ap)\b/i);
@@ -757,7 +716,7 @@ const base = stat === "toughness"
         lines.push("Manual effect: this ability mentions Temporary HP, but the target, trigger, or formula needs player/GM handling.");
       }
 
-      if (!handledByActiveEffect && /\bmaximum (?:hp|mana|ap|rp)\b/i.test(text) && !lines.some((line) => /maximum/i.test(line))) {
+      if (/\bmaximum (?:hp|mana|ap|rp)\b/i.test(text) && !lines.some((line) => /maximum/i.test(line))) {
         lines.push("Manual effect: this use mentions a temporary maximum-resource change; adjust the max field manually if it applies.");
       }
 
@@ -770,10 +729,10 @@ const resources = state.play.resources;
 const cost = parseResourceCost(costLabel);
 const feedbackId = options.feedbackId || "";
 const checks = [
-        { key: "AP", currentKey: "apCurrent", amount: cost.AP, max: getActivePlayResourceCurrentLimit("apCurrent", derived.apMax) },
-        { key: "RP", currentKey: "rpCurrent", amount: cost.RP, max: getActivePlayResourceCurrentLimit("rpCurrent", derived.rpMax) },
-        { key: "Mana", currentKey: "manaCurrent", amount: cost.Mana, max: getActivePlayResourceCurrentLimit("manaCurrent", derived.manaMax) },
-        { key: "HP", currentKey: "hpCurrent", amount: cost.HP, max: getActivePlayResourceCurrentLimit("hpCurrent", derived.hpMax) }
+        { key: "AP", currentKey: "apCurrent", amount: cost.AP, max: derived.apMax },
+        { key: "RP", currentKey: "rpCurrent", amount: cost.RP, max: derived.rpMax },
+        { key: "Mana", currentKey: "manaCurrent", amount: cost.Mana, max: derived.manaMax },
+        { key: "HP", currentKey: "hpCurrent", amount: cost.HP, max: derived.hpMax }
       ];
 const blocked = checks.find((entry) => entry.amount > 0 && toNumber(resources[entry.currentKey], entry.max) < entry.amount);
       if (blocked) {
@@ -822,11 +781,8 @@ const parts = [
       if (expertiseGroup) {
         parts.push(`${expertiseGroup.name} Expertise ${formatModifier(expertiseGroup.bonus)}`);
       }
-      if (skill.featureBonusValue) {
-        parts.push(`Feature ${formatModifier(skill.featureBonusValue)}`);
-      }
-      if (skill.activeEffectBonusValue) {
-        parts.push(`Active Effects ${formatModifier(skill.activeEffectBonusValue)}`);
+      if (skill.bonusValue) {
+        parts.push(`Feature ${formatModifier(skill.bonusValue)}`);
       }
       return parts;
     }

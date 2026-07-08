@@ -918,6 +918,22 @@
         0 12px 28px rgba(37, 113, 185, 0.34);
     }
 
+    .breakthrough-option-card > .builder-equipment-inspect {
+      grid-column: 1 / -1;
+      width: 100%;
+    }
+
+    .breakthrough-option-card.is-compact .builder-equipment-inspect {
+      cursor: pointer;
+    }
+
+    .breakthrough-option-card.is-compact .builder-option-copy p {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
     .breakthrough-option-card.selected .builder-option-status.is-selected {
       background: linear-gradient(180deg, #e9f7ff, #a9d9ff);
       border-color: rgba(255, 255, 255, 0.74);
@@ -1562,6 +1578,47 @@
       font-size: 1.5rem;
     }
 
+    .play-mode-switch {
+      display: inline-flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      width: fit-content;
+      max-width: 100%;
+      margin-top: 6px;
+      padding: 5px;
+      border: 1px solid rgba(255, 226, 155, 0.18);
+      border-radius: 14px;
+      background: rgba(9, 32, 58, 0.44);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .play-mode-switch button {
+      min-height: 36px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      background: transparent;
+      color: rgba(255, 243, 214, 0.9);
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.86rem;
+      font-weight: 900;
+      line-height: 1.1;
+      padding: 8px 11px;
+    }
+
+    .play-mode-switch button.is-active {
+      border-color: rgba(255, 241, 193, 0.56);
+      background: linear-gradient(180deg, rgba(255, 226, 116, 0.98), rgba(255, 193, 7, 0.94));
+      color: var(--ink-strong);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
+    }
+
+    .play-mode-switch button:focus-visible {
+      outline: 3px solid rgba(148, 212, 234, 0.42);
+      outline-offset: 2px;
+    }
+
     .play-header-class-strip {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
@@ -1828,11 +1885,64 @@
       color: var(--accent-3);
     }
 
+    .play-crafting-card p,
+    .play-crafting-card span,
+    .play-crafting-form p,
+    .play-crafting-form span {
+      color: #4f4a3f;
+    }
+
     .play-crafting-value {
       color: var(--accent-3);
       font-size: 1.65rem;
       font-weight: 900;
       line-height: 1;
+    }
+
+    .play-crafting-die-roller,
+    .play-crafting-spend-strip {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .play-crafting-die-roller span,
+    .play-crafting-spend-strip span {
+      color: #4f4a3f;
+      font-size: 0.78rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .play-crafting-spend-strip {
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255, 248, 229, 0.94);
+      color: var(--ink);
+      border: 1px solid rgba(21, 18, 12, 0.08);
+    }
+
+    .play-crafting-spend-strip > div {
+      display: grid;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .play-crafting-spend-strip strong {
+      color: var(--accent-3);
+    }
+
+    .play-crafting-die-roller button,
+    .play-crafting-spend-strip button {
+      border: 1px solid rgba(171, 199, 255, 0.34);
+      border-radius: 11px;
+      background: linear-gradient(180deg, rgba(17, 113, 214, 0.98), rgba(0, 92, 187, 0.96));
+      color: #ffffff;
+      cursor: pointer;
+      font-weight: 900;
+      padding: 7px 9px;
+      white-space: nowrap;
     }
 
     .play-crafting-field-grid {
@@ -1846,7 +1956,16 @@
       gap: 6px;
     }
 
+    .play-crafting-field strong {
+      color: #fff3d6;
+    }
+
+    .play-crafting-form .play-crafting-field strong {
+      color: var(--accent-3);
+    }
+
     .play-crafting-field input,
+    .play-crafting-field select,
     .play-crafting-field textarea {
       width: 100%;
       border-radius: 12px;
@@ -1887,6 +2006,1444 @@
       cursor: not-allowed;
       filter: grayscale(0.25);
       opacity: 0.62;
+    }
+
+    .play-crafting-die-roller button:disabled,
+    .play-crafting-spend-strip button:disabled {
+      cursor: not-allowed;
+      filter: grayscale(0.25);
+      opacity: 0.62;
+    }
+
+    .play-crafting-gathering-dashboard {
+      display: grid;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .play-crafting-gathering-dashboard[hidden] {
+      display: none;
+    }
+
+    [data-play-mode-panel][hidden] {
+      display: none !important;
+    }
+
+    .play-crafting-mode-grid {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.9fr) minmax(420px, 1.25fr) minmax(320px, 1fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .play-crafting-dashboard-panel,
+    .play-crafting-column {
+      min-width: 0;
+    }
+
+    .play-workflow-step {
+      position: relative;
+    }
+
+    .play-workflow-badge {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: var(--accent);
+      border: 5px solid #05070a;
+      color: #1c1708;
+      font-size: 0.86rem;
+      font-weight: 900;
+      line-height: 1;
+      pointer-events: none;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+    }
+
+    .play-gathering-workflow-step .play-workflow-badge {
+      background: linear-gradient(180deg, #ffd94a, #f3b51d);
+    }
+
+    .play-workflow-step > div:first-of-type {
+      padding-right: 48px;
+    }
+
+    .play-crafting-column {
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+
+    .play-crafting-mode-grid.is-crafting-mode .play-crafting-blueprint-panel,
+    .play-crafting-mode-grid.is-gathering-mode .play-crafting-blueprint-panel {
+      position: sticky;
+      top: 18px;
+      z-index: 3;
+      max-height: calc(100vh - 36px);
+      overflow: auto;
+      scrollbar-gutter: stable;
+    }
+
+    .play-crafting-mode-grid.is-gathering-mode .play-crafting-blueprint-panel {
+      min-height: 0;
+    }
+
+    .play-crafting-status-panel {
+      grid-column: 1 / -1;
+    }
+
+    .play-crafting-wide-panel,
+    .play-crafting-guide-panel,
+    .play-crafting-rules-panel {
+      grid-column: 1 / -1;
+      min-width: 0;
+    }
+
+    .play-downtime-guide-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .play-downtime-guide-tabs button {
+      border: 1px solid rgba(255, 226, 155, 0.26);
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(81, 60, 31, 0.92), rgba(26, 23, 18, 0.98));
+      color: #fff3d6;
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.9rem;
+      font-weight: 900;
+      line-height: 1.2;
+      padding: 9px 13px;
+    }
+
+    .play-downtime-guide-tabs button.is-active {
+      background: var(--accent);
+      color: #1c1708;
+    }
+
+    .play-downtime-guide-section {
+      display: none;
+      gap: 14px;
+    }
+
+    .play-downtime-guide-section.is-active {
+      display: grid;
+    }
+
+    .play-downtime-guide-intro {
+      display: grid;
+      gap: 5px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: rgba(255, 248, 229, 0.94);
+      border: 1px solid rgba(21, 18, 12, 0.08);
+      color: var(--ink);
+    }
+
+    .play-downtime-guide-intro h4,
+    .play-downtime-guide-intro p {
+      margin: 0;
+    }
+
+    .play-downtime-guide-intro h4 {
+      color: var(--accent-3);
+      font-size: 1.15rem;
+      line-height: 1.2;
+    }
+
+    .play-downtime-guide-intro p {
+      color: var(--ink-soft);
+      line-height: 1.35;
+    }
+
+    .play-downtime-guide-steps {
+      counter-reset: downtime-step;
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .play-downtime-guide-steps li {
+      counter-increment: downtime-step;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      border-radius: 12px;
+      background: rgba(255, 248, 229, 0.94);
+      border: 1px solid rgba(21, 18, 12, 0.08);
+      color: var(--ink);
+      font-size: 0.9rem;
+      line-height: 1.35;
+      padding: 11px 12px;
+    }
+
+    .play-downtime-guide-steps li::before {
+      content: counter(downtime-step);
+      display: grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #1c1708;
+      font-size: 0.78rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .play-downtime-guide-reminders {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .play-downtime-guide-reminders p {
+      margin: 0;
+      border-radius: 12px;
+      background: rgba(16, 39, 62, 0.92);
+      border: 1px solid rgba(255, 226, 155, 0.12);
+      color: #fff3d6;
+      font-size: 0.84rem;
+      line-height: 1.35;
+      padding: 10px 12px;
+    }
+
+    .play-crafting-status-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .play-crafting-status-grid.is-gathering {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .play-crafting-session-panel .play-crafting-tracker-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .play-crafting-status-panel.play-crafting-session-panel .play-crafting-tracker-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .play-crafting-blueprint-panel {
+      min-height: clamp(600px, 43vw, 700px);
+      align-content: start;
+    }
+
+    .play-crafting-collapse {
+      display: grid;
+      gap: 0;
+      min-width: 0;
+    }
+
+    .play-crafting-collapse summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      cursor: pointer;
+      list-style: none;
+      min-width: 0;
+    }
+
+    .play-crafting-collapse summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .play-crafting-collapse summary::after {
+      content: "+";
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: rgba(255, 248, 229, 0.12);
+      border: 1px solid rgba(255, 226, 155, 0.24);
+      color: #ffe9a8;
+      font-size: 1.15rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .play-crafting-collapse[open] summary::after {
+      content: "-";
+    }
+
+    .play-crafting-collapse-title {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .play-crafting-collapse-title strong {
+      color: var(--gold);
+      font-size: 1.15rem;
+      line-height: 1.2;
+    }
+
+    .play-crafting-collapse-body {
+      margin-top: 14px;
+    }
+
+    .play-crafting-collapse:not([open]) > .play-crafting-collapse-body {
+      display: none;
+    }
+
+    .play-crafting-session-panel .play-crafting-field-grid,
+    .play-crafting-session-support-panel .play-crafting-field-grid,
+    .play-crafting-notes-panel .play-crafting-field-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .play-crafting-support-grid {
+      display: grid;
+      gap: 8px;
+    }
+
+    .play-crafting-facility-fields {
+      align-items: end;
+    }
+
+    .play-crafting-facility-actions {
+      display: grid;
+      gap: 6px;
+      align-content: end;
+      min-width: 0;
+    }
+
+    .play-crafting-facility-levels {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .play-crafting-facility-levels button,
+    .play-crafting-helper-tool button {
+      border: 1px solid rgba(94, 72, 34, 0.24);
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(81, 60, 31, 0.92), rgba(26, 23, 18, 0.98));
+      color: #fff3d6;
+      cursor: pointer;
+      display: grid;
+      gap: 2px;
+      font: inherit;
+      font-size: 0.78rem;
+      font-weight: 900;
+      line-height: 1.15;
+      min-width: 0;
+      padding: 7px 8px;
+      text-align: left;
+    }
+
+    .play-crafting-facility-levels button small {
+      color: rgba(255, 243, 214, 0.78);
+      font-size: 0.66rem;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .play-crafting-facility-levels button.is-active {
+      background: var(--accent);
+      border-color: rgba(21, 18, 12, 0.26);
+      color: #1c1708;
+    }
+
+    .play-crafting-facility-levels button.is-active small {
+      color: rgba(28, 23, 8, 0.72);
+    }
+
+    .play-crafting-facility-levels button:disabled,
+    .play-crafting-helper-tool button:disabled {
+      cursor: not-allowed;
+      filter: grayscale(0.25);
+      opacity: 0.62;
+    }
+
+    .play-crafting-helper-list {
+      display: grid;
+      gap: 7px;
+      margin-top: 4px;
+    }
+
+    .play-crafting-helper-tool {
+      align-items: center;
+      border-radius: 10px;
+      border: 1px solid rgba(21, 18, 12, 0.08);
+      display: grid;
+      gap: 6px;
+      grid-template-columns: minmax(0, 1fr) auto;
+      padding: 8px;
+    }
+
+    .play-crafting-helper-tool.is-ready {
+      background: rgba(220, 239, 229, 0.92);
+    }
+
+    .play-crafting-helper-tool.is-missing {
+      background: rgba(255, 239, 224, 0.92);
+    }
+
+    .play-crafting-helper-tool strong {
+      color: var(--accent-3);
+      display: block;
+      font-size: 0.82rem;
+      line-height: 1.2;
+    }
+
+    .play-crafting-helper-tool span {
+      color: var(--ink-soft);
+      display: block;
+      font-size: 0.76rem;
+      line-height: 1.25;
+      margin-top: 2px;
+    }
+
+    .play-crafting-helper-tool button {
+      width: max-content;
+    }
+
+    .play-crafting-facility-actions span {
+      color: #fff3d6;
+      font-size: 0.78rem;
+      font-weight: 800;
+      line-height: 1.25;
+    }
+
+    .play-crafting-facility-actions button,
+    .play-gathering-tool-check button {
+      border: 1px solid rgba(255, 226, 155, 0.18);
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(81, 60, 31, 0.72), rgba(26, 23, 18, 0.96));
+      color: #fff3d6;
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.78rem;
+      font-weight: 900;
+      padding: 7px 9px;
+      width: fit-content;
+    }
+
+    .play-crafting-facility-actions button:disabled,
+    .play-gathering-tool-check button:disabled {
+      cursor: not-allowed;
+      filter: grayscale(0.25);
+      opacity: 0.62;
+    }
+
+    .play-rule-note-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .play-rule-note-list p {
+      margin: 0;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255, 248, 229, 0.94);
+      color: var(--ink);
+      border: 1px solid rgba(21, 18, 12, 0.08);
+      font-size: 0.88rem;
+      line-height: 1.38;
+    }
+
+    .play-crafting-context-switch {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-top: 2px;
+    }
+
+    .play-crafting-context-switch button,
+    .play-gathering-action-grid button {
+      border: 1px solid rgba(255, 226, 155, 0.18);
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(81, 60, 31, 0.72), rgba(26, 23, 18, 0.96));
+      color: #fff3d6;
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.84rem;
+      font-weight: 900;
+      padding: 8px 10px;
+    }
+
+    .play-crafting-context-switch button.is-active,
+    .play-gathering-action-grid button.is-active {
+      border-color: rgba(255, 241, 193, 0.56);
+      background: linear-gradient(180deg, rgba(255, 226, 116, 0.98), rgba(255, 193, 7, 0.94));
+      color: var(--ink-strong);
+    }
+
+    .play-gathering-action-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .play-gathering-action-grid button:disabled {
+      cursor: not-allowed;
+      border-color: rgba(255, 226, 155, 0.12);
+      color: rgba(255, 243, 214, 0.74);
+      filter: grayscale(0.35) brightness(0.88);
+      opacity: 0.9;
+    }
+
+    .play-gathering-action-note {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: start;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255, 248, 229, 0.94);
+      border: 1px solid rgba(21, 18, 12, 0.08);
+      color: var(--ink);
+    }
+
+    .play-gathering-action-note div {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .play-gathering-action-note strong {
+      color: var(--accent-3);
+      line-height: 1.2;
+    }
+
+    .play-gathering-action-note span {
+      color: var(--ink-soft);
+      font-size: 0.82rem;
+      line-height: 1.3;
+    }
+
+    .play-gathering-action-note em {
+      border-radius: 999px;
+      background: rgba(203, 238, 219, 0.95);
+      color: #1f654d;
+      font-size: 0.68rem;
+      font-style: normal;
+      font-weight: 900;
+      line-height: 1.2;
+      padding: 5px 7px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .play-gathering-roll-help {
+      display: grid;
+      gap: 4px;
+      padding: 9px 12px;
+      border-radius: 12px;
+      border-left: 5px solid rgba(255, 204, 64, 0.85);
+      background: rgba(255, 248, 229, 0.94);
+      color: var(--ink);
+    }
+
+    .play-gathering-roll-help strong {
+      color: var(--accent-3);
+      line-height: 1.2;
+    }
+
+    .play-gathering-roll-help span {
+      color: var(--ink-soft);
+      font-size: 0.82rem;
+      line-height: 1.3;
+    }
+
+    .play-recipe-mode-switch,
+    .play-recipe-filter-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .play-recipe-mode-switch button,
+    .play-recipe-filter-buttons button,
+    .play-recipe-requirement-actions button {
+      border: 1px solid rgba(255, 226, 155, 0.18);
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(81, 60, 31, 0.72), rgba(26, 23, 18, 0.96));
+      color: #fff3d6;
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.84rem;
+      font-weight: 900;
+      padding: 8px 10px;
+    }
+
+    .play-recipe-mode-switch button.is-active,
+    .play-recipe-filter-buttons button.is-active {
+      border-color: rgba(255, 241, 193, 0.56);
+      background: linear-gradient(180deg, rgba(255, 226, 116, 0.98), rgba(255, 193, 7, 0.94));
+      color: var(--ink-strong);
+    }
+
+    .play-recipe-filter-group {
+      display: grid;
+      gap: 7px;
+      padding-top: 6px;
+    }
+
+    .play-recipe-filter-group > strong {
+      color: #fff3d6;
+      font-size: 0.86rem;
+    }
+
+    .play-recipe-list {
+      display: grid;
+      gap: 8px;
+      max-height: 340px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .play-crafting-shop-list {
+      display: grid;
+      gap: 10px;
+      max-height: 560px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .play-crafting-reference-columns {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      align-items: start;
+    }
+
+    .play-crafting-reference-columns h4 {
+      margin: 0 0 10px;
+      color: var(--gold);
+      font-size: 1rem;
+      line-height: 1.2;
+    }
+
+    .play-recipe-option {
+      display: grid;
+      gap: 4px;
+      width: 100%;
+      border: 1px solid rgba(255, 248, 229, 0.12);
+      border-radius: 12px;
+      background: rgba(255, 248, 229, 0.94);
+      color: var(--ink);
+      cursor: pointer;
+      font: inherit;
+      padding: 10px 12px;
+      text-align: left;
+    }
+
+    .play-recipe-option.is-unavailable {
+      border-color: rgba(181, 75, 54, 0.4);
+      background: linear-gradient(180deg, rgba(255, 244, 236, 0.96), rgba(255, 248, 229, 0.92));
+    }
+
+    .play-recipe-option-head {
+      align-items: start;
+      display: grid;
+      gap: 8px;
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .play-recipe-option strong {
+      color: var(--accent-3);
+    }
+
+    .play-recipe-option em,
+    .play-recipe-availability-notice strong {
+      border-radius: 999px;
+      background: rgba(203, 238, 219, 0.95);
+      color: #1f654d;
+      font-size: 0.68rem;
+      font-style: normal;
+      font-weight: 900;
+      line-height: 1.2;
+      padding: 5px 7px;
+      text-transform: uppercase;
+    }
+
+    .play-recipe-option.is-unavailable em,
+    .play-recipe-availability-notice.is-missing strong {
+      background: rgba(255, 223, 213, 0.98);
+      color: #9d3325;
+    }
+
+    .play-recipe-option span {
+      color: var(--ink-soft);
+      font-size: 0.8rem;
+      line-height: 1.3;
+    }
+
+    .play-recipe-option .play-recipe-requirement-note {
+      color: #1e5869;
+      font-size: 0.76rem;
+      font-weight: 900;
+    }
+
+    .play-recipe-option.is-unavailable .play-recipe-requirement-note {
+      color: #9d3325;
+    }
+
+    .play-recipe-option.is-active {
+      border-color: rgba(255, 204, 64, 0.78);
+      box-shadow: 0 0 0 3px rgba(255, 204, 64, 0.18);
+    }
+
+    .play-recipe-selected-summary,
+    .play-recipe-cost-summary {
+      display: grid;
+      gap: 4px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255, 248, 229, 0.94);
+      color: var(--ink);
+      border: 1px solid rgba(21, 18, 12, 0.08);
+    }
+
+    .play-recipe-selected-summary strong,
+    .play-recipe-cost-summary strong {
+      color: var(--accent-3);
+    }
+
+    .play-recipe-selected-summary span,
+    .play-recipe-cost-summary span {
+      color: var(--ink-soft);
+      font-size: 0.84rem;
+      line-height: 1.35;
+    }
+
+    .play-recipe-availability-notice {
+      display: grid;
+      gap: 5px;
+      margin-top: 4px;
+      padding: 8px;
+      border-radius: 10px;
+      border-left: 5px solid #2f8466;
+      background: rgba(220, 239, 229, 0.82);
+    }
+
+    .play-recipe-availability-notice.is-missing {
+      border-left-color: #b54b36;
+      background: rgba(255, 239, 224, 0.9);
+    }
+
+    .play-recipe-availability-notice strong {
+      width: fit-content;
+    }
+
+    .play-recipe-availability-notice span {
+      color: var(--ink-soft);
+      font-size: 0.8rem;
+      line-height: 1.3;
+    }
+
+    .play-recipe-requirement-list {
+      display: grid;
+      gap: 10px;
+      max-height: 520px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .play-recipe-requirement-row {
+      display: grid;
+      gap: 9px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255, 248, 229, 0.94);
+      color: var(--ink);
+      border: 1px solid rgba(21, 18, 12, 0.08);
+    }
+
+    .play-recipe-requirement-name {
+      display: grid;
+      gap: 3px;
+    }
+
+    .play-recipe-requirement-name strong {
+      color: var(--accent-3);
+    }
+
+    .play-recipe-requirement-name span {
+      color: var(--ink-soft);
+      font-size: 0.82rem;
+      line-height: 1.3;
+    }
+
+    .play-requirement-inferred-flag {
+      display: inline-block;
+      margin-left: 4px;
+      padding: 1px 7px;
+      border-radius: 999px;
+      background: rgba(181, 118, 34, 0.16);
+      border: 1px solid rgba(181, 118, 34, 0.55);
+      color: #8a5514;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      vertical-align: middle;
+      cursor: help;
+    }
+
+    .play-recipe-inferred-note {
+      margin: 0;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border-left: 5px solid rgba(181, 118, 34, 0.75);
+      background: rgba(255, 243, 219, 0.92);
+      color: var(--ink-soft);
+      font-size: 0.8rem;
+      line-height: 1.35;
+    }
+
+    .play-blueprint-slot .play-requirement-inferred-flag {
+      margin-left: 0;
+      justify-self: start;
+    }
+
+    .play-recipe-requirement-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .play-recipe-requirement-metrics span {
+      border-radius: 999px;
+      background: rgba(22, 83, 99, 0.08);
+      color: #1e5869;
+      font-size: 0.78rem;
+      font-weight: 800;
+      line-height: 1.2;
+      padding: 6px 8px;
+    }
+
+    .play-recipe-requirement-actions {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .play-recipe-requirement-actions input {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid rgba(21, 18, 12, 0.14);
+      background: #fff8ea;
+      color: var(--ink);
+      padding: 9px 10px;
+      font: inherit;
+    }
+
+    .play-gathering-resource-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      max-height: 112px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .play-gathering-resource-card-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-auto-rows: min-content;
+      gap: 10px;
+      max-height: min(54vh, 560px);
+      overflow: auto;
+      padding: 4px 6px 4px 0;
+      align-items: start;
+    }
+
+    .play-gathering-resource-card {
+      align-content: start;
+      gap: 7px;
+      min-height: 126px;
+      padding: 12px 14px;
+    }
+
+    .play-gathering-resource-card-head {
+      align-items: start;
+      gap: 10px;
+    }
+
+    .play-gathering-resource-card-head strong {
+      line-height: 1.18;
+      overflow-wrap: anywhere;
+    }
+
+    .play-gathering-resource-card-head em {
+      justify-self: end;
+      max-width: 100%;
+      text-align: center;
+      white-space: normal;
+    }
+
+    .play-gathering-resource-card-meta,
+    .play-gathering-resource-card-yield,
+    .play-gathering-resource-card-requirements {
+      display: block;
+      overflow-wrap: anywhere;
+    }
+
+    .play-gathering-resource-card-meta {
+      line-height: 1.35;
+    }
+
+    .play-gathering-resource-card-yield {
+      color: #2a2417;
+      font-weight: 800;
+      line-height: 1.32;
+    }
+
+    .play-recipe-option .play-gathering-resource-card-requirements {
+      line-height: 1.32;
+    }
+
+    .play-gathering-setup-top-panel .play-gathering-resource-card-list {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      max-height: clamp(480px, 48vh, 540px);
+      min-height: 480px;
+    }
+
+    .play-gathering-setup-top-panel {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      gap: 14px 18px;
+      align-items: start;
+    }
+
+    .play-gathering-setup-top-panel > div:first-of-type {
+      grid-column: 1 / -1;
+    }
+
+    .play-gathering-setup-top-panel > .play-recipe-filter-group {
+      grid-column: 1;
+      padding-top: 0;
+    }
+
+    .play-gathering-setup-top-panel > .play-crafting-form {
+      grid-column: 2;
+      margin-top: 66px;
+    }
+
+    .play-gathering-setup-top-panel .play-gathering-resource-card {
+      min-height: 124px;
+      padding-block: 12px;
+    }
+
+    .play-gathering-setup-top-panel .play-gathering-resource-card span {
+      line-height: 1.38;
+    }
+
+    .play-gathering-setup-top-panel .play-crafting-field-grid {
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    }
+
+    .play-gathering-resource-list button,
+    .play-gathering-inline-status {
+      border: 0;
+      border-radius: 999px;
+      background: rgba(226, 232, 216, 0.9);
+      color: #18576b;
+      cursor: pointer;
+      font-size: 0.72rem;
+      font-weight: 900;
+      line-height: 1.2;
+      padding: 5px 7px;
+    }
+
+    .play-gathering-resource-list button:hover,
+    .play-gathering-resource-list button.is-active {
+      background: var(--accent);
+      color: #1c1708;
+    }
+
+    .play-gathering-resource-list button.is-active {
+      box-shadow: inset 0 0 0 1px rgba(21, 18, 12, 0.2);
+    }
+
+    .play-gathering-tool-check {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+      border-radius: 12px;
+      background: rgba(255, 248, 229, 0.94);
+      border: 1px solid rgba(21, 18, 12, 0.08);
+      border-left: 5px solid #8b806d;
+      color: var(--ink);
+      padding: 10px 12px;
+    }
+
+    .play-gathering-tool-check strong {
+      color: var(--accent-3);
+      line-height: 1.2;
+    }
+
+    .play-gathering-tool-check span {
+      color: var(--ink-soft);
+      font-size: 0.82rem;
+      line-height: 1.3;
+    }
+
+    .play-gathering-tool-check.is-ready {
+      border-left-color: #2f8466;
+    }
+
+    .play-gathering-tool-check.is-missing {
+      border-left-color: #b54b36;
+    }
+
+    .play-gathering-override-toggle {
+      align-items: center;
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      color: var(--ink);
+      font-size: 0.86rem;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .play-gathering-override-toggle input {
+      width: 18px;
+      height: 18px;
+      accent-color: #f0bd22;
+    }
+
+    .play-gathering-override-toggle span {
+      color: var(--ink);
+    }
+
+    .play-gathering-inline-status {
+      display: inline-block;
+      cursor: default;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    .play-gathering-inline-status.is-ready {
+      background: rgba(203, 238, 219, 0.95);
+      color: #1f654d;
+    }
+
+    .play-gathering-inline-status.is-missing {
+      background: rgba(255, 218, 207, 0.95);
+      color: #8a2c20;
+    }
+
+    .play-recipe-requirement-actions button:disabled {
+      cursor: not-allowed;
+      filter: grayscale(0.25);
+      opacity: 0.62;
+    }
+
+    .play-recipe-requirement-actions button {
+      white-space: nowrap;
+    }
+
+    .play-blueprint-panel {
+      display: grid;
+      gap: 12px;
+    }
+
+    .play-gathering-node-panel,
+    .play-gathering-aftercare {
+      display: grid;
+      gap: 12px;
+    }
+
+    .play-gathering-reference-panel {
+      padding: 0;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+    }
+
+    .play-gathering-reference-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .play-gathering-node-grid {
+      display: grid;
+      grid-template-columns: minmax(150px, 0.72fr) minmax(0, 1fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .play-gathering-node-core {
+      display: grid;
+      place-items: center;
+      gap: 8px;
+      min-height: 270px;
+      padding: 16px 12px;
+      border-radius: 16px;
+      background:
+        linear-gradient(180deg, rgba(255, 236, 170, 0.16), rgba(20, 50, 72, 0.34)),
+        rgba(13, 34, 55, 0.86);
+      border: 1px solid rgba(255, 226, 155, 0.22);
+      color: #fff3d6;
+      text-align: center;
+    }
+
+    .play-gathering-node-core strong {
+      line-height: 1.2;
+    }
+
+    .play-gathering-node-core span {
+      color: rgba(255, 243, 211, 0.78);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .play-gathering-node-icon {
+      position: relative;
+      width: 112px;
+      aspect-ratio: 1;
+      border-radius: 42% 58% 48% 52%;
+      background:
+        radial-gradient(circle at 32% 28%, rgba(255, 233, 168, 0.28), transparent 24%),
+        linear-gradient(135deg, rgba(42, 74, 91, 0.95), rgba(14, 30, 45, 0.98));
+      border: 4px solid rgba(255, 232, 170, 0.9);
+      box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.28), 0 12px 22px rgba(0, 0, 0, 0.22);
+      transform: rotate(-8deg);
+      color: rgba(255, 232, 170, 0.96);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .play-gathering-node-icon.is-farming {
+      background:
+        radial-gradient(circle at 32% 28%, rgba(255, 233, 168, 0.28), transparent 24%),
+        linear-gradient(135deg, rgba(45, 84, 65, 0.95), rgba(13, 38, 41, 0.98));
+    }
+
+    .play-gathering-node-icon.is-foraging {
+      background:
+        radial-gradient(circle at 32% 28%, rgba(255, 233, 168, 0.28), transparent 24%),
+        linear-gradient(135deg, rgba(44, 87, 70, 0.95), rgba(13, 34, 45, 0.98));
+    }
+
+    .play-gathering-node-icon.is-husbandry {
+      border-radius: 48% 52% 44% 56%;
+      background:
+        radial-gradient(circle at 32% 28%, rgba(255, 233, 168, 0.28), transparent 24%),
+        linear-gradient(135deg, rgba(86, 66, 50, 0.95), rgba(37, 30, 32, 0.98));
+    }
+
+    .play-gathering-node-svg {
+      width: 84%;
+      height: 84%;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.32));
+      transform: rotate(8deg);
+    }
+
+    .play-gathering-node-details {
+      display: grid;
+      gap: 10px;
+      align-content: center;
+    }
+
+    .play-gathering-progress {
+      display: grid;
+      gap: 7px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255, 248, 229, 0.94);
+      color: var(--ink);
+      border: 1px solid rgba(21, 18, 12, 0.08);
+    }
+
+    .play-gathering-progress > div:first-child {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .play-gathering-progress strong {
+      color: var(--accent-3);
+      font-size: 0.88rem;
+    }
+
+    .play-gathering-progress span {
+      color: var(--ink-soft);
+      font-size: 0.78rem;
+      font-weight: 900;
+    }
+
+    .play-gathering-progress-track {
+      height: 10px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(22, 83, 99, 0.13);
+    }
+
+    .play-gathering-progress-track span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #005cbb, #ffc107);
+    }
+
+    .play-gathering-yield-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .play-gathering-readiness {
+      display: grid;
+      gap: 6px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255, 248, 229, 0.94);
+      color: var(--ink);
+      border: 1px solid rgba(21, 18, 12, 0.08);
+    }
+
+    .play-gathering-readiness strong {
+      color: var(--accent-3);
+    }
+
+    .play-gathering-readiness p {
+      color: var(--ink-soft);
+      font-size: 0.84rem;
+      line-height: 1.35;
+    }
+
+    .play-blueprint-head {
+      display: grid;
+      gap: 4px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255, 248, 229, 0.94);
+      color: var(--ink);
+      border: 1px solid rgba(21, 18, 12, 0.08);
+    }
+
+    .play-blueprint-head strong {
+      color: var(--accent-3);
+      font-size: 1rem;
+      line-height: 1.2;
+    }
+
+    .play-blueprint-head span,
+    .play-blueprint-head em {
+      color: var(--ink-soft);
+      font-size: 0.82rem;
+      font-style: normal;
+      line-height: 1.3;
+    }
+
+    .play-blueprint-head p {
+      margin: 3px 0 0;
+      color: var(--ink);
+      font-size: 0.86rem;
+      line-height: 1.38;
+    }
+
+    .play-blueprint-benefit-list {
+      display: grid;
+      gap: 5px;
+      margin-top: 6px;
+    }
+
+    .play-blueprint-benefit-list span {
+      display: grid;
+      grid-template-columns: minmax(82px, max-content) minmax(0, 1fr);
+      gap: 8px;
+      align-items: start;
+      color: var(--ink);
+      font-size: 0.78rem;
+      line-height: 1.32;
+    }
+
+    .play-blueprint-benefit-list strong {
+      color: var(--accent-3);
+      font-size: 0.72rem;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .play-blueprint-effect-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .play-blueprint-effect-tags span {
+      border-radius: 999px;
+      background: rgba(22, 83, 99, 0.08);
+      color: #1e5869;
+      font-size: 0.72rem;
+      font-weight: 900;
+      line-height: 1.2;
+      padding: 5px 7px;
+    }
+
+    .play-blueprint-canvas {
+      --blueprint-core-rows: 4;
+      display: grid;
+      grid-template-columns: minmax(118px, 1fr) minmax(138px, 0.9fr) minmax(118px, 1fr);
+      grid-template-rows: repeat(var(--blueprint-core-rows), minmax(72px, auto));
+      gap: 10px;
+      align-items: stretch;
+      min-width: 0;
+    }
+
+    .play-blueprint-core {
+      grid-column: 2;
+      grid-row: 1 / span var(--blueprint-core-rows);
+      display: grid;
+      place-items: center;
+      gap: 12px;
+      min-height: 320px;
+      padding: 18px 12px;
+      border-radius: 16px;
+      background:
+        linear-gradient(180deg, rgba(255, 236, 170, 0.16), rgba(20, 50, 72, 0.34)),
+        rgba(13, 34, 55, 0.86);
+      border: 1px solid rgba(255, 226, 155, 0.22);
+      box-shadow: inset 0 0 42px rgba(255, 214, 96, 0.08);
+      color: #f4e1b1;
+      text-align: center;
+    }
+
+    .play-blueprint-shape {
+      width: min(100%, 190px);
+      color: #f4e1b1;
+      filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.26));
+    }
+
+    .play-blueprint-shape.has-item-image {
+      width: min(100%, 220px);
+      filter: none;
+    }
+
+    .play-blueprint-shape svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 5;
+    }
+
+    .play-blueprint-item-image {
+      display: block;
+      width: 100%;
+      max-height: 260px;
+      object-fit: contain;
+      border-radius: 14px;
+      background:
+        linear-gradient(180deg, rgba(255, 248, 229, 0.12), rgba(8, 22, 36, 0.18)),
+        rgba(255, 248, 229, 0.06);
+      border: 1px solid rgba(255, 226, 155, 0.28);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.28);
+    }
+
+    .play-blueprint-core-label {
+      display: grid;
+      gap: 3px;
+      color: #fff3d6;
+      font-size: 0.9rem;
+      line-height: 1.2;
+    }
+
+    .play-blueprint-core-label span {
+      color: rgba(255, 243, 211, 0.74);
+      font-size: 0.78rem;
+    }
+
+    .play-blueprint-slot {
+      display: grid;
+      gap: 3px;
+      min-width: 0;
+      padding: 10px;
+      border-radius: 12px;
+      background: rgba(255, 248, 229, 0.95);
+      color: var(--ink);
+      border: 1px solid rgba(21, 18, 12, 0.08);
+      border-left: 5px solid #b54b36;
+      align-content: center;
+    }
+
+    .play-blueprint-slot.is-ready {
+      border-left-color: #2f8466;
+    }
+
+    .play-blueprint-slot.is-partial {
+      border-left-color: #c98b27;
+    }
+
+    .play-blueprint-slot.is-missing {
+      border-left-color: #b54b36;
+    }
+
+    .play-blueprint-slot strong {
+      color: var(--accent-3);
+      font-size: 0.88rem;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+    }
+
+    .play-blueprint-slot span,
+    .play-blueprint-slot em {
+      color: var(--ink-soft);
+      font-size: 0.76rem;
+      font-style: normal;
+      line-height: 1.25;
+    }
+
+    .play-blueprint-slot em {
+      color: #1e5869;
+      font-weight: 900;
+    }
+
+    .play-blueprint-empty {
+      grid-column: 1 / -1;
+      display: grid;
+      gap: 4px;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(255, 248, 229, 0.94);
+      color: var(--ink);
+      border: 1px dashed rgba(21, 18, 12, 0.2);
+    }
+
+    .play-blueprint-empty strong {
+      color: var(--accent-3);
+    }
+
+    .play-blueprint-empty span {
+      color: var(--ink-soft);
+      font-size: 0.84rem;
+      line-height: 1.35;
     }
 
     .play-hit-points {
@@ -4664,6 +6221,12 @@
       border-bottom-color: rgba(255, 248, 229, 0.18);
     }
 
+    .play-crafting-skill-panel.is-discovery .play-skill-mini-list {
+      max-height: none;
+      overflow: visible;
+      padding-right: 4px;
+    }
+
     .play-crafting-skill-panel .play-skill-mini-copy strong {
       color: #ffffff;
     }
@@ -5813,7 +7376,79 @@
 
       .play-command-strip,
       .play-overview-strip,
-      .play-layout-grid {
+      .play-layout-grid,
+      .play-crafting-mode-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .play-crafting-mode-grid {
+        grid-template-areas: none;
+      }
+
+      .play-crafting-status-panel,
+      .play-crafting-session-panel,
+      .play-crafting-blueprint-panel,
+      .play-crafting-picker-panel,
+      .play-crafting-requirements-panel,
+      .play-crafting-notes-panel,
+      .play-crafting-skill-panel,
+      .play-crafting-support-panel,
+      .play-crafting-guide-panel,
+      .play-crafting-wide-panel,
+      .play-crafting-mode-grid > .play-crafting-dashboard-panel {
+        grid-area: auto;
+        grid-column: 1 / -1;
+        grid-row: auto;
+      }
+
+      .play-crafting-blueprint-panel {
+        position: static !important;
+        min-height: 0;
+        max-height: none;
+        overflow: visible;
+      }
+
+      .play-crafting-status-grid.is-gathering,
+      .play-gathering-node-grid,
+      .play-gathering-yield-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .play-blueprint-canvas {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+      }
+
+      .play-blueprint-core,
+      .play-blueprint-slot,
+      .play-blueprint-empty {
+        grid-column: auto !important;
+        grid-row: auto !important;
+      }
+
+      .play-blueprint-core {
+        min-height: 280px;
+      }
+
+      .play-crafting-reference-columns {
+        grid-template-columns: 1fr;
+      }
+
+      .play-gathering-setup-top-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .play-gathering-setup-top-panel > .play-recipe-filter-group,
+      .play-gathering-setup-top-panel > .play-crafting-form {
+        grid-column: 1 / -1;
+      }
+
+      .play-gathering-setup-top-panel .play-gathering-resource-card-list {
+        min-height: 0;
+      }
+
+      .play-downtime-guide-steps,
+      .play-downtime-guide-reminders {
         grid-template-columns: 1fr;
       }
 
@@ -5937,6 +7572,7 @@
       .play-build-strip,
       .play-secondary-grid,
       .play-derived-grid,
+      .play-crafting-status-grid,
       .play-crafting-tracker-grid,
       .play-crafting-field-grid,
       .play-defense-summary-grid,
@@ -6323,4 +7959,240 @@
         grid-template-columns: minmax(0, 188px) !important;
         justify-content: start;
       }
+    }
+
+    .play-crafting-mode-grid.is-wizard-mode {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .play-wizard-shell {
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .play-wizard-lead {
+      margin: 4px 0 0;
+      color: var(--ink-soft);
+      font-size: 0.9rem;
+      line-height: 1.4;
+      max-width: 72ch;
+    }
+
+    .play-wizard-nav {
+      display: grid;
+      grid-template-columns: repeat(var(--wizard-step-count, 5), minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .play-wizard-nav-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255, 248, 229, 0.72);
+      color: var(--ink);
+      cursor: pointer;
+      font: inherit;
+      text-align: left;
+      min-width: 0;
+    }
+
+    .play-wizard-nav-step .play-wizard-nav-number {
+      display: grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      flex: none;
+      border-radius: 999px;
+      background: rgba(0, 27, 63, 0.12);
+      color: var(--ink);
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .play-wizard-nav-step .play-wizard-nav-title {
+      font-weight: 700;
+      font-size: 0.86rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .play-wizard-nav-step.is-active {
+      background: var(--paper-2);
+      border-color: var(--accent-2);
+      box-shadow: 0 0 0 3px var(--glow);
+    }
+
+    .play-wizard-nav-step.is-active .play-wizard-nav-number {
+      background: var(--accent);
+      color: #1c1708;
+    }
+
+    .play-wizard-nav-step.is-done .play-wizard-nav-number {
+      background: #2f8466;
+      color: #eafff5;
+    }
+
+    .play-wizard-summary .selected-chip.is-good {
+      border-color: rgba(47, 132, 102, 0.65);
+      background: rgba(220, 239, 229, 0.92);
+      color: #114d38;
+    }
+
+    .play-wizard-summary .selected-chip.is-warn {
+      border-color: rgba(181, 118, 34, 0.6);
+      background: rgba(255, 243, 219, 0.94);
+      color: #7a4a10;
+    }
+
+    .play-wizard-coach {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: 10px;
+      padding: 12px;
+      border-radius: 14px;
+      background:
+        linear-gradient(135deg, rgba(255, 248, 229, 0.96), rgba(246, 233, 204, 0.92));
+      color: var(--ink);
+      border: 1px solid rgba(255, 226, 155, 0.48);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+    }
+
+    .play-wizard-coach > div {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .play-wizard-coach .eyebrow {
+      color: #8a5514;
+    }
+
+    .play-wizard-coach strong {
+      color: var(--ink);
+      font-size: 0.9rem;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .play-wizard-coach-warning {
+      grid-column: 1 / -1;
+      padding: 10px;
+      border-radius: 12px;
+      border-left: 5px solid #b57622;
+      background: rgba(255, 243, 219, 0.96);
+    }
+
+    .play-wizard-coach-warning strong {
+      color: #72420f;
+    }
+
+    .play-wizard-step-body {
+      display: grid;
+      gap: 14px;
+    }
+
+    .play-wizard-panel {
+      display: grid;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(255, 253, 241, 0.06);
+      border: 1px solid var(--border-bright);
+      min-width: 0;
+    }
+
+    .play-wizard-two-col {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 14px;
+      align-items: start;
+    }
+
+    .play-wizard-controls {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding-top: 4px;
+    }
+
+    .play-wizard-controls button,
+    .play-wizard-outcome-row button {
+      padding: 10px 22px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 226, 155, 0.24);
+      background: linear-gradient(180deg, rgba(81, 60, 31, 0.72), rgba(26, 23, 18, 0.96));
+      color: #fff3d6;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: normal;
+      text-align: center;
+    }
+
+    .play-wizard-controls button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+
+    .play-wizard-controls .play-wizard-continue {
+      background: linear-gradient(180deg, #1c74d4, #0b4d94);
+      border-color: rgba(215, 227, 255, 0.4);
+      color: #f2f7ff;
+    }
+
+    .play-wizard-complete {
+      display: grid;
+      gap: 12px;
+    }
+
+    .play-wizard-outcome-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .play-wizard-outcome-row .play-wizard-outcome-success {
+      background: linear-gradient(180deg, #2f8466, #1d5c46);
+      border-color: rgba(220, 239, 229, 0.4);
+      color: #eafff5;
+    }
+
+    .play-wizard-outcome-row .play-wizard-outcome-failure {
+      background: linear-gradient(180deg, #b54b36, #7e3123);
+      border-color: rgba(255, 224, 214, 0.4);
+      color: #ffe9e2;
+    }
+
+    .play-wizard-outcome-row button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+
+    @media (max-width: 900px) {
+      .play-wizard-nav {
+        grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      }
+
+      .play-wizard-coach {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .play-wizard-controls {
+        flex-direction: column-reverse;
+      }
+
+      .play-wizard-controls button {
+        width: 100%;
+      }
+    }
+
+    .play-wizard-shell .play-recipe-inferred-note,
+    .play-wizard-panel .play-recipe-inferred-note,
+    .play-wizard-complete .play-recipe-inferred-note {
+      color: var(--ink-soft);
     }

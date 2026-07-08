@@ -97,7 +97,7 @@ async function runDirectFileStartupAssertion() {
       && result.cardCount > 0
       && result.navCount > 0
       && result.summaryText.includes('Identity')
-      && result.buildLabel.includes('Beta 1.5');
+      && result.buildLabel.includes('Beta 1.9');
 
     if (!startupIsValid || errors.length || failedFileRequests.length) {
       throw new Error(`Direct file startup regression failed: ${JSON.stringify({ result, errors, failedFileRequests }, null, 2)}`);
@@ -167,8 +167,138 @@ const browsers = [
     { name: 'WebKit (Safari)', type: webkit }
   ];
 
+  async function runCraftingOutcomeResolutionAssertion(page) {
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'load' });
+    await page.locator('[data-builder-action="pick-race"]').filter({ hasText: 'Human' }).first().click();
+    await page.click('#builder-sheet-shortcut-top');
+    await page.waitForSelector('[data-play-mode="crafting"]', { timeout: 5000 });
+    await page.click('[data-play-mode="crafting"]');
+    await page.waitForSelector('#play-crafting [data-crafting-select-recipe="axolotl-elixir"]', { timeout: 5000 });
+    await page.click('#play-crafting [data-crafting-select-recipe="axolotl-elixir"]');
+    await page.click('#play-crafting [data-crafting-wizard-goto="4"]');
+    await page.waitForSelector('#play-crafting [data-crafting-action="craft-success"]', { timeout: 5000 });
+    await page.click('#play-crafting [data-crafting-action="craft-success"]');
+
+    const guardResult = await page.evaluate(() => {
+      const logText = document.querySelector('#play-log')?.textContent || '';
+      return {
+        successDisabled: Boolean(document.querySelector('#play-crafting [data-crafting-action="craft-success"]')?.disabled),
+        failureDisabled: Boolean(document.querySelector('#play-crafting [data-crafting-action="craft-failure"]')?.disabled),
+        undoAvailable: Boolean(document.querySelector('#play-crafting [data-crafting-action="craft-undo"]')),
+        newCraftAvailable: Boolean(document.querySelector('#play-crafting [data-crafting-action="reset-session"]')),
+        craftSucceededMentions: (logText.match(/Craft Succeeded/g) || []).length,
+        craftedLineMentions: (logText.match(/Crafted: 1 x Axolotl Elixir/g) || []).length
+      };
+    });
+
+    if (
+      !guardResult.successDisabled ||
+      !guardResult.failureDisabled ||
+      !guardResult.undoAvailable ||
+      !guardResult.newCraftAvailable ||
+      guardResult.craftSucceededMentions !== 1 ||
+      guardResult.craftedLineMentions !== 1
+    ) {
+      throw new Error(`Crafting outcome guard regression failed: ${JSON.stringify(guardResult)}`);
+    }
+
+    await page.click('[data-play-mode="combat"]');
+    await page.click('[data-play-tab="inventory"]');
+    const inventoryResult = await page.evaluate(() => {
+      const inventoryText = document.querySelector('#play-inventory')?.textContent || '';
+      return {
+        axolotlInventoryMentions: (inventoryText.match(/Axolotl Elixir/g) || []).length
+      };
+    });
+    if (inventoryResult.axolotlInventoryMentions !== 1) {
+      throw new Error(`Crafting outcome inventory regression failed: ${JSON.stringify(inventoryResult)}`);
+    }
+
+    await page.click('[data-play-mode="crafting"]');
+    await page.evaluate(() => {
+      document.querySelector('#play-crafting [data-crafting-action="craft-success"]')?.click();
+    });
+    const duplicateAttemptResult = await page.evaluate(() => {
+      const logText = document.querySelector('#play-log')?.textContent || '';
+      return {
+        craftSucceededMentions: (logText.match(/Craft Succeeded/g) || []).length,
+        craftedLineMentions: (logText.match(/Crafted: 1 x Axolotl Elixir/g) || []).length
+      };
+    });
+    if (duplicateAttemptResult.craftSucceededMentions !== 1 || duplicateAttemptResult.craftedLineMentions !== 1) {
+      throw new Error(`Crafting duplicate outcome regression failed: ${JSON.stringify(duplicateAttemptResult)}`);
+    }
+
+    await page.click('#play-crafting [data-crafting-action="reset-session"]');
+    await page.waitForFunction(() => document.querySelector('#play-crafting .play-wizard-shell h3')?.textContent?.trim() === 'Choose Recipe');
+    const resetResult = await page.evaluate(() => ({
+      recipeStepVisible: document.querySelector('#play-crafting .play-wizard-shell h3')?.textContent?.trim() === 'Choose Recipe',
+      lastOutcomeVisible: document.querySelector('#play-crafting')?.textContent.includes('Last outcome') || false
+    }));
+    if (!resetResult.recipeStepVisible || resetResult.lastOutcomeVisible) {
+      throw new Error(`Crafting new-session reset regression failed: ${JSON.stringify(resetResult)}`);
+    }
+
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'load' });
+  }
+
+  async function runGatheringNoYieldResolutionAssertion(page) {
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'load' });
+    await page.locator('[data-builder-action="pick-race"]').filter({ hasText: 'Human' }).first().click();
+    await page.click('#builder-sheet-shortcut-top');
+    await page.waitForSelector('[data-play-mode="gathering"]', { timeout: 5000 });
+    await page.click('[data-play-mode="gathering"]');
+    await page.waitForSelector('#play-gathering .play-wizard-shell h3', { timeout: 5000 });
+
+    await page.locator('#play-gathering [data-crafting-field="gatheringHpMax"]').first().fill('1');
+    await page.locator('#play-gathering [data-crafting-field="gatheringHpRemaining"]').first().fill('1');
+    await page.click('#play-gathering [data-gathering-wizard-continue]');
+    await page.locator('#play-gathering [data-gathering-gm-override]').first().check();
+    await page.click('#play-gathering [data-gathering-wizard-continue]');
+    await page.waitForFunction(() => document.querySelector('#play-gathering .play-wizard-shell h3')?.textContent?.trim() === 'Roll Strikes');
+
+    await page.click('#play-gathering [data-crafting-action="gather-finish"]');
+    await page.waitForFunction(() => document.querySelector('#play-gathering .play-wizard-shell h3')?.textContent?.trim() === 'Resolve Gather');
+
+    const result = await page.evaluate(() => {
+      const panel = document.querySelector('#play-gathering');
+      const text = panel?.textContent?.replace(/\s+/g, ' ').trim() || '';
+      const resolvedButton = Array.from(panel?.querySelectorAll('button') || [])
+        .find((button) => button.textContent.trim() === 'Attempt Resolved');
+      return {
+        hasNoYieldTitle: text.includes('Attempt Resolved / No Yield'),
+        explainsNoYield: /Node Points were 0 \/ \d+/.test(text),
+        explainsReset: text.includes('Progress bars were reset afterward'),
+        explainsDepleted: text.includes('The node lost its final HP and is depleted. Pick a new node'),
+        resolvedButtonDisabled: Boolean(resolvedButton?.disabled),
+        repeatDisabled: Boolean(panel?.querySelector('[data-gathering-wizard-repeat]')?.disabled),
+        newNodeAvailable: Boolean(panel?.querySelector('[data-gathering-wizard-new-node]'))
+      };
+    });
+
+    if (
+      !result.hasNoYieldTitle ||
+      !result.explainsNoYield ||
+      !result.explainsReset ||
+      !result.explainsDepleted ||
+      !result.resolvedButtonDisabled ||
+      !result.repeatDisabled ||
+      !result.newNodeAvailable
+    ) {
+      throw new Error(`Gathering no-yield resolution regression failed: ${JSON.stringify(result)}`);
+    }
+
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'load' });
+  }
+
   async function runRulesRegressionAssertions(page) {
     await runSpreadsheetVisibleGridImportAssertion(page);
+    await runCraftingOutcomeResolutionAssertion(page);
+    await runGatheringNoYieldResolutionAssertion(page);
 
     await page.locator('[data-builder-action="pick-race"]').filter({ hasText: 'Human' }).first().click();
     await page.click('[data-step-index="7"]');
@@ -934,6 +1064,95 @@ const browsers = [
       throw new Error(`Repeatable Elemental Affinity unlock regression failed: ${JSON.stringify(repeatableElementalUnlockResult)}`);
     }
 
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'builder', gameVersion: '0.13.0' },
+        fields: { Name: 'Breakthrough General XP Tester', Exp: '5200', 'Spirit Core': '1400' },
+        builder: {
+          selectedRaceId: 'human',
+          selectedBreakthroughIds: ['early-ascension'],
+          inspected: { breakthrough: 'elemental-affinity' }
+        }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-step-index="5"]');
+    await page.waitForSelector('.builder-elemental-affinity-card [data-elemental-affinity-select]', { timeout: 5000 });
+    await page.selectOption('[data-elemental-affinity-select]', 'Fire');
+    await page.click('[data-builder-action="add-elemental-affinity"]');
+    await page.waitForFunction(() => {
+      const saved = JSON.parse(localStorage.getItem('lyrian-chronicles-character-suite-v2') || '{}');
+      return saved.fields?.Exp === '5050'
+        && saved.fields?.['Spirit Core'] === '1550'
+        && saved.fields?.BName?.includes('Elemental Affinity: Fire');
+    });
+
+    const breakthroughGeneralXpResult = await page.evaluate(() => {
+      const saved = JSON.parse(localStorage.getItem('lyrian-chronicles-character-suite-v2') || '{}');
+      const cardText = document.querySelector('.builder-elemental-affinity-card')?.textContent?.replace(/\s+/g, ' ').trim() || '';
+      const chipText = [...document.querySelectorAll('.selected-chip-list .selected-chip')]
+        .map((entry) => entry.textContent.replace(/\s+/g, ' ').trim())
+        .join(' | ');
+      return {
+        exp: saved.fields?.Exp || '',
+        spiritCore: saved.fields?.['Spirit Core'] || '',
+        bName: saved.fields?.BName || '',
+        cardText,
+        chipText
+      };
+    });
+
+    if (
+      breakthroughGeneralXpResult.exp !== '5050' ||
+      breakthroughGeneralXpResult.spiritCore !== '1550' ||
+      !breakthroughGeneralXpResult.bName.includes('Elemental Affinity: Fire') ||
+      !breakthroughGeneralXpResult.cardText.includes('Selected x1') ||
+      !breakthroughGeneralXpResult.chipText.includes('Normal XP Spent: 150')
+    ) {
+      throw new Error(`Breakthrough general XP spending regression failed: ${JSON.stringify(breakthroughGeneralXpResult)}`);
+    }
+
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'builder', gameVersion: '0.13.0' },
+        fields: { Name: 'Locked Breakthrough Layout Tester' },
+        builder: {
+          selectedRaceId: 'human',
+          inspected: { breakthrough: 'bully' }
+        }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-step-index="5"]');
+    await page.waitForSelector('.builder-repeatable-choice-card', { timeout: 5000 });
+
+    const compactLockedBreakthroughResult = await page.evaluate(() => {
+      const card = [...document.querySelectorAll('.builder-repeatable-choice-card')]
+        .find((entry) => entry.textContent.includes('Blend In II'));
+      const rect = card?.getBoundingClientRect();
+      return card ? {
+        found: true,
+        height: Math.round(rect.height),
+        width: Math.round(rect.width),
+        compact: card.classList.contains('is-compact'),
+        locked: card.classList.contains('locked'),
+        hasChoiceControls: Boolean(card.querySelector('.builder-inline-action-row')),
+        text: card.textContent.replace(/\s+/g, ' ').trim()
+      } : { found: false };
+    });
+
+    if (
+      !compactLockedBreakthroughResult.found ||
+      !compactLockedBreakthroughResult.locked ||
+      !compactLockedBreakthroughResult.compact ||
+      compactLockedBreakthroughResult.hasChoiceControls ||
+      compactLockedBreakthroughResult.height > 180
+    ) {
+      throw new Error(`Compact locked breakthrough layout regression failed: ${JSON.stringify(compactLockedBreakthroughResult)}`);
+    }
+
     const elementalAffinityId = 'elemental-affinity';
     await page.evaluate((breakthroughId) => {
       localStorage.clear();
@@ -1590,134 +1809,6 @@ const browsers = [
     await page.waitForFunction(() => (document.querySelector('#sheet-modal')?.textContent || '').includes('Until start of your next turn'));
     await page.locator('#sheet-modal-close').click();
 
-    await page.evaluate(() => {
-      localStorage.clear();
-      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
-        ui: { mode: 'sheet', sheetTab: 'inventory', gameVersion: '0.13.0' },
-        fields: {
-          Name: 'Bear Elixir Tester',
-          Power: '4',
-          Focus: '3',
-          Agility: '4',
-          Toughness: '5'
-        },
-        builder: {
-          selectedRaceId: 'human',
-          selectedItemIds: ['bear-elixir'],
-          itemQuantities: { 'bear-elixir': 1 }
-        },
-        play: {
-          resources: {
-            hpCurrent: 70,
-            hpMax: 70,
-            tempHp: 0,
-            manaCurrent: 10,
-            manaMax: 10,
-            rpCurrent: 6,
-            rpMax: 6,
-            apCurrent: 4,
-            apMax: 4
-          }
-        }
-      }));
-    });
-    await page.reload({ waitUntil: 'load' });
-    await page.click('[data-play-tab="inventory"]');
-    await page.waitForSelector('#play-inventory [data-inventory-use]', { timeout: 5000 });
-    await page.locator('#play-inventory .play-item-row')
-      .filter({ hasText: 'Bear Elixir' })
-      .locator('[data-inventory-use]')
-      .first()
-      .click();
-    await page.waitForFunction(() =>
-      Number(document.querySelector('[data-play-resource="rpCurrent"]')?.value || 0) === 7 &&
-      Number(document.querySelector('[data-play-resource="rpMax"]')?.value || 0) === 7 &&
-      (document.querySelector('#play-derived-grid .play-tracker-effects')?.textContent || '').includes('Bear Elixir')
-    );
-    const bearElixirResult = await page.evaluate(() => ({
-      hp: Number(document.querySelector('.play-hit-current')?.textContent?.trim() || 0),
-      rp: Number(document.querySelector('[data-play-resource="rpCurrent"]')?.value || 0),
-      rpMax: Number(document.querySelector('[data-play-resource="rpMax"]')?.value || 0),
-      logText: document.querySelector('#play-log')?.textContent || ''
-    }));
-    if (
-      bearElixirResult.hp !== 59 ||
-      bearElixirResult.rp !== 7 ||
-      bearElixirResult.rpMax !== 7 ||
-      !bearElixirResult.logText.includes('active effect will increase maximum RP by 1 and grant 1 RP') ||
-      bearElixirResult.logText.includes('adjust the max field manually')
-    ) {
-      throw new Error(`Bear Elixir linked resource effect failed: ${JSON.stringify(bearElixirResult)}`);
-    }
-    await page.locator('#play-derived-grid .play-effect-chip')
-      .filter({ hasText: 'Bear Elixir' })
-      .first()
-      .click();
-    await page.waitForFunction(() => {
-      const text = document.querySelector('#sheet-modal')?.textContent || '';
-      return text.includes('RP max is increased by 1') && text.includes('One current RP is granted');
-    });
-    await page.click('[data-play-effect-detail-clear]');
-    await page.waitForFunction(() =>
-      Number(document.querySelector('[data-play-resource="rpCurrent"]')?.value || 0) === 6 &&
-      Number(document.querySelector('[data-play-resource="rpMax"]')?.value || 0) === 6
-    );
-
-    await page.evaluate(() => {
-      localStorage.clear();
-      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
-        ui: { mode: 'sheet', sheetTab: 'inventory', gameVersion: '0.13.0' },
-        fields: {
-          Name: 'Axolotl Elixir Tester',
-          Power: '4',
-          Focus: '3',
-          Agility: '4',
-          Toughness: '5'
-        },
-        builder: {
-          selectedRaceId: 'human',
-          selectedItemIds: ['axolotl-elixir'],
-          itemQuantities: { 'axolotl-elixir': 1 }
-        },
-        play: {
-          resources: {
-            hpCurrent: 70,
-            hpMax: 70,
-            tempHp: 0,
-            manaCurrent: 10,
-            manaMax: 10,
-            rpCurrent: 6,
-            rpMax: 6,
-            apCurrent: 4,
-            apMax: 4
-          }
-        }
-      }));
-    });
-    await page.reload({ waitUntil: 'load' });
-    await page.click('[data-play-tab="inventory"]');
-    await page.waitForSelector('#play-inventory [data-inventory-use]', { timeout: 5000 });
-    await page.locator('#play-inventory .play-item-row')
-      .filter({ hasText: 'Axolotl Elixir' })
-      .locator('[data-inventory-use]')
-      .first()
-      .click();
-    await page.waitForFunction(() =>
-      Number(document.querySelector('.play-hit-current')?.textContent?.trim() || 0) === 45 &&
-      (document.querySelector('#play-derived-grid .play-tracker-effects')?.textContent || '').includes('Axolotl Elixir')
-    );
-    await page.locator('#play-derived-grid .play-effect-chip')
-      .filter({ hasText: 'Axolotl Elixir' })
-      .first()
-      .click();
-    await page.waitForFunction(() => {
-      const text = document.querySelector('#sheet-modal')?.textContent || '';
-      return text.includes('Toughness 5 = 5 HP') && text.includes('Resolved healing reminder: 5 HP');
-    });
-    await page.click('[data-play-effect-detail-clear]');
-    await page.click('[data-play-tab="actions"]');
-    await page.waitForSelector('#play-basic-actions .play-action-card', { timeout: 5000 });
-
     await page.click('[data-open-effect-picker="negative"]');
     await page.waitForSelector('[data-manual-effect-option="poisoned"]', { timeout: 5000 });
     await page.check('[data-manual-effect-option="poisoned"]');
@@ -1761,21 +1852,6 @@ const browsers = [
     await page.check('[data-manual-effect-option="haste"]');
     await page.click('[data-manual-effect-confirm]');
     await page.waitForFunction(() => Number(document.querySelector('[data-play-resource="apCurrent"]')?.value || 0) === 6);
-    await page.locator('#play-basic-actions .play-action-card')
-      .filter({ hasText: 'Light Attack' })
-      .locator('button[data-play-roll="lightAttack"]')
-      .first()
-      .click();
-    await page.waitForFunction(() => Number(document.querySelector('[data-play-resource="apCurrent"]')?.value || 0) === 5);
-    if (await page.locator('#sheet-modal').isVisible()) {
-      await page.locator('#sheet-modal-close').click();
-    }
-    await page.fill('[data-play-resource="apCurrent"]', '1');
-    await page.click('#play-resource-grid [data-play-recover-ap]');
-    await page.waitForFunction(() => Number(document.querySelector('[data-play-resource="apCurrent"]')?.value || 0) === 6);
-    if (await page.locator('#sheet-modal').isVisible()) {
-      await page.locator('#sheet-modal-close').click();
-    }
     await page.locator('#play-derived-grid .play-effect-chip')
       .filter({ hasText: 'Haste' })
       .first()
@@ -1783,169 +1859,6 @@ const browsers = [
     await page.waitForFunction(() => (document.querySelector('#sheet-modal')?.textContent || '').includes('granting them 2 AP'));
     await page.click('[data-play-effect-detail-clear]');
     await page.waitForFunction(() => Number(document.querySelector('[data-play-resource="apCurrent"]')?.value || 0) === 4);
-
-    await page.evaluate(() => {
-      localStorage.clear();
-      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
-        ui: { mode: 'sheet', sheetTab: 'actions', gameVersion: '0.13.0' },
-        fields: {
-          Name: 'Regrowth Tester',
-          Power: '4',
-          Focus: '3',
-          Agility: '4',
-          Toughness: '5'
-        },
-        play: {
-          resources: {
-            hpCurrent: 70,
-            hpMax: 70,
-            tempHp: 0,
-            manaCurrent: 10,
-            manaMax: 10,
-            rpCurrent: 6,
-            rpMax: 6,
-            apCurrent: 4,
-            apMax: 4
-          }
-        }
-      }));
-    });
-    await page.reload({ waitUntil: 'load' });
-    await page.click('[data-open-effect-picker="positive"]');
-    await page.waitForSelector('[data-manual-effect-option="regrowth"]', { timeout: 5000 });
-    await page.check('[data-manual-effect-option="regrowth"]');
-    await page.click('[data-manual-effect-confirm]');
-    await page.locator('#play-derived-grid .play-effect-chip')
-      .filter({ hasText: 'Regrowth' })
-      .first()
-      .click();
-    await page.waitForFunction(() => {
-      const text = document.querySelector('#sheet-modal')?.textContent || '';
-      return text.includes('3 + Focus 3 = 6 HP') && text.includes('Resolved healing reminder: 6 HP');
-    });
-    await page.click('[data-play-effect-detail-clear]');
-    await page.waitForFunction(() => !(document.querySelector('#play-derived-grid .play-tracker-effects')?.textContent || '').includes('Regrowth'));
-
-    await page.evaluate(() => {
-      localStorage.clear();
-      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
-        ui: { mode: 'sheet', sheetTab: 'actions', gameVersion: '0.13.0' },
-        fields: {
-          Name: 'Linked Effect Tester',
-          Power: '4',
-          Focus: '3',
-          Agility: '4',
-          Toughness: '5',
-          Fitness: '5',
-          Cunning: '4',
-          Reason: '3',
-          Awareness: '2',
-          Presence: '1'
-        },
-        play: {
-          resources: {
-            hpCurrent: 70,
-            hpMax: 70,
-            tempHp: 0,
-            manaCurrent: 10,
-            manaMax: 10,
-            rpCurrent: 6,
-            rpMax: 6,
-            apCurrent: 4,
-            apMax: 4
-          }
-        }
-      }));
-    });
-    await page.reload({ waitUntil: 'load' });
-    await page.click('[data-open-effect-picker="positive"]');
-    await page.waitForSelector('[data-manual-effect-option="presence-concealment"]', { timeout: 5000 });
-    await page.check('[data-manual-effect-option="presence-concealment"]');
-    await page.click('[data-manual-effect-confirm]');
-    await page.waitForFunction(() => {
-      const row = [...document.querySelectorAll('#play-skills .play-skill-mini-row')]
-        .find((entry) => entry.querySelector('strong')?.textContent?.trim() === 'Stealth');
-      return row?.textContent.includes('Active Effects +5') && row?.querySelector('[data-play-roll-skill]')?.textContent?.trim() === '+9';
-    });
-    await page.locator('#play-derived-grid .play-effect-chip')
-      .filter({ hasText: 'Presence Concealment' })
-      .first()
-      .click();
-    await page.waitForFunction(() => (document.querySelector('#sheet-modal')?.textContent || '').includes('Stealth checks receive +5'));
-    await page.click('[data-play-effect-detail-clear]');
-    await page.waitForFunction(() => {
-      const row = [...document.querySelectorAll('#play-skills .play-skill-mini-row')]
-        .find((entry) => entry.querySelector('strong')?.textContent?.trim() === 'Stealth');
-      return row && !row.textContent.includes('Active Effects +5') && row.querySelector('[data-play-roll-skill]')?.textContent?.trim() === '+4';
-    });
-
-    await page.click('[data-open-effect-picker="negative"]');
-    await page.waitForSelector('[data-manual-effect-option="root"]', { timeout: 5000 });
-    await page.check('[data-manual-effect-option="root"]');
-    await page.click('[data-manual-effect-confirm]');
-    await page.waitForFunction(() => {
-      const utility = document.querySelector('#play-utility-grid')?.textContent || '';
-      const saves = document.querySelector('#play-saves')?.textContent || '';
-      return utility.includes('Speed') && utility.includes('0') && saves.includes('Dodge') && saves.includes('17');
-    });
-    await page.locator('#play-derived-grid .play-effect-chip')
-      .filter({ hasText: 'Root' })
-      .first()
-      .click();
-    await page.waitForFunction(() => (document.querySelector('#sheet-modal')?.textContent || '').includes('13 + Agility 4 = Dodge 17'));
-    await page.click('[data-play-effect-detail-clear]');
-    await page.waitForFunction(() => {
-      const utility = document.querySelector('#play-utility-grid')?.textContent || '';
-      const saves = document.querySelector('#play-saves')?.textContent || '';
-      return utility.includes('Speed') && utility.includes('20') && saves.includes('Dodge') && saves.includes('24');
-    });
-
-    await page.click('[data-open-effect-picker="negative"]');
-    await page.waitForSelector('[data-manual-effect-option="shaken"]', { timeout: 5000 });
-    await page.check('[data-manual-effect-option="shaken"]');
-    await page.click('[data-manual-effect-confirm]');
-    await page.waitForFunction(() =>
-      Number(document.querySelector('[data-play-resource="apCurrent"]')?.value || 0) === 3 &&
-      Number(document.querySelector('[data-play-resource="apMax"]')?.value || 0) === 3
-    );
-    await page.locator('#play-derived-grid .play-effect-chip').filter({ hasText: 'Shaken' }).first().click();
-    await page.waitForFunction(() => (document.querySelector('#sheet-modal')?.textContent || '').includes('AP max is reduced by 1'));
-    await page.click('[data-play-effect-detail-clear]');
-    await page.waitForFunction(() => Number(document.querySelector('[data-play-resource="apMax"]')?.value || 0) === 4);
-
-    await page.click('[data-open-effect-picker="negative"]');
-    await page.waitForSelector('[data-manual-effect-option="weakened"]', { timeout: 5000 });
-    await page.check('[data-manual-effect-option="weakened"]');
-    await page.click('[data-manual-effect-confirm]');
-    await page.waitForFunction(() =>
-      Number(document.querySelector('[data-play-resource="apMax"]')?.value || 0) === 2 &&
-      Number(document.querySelector('[data-play-resource="rpMax"]')?.value || 0) === 1
-    );
-    await page.locator('#play-derived-grid .play-effect-chip').filter({ hasText: 'Weakened' }).first().click();
-    await page.waitForFunction(() => (document.querySelector('#sheet-modal')?.textContent || '').includes('AP max is set to 2 and RP max is set to 1'));
-    await page.click('[data-play-effect-detail-clear]');
-    await page.waitForFunction(() =>
-      Number(document.querySelector('[data-play-resource="apMax"]')?.value || 0) === 4 &&
-      Number(document.querySelector('[data-play-resource="rpMax"]')?.value || 0) === 6
-    );
-
-    await page.click('[data-open-effect-picker="negative"]');
-    await page.waitForSelector('[data-manual-effect-option="stun"]', { timeout: 5000 });
-    await page.check('[data-manual-effect-option="stun"]');
-    await page.click('[data-manual-effect-confirm]');
-    await page.waitForFunction(() =>
-      Number(document.querySelector('[data-play-resource="apCurrent"]')?.value || 0) === 0 &&
-      Number(document.querySelector('[data-play-resource="apMax"]')?.value || 0) === 0 &&
-      Number(document.querySelector('[data-play-resource="rpCurrent"]')?.value || 0) === 0 &&
-      Number(document.querySelector('[data-play-resource="rpMax"]')?.value || 0) === 0
-    );
-    await page.locator('#play-derived-grid .play-effect-chip').filter({ hasText: 'Stun' }).first().click();
-    await page.waitForFunction(() => (document.querySelector('#sheet-modal')?.textContent || '').includes('AP max/recovery and RP max are set to 0'));
-    await page.click('[data-play-effect-detail-clear]');
-    await page.waitForFunction(() =>
-      Number(document.querySelector('[data-play-resource="apMax"]')?.value || 0) === 4 &&
-      Number(document.querySelector('[data-play-resource="rpMax"]')?.value || 0) === 6
-    );
 
     await page.click('[data-open-effect-picker="positive"]');
     await page.waitForSelector('[data-manual-effect-option="inspired"]', { timeout: 5000 });
@@ -2651,7 +2564,7 @@ const browsers = [
             const contentValid = stepContent && stepContent.children.length > 0 && stepContent.textContent.trim().length > 0;
             const navValid = stepNav && stepNav.querySelectorAll('button').length > 0;
             const versionsValid = versionSelect && versionSelect.querySelectorAll('option').length > 0;
-            const builderBuildValid = builderBuildVersion && builderBuildVersion.textContent.includes('Beta 1.5');
+            const builderBuildValid = builderBuildVersion && builderBuildVersion.textContent.includes('Beta 1.9');
 
             return {
               contentValid,
@@ -2713,10 +2626,10 @@ const browsers = [
           }
           testFailedGlobal = true;
         } finally {
-          await context.close();
+          await closeWithTimeout(context, `${browserInfo.name} context`);
         }
       }
-      await browser.close();
+      await closeWithTimeout(browser, `${browserInfo.name} browser`);
     }
   } finally {
     // 3. Stop the local server
@@ -2739,7 +2652,21 @@ const browsers = [
   }
 }
 
+function closeWithTimeout(closable, label, ms = 15000) {
+  return Promise.race([
+    closable.close().catch((error) => {
+      console.error(`   Warning: ${label} close reported an error:`, error.message);
+    }),
+    new Promise((resolve) => setTimeout(() => {
+      console.error(`   Warning: ${label} did not close within ${ms / 1000}s; continuing anyway.`);
+      resolve();
+    }, ms))
+  ]);
+}
+
 main().catch((err) => {
   console.error('Test execution failed:', err);
   process.exitCode = 1;
+}).finally(() => {
+  setTimeout(() => process.exit(process.exitCode || 0), 500);
 });

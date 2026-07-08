@@ -1,8 +1,16 @@
-# Lyrian Chronicles Character Builder - Beta 1.5 Static Parity Build
+# Lyrian Chronicles Character Builder - Beta 1.9 New Player Downtime UX
 
-This is the local Beta 1.5 static/public working copy for the Angel Sword character builder and live play sheet.
+This is the local Beta 1.9 static/public working copy for the Angel Sword character builder and live play sheet.
 
-It has been synced forward with the non-API behavior from the Beta 1.6 work: play-sheet improvements, effects/conditions support, workbook import/export fixes, and Roland/Masaru regression coverage. It intentionally does not include the Beta 1.6 API provider layer.
+It starts as a copy of the hardened Beta 1.8 guided crafting and gathering baseline (2026-07-06). It intentionally does not include the Beta 1.6 API provider layer.
+
+## Workstream
+
+Beta 1.9 keeps the guided crafting and gathering wizard from Beta 1.8, then tightens it for new players with clearer step names, visible goal/next-action coaching, and safer outcome language.
+
+Crafting and gathering both run as guided downtime workflows. Each step shows what the player is trying to do, what to click next, and which warnings are soft GM gates rather than hard app failures.
+
+Do not update the local Beta 1.6, Beta 1.7, or Beta 1.8 folders from this folder until the 1.9 work is reviewed and approved for sync.
 
 ## Public Web Build
 
@@ -30,6 +38,8 @@ This rebuilds `assets/app.bundle.js` and runs the cross-browser regression suite
 ## Included
 
 - Interactive builder and live play sheet.
+- Guided crafting wizard (5 steps: choose recipe, gather materials, check support, roll points, resolve craft).
+- Guided gathering wizard (4 steps: choose node, check access, roll strikes, resolve gather).
 - Local rules versions `0.12.5`, `0.12.6`, and `0.13.0`; fresh characters default to the latest local version.
 - Browser save/load slots.
 - JSON, PDF, and spreadsheet export/import.

@@ -1,3 +1,5 @@
-Lyrian Chronicles Character Builder - Beta Version 1.5 Static Parity Build
-Static/public build with non-API parity updates from the later 1.6 work.
+Lyrian Chronicles Character Builder - Beta Version 1.9 New Player Downtime UX
+Copied from the hardened Beta 1.8 guided crafting and gathering baseline (2026-07-06).
 This package does not include the Beta 1.6 API provider layer.
+Focus: tightening the crafting and gathering play modes for new-player readability,
+with clearer step labels, next-action guidance, and safer guided outcomes.

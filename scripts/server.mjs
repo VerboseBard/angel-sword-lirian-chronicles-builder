@@ -75,7 +75,7 @@ async function handleApi(request, response, pathname) {
       mode: "local-server",
       projectRoot: PROJECT_ROOT,
       campaignPrototype: true,
-      message: "Beta 1.5 local development server is connected."
+      message: "Beta 1.9 local development server is connected."
     });
   }
 
@@ -203,7 +203,7 @@ async function start() {
     try {
       await listenOnPort(server, port);
       const url = `http://${HOST}:${port}/`;
-      console.log(`Lyrian Beta 1.5 running at ${url}`);
+      console.log(`Lyrian Beta 1.9 running at ${url}`);
       console.log("Close this terminal window to stop the local development server.");
       openBrowser(url);
       return;

@@ -2,7 +2,7 @@ import { ACTIVE_SAVE_SLOT_KEY, DEFAULT_DICE_SET_ID, SAVE_SLOTS_KEY, STORAGE_KEY 
 import { cleanText, cssEscape, toNumber } from "./utils.js";
 import { hasManualHpHistory } from "./rules.js";
 import { deriveSaveSlotName, getSavedSlotStore, persistSavedSlotStoreQuietly } from "./io.js";
-import { applyStateToDom, createStorableStateSnapshot, invalidateExportCache, serializeCurrentState, setStatus } from "./ui.js";
+import { applyStateToDom, createStorableStateSnapshot, invalidateExportCache, serializeCurrentState, setMode, setStatus } from "./ui.js";
 
 
 
@@ -17,6 +17,7 @@ export function createDefaultState() {
         ui: {
           mode: "builder",
           builderStep: 0,
+          playMode: "combat",
           sheetTab: "actions",
           showPdf: false,
           activeSaveSlotId: "",
@@ -44,6 +45,7 @@ export function createDefaultState() {
           selectedItemIds: [],
           itemQuantities: {},
           selectedBreakthroughIds: [],
+          gmApprovedBreakthroughIds: [],
           skillExpertiseEntries: [],
           choiceSelections: {},
           inspected: {
@@ -92,6 +94,10 @@ export function createDefaultState() {
             description: ""
           },
           crafting: {
+            activityMode: "crafting",
+            craftingWizardStep: 0,
+            craftedOutcomePending: false,
+            gatheringWizardStep: 0,
             diceMax: 0,
             diceRemaining: 0,
             pointsGenerated: 0,
@@ -100,8 +106,45 @@ export function createDefaultState() {
             pendingPointSpend: 0,
             recipeName: "",
             materialCost: "",
+            selectionMode: "recipe",
+            recipeCategory: "all",
+            recipeSubcategory: "all",
+            selectedRecipeId: "",
+            materialCustomCosts: {},
+            facilityLevel: 0,
+            facilityUsesRemaining: 0,
+            facilityUsesMax: 0,
+            facilityNotes: "",
             selectedMods: "",
-            notes: ""
+            notes: "",
+            gatheringNodeType: "mining",
+            gatheringTemplateId: "dark-iron-outcrop",
+            gatheringSelectedResource: "",
+            gatheringNodeName: "Normal Dark Iron Outcrop",
+            gatheringVariation: "Normal",
+            gatheringTier: 1,
+            gatheringHpMax: 3,
+            gatheringHpRemaining: 3,
+            gatheringNodeTarget: 40,
+            gatheringNodeProgress: 0,
+            gatheringLuckyTarget: 15,
+            gatheringLuckyProgress: 0,
+            gatheringStrikeDiceMax: 5,
+            gatheringStrikeDiceRemaining: 5,
+            gatheringSkill: "Mining",
+            gatheringBonus: 0,
+            gatheringQueuedDice: "",
+            gatheringActiveAction: "basic",
+            gatheringTool: "Pickaxe",
+            gatheringRequiredAbility: "Miner: Rock and Stone",
+            gatheringGmOverride: false,
+            gatheringDiscovery: "Find or identify with Perception, Appraise, Common Knowledge, Expert Knowledge, Magic, Artifice, or another GM-approved check.",
+            gatheringYieldName: "Iron",
+            gatheringYieldQuantity: 500,
+            gatheringLuckyYieldName: "Dark Iron",
+            gatheringLuckyYieldQuantity: 500,
+            gatheringNotes: "",
+            lastGatheringOutcome: null
           },
           diceTray: {
             isOpen: false,
@@ -146,6 +189,7 @@ export function mergeBuilderState(source = {}) {
         selectedItemIds,
         itemQuantities,
         selectedBreakthroughIds: Array.isArray(source.selectedBreakthroughIds) ? source.selectedBreakthroughIds.filter(Boolean) : [...defaults.selectedBreakthroughIds],
+        gmApprovedBreakthroughIds: Array.isArray(source.gmApprovedBreakthroughIds) ? source.gmApprovedBreakthroughIds.filter(Boolean) : [...defaults.gmApprovedBreakthroughIds],
         skillExpertiseEntries: Array.isArray(source.skillExpertiseEntries)
           ? source.skillExpertiseEntries
             .map((entry) => ({
@@ -217,7 +261,14 @@ const sourceHasHpFlag = Object.prototype.hasOwnProperty.call(source, "hpHasManua
         },
         crafting: {
           ...defaults.crafting,
-          ...(source.crafting || {})
+          ...(source.crafting || {}),
+          materialCustomCosts: source.crafting?.materialCustomCosts && typeof source.crafting.materialCustomCosts === "object"
+            ? Object.fromEntries(
+              Object.entries(source.crafting.materialCustomCosts)
+                .map(([key, value]) => [cleanText(key), cleanText(value)])
+                .filter(([key]) => key)
+            )
+            : { ...defaults.crafting.materialCustomCosts }
         },
         diceTray: {
           ...defaults.diceTray,

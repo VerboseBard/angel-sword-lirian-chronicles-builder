@@ -1601,10 +1601,19 @@ var LyrianApp = (() => {
   function getBreakthroughBudgetState(excludeId = "") {
     const selected = getSelectedBreakthroughRecords().filter((entry) => entry.id !== excludeId);
     const spent = selected.reduce((total, entry) => total + Math.max(0, parseNumericCost(entry.cost)), 0);
-    const remaining = BREAKTHROUGH_CREATION_BUDGET - spent;
+    const creationSpent = Math.min(BREAKTHROUGH_CREATION_BUDGET, spent);
+    const creationRemaining = Math.max(0, BREAKTHROUGH_CREATION_BUDGET - spent);
+    const generalSpent = Math.max(0, spent - BREAKTHROUGH_CREATION_BUDGET);
+    const expBankText = cleanText(state.fields.Exp);
+    const generalRemaining = expBankText ? Math.max(0, toNumber(expBankText, 0)) : Math.max(0, STARTING_CLASS_EXP - getSelectedClassProgress().reduce((total, entry) => total + entry.cost, 0));
+    const remaining = creationRemaining + generalRemaining;
     return {
       budget: BREAKTHROUGH_CREATION_BUDGET,
       spent,
+      creationSpent,
+      creationRemaining,
+      generalSpent,
+      generalRemaining,
       remaining,
       selected
     };
@@ -1797,20 +1806,14 @@ var LyrianApp = (() => {
     const summary = {
       stat: { Power: 0, Focus: 0, Agility: 0, Toughness: 0 },
       derived: {},
-      resourceMaxDelta: {},
-      resourceMaxSet: {},
       speedMultiplier: 1,
       speedSet: null,
       dodgeSet: null
     };
-    const resourceMaxKeys = /* @__PURE__ */ new Set(["hpMax", "manaMax", "rpMax", "apMax"]);
     const effects = Array.isArray(state.play?.activeEffects) ? state.play.activeEffects : [];
     effects.forEach((effect) => {
       const modifiers = effect?.rules?.modifiers && typeof effect.rules.modifiers === "object" ? effect.rules.modifiers : {};
       Object.entries(modifiers).forEach(([key, rawValue]) => {
-        if (key === "skillChecks" || key === "resourceGrant") {
-          return;
-        }
         if (key === "speedMultiplier") {
           summary.speedMultiplier *= Number.isFinite(Number(rawValue)) ? Number(rawValue) : 1;
           return;
@@ -1826,18 +1829,6 @@ var LyrianApp = (() => {
           const value = Number(rawValue);
           if (Number.isFinite(value)) {
             summary.dodgeSet = summary.dodgeSet == null ? value : Math.min(summary.dodgeSet, value);
-          }
-          return;
-        }
-        if (resourceMaxKeys.has(key)) {
-          summary.resourceMaxDelta[key] = (summary.resourceMaxDelta[key] || 0) + toNumber(rawValue, 0);
-          return;
-        }
-        if (/MaxSet$/.test(key)) {
-          const resourceKey = key.replace(/Set$/, "");
-          const value = Number(rawValue);
-          if (resourceMaxKeys.has(resourceKey) && Number.isFinite(value)) {
-            summary.resourceMaxSet[resourceKey] = summary.resourceMaxSet[resourceKey] == null ? value : Math.min(summary.resourceMaxSet[resourceKey], value);
           }
           return;
         }
@@ -1857,17 +1848,6 @@ var LyrianApp = (() => {
       return total + Math.max(0, grant);
     }, 0);
   }
-  function hasActivePlayResourceMaxModifier(resourceKey) {
-    const setKey = `${resourceKey}Set`;
-    const effects = Array.isArray(state.play?.activeEffects) ? state.play.activeEffects : [];
-    return effects.some((effect) => {
-      const modifiers = effect?.rules?.modifiers && typeof effect.rules.modifiers === "object" ? effect.rules.modifiers : {};
-      return Object.prototype.hasOwnProperty.call(modifiers, resourceKey) || Object.prototype.hasOwnProperty.call(modifiers, setKey);
-    });
-  }
-  function getActivePlayResourceCurrentLimit(resourceKey, baseMax = 0) {
-    return Math.max(0, toNumber(baseMax, 0) + getActivePlayEffectCurrentAllowance(resourceKey));
-  }
   function getDerivedCombatStats() {
     const bonuses = getComputedBonuses();
     const activeEffectModifiers = getActivePlayEffectModifierSummary();
@@ -1876,17 +1856,11 @@ var LyrianApp = (() => {
     const agility = toNumber(state.fields.Agility, 0) + (bonuses.mainStats.Agility || 0) + activeEffectModifiers.stat.Agility;
     const toughness = toNumber(state.fields.Toughness, 0) + (bonuses.mainStats.Toughness || 0) + activeEffectModifiers.stat.Toughness;
     const breakthroughEffects = getSelectedBreakthroughEffects();
-    const hpMaxBeforeSet = Math.max(0, 20 + toughness * 10 + (bonuses.derived.hpMax || 0) + (activeEffectModifiers.resourceMaxDelta.hpMax || 0));
-    const manaMaxBeforeSet = Math.max(0, 6 + power + (bonuses.derived.manaMax || 0) + (activeEffectModifiers.resourceMaxDelta.manaMax || 0));
-    const rpMaxBeforeSet = Math.max(0, 2 + agility + (bonuses.derived.rpMax || 0) + (activeEffectModifiers.resourceMaxDelta.rpMax || 0));
+    const hpMax = 20 + toughness * 10 + (bonuses.derived.hpMax || 0);
+    const manaMax = 6 + power + (bonuses.derived.manaMax || 0);
+    const rpMax = 2 + agility + (bonuses.derived.rpMax || 0);
     const apMaxText = cleanText(state.play?.resources?.apMax);
-    const apBaseMaxText = cleanText(state.play?.resources?.apBaseMax);
-    const normalApMax = apBaseMaxText ? Math.max(0, toNumber(apBaseMaxText, 4)) : apMaxText ? Math.max(0, toNumber(apMaxText, 4)) : 4;
-    const apMaxBeforeSet = Math.max(0, normalApMax + (activeEffectModifiers.resourceMaxDelta.apMax || 0));
-    const hpMax = activeEffectModifiers.resourceMaxSet.hpMax == null ? hpMaxBeforeSet : Math.max(0, activeEffectModifiers.resourceMaxSet.hpMax);
-    const manaMax = activeEffectModifiers.resourceMaxSet.manaMax == null ? manaMaxBeforeSet : Math.max(0, activeEffectModifiers.resourceMaxSet.manaMax);
-    const rpMax = activeEffectModifiers.resourceMaxSet.rpMax == null ? rpMaxBeforeSet : Math.max(0, activeEffectModifiers.resourceMaxSet.rpMax);
-    const apMax = activeEffectModifiers.resourceMaxSet.apMax == null ? apMaxBeforeSet : Math.max(0, activeEffectModifiers.resourceMaxSet.apMax);
+    const apMax = apMaxText ? Math.max(0, toNumber(apMaxText, 4)) : 4;
     const derivedBonuses = {
       ...bonuses.derived,
       ...Object.fromEntries(Object.entries(activeEffectModifiers.derived).map(([key, value]) => [key, (bonuses.derived[key] || 0) + value]))
@@ -1940,7 +1914,6 @@ var LyrianApp = (() => {
     const resources = state.play.resources;
     const previousHpCurrent = toNumber(resources.hpCurrent, NaN);
     const previousHpMax = toNumber(resources.hpMax, NaN);
-    const previousApMax = toNumber(resources.apMax, NaN);
     const hasHpCurrent = cleanText(resources.hpCurrent) !== "";
     const wasAtPreviousHpMax = Number.isFinite(previousHpCurrent) && Number.isFinite(previousHpMax) && previousHpCurrent >= previousHpMax;
     const isBuilderMode = state.ui?.mode === "builder";
@@ -1949,13 +1922,6 @@ var LyrianApp = (() => {
     resources.hpMax = derived.hpMax;
     resources.manaMax = derived.manaMax;
     resources.rpMax = derived.rpMax;
-    if (hasActivePlayResourceMaxModifier("apMax")) {
-      if (!cleanText(resources.apBaseMax)) {
-        resources.apBaseMax = Number.isFinite(previousApMax) ? previousApMax : derived.apMax;
-      }
-    } else {
-      resources.apBaseMax = "";
-    }
     resources.apMax = derived.apMax;
     if (shouldSyncHpToMax) {
       resources.hpCurrent = derived.hpMax;
@@ -1965,22 +1931,22 @@ var LyrianApp = (() => {
     } else {
       resources.hpCurrent = clamp(toNumber(resources.hpCurrent, derived.hpMax), 0, Math.max(0, derived.hpMax));
     }
-    if (!preserveCurrent || resources.manaCurrent === "") {
+    if (!preserveCurrent || isBuilderMode || resources.manaCurrent === "") {
       resources.manaCurrent = derived.manaMax;
     }
-    if (!preserveCurrent || resources.rpCurrent === "") {
+    if (!preserveCurrent || isBuilderMode || resources.rpCurrent === "") {
       resources.rpCurrent = derived.rpMax;
     }
-    if (!preserveCurrent || resources.apCurrent === "") {
+    if (!preserveCurrent || isBuilderMode || resources.apCurrent === "") {
       resources.apCurrent = derived.apMax;
     }
     resources.tempHp = clamp(toNumber(resources.tempHp, 0), 0, 9999);
     if (resources.hpCurrent >= derived.hpMax) {
       state.play.hpHasManualChange = false;
     }
-    resources.manaCurrent = clamp(toNumber(resources.manaCurrent, derived.manaMax), 0, getActivePlayResourceCurrentLimit("manaCurrent", derived.manaMax));
-    resources.rpCurrent = clamp(toNumber(resources.rpCurrent, derived.rpMax), 0, getActivePlayResourceCurrentLimit("rpCurrent", derived.rpMax));
-    resources.apCurrent = clamp(toNumber(resources.apCurrent, derived.apMax), 0, getActivePlayResourceCurrentLimit("apCurrent", derived.apMax));
+    resources.manaCurrent = clamp(toNumber(resources.manaCurrent, derived.manaMax), 0, Math.max(0, derived.manaMax));
+    resources.rpCurrent = clamp(toNumber(resources.rpCurrent, derived.rpMax), 0, Math.max(0, derived.rpMax + getActivePlayEffectCurrentAllowance("rpCurrent")));
+    resources.apCurrent = clamp(toNumber(resources.apCurrent, derived.apMax), 0, Math.max(0, derived.apMax + getActivePlayEffectCurrentAllowance("apCurrent")));
   }
   function applyTrackedPlayUseEffects(label, effectText, cost, options = {}) {
     const resources = state.play.resources;
@@ -1988,7 +1954,6 @@ var LyrianApp = (() => {
     const text = cleanText(effectText);
     const lines = [];
     const normalizedLabel = normalizePhrase(label);
-    const handledByActiveEffect = normalizedLabel === "bear elixir" || /\byou(?:\s+immediately)?\s+gain\s+1\s*rp\b[\s\S]*\bmaximum\s+rp\s+increases\s+by\s+1\b/i.test(text);
     if (!text) {
       return lines;
     }
@@ -2036,9 +2001,9 @@ var LyrianApp = (() => {
         return;
       }
       const resourceConfig = {
-        Mana: { currentKey: "manaCurrent", max: getActivePlayResourceCurrentLimit("manaCurrent", derived.manaMax) },
-        RP: { currentKey: "rpCurrent", max: getActivePlayResourceCurrentLimit("rpCurrent", derived.rpMax) },
-        AP: { currentKey: "apCurrent", max: getActivePlayResourceCurrentLimit("apCurrent", derived.apMax) }
+        Mana: { currentKey: "manaCurrent", max: derived.manaMax },
+        RP: { currentKey: "rpCurrent", max: derived.rpMax },
+        AP: { currentKey: "apCurrent", max: derived.apMax }
       }[resource];
       if (!resourceConfig) {
         return;
@@ -2052,10 +2017,6 @@ var LyrianApp = (() => {
     };
     const restoreDirectResourceSentence = (sentence) => {
       if (/\b(?:target|ally|enemy|creature)\b/i.test(sentence) || /\bstart of your turn\b/i.test(sentence)) {
-        return;
-      }
-      if (handledByActiveEffect && /\bmaximum\s+rp\s+increases\s+by\s+1\b/i.test(sentence)) {
-        lines.push("Tracked effect: Bear Elixir active effect will increase maximum RP by 1 and grant 1 RP.");
         return;
       }
       const directResourceMatch = sentence.match(/\byou(?:\s+immediately)?\s+(?:regain|gain|recover)\s+(\d+)\s*(mana|rp|ap)\b/i);
@@ -2103,7 +2064,7 @@ var LyrianApp = (() => {
     if (!lines.length && options.logManualEffects !== false && /\btemporary (?:hit points|hp)\b/i.test(text)) {
       lines.push("Manual effect: this ability mentions Temporary HP, but the target, trigger, or formula needs player/GM handling.");
     }
-    if (!handledByActiveEffect && /\bmaximum (?:hp|mana|ap|rp)\b/i.test(text) && !lines.some((line) => /maximum/i.test(line))) {
+    if (/\bmaximum (?:hp|mana|ap|rp)\b/i.test(text) && !lines.some((line) => /maximum/i.test(line))) {
       lines.push("Manual effect: this use mentions a temporary maximum-resource change; adjust the max field manually if it applies.");
     }
     return lines;
@@ -2115,10 +2076,10 @@ var LyrianApp = (() => {
     const cost = parseResourceCost(costLabel);
     const feedbackId = options.feedbackId || "";
     const checks = [
-      { key: "AP", currentKey: "apCurrent", amount: cost.AP, max: getActivePlayResourceCurrentLimit("apCurrent", derived.apMax) },
-      { key: "RP", currentKey: "rpCurrent", amount: cost.RP, max: getActivePlayResourceCurrentLimit("rpCurrent", derived.rpMax) },
-      { key: "Mana", currentKey: "manaCurrent", amount: cost.Mana, max: getActivePlayResourceCurrentLimit("manaCurrent", derived.manaMax) },
-      { key: "HP", currentKey: "hpCurrent", amount: cost.HP, max: getActivePlayResourceCurrentLimit("hpCurrent", derived.hpMax) }
+      { key: "AP", currentKey: "apCurrent", amount: cost.AP, max: derived.apMax },
+      { key: "RP", currentKey: "rpCurrent", amount: cost.RP, max: derived.rpMax },
+      { key: "Mana", currentKey: "manaCurrent", amount: cost.Mana, max: derived.manaMax },
+      { key: "HP", currentKey: "hpCurrent", amount: cost.HP, max: derived.hpMax }
     ];
     const blocked = checks.find((entry) => entry.amount > 0 && toNumber(resources[entry.currentKey], entry.max) < entry.amount);
     if (blocked) {
@@ -2163,11 +2124,8 @@ var LyrianApp = (() => {
     if (expertiseGroup) {
       parts.push(`${expertiseGroup.name} Expertise ${formatModifier(expertiseGroup.bonus)}`);
     }
-    if (skill.featureBonusValue) {
-      parts.push(`Feature ${formatModifier(skill.featureBonusValue)}`);
-    }
-    if (skill.activeEffectBonusValue) {
-      parts.push(`Active Effects ${formatModifier(skill.activeEffectBonusValue)}`);
+    if (skill.bonusValue) {
+      parts.push(`Feature ${formatModifier(skill.bonusValue)}`);
     }
     return parts;
   }
@@ -2493,7 +2451,7 @@ var LyrianApp = (() => {
   async function checkForVersionUpdates() {
     const connected = versionRuntime.serverAvailable || await detectVersionServer();
     if (!connected) {
-      setStatus("This web build is updated by published site deployments. Refresh after a new Beta 1.5 update is pushed.");
+      setStatus("This web build is updated by published site deployments. Refresh after a new Beta 1.9 update is pushed.");
       renderVersionManager();
       return;
     }
@@ -5739,9 +5697,20 @@ var LyrianApp = (() => {
   function getSkillTrainingSkillOptions() {
     return getHumanRaceSkillChoiceOptions();
   }
+  function stripParentheticalSuffixes(value) {
+    return cleanText(String(value || "").replace(/\s*\([^)]*\)/g, ""));
+  }
   function hasSelectedBreakthroughName(name) {
     const normalized = normalizePhrase(name);
-    return getSelectedBreakthroughRecords().some((entry) => normalizePhrase(entry.name) === normalized);
+    const normalizedStripped = normalizePhrase(stripParentheticalSuffixes(name));
+    return getSelectedBreakthroughRecords().some((entry) => {
+      const entryName = normalizePhrase(entry.name);
+      if (entryName === normalized) {
+        return true;
+      }
+      const entryStripped = normalizePhrase(stripParentheticalSuffixes(entry.name));
+      return entryStripped === normalized || entryStripped === normalizedStripped;
+    });
   }
   function buildBuilderChoiceDefinitions() {
     const race = getSelectedRaceDetail();
@@ -6818,20 +6787,6 @@ var LyrianApp = (() => {
     const base = toNumber(state.fields[key], 0);
     return base + (bonuses.secondaryStats[key] || 0);
   }
-  function getActivePlaySkillCheckModifier(skillName) {
-    const target = normalizePhrase(skillName);
-    if (!target) {
-      return 0;
-    }
-    const effects = Array.isArray(state.play?.activeEffects) ? state.play.activeEffects : [];
-    return effects.reduce((total, effect) => {
-      const skillChecks = effect?.rules?.modifiers?.skillChecks;
-      if (!skillChecks || typeof skillChecks !== "object") {
-        return total;
-      }
-      return total + Object.entries(skillChecks).reduce((skillTotal, [name, value]) => normalizePhrase(name) === target ? skillTotal + toNumber(value, 0) : skillTotal, 0);
-    }, 0);
-  }
   function getSelectedBreakthroughEffects() {
     const effects = {
       bonusClim: 0,
@@ -7066,7 +7021,10 @@ var LyrianApp = (() => {
       reasons: [],
       raceMismatch: false,
       ancestryMismatch: false,
-      missingBreakthroughIds: []
+      missingBreakthroughIds: [],
+      manualOnly: false,
+      manualLabels: [],
+      gmApproved: false
     };
     if (!entry) {
       return {
@@ -7109,13 +7067,32 @@ var LyrianApp = (() => {
         status.reasons.push(`Requires breakthrough: ${missingIds.map((id) => lookup.breakthroughs.resolve(id)?.name || id).join(" and ")}.`);
       }
       const clauseResults = getBreakthroughRequirementClauses(requirementText).map(evaluateBreakthroughUnlockClause).filter((result) => result && !result.met);
-      clauseResults.forEach((result) => {
+      const trackableResults = clauseResults.filter((result) => result.trackable);
+      const manualResults = clauseResults.filter((result) => !result.trackable);
+      trackableResults.forEach((result) => {
         status.met = false;
-        const reason = result.trackable ? `Requires: ${result.label}.` : `Requires manual confirmation: ${result.label}.`;
+        const reason = `Requires: ${result.label}.`;
         if (!status.reasons.includes(reason)) {
           status.reasons.push(reason);
         }
       });
+      status.manualLabels = manualResults.map((result) => result.label);
+      if (manualResults.length) {
+        const gmApproved = Array.isArray(state.builder.gmApprovedBreakthroughIds) && state.builder.gmApprovedBreakthroughIds.includes(entry.id);
+        if (gmApproved) {
+          status.gmApproved = true;
+        } else {
+          const hadOtherFailures = !status.met;
+          status.met = false;
+          status.manualOnly = !hadOtherFailures;
+          manualResults.forEach((result) => {
+            const reason = `Requires manual confirmation: ${result.label}.`;
+            if (!status.reasons.includes(reason)) {
+              status.reasons.push(reason);
+            }
+          });
+        }
+      }
     }
     return status;
   }
@@ -7167,6 +7144,14 @@ var LyrianApp = (() => {
       if (ancestry) {
         state.builder.selectedAncestryId = ancestry.id;
       }
+    }
+    const hydratedRace = getSelectedRaceDetail();
+    const hydratedAncestry = getSelectedAncestryDetail();
+    if (hydratedRace && hydratedAncestry && cleanText(hydratedAncestry.primaryRace) && normalizeKey(hydratedAncestry.primaryRace) !== normalizeKey(hydratedRace.name)) {
+      state.builder.selectedAncestryId = "";
+      state.builder.inspected.ancestry = "";
+      updateFieldValue("Sub Race", "");
+      setStatus(`Cleared ${hydratedAncestry.name}: it belongs to ${hydratedAncestry.primaryRace}, not ${hydratedRace.name}. Pick a matching ancestry in the builder.`);
     }
     if (!state.builder.selectedClassIds.length) {
       state.builder.selectedClassIds = CLASS_ROWS.map((row) => state.fields[`Class${row}`]).filter(Boolean).map((value) => {
@@ -9420,9 +9405,7 @@ var LyrianApp = (() => {
     const expertiseValue = expertiseGroups.reduce((best, entry) => Math.max(best, entry.bonus), 0);
     const creationExpertiseSpend = getCreationExpertiseSpendForSkill(index);
     const expertiseSpend = getTotalExpertiseSpendForSkill(index);
-    const featureBonusValue = bonuses.skillChecks[definition.name] || 0;
-    const activeEffectBonusValue = getActivePlaySkillCheckModifier(definition.name);
-    const bonusValue = featureBonusValue + activeEffectBonusValue;
+    const bonusValue = bonuses.skillChecks[definition.name] || 0;
     const total = substatValue + skillPoints + bonusValue;
     const bestExpertiseTotal = total + expertiseValue;
     return {
@@ -9439,8 +9422,6 @@ var LyrianApp = (() => {
       expertiseGroups,
       creationExpertiseSpend,
       expertiseSpend,
-      featureBonusValue,
-      activeEffectBonusValue,
       bonusValue,
       total,
       bestExpertiseTotal,
@@ -9562,6 +9543,30 @@ var LyrianApp = (() => {
     }
     return (skill.expertiseGroups || []).find((entry) => normalizePhrase(entry.name) === normalized) || null;
   }
+  function getActiveCraftingSkillCheckBonus(skill) {
+    if (!skill || normalizePlayMode(state.ui.playMode) !== "crafting") {
+      return null;
+    }
+    const crafting = getCraftingTrackerState();
+    if (crafting.activityMode !== "crafting") {
+      return null;
+    }
+    const recipe = getCraftingRecipeById(crafting.selectedRecipeId);
+    if (!recipe) {
+      return null;
+    }
+    const support = getCraftingSupportState(recipe, crafting, state.play?.inventoryItems || []);
+    if (!support.facility || !support.facilityBonus) {
+      return null;
+    }
+    if (normalizePhrase(skill.name) !== normalizePhrase(support.facility.skill)) {
+      return null;
+    }
+    return {
+      label: support.facility.name,
+      bonus: support.facilityBonus
+    };
+  }
   function rollSkillCheck(index, expertiseName = "") {
     const skill = getSkillRowData(Number(index));
     if (!skill) {
@@ -9570,9 +9575,15 @@ var LyrianApp = (() => {
     let expertiseGroup = findSkillExpertiseGroup(skill, expertiseName);
     const roll = rollDie(20);
     const expertiseBonus = expertiseGroup ? expertiseGroup.bonus : 0;
-    const total = roll + skill.total + expertiseBonus;
+    const contextualBonus = getActiveCraftingSkillCheckBonus(skill);
+    const contextualBonusValue = contextualBonus ? contextualBonus.bonus : 0;
+    const total = roll + skill.total + expertiseBonus + contextualBonusValue;
     const label = expertiseGroup ? `${skill.name} (${expertiseGroup.name}) Check` : `${skill.name} Check`;
-    const breakdown = `d20: ${roll} | ${getSkillBreakdownParts(skill, expertiseGroup).join(" | ")}`;
+    const breakdownParts = getSkillBreakdownParts(skill, expertiseGroup);
+    if (contextualBonusValue) {
+      breakdownParts.push(`${contextualBonus.label}: ${formatModifier(contextualBonusValue)}`);
+    }
+    const breakdown = `d20: ${roll} | ${breakdownParts.join(" | ")}`;
     appendPlayLog(label, [breakdown, `Total: ${total}`]);
     showRollOverlay({
       label,
@@ -9587,14 +9598,12 @@ var LyrianApp = (() => {
   function restoreTurnResources() {
     syncPlayResourcesFromFields(true);
     const derived = getDerivedCombatStats();
-    const apLimit = getActivePlayResourceCurrentLimit("apCurrent", derived.apMax);
-    state.play.resources.apCurrent = apLimit;
+    state.play.resources.apCurrent = derived.apMax;
     appendPlayLog("AP Recovery", [
-      `AP recovered to ${apLimit}.`,
-      apLimit !== derived.apMax ? `Active effects currently raise AP above the normal ${derived.apMax} limit.` : "",
+      `AP recovered to ${derived.apMax}.`,
       "Mana and RP are not restored by AP recovery.",
       "If a rule changes AP recovery, adjust AP manually after using this."
-    ].filter(Boolean));
+    ]);
     renderPlayDashboard();
     setStatus("Recovered AP for the start of turn.");
   }
@@ -9603,7 +9612,6 @@ var LyrianApp = (() => {
     state.play.hpHasManualChange = false;
     state.play.foodUsedSinceRest = false;
     state.play.activeEffects = [];
-    syncSkillFields();
     syncPlayResourcesFromFields(false);
     appendPlayLog("Full Restore", [
       "HP, Mana, AP, and RP restored to their current maximum values.",
@@ -9666,10 +9674,6 @@ var LyrianApp = (() => {
       resourceGrant: rules.resourceGrant && typeof rules.resourceGrant === "object" ? { ...rules.resourceGrant } : {}
     };
   }
-  function playEffectHasSkillCheckModifiers(effect) {
-    const skillChecks = effect?.rules?.modifiers?.skillChecks;
-    return Boolean(skillChecks && typeof skillChecks === "object" && Object.keys(skillChecks).length);
-  }
   function applyPlayEffectResourceGrant(effect) {
     const grant = effect?.rules?.resourceGrant && typeof effect.rules.resourceGrant === "object" ? effect.rules.resourceGrant : {};
     if (!Object.keys(grant).length) {
@@ -9690,7 +9694,7 @@ var LyrianApp = (() => {
         return;
       }
       const current = toNumber(resources[currentKey], 0);
-      const max = getActivePlayResourceCurrentLimit(currentKey, toNumber(resources[config.maxKey], current + amount));
+      const max = toNumber(resources[config.maxKey], current + amount) + amount;
       const next = clamp(current + amount, 0, Math.max(0, max));
       resources[currentKey] = next;
       lines.push(`${config.label} +${amount} (${next}${currentKey === "hpCurrent" ? ` / ${resources[config.maxKey]}` : ""}).`);
@@ -9720,9 +9724,6 @@ var LyrianApp = (() => {
       ...state.play.activeEffects.filter((entry) => [entry.name, entry.source, entry.duration].map(normalizePhrase).join("|") !== nextKey)
     ].slice(0, 20);
     const grantLines = hadMatchingEffect ? [] : applyPlayEffectResourceGrant(nextEffect);
-    if (playEffectHasSkillCheckModifiers(nextEffect)) {
-      syncSkillFields();
-    }
     return { effect: nextEffect, grantLines, replaced: hadMatchingEffect };
   }
   function removePlayActiveEffect(effectId) {
@@ -9730,9 +9731,6 @@ var LyrianApp = (() => {
     const id = cleanText(effectId);
     const removed = state.play.activeEffects.find((entry) => entry.id === id);
     state.play.activeEffects = state.play.activeEffects.filter((entry) => entry.id !== id);
-    if (playEffectHasSkillCheckModifiers(removed)) {
-      syncSkillFields();
-    }
     syncPlayResourcesFromFields(true);
     appendPlayLog("Active Effect Cleared", [removed ? removed.name : "Effect removed."]);
     renderPlayDashboard();
@@ -9803,20 +9801,11 @@ var LyrianApp = (() => {
         name: "Regrowth",
         summary: "Official keyword: heal for 3 + applier Focus at the start of your turn.",
         defaultDuration: "Until start of your next turn",
-        buildRules: () => {
-          const focus = getComputedMainStatValue("Focus");
-          const healing = 3 + focus;
-          return buildOfficialEffectRules({
-            id: "regrowth",
-            value: String(healing),
-            valueLabel: "Healing",
-            detailLines: [
-              "You heal for 3 + Focus of the one who applied it at the start of your turn.",
-              `This sheet used the current character's Focus as the applier Focus: 3 + Focus ${focus} = ${healing} HP.`
-            ],
-            automationLines: [`Resolved healing reminder: ${healing} HP at the start of your turn.`]
-          });
-        }
+        buildRules: () => buildOfficialEffectRules({
+          id: "regrowth",
+          detailLines: ["You heal for 3 + Focus of the one who applied it at the start of your turn."],
+          automationLines: ["No automatic healing is applied yet because the applier's Focus must be known."]
+        })
       },
       {
         id: "hiding",
@@ -9843,8 +9832,7 @@ var LyrianApp = (() => {
             "You hide your mana output and aura, causing your spirit core to be considered 0 for the purposes of detection and aura abilities.",
             "In addition you gain a +5 bonus to Stealth."
           ],
-          automationLines: ["Stealth checks receive +5 while this chip remains active."],
-          modifiers: { skillChecks: { Stealth: 5 } }
+          automationLines: ["Stealth automation is not wired into active effects yet; the rule is tracked as a reminder."]
         })
       },
       { id: "blessed", name: "Blessed", summary: "Manual: blessing/boon needs a source and exact value.", buildRules: () => buildManualOnlyEffectRules("blessed", "Blessed is not a generic condition in the bundled rules data. The closest named entry is the Blessed by Kari breakthrough, which modifies Divine Providence rather than applying a universal status.") },
@@ -9900,21 +9888,12 @@ var LyrianApp = (() => {
         name: "Root",
         summary: "Official: cannot move; Dodge reaction evasion becomes 13 + Agility.",
         defaultDuration: "Until cleared",
-        buildRules: () => {
-          const agility = getComputedMainStatValue("Agility");
-          const dodge = 13 + agility;
-          return buildOfficialEffectRules({
-            id: "root",
-            value: String(dodge),
-            valueLabel: "Dodge",
-            detailLines: [
-              "You cannot move and your evasion when taking the Dodge reaction is changed to 13 + Agility.",
-              `This sheet used the current character's Agility: 13 + Agility ${agility} = Dodge ${dodge}.`
-            ],
-            automationLines: [`Speed is set to 0. Dodge is shown as ${dodge} while this chip remains active.`],
-            modifiers: { speedSet: 0, dodgeSet: dodge }
-          });
-        }
+        buildRules: () => buildOfficialEffectRules({
+          id: "root",
+          detailLines: ["You cannot move and your evasion when taking the Dodge reaction is changed to 13 + Agility."],
+          automationLines: ["Speed is set to 0. Dodge is shown as 13 + current Agility."],
+          modifiers: { speedSet: 0, dodgeSet: 13 + toNumber(state.fields.Agility, 0) }
+        })
       },
       valuedRuleOption({
         id: "sunder",
@@ -9940,8 +9919,7 @@ var LyrianApp = (() => {
         buildRules: () => buildOfficialEffectRules({
           id: "stun",
           detailLines: ["Your AP, AP recovery and RP is set to 0 when afflicted by this. When it ends, you regain any unused RP lost from this effect."],
-          automationLines: ["AP max/recovery and RP max are set to 0 while this chip remains active. Clearing Stun restores the normal calculated limits."],
-          modifiers: { apMaxSet: 0, rpMaxSet: 0 }
+          automationLines: ["Tracked as an exact rule reminder. Max-resource automation is deferred so the editable AP/RP max boxes are not permanently overwritten."]
         })
       },
       {
@@ -9952,8 +9930,7 @@ var LyrianApp = (() => {
         buildRules: () => buildOfficialEffectRules({
           id: "weakened",
           detailLines: ["Your maximum AP goes down to 2 and maximum RP goes down to 1. When it ends, you regain any unused RP lost from this effect."],
-          automationLines: ["AP max is set to 2 and RP max is set to 1 while this chip remains active. Clearing Weakened restores the normal calculated limits."],
-          modifiers: { apMaxSet: 2, rpMaxSet: 1 }
+          automationLines: ["Tracked as an exact rule reminder. Max-resource automation is deferred so the editable AP/RP max boxes are not permanently overwritten."]
         })
       },
       {
@@ -9964,8 +9941,7 @@ var LyrianApp = (() => {
         buildRules: () => buildOfficialEffectRules({
           id: "shaken",
           detailLines: ["The target's maximum AP is reduced by 1."],
-          automationLines: ["AP max is reduced by 1 while this chip remains active. Clearing Shaken restores the normal calculated limit."],
-          modifiers: { apMax: -1 }
+          automationLines: ["Tracked as an exact rule reminder. Max-resource automation is deferred so the editable AP max box is not permanently overwritten."]
         })
       },
       {
@@ -10324,9 +10300,100 @@ var LyrianApp = (() => {
         </details>
       `;
   }
+  var PLAY_MODE_LABELS = {
+    combat: "Combat",
+    crafting: "Crafting",
+    gathering: "Gathering"
+  };
+  var DOWNTIME_PLAY_MODES = /* @__PURE__ */ new Set(["crafting", "gathering"]);
+  function normalizePlayMode(mode) {
+    const cleaned = cleanText(mode);
+    if (cleaned === "crafting-gathering" || cleaned === "downtime") {
+      return state.play?.crafting?.activityMode === "gathering" ? "gathering" : "crafting";
+    }
+    return DOWNTIME_PLAY_MODES.has(cleaned) ? cleaned : "combat";
+  }
+  function isDowntimePlayMode(mode) {
+    return DOWNTIME_PLAY_MODES.has(mode);
+  }
+  function syncCraftingActivityToPlayMode(mode) {
+    if (!isDowntimePlayMode(mode)) {
+      return;
+    }
+    state.play = mergePlayState(state.play);
+    state.play.crafting.activityMode = mode;
+  }
+  function getActivePlayMode() {
+    const mode = normalizePlayMode(state.ui.playMode);
+    state.ui.playMode = mode;
+    syncCraftingActivityToPlayMode(mode);
+    return mode;
+  }
+  function setPlayMode(mode) {
+    const nextMode = normalizePlayMode(mode);
+    state.ui.playMode = nextMode;
+    syncCraftingActivityToPlayMode(nextMode);
+    renderPlayModePanels(nextMode);
+    try {
+      renderPlayDashboard();
+      renderPlayModePanels(nextMode);
+      setStatus(`Switched to ${PLAY_MODE_LABELS[nextMode]} mode.`);
+    } catch (error) {
+      console.error(error);
+      setStatus(`Switched to ${PLAY_MODE_LABELS[nextMode]} mode, but the dashboard could not fully refresh: ${error.message || error}`);
+    }
+  }
+  function renderPlayModeSwitch(activeMode = getActivePlayMode()) {
+    return `
+        <div class="play-mode-switch" aria-label="Character sheet mode">
+          ${Object.entries(PLAY_MODE_LABELS).map(([mode, label]) => `
+            <button
+              type="button"
+              data-play-mode="${escapeHtml(mode)}"
+              class="${mode === activeMode ? "is-active" : ""}"
+              aria-pressed="${mode === activeMode ? "true" : "false"}"
+            >${escapeHtml(label)}</button>
+          `).join("")}
+        </div>
+      `;
+  }
+  function renderPlayModePanels(activeMode = getActivePlayMode()) {
+    document.querySelectorAll("[data-play-mode]").forEach((button) => {
+      button.classList.toggle("is-active", button.dataset.playMode === activeMode);
+      button.setAttribute("aria-pressed", button.dataset.playMode === activeMode ? "true" : "false");
+    });
+    document.querySelectorAll("[data-play-mode-panel]").forEach((panel) => {
+      const isHidden = panel.dataset.playModePanel !== activeMode;
+      panel.hidden = isHidden;
+      panel.setAttribute("aria-hidden", isHidden ? "true" : "false");
+    });
+  }
+  function renderPlayDowntimePanelError(activityMode, error) {
+    const modeLabel = activityMode === "gathering" ? "Gathering" : "Crafting";
+    return `
+        <div class="play-panel play-crafting-dashboard-panel">
+          <p class="eyebrow">${escapeHtml(modeLabel)}</p>
+          <h3>${escapeHtml(`${modeLabel} Workspace`)}</h3>
+          <p class="play-empty">This workspace could not render because one rule or material entry is incomplete. ${escapeHtml(error?.message || String(error || ""))}</p>
+        </div>
+      `;
+  }
+  function renderPlayCraftingPanelSafe(forcedActivityMode = "") {
+    try {
+      return renderPlayCraftingPanel(forcedActivityMode);
+    } catch (error) {
+      console.error(error);
+      return renderPlayDowntimePanelError(forcedActivityMode, error);
+    }
+  }
   function renderPlayTabs() {
-    const activeTab = state.ui.sheetTab || "actions";
-    document.querySelectorAll("#play-tab-nav [data-play-tab]").forEach((button) => {
+    const tabButtons = Array.from(document.querySelectorAll("#play-tab-nav [data-play-tab]"));
+    let activeTab = state.ui.sheetTab || "actions";
+    if (!tabButtons.some((button) => button.dataset.playTab === activeTab)) {
+      activeTab = tabButtons[0]?.dataset.playTab || "actions";
+      state.ui.sheetTab = activeTab;
+    }
+    tabButtons.forEach((button) => {
       button.classList.toggle("is-active", button.dataset.playTab === activeTab);
     });
     document.querySelectorAll("[data-play-tab-panel]").forEach((panel) => {
@@ -10453,12 +10520,14 @@ var LyrianApp = (() => {
         </div>
       `;
   }
-  function renderPlaySkillRollControls(skill, buttonClass = "play-skill-roll") {
+  function renderPlaySkillRollControls(skill, buttonClass = "play-skill-roll", options = {}) {
+    const contextualBonus = options.contextualBonus || null;
+    const displayTotal = skill.total + (contextualBonus ? contextualBonus.bonus : 0);
     const groups = (skill.expertiseGroups || []).filter((group) => normalizeExpertiseSpecialtyName(group?.name) && !/^unassigned\b/i.test(cleanText(group.name)));
     return `
         <div class="play-skill-roll-controls">
           <button type="button" class="${escapeHtml(buttonClass)}" data-play-roll-skill="${skill.index}">
-            ${escapeHtml(formatModifier(skill.total))}
+            ${escapeHtml(formatModifier(displayTotal))}
           </button>
           ${groups.length ? `
             <details class="play-skill-expertise-menu">
@@ -10509,7 +10578,7 @@ var LyrianApp = (() => {
   }
   function openSheetView() {
     syncBuilderSelectionsIntoSheet2();
-    setMode2("sheet");
+    setMode("sheet");
     setStatus("Opened the character sheet.");
   }
   function openSheetViewFromShortcut() {
@@ -10545,6 +10614,7 @@ var LyrianApp = (() => {
     const progress = getCampaignProgressState();
     const portrait = state.builder.portraitDataUrl || "assets/lyrian-symbol.png";
     const resources = state.play.resources;
+    const activePlayMode = getActivePlayMode();
     const senses = ["Perception", "Insight", "Survival"].map(
       (name) => skills.find((entry) => normalizePhrase(entry.name) === normalizePhrase(name))
     ).filter(Boolean);
@@ -10565,9 +10635,11 @@ var LyrianApp = (() => {
           </div>
           <p>${escapeHtml(classes.length ? classes.map((entry) => entry.name).join(", ") : "No classes selected yet.")}</p>
           <p>${escapeHtml([state.fields.Gender, state.fields.Age ? `Age ${state.fields.Age}` : "", state.fields.Height, state.fields.Weight].filter(Boolean).join(" | ") || "Profile details can be filled in from the builder profile step at any time.")}</p>
+          ${renderPlayModeSwitch(activePlayMode)}
         </div>
         ${classArtMarkup}
       `;
+    renderPlayModePanels(activePlayMode);
     document.getElementById("play-main-stat-strip").innerHTML = MAIN_STATS.map((entry) => {
       const baseValue = toNumber(state.fields[entry.key], 0);
       const bonusValue = computedBonuses.mainStats[entry.key] || 0;
@@ -10659,7 +10731,8 @@ var LyrianApp = (() => {
     const quickAbilities = getQuickPlayAbilities();
     document.getElementById("play-quick-abilities").innerHTML = quickAbilities.length ? quickAbilities.map((ability, index) => renderPlayAbilityCard(ability, index)).join("") : `<p class="play-empty">Choose a race or classes in the builder to surface quick-use abilities here.</p>`;
     document.getElementById("play-inventory").innerHTML = renderPlayInventoryPanel(funds);
-    document.getElementById("play-crafting").innerHTML = renderPlayCraftingPanel();
+    document.getElementById("play-crafting").innerHTML = renderPlayCraftingPanelSafe("crafting");
+    document.getElementById("play-gathering").innerHTML = renderPlayCraftingPanelSafe("gathering");
     document.getElementById("play-proficiencies").innerHTML = proficienciesMarkup || `<p class="play-empty">No proficiencies have been entered yet.</p>`;
     document.getElementById("play-breakthroughs").innerHTML = `
         ${funds.effects.autoApplied.length ? `
@@ -10707,6 +10780,7 @@ var LyrianApp = (() => {
             </div>
           `).join("") : `<p class="play-empty">The combat log will collect rolls and resource spends here.</p>`;
     renderPlayReferenceDetail();
+    renderPlayModePanels(activePlayMode);
     renderSheetBuildSummary();
     renderDiceTray();
     renderPlayTabs();
@@ -11143,6 +11217,18 @@ var LyrianApp = (() => {
     const haystack = normalizePhrase([item?.name, item?.type, item?.subType, item?.description, item?.descriptionText].filter(Boolean).join(" "));
     return /\b(core crafting tool|allows you to craft|materials|crafting|gathering|forager|foraging|miner|mining|farmer|farming|lumber|food bag|botany bag)\b/.test(haystack);
   }
+  function isGatheringToolOrGearItem(item) {
+    if (!item || item.materialReferenceCard || item.generatedMaterial) {
+      return false;
+    }
+    const name = normalizePhrase(item.name);
+    const haystack = normalizePhrase([item.name, item.type, item.subType, item.description, item.descriptionText].filter(Boolean).join(" "));
+    const knownGatheringTool = /\b(pickaxes?|hori|sickles?|scythes?|axes?|chainsaw|botany bag|food bag|foraging kit)\b/.test(name);
+    const gatheringUse = /\b(gathering|gather|forager|foraging|miner|mining|farmer|farming|lumber|alchemy units|food material|miner'?s tool|farmer'?s tool|foraging tool)\b/.test(haystack);
+    const toolOrGear = /\b(tool|gear|bag|artisan weapon|weapon)\b/.test(haystack);
+    const materialOnly = /\b(crafting materials|materials reference|mods|modifications|facility|facilities|seed|fertilizer)\b/.test(haystack);
+    return knownGatheringTool || gatheringUse && toolOrGear && !materialOnly;
+  }
   function isOfficialItemOwned(itemId) {
     const id = cleanText(itemId);
     if (!id) {
@@ -11177,13 +11263,1583 @@ var LyrianApp = (() => {
         </div>
       `;
   }
+  var CRAFTING_RECIPE_ALL = "all";
+  function isMeaningfulCraftingType(value) {
+    const normalized = normalizePhrase(value);
+    return Boolean(normalized) && normalized !== "-";
+  }
+  function isCraftingRecipeEntry(entry = {}) {
+    return Boolean(entry && isMeaningfulCraftingType(entry.craftingType)) && !entry.generatedMaterial && !entry.materialReferenceCard;
+  }
+  function getCraftingRecipeEntries() {
+    const seen = /* @__PURE__ */ new Set();
+    return lookup.items.entries.filter(isCraftingRecipeEntry).filter((entry) => {
+      const key = [
+        normalizePhrase(entry.name),
+        normalizePhrase(entry.craftingType),
+        normalizePhrase(entry.subType || entry.type),
+        normalizePhrase(entry.cost)
+      ].join("|");
+      if (seen.has(key)) {
+        return false;
+      }
+      seen.add(key);
+      return true;
+    }).slice().sort(
+      (a, b) => cleanText(a?.craftingType).localeCompare(cleanText(b?.craftingType)) || cleanText(a?.subType).localeCompare(cleanText(b?.subType)) || cleanText(a?.name).localeCompare(cleanText(b?.name))
+    );
+  }
+  function getCraftingRecipeById(recipeId) {
+    const recipe = lookup.items.resolve(recipeId);
+    return isCraftingRecipeEntry(recipe) ? recipe : null;
+  }
+  function getCraftingRecipeCategories(recipes) {
+    return Array.from(new Set(recipes.map((entry) => cleanText(entry?.craftingType)).filter(Boolean))).sort((a, b) => a.localeCompare(b));
+  }
+  function getCraftingRecipesForCategory(recipes, category) {
+    const normalized = normalizePhrase(category);
+    if (!normalized || normalized === CRAFTING_RECIPE_ALL) {
+      return recipes;
+    }
+    return recipes.filter((entry) => entry && normalizePhrase(entry.craftingType) === normalized);
+  }
+  function getCraftingRecipeSubcategories(recipes, category) {
+    return Array.from(new Set(getCraftingRecipesForCategory(recipes, category).map((entry) => cleanText(entry.subType || entry.type || "Other")).filter(Boolean))).sort((a, b) => a.localeCompare(b));
+  }
+  function getFilteredCraftingRecipes(recipes, crafting) {
+    const category = cleanText(crafting.recipeCategory || CRAFTING_RECIPE_ALL);
+    const subcategory = cleanText(crafting.recipeSubcategory || CRAFTING_RECIPE_ALL);
+    return getCraftingRecipesForCategory(recipes, category).filter((entry) => {
+      if (normalizePhrase(subcategory) === CRAFTING_RECIPE_ALL) {
+        return true;
+      }
+      return normalizePhrase(entry.subType || entry.type || "Other") === normalizePhrase(subcategory);
+    });
+  }
+  function getCraftingShopCategory(entry = {}) {
+    const text = normalizePhrase([
+      entry.craftingType,
+      entry.materialCategory,
+      entry.name,
+      entry.type,
+      entry.subType
+    ].filter(Boolean).join(" "));
+    if (/\bartifice|artificer|artificing\b/.test(text)) {
+      return "Artificing";
+    }
+    if (/\bcarpenter|carpentry\b/.test(text)) {
+      return "Carpentry";
+    }
+    if (/\bculinarian|culinary|cooking|food\b/.test(text)) {
+      return "Culinary";
+    }
+    const known = ["alchemy", "armorsmithing", "blacksmithing", "farming"];
+    const match = known.find((name) => text.includes(name));
+    return match ? match.replace(/\b\w/g, (letter) => letter.toUpperCase()) : "General";
+  }
+  function isCraftingShopEntry(entry = {}) {
+    if (!entry || !entry.id || parseClimCost(entry.cost) <= 0) {
+      return false;
+    }
+    if (isCraftingRecipeEntry(entry) && !entry.generatedMaterial) {
+      return false;
+    }
+    const text = normalizePhrase([entry.name, entry.type, entry.subType, entry.description, entry.descriptionText, entry.materialCategory].filter(Boolean).join(" "));
+    return Boolean(entry.generatedMaterial) || isOwnedCraftingSupportItem(entry) || isCraftingOrGatheringReference(entry) && !/\bmods?|modifications?|facilities?|reference\b/.test(text);
+  }
+  function getCraftingShopEntries() {
+    const seen = /* @__PURE__ */ new Set();
+    return lookup.items.entries.filter(isCraftingShopEntry).filter((entry) => Boolean(lookup.items.resolve(entry.id))).filter((entry) => {
+      const key = [
+        normalizePhrase(entry.name),
+        normalizePhrase(entry.type),
+        normalizePhrase(entry.subType),
+        normalizePhrase(entry.cost)
+      ].join("|");
+      if (seen.has(key)) {
+        return false;
+      }
+      seen.add(key);
+      return true;
+    }).sort(
+      (a, b) => getCraftingShopCategory(a).localeCompare(getCraftingShopCategory(b)) || cleanText(a?.subType).localeCompare(cleanText(b?.subType)) || cleanText(a?.name).localeCompare(cleanText(b?.name))
+    );
+  }
+  function getCraftingShopCategories(entries) {
+    return Array.from(new Set(entries.map(getCraftingShopCategory).filter(Boolean))).sort((a, b) => a.localeCompare(b));
+  }
+  function getCraftingShopEntriesForCategory(entries, category) {
+    const normalized = normalizePhrase(category);
+    if (!normalized || normalized === CRAFTING_RECIPE_ALL) {
+      return entries;
+    }
+    return entries.filter((entry) => normalizePhrase(getCraftingShopCategory(entry)) === normalized);
+  }
+  function getCraftingShopSubcategories(entries, category) {
+    return Array.from(new Set(getCraftingShopEntriesForCategory(entries, category).map((entry) => cleanText(entry.subType || entry.type || "Other")).filter(Boolean))).sort((a, b) => a.localeCompare(b));
+  }
+  function getFilteredCraftingShopEntries(entries, crafting) {
+    const category = cleanText(crafting.recipeCategory || CRAFTING_RECIPE_ALL);
+    const subcategory = cleanText(crafting.recipeSubcategory || CRAFTING_RECIPE_ALL);
+    return getCraftingShopEntriesForCategory(entries, category).filter((entry) => {
+      if (normalizePhrase(subcategory) === CRAFTING_RECIPE_ALL) {
+        return true;
+      }
+      return normalizePhrase(entry.subType || entry.type || "Other") === normalizePhrase(subcategory);
+    });
+  }
+  function getRecipeRawText(recipe = {}) {
+    return String(recipe.descriptionText || recipe.description || "");
+  }
+  function stripRecipeCraftingSection(value = "") {
+    return cleanText(value).split(/\n\s*Crafting\s*:?\s*(?:\n|$)/i)[0].replace(/\s+\bCrafting\s*:\s*(?:Materials?|Herbs?|Special Materials?)\s*:.*$/i, "").replace(/\s+\bMaterials?\s*:\s*[\d,]+\s+.*$/i, "").trim();
+  }
+  function getRecipeDisplayDescription(recipe = {}) {
+    const text = stripRecipeCraftingSection(getBaseItemRulesText(recipe) || recipe.descriptionText || recipe.description || "");
+    if (text) {
+      return text.replace(/\s+/g, " ").trim();
+    }
+    const fallback = stripRecipeCraftingSection(firstReadableText(recipe.descriptionText, recipe.description));
+    return fallback.replace(/\s+/g, " ").trim();
+  }
+  function getRecipeSummarySentences(recipe = {}) {
+    return getRecipeDisplayDescription(recipe).split(/(?<=[.!?])\s+/).map((entry) => cleanText(entry)).filter(Boolean);
+  }
+  function getRecipeBenefitNotes(recipe = {}) {
+    const sentences = getRecipeSummarySentences(recipe);
+    if (!sentences.length) {
+      return [];
+    }
+    const notes = [];
+    const used = /* @__PURE__ */ new Set();
+    const addNote = (label, text) => {
+      const cleaned = cleanText(text);
+      if (!cleaned || used.has(cleaned)) {
+        return;
+      }
+      used.add(cleaned);
+      notes.push({ label, text: cleaned });
+    };
+    const findSentence = (pattern) => sentences.find((sentence) => pattern.test(sentence));
+    addNote("What it does", sentences[0]);
+    addNote("Benefit", findSentence(/\b(allows?|lets?|can|gain|grants?|provides?|adds?|increases?|improves?|raises?|restores?|heals?|reduces?|removes?|immune|bonus|shield|protect|carry|craft|filter|translate|record|zoom|fly|teleport|damage|range|speed)\b/i));
+    addNote("Limit", findSentence(/\b(but|cannot|can't|does not|do not|no longer|only|requires?|must|spend|expends?|consumes?|costs?|takes|penalty|reduces your|increases the burden|burden|limited|minimum|maximum)\b/i));
+    return notes.slice(0, 3);
+  }
+  function getRecipeDisplayEffectSummary(recipe = {}) {
+    const description = getRecipeDisplayDescription(recipe);
+    const useCost = getInventoryItemActivationCost(recipe);
+    const tags = [
+      hasInventoryItemActivationCost(useCost) ? `Use: ${formatCostLabelForDisplay(useCost)}` : "",
+      recipe.cost ? `Market: ${recipe.cost}` : "",
+      recipe.craftingPoints ? `Craft: ${recipe.craftingPoints} points` : ""
+    ].filter(Boolean);
+    return { description, tags, notes: getRecipeBenefitNotes(recipe) };
+  }
+  function cleanRecipeMaterialName(value) {
+    return cleanText(value).replace(/[.;:,]+$/g, "").replace(/\s+/g, " ").trim();
+  }
+  function parseRecipeRequirementLine(line, section, index) {
+    let text = cleanText(line).replace(/^-\s*/, "");
+    if (!text) {
+      return null;
+    }
+    if (/^(?:none|none\s+required|not\s+required|n\/a)$/i.test(text)) {
+      return null;
+    }
+    let quantity = 1;
+    let unit = section === "materials" ? "units" : "item";
+    let materialName = text;
+    const unitsOfMatch = text.match(/^([\d,]+)\s+units?\s+of\s+(.+)$/i);
+    const compactUnitsMatch = text.match(/^([\d,]+)\s*u(?:nits?)?\s+(?:of\s+)?(.+)$/i);
+    const xMatch = text.match(/^([\d,]+)\s*x\s+(.+)$/i);
+    const plainCountMatch = text.match(/^([\d,]+)\s+(.+)$/i);
+    if (unitsOfMatch) {
+      quantity = Math.max(1, toNumber(unitsOfMatch[1], 1));
+      unit = "units";
+      materialName = unitsOfMatch[2];
+    } else if (compactUnitsMatch) {
+      quantity = Math.max(1, toNumber(compactUnitsMatch[1], 1));
+      unit = "units";
+      materialName = compactUnitsMatch[2];
+    } else if (xMatch) {
+      quantity = Math.max(1, toNumber(xMatch[1], 1));
+      materialName = xMatch[2];
+    } else if (plainCountMatch) {
+      quantity = Math.max(1, toNumber(plainCountMatch[1], 1));
+      materialName = plainCountMatch[2];
+    }
+    materialName = cleanRecipeMaterialName(materialName);
+    const herbLike = section === "herbs" || /\bherbs?\b/i.test(materialName);
+    materialName = herbLike ? cleanRecipeMaterialName(materialName.replace(/\bherbs?\b/gi, "")) : materialName;
+    const lookupName = herbLike && !/^alchemy herb\s*-/i.test(materialName) ? `Alchemy Herb - ${materialName}` : materialName;
+    return {
+      key: `${section}:${index}:${normalizePhrase(lookupName)}:${quantity}:${unit}`,
+      section,
+      label: materialName,
+      lookupName,
+      quantity,
+      unit,
+      herbLike
+    };
+  }
+  function collectRecipeBulletRequirements(text, heading, section) {
+    const lines = String(text || "").split(/\r?\n/);
+    const results = [];
+    let active = false;
+    const headingPattern = new RegExp(`^${heading}\\s*:?\\s*(.*)$`, "i");
+    lines.forEach((line) => {
+      const trimmed = line.trim();
+      const headingMatch = trimmed.match(headingPattern);
+      if (headingMatch) {
+        active = true;
+        const inline = cleanText(headingMatch[1] || "");
+        if (inline) {
+          const parsed2 = parseRecipeRequirementLine(inline.startsWith("-") ? inline : `- ${inline}`, section, results.length);
+          if (parsed2) {
+            results.push(parsed2);
+          }
+        }
+        return;
+      }
+      if (active && /^[A-Z][A-Za-z\s/&-]{2,}:\s*/.test(trimmed) && !/^-\s*/.test(trimmed)) {
+        active = false;
+      }
+      if (!active || !/^-\s*/.test(trimmed)) {
+        return;
+      }
+      const parsed = parseRecipeRequirementLine(trimmed, section, results.length);
+      if (parsed) {
+        results.push(parsed);
+      }
+    });
+    return results;
+  }
+  function createRecipeRequirement({ section = "materials", label, lookupName = label, quantity = 1, unit = "item", standardUnitCost = 0 }) {
+    const safeLabel = cleanRecipeMaterialName(label);
+    const safeLookupName = cleanRecipeMaterialName(lookupName || safeLabel);
+    const safeQuantity = Math.max(1, toNumber(quantity, 1));
+    const safeUnit = cleanText(unit || "item");
+    const requirement = {
+      key: `${section}:inferred:${normalizePhrase(safeLookupName)}:${safeQuantity}:${safeUnit}`,
+      section,
+      label: safeLabel,
+      lookupName: safeLookupName,
+      quantity: safeQuantity,
+      unit: safeUnit,
+      herbLike: false,
+      inferred: true
+    };
+    const safeStandardUnitCost = Math.max(0, toNumber(standardUnitCost, 0));
+    if (safeStandardUnitCost > 0) {
+      requirement.standardUnitCost = safeStandardUnitCost;
+    }
+    return requirement;
+  }
+  function getInferredRecipeRequirements(recipe = {}) {
+    const category = normalizePhrase(recipe.craftingType);
+    const subcategory = normalizePhrase(recipe.subType || recipe.type);
+    const costText = cleanText(recipe.cost);
+    const recipeCost = parseClimCost(costText);
+    const text = normalizePhrase([recipe.name, recipe.type, recipe.subType, recipe.craftingType, recipe.cost, getRecipeDisplayDescription(recipe)].filter(Boolean).join(" "));
+    const ironIngotRequirement = (quantity) => createRecipeRequirement({
+      label: "Iron Ingot",
+      lookupName: "Armorsmithing Material - Iron Ingot",
+      quantity,
+      unit: "ingot"
+    });
+    const tannedHideRequirement = (quantity = 1) => createRecipeRequirement({
+      label: "Tanned Animal Hide",
+      lookupName: "Armorsmithing Material - Animal Hide Tanned Hide",
+      quantity,
+      unit: "tanned hide"
+    });
+    const blacksmithIronRequirement = (quantity) => createRecipeRequirement({
+      label: "Iron Ingot",
+      lookupName: "Blacksmithing Material - Iron Ingot",
+      quantity,
+      unit: "ingot"
+    });
+    const pineBlockRequirement = (quantity) => createRecipeRequirement({
+      label: "Pine Block",
+      lookupName: "Carpenter Material - Pine Block",
+      quantity,
+      unit: "block"
+    });
+    const artificerIronRequirement = () => createRecipeRequirement({
+      label: "Iron Ingot",
+      lookupName: "Artificer Material - Iron Ingot",
+      quantity: 1,
+      unit: "ingot"
+    });
+    const artificePartsRequirement = (quantity) => createRecipeRequirement({
+      label: "Iron Artifice Parts",
+      lookupName: "Iron Artifice Parts",
+      quantity,
+      unit: "part",
+      standardUnitCost: 1
+    });
+    const originalWeaponRequirement = () => createRecipeRequirement({
+      section: "base item",
+      label: "Original Weapon",
+      lookupName: "Original Weapon",
+      quantity: 1,
+      unit: "item"
+    });
+    const foodUnitsRequirement = (quantity) => createRecipeRequirement({
+      label: "Food Units",
+      lookupName: "Food Units",
+      quantity,
+      unit: "units"
+    });
+    const isTwoHanded = /\btwo\s+handed\b|\btwohanded\b/.test(text);
+    const isLongsword = /\blongsword\b/.test(text);
+    if (category === "armorsmithing") {
+      if (/\barmor\s*plates?\b|\bplates?\s+armor\b/.test(text)) {
+        return [ironIngotRequirement(1)];
+      }
+      if (/\bgreat\s*shield\b|\bgreatshield\b|\bshield\s+great\b/.test(text)) {
+        return [ironIngotRequirement(2)];
+      }
+      if (/\bshield\b/.test(text)) {
+        return [ironIngotRequirement(1)];
+      }
+      if (/\barmor\s+clothing\b|\bclothing\s+armor\b|\bclothing\b|\bclothes\b|\brobes?\b|\bgarments?\b|\boutfits?\b/.test(text)) {
+        return [tannedHideRequirement()];
+      }
+      if (/\bcloaks?\b|\bcapes?\b|\bmantles?\b|\bbags?\b/.test(text)) {
+        return [tannedHideRequirement()];
+      }
+      if (/\bheavy\s+armor\b|\barmor\s+heavy\b/.test(text)) {
+        return [ironIngotRequirement(4)];
+      }
+      if (/\bmedium\s+armor\b|\barmor\s+medium\b/.test(text)) {
+        return [ironIngotRequirement(2)];
+      }
+      if (/\blight\s+armor\b|\barmor\s+light\b/.test(text)) {
+        return [tannedHideRequirement()];
+      }
+    }
+    if (category === "blacksmithing") {
+      if (["weapon", "specialized weapon", "artisan weapon", "tool"].includes(subcategory)) {
+        return [blacksmithIronRequirement(isTwoHanded || isLongsword ? 2 : 1)];
+      }
+    }
+    if (category === "carpentry") {
+      if (["weapon", "specialized weapon", "channeling weapon", "mount"].includes(subcategory)) {
+        return [pineBlockRequirement(isTwoHanded ? 2 : 1)];
+      }
+    }
+    if (category === "artificing") {
+      const hasOriginalWeaponCost = /\boriginal\s+weapon\b/.test(normalizePhrase(costText));
+      if (hasOriginalWeaponCost) {
+        return [
+          originalWeaponRequirement(),
+          artificePartsRequirement(Math.max(1, recipeCost))
+        ];
+      }
+      if (subcategory === "weapon" || subcategory === "specialized weapon") {
+        const requirements = [artificerIronRequirement()];
+        const parts = Math.max(0, recipeCost - 500);
+        if (parts > 0) {
+          requirements.push(artificePartsRequirement(parts));
+        }
+        return requirements;
+      }
+      if (["accessory", "airship", "assist", "basic", "weapon attachment"].includes(subcategory) && recipeCost > 0) {
+        return [artificePartsRequirement(recipeCost)];
+      }
+    }
+    if (category === "culinary") {
+      if (/\bgourmet\s+cooking\s+stock\b|\bcooking\s+stock\b/.test(text)) {
+        return [foodUnitsRequirement(500)];
+      }
+    }
+    return [];
+  }
+  function getRecipeRequirements(recipe = {}) {
+    const text = getRecipeRawText(recipe);
+    const requirements = [];
+    const materialMatch = text.match(/(?:^|\n)\s*Materials?\s*:?\s*([\d,]+)\s+([^\n]+)/i);
+    if (materialMatch) {
+      const quantity = Math.max(0, toNumber(materialMatch[1], 0));
+      const materialName = cleanRecipeMaterialName(materialMatch[2]);
+      if (quantity > 0) {
+        requirements.push({
+          key: `materials:base:${normalizePhrase(materialName)}:${quantity}:units`,
+          section: "materials",
+          label: materialName,
+          lookupName: materialName,
+          quantity,
+          unit: "units",
+          herbLike: false
+        });
+      }
+    }
+    requirements.push(...collectRecipeBulletRequirements(text, "Herbs", "herbs"));
+    requirements.push(...collectRecipeBulletRequirements(text, "Special Materials", "special"));
+    if (!requirements.length) {
+      requirements.push(...getInferredRecipeRequirements(recipe));
+    }
+    const seen = /* @__PURE__ */ new Set();
+    return requirements.filter((entry) => {
+      if (seen.has(entry.key)) {
+        return false;
+      }
+      seen.add(entry.key);
+      return true;
+    });
+  }
+  function getMaterialPackageQuantity(record = {}, requirement = {}) {
+    const safeRecord = record || {};
+    const requestedUnit = normalizePhrase(requirement?.unit || "");
+    if (requestedUnit && requestedUnit !== "units" && requestedUnit !== "item") {
+      return 1;
+    }
+    const label = cleanText(safeRecord.materialUnitLabel || "");
+    const match = label.match(/([\d,]+)/);
+    return Math.max(1, match ? toNumber(match[1], 1) : 1);
+  }
+  function findRecipeRequirementRecord(requirement) {
+    const wanted = normalizePhrase(requirement?.lookupName || requirement?.label || "");
+    if (!wanted) {
+      return null;
+    }
+    if (wanted === "alchemy materials" || wanted === "food units" || wanted === "alchemy units") {
+      return null;
+    }
+    const entries = lookup.items.entries.filter((entry) => !entry.materialReferenceCard);
+    const exact = entries.find((entry) => normalizePhrase(entry.name) === wanted);
+    if (exact) {
+      return exact;
+    }
+    if (requirement.herbLike) {
+      const herbName = normalizePhrase(`Alchemy Herb - ${requirement.label}`);
+      const herb = entries.find((entry) => normalizePhrase(entry.name) === herbName);
+      if (herb) {
+        return herb;
+      }
+    }
+    return entries.find(
+      (entry) => entry.generatedMaterial && (normalizePhrase(entry.name).includes(wanted) || wanted.includes(normalizePhrase(entry.name)) || normalizePhrase(entry.materialCategory).includes(wanted))
+    ) || null;
+  }
+  function getOwnedRequirementQuantity(record, requirement, inventory) {
+    const safeRecord = record || {};
+    const packageQuantity = getMaterialPackageQuantity(safeRecord, requirement);
+    const wanted = normalizePhrase(safeRecord.name || requirement.lookupName || requirement.label);
+    return inventory.reduce((total, entry) => {
+      if (normalizePhrase(entry.materialUnitsFor || "") === wanted) {
+        return total + Math.max(0, Math.floor(toNumber(entry.quantity, 0)));
+      }
+      const sameRecord = safeRecord.id && entry.itemId === safeRecord.id;
+      const sameName = normalizePhrase(entry.name) === wanted;
+      if (!sameRecord && !sameName) {
+        return total;
+      }
+      return total + Math.max(1, Math.floor(toNumber(entry.quantity, 1))) * packageQuantity;
+    }, 0);
+  }
+  function getRecipeRequirementState(requirement, inventory, recipe, crafting) {
+    const record = findRecipeRequirementRecord(requirement);
+    const packageQuantity = record ? getMaterialPackageQuantity(record, requirement) : 1;
+    const have = getOwnedRequirementQuantity(record, requirement, inventory);
+    const need = Math.max(0, requirement.quantity - have);
+    const packagesNeeded = record ? Math.ceil(need / packageQuantity) : 0;
+    const standardUnitCost = record ? parseClimCost(record.cost) : Math.max(0, toNumber(requirement.standardUnitCost, 0));
+    const standardCost = record ? standardUnitCost * packagesNeeded : standardUnitCost * need;
+    const customCosts = crafting.materialCustomCosts && typeof crafting.materialCustomCosts === "object" ? crafting.materialCustomCosts : {};
+    const customCost = cleanText(customCosts[`${recipe.id}::${requirement.key}`] || "");
+    return {
+      ...requirement,
+      record,
+      packageQuantity,
+      have,
+      need,
+      packagesNeeded,
+      standardUnitCost,
+      standardCost,
+      customCost,
+      customCostKey: `${recipe.id}::${requirement.key}`
+    };
+  }
+  function formatRequirementQuantity(value, unit) {
+    const quantity = Math.max(0, toNumber(value, 0));
+    if (unit === "units") {
+      return `${quantity} units`;
+    }
+    if (unit && unit !== "item") {
+      return `${quantity} ${unit}${quantity === 1 ? "" : "s"}`;
+    }
+    return `${quantity}`;
+  }
+  function summarizeRecipeRequirements(requirements) {
+    return requirements.length ? requirements.map((entry) => `${entry.quantity} ${entry.label}${entry.inferred ? " (inferred)" : ""}`).join(", ") : "";
+  }
+  var CRAFTING_RULE_CLARIFICATION_ITEMS = [
+    "Whether a facility is required for some crafts, or only gives a limited-use bonus when the GM says the location supports the craft.",
+    "Which facility applies to Armorsmithing. The facility list names Blacksmith Workshop, but not a separate Armorsmithing Workshop.",
+    "Exact official node values for every gatherable material. The rules give the node structure and at least one mining example, but not a full table for every resource.",
+    "Whether every purchasable material can be gathered directly, or whether some are only created by errand, conversion, shop purchase, or GM-declared special nodes.",
+    "Exact material costs for recipe cards that describe an item but do not list a materials section or crafting point cost."
+  ];
+  var CRAFTING_TOOL_REQUIREMENTS = {
+    alchemy: {
+      label: "Alchemist's Alembic",
+      itemNames: ["Alchemist's Alembic"],
+      note: "Core crafting tool. Allows you to craft items as an alchemist."
+    },
+    artificing: {
+      label: "Artificer's Multitool",
+      itemNames: ["Artificer's Multitool"],
+      note: "Core crafting tool. Allows you to craft items as an artificer."
+    },
+    armorsmithing: {
+      label: "Smith's Hammer",
+      itemNames: ["Smith's Hammer (One-handed)", "Smith's Hammer (Two-handed)", "Smith's Hammer"],
+      note: "Core crafting tool. Allows you to craft items as a Blacksmith or Armorsmith."
+    },
+    blacksmithing: {
+      label: "Smith's Hammer",
+      itemNames: ["Smith's Hammer (One-handed)", "Smith's Hammer (Two-handed)", "Smith's Hammer"],
+      note: "Core crafting tool. Allows you to craft items as a Blacksmith or Armorsmith."
+    },
+    carpentry: {
+      label: "Carpenter's Chisel",
+      itemNames: ["Carpenter's Chisel"],
+      note: "Core crafting tool. Allows you to craft items as a carpenter."
+    },
+    culinary: {
+      label: "Frying Pan",
+      itemNames: ["Frying Pan", "Culinary Kit"],
+      note: "Frying Pan is the core culinarian crafting tool. Culinary Kit or Kitchen text also matters for cooking food during rests."
+    }
+  };
+  var CRAFTING_HELPER_TOOLS = {
+    alchemy: [
+      {
+        label: "Botany Bag",
+        itemNames: ["Botany Bag"],
+        note: "Storage support for extra Lumber material and Alchemy units. No crafting check bonus is listed on the item card."
+      }
+    ],
+    artificing: [
+      {
+        label: "Artificer's Kit",
+        itemNames: ["Artificer's Kit"],
+        note: "Maintenance support for patching broken non-airship artifice during a rest, or creating an Artifice Shell by paying Magical Fuel. No crafting check bonus is listed."
+      }
+    ],
+    culinary: [
+      {
+        label: "Culinary Kit",
+        itemNames: ["Culinary Kit"],
+        note: "Portable cooking support for rest meals and food handling. No crafting check bonus is listed."
+      }
+    ]
+  };
+  var CRAFTING_FACILITY_PROFILES = {
+    alchemy: {
+      name: "Alchemy Atelier",
+      skill: "Alchemy",
+      note: "Crafting workshop/atelier rule: level 1/2/3 gives +2/+4/+6 facility bonus to the respective crafting skill."
+    },
+    artificing: {
+      name: "Artificer's Atelier",
+      skill: "Artifice",
+      note: "Crafting workshop/atelier rule: level 1/2/3 gives +2/+4/+6 facility bonus to the respective crafting skill."
+    },
+    armorsmithing: {
+      name: "Blacksmith Workshop",
+      skill: "Armorsmithing",
+      note: "The facility list names Blacksmith Workshop, not a separate Armorsmithing Workshop. Treat this as the likely facility until clarified."
+    },
+    blacksmithing: {
+      name: "Blacksmith Workshop",
+      skill: "Blacksmithing",
+      note: "Crafting workshop/atelier rule: level 1/2/3 gives +2/+4/+6 facility bonus to the respective crafting skill."
+    },
+    carpentry: {
+      name: "Carpentry Workshop",
+      skill: "Carpentry",
+      note: "Crafting workshop/atelier rule: level 1/2/3 gives +2/+4/+6 facility bonus to the respective crafting skill."
+    },
+    culinary: {
+      name: "Professional Kitchen",
+      skill: "Culinary",
+      note: "Professional Kitchen is the listed culinary facility. Gourmet stock text also calls out Culinary Kit or Kitchen for cooking food during rests."
+    },
+    farming: {
+      name: "Greenhouse / Serene Garden",
+      skill: "Farming",
+      note: "The facility list includes Greenhouse / Serene Garden as a facility bonus, but exact gathering/crafting boundaries need GM clarification."
+    }
+  };
+  var CRAFTING_CLASS_REQUIREMENTS = {
+    alchemy: "Alchemist",
+    artificing: "Artificer",
+    armorsmithing: "Armorsmith",
+    blacksmithing: "Blacksmith",
+    carpentry: "Carpenter",
+    culinary: "Culinarian",
+    farming: "Farmer"
+  };
+  function getCraftingCategoryKey(value = "") {
+    const key = normalizePhrase(value);
+    if (/artifice|artificer|artificing/.test(key)) {
+      return "artificing";
+    }
+    if (/armor|armour/.test(key)) {
+      return "armorsmithing";
+    }
+    if (/blacksmith|smithing/.test(key)) {
+      return "blacksmithing";
+    }
+    if (/carpenter|carpentry/.test(key)) {
+      return "carpentry";
+    }
+    if (/culinary|culinarian|cooking|food/.test(key)) {
+      return "culinary";
+    }
+    if (/farm|farming/.test(key)) {
+      return "farming";
+    }
+    if (/alchemy|alchemist/.test(key)) {
+      return "alchemy";
+    }
+    return key;
+  }
+  function getSelectedRecipeCategoryKey(recipe = {}) {
+    return getCraftingCategoryKey(recipe?.craftingType || recipe?.type || recipe?.subType || "");
+  }
+  function getInventoryCorpus(inventory = []) {
+    return inventory.map(
+      (entry) => normalizePhrase([entry.name, entry.type, entry.subType, entry.description, entry.descriptionText].filter(Boolean).join(" "))
+    );
+  }
+  function doesInventoryHaveAnyNamedItem(names = [], inventory = []) {
+    const wanted = names.map(normalizePhrase).filter(Boolean);
+    if (!wanted.length) {
+      return true;
+    }
+    const corpus = getInventoryCorpus(inventory);
+    return wanted.some((name) => corpus.some((entryText) => entryText.includes(name)));
+  }
+  function findItemRecordByNameOptions(names = []) {
+    const wanted = names.map(normalizePhrase).filter(Boolean);
+    if (!wanted.length) {
+      return null;
+    }
+    return lookup.items.entries.find((entry) => wanted.includes(normalizePhrase(entry.name))) || lookup.items.entries.find((entry) => wanted.some((name) => normalizePhrase(entry.name).includes(name))) || null;
+  }
+  function getCraftingToolRequirement(recipe = {}) {
+    const profile = CRAFTING_TOOL_REQUIREMENTS[getSelectedRecipeCategoryKey(recipe)];
+    if (!profile) {
+      return null;
+    }
+    return {
+      ...profile,
+      record: findItemRecordByNameOptions(profile.itemNames)
+    };
+  }
+  function getCraftingHelperTools(recipe = {}, inventory = []) {
+    const profiles = CRAFTING_HELPER_TOOLS[getSelectedRecipeCategoryKey(recipe)] || [];
+    return profiles.map((profile) => ({
+      ...profile,
+      hasItem: doesInventoryHaveAnyNamedItem(profile.itemNames, inventory),
+      record: findItemRecordByNameOptions(profile.itemNames)
+    }));
+  }
+  function getCraftingFacilityProfile(recipe = {}) {
+    const profile = CRAFTING_FACILITY_PROFILES[getSelectedRecipeCategoryKey(recipe)];
+    return profile || null;
+  }
+  function getCraftingFacilityUsesForLevel(level) {
+    return [0, 2, 3, 4][Math.max(0, Math.min(3, Math.floor(toNumber(level, 0))))] || 0;
+  }
+  function getCraftingFacilityBonus(level) {
+    return Math.max(0, Math.min(3, Math.floor(toNumber(level, 0)))) * 2;
+  }
+  function getSelectedClassRulesCorpus() {
+    return normalizePhrase(getSelectedClassDetails().map((entry) => {
+      try {
+        return JSON.stringify(entry);
+      } catch {
+        return [entry?.name, entry?.descriptionText, entry?.guideText].filter(Boolean).join(" ");
+      }
+    }).join(" "));
+  }
+  function hasSelectedClassText(value = "") {
+    const wanted = normalizePhrase(value);
+    if (!wanted) {
+      return false;
+    }
+    return getSelectedClassRulesCorpus().includes(wanted);
+  }
+  function getCraftingSupportState(recipe = {}, crafting = getCraftingTrackerState(), inventory = []) {
+    const tool = recipe ? getCraftingToolRequirement(recipe) : null;
+    const facility = recipe ? getCraftingFacilityProfile(recipe) : null;
+    const facilityLevel = Math.max(0, Math.min(3, Math.floor(toNumber(crafting.facilityLevel, 0))));
+    const usesMax = Math.max(0, Math.floor(toNumber(crafting.facilityUsesMax, 0)));
+    const usesRemaining = Math.max(0, Math.floor(toNumber(crafting.facilityUsesRemaining, 0)));
+    const facilityUsable = facilityLevel > 0 && (!usesMax || usesRemaining > 0);
+    const facilityBonus = facility && facilityUsable ? getCraftingFacilityBonus(facilityLevel) : 0;
+    const className = CRAFTING_CLASS_REQUIREMENTS[getSelectedRecipeCategoryKey(recipe)] || "";
+    return {
+      tool,
+      hasTool: tool ? doesInventoryHaveAnyNamedItem(tool.itemNames, inventory) : true,
+      helperTools: getCraftingHelperTools(recipe, inventory),
+      facility,
+      facilityLevel,
+      facilityUsable,
+      facilityBonus,
+      usesMax,
+      usesRemaining,
+      suggestedUses: getCraftingFacilityUsesForLevel(facilityLevel),
+      className,
+      hasClass: className ? hasSelectedClassText(className) : true
+    };
+  }
+  function getCraftingRecipeAvailability(recipe = {}, inventory = [], crafting = getCraftingTrackerState()) {
+    const support = getCraftingSupportState(recipe || {}, crafting, inventory);
+    const missing = [];
+    if (support.tool && !support.hasTool) {
+      missing.push({
+        kind: "Tool",
+        label: support.tool.label,
+        text: `Tool: ${support.tool.label}`
+      });
+    }
+    if (support.className && !support.hasClass) {
+      missing.push({
+        kind: "Class",
+        label: support.className,
+        text: `Class: ${support.className}`
+      });
+    }
+    const missingSummary = missing.map((entry) => entry.text).join(", ");
+    return {
+      support,
+      missing,
+      missingSummary,
+      available: missing.length === 0,
+      statusLabel: missing.length ? "Unavailable" : "Available",
+      reasonLabel: missing.length ? `Requirements not met: ${missingSummary}` : "Requirements met."
+    };
+  }
+  function renderCraftingAvailabilityNotice(recipe = {}, inventory = [], crafting = getCraftingTrackerState()) {
+    const availability = getCraftingRecipeAvailability(recipe, inventory, crafting);
+    return `
+        <div class="play-recipe-availability-notice ${availability.available ? "is-ready" : "is-missing"}">
+          <strong>${escapeHtml(availability.available ? "Crafting Availability / Available" : "Crafting Availability / Unavailable")}</strong>
+          <span>${escapeHtml(availability.available ? "Required class and core tool checks are met. Facility bonuses are optional unless the GM says the craft needs a specific location." : `${availability.reasonLabel}.`)}</span>
+        </div>
+      `;
+  }
+  var GATHERING_NODE_TYPES = {
+    mining: {
+      id: "mining",
+      label: "Mining",
+      heading: "Mining Nodes",
+      skill: "Mining",
+      tool: "Pickaxe",
+      summary: "Metal, stone, gems, ore pockets, and mineral outcrops.",
+      resources: ["Iron", "Dark Iron", "Tamahagane", "Mithril", "Orichalcum", "Escudo", "Stone", "Gemstones"]
+    },
+    foraging: {
+      id: "foraging",
+      label: "Foraging",
+      heading: "Foraging Nodes",
+      skill: "Foraging",
+      tool: "Axe or Hori",
+      summary: "Wild herbs, lumber, mushrooms, vines, flowers, and naturally found materials.",
+      resources: ["Common Alchemy Herbs", "Rare Alchemy Herbs", "Lumber", "Heartwood", "Fresh Mushrooms", "Fresh Herbs", "Spidersilk"]
+    },
+    farming: {
+      id: "farming",
+      label: "Farming",
+      heading: "Farming Plots",
+      skill: "Farming",
+      tool: "Sickle or Scythe",
+      summary: "Seeds, prepared plots, cultivated food, fertilizer, and farmed alchemy plants.",
+      resources: ["Food Units", "Fresh Vegetables", "Fresh Cooking Herbs", "Spicy Peppers", "Seeds", "Fertilizer"]
+    },
+    husbandry: {
+      id: "husbandry",
+      label: "Husbandry",
+      heading: "Animal Nodes",
+      skill: "Animal Husbandry",
+      tool: "GM-approved animal handling gear",
+      summary: "Animals, eggs, milk, wool, hides, fish, honey, and creature-based materials.",
+      resources: ["Fresh Meat", "Fresh Fish", "Hide", "Wool", "Eggs", "Milk", "Honey", "Creature Materials"]
+    }
+  };
+  function getGatheringNodeTypeEntries() {
+    return Object.values(GATHERING_NODE_TYPES).slice().sort((left, right) => cleanText(left.label).localeCompare(cleanText(right.label)));
+  }
+  var GATHERING_NODE_TEMPLATES = {
+    "dark-iron-outcrop": {
+      id: "dark-iron-outcrop",
+      nodeType: "mining",
+      name: "Normal Dark Iron Outcrop",
+      variation: "Normal",
+      tier: 1,
+      hpMax: 3,
+      nodeTarget: 40,
+      luckyTarget: 15,
+      strikeDiceMax: 5,
+      skill: "Mining",
+      tool: "Pickaxe",
+      requiredAbility: "Miner: Rock and Stone",
+      yieldName: "Iron",
+      yieldQuantity: 500,
+      luckyYieldName: "Dark Iron",
+      luckyYieldQuantity: 500,
+      discovery: "Find or identify with Perception, Appraise, Common Knowledge, Expert Knowledge, Magic, Artifice, or another GM-approved check.",
+      note: "Clear Node Points to gain the base yield. Clear both Node Points and Lucky Points to gain both yields. Finishing an attempt reduces HP by 1."
+    },
+    "iron-vein": {
+      id: "iron-vein",
+      nodeType: "mining",
+      name: "Iron Vein",
+      variation: "Basic",
+      tier: 1,
+      hpMax: 3,
+      nodeTarget: 35,
+      luckyTarget: 15,
+      strikeDiceMax: 5,
+      skill: "Mining",
+      tool: "Pickaxe",
+      requiredAbility: "Rock and Stone",
+      yieldName: "Iron",
+      yieldQuantity: 500,
+      luckyYieldName: "Dark Iron",
+      luckyYieldQuantity: 250,
+      discovery: "Find ore with Perception, Appraise, Common Knowledge, Expert Knowledge, or a GM-approved mining check.",
+      note: "Baseline mining node. Use this when the GM wants a simple metal outcrop without unusual hazards."
+    },
+    "gemstone-pocket": {
+      id: "gemstone-pocket",
+      nodeType: "mining",
+      name: "Gemstone Pocket",
+      variation: "Hidden",
+      tier: 1,
+      hpMax: 2,
+      nodeTarget: 30,
+      luckyTarget: 20,
+      strikeDiceMax: 4,
+      skill: "Mining",
+      tool: "Pickaxe",
+      requiredAbility: "Rock and Stone",
+      yieldName: "Stone",
+      yieldQuantity: 500,
+      luckyYieldName: "Gemstones",
+      luckyYieldQuantity: 1,
+      discovery: "Usually found with Appraise, Perception, or Expert Knowledge before mining begins.",
+      note: "Use for a lower-volume mineral node where the lucky result matters more than the base yield."
+    },
+    "wild-herb-patch": {
+      id: "wild-herb-patch",
+      nodeType: "foraging",
+      name: "Wild Herb Patch",
+      variation: "Foraging",
+      tier: 1,
+      hpMax: 3,
+      nodeTarget: 30,
+      luckyTarget: 15,
+      strikeDiceMax: 5,
+      skill: "Foraging",
+      tool: "Axe or Hori",
+      requiredAbility: "Forager's Path",
+      yieldName: "Common Alchemy Herbs",
+      yieldQuantity: 1,
+      luckyYieldName: "Rare Alchemy Herbs",
+      luckyYieldQuantity: 1,
+      discovery: "Find and identify with Foraging, Survival, Perception, Medicine, or Common Knowledge.",
+      note: "Use for wild herbs, safe food plants, and gathered alchemy ingredients."
+    },
+    "lumber-stand": {
+      id: "lumber-stand",
+      nodeType: "foraging",
+      name: "Lumber Stand",
+      variation: "Woodland",
+      tier: 1,
+      hpMax: 4,
+      nodeTarget: 40,
+      luckyTarget: 15,
+      strikeDiceMax: 5,
+      skill: "Foraging",
+      tool: "Axe or Artifice Chainsaw",
+      requiredAbility: "Forager's Path",
+      yieldName: "Lumber",
+      yieldQuantity: 500,
+      luckyYieldName: "Heartwood",
+      luckyYieldQuantity: 250,
+      discovery: "Locate useful wood with Foraging, Survival, Common Knowledge, or Expert Knowledge.",
+      note: "Use for lumber, useful branches, and natural wood blocks."
+    },
+    "spiritual-ground-plot": {
+      id: "spiritual-ground-plot",
+      nodeType: "farming",
+      name: "Spiritual Ground Plot",
+      variation: "Cultivated",
+      tier: 1,
+      hpMax: 1,
+      nodeTarget: 30,
+      luckyTarget: 15,
+      strikeDiceMax: 4,
+      skill: "Farming",
+      tool: "Sickle or Scythe",
+      requiredAbility: "Farming Basics",
+      yieldName: "Food Units",
+      yieldQuantity: 500,
+      luckyYieldName: "Fresh Cooking Herbs",
+      luckyYieldQuantity: 1,
+      discovery: "Farming uses prepared plots rather than discovery unless the GM rules otherwise.",
+      note: "Use for a planted farming plot after seeds have been placed in usable ground."
+    },
+    "spice-garden": {
+      id: "spice-garden",
+      nodeType: "farming",
+      name: "Spice Garden",
+      variation: "Cultivated",
+      tier: 1,
+      hpMax: 1,
+      nodeTarget: 35,
+      luckyTarget: 20,
+      strikeDiceMax: 4,
+      skill: "Farming",
+      tool: "Sickle or Scythe",
+      requiredAbility: "Farming Basics",
+      yieldName: "Spicy Peppers",
+      yieldQuantity: 1,
+      luckyYieldName: "Excellent Spicy Peppers",
+      luckyYieldQuantity: 1,
+      discovery: "Farming uses the planted seed and plot condition as the setup.",
+      note: "Use for specialty crops, herbs, peppers, or other cultivated recipe ingredients."
+    },
+    "livestock-herd": {
+      id: "livestock-herd",
+      nodeType: "husbandry",
+      name: "Livestock Herd",
+      variation: "Animal",
+      tier: 1,
+      hpMax: 1,
+      nodeTarget: 30,
+      luckyTarget: 15,
+      strikeDiceMax: 4,
+      skill: "Animal Husbandry",
+      tool: "GM-approved animal handling gear",
+      requiredAbility: "GM Permission",
+      yieldName: "Fresh Meat",
+      yieldQuantity: 1,
+      luckyYieldName: "Hide",
+      luckyYieldQuantity: 1,
+      discovery: "Animal nodes usually begin from owned livestock, a found herd, or a GM-declared encounter.",
+      note: "Use for animal products, but let the GM decide if this is harvest, care, capture, or processing."
+    },
+    "fishing-hole": {
+      id: "fishing-hole",
+      nodeType: "husbandry",
+      name: "Fishing Hole",
+      variation: "Animal",
+      tier: 1,
+      hpMax: 2,
+      nodeTarget: 30,
+      luckyTarget: 15,
+      strikeDiceMax: 4,
+      skill: "Animal Husbandry",
+      tool: "Fishing gear or net",
+      requiredAbility: "GM Permission",
+      yieldName: "Fresh Fish",
+      yieldQuantity: 1,
+      luckyYieldName: "Rare Fish",
+      luckyYieldQuantity: 1,
+      discovery: "Find fishing spots with Survival, Perception, Animal Husbandry, or local knowledge.",
+      note: "Use for fish, aquatic creatures, and location-based food gathering."
+    }
+  };
+  var GATHERING_DEFAULT_TEMPLATE_ID = "dark-iron-outcrop";
+  var GATHERING_RESOURCE_PROFILES = {
+    "iron": {
+      nodeType: "mining",
+      name: "Iron Vein",
+      variation: "Basic",
+      tier: 1,
+      hpMax: 3,
+      nodeTarget: 35,
+      luckyTarget: 15,
+      strikeDiceMax: 5,
+      skill: "Mining",
+      tool: "Pickaxe",
+      requiredAbility: "Miner: Rock and Stone",
+      yieldName: "Iron",
+      yieldQuantity: 500,
+      luckyYieldName: "Dark Iron",
+      luckyYieldQuantity: 250,
+      basis: "Inferred T1 mining default from the Dark Iron outcrop example.",
+      discovery: "Find ore with Perception, Appraise, Common Knowledge, Expert Knowledge, Magic, Artifice, or a GM-approved mining check."
+    },
+    "dark iron": {
+      nodeType: "mining",
+      name: "Normal Dark Iron Outcrop",
+      variation: "Normal",
+      tier: 1,
+      hpMax: 3,
+      nodeTarget: 40,
+      luckyTarget: 15,
+      strikeDiceMax: 5,
+      skill: "Mining",
+      tool: "Pickaxe",
+      requiredAbility: "Miner: Rock and Stone",
+      yieldName: "Iron",
+      yieldQuantity: 500,
+      luckyYieldName: "Dark Iron",
+      luckyYieldQuantity: 500,
+      basis: "Book example.",
+      discovery: "Find or identify with Perception, Appraise, Common Knowledge, Expert Knowledge, Magic, Artifice, or another GM-approved check."
+    },
+    "tamahagane": {
+      nodeType: "mining",
+      name: "Tamahagane Vein",
+      variation: "Special Material",
+      tier: 1,
+      hpMax: 3,
+      nodeTarget: 45,
+      luckyTarget: 20,
+      strikeDiceMax: 5,
+      skill: "Mining",
+      tool: "Pickaxe",
+      requiredAbility: "Miner: Rock and Stone",
+      yieldName: "Iron",
+      yieldQuantity: 500,
+      luckyYieldName: "Tamahagane",
+      luckyYieldQuantity: 500,
+      basis: "Inferred GM preset. Adjust if your table treats Tamahagane as higher tier.",
+      discovery: "Identify the special ore quality with Appraise, Expert Knowledge, Artifice, Magic, or a GM-approved mining check."
+    },
+    "mithril": {
+      nodeType: "mining",
+      name: "Mithril Vein",
+      variation: "Rare Material",
+      tier: 2,
+      hpMax: 3,
+      nodeTarget: 50,
+      luckyTarget: 20,
+      strikeDiceMax: 5,
+      skill: "Mining",
+      tool: "Pickaxe",
+      requiredAbility: "Ore Hunter or GM Permission",
+      yieldName: "Tamahagane",
+      yieldQuantity: 500,
+      luckyYieldName: "Mithril",
+      luckyYieldQuantity: 500,
+      basis: "Inferred T2 rare mining preset.",
+      discovery: "Find subtle rare-material signs with Appraise, Expert Knowledge, Magic, Artifice, or a GM-approved mining check."
+    },
+    "orichalcum": {
+      nodeType: "mining",
+      name: "Orichalcum Seam",
+      variation: "Rare Magical Material",
+      tier: 2,
+      hpMax: 4,
+      nodeTarget: 55,
+      luckyTarget: 25,
+      strikeDiceMax: 5,
+      skill: "Mining",
+      tool: "Pickaxe",
+      requiredAbility: "Ore Hunter or GM Permission",
+      yieldName: "Mithril",
+      yieldQuantity: 500,
+      luckyYieldName: "Orichalcum",
+      luckyYieldQuantity: 500,
+      basis: "Inferred T2/T3 rare mining preset.",
+      discovery: "Identify the magical ore signature with Magic, Artifice, Appraise, Expert Knowledge, or a GM-approved mining check."
+    },
+    "escudo": {
+      nodeType: "mining",
+      name: "Escudo Deposit",
+      variation: "Elite Rare Material",
+      tier: 3,
+      hpMax: 4,
+      nodeTarget: 60,
+      luckyTarget: 25,
+      strikeDiceMax: 5,
+      skill: "Mining",
+      tool: "Pickaxe",
+      requiredAbility: "Advanced Ore Hunter or GM Permission",
+      yieldName: "Orichalcum",
+      yieldQuantity: 500,
+      luckyYieldName: "Escudo",
+      luckyYieldQuantity: 500,
+      basis: "Inferred high-tier mining preset.",
+      discovery: "Treat as an expert or specialist discovery unless the GM has already revealed the deposit."
+    },
+    "stone": {
+      nodeType: "mining",
+      name: "Stone Quarry Node",
+      variation: "Basic",
+      tier: 1,
+      hpMax: 4,
+      nodeTarget: 25,
+      luckyTarget: 15,
+      strikeDiceMax: 5,
+      skill: "Mining",
+      tool: "Pickaxe",
+      requiredAbility: "Miner: Rock and Stone or GM Permission",
+      yieldName: "Stone",
+      yieldQuantity: 500,
+      luckyYieldName: "Gemstones",
+      luckyYieldQuantity: 1,
+      basis: "Inferred common quarry preset.",
+      discovery: "Find useful stone with Mining, Appraise, Common Knowledge, Expert Knowledge, or a GM-approved check."
+    },
+    "gemstones": {
+      nodeType: "mining",
+      name: "Gemstone Pocket",
+      variation: "Hidden",
+      tier: 1,
+      hpMax: 2,
+      nodeTarget: 30,
+      luckyTarget: 20,
+      strikeDiceMax: 4,
+      skill: "Mining",
+      tool: "Pickaxe",
+      requiredAbility: "Miner: Rock and Stone or GM Permission",
+      yieldName: "Stone",
+      yieldQuantity: 500,
+      luckyYieldName: "Gemstones",
+      luckyYieldQuantity: 1,
+      basis: "Inferred from the existing gemstone pocket preset.",
+      discovery: "Usually found with Appraise, Perception, Expert Knowledge, or a GM-approved mining check."
+    },
+    "common alchemy herbs": {
+      nodeType: "foraging",
+      name: "Common Herb Patch",
+      variation: "Foraging",
+      tier: 1,
+      hpMax: 3,
+      nodeTarget: 30,
+      luckyTarget: 15,
+      strikeDiceMax: 5,
+      skill: "Foraging",
+      tool: "Hori or Foraging Kit",
+      requiredAbility: "Forager's Path or GM Permission",
+      yieldName: "Common Alchemy Herbs",
+      yieldQuantity: 1,
+      luckyYieldName: "Rare Alchemy Herbs",
+      luckyYieldQuantity: 1,
+      basis: "Inferred herb-gathering preset.",
+      discovery: "Find and identify with Foraging, Survival, Perception, Medicine, or Common Knowledge."
+    },
+    "rare alchemy herbs": {
+      nodeType: "foraging",
+      name: "Rare Herb Patch",
+      variation: "Hidden",
+      tier: 1,
+      hpMax: 2,
+      nodeTarget: 35,
+      luckyTarget: 20,
+      strikeDiceMax: 5,
+      skill: "Foraging",
+      tool: "Hori or Foraging Kit",
+      requiredAbility: "Forager's Path or GM Permission",
+      yieldName: "Common Alchemy Herbs",
+      yieldQuantity: 1,
+      luckyYieldName: "Rare Alchemy Herbs",
+      luckyYieldQuantity: 1,
+      basis: "Inferred rare herb preset.",
+      discovery: "Rare herbs should usually require a professional or expert discovery check unless the GM reveals the patch."
+    },
+    "lumber": {
+      nodeType: "foraging",
+      name: "Lumber Stand",
+      variation: "Woodland",
+      tier: 1,
+      hpMax: 4,
+      nodeTarget: 40,
+      luckyTarget: 15,
+      strikeDiceMax: 5,
+      skill: "Foraging",
+      tool: "Axe or Artifice Chainsaw",
+      requiredAbility: "Forager's Path or GM Permission",
+      yieldName: "Lumber",
+      yieldQuantity: 500,
+      luckyYieldName: "Heartwood",
+      luckyYieldQuantity: 250,
+      basis: "Inferred woodland preset.",
+      discovery: "Locate useful wood with Foraging, Survival, Common Knowledge, Expert Knowledge, or a GM-approved check."
+    },
+    "heartwood": {
+      nodeType: "foraging",
+      name: "Heartwood Stand",
+      variation: "Rare Woodland",
+      tier: 1,
+      hpMax: 3,
+      nodeTarget: 45,
+      luckyTarget: 20,
+      strikeDiceMax: 5,
+      skill: "Foraging",
+      tool: "Axe or Artifice Chainsaw",
+      requiredAbility: "Forager's Path or GM Permission",
+      yieldName: "Lumber",
+      yieldQuantity: 500,
+      luckyYieldName: "Heartwood",
+      luckyYieldQuantity: 500,
+      basis: "Inferred rare wood preset.",
+      discovery: "Identify valuable wood with Foraging, Survival, Appraise, Expert Knowledge, or a GM-approved check."
+    },
+    "food units": {
+      nodeType: "farming",
+      name: "Food Crop Plot",
+      variation: "Cultivated",
+      tier: 1,
+      hpMax: 1,
+      nodeTarget: 30,
+      luckyTarget: 15,
+      strikeDiceMax: 4,
+      skill: "Farming",
+      tool: "Sickle or Scythe",
+      requiredAbility: "Farming Basics or GM Permission",
+      yieldName: "Food Units",
+      yieldQuantity: 500,
+      luckyYieldName: "Fresh Cooking Herbs",
+      luckyYieldQuantity: 1,
+      basis: "Inferred farming preset.",
+      discovery: "Farming usually starts from a prepared plot, seed, or GM-declared crop source."
+    },
+    "fresh meat": {
+      nodeType: "husbandry",
+      name: "Hunting or Livestock Harvest",
+      variation: "Animal",
+      tier: 1,
+      hpMax: 1,
+      nodeTarget: 30,
+      luckyTarget: 15,
+      strikeDiceMax: 4,
+      skill: "Animal Husbandry",
+      tool: "GM-approved animal handling gear",
+      requiredAbility: "GM Permission",
+      yieldName: "Fresh Meat",
+      yieldQuantity: 1,
+      luckyYieldName: "Hide",
+      luckyYieldQuantity: 1,
+      basis: "Inferred animal-resource preset.",
+      discovery: "Animal nodes usually come from a found herd, hunt, owned livestock, or GM-declared encounter."
+    },
+    "fresh fish": {
+      nodeType: "husbandry",
+      name: "Fishing Hole",
+      variation: "Animal",
+      tier: 1,
+      hpMax: 2,
+      nodeTarget: 30,
+      luckyTarget: 15,
+      strikeDiceMax: 4,
+      skill: "Animal Husbandry",
+      tool: "Fishing gear or net",
+      requiredAbility: "GM Permission",
+      yieldName: "Fresh Fish",
+      yieldQuantity: 1,
+      luckyYieldName: "Rare Fish",
+      luckyYieldQuantity: 1,
+      basis: "Inferred fishing preset.",
+      discovery: "Find fishing spots with Survival, Perception, Animal Husbandry, or local knowledge."
+    },
+    "hide": {
+      nodeType: "husbandry",
+      name: "Hide Harvest",
+      variation: "Animal",
+      tier: 1,
+      hpMax: 1,
+      nodeTarget: 30,
+      luckyTarget: 15,
+      strikeDiceMax: 4,
+      skill: "Animal Husbandry",
+      tool: "Skinning knife or GM-approved handling gear",
+      requiredAbility: "GM Permission",
+      yieldName: "Hide",
+      yieldQuantity: 1,
+      luckyYieldName: "Prime Hide",
+      luckyYieldQuantity: 1,
+      basis: "Inferred animal-material preset.",
+      discovery: "Use when the GM declares usable animal hide, capture, harvest, or processing."
+    }
+  };
+  var GATHERING_PROCESSED_RESOURCE_HINTS = [
+    {
+      pattern: /\bingot\b/i,
+      rawFromName: (name) => cleanText(name).replace(/\s+ingots?$/i, ""),
+      note: "Ingots are not normally gathered directly. Gather raw units first, then convert them into ingots during Interlude or with the correct errand/ability."
+    },
+    {
+      pattern: /\btanned\s+hide\b|\btanned\s+hide$/i,
+      rawFromName: () => "Hide",
+      note: "Tanned hide is a processed crafting material. Gather hide first, then tan or convert it through the correct crafting/errand route."
+    },
+    {
+      pattern: /\bartifice\s+parts?\b/i,
+      rawFromName: () => "Iron",
+      note: "Artifice parts are normally crafted or converted, not pulled directly from a node. This draft points at the raw iron/material source."
+    }
+  ];
+  function getGatheringTemplate(templateId = GATHERING_DEFAULT_TEMPLATE_ID) {
+    return GATHERING_NODE_TEMPLATES[templateId] || GATHERING_NODE_TEMPLATES[GATHERING_DEFAULT_TEMPLATE_ID];
+  }
+  function getGatheringNodeTypeKey(nodeType = "") {
+    const key = normalizeKey(nodeType);
+    return GATHERING_NODE_TYPES[key] ? key : "mining";
+  }
+  function getGatheringNodeTypeForTemplate(templateId = GATHERING_DEFAULT_TEMPLATE_ID) {
+    return getGatheringNodeTypeKey(getGatheringTemplate(templateId).nodeType);
+  }
+  function getGatheringTemplatesForType(nodeType = "") {
+    const typeKey = getGatheringNodeTypeKey(nodeType);
+    return Object.values(GATHERING_NODE_TEMPLATES).filter((template) => getGatheringNodeTypeKey(template.nodeType) === typeKey);
+  }
+  function formatGatheringResourceLabel(entry = {}) {
+    return cleanText(entry.name).replace(/^(?:Alchemy Herb|Farming Seed|Farming Fertilizer|.+? Material|.+? Ingredient)\s+-\s+/i, "").replace(/\s+/g, " ");
+  }
+  function getGatheringResourceProfile(resourceName = "", nodeType = "") {
+    const requestedName = cleanText(resourceName);
+    const requestedKey = normalizePhrase(requestedName);
+    const processedHint = GATHERING_PROCESSED_RESOURCE_HINTS.find((entry) => entry.pattern.test(requestedName));
+    const rawName = processedHint ? processedHint.rawFromName(requestedName) : requestedName;
+    const rawKey = normalizePhrase(rawName);
+    const profile = GATHERING_RESOURCE_PROFILES[requestedKey] || GATHERING_RESOURCE_PROFILES[rawKey];
+    if (profile) {
+      const noteParts = [
+        profile.basis,
+        processedHint ? processedHint.note : "",
+        "Clicking a resource creates a GM-editable node draft. HP, Node Points, Lucky Points, yields, tool, and ability can be changed before rolling."
+      ].filter(Boolean);
+      return {
+        ...profile,
+        requestedResourceName: requestedName,
+        processed: Boolean(processedHint),
+        note: noteParts.join(" ")
+      };
+    }
+    const typeKey = getGatheringNodeTypeKey(nodeType);
+    const config = GATHERING_NODE_TYPES[typeKey] || GATHERING_NODE_TYPES.mining;
+    const isBulk = /\b(units?|wood|lumber|ore|stone|metal|parts?)\b/i.test(requestedName);
+    const isAnimal = typeKey === "husbandry";
+    const isFarm = typeKey === "farming";
+    const quantity = isBulk || typeKey === "mining" ? 500 : 1;
+    const luckyName = typeKey === "mining" ? requestedKey.includes("gem") ? "Rare Gemstones" : `High-grade ${requestedName}` : typeKey === "foraging" ? `Rare ${requestedName}` : isFarm ? `Excellent ${requestedName}` : `Prime ${requestedName}`;
+    return {
+      nodeType: typeKey,
+      name: `${requestedName} ${typeKey === "farming" ? "Plot" : isAnimal ? "Node" : "Node"}`,
+      variation: "GM Draft",
+      tier: 1,
+      hpMax: typeKey === "farming" ? 1 : isAnimal ? 1 : 3,
+      nodeTarget: typeKey === "mining" ? 35 : 30,
+      luckyTarget: 15,
+      strikeDiceMax: typeKey === "farming" || isAnimal ? 4 : 5,
+      skill: config.skill,
+      tool: config.tool,
+      requiredAbility: typeKey === "mining" ? "Gathering class ability or GM Permission" : "GM Permission",
+      yieldName: requestedName,
+      yieldQuantity: quantity,
+      luckyYieldName: luckyName,
+      luckyYieldQuantity: quantity === 500 ? 250 : 1,
+      requestedResourceName: requestedName,
+      processed: Boolean(processedHint),
+      basis: "Generic GM draft.",
+      discovery: `Use ${config.skill}, Survival, Perception, Appraise, relevant knowledge, or another GM-approved check to identify the node.`,
+      note: [
+        "Generic GM draft. The rules provide the node structure, but the GM sets exact HP, Node Points, Lucky Points, yields, and variations.",
+        processedHint ? processedHint.note : "",
+        "Adjust this draft before rolling if the resource is easier, rarer, hazardous, cultivated, or processed."
+      ].filter(Boolean).join(" ")
+    };
+  }
+  function getGatheringResourceOptionsForType(nodeType = "") {
+    const typeKey = getGatheringNodeTypeKey(nodeType);
+    const config = GATHERING_NODE_TYPES[typeKey] || GATHERING_NODE_TYPES.mining;
+    const categoryMatchers = {
+      mining: /\b(blacksmithing|armorsmithing|artificer|flamellon)\b/i,
+      foraging: /\b(alchemy|carpenter|culinarian)\b/i,
+      farming: /\b(farming|culinarian|alchemy)\b/i,
+      husbandry: /\b(culinarian|flamellon)\b/i
+    };
+    const generated = lookup.items.entries.filter((entry) => entry.generatedMaterial).filter((entry) => categoryMatchers[typeKey]?.test([entry.materialCategory, entry.name, entry.subType].filter(Boolean).join(" "))).map((entry) => formatGatheringResourceLabel(entry)).filter(Boolean);
+    return Array.from(/* @__PURE__ */ new Set([...config.resources, ...generated])).slice(0, 120).map((name) => ({
+      name,
+      profile: getGatheringResourceProfile(name, typeKey)
+    }));
+  }
+  var GATHERING_ACTION_DEFINITIONS = {
+    basic: {
+      id: "basic",
+      label: "Basic Strike",
+      trackerLabel: "Basic Strike Dice",
+      targetLabel: "Node Points",
+      diceText: "Roll d10 + skill + extra modifier into Node Points.",
+      summary: "Use this for the normal gather action. Clearing Node Points awards the base yield when the attempt is finished."
+    },
+    lucky: {
+      id: "lucky",
+      label: "Lucky Strike",
+      trackerLabel: "Lucky Strike Dice",
+      targetLabel: "Lucky Points",
+      diceText: "Spend 10 current Node Points, then roll d10 + skill + modifier +10 into Lucky Points.",
+      summary: "Use this when you are pushing for the rare yield. The button unlocks once the current node has at least 10 Node Points."
+    },
+    "power-rock": {
+      id: "power-rock",
+      label: "Power Rock",
+      trackerLabel: "Power Rock Dice",
+      targetLabel: "Node and Lucky Points",
+      diceText: "Roll d10 + half strike bonus into both Node Points and Lucky Points.",
+      summary: "Mining class action. It splits the strike into both progress tracks, so it is useful when you want base and rare yield together."
+    },
+    efficient: {
+      id: "efficient",
+      label: "Efficient Strike",
+      trackerLabel: "Efficient Strike Dice",
+      targetLabel: "Node Points, overflow to Lucky",
+      diceText: "Roll d10 + strike bonus into Node Points; overflow becomes Lucky Points.",
+      summary: "Use this when the base yield is nearly finished and you do not want excess progress wasted."
+    },
+    verdant: {
+      id: "verdant",
+      label: "Verdant Instinct",
+      trackerLabel: "Verdant Instinct Dice",
+      targetLabel: "Node Points and queued dice",
+      diceText: "Roll d10 + strike bonus into Node Points, then queue the next two strike dice.",
+      summary: "Foraging class action. The queued dice appear in the Queued Dice field so the next strikes can be planned."
+    },
+    petalfall: {
+      id: "petalfall",
+      label: "Petalfall",
+      trackerLabel: "Petalfall Dice",
+      targetLabel: "Even to Node, odd to Lucky",
+      diceText: "Roll d10 + strike bonus +5. Even rolls go to Node Points; odd rolls go to Lucky Points.",
+      summary: "Divining Petalfall is swingy by design: the die decides which progress track receives the strike."
+    },
+    "focused-node": {
+      id: "focused-node",
+      label: "Focused NP",
+      trackerLabel: "Focused Node Dice",
+      targetLabel: "Node Points",
+      diceText: "Roll d10 + strike bonus into Node Points, with the option to stop 1 point short for +1 strike die.",
+      summary: "Focused Detonation aimed at the base yield track."
+    },
+    "focused-lucky": {
+      id: "focused-lucky",
+      label: "Focused LP",
+      trackerLabel: "Focused Lucky Dice",
+      targetLabel: "Lucky Points",
+      diceText: "Roll d10 + strike bonus into Lucky Points, with the option to stop 1 point short for +1 strike die.",
+      summary: "Focused Detonation aimed at the rare yield track."
+    },
+    "take-easy": {
+      id: "take-easy",
+      label: "Take it easy",
+      trackerLabel: "Careful Gather",
+      targetLabel: "Bonus material",
+      diceText: "Spend one strike die for 25% of the base yield without adding Node or Lucky progress.",
+      summary: "Use this when you want a small guaranteed material pickup instead of pushing the node tracks."
+    },
+    finish: {
+      id: "finish",
+      label: "Finish Attempt",
+      trackerLabel: "Finish Attempt",
+      targetLabel: "Resolve yield",
+      diceText: "Resolve completed tracks, award material, reduce node HP, and reset progress for the next attempt.",
+      summary: "Use this after deciding whether the current attempt succeeded, failed, or should simply consume one node HP."
+    },
+    reset: {
+      id: "reset",
+      label: "Reset Attempt",
+      trackerLabel: "Reset Attempt",
+      targetLabel: "Reset progress",
+      diceText: "Reset Node Points, Lucky Points, queued dice, and strike dice without changing node HP.",
+      summary: "Use this when you need to restart the current attempt without treating it as finished."
+    }
+  };
+  function getGatheringActionDefinition(actionKey = "basic") {
+    const key = cleanText(actionKey) || "basic";
+    return GATHERING_ACTION_DEFINITIONS[key] || GATHERING_ACTION_DEFINITIONS.basic;
+  }
+  function setGatheringActiveAction(actionKey = "basic", options = {}) {
+    const action = getGatheringActionDefinition(actionKey);
+    state.play = mergePlayState(state.play);
+    state.play.crafting.gatheringActiveAction = action.id;
+    persistWorkingState();
+    if (options.render) {
+      renderPlayDashboard();
+    }
+  }
+  var GATHERING_ACTION_BY_CRAFTING_ACTION = {
+    "gather-basic": "basic",
+    "gather-lucky": "lucky",
+    "gather-power-rock": "power-rock",
+    "gather-efficient": "efficient",
+    "gather-verdant": "verdant",
+    "gather-petalfall": "petalfall",
+    "gather-focused-node": "focused-node",
+    "gather-focused-lucky": "focused-lucky",
+    "gather-take-easy": "take-easy",
+    "gather-finish": "finish",
+    "gather-reset": "reset"
+  };
+  function getGatheringHealthLabel(crafting = getCraftingTrackerState()) {
+    const typeKey = getGatheringNodeTypeKey(crafting.gatheringNodeType);
+    return {
+      mining: "Outcrop HP",
+      foraging: "Patch HP",
+      farming: "Plot HP",
+      husbandry: "Animal Node HP"
+    }[typeKey] || "Node HP";
+  }
+  function getGatheringToolOptions(toolText = "") {
+    const cleaned = cleanText(toolText);
+    if (!cleaned || /gm[-\s]?approved|gm decides|permission/i.test(cleaned)) {
+      return [];
+    }
+    return cleaned.split(/\s*(?:\/|,|\bor\b|\band\b)\s*/i).map((entry) => entry.replace(/\b(?:gear|tools?|weapon|weapons?)\b/gi, "").trim()).filter((entry) => entry.length > 1);
+  }
+  function doesInventoryHaveGatheringTool(toolText = "", inventory = []) {
+    const options = getGatheringToolOptions(toolText);
+    if (!options.length) {
+      return true;
+    }
+    const inventoryCorpus = inventory.map(
+      (entry) => normalizePhrase([entry.name, entry.type, entry.subType, entry.description, entry.descriptionText].filter(Boolean).join(" "))
+    );
+    return options.some((option) => {
+      const normalizedOption = normalizePhrase(option);
+      const reversedOption = normalizedOption.split(" ").reverse().join(" ");
+      const optionWords = normalizedOption.split(" ").filter((word) => word.length > 2);
+      return inventoryCorpus.some(
+        (entryText) => entryText.includes(normalizedOption) || entryText.includes(reversedOption) || optionWords.length > 1 && optionWords.every((word) => entryText.includes(word))
+      );
+    });
+  }
   var CRAFTING_NUMERIC_FIELDS = /* @__PURE__ */ new Set([
     "diceMax",
     "diceRemaining",
     "pointsGenerated",
     "pointsSpent",
     "rollBonus",
-    "pendingPointSpend"
+    "pendingPointSpend",
+    "facilityLevel",
+    "facilityUsesRemaining",
+    "facilityUsesMax",
+    "gatheringTier",
+    "gatheringHpMax",
+    "gatheringHpRemaining",
+    "gatheringNodeTarget",
+    "gatheringNodeProgress",
+    "gatheringLuckyTarget",
+    "gatheringLuckyProgress",
+    "gatheringStrikeDiceMax",
+    "gatheringStrikeDiceRemaining",
+    "gatheringBonus",
+    "gatheringYieldQuantity",
+    "gatheringLuckyYieldQuantity"
   ]);
   function getCraftingTrackerState() {
     const defaults = createDefaultState().play.crafting;
@@ -11194,9 +12850,23 @@ var LyrianApp = (() => {
     CRAFTING_NUMERIC_FIELDS.forEach((field) => {
       raw[field] = Math.max(0, toNumber(raw[field], 0));
     });
+    raw.activityMode = cleanText(raw.activityMode) === "gathering" ? "gathering" : "crafting";
+    raw.gatheringNodeType = getGatheringNodeTypeKey(cleanText(raw.gatheringNodeType) || getGatheringNodeTypeForTemplate(raw.gatheringTemplateId));
     raw.pointsSpent = Math.min(raw.pointsSpent, raw.pointsGenerated);
     raw.diceRemaining = Math.min(raw.diceRemaining, raw.diceMax);
     raw.pointsAvailable = Math.max(0, raw.pointsGenerated - raw.pointsSpent);
+    raw.facilityLevel = clamp(Math.floor(toNumber(raw.facilityLevel, 0)), 0, 3);
+    raw.facilityUsesMax = Math.max(0, Math.floor(toNumber(raw.facilityUsesMax, 0)));
+    raw.facilityUsesRemaining = Math.min(Math.max(0, Math.floor(toNumber(raw.facilityUsesRemaining, 0))), raw.facilityUsesMax);
+    raw.gatheringHpRemaining = Math.min(raw.gatheringHpRemaining, raw.gatheringHpMax);
+    raw.gatheringNodeProgress = Math.min(raw.gatheringNodeProgress, raw.gatheringNodeTarget);
+    raw.gatheringLuckyProgress = Math.min(raw.gatheringLuckyProgress, raw.gatheringLuckyTarget);
+    raw.gatheringStrikeDiceRemaining = Math.min(raw.gatheringStrikeDiceRemaining, raw.gatheringStrikeDiceMax);
+    raw.gatheringGmOverride = Boolean(raw.gatheringGmOverride);
+    raw.craftingWizardStep = clamp(Math.floor(toNumber(raw.craftingWizardStep, 0)), 0, CRAFTING_WIZARD_STEPS.length - 1);
+    raw.craftedOutcomePending = Boolean(raw.craftedOutcomePending);
+    raw.gatheringWizardStep = clamp(Math.floor(toNumber(raw.gatheringWizardStep, 0)), 0, GATHERING_WIZARD_STEPS.length - 1);
+    raw.lastGatheringOutcome = raw.lastGatheringOutcome && typeof raw.lastGatheringOutcome === "object" ? raw.lastGatheringOutcome : null;
     return raw;
   }
   function setCraftingField(fieldName, value) {
@@ -11214,12 +12884,534 @@ var LyrianApp = (() => {
       const generated = Math.max(0, toNumber(state.play.crafting.pointsGenerated, 0));
       state.play.crafting.pointsSpent = Math.min(Math.max(0, toNumber(state.play.crafting.pointsSpent, 0)), generated);
     }
+    if (fieldName === "facilityLevel") {
+      state.play.crafting.facilityLevel = clamp(Math.floor(toNumber(state.play.crafting.facilityLevel, 0)), 0, 3);
+    }
+    if (fieldName === "facilityUsesMax" || fieldName === "facilityUsesRemaining") {
+      const usesMax = Math.max(0, toNumber(state.play.crafting.facilityUsesMax, 0));
+      state.play.crafting.facilityUsesRemaining = Math.min(Math.max(0, toNumber(state.play.crafting.facilityUsesRemaining, 0)), usesMax);
+    }
+    if (fieldName === "gatheringHpMax" || fieldName === "gatheringHpRemaining") {
+      const hpMax = Math.max(0, toNumber(state.play.crafting.gatheringHpMax, 0));
+      state.play.crafting.gatheringHpRemaining = Math.min(Math.max(0, toNumber(state.play.crafting.gatheringHpRemaining, 0)), hpMax);
+    }
+    if (fieldName === "gatheringNodeTarget" || fieldName === "gatheringNodeProgress") {
+      const nodeTarget = Math.max(0, toNumber(state.play.crafting.gatheringNodeTarget, 0));
+      state.play.crafting.gatheringNodeProgress = Math.min(Math.max(0, toNumber(state.play.crafting.gatheringNodeProgress, 0)), nodeTarget);
+    }
+    if (fieldName === "gatheringLuckyTarget" || fieldName === "gatheringLuckyProgress") {
+      const luckyTarget = Math.max(0, toNumber(state.play.crafting.gatheringLuckyTarget, 0));
+      state.play.crafting.gatheringLuckyProgress = Math.min(Math.max(0, toNumber(state.play.crafting.gatheringLuckyProgress, 0)), luckyTarget);
+    }
+    if (fieldName === "gatheringStrikeDiceMax" || fieldName === "gatheringStrikeDiceRemaining") {
+      const diceMax = Math.max(0, toNumber(state.play.crafting.gatheringStrikeDiceMax, 0));
+      state.play.crafting.gatheringStrikeDiceRemaining = Math.min(Math.max(0, toNumber(state.play.crafting.gatheringStrikeDiceRemaining, 0)), diceMax);
+    }
     persistWorkingState();
+  }
+  function setCraftingActivityMode(mode) {
+    state.play = mergePlayState(state.play);
+    state.play.crafting.activityMode = cleanText(mode) === "gathering" ? "gathering" : "crafting";
+    state.ui.playMode = state.play.crafting.activityMode;
+    persistWorkingState();
+    renderPlayDashboard();
+    setStatus(state.play.crafting.activityMode === "gathering" ? "Gathering session mode is active." : "Crafting session mode is active.");
   }
   function renderPlayDashboardIfVisible() {
     if (state.ui.mode === "sheet") {
       renderPlayDashboard();
     }
+  }
+  function loadGatheringTemplate(templateId = GATHERING_DEFAULT_TEMPLATE_ID) {
+    const template = GATHERING_NODE_TEMPLATES[templateId] || GATHERING_NODE_TEMPLATES[GATHERING_DEFAULT_TEMPLATE_ID];
+    state.play = mergePlayState(state.play);
+    state.play.crafting = {
+      ...state.play.crafting,
+      activityMode: "gathering",
+      gatheringNodeType: getGatheringNodeTypeKey(template.nodeType),
+      gatheringTemplateId: template.id,
+      gatheringSelectedResource: "",
+      gatheringNodeName: template.name,
+      gatheringVariation: template.variation,
+      gatheringTier: template.tier,
+      gatheringHpMax: template.hpMax,
+      gatheringHpRemaining: template.hpMax,
+      gatheringNodeTarget: template.nodeTarget,
+      gatheringNodeProgress: 0,
+      gatheringLuckyTarget: template.luckyTarget,
+      gatheringLuckyProgress: 0,
+      gatheringStrikeDiceMax: template.strikeDiceMax,
+      gatheringStrikeDiceRemaining: template.strikeDiceMax,
+      gatheringSkill: template.skill,
+      gatheringBonus: 0,
+      gatheringActiveAction: "basic",
+      gatheringTool: template.tool,
+      gatheringRequiredAbility: template.requiredAbility,
+      gatheringDiscovery: template.discovery,
+      gatheringYieldName: template.yieldName,
+      gatheringYieldQuantity: template.yieldQuantity,
+      gatheringLuckyYieldName: template.luckyYieldName,
+      gatheringLuckyYieldQuantity: template.luckyYieldQuantity,
+      gatheringNotes: template.note,
+      lastGatheringOutcome: null
+    };
+    state.ui.playMode = "gathering";
+    appendPlayLog("Gathering Node Loaded", [
+      template.name,
+      `HP ${template.hpMax} | NP ${template.nodeTarget} | LP ${template.luckyTarget}`,
+      `Yield: ${template.yieldQuantity} ${template.yieldName}`,
+      `Lucky Yield: ${template.luckyYieldQuantity} ${template.luckyYieldName}`
+    ]);
+    persistWorkingState();
+    renderPlayDashboard();
+    setStatus(`Loaded ${template.name}.`);
+  }
+  function loadGatheringResourceDraft(resourceName = "", nodeType = "") {
+    const profile = getGatheringResourceProfile(resourceName, nodeType);
+    const typeKey = getGatheringNodeTypeKey(profile.nodeType || nodeType);
+    state.play = mergePlayState(state.play);
+    state.play.crafting = {
+      ...state.play.crafting,
+      activityMode: "gathering",
+      gatheringNodeType: typeKey,
+      gatheringTemplateId: `resource:${normalizePhrase(profile.requestedResourceName || resourceName || profile.name).replace(/\s+/g, "-")}`,
+      gatheringSelectedResource: profile.requestedResourceName || resourceName || profile.yieldName,
+      gatheringNodeName: profile.name,
+      gatheringVariation: profile.variation,
+      gatheringTier: profile.tier,
+      gatheringHpMax: profile.hpMax,
+      gatheringHpRemaining: profile.hpMax,
+      gatheringNodeTarget: profile.nodeTarget,
+      gatheringNodeProgress: 0,
+      gatheringLuckyTarget: profile.luckyTarget,
+      gatheringLuckyProgress: 0,
+      gatheringStrikeDiceMax: profile.strikeDiceMax,
+      gatheringStrikeDiceRemaining: profile.strikeDiceMax,
+      gatheringSkill: profile.skill,
+      gatheringBonus: 0,
+      gatheringActiveAction: "basic",
+      gatheringTool: profile.tool,
+      gatheringRequiredAbility: profile.requiredAbility,
+      gatheringDiscovery: profile.discovery,
+      gatheringYieldName: profile.yieldName,
+      gatheringYieldQuantity: profile.yieldQuantity,
+      gatheringLuckyYieldName: profile.luckyYieldName,
+      gatheringLuckyYieldQuantity: profile.luckyYieldQuantity,
+      gatheringNotes: profile.note,
+      lastGatheringOutcome: null
+    };
+    state.ui.playMode = "gathering";
+    appendPlayLog("Gathering Resource Draft Loaded", [
+      `${profile.requestedResourceName || resourceName}: ${profile.name}`,
+      `${profile.basis || "GM draft"} HP ${profile.hpMax} | NP ${profile.nodeTarget} | LP ${profile.luckyTarget}`,
+      `Tool: ${profile.tool} | Ability: ${profile.requiredAbility}`,
+      `Yield: ${profile.yieldQuantity} ${profile.yieldName}`,
+      `Lucky Yield: ${profile.luckyYieldQuantity} ${profile.luckyYieldName}`
+    ]);
+    persistWorkingState();
+    renderPlayDashboard();
+    setStatus(`Loaded suggested node for ${profile.requestedResourceName || resourceName}.`);
+  }
+  function setGatheringNodeType(nodeType = "") {
+    const typeKey = getGatheringNodeTypeKey(nodeType);
+    const firstTemplate = getGatheringTemplatesForType(typeKey)[0] || getGatheringTemplate(GATHERING_DEFAULT_TEMPLATE_ID);
+    loadGatheringTemplate(firstTemplate.id);
+    setStatus(`${GATHERING_NODE_TYPES[typeKey]?.heading || "Gathering nodes"} selected.`);
+  }
+  function getGatheringSkillRow(crafting = getCraftingTrackerState()) {
+    const wanted = normalizePhrase(crafting.gatheringSkill || "Mining");
+    return getSkillRowsData().find((skill) => normalizePhrase(skill.name) === wanted) || null;
+  }
+  function getGatheringStrikeBonus(crafting = getCraftingTrackerState()) {
+    const skill = getGatheringSkillRow(crafting);
+    return (skill?.total || 0) + Math.max(0, toNumber(crafting.gatheringBonus, 0));
+  }
+  function getGatheringQueuedDice(crafting = getCraftingTrackerState()) {
+    return cleanText(crafting.gatheringQueuedDice).split(/\s*,\s*/).map((entry) => Math.floor(toNumber(entry, 0))).filter((entry) => entry >= 1 && entry <= 10);
+  }
+  function setGatheringQueuedDice(values = []) {
+    state.play = mergePlayState(state.play);
+    state.play.crafting.gatheringQueuedDice = values.map((entry) => Math.floor(toNumber(entry, 0))).filter((entry) => entry >= 1 && entry <= 10).join(", ");
+  }
+  function takeGatheringStrikeDie(crafting = getCraftingTrackerState()) {
+    const queued = getGatheringQueuedDice(crafting);
+    if (queued.length) {
+      const roll = queued.shift();
+      setGatheringQueuedDice(queued);
+      return { roll, queued: true };
+    }
+    return { roll: rollDie(10), queued: false };
+  }
+  function addGatheringProgress(kind, amount, options = {}) {
+    const targetField = kind === "lucky" ? "gatheringLuckyTarget" : "gatheringNodeTarget";
+    const progressField = kind === "lucky" ? "gatheringLuckyProgress" : "gatheringNodeProgress";
+    const target = Math.max(0, toNumber(state.play.crafting[targetField], 0));
+    const current = Math.max(0, toNumber(state.play.crafting[progressField], 0));
+    const total = current + Math.max(0, Math.floor(toNumber(amount, 0)));
+    let applied = Math.min(target, total);
+    let overflow = Math.max(0, total - target);
+    let heldBack = false;
+    if (options.leaveOneIfComplete && target > 1 && total >= target) {
+      applied = target - 1;
+      overflow = 0;
+      heldBack = true;
+    }
+    state.play.crafting[progressField] = applied;
+    return { applied, overflow, heldBack, target };
+  }
+  function canUseGatheringAbility(abilityName) {
+    return hasSelectedClassText(abilityName);
+  }
+  function getGatheringAbilityAvailability(crafting, readiness) {
+    const canStrike = readiness.canGather && crafting.gatheringHpRemaining > 0 && crafting.gatheringStrikeDiceRemaining > 0;
+    return {
+      canStrike,
+      powerRock: canStrike && canUseGatheringAbility("Power Rock Strike"),
+      efficient: canStrike && canUseGatheringAbility("Efficient Strike"),
+      verdant: canStrike && canUseGatheringAbility("Verdant Instinct"),
+      petalfall: canStrike && canUseGatheringAbility("Divining Petalfall"),
+      focused: canStrike && canUseGatheringAbility("Focused Detonation"),
+      takeEasy: canStrike && canUseGatheringAbility("Take it easy")
+    };
+  }
+  function addGatheredMaterialToInventory(name, quantity, sourceName) {
+    const materialName = cleanText(name);
+    const amount = Math.max(0, Math.floor(toNumber(quantity, 0)));
+    if (!materialName || !amount) {
+      return null;
+    }
+    state.play = mergePlayState(state.play);
+    const existing = state.play.inventoryItems.find(
+      (entry2) => entry2.custom && normalizePhrase(entry2.name) === normalizePhrase(materialName)
+    );
+    if (existing) {
+      existing.quantity = Math.max(0, Math.floor(toNumber(existing.quantity, 0))) + amount;
+      existing.type = cleanText(existing.type) || "Gathered Material";
+      existing.subType = cleanText(existing.subType) || "Raw Units";
+      existing.description = cleanText(existing.description || `Gathered from ${sourceName}.`);
+      return existing;
+    }
+    const entry = {
+      uid: createInventoryUid("gathered-material"),
+      itemId: "",
+      custom: true,
+      equipped: false,
+      quantity: amount,
+      name: materialName,
+      type: "Gathered Material",
+      subType: "Raw Units",
+      cost: "",
+      burden: "",
+      imageSmUrl: "assets/lyrian-symbol.png",
+      imageLgUrl: "assets/lyrian-symbol.png",
+      description: `Raw gathered material from ${sourceName}. Carry, sell, save, or convert during Interlude as the rules allow.`
+    };
+    state.play.inventoryItems.push(entry);
+    return entry;
+  }
+  function rollGatheringStrike(kind = "basic") {
+    const crafting = getCraftingTrackerState();
+    const readiness = getGatheringReadiness(crafting, getPlayInventoryEntries());
+    if (!readiness.canGather) {
+      const missing = [
+        readiness.hasTool ? "" : `tool (${crafting.gatheringTool || "GM-required tool"})`,
+        readiness.hasAbility ? "" : `ability (${crafting.gatheringRequiredAbility || "GM-required ability"})`
+      ].filter(Boolean).join(" and ");
+      setStatus(`Cannot gather yet: missing ${missing}.`);
+      return;
+    }
+    if (crafting.gatheringHpRemaining <= 0) {
+      setStatus("This node is depleted.");
+      return;
+    }
+    if (crafting.gatheringStrikeDiceRemaining <= 0) {
+      setStatus("No strike dice remain for this gathering attempt.");
+      return;
+    }
+    const isLucky = kind === "lucky";
+    if (isLucky && crafting.gatheringNodeProgress < 10) {
+      setStatus("Lucky Strike needs at least 10 current Node Points to spend.");
+      return;
+    }
+    const skill = getGatheringSkillRow(crafting);
+    const skillTotal = skill?.total || 0;
+    const modifier = Math.max(0, toNumber(crafting.gatheringBonus, 0));
+    state.play = mergePlayState(state.play);
+    const die = takeGatheringStrikeDie(crafting);
+    const roll = die.roll;
+    const luckyBonus = isLucky ? 10 : 0;
+    const total = roll + skillTotal + modifier + luckyBonus;
+    state.play.crafting.gatheringActiveAction = isLucky ? "lucky" : "basic";
+    state.play.crafting.gatheringStrikeDiceRemaining = Math.max(0, crafting.gatheringStrikeDiceRemaining - 1);
+    if (isLucky) {
+      state.play.crafting.gatheringNodeProgress = Math.max(0, crafting.gatheringNodeProgress - 10);
+      state.play.crafting.gatheringLuckyProgress = Math.min(crafting.gatheringLuckyTarget, crafting.gatheringLuckyProgress + total);
+    } else {
+      state.play.crafting.gatheringNodeProgress = Math.min(crafting.gatheringNodeTarget, crafting.gatheringNodeProgress + total);
+    }
+    const label = isLucky ? "Lucky Strike" : "Basic Strike";
+    const breakdown = `${die.queued ? "Queued d10" : "d10"}: ${roll} | ${cleanText(crafting.gatheringSkill || "Gathering")}: ${formatModifier(skillTotal)}${modifier ? ` | Modifier: ${formatModifier(modifier)}` : ""}${isLucky ? " | Lucky Strike: +10" : ""}`;
+    appendPlayLog(label, [
+      `Node: ${crafting.gatheringNodeName}`,
+      breakdown,
+      isLucky ? `Lucky Points: ${state.play.crafting.gatheringLuckyProgress} / ${crafting.gatheringLuckyTarget}` : `Node Points: ${state.play.crafting.gatheringNodeProgress} / ${crafting.gatheringNodeTarget}`,
+      `Strike Dice remaining: ${state.play.crafting.gatheringStrikeDiceRemaining}`,
+      state.play.crafting.gatheringQueuedDice ? `Queued dice: ${state.play.crafting.gatheringQueuedDice}` : ""
+    ].filter(Boolean));
+    showRollOverlay({
+      label,
+      dieType: "d10",
+      rollText: String(roll),
+      breakdown,
+      totalText: `+${total} ${isLucky ? "LP" : "NP"}`,
+      diceResults: [{ sides: 10, value: roll, label: "d10" }]
+    });
+    persistWorkingState();
+    renderPlayDashboard();
+    setStatus(`${label}: ${total} ${isLucky ? "Lucky Points" : "Node Points"}.`);
+  }
+  function getGatheringAbilityReadyState(abilityName) {
+    const crafting = getCraftingTrackerState();
+    const readiness = getGatheringReadiness(crafting, getPlayInventoryEntries());
+    if (!readiness.canGather) {
+      const missing = [
+        readiness.hasTool ? "" : `tool (${crafting.gatheringTool || "GM-required tool"})`,
+        readiness.hasAbility ? "" : `ability (${crafting.gatheringRequiredAbility || "GM-required ability"})`
+      ].filter(Boolean).join(" and ");
+      setStatus(`Cannot use ${abilityName}: missing ${missing}.`);
+      return null;
+    }
+    if (!canUseGatheringAbility(abilityName)) {
+      setStatus(`${abilityName} is not found on this character's selected class rules.`);
+      return null;
+    }
+    if (crafting.gatheringHpRemaining <= 0) {
+      setStatus("This node is depleted.");
+      return null;
+    }
+    if (crafting.gatheringStrikeDiceRemaining <= 0) {
+      setStatus("No strike dice remain for this gathering attempt.");
+      return null;
+    }
+    return { crafting, readiness };
+  }
+  function rollGatheringAbility(action) {
+    const abilityNames = {
+      "power-rock": "Power Rock Strike",
+      "efficient": "Efficient Strike",
+      "verdant": "Verdant Instinct",
+      "petalfall": "Divining Petalfall",
+      "focused-node": "Focused Detonation",
+      "focused-lucky": "Focused Detonation"
+    };
+    const abilityName = abilityNames[action] || "";
+    const ready = getGatheringAbilityReadyState(abilityName);
+    if (!ready) {
+      return;
+    }
+    const crafting = ready.crafting;
+    const strikeBonus = getGatheringStrikeBonus(crafting);
+    state.play = mergePlayState(state.play);
+    const die = takeGatheringStrikeDie(crafting);
+    const roll = die.roll;
+    state.play.crafting.gatheringActiveAction = action;
+    state.play.crafting.gatheringStrikeDiceRemaining = Math.max(0, crafting.gatheringStrikeDiceRemaining - 1);
+    const dieLabel = die.queued ? "Queued d10" : "d10";
+    let total = roll + strikeBonus;
+    let pointLabel = "NP";
+    let resultLine = "";
+    let extraLine = "";
+    if (action === "power-rock") {
+      const halfBonus = Math.floor(strikeBonus / 2);
+      total = roll + halfBonus;
+      addGatheringProgress("node", total);
+      addGatheringProgress("lucky", total);
+      pointLabel = "NP and LP";
+      resultLine = `Node Points: ${state.play.crafting.gatheringNodeProgress} / ${crafting.gatheringNodeTarget} | Lucky Points: ${state.play.crafting.gatheringLuckyProgress} / ${crafting.gatheringLuckyTarget}`;
+      extraLine = `Power Rock Strike uses half gathering bonus: ${formatModifier(halfBonus)}.`;
+    } else if (action === "efficient") {
+      const progress = addGatheringProgress("node", total);
+      if (progress.overflow > 0) {
+        addGatheringProgress("lucky", progress.overflow);
+      }
+      pointLabel = progress.overflow > 0 ? "NP, overflow to LP" : "NP";
+      resultLine = `Node Points: ${state.play.crafting.gatheringNodeProgress} / ${crafting.gatheringNodeTarget} | Lucky Points: ${state.play.crafting.gatheringLuckyProgress} / ${crafting.gatheringLuckyTarget}`;
+      extraLine = progress.overflow > 0 ? `Overflow converted to Lucky Points: ${progress.overflow}.` : "No overflow converted.";
+    } else if (action === "verdant") {
+      addGatheringProgress("node", total);
+      const queued = [rollDie(10), rollDie(10)];
+      setGatheringQueuedDice(queued);
+      pointLabel = "NP";
+      resultLine = `Node Points: ${state.play.crafting.gatheringNodeProgress} / ${crafting.gatheringNodeTarget}`;
+      extraLine = `Queued next strike dice: ${queued.join(", ")}. You may reorder them or replace one with 5 before rolling.`;
+    } else if (action === "petalfall") {
+      total = roll + strikeBonus + 5;
+      const target = roll % 2 === 0 ? "node" : "lucky";
+      addGatheringProgress(target, total);
+      pointLabel = target === "node" ? "NP" : "LP";
+      resultLine = target === "node" ? `Node Points: ${state.play.crafting.gatheringNodeProgress} / ${crafting.gatheringNodeTarget}` : `Lucky Points: ${state.play.crafting.gatheringLuckyProgress} / ${crafting.gatheringLuckyTarget}`;
+      extraLine = `Divining Petalfall uses +5. The d10 value was ${roll % 2 === 0 ? "even" : "odd"}, so the total went to ${pointLabel}.`;
+    } else if (action === "focused-node" || action === "focused-lucky") {
+      const target = action === "focused-lucky" ? "lucky" : "node";
+      const targetProgress = target === "lucky" ? crafting.gatheringLuckyProgress : crafting.gatheringNodeProgress;
+      const targetLimit = target === "lucky" ? crafting.gatheringLuckyTarget : crafting.gatheringNodeTarget;
+      const wouldComplete = targetLimit > 1 && targetProgress + total >= targetLimit;
+      const leaveOne = wouldComplete && typeof window.confirm === "function" ? window.confirm("Focused Detonation would complete this track. Leave it 1 point away and gain +1 Strike Dice?") : false;
+      const progress = addGatheringProgress(target, total, { leaveOneIfComplete: leaveOne });
+      if (progress.heldBack) {
+        state.play.crafting.gatheringStrikeDiceRemaining += 1;
+      }
+      pointLabel = target === "lucky" ? "LP" : "NP";
+      resultLine = target === "lucky" ? `Lucky Points: ${state.play.crafting.gatheringLuckyProgress} / ${crafting.gatheringLuckyTarget}` : `Node Points: ${state.play.crafting.gatheringNodeProgress} / ${crafting.gatheringNodeTarget}`;
+      extraLine = progress.heldBack ? "Left 1 point away from completion and gained +1 Strike Dice." : "Applied the strike normally.";
+    } else {
+      setStatus("Unknown gathering ability.");
+      return;
+    }
+    const breakdown = `${dieLabel}: ${roll} | ${cleanText(crafting.gatheringSkill || "Gathering")}: ${formatModifier(strikeBonus)}${action === "petalfall" ? " | Divining Petalfall: +5" : ""}`;
+    appendPlayLog(abilityName, [
+      `Node: ${crafting.gatheringNodeName}`,
+      breakdown,
+      extraLine,
+      resultLine,
+      `Strike Dice remaining: ${state.play.crafting.gatheringStrikeDiceRemaining}`,
+      state.play.crafting.gatheringQueuedDice ? `Queued dice: ${state.play.crafting.gatheringQueuedDice}` : ""
+    ].filter(Boolean));
+    showRollOverlay({
+      label: abilityName,
+      dieType: "d10",
+      rollText: String(roll),
+      breakdown,
+      totalText: `+${total} ${pointLabel}`,
+      diceResults: [{ sides: 10, value: roll, label: "d10" }]
+    });
+    persistWorkingState();
+    renderPlayDashboard();
+    setStatus(`${abilityName}: ${total} ${pointLabel}.`);
+  }
+  function useTakeItEasyGathering() {
+    const ready = getGatheringAbilityReadyState("Take it easy");
+    if (!ready) {
+      return;
+    }
+    const crafting = ready.crafting;
+    const bonusQuantity = Math.floor(Math.max(0, toNumber(crafting.gatheringYieldQuantity, 0)) * 0.25);
+    if (bonusQuantity <= 0) {
+      setStatus("Take it easy needs a base yield large enough to grant a 25% bonus.");
+      return;
+    }
+    state.play = mergePlayState(state.play);
+    state.play.crafting.gatheringActiveAction = "take-easy";
+    state.play.crafting.gatheringStrikeDiceRemaining = Math.max(0, crafting.gatheringStrikeDiceRemaining - 1);
+    const entry = addGatheredMaterialToInventory(crafting.gatheringYieldName, bonusQuantity, `${crafting.gatheringNodeName} - Take it easy`);
+    appendPlayLog("Take it easy", [
+      `Node: ${crafting.gatheringNodeName}`,
+      `Bonus material: ${bonusQuantity} ${crafting.gatheringYieldName}`,
+      "No Node or Lucky progress was made.",
+      `Strike Dice remaining: ${state.play.crafting.gatheringStrikeDiceRemaining}`
+    ]);
+    persistWorkingState();
+    renderPlayDashboard();
+    setStatus(entry ? `Collected ${bonusQuantity} ${crafting.gatheringYieldName} with Take it easy.` : "Take it easy did not add material.");
+  }
+  function resetGatheringAttempt() {
+    const crafting = getCraftingTrackerState();
+    state.play = mergePlayState(state.play);
+    state.play.crafting.gatheringNodeProgress = 0;
+    state.play.crafting.gatheringLuckyProgress = 0;
+    state.play.crafting.gatheringStrikeDiceRemaining = crafting.gatheringHpRemaining > 0 ? crafting.gatheringStrikeDiceMax : 0;
+    state.play.crafting.gatheringQueuedDice = "";
+    state.play.crafting.gatheringActiveAction = "reset";
+    state.play.crafting.lastGatheringOutcome = null;
+    appendPlayLog("Gathering Attempt Reset", [
+      `Node: ${crafting.gatheringNodeName}`,
+      "NP, LP, queued dice, and strike dice were reset. Node HP was not changed."
+    ]);
+    persistWorkingState();
+    renderPlayDashboard();
+    setStatus("Reset the current gathering attempt.");
+  }
+  function getCurrentGatheringOutcome(crafting = getCraftingTrackerState()) {
+    const outcome = crafting.lastGatheringOutcome;
+    if (!outcome || typeof outcome !== "object") {
+      return null;
+    }
+    return normalizePhrase(outcome.nodeName) === normalizePhrase(crafting.gatheringNodeName) ? outcome : null;
+  }
+  function finishGatheringAttempt() {
+    const crafting = getCraftingTrackerState();
+    const existingOutcome = getCurrentGatheringOutcome(crafting);
+    if (existingOutcome) {
+      setStatus("This gathering attempt is already resolved. Repeat this node or pick a new node before finishing again.");
+      return;
+    }
+    const readiness = getGatheringReadiness(crafting, getPlayInventoryEntries());
+    if (!readiness.canGather) {
+      const missing = [
+        readiness.hasTool ? "" : `tool (${crafting.gatheringTool || "GM-required tool"})`,
+        readiness.hasAbility ? "" : `ability (${crafting.gatheringRequiredAbility || "GM-required ability"})`
+      ].filter(Boolean).join(" and ");
+      setStatus(`Cannot finish gathering yet: missing ${missing}.`);
+      return;
+    }
+    if (crafting.gatheringHpRemaining <= 0) {
+      setStatus("This node is already depleted.");
+      return;
+    }
+    const nodeProgressBefore = crafting.gatheringNodeProgress;
+    const luckyProgressBefore = crafting.gatheringLuckyProgress;
+    const hpBefore = crafting.gatheringHpRemaining;
+    const clearedNode = crafting.gatheringNodeTarget > 0 && nodeProgressBefore >= crafting.gatheringNodeTarget;
+    const clearedLucky = clearedNode && crafting.gatheringLuckyTarget > 0 && luckyProgressBefore >= crafting.gatheringLuckyTarget;
+    state.play = mergePlayState(state.play);
+    const gained = [];
+    if (clearedNode) {
+      const baseEntry = addGatheredMaterialToInventory(crafting.gatheringYieldName, crafting.gatheringYieldQuantity, crafting.gatheringNodeName);
+      if (baseEntry) {
+        gained.push(`${crafting.gatheringYieldQuantity} ${crafting.gatheringYieldName}`);
+      }
+    }
+    if (clearedLucky) {
+      const luckyEntry = addGatheredMaterialToInventory(crafting.gatheringLuckyYieldName, crafting.gatheringLuckyYieldQuantity, crafting.gatheringNodeName);
+      if (luckyEntry) {
+        gained.push(`${crafting.gatheringLuckyYieldQuantity} ${crafting.gatheringLuckyYieldName}`);
+      }
+    }
+    const nextHp = Math.max(0, hpBefore - 1);
+    state.play.crafting.gatheringHpRemaining = nextHp;
+    state.play.crafting.gatheringNodeProgress = 0;
+    state.play.crafting.gatheringLuckyProgress = 0;
+    state.play.crafting.gatheringStrikeDiceRemaining = nextHp > 0 ? crafting.gatheringStrikeDiceMax : 0;
+    state.play.crafting.gatheringQueuedDice = "";
+    state.play.crafting.gatheringActiveAction = "finish";
+    state.play.crafting.gatheringWizardStep = GATHERING_WIZARD_STEPS.length - 1;
+    state.play.crafting.lastGatheringOutcome = {
+      nodeName: crafting.gatheringNodeName,
+      nodeTarget: crafting.gatheringNodeTarget,
+      nodeProgress: nodeProgressBefore,
+      luckyTarget: crafting.gatheringLuckyTarget,
+      luckyProgress: luckyProgressBefore,
+      hpBefore,
+      hpAfter: nextHp,
+      hpMax: crafting.gatheringHpMax,
+      healthLabel: getGatheringHealthLabel(crafting),
+      clearedNode,
+      clearedLucky,
+      gained,
+      baseYield: `${crafting.gatheringYieldQuantity} ${crafting.gatheringYieldName}`,
+      luckyYield: `${crafting.gatheringLuckyYieldQuantity} ${crafting.gatheringLuckyYieldName}`,
+      at: (/* @__PURE__ */ new Date()).toISOString()
+    };
+    appendPlayLog("Gathering Attempt Finished", [
+      `Node: ${crafting.gatheringNodeName}`,
+      `NP cleared: ${clearedNode ? "Yes" : "No"}`,
+      `LP cleared: ${clearedLucky ? "Yes" : "No"}`,
+      gained.length ? `Gained: ${gained.join(", ")}` : "Gained: No yield",
+      `${getGatheringHealthLabel(crafting)}: ${nextHp} / ${crafting.gatheringHpMax}`
+    ]);
+    persistWorkingState();
+    renderPlayDashboard();
+    setStatus(gained.length ? `Gathered ${gained.join(" and ")}.` : `Gathering attempt finished with no yield because Node Points did not reach ${crafting.gatheringNodeTarget}.`);
   }
   function addCraftingPoints() {
     const crafting = getCraftingTrackerState();
@@ -11235,6 +13427,7 @@ var LyrianApp = (() => {
       `Generated total: ${state.play.crafting.pointsGenerated}`
     ]);
     persistWorkingState();
+    renderPlayDashboard();
     setStatus(`Added ${amount} crafting points.`);
   }
   function spendCraftingPoints(direction = "spend") {
@@ -11264,6 +13457,109 @@ var LyrianApp = (() => {
       setStatus(`Spent ${spend} crafting points.`);
     }
     persistWorkingState();
+    renderPlayDashboard();
+  }
+  function getSelectedCraftingRecipePointCost(crafting = getCraftingTrackerState()) {
+    const recipe = getCraftingRecipeById(crafting.selectedRecipeId);
+    return {
+      recipe,
+      cost: Math.max(0, parseNumericCost(recipe?.craftingPoints))
+    };
+  }
+  function spendSelectedRecipePoints() {
+    const crafting = getCraftingTrackerState();
+    const { recipe, cost } = getSelectedCraftingRecipePointCost(crafting);
+    if (!recipe) {
+      setStatus("Select a recipe before spending recipe crafting points.");
+      return;
+    }
+    if (!cost) {
+      setStatus(`${recipe.name} does not have a numeric crafting point cost.`);
+      return;
+    }
+    const availability = getCraftingRecipeAvailability(recipe, getPlayInventoryEntries(), crafting);
+    if (!availability.available) {
+      setStatus(`${recipe.name} is unavailable. ${availability.reasonLabel}`);
+      return;
+    }
+    if (crafting.pointsAvailable < cost) {
+      setStatus(`${recipe.name} needs ${cost} crafting points, but only ${crafting.pointsAvailable} are available.`);
+      return;
+    }
+    state.play = mergePlayState(state.play);
+    state.play.crafting.pointsSpent = Math.min(crafting.pointsGenerated, crafting.pointsSpent + cost);
+    appendPlayLog("Recipe Crafting Points Spent", [
+      `Recipe: ${recipe.name}`,
+      `Spent: ${cost}`,
+      `Spent total: ${state.play.crafting.pointsSpent}`,
+      `Remaining: ${Math.max(0, crafting.pointsAvailable - cost)}`
+    ]);
+    persistWorkingState();
+    renderPlayDashboard();
+    setStatus(`Spent ${cost} crafting points on ${recipe.name}.`);
+  }
+  function setFacilityUsesFromLevel() {
+    const crafting = getCraftingTrackerState();
+    const uses = getCraftingFacilityUsesForLevel(crafting.facilityLevel);
+    if (!crafting.facilityLevel || !uses) {
+      setStatus("Set facility level 1-3 before filling facility uses.");
+      return;
+    }
+    state.play = mergePlayState(state.play);
+    state.play.crafting.facilityUsesMax = uses;
+    state.play.crafting.facilityUsesRemaining = uses;
+    persistWorkingState();
+    renderPlayDashboard();
+    setStatus(`Facility uses set to ${uses} for level ${crafting.facilityLevel}.`);
+  }
+  function setCraftingFacilityLevel(level) {
+    const normalizedLevel = clamp(Math.floor(toNumber(level, 0)), 0, 3);
+    const current = getCraftingTrackerState();
+    const recipe = getCraftingRecipeById(current.selectedRecipeId);
+    const facility = getCraftingFacilityProfile(recipe || {});
+    const suggestedUses = getCraftingFacilityUsesForLevel(normalizedLevel);
+    state.play = mergePlayState(state.play);
+    state.play.crafting.facilityLevel = normalizedLevel;
+    if (!normalizedLevel) {
+      state.play.crafting.facilityUsesMax = 0;
+      state.play.crafting.facilityUsesRemaining = 0;
+    } else if (normalizedLevel !== current.facilityLevel || current.facilityUsesMax <= 0) {
+      state.play.crafting.facilityUsesMax = suggestedUses;
+      state.play.crafting.facilityUsesRemaining = suggestedUses;
+    }
+    persistWorkingState();
+    renderPlayDashboard();
+    if (!normalizedLevel) {
+      setStatus("Facility bonus cleared for this crafting session.");
+      return;
+    }
+    const facilityName = facility?.name || "GM-approved facility";
+    setStatus(`Selected ${facilityName} level ${normalizedLevel}: ${formatModifier(getCraftingFacilityBonus(normalizedLevel))} facility bonus.`);
+  }
+  function spendFacilityUse() {
+    const crafting = getCraftingTrackerState();
+    if (!crafting.facilityLevel) {
+      setStatus("Set a facility level before marking a facility use.");
+      return;
+    }
+    if (crafting.facilityUsesMax > 0 && crafting.facilityUsesRemaining <= 0) {
+      setStatus("No facility uses remain.");
+      return;
+    }
+    state.play = mergePlayState(state.play);
+    if (crafting.facilityUsesMax > 0) {
+      state.play.crafting.facilityUsesRemaining = Math.max(0, crafting.facilityUsesRemaining - 1);
+    }
+    const recipe = getCraftingRecipeById(crafting.selectedRecipeId);
+    const facility = getCraftingFacilityProfile(recipe || {});
+    appendPlayLog("Facility Use Marked", [
+      facility ? `Facility: ${facility.name}` : "Facility: Manual",
+      `Level: ${crafting.facilityLevel}`,
+      crafting.facilityUsesMax > 0 ? `Uses remaining: ${state.play.crafting.facilityUsesRemaining} / ${crafting.facilityUsesMax}` : "Uses are not being numerically tracked."
+    ]);
+    persistWorkingState();
+    renderPlayDashboard();
+    setStatus("Marked one facility use for this crafting session.");
   }
   function rollCraftingDie() {
     const crafting = getCraftingTrackerState();
@@ -11271,12 +13567,24 @@ var LyrianApp = (() => {
       setStatus("No crafting dice remain for this session.");
       return;
     }
+    const recipe = getCraftingRecipeById(crafting.selectedRecipeId);
+    if (recipe) {
+      const availability = getCraftingRecipeAvailability(recipe, getPlayInventoryEntries(), crafting);
+      if (!availability.available) {
+        setStatus(`${recipe.name} is unavailable. ${availability.reasonLabel}`);
+        return;
+      }
+    }
     const roll = rollDie(10);
-    const total = roll + crafting.rollBonus;
+    const support = getCraftingSupportState(recipe || {}, crafting, getPlayInventoryEntries());
+    const manualBonus = Math.max(0, toNumber(crafting.rollBonus, 0));
+    const totalBonus = manualBonus + support.facilityBonus;
+    const total = roll + totalBonus;
     state.play = mergePlayState(state.play);
     state.play.crafting.diceRemaining = Math.max(0, crafting.diceRemaining - 1);
     state.play.crafting.pointsGenerated = crafting.pointsGenerated + total;
-    const breakdown = `d10: ${roll} | Crafting bonus: ${formatModifier(crafting.rollBonus)}`;
+    const facilityText = support.facilityBonus ? ` | ${support.facility?.name || "Facility"}: ${formatModifier(support.facilityBonus)}` : "";
+    const breakdown = `d10: ${roll} | Manual bonus: ${formatModifier(manualBonus)}${facilityText}`;
     appendPlayLog("Crafting Check", [
       cleanText(crafting.recipeName) ? `Recipe: ${crafting.recipeName}` : "",
       breakdown,
@@ -11293,93 +13601,235 @@ var LyrianApp = (() => {
       diceResults: [{ sides: 10, value: roll, label: "d10" }]
     });
     persistWorkingState();
+    renderPlayDashboard();
     setStatus(`Rolled crafting check for ${total} crafting points.`);
   }
   function resetCraftingSession() {
     state.play = mergePlayState(state.play);
     state.play.crafting = {
       ...state.play.crafting,
+      craftingWizardStep: 0,
+      craftedOutcomePending: false,
       diceRemaining: state.play.crafting.diceMax || 0,
       pointsGenerated: 0,
       pointsSpent: 0,
       pendingPointSpend: 0,
       recipeName: "",
       materialCost: "",
+      selectedRecipeId: "",
       selectedMods: "",
-      notes: ""
+      notes: "",
+      lastCraftOutcome: null
     };
     appendPlayLog("Crafting Session Reset", ["Crafting points, recipe notes, and selected mods/alloys were cleared."]);
     persistWorkingState();
+    renderPlayDashboard();
     setStatus("Reset the crafting session.");
   }
-  function renderPlayCraftingPanel() {
-    const crafting = getCraftingTrackerState();
-    const inventory = getPlayInventoryEntries();
-    const ownedSupport = inventory.filter(isOwnedCraftingSupportItem);
-    const referenceEntries = lookup.items.entries.filter(isCraftingOrGatheringReference).filter((entry) => !ownedSupport.some((owned) => normalizePhrase(owned.name) === normalizePhrase(entry.name)));
-    const materials = referenceEntries.filter(
-      (entry) => includesPhrase(entry.type, "Crafting") || includesPhrase(entry.subType, "Materials") || includesPhrase(entry.name, "Materials") || includesPhrase(entry.name, "Facilities")
-    ).slice(0, 12);
-    const toolsAndGathering = referenceEntries.filter(
-      (entry) => !materials.includes(entry) && (includesPhrase(entry.subType, "Tool") || /gather|forag|mining|farming|lumber|core crafting tool/i.test([entry.name, entry.description].join(" ")))
-    ).slice(0, 8);
-    const craftingSkills = getSkillRowsData().filter(
-      (skill) => SKILL_DEFINITIONS[skill.index - 1]?.group || ["Artifice", "Appraise", "Survival", "Animal Husbandry", "Magic", "Medicine"].some((name) => normalizePhrase(skill.name) === normalizePhrase(name))
+  function setCraftingSelectionMode(mode) {
+    state.play = mergePlayState(state.play);
+    const nextMode = ["item", "shop"].includes(mode) ? mode : "recipe";
+    if (state.play.crafting.selectionMode !== nextMode) {
+      state.play.crafting.recipeCategory = CRAFTING_RECIPE_ALL;
+      state.play.crafting.recipeSubcategory = CRAFTING_RECIPE_ALL;
+    }
+    state.play.crafting.selectionMode = nextMode;
+    persistWorkingState();
+    renderPlayDashboard();
+    setStatus({
+      item: "Manual item entry is active.",
+      shop: "Crafting shop is active.",
+      recipe: "Recipe selection is active."
+    }[state.play.crafting.selectionMode] || "Recipe selection is active.");
+  }
+  function setCraftingRecipeCategory(category) {
+    state.play = mergePlayState(state.play);
+    state.play.crafting.recipeCategory = cleanText(category) || CRAFTING_RECIPE_ALL;
+    state.play.crafting.recipeSubcategory = CRAFTING_RECIPE_ALL;
+    persistWorkingState();
+    renderPlayDashboard();
+    setStatus(state.play.crafting.recipeCategory === CRAFTING_RECIPE_ALL ? "Showing all recipes." : `Showing ${state.play.crafting.recipeCategory} recipes.`);
+  }
+  function setCraftingRecipeSubcategory(subcategory) {
+    state.play = mergePlayState(state.play);
+    state.play.crafting.recipeSubcategory = cleanText(subcategory) || CRAFTING_RECIPE_ALL;
+    persistWorkingState();
+    renderPlayDashboard();
+    setStatus(state.play.crafting.recipeSubcategory === CRAFTING_RECIPE_ALL ? "Showing all recipe types." : `Showing ${state.play.crafting.recipeSubcategory} recipes.`);
+  }
+  function selectCraftingRecipe(recipeId) {
+    const recipe = getCraftingRecipeById(recipeId);
+    if (!recipe) {
+      setStatus("Could not find that recipe.");
+      return;
+    }
+    const requirements = getRecipeRequirements(recipe);
+    state.play = mergePlayState(state.play);
+    state.play.crafting.selectionMode = "recipe";
+    state.play.crafting.selectedRecipeId = recipe.id;
+    state.play.crafting.recipeName = recipe.name;
+    state.play.crafting.materialCost = summarizeRecipeRequirements(requirements);
+    persistWorkingState();
+    renderPlayDashboard();
+    setStatus(`Selected recipe: ${recipe.name}.`);
+  }
+  function setCraftingRequirementCustomCost(customCostKey, value) {
+    state.play = mergePlayState(state.play);
+    if (!state.play.crafting.materialCustomCosts || typeof state.play.crafting.materialCustomCosts !== "object") {
+      state.play.crafting.materialCustomCosts = {};
+    }
+    const key = cleanText(customCostKey);
+    if (!key) {
+      return;
+    }
+    const cleaned = cleanText(value);
+    if (cleaned) {
+      state.play.crafting.materialCustomCosts[key] = cleaned;
+    } else {
+      delete state.play.crafting.materialCustomCosts[key];
+    }
+    persistWorkingState();
+  }
+  function getCraftingRequirementPurchasePrice(requirement) {
+    const customText = cleanText(requirement?.customCost);
+    const hasCustomPrice = customText !== "";
+    const customPrice = Math.max(0, Math.floor(toNumber(customText, 0)));
+    const standardPrice = Math.max(0, Math.floor(toNumber(requirement?.standardCost, 0)));
+    return {
+      hasCustomPrice,
+      customPrice,
+      standardPrice,
+      purchasePrice: hasCustomPrice ? customPrice : standardPrice
+    };
+  }
+  function applyCraftingRequirementPurchasePrice(trackedStandardCost, purchaseCost) {
+    const trackedCost = Math.max(0, Math.floor(toNumber(trackedStandardCost, 0)));
+    const paidCost = Math.max(0, Math.floor(toNumber(purchaseCost, 0)));
+    const climAdjustment = trackedCost - paidCost;
+    if (climAdjustment !== 0) {
+      const earnedClim = toNumber(cleanText(state.fields["Earned Clim"]), 0);
+      updateFieldValue("Earned Clim", String(earnedClim + climAdjustment));
+    }
+  }
+  function addCustomRequirementPurchaseToInventory(requirement, recipe, purchaseCost) {
+    const materialName = cleanText(requirement.lookupName || requirement.label || "Custom Material");
+    const quantity = Math.max(1, Math.ceil(toNumber(requirement.need, requirement.quantity || 1)));
+    state.play = mergePlayState(state.play);
+    const existing = state.play.inventoryItems.find(
+      (entry2) => entry2.custom && normalizePhrase(entry2.name) === normalizePhrase(materialName)
     );
-    return `
-        <div class="play-subpanel">
-          <p class="eyebrow">Crafting &amp; Gathering</p>
-          <h4>Character Crafting Workspace</h4>
-          <p class="play-field-note">This tab gathers source-backed crafting tools, material references, and useful skill shortcuts from the current builder data. It does not invent missing recipe or downtime rules.</p>
-        </div>
-
-        <div class="play-subpanel">
-          <p class="eyebrow">Crafting Session Tracker</p>
-          <h4>Dice, Points, Materials, and Mods</h4>
-          <div class="play-crafting-tracker-grid">
-            <div class="play-crafting-card">
-              <strong>Crafting Dice</strong>
-              <div class="play-resource-inputs">
-                <input class="play-number-input" type="number" inputmode="numeric" min="0" data-crafting-field="diceRemaining" value="${escapeHtml(String(crafting.diceRemaining))}">
-                <span>/</span>
-                <input class="play-number-input" type="number" inputmode="numeric" min="0" data-crafting-field="diceMax" value="${escapeHtml(String(crafting.diceMax))}">
-              </div>
-            </div>
-            <div class="play-crafting-card">
-              <strong>Generated</strong>
-              <div class="play-crafting-value">${escapeHtml(String(crafting.pointsGenerated))}</div>
-              <p>Crafting Points made this session.</p>
-            </div>
-            <div class="play-crafting-card">
-              <strong>Spent</strong>
-              <div class="play-crafting-value">${escapeHtml(String(crafting.pointsSpent))}</div>
-              <p>Points assigned to mods, alloys, finishes, or gathering difficulty.</p>
-            </div>
-            <div class="play-crafting-card">
-              <strong>Available</strong>
-              <div class="play-crafting-value">${escapeHtml(String(crafting.pointsAvailable))}</div>
-              <p>Generated minus spent.</p>
-            </div>
+    if (existing) {
+      existing.quantity = Math.max(0, Math.floor(toNumber(existing.quantity, 0))) + quantity;
+      existing.type = cleanText(existing.type) || "Crafting Material";
+      existing.subType = cleanText(existing.subType || requirement.section || recipe.craftingType || "");
+      existing.cost = purchaseCost ? `${purchaseCost} Clim` : cleanText(existing.cost);
+      existing.description = cleanText(existing.description || `Custom crafting material purchased for ${recipe.name}.`);
+      return existing;
+    }
+    const entry = {
+      uid: createInventoryUid("crafting-material"),
+      itemId: "",
+      custom: true,
+      equipped: false,
+      quantity,
+      name: materialName,
+      type: "Crafting Material",
+      subType: cleanText(requirement.section || recipe.craftingType || ""),
+      cost: purchaseCost ? `${purchaseCost} Clim` : "",
+      burden: "",
+      imageSmUrl: "assets/lyrian-symbol.png",
+      imageLgUrl: "assets/lyrian-symbol.png",
+      description: [
+        `Purchased for ${recipe.name}.`,
+        `Covers ${formatRequirementQuantity(quantity, requirement.unit)}.`,
+        `Price paid: ${purchaseCost || 0} Clim.`
+      ].join(" ")
+    };
+    state.play.inventoryItems.push(entry);
+    return entry;
+  }
+  function purchaseCraftingRequirement(customCostKey) {
+    const crafting = getCraftingTrackerState();
+    const recipe = getCraftingRecipeById(crafting.selectedRecipeId);
+    if (!recipe) {
+      setStatus("Select a recipe before purchasing requirements.");
+      return;
+    }
+    const inventory = getPlayInventoryEntries();
+    const requirement = getRecipeRequirements(recipe).map((entry) => getRecipeRequirementState(entry, inventory, recipe, crafting)).find((entry) => entry.customCostKey === customCostKey);
+    if (!requirement) {
+      setStatus("No recipe requirement was found for that material.");
+      return;
+    }
+    if (requirement.need <= 0) {
+      setStatus(`${requirement.label} is already covered.`);
+      return;
+    }
+    const priceInfo = getCraftingRequirementPurchasePrice(requirement);
+    if (!requirement.record && !priceInfo.purchasePrice && !priceInfo.hasCustomPrice) {
+      setStatus(`Set a custom price before buying ${requirement.label}.`);
+      return;
+    }
+    const packages = requirement.record ? Math.max(1, requirement.packagesNeeded) : Math.max(1, Math.ceil(toNumber(requirement.need, 1)));
+    const record = requirement.record;
+    const purchaseName = record?.name || requirement.lookupName || requirement.label;
+    const trackedStandardTotal = record ? Math.max(0, requirement.standardUnitCost * packages) : 0;
+    const priceLabel = priceInfo.hasCustomPrice ? "custom price" : "standard price";
+    const funds = getStartingFundsState();
+    if (priceInfo.purchasePrice > 0 && priceInfo.purchasePrice > funds.availableClim) {
+      setStatus(`${purchaseName} costs ${priceInfo.purchasePrice} Clim, but only ${funds.availableClim} Clim remains.`);
+      return;
+    }
+    if (typeof window.confirm === "function") {
+      const quantityLabel = record ? `${packages} x ${record.name}` : formatRequirementQuantity(requirement.need, requirement.unit);
+      const confirmed = window.confirm(`Buy ${quantityLabel} for ${priceInfo.purchasePrice || 0} Clim (${priceLabel})?`);
+      if (!confirmed) {
+        setStatus(`Purchase cancelled for ${purchaseName}.`);
+        return;
+      }
+    }
+    state.play = mergePlayState(state.play);
+    if (record) {
+      const carriedEntry = state.play.inventoryItems.find((entry) => entry.itemId === record.id);
+      const currentQuantity = Math.max(getBuilderItemQuantity(record.id), Math.floor(toNumber(carriedEntry?.quantity, 0)));
+      setBuilderItemQuantity(record.id, currentQuantity + packages);
+      ensurePlayInventoryFromBuilder();
+      syncOfficialItemToSheetInventory(record);
+      syncBuilderSelectionsIntoSheet2();
+    } else {
+      addCustomRequirementPurchaseToInventory(requirement, recipe, priceInfo.purchasePrice);
+    }
+    applyCraftingRequirementPurchasePrice(trackedStandardTotal, priceInfo.purchasePrice);
+    const updatedFunds = getStartingFundsState();
+    appendPlayLog("Recipe Requirement Purchased", [
+      `Recipe: ${recipe.name}`,
+      record ? `${record.name}: x${packages}` : `${purchaseName}: ${formatRequirementQuantity(requirement.need, requirement.unit)}`,
+      `${priceInfo.hasCustomPrice ? "Custom price" : "Standard price"}: ${priceInfo.purchasePrice || 0} Clim`,
+      `Remaining Clim: ${updatedFunds.availableClim}`
+    ]);
+    persistWorkingState();
+    renderBuilderSummary();
+    renderPlayDashboard();
+    setStatus(`Purchased ${purchaseName} for ${priceInfo.purchasePrice || 0} Clim.`);
+  }
+  function renderCraftingRecipeItemPanel(crafting, inventory) {
+    const mode = ["item", "shop"].includes(crafting.selectionMode) ? crafting.selectionMode : "recipe";
+    const recipes = getCraftingRecipeEntries();
+    const categories = getCraftingRecipeCategories(recipes);
+    const category = cleanText(crafting.recipeCategory || CRAFTING_RECIPE_ALL);
+    const subcategories = getCraftingRecipeSubcategories(recipes, category);
+    const filteredRecipes = getFilteredCraftingRecipes(recipes, crafting);
+    const selectedRecipe = getCraftingRecipeById(crafting.selectedRecipeId);
+    const renderModeButton = (value, label) => `
+        <button type="button" data-crafting-selection-mode="${escapeHtml(value)}" class="${mode === value ? "is-active" : ""}">${escapeHtml(label)}</button>
+      `;
+    if (mode === "item") {
+      return `
+          <div class="play-recipe-mode-switch">
+            ${renderModeButton("recipe", "Recipe")}
+            ${renderModeButton("shop", "Shop")}
+            ${renderModeButton("item", "Item / Manual")}
           </div>
-
-          <div class="play-crafting-field-grid">
-            <label class="play-crafting-field">
-              <strong>Crafting Bonus</strong>
-              <input type="number" inputmode="numeric" min="0" data-crafting-field="rollBonus" value="${escapeHtml(String(crafting.rollBonus))}">
-            </label>
-            <label class="play-crafting-field">
-              <strong>Point Amount</strong>
-              <input type="number" inputmode="numeric" min="0" data-crafting-field="pendingPointSpend" value="${escapeHtml(String(crafting.pendingPointSpend))}">
-            </label>
-          </div>
-          <div class="play-crafting-actions">
-            <button type="button" data-crafting-action="roll-die">Roll Crafting Die</button>
-            <button type="button" data-crafting-action="add-points">Add Points</button>
-            <button type="button" data-crafting-action="spend-points">Spend Points</button>
-            <button type="button" class="secondary" data-crafting-action="refund-points">Refund Points</button>
-            <button type="button" class="secondary" data-crafting-action="reset-session">Reset Session</button>
-          </div>
-
           <div class="play-crafting-form">
             <div class="play-crafting-field-grid">
               <label class="play-crafting-field">
@@ -11391,57 +13841,1924 @@ var LyrianApp = (() => {
                 <input data-crafting-field="materialCost" value="${escapeHtml(crafting.materialCost)}" placeholder="Example: 1 Iron ingot, 500 units, special herb mix">
               </label>
             </div>
-            <label class="play-crafting-field">
-              <strong>Selected Mods / Alloys / Point Spending</strong>
-              <textarea data-crafting-field="selectedMods" placeholder="Track chosen mods, alloys, artisan bonuses, or harvest difficulty here.">${escapeHtml(crafting.selectedMods)}</textarea>
-            </label>
-            <label class="play-crafting-field">
-              <strong>Session Notes</strong>
-              <textarea data-crafting-field="notes" placeholder="Crafting dice used, GM rulings, facility notes, gathered units, or complications.">${escapeHtml(crafting.notes)}</textarea>
-            </label>
+          </div>
+        `;
+    }
+    if (mode === "shop") {
+      const shopEntries = getCraftingShopEntries();
+      const shopCategories = getCraftingShopCategories(shopEntries);
+      const shopSubcategories = getCraftingShopSubcategories(shopEntries, category);
+      const filteredShopEntries = getFilteredCraftingShopEntries(shopEntries, crafting);
+      return `
+          <div class="play-recipe-mode-switch">
+            ${renderModeButton("recipe", "Recipe")}
+            ${renderModeButton("shop", "Shop")}
+            ${renderModeButton("item", "Item / Manual")}
+          </div>
+          <div class="play-recipe-filter-group">
+            <strong>Shop Category</strong>
+            <div class="play-recipe-filter-buttons">
+              <button type="button" data-crafting-recipe-category="${CRAFTING_RECIPE_ALL}" class="${normalizePhrase(category) === CRAFTING_RECIPE_ALL ? "is-active" : ""}">See All Shop</button>
+              ${shopCategories.map((entry) => `
+                <button type="button" data-crafting-recipe-category="${escapeHtml(entry)}" class="${normalizePhrase(category) === normalizePhrase(entry) ? "is-active" : ""}">${escapeHtml(entry)}</button>
+              `).join("")}
+            </div>
+          </div>
+          <div class="play-recipe-filter-group">
+            <strong>Quick Option</strong>
+            <div class="play-recipe-filter-buttons">
+              <button type="button" data-crafting-recipe-subcategory="${CRAFTING_RECIPE_ALL}" class="${normalizePhrase(crafting.recipeSubcategory || CRAFTING_RECIPE_ALL) === CRAFTING_RECIPE_ALL ? "is-active" : ""}">All Types</button>
+              ${shopSubcategories.map((entry) => `
+                <button type="button" data-crafting-recipe-subcategory="${escapeHtml(entry)}" class="${normalizePhrase(crafting.recipeSubcategory) === normalizePhrase(entry) ? "is-active" : ""}">${escapeHtml(entry)}</button>
+              `).join("")}
+            </div>
+          </div>
+          <div class="play-crafting-shop-list" aria-label="Crafting shop list">
+            ${filteredShopEntries.length ? filteredShopEntries.map((entry) => renderPlayCraftingCard(entry, { badge: getCraftingShopCategory(entry) })).join("") : `<p class="play-empty">No shop items match those filters.</p>`}
+          </div>
+        `;
+    }
+    return `
+        <div class="play-recipe-mode-switch">
+          ${renderModeButton("recipe", "Recipe")}
+          ${renderModeButton("shop", "Shop")}
+          ${renderModeButton("item", "Item / Manual")}
+        </div>
+        <div class="play-recipe-filter-group">
+          <strong>Recipe Category</strong>
+          <div class="play-recipe-filter-buttons">
+            <button type="button" data-crafting-recipe-category="${CRAFTING_RECIPE_ALL}" class="${normalizePhrase(category) === CRAFTING_RECIPE_ALL ? "is-active" : ""}">See All Recipes</button>
+            ${categories.map((entry) => `
+              <button type="button" data-crafting-recipe-category="${escapeHtml(entry)}" class="${normalizePhrase(category) === normalizePhrase(entry) ? "is-active" : ""}">${escapeHtml(entry)}</button>
+            `).join("")}
           </div>
         </div>
-
-        <div class="play-subpanel">
-          <p class="eyebrow">Owned Support</p>
-          <h4>Tools, Materials, and Gathering Gear</h4>
-          <div class="play-action-stack">
-            ${ownedSupport.length ? ownedSupport.map((entry) => renderPlayCraftingCard(entry, { badge: entry.equipped ? "Equipped" : "Inventory" })).join("") : `<p class="play-empty">No crafting tools, material bags, or gathering gear are currently in this character's inventory.</p>`}
+        <div class="play-recipe-filter-group">
+          <strong>Quick Option</strong>
+          <div class="play-recipe-filter-buttons">
+            <button type="button" data-crafting-recipe-subcategory="${CRAFTING_RECIPE_ALL}" class="${normalizePhrase(crafting.recipeSubcategory || CRAFTING_RECIPE_ALL) === CRAFTING_RECIPE_ALL ? "is-active" : ""}">All Types</button>
+            ${subcategories.map((entry) => `
+              <button type="button" data-crafting-recipe-subcategory="${escapeHtml(entry)}" class="${normalizePhrase(crafting.recipeSubcategory) === normalizePhrase(entry) ? "is-active" : ""}">${escapeHtml(entry)}</button>
+            `).join("")}
           </div>
         </div>
-
-        <div class="play-subpanel play-crafting-skill-panel">
-          <p class="eyebrow">Skill Shortcuts</p>
-          <h4>Roll Relevant Checks</h4>
-          <div class="play-skill-mini-list">
-            ${craftingSkills.length ? craftingSkills.map((skill) => `
-                <div class="play-skill-mini-row">
-                  <div class="play-skill-mini-copy">
-                    <strong>${escapeHtml(skill.name)}</strong>
-                    <span>${escapeHtml(getSkillBreakdownParts(skill).join(" | "))}</span>
+        <div class="play-recipe-list" aria-label="Recipe list">
+          ${filteredRecipes.length ? filteredRecipes.map((entry) => {
+      const availability = getCraftingRecipeAvailability(entry, inventory, crafting);
+      return `
+                <button type="button" class="play-recipe-option${selectedRecipe?.id === entry.id ? " is-active" : ""}${availability.available ? " is-available" : " is-unavailable"}" data-crafting-select-recipe="${escapeHtml(entry.id)}">
+                  <span class="play-recipe-option-head">
+                    <strong>${escapeHtml(entry.name)}</strong>
+                    <em>${escapeHtml(availability.statusLabel)}</em>
+                  </span>
+                  <span>${escapeHtml([entry.craftingType, entry.subType, entry.craftingPoints ? `${entry.craftingPoints} points` : ""].filter(Boolean).join(" | "))}</span>
+                  <span class="play-recipe-requirement-note">${escapeHtml(availability.reasonLabel)}</span>
+                </button>
+              `;
+    }).join("") : `<p class="play-empty">No recipes match those filters.</p>`}
+        </div>
+        ${selectedRecipe ? `
+          <div class="play-recipe-selected-summary">
+            <strong>${escapeHtml(selectedRecipe.name)}</strong>
+            <span>${escapeHtml([selectedRecipe.craftingType, selectedRecipe.subType, selectedRecipe.craftingPoints ? `${selectedRecipe.craftingPoints} crafting points` : ""].filter(Boolean).join(" | "))}</span>
+            ${renderCraftingAvailabilityNotice(selectedRecipe, inventory, crafting)}
+          </div>
+        ` : ""}
+      `;
+  }
+  function renderCraftingRequirementPanel(crafting, inventory) {
+    const mode = crafting.selectionMode === "item" ? "item" : "recipe";
+    if (mode === "item") {
+      return `
+          <div class="play-recipe-selected-summary">
+            <strong>${escapeHtml(crafting.recipeName || "Manual Item")}</strong>
+            <span>${escapeHtml(crafting.materialCost || "Manual material costs are tracked in the Recipe / Item panel.")}</span>
+          </div>
+        `;
+    }
+    const recipe = getCraftingRecipeById(crafting.selectedRecipeId);
+    if (!recipe) {
+      return `<p class="play-empty">Select a recipe to see required materials, current inventory, missing amounts, and cost options.</p>`;
+    }
+    const requirements = getRecipeRequirements(recipe).map((entry) => getRecipeRequirementState(entry, inventory, recipe, crafting));
+    const totalStandard = requirements.reduce((total, entry) => total + Math.max(0, entry.standardCost), 0);
+    const hasInferredRequirements = requirements.some((entry) => entry.inferred);
+    return `
+        <div class="play-recipe-selected-summary">
+          <strong>${escapeHtml(recipe.name)}</strong>
+          <span>${escapeHtml([recipe.craftingType, recipe.subType, recipe.craftingPoints ? `${recipe.craftingPoints} crafting points` : ""].filter(Boolean).join(" | "))}</span>
+          ${renderCraftingAvailabilityNotice(recipe, inventory, crafting)}
+        </div>
+        <div class="play-recipe-cost-summary">
+          <span>Standard missing cost</span>
+          <strong>${escapeHtml(totalStandard ? `${totalStandard} Clim` : "No standard cost found")}</strong>
+        </div>
+        ${hasInferredRequirements ? `
+          <p class="play-recipe-inferred-note">Requirements marked <span class="play-requirement-inferred-flag">Inferred</span> were guessed from the recipe card because it has no official materials list. Treat them as a starting point and confirm with the GM.</p>
+        ` : ""}
+        <div class="play-recipe-requirement-list">
+          ${requirements.length ? requirements.map((entry) => {
+      const priceInfo = getCraftingRequirementPurchasePrice(entry);
+      const canPurchase = entry.need > 0 && (entry.record || priceInfo.purchasePrice > 0 || priceInfo.hasCustomPrice);
+      const missingPrice = priceInfo.purchasePrice ? ` (${priceInfo.purchasePrice} Clim)` : "";
+      const purchaseLabel = entry.need <= 0 ? "Covered" : canPurchase ? `Buy Missing${entry.record && entry.packagesNeeded > 1 ? ` x${entry.packagesNeeded}` : ""}${missingPrice}` : "Set Price";
+      return `
+                <div class="play-recipe-requirement-row">
+                  <div class="play-recipe-requirement-name">
+                    <strong>${escapeHtml(entry.label)}${entry.inferred ? ` <span class="play-requirement-inferred-flag" title="This material requirement was inferred from the recipe card, not read from official materials text. Confirm with the GM.">Inferred</span>` : ""}</strong>
+                    <span>${escapeHtml(entry.record ? entry.record.name : "No standard material card matched")}</span>
                   </div>
-                  ${renderPlaySkillRollControls(skill)}
+                  <div class="play-recipe-requirement-metrics">
+                    <span>Need ${escapeHtml(formatRequirementQuantity(entry.quantity, entry.unit))}</span>
+                    <span>Have ${escapeHtml(formatRequirementQuantity(entry.have, entry.unit))}</span>
+                    <span>Missing ${escapeHtml(formatRequirementQuantity(entry.need, entry.unit))}</span>
+                    <span>Standard ${escapeHtml(entry.standardCost ? `${entry.standardCost} Clim` : "--")}</span>
+                  </div>
+                  <div class="play-recipe-requirement-actions">
+                    <input type="number" inputmode="numeric" min="0" data-crafting-requirement-custom-cost="${escapeHtml(entry.customCostKey)}" value="${escapeHtml(entry.customCost)}" placeholder="Custom Price" aria-label="${escapeHtml(`${entry.label} custom price`)}">
+                    <button type="button" data-crafting-purchase-requirement="${escapeHtml(entry.customCostKey)}" ${canPurchase ? "" : "disabled"}>${escapeHtml(purchaseLabel)}</button>
+                  </div>
                 </div>
-              `).join("") : `<p class="play-empty">No matching skill rows are available yet.</p>`}
+              `;
+    }).join("") : `<p class="play-empty">No material requirements were parsed for this recipe yet.</p>`}
+        </div>
+      `;
+  }
+  function renderCraftingSupportPanel(crafting, inventory) {
+    const recipe = getCraftingRecipeById(crafting.selectedRecipeId);
+    const support = getCraftingSupportState(recipe || {}, crafting, inventory);
+    if (!recipe) {
+      return `
+          <div class="play-crafting-support-grid">
+            <div class="play-gathering-tool-check is-neutral">
+              <strong>Session Support</strong>
+              <span>Select a recipe to show the required crafting tool, likely facility, class match, and facility bonus.</span>
+            </div>
+          </div>
+        `;
+    }
+    const toolStatusClass = !support.tool ? "is-neutral" : support.hasTool ? "is-ready" : "is-missing";
+    const toolStatusText = !support.tool ? "GM" : support.hasTool ? "Have" : "Missing";
+    const classStatusClass = !support.className ? "is-neutral" : support.hasClass ? "is-ready" : "is-missing";
+    const classStatusText = !support.className ? "GM" : support.hasClass ? "Found" : "Not Found";
+    const availability = getCraftingRecipeAvailability(recipe, inventory, crafting);
+    const facilityStatusClass = !support.facility ? "is-neutral" : support.facilityUsable ? "is-ready" : support.facilityLevel > 0 ? "is-missing" : "is-neutral";
+    const facilityStatusText = !support.facility ? "GM" : support.facilityUsable ? `Active +${support.facilityBonus}` : support.facilityLevel > 0 ? "Uses Exhausted" : "None";
+    const facilityLevelButtons = [0, 1, 2, 3].map((level) => {
+      const active = support.facilityLevel === level;
+      const disabled = !support.facility && level > 0;
+      const label = level ? `Level ${level}` : "None";
+      const detail = level ? `${formatModifier(getCraftingFacilityBonus(level))} / ${getCraftingFacilityUsesForLevel(level)} uses` : "No facility bonus";
+      return `
+          <button type="button" data-crafting-facility-level="${level}" class="${active ? "is-active" : ""}" ${disabled ? "disabled" : ""}>
+            <span>${escapeHtml(label)}</span>
+            <small>${escapeHtml(detail)}</small>
+          </button>
+        `;
+    }).join("");
+    const helperToolsMarkup = support.helperTools.length ? `
+          <div class="play-gathering-tool-check is-neutral">
+            <strong>Additional Support Tools</strong>
+            <span>Listed when the loaded rules data names a tool or support item that helps the category. These are not automatic roll bonuses unless the item text says so.</span>
+            <div class="play-crafting-helper-list">
+              ${support.helperTools.map((helper) => `
+                <div class="play-crafting-helper-tool ${helper.hasItem ? "is-ready" : "is-missing"}">
+                  <div>
+                    <strong>${escapeHtml(helper.label)} / ${escapeHtml(helper.hasItem ? "Have" : "Missing")}</strong>
+                    <span>${escapeHtml(helper.note)}</span>
+                  </div>
+                  ${helper.record && !helper.hasItem ? `<button type="button" data-crafting-purchase-item="${escapeHtml(helper.record.id)}">Buy (${escapeHtml(helper.record.cost || "Cost unknown")})</button>` : ""}
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        ` : `
+          <div class="play-gathering-tool-check is-neutral">
+            <strong>Additional Support Tools / None Found</strong>
+            <span>No extra rule-backed helper tool was found for this recipe category. Use Manual Crafting Bonus for GM-approved tools, assistants, or special circumstances.</span>
+          </div>
+        `;
+    return `
+        <div class="play-crafting-support-grid">
+          <div class="play-gathering-tool-check ${availability.available ? "is-ready" : "is-missing"}">
+            <strong>Crafting Availability / ${escapeHtml(availability.statusLabel)}</strong>
+            <span>${escapeHtml(availability.available ? "Required class and core tool are present. Location and facility remain GM-controlled." : `${availability.reasonLabel}.`)}</span>
+          </div>
+          <div class="play-gathering-tool-check ${toolStatusClass}">
+            <strong>Required Tool / ${escapeHtml(toolStatusText)}</strong>
+            <span>${escapeHtml(support.tool ? `${support.tool.label}. ${support.tool.note}` : "No rule-backed core tool was mapped for this recipe type yet.")}</span>
+            ${support.tool?.record && !support.hasTool ? `
+              <button type="button" data-crafting-purchase-item="${escapeHtml(support.tool.record.id)}">Buy Tool (${escapeHtml(support.tool.record.cost || "Cost unknown")})</button>
+            ` : ""}
+          </div>
+          <div class="play-gathering-tool-check ${facilityStatusClass}">
+            <strong>Facility / ${escapeHtml(facilityStatusText)}</strong>
+            <span>${escapeHtml(support.facility ? `${support.facility.name}. ${support.facility.note}` : "The rules let the GM reduce or disallow crafting based on location; no specific facility mapping was found.")}</span>
+            <div class="play-crafting-facility-levels" role="group" aria-label="Crafting facility level">
+              ${facilityLevelButtons}
+            </div>
+          </div>
+          <div class="play-gathering-tool-check ${classStatusClass}">
+            <strong>Class / ${escapeHtml(classStatusText)}</strong>
+            <span>${escapeHtml(support.className ? `${support.className} is the expected crafting class for this category. Expertise does not stack with other expertise; facility/tool bonuses are separate rule sources.` : "No specific crafting class mapping was found for this recipe type.")}</span>
+          </div>
+          ${helperToolsMarkup}
+        </div>
+        <div class="play-crafting-field-grid play-crafting-facility-fields">
+          <label class="play-crafting-field">
+            <strong>Uses Remaining</strong>
+            <input type="number" inputmode="numeric" min="0" data-crafting-field="facilityUsesRemaining" value="${escapeHtml(String(crafting.facilityUsesRemaining))}">
+          </label>
+          <label class="play-crafting-field">
+            <strong>Uses Max</strong>
+            <input type="number" inputmode="numeric" min="0" data-crafting-field="facilityUsesMax" value="${escapeHtml(String(crafting.facilityUsesMax))}">
+          </label>
+          <div class="play-crafting-facility-actions">
+            <span>Suggested uses: ${escapeHtml(String(support.suggestedUses))}</span>
+            <button type="button" data-crafting-action="facility-fill-uses" ${support.suggestedUses ? "" : "disabled"}>Fill Uses</button>
+            <button type="button" data-crafting-action="facility-spend-use" ${support.facilityLevel ? "" : "disabled"}>Mark Use</button>
           </div>
         </div>
-
-        <div class="play-subpanel">
-          <p class="eyebrow">Source References</p>
-          <h4>Materials, Facilities, and Mods</h4>
-          <div class="play-action-stack">
-            ${materials.length ? materials.map((entry) => renderPlayCraftingCard(entry, { badge: "Reference", long: true })).join("") : `<p class="play-empty">No crafting material references were found in the loaded rules data.</p>`}
+        <label class="play-crafting-field">
+          <strong>Facility / Location Notes</strong>
+          <textarea data-crafting-field="facilityNotes" placeholder="GM rulings, available workshop, limited use, town access, or why this craft is allowed here.">${escapeHtml(crafting.facilityNotes)}</textarea>
+        </label>
+      `;
+  }
+  function getCraftingBlueprintType(recipe = {}, crafting = {}) {
+    const text = normalizePhrase([
+      recipe.name,
+      recipe.type,
+      recipe.subType,
+      recipe.craftingType,
+      crafting.recipeName
+    ].filter(Boolean).join(" "));
+    if (/\b(potion|elixir|flask|poison|salve|antidote|drink|brew)\b/.test(text)) {
+      return "bottle";
+    }
+    if (/\b(cloak|cape|mantle|shawl)\b/.test(text)) {
+      return "cloak";
+    }
+    if (/\b(clothing|clothes|robe|robes|outfit|garment|dress|tunic)\b/.test(text)) {
+      return "clothing";
+    }
+    if (/\bshield|greatshield|buckler\b/.test(text)) {
+      return "shield";
+    }
+    if (/\b(armor|armour|plate|mail|helmet|helm|gauntlet|greave)\b/.test(text)) {
+      return "armor";
+    }
+    if (/\b(tool|multitool|alembic|chisel|frying\s+pan)\b/.test(text)) {
+      return "tool";
+    }
+    if (/\b(weapon|sword|blade|bow|crossbow|gun|rifle|pistol|musket|staff|wand|sling|axe|hammer|dagger|polearm|katana|whip)\b/.test(text)) {
+      return "weapon";
+    }
+    if (/\b(artifice|airship|device|attachment|station|engine|lens|aerial|mechanical|cartridge)\b/.test(text)) {
+      return "artifice";
+    }
+    return "generic";
+  }
+  function getCraftingBlueprintLabel(type) {
+    return {
+      bottle: "Potion Bottle",
+      cloak: "Cloak Pattern",
+      clothing: "Clothing Pattern",
+      shield: "Shield Form",
+      armor: "Armor Frame",
+      tool: "Tool Form",
+      weapon: "Weapon Form",
+      artifice: "Artifice Frame",
+      generic: "Crafting Frame"
+    }[type] || "Crafting Frame";
+  }
+  function renderCraftingBlueprintShape(type) {
+    if (type === "shield") {
+      return `
+          <svg viewBox="0 0 120 150" aria-hidden="true">
+            <path d="M60 10 C82 25 101 26 108 27 C108 82 92 121 60 140 C28 121 12 82 12 27 C19 26 38 25 60 10 Z"></path>
+            <path d="M60 23 L60 123"></path>
+            <path d="M28 42 C45 49 75 49 92 42"></path>
+          </svg>
+        `;
+    }
+    if (type === "armor") {
+      return `
+          <svg viewBox="0 0 120 150" aria-hidden="true">
+            <path d="M37 19 L60 35 L83 19 L104 42 L91 64 L91 127 L29 127 L29 64 L16 42 Z"></path>
+            <path d="M40 35 C47 45 53 51 60 55 C67 51 73 45 80 35"></path>
+            <path d="M43 70 L77 70"></path>
+            <path d="M43 93 L77 93"></path>
+          </svg>
+        `;
+    }
+    if (type === "clothing") {
+      return `
+          <svg viewBox="0 0 120 150" aria-hidden="true">
+            <path d="M38 21 L60 34 L82 21 L101 43 L88 60 L94 130 L26 130 L32 60 L19 43 Z"></path>
+            <path d="M47 38 C51 48 55 54 60 58 C65 54 69 48 73 38"></path>
+            <path d="M38 82 C50 88 70 88 82 82"></path>
+          </svg>
+        `;
+    }
+    if (type === "cloak") {
+      return `
+          <svg viewBox="0 0 120 150" aria-hidden="true">
+            <path d="M60 18 C78 29 94 51 100 130 L20 130 C26 51 42 29 60 18 Z"></path>
+            <path d="M45 31 C51 39 69 39 75 31"></path>
+            <path d="M60 38 C51 63 47 94 45 124"></path>
+            <path d="M60 38 C69 63 73 94 75 124"></path>
+          </svg>
+        `;
+    }
+    if (type === "weapon") {
+      return `
+          <svg viewBox="0 0 120 150" aria-hidden="true">
+            <path d="M69 13 L78 22 L52 100 L41 111 Z"></path>
+            <path d="M38 101 L58 121"></path>
+            <path d="M45 114 L28 132"></path>
+            <path d="M65 28 L54 91"></path>
+          </svg>
+        `;
+    }
+    if (type === "tool") {
+      return `
+          <svg viewBox="0 0 120 150" aria-hidden="true">
+            <path d="M72 17 C85 21 96 32 100 45 L83 61 L69 47 L85 31 C80 27 74 24 67 23 Z"></path>
+            <path d="M62 48 L19 91 C12 98 12 110 19 117 C26 124 38 124 45 117 L88 74 Z"></path>
+            <path d="M27 99 L37 109"></path>
+            <path d="M51 58 L78 85"></path>
+          </svg>
+        `;
+    }
+    if (type === "artifice") {
+      return `
+          <svg viewBox="0 0 120 150" aria-hidden="true">
+            <circle cx="60" cy="73" r="35"></circle>
+            <circle cx="60" cy="73" r="14"></circle>
+            <path d="M60 18 L60 36"></path>
+            <path d="M60 110 L60 128"></path>
+            <path d="M15 73 L33 73"></path>
+            <path d="M87 73 L105 73"></path>
+            <path d="M29 42 L42 55"></path>
+            <path d="M78 91 L91 104"></path>
+            <path d="M91 42 L78 55"></path>
+            <path d="M42 91 L29 104"></path>
+          </svg>
+        `;
+    }
+    if (type === "bottle") {
+      return `
+          <svg viewBox="0 0 120 150" aria-hidden="true">
+            <path d="M49 13 H71 V37 C88 48 97 68 97 95 C97 121 82 136 60 136 C38 136 23 121 23 95 C23 68 32 48 49 37 Z"></path>
+            <path d="M47 13 H73"></path>
+            <path d="M34 91 C49 80 71 102 86 90"></path>
+            <path d="M38 108 C51 118 69 118 82 108"></path>
+          </svg>
+        `;
+    }
+    return `
+        <svg viewBox="0 0 120 150" aria-hidden="true">
+          <path d="M60 15 L102 49 L89 129 H31 L18 49 Z"></path>
+          <path d="M60 15 V129"></path>
+          <path d="M28 55 H92"></path>
+          <path d="M34 95 H86"></path>
+        </svg>
+      `;
+  }
+  function getBlueprintSlotStyle(index) {
+    const row = Math.floor(index / 2) + 1;
+    const column = index % 2 === 0 ? 1 : 3;
+    return `grid-column: ${column}; grid-row: ${row};`;
+  }
+  function renderCraftingBlueprintPanel(crafting, inventory) {
+    const mode = crafting.selectionMode === "item" ? "item" : "recipe";
+    const recipe = mode === "recipe" ? getCraftingRecipeById(crafting.selectedRecipeId) : null;
+    const blueprintType = getCraftingBlueprintType(recipe || {}, crafting);
+    const requirements = recipe ? getRecipeRequirements(recipe).map((entry) => getRecipeRequirementState(entry, inventory, recipe, crafting)) : [];
+    const title = recipe?.name || cleanText(crafting.recipeName) || "Select a recipe";
+    const meta = recipe ? [recipe.craftingType, recipe.subType, recipe.craftingPoints ? `${recipe.craftingPoints} crafting points` : ""].filter(Boolean).join(" | ") : mode === "item" ? "Manual item outline" : "Choose a recipe to build the blueprint.";
+    const effectSummary = recipe ? getRecipeDisplayEffectSummary(recipe) : { description: "", tags: [], notes: [] };
+    const recipeImageUrl = recipe?.imageLgUrl || recipe?.imageSmUrl || "";
+    const blueprintVisual = recipeImageUrl ? `<img class="play-blueprint-item-image" src="${escapeHtml(recipeImageUrl)}" alt="${escapeHtml(title)}">` : renderCraftingBlueprintShape(blueprintType);
+    const blueprintShapeClass = recipeImageUrl ? " has-item-image" : "";
+    const coreRows = Math.max(3, Math.ceil(Math.max(requirements.length, 2) / 2));
+    const requirementMarkup = requirements.length ? requirements.map((entry, index) => {
+      const status = entry.need <= 0 ? "ready" : entry.have > 0 ? "partial" : "missing";
+      const statusText = status === "ready" ? "Ready" : status === "partial" ? "Partial" : "Missing";
+      return `
+            <div class="play-blueprint-slot is-${status}" style="${escapeHtml(getBlueprintSlotStyle(index))}">
+              <strong>${escapeHtml(entry.label)}${entry.inferred ? ` <span class="play-requirement-inferred-flag" title="Inferred from the recipe card, not official materials text.">Inferred</span>` : ""}</strong>
+              <span>Need ${escapeHtml(formatRequirementQuantity(entry.quantity, entry.unit))}</span>
+              <span>Have ${escapeHtml(formatRequirementQuantity(entry.have, entry.unit))}</span>
+              <em>${escapeHtml(statusText)}</em>
+            </div>
+          `;
+    }).join("") : `
+          <div class="play-blueprint-empty">
+            <strong>${escapeHtml(mode === "item" ? "Manual Item" : recipe ? "No Material Slots Found" : "No Recipe Selected")}</strong>
+            <span>${escapeHtml(mode === "item" ? "Use manual notes and material costs until a recipe is selected." : recipe ? "This recipe has no explicit or inferred material requirements yet." : "Pick a recipe to place its requirements around the outline.")}</span>
           </div>
-        </div>
-
-        <div class="play-subpanel">
-          <p class="eyebrow">Gathering &amp; Tools</p>
-          <h4>Related Equipment References</h4>
-          <div class="play-action-stack">
-            ${toolsAndGathering.length ? toolsAndGathering.map((entry) => renderPlayCraftingCard(entry, { badge: "Reference" })).join("") : `<p class="play-empty">No gathering-specific tool references were found in the loaded rules data.</p>`}
+        `;
+    return `
+        <div class="play-blueprint-panel">
+          <div class="play-blueprint-head">
+            <span>${escapeHtml(getCraftingBlueprintLabel(blueprintType))}</span>
+            <strong>${escapeHtml(title)}</strong>
+            <em>${escapeHtml(meta)}</em>
+            ${effectSummary.description ? `<p>${escapeHtml(effectSummary.description)}</p>` : ""}
+            ${effectSummary.notes.length ? `
+              <div class="play-blueprint-benefit-list">
+                ${effectSummary.notes.map((note) => `
+                  <span><strong>${escapeHtml(note.label)}</strong>${escapeHtml(note.text)}</span>
+                `).join("")}
+              </div>
+            ` : ""}
+            ${effectSummary.tags.length ? `
+              <div class="play-blueprint-effect-tags">
+                ${effectSummary.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}
+              </div>
+            ` : ""}
+          </div>
+          <div class="play-blueprint-canvas is-${escapeHtml(blueprintType)}" style="--blueprint-core-rows: ${escapeHtml(String(coreRows))};">
+            <div class="play-blueprint-core">
+              <div class="play-blueprint-shape${blueprintShapeClass}">${blueprintVisual}</div>
+              <div class="play-blueprint-core-label">
+                <strong>${escapeHtml(title)}</strong>
+                <span>${escapeHtml(getCraftingBlueprintLabel(blueprintType))}</span>
+              </div>
+            </div>
+            ${requirementMarkup}
           </div>
         </div>
       `;
+  }
+  function renderCraftingNotesPanel(crafting) {
+    return `
+        <div class="play-crafting-form">
+          <label class="play-crafting-field">
+            <strong>Selected Mods / Alloys / Point Spending</strong>
+            <textarea data-crafting-field="selectedMods" placeholder="Track chosen mods, alloys, artisan bonuses, or harvest difficulty here.">${escapeHtml(crafting.selectedMods)}</textarea>
+          </label>
+          <label class="play-crafting-field">
+            <strong>Session Notes</strong>
+            <textarea data-crafting-field="notes" placeholder="Crafting dice used, GM rulings, facility notes, gathered units, or complications.">${escapeHtml(crafting.notes)}</textarea>
+          </label>
+        </div>
+      `;
+  }
+  function renderCraftingClarificationPanel(isGatheringMode = false) {
+    const extra = isGatheringMode ? [
+      "Exact HP, Node Points, Lucky Points, tier, and variation effects should be confirmed for nodes that are not explicitly listed.",
+      "The app can draft nodes from known resource categories, but the GM still decides if a location contains that node."
+    ] : [
+      "The app can infer many material costs from item rules, but recipe cards with no material section still need GM or creator confirmation.",
+      "Location and facility access should be checked before treating a craft as allowed during the interlude."
+    ];
+    return `
+        <div class="play-rule-note-list">
+          ${[...extra, ...CRAFTING_RULE_CLARIFICATION_ITEMS].map((entry) => `<p>${escapeHtml(entry)}</p>`).join("")}
+        </div>
+      `;
+  }
+  var DOWNTIME_RULE_GUIDE = {
+    crafting: {
+      eyebrow: "Crafting Rules",
+      title: "How to Run a Craft",
+      summary: "Use this when a character spends downtime or an interlude action to build, modify, or prepare an item.",
+      steps: [
+        "Pick the recipe or item being made, then check its category and type.",
+        "Review the build outline, item effect, use cost, and visible recipe requirements.",
+        "Use the material-cost panel to compare need, have, missing cost, and custom price before buying or spending materials.",
+        "Check required tool, facility access, class access, expertise, and any class abilities. Facility and tool bonuses are separate rule sources.",
+        "Roll the matching crafting skill when the rules or GM call for it. Expertise does not stack with other expertise.",
+        "Use the crafting session tracker to roll crafting dice, add generated points, spend points, and record mods, alloys, or complications."
+      ],
+      reminders: [
+        "Level 1/2/3 facilities give +2/+4/+6 to the matching crafting skill when available.",
+        "Missing recipe costs or material lists should stay GM-set until clarified by the rules.",
+        "Use session notes for alloys, mods, helper rulings, location limits, and unusual ingredient substitutions."
+      ]
+    },
+    gathering: {
+      eyebrow: "Gathering Rules",
+      title: "How to Run a Gather",
+      summary: "Use this when a character finds a node and spends strike dice to collect raw materials or rare yield.",
+      steps: [
+        "Pick the node type first: mining, foraging, farming, or husbandry. Then choose the resource to create a GM-editable node draft.",
+        "Review the resource node tracker for HP, Node Points, Lucky Points, base yield, and lucky yield.",
+        "Make discovery or identification checks before formal gathering if the GM requires them. These are normal d20 skill checks.",
+        "Use the gathering session tracker to spend strike dice on Basic Strike, Lucky Strike, or a class ability. These rolls are d10 + gathering skill + modifiers.",
+        "Use gathering skill checks when the GM calls for a normal skill roll outside the strike-dice progress system.",
+        "Finish the attempt, reduce node HP, then add gathered raw materials to inventory or note sale/conversion during interlude."
+      ],
+      reminders: [
+        "Gathering uses d10 strike dice after the GM declares a usable node.",
+        "Exact node values are not fully listed for every resource, so resource drafts are editable.",
+        "Raw materials may need conversion rules, such as Create Ingot, before they become crafting components."
+      ]
+    }
+  };
+  function renderDowntimeRuleGuide(activeMode = "crafting") {
+    const modes = ["crafting", "gathering"];
+    const currentMode = modes.includes(activeMode) ? activeMode : "crafting";
+    return `
+        <section class="play-panel play-crafting-dashboard-panel play-crafting-guide-panel">
+          <details class="play-crafting-collapse">
+            <summary>
+              <span class="play-crafting-collapse-title">
+                <span class="eyebrow">Downtime Rules Guide</span>
+                <strong>How Downtime Works</strong>
+              </span>
+            </summary>
+            <div class="play-crafting-collapse-body">
+              <div class="play-downtime-guide-tabs" role="tablist" aria-label="Downtime rules sections">
+                ${modes.map((mode) => `
+                  <button
+                    type="button"
+                    data-downtime-guide-mode="${escapeHtml(mode)}"
+                    class="${mode === currentMode ? "is-active" : ""}"
+                    aria-pressed="${mode === currentMode ? "true" : "false"}"
+                  >${escapeHtml(DOWNTIME_RULE_GUIDE[mode].eyebrow.replace(" Rules", ""))}</button>
+                `).join("")}
+              </div>
+              ${modes.map((mode) => {
+      const guide = DOWNTIME_RULE_GUIDE[mode];
+      return `
+                  <div class="play-downtime-guide-section ${mode === currentMode ? "is-active" : ""}" data-downtime-guide-section="${escapeHtml(mode)}">
+                    <div class="play-downtime-guide-intro">
+                      <span class="eyebrow">${escapeHtml(guide.eyebrow)}</span>
+                      <h4>${escapeHtml(guide.title)}</h4>
+                      <p>${escapeHtml(guide.summary)}</p>
+                    </div>
+                    <ol class="play-downtime-guide-steps">
+                      ${guide.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}
+                    </ol>
+                    <div class="play-downtime-guide-reminders">
+                      ${guide.reminders.map((reminder) => `<p>${escapeHtml(reminder)}</p>`).join("")}
+                    </div>
+                  </div>
+                `;
+    }).join("")}
+            </div>
+          </details>
+        </section>
+      `;
+  }
+  function renderGatheringProgressBar(label, current, target) {
+    const safeTarget = Math.max(0, toNumber(target, 0));
+    const safeCurrent = Math.max(0, Math.min(toNumber(current, 0), safeTarget));
+    const percent = safeTarget ? Math.round(safeCurrent / safeTarget * 100) : 0;
+    return `
+        <div class="play-gathering-progress">
+          <div>
+            <strong>${escapeHtml(label)}</strong>
+            <span>${escapeHtml(`${safeCurrent} / ${safeTarget}`)}</span>
+          </div>
+          <div class="play-gathering-progress-track" aria-hidden="true">
+            <span style="width: ${escapeHtml(String(percent))}%;"></span>
+          </div>
+        </div>
+      `;
+  }
+  function getGatheringReadiness(crafting, inventory = []) {
+    const toolText = cleanText(crafting.gatheringTool);
+    const requiredText = normalizePhrase(crafting.gatheringRequiredAbility);
+    const toolOptions = getGatheringToolOptions(toolText);
+    const hasTool = doesInventoryHaveGatheringTool(toolText, inventory);
+    const classCorpus = getSelectedClassRulesCorpus();
+    const hasAbility = !requiredText || /gm\s*(permission|decides|approved)/.test(requiredText) || requiredText.split(" ").filter((word) => word.length > 3).some((word) => classCorpus.includes(word)) || /miner|rock and stone/.test(requiredText) && /miner|rock and stone/.test(classCorpus);
+    const gmOverride = Boolean(crafting.gatheringGmOverride);
+    return {
+      hasTool,
+      toolOptions,
+      hasAbility,
+      gmOverride,
+      canGather: hasTool && hasAbility || gmOverride
+    };
+  }
+  function renderGatheringSessionPanel(crafting, inventory = []) {
+    const skill = getGatheringSkillRow(crafting);
+    const strikeBonus = getGatheringStrikeBonus(crafting);
+    const readiness = getGatheringReadiness(crafting, inventory);
+    const canStrike = readiness.canGather && crafting.gatheringHpRemaining > 0 && crafting.gatheringStrikeDiceRemaining > 0;
+    const canLucky = canStrike && crafting.gatheringNodeProgress >= 10;
+    const abilities = getGatheringAbilityAvailability(crafting, readiness);
+    const typeConfig = GATHERING_NODE_TYPES[getGatheringNodeTypeKey(crafting.gatheringNodeType)] || GATHERING_NODE_TYPES.mining;
+    const activeAction = getGatheringActionDefinition(crafting.gatheringActiveAction);
+    const trackerTitle = `${typeConfig.label} ${activeAction.trackerLabel}`;
+    const missingReasons = [
+      readiness.hasTool ? "" : `Missing tool: ${crafting.gatheringTool || "GM-required tool"}`,
+      readiness.hasAbility ? "" : `Missing ability: ${crafting.gatheringRequiredAbility || "GM-required ability"}`
+    ].filter(Boolean);
+    const renderGatheringActionButton = ({ action, id, label, enabled = true, secondary = false }) => `
+          <button type="button" class="${secondary ? "secondary " : ""}${activeAction.id === id ? "is-active" : ""}" data-crafting-action="${escapeHtml(action)}" ${enabled ? "" : "disabled"}>${escapeHtml(label)}</button>
+        `;
+    return `
+        <div>
+          <p class="eyebrow">Gathering Session Tracker</p>
+          <h3>${escapeHtml(trackerTitle)}</h3>
+        </div>
+        <div class="play-crafting-tracker-grid">
+          <div class="play-crafting-card">
+            <strong>Strike Dice</strong>
+            <div class="play-resource-inputs">
+              <input class="play-number-input" type="number" inputmode="numeric" min="0" data-crafting-field="gatheringStrikeDiceRemaining" value="${escapeHtml(String(crafting.gatheringStrikeDiceRemaining))}">
+              <span>/</span>
+              <input class="play-number-input" type="number" inputmode="numeric" min="0" data-crafting-field="gatheringStrikeDiceMax" value="${escapeHtml(String(crafting.gatheringStrikeDiceMax))}">
+            </div>
+            <p>${escapeHtml(activeAction.diceText)}</p>
+          </div>
+          <div class="play-crafting-card">
+            <strong>Strike Bonus</strong>
+            <div class="play-crafting-value">${escapeHtml(formatModifier(strikeBonus))}</div>
+            <p>${escapeHtml(skill ? getSkillBreakdownParts(skill).join(" | ") : "No matching skill row found.")}</p>
+          </div>
+          <div class="play-crafting-card">
+            <strong>Node Points</strong>
+            <div class="play-crafting-value">${escapeHtml(`${crafting.gatheringNodeProgress} / ${crafting.gatheringNodeTarget}`)}</div>
+            <p>Clear this for the base yield.</p>
+          </div>
+          <div class="play-crafting-card">
+            <strong>Lucky Points</strong>
+            <div class="play-crafting-value">${escapeHtml(`${crafting.gatheringLuckyProgress} / ${crafting.gatheringLuckyTarget}`)}</div>
+            <p>Clear this too for the rare yield.</p>
+          </div>
+        </div>
+        <div class="play-gathering-action-note">
+          <div>
+            <strong>${escapeHtml(activeAction.label)}</strong>
+            <span>${escapeHtml(activeAction.summary)}</span>
+          </div>
+          <em>${escapeHtml(activeAction.targetLabel)}</em>
+        </div>
+        <div class="play-gathering-roll-help">
+          <strong>Strike Roll</strong>
+          <span>Use the roll buttons below for gathering progress. Discovery and skill-shortcut checks are separate d20 checks.</span>
+        </div>
+        <div class="play-gathering-action-grid">
+          ${renderGatheringActionButton({ action: "gather-basic", id: "basic", label: "Roll Basic Strike", enabled: canStrike })}
+          ${renderGatheringActionButton({ action: "gather-lucky", id: "lucky", label: "Roll Lucky Strike", enabled: canLucky })}
+          ${renderGatheringActionButton({ action: "gather-power-rock", id: "power-rock", label: "Roll Power Rock", enabled: abilities.powerRock })}
+          ${renderGatheringActionButton({ action: "gather-efficient", id: "efficient", label: "Roll Efficient Strike", enabled: abilities.efficient })}
+          ${renderGatheringActionButton({ action: "gather-verdant", id: "verdant", label: "Roll Verdant Instinct", enabled: abilities.verdant })}
+          ${renderGatheringActionButton({ action: "gather-petalfall", id: "petalfall", label: "Roll Petalfall", enabled: abilities.petalfall })}
+          ${renderGatheringActionButton({ action: "gather-focused-node", id: "focused-node", label: "Roll Focused NP", enabled: abilities.focused })}
+          ${renderGatheringActionButton({ action: "gather-focused-lucky", id: "focused-lucky", label: "Roll Focused LP", enabled: abilities.focused })}
+          ${renderGatheringActionButton({ action: "gather-take-easy", id: "take-easy", label: "Take it easy", enabled: abilities.takeEasy })}
+          ${renderGatheringActionButton({ action: "gather-finish", id: "finish", label: "Finish Attempt", enabled: readiness.canGather && crafting.gatheringHpRemaining > 0 })}
+          ${renderGatheringActionButton({ action: "gather-reset", id: "reset", label: "Reset Attempt", secondary: true })}
+        </div>
+        ${missingReasons.length ? `
+          <div class="play-gathering-tool-check ${readiness.gmOverride ? "is-neutral" : "is-missing"}">
+            <strong>${readiness.gmOverride ? "GM Override Active" : "Gathering Locked"}</strong>
+            <span>${escapeHtml(`${missingReasons.join(" | ")}${readiness.gmOverride ? " | GM allows the attempt, but missing tool, class, or ability bonuses are not added." : ""}`)}</span>
+            <label class="play-gathering-override-toggle">
+              <input type="checkbox" data-gathering-gm-override ${readiness.gmOverride ? "checked" : ""}>
+              <span>GM override</span>
+            </label>
+          </div>
+        ` : `
+          <div class="play-gathering-tool-check is-ready">
+            <strong>Gathering Ready</strong>
+            <span>Tool and ability requirements appear to be met.</span>
+            <label class="play-gathering-override-toggle">
+              <input type="checkbox" data-gathering-gm-override ${readiness.gmOverride ? "checked" : ""}>
+              <span>GM override</span>
+            </label>
+          </div>
+        `}
+        <div class="play-crafting-field-grid">
+          <label class="play-crafting-field">
+            <strong>Gathering Skill</strong>
+            <input data-crafting-field="gatheringSkill" value="${escapeHtml(crafting.gatheringSkill)}" placeholder="Mining">
+          </label>
+          <label class="play-crafting-field">
+            <strong>Extra Modifier</strong>
+            <input type="number" inputmode="numeric" min="0" data-crafting-field="gatheringBonus" value="${escapeHtml(String(crafting.gatheringBonus))}">
+          </label>
+          <label class="play-crafting-field">
+            <strong>Queued Dice</strong>
+            <input data-crafting-field="gatheringQueuedDice" value="${escapeHtml(crafting.gatheringQueuedDice)}" placeholder="Example: 5, 8">
+          </label>
+        </div>
+      `;
+  }
+  function renderCraftingSessionPanel(crafting, options = {}) {
+    const activeRecipe = options.activeRecipe || null;
+    const activeRecipePointCost = Math.max(0, toNumber(options.activeRecipePointCost, 0));
+    const activeRecipeRequirementsMet = options.activeRecipeRequirementsMet !== false;
+    const activeRecipeSpendLabel = cleanText(options.activeRecipeSpendLabel) || "Select a recipe";
+    return `
+        <div>
+          <p class="eyebrow">Crafting Session Tracker</p>
+          <h3>Dice and Points</h3>
+        </div>
+        <div class="play-crafting-tracker-grid">
+          <div class="play-crafting-card">
+            <strong>Crafting Dice</strong>
+            <div class="play-resource-inputs">
+              <input class="play-number-input" type="number" inputmode="numeric" min="0" data-crafting-field="diceRemaining" value="${escapeHtml(String(crafting.diceRemaining))}">
+              <span>/</span>
+              <input class="play-number-input" type="number" inputmode="numeric" min="0" data-crafting-field="diceMax" value="${escapeHtml(String(crafting.diceMax))}">
+            </div>
+            <div class="play-crafting-die-roller">
+              <span>d10 + Bonus</span>
+              <button type="button" data-crafting-action="roll-die" ${activeRecipe && !activeRecipeRequirementsMet ? "disabled" : ""}>Roll d10</button>
+            </div>
+          </div>
+          <div class="play-crafting-card">
+            <strong>Generated</strong>
+            <div class="play-crafting-value">${escapeHtml(String(crafting.pointsGenerated))}</div>
+            <p>Crafting Points made this session.</p>
+          </div>
+          <div class="play-crafting-card">
+            <strong>Spent</strong>
+            <div class="play-crafting-value">${escapeHtml(String(crafting.pointsSpent))}</div>
+            <p>Recipe costs, mods, alloys, finishes, or gathering difficulty.</p>
+          </div>
+          <div class="play-crafting-card">
+            <strong>Available</strong>
+            <div class="play-crafting-value">${escapeHtml(String(crafting.pointsAvailable))}</div>
+            <p>Generated minus spent.</p>
+          </div>
+        </div>
+
+        <div class="play-crafting-spend-strip">
+          <div>
+            <strong>Active Recipe Cost</strong>
+            <span>${escapeHtml(activeRecipeSpendLabel)}</span>
+          </div>
+          <button type="button" data-crafting-action="spend-recipe" ${activeRecipe && activeRecipePointCost && activeRecipeRequirementsMet ? "" : "disabled"}>Spend Recipe Points</button>
+        </div>
+
+        <div class="play-crafting-field-grid">
+          <label class="play-crafting-field">
+            <strong>Manual Crafting Bonus</strong>
+            <input type="number" inputmode="numeric" min="0" data-crafting-field="rollBonus" value="${escapeHtml(String(crafting.rollBonus))}">
+          </label>
+          <label class="play-crafting-field">
+            <strong>Point Amount</strong>
+            <input type="number" inputmode="numeric" min="0" data-crafting-field="pendingPointSpend" value="${escapeHtml(String(crafting.pendingPointSpend))}">
+          </label>
+        </div>
+        <div class="play-crafting-actions">
+          <button type="button" data-crafting-action="add-points">Add Points</button>
+          <button type="button" data-crafting-action="spend-points">Spend Points</button>
+          <button type="button" class="secondary" data-crafting-action="refund-points">Refund Points</button>
+          <button type="button" class="secondary" data-crafting-action="reset-session">Reset Session</button>
+        </div>
+      `;
+  }
+  function renderGatheringNodePanel(crafting, inventory = []) {
+    const template = GATHERING_NODE_TEMPLATES[crafting.gatheringTemplateId] || GATHERING_NODE_TEMPLATES[GATHERING_DEFAULT_TEMPLATE_ID];
+    const readiness = getGatheringReadiness(crafting, inventory);
+    const typeKey = getGatheringNodeTypeKey(crafting.gatheringNodeType || template.nodeType);
+    const discoveryText = cleanText(crafting.gatheringDiscovery || template.discovery);
+    const noteText = cleanText(crafting.gatheringNotes || template.note);
+    const healthLabel = getGatheringHealthLabel(crafting);
+    const canGatherNotes = [
+      crafting.gatheringTool ? `Tool: ${readiness.hasTool ? "Found" : "Missing"} - ${crafting.gatheringTool}` : "Tool: GM decides",
+      crafting.gatheringRequiredAbility ? `Ability: ${readiness.hasAbility ? "Found" : "Missing"} - ${crafting.gatheringRequiredAbility}` : "Ability: GM decides",
+      `Skill: ${crafting.gatheringSkill || "Gathering"}`
+    ];
+    return `
+        <div class="play-gathering-node-panel">
+          <div class="play-blueprint-head">
+            <span>${escapeHtml([crafting.gatheringVariation || "Node", `Tier ${crafting.gatheringTier || 1}`].filter(Boolean).join(" | "))}</span>
+            <strong>${escapeHtml(crafting.gatheringNodeName || "Resource Node")}</strong>
+            <em>${escapeHtml(discoveryText)}</em>
+            <p>${escapeHtml(noteText)}</p>
+          </div>
+          <div class="play-gathering-node-grid">
+            <div class="play-gathering-node-core">
+              ${renderGatheringNodeIcon(typeKey)}
+              <strong>${escapeHtml(crafting.gatheringNodeName || "Resource Node")}</strong>
+              <span>${escapeHtml(`HP ${crafting.gatheringHpRemaining} / ${crafting.gatheringHpMax}`)}</span>
+            </div>
+            <div class="play-gathering-node-details">
+              ${renderGatheringProgressBar("Node Points", crafting.gatheringNodeProgress, crafting.gatheringNodeTarget)}
+              ${renderGatheringProgressBar("Lucky Points", crafting.gatheringLuckyProgress, crafting.gatheringLuckyTarget)}
+              ${renderGatheringProgressBar(healthLabel, crafting.gatheringHpRemaining, crafting.gatheringHpMax)}
+            </div>
+          </div>
+          <div class="play-gathering-yield-grid">
+            <div class="play-recipe-selected-summary">
+              <strong>Base Yield</strong>
+              <span>${escapeHtml(`${crafting.gatheringYieldQuantity} ${crafting.gatheringYieldName}`)}</span>
+            </div>
+            <div class="play-recipe-selected-summary">
+              <strong>Lucky Yield</strong>
+              <span>${escapeHtml(`${crafting.gatheringLuckyYieldQuantity} ${crafting.gatheringLuckyYieldName}`)}</span>
+            </div>
+          </div>
+          <div class="play-gathering-readiness">
+            <strong>Gathering Requirements</strong>
+            <div class="play-blueprint-effect-tags">
+              ${canGatherNotes.map((entry) => `<span>${escapeHtml(entry)}</span>`).join("")}
+            </div>
+            <p>${escapeHtml(readiness.canGather ? "This character appears ready to attempt the node. GM rulings still apply." : "This character may need the missing tool, class ability, or GM permission before formal gathering rewards apply.")}</p>
+            <p>Discovery is a normal d20 skill check. Gathering uses strike dice after the GM declares a usable node.</p>
+          </div>
+        </div>
+      `;
+  }
+  function renderGatheringNodeIcon(typeKey = "") {
+    const key = getGatheringNodeTypeKey(typeKey);
+    const label = GATHERING_NODE_TYPES[key]?.label || "Gathering";
+    const icons = {
+      mining: `
+          <path d="M31 74 C38 55 52 42 72 35" />
+          <path d="M61 28 L82 49" />
+          <path d="M70 25 C78 29 84 35 88 43" />
+          <path d="M24 81 L41 66" />
+          <path d="M36 86 L76 86 L88 72 L71 58 L44 61 Z" />
+          <path d="M51 72 L67 70" />
+        `,
+      farming: `
+          <path d="M56 88 L56 45" />
+          <path d="M56 53 C42 50 34 40 31 28 C45 27 54 35 56 53 Z" />
+          <path d="M57 59 C72 57 82 48 85 35 C70 34 60 43 57 59 Z" />
+          <path d="M25 88 C34 76 43 70 56 68 C69 70 78 76 87 88" />
+          <path d="M29 76 C38 69 47 65 56 64 C65 65 74 69 83 76" />
+          <path d="M35 64 C42 60 49 58 56 58 C63 58 70 60 77 64" />
+        `,
+      foraging: `
+          <path d="M35 80 C45 66 52 51 55 30" />
+          <path d="M55 37 C40 31 30 23 25 13 C42 11 54 20 55 37 Z" />
+          <path d="M52 54 C70 51 82 42 88 27 C69 24 56 35 52 54 Z" />
+          <path d="M43 70 C31 70 22 64 17 53 C30 48 40 54 43 70 Z" />
+          <path d="M55 80 C64 72 73 69 85 70" />
+          <path d="M47 58 C41 52 34 49 25 48" />
+        `,
+      husbandry: `
+          <path d="M56 35 C66 35 74 43 74 55 C74 71 65 84 56 84 C47 84 38 71 38 55 C38 43 46 35 56 35 Z" />
+          <path d="M45 53 C49 58 53 60 56 60 C59 60 63 58 67 53" />
+          <path d="M56 60 L56 83" />
+          <path d="M34 29 C30 21 32 14 39 11 C45 17 46 25 41 33" />
+          <path d="M78 29 C82 21 80 14 73 11 C67 17 66 25 71 33" />
+          <path d="M29 88 C37 83 46 81 56 81 C66 81 75 83 83 88" />
+        `
+    };
+    return `
+        <div class="play-gathering-node-icon is-${escapeHtml(key)}" aria-label="${escapeHtml(`${label} node icon`)}" role="img">
+          <svg class="play-gathering-node-svg" viewBox="0 0 112 112" focusable="false" aria-hidden="true">
+            ${icons[key] || icons.mining}
+          </svg>
+        </div>
+      `;
+  }
+  function renderGatheringSetupPanel(crafting, inventory = []) {
+    const selectedTemplate = GATHERING_NODE_TEMPLATES[crafting.gatheringTemplateId] || null;
+    const template = selectedTemplate || getGatheringTemplate(crafting.gatheringTemplateId);
+    const selectedType = getGatheringNodeTypeKey(crafting.gatheringNodeType || template.nodeType);
+    const typeConfig = GATHERING_NODE_TYPES[selectedType] || GATHERING_NODE_TYPES.mining;
+    const templates = getGatheringTemplatesForType(selectedType);
+    const readiness = getGatheringReadiness(crafting, inventory);
+    const resourceOptions = getGatheringResourceOptionsForType(selectedType);
+    const selectedResourceKey = normalizePhrase(crafting.gatheringSelectedResource);
+    const activeYieldKeys = new Set([
+      crafting.gatheringYieldName,
+      crafting.gatheringLuckyYieldName
+    ].map((entry) => normalizePhrase(entry)).filter(Boolean));
+    const toolStatusClass = !readiness.toolOptions.length ? "is-neutral" : readiness.hasTool ? "is-ready" : "is-missing";
+    const toolStatusText = !readiness.toolOptions.length ? "GM" : readiness.hasTool ? "Have" : "Missing";
+    const toolStatusNote = !readiness.toolOptions.length ? "This node uses a GM-approved tool or special handling." : readiness.hasTool ? `Inventory has a usable tool for ${crafting.gatheringTool}.` : `Missing required tool. Add or buy ${crafting.gatheringTool} before awarding this gather.`;
+    return `
+        <div class="play-recipe-filter-group">
+          <strong>Node Types</strong>
+          <div class="play-recipe-filter-buttons">
+            ${getGatheringNodeTypeEntries().map((entry) => `
+              <button
+                type="button"
+                data-gathering-node-type="${escapeHtml(entry.id)}"
+                class="${entry.id === selectedType ? "is-active" : ""}"
+              >${escapeHtml(entry.label)}</button>
+            `).join("")}
+          </div>
+          <div class="play-recipe-selected-summary">
+            <strong>${escapeHtml(typeConfig.heading)}</strong>
+            <span>${escapeHtml(typeConfig.summary)}</span>
+          </div>
+          <div class="play-gathering-resource-card-list" aria-label="${escapeHtml(typeConfig.label)} resource drafts">
+            ${resourceOptions.map(({ name, profile }) => {
+      const resourceKeys = [profile.requestedResourceName, name].map((entry) => normalizePhrase(entry)).filter(Boolean);
+      const isActive = selectedResourceKey ? resourceKeys.includes(selectedResourceKey) : resourceKeys.some((entry) => activeYieldKeys.has(entry));
+      const label = profile.processed ? `${name} (processed)` : name;
+      const status = profile.processed ? "Processed" : profile.variation || "Draft";
+      const meta = [
+        profile.name,
+        profile.skill,
+        `T${profile.tier || 1}`,
+        `HP ${profile.hpMax}`,
+        `NP ${profile.nodeTarget}`,
+        `LP ${profile.luckyTarget}`
+      ].filter(Boolean).join(" | ");
+      const yieldText = `Base ${profile.yieldQuantity} ${profile.yieldName} | Lucky ${profile.luckyYieldQuantity} ${profile.luckyYieldName}`;
+      const requirementText = [
+        profile.tool ? `Tool: ${profile.tool}` : "",
+        profile.requiredAbility ? `Ability: ${profile.requiredAbility}` : ""
+      ].filter(Boolean).join(" | ");
+      return `
+                <button type="button" data-gathering-resource="${escapeHtml(name)}" data-gathering-resource-type="${escapeHtml(selectedType)}" class="play-recipe-option play-gathering-resource-card${isActive ? " is-active" : ""}" title="${escapeHtml(profile.basis || "GM draft")}">
+                  <span class="play-recipe-option-head play-gathering-resource-card-head">
+                    <strong>${escapeHtml(label)}</strong>
+                    <em>${escapeHtml(status)}</em>
+                  </span>
+                  <span class="play-gathering-resource-card-meta">${escapeHtml(meta)}</span>
+                  <span class="play-gathering-resource-card-yield">${escapeHtml(yieldText)}</span>
+                  <span class="play-recipe-requirement-note play-gathering-resource-card-requirements">${escapeHtml(requirementText || "GM sets final requirement.")}</span>
+                </button>
+              `;
+    }).join("")}
+          </div>
+          <div class="play-gathering-tool-check is-neutral">
+            <strong>Resource Drafts</strong>
+            <span>Click a resource to load a suggested node setup. These values are editable; the rules provide the node structure, while the GM sets exact HP, Node Points, Lucky Points, yields, tier, variation, and permissions.</span>
+          </div>
+        </div>
+
+        <div class="play-crafting-form">
+          <div class="play-crafting-field-grid">
+            <label class="play-crafting-field">
+              <strong>Node Preset</strong>
+              <select data-gathering-template-select>
+                ${selectedTemplate ? "" : `
+                  <option value="${escapeHtml(crafting.gatheringTemplateId || "")}" selected>
+                    ${escapeHtml(`Custom: ${crafting.gatheringNodeName || "Resource Draft"}`)}
+                  </option>
+                `}
+                ${templates.map((entry) => `
+                  <option value="${escapeHtml(entry.id)}" ${entry.id === selectedTemplate?.id ? "selected" : ""}>
+                    ${escapeHtml(`${entry.name} | ${entry.variation} | T${entry.tier} | HP ${entry.hpMax} NP ${entry.nodeTarget} LP ${entry.luckyTarget}`)}
+                  </option>
+                `).join("")}
+              </select>
+            </label>
+            <div class="play-gathering-tool-check ${toolStatusClass}">
+              <strong>Required Tool / ${escapeHtml(toolStatusText)}</strong>
+              <span>${escapeHtml(toolStatusNote)}</span>
+            </div>
+          </div>
+
+          <div class="play-crafting-field-grid">
+            <label class="play-crafting-field">
+              <strong>Node Name</strong>
+              <input data-crafting-field="gatheringNodeName" value="${escapeHtml(crafting.gatheringNodeName)}">
+            </label>
+            <label class="play-crafting-field">
+              <strong>Variation</strong>
+              <input data-crafting-field="gatheringVariation" value="${escapeHtml(crafting.gatheringVariation)}">
+            </label>
+            <label class="play-crafting-field">
+              <strong>HP</strong>
+              <input type="number" inputmode="numeric" min="0" data-crafting-field="gatheringHpRemaining" value="${escapeHtml(String(crafting.gatheringHpRemaining))}">
+            </label>
+            <label class="play-crafting-field">
+              <strong>Max HP</strong>
+              <input type="number" inputmode="numeric" min="0" data-crafting-field="gatheringHpMax" value="${escapeHtml(String(crafting.gatheringHpMax))}">
+            </label>
+            <label class="play-crafting-field">
+              <strong>Node Point Target</strong>
+              <input type="number" inputmode="numeric" min="0" data-crafting-field="gatheringNodeTarget" value="${escapeHtml(String(crafting.gatheringNodeTarget))}">
+            </label>
+            <label class="play-crafting-field">
+              <strong>Lucky Point Target</strong>
+              <input type="number" inputmode="numeric" min="0" data-crafting-field="gatheringLuckyTarget" value="${escapeHtml(String(crafting.gatheringLuckyTarget))}">
+            </label>
+            <label class="play-crafting-field">
+              <strong>Base Yield</strong>
+              <input data-crafting-field="gatheringYieldName" value="${escapeHtml(crafting.gatheringYieldName)}">
+            </label>
+            <label class="play-crafting-field">
+              <strong>Base Yield Qty</strong>
+              <input type="number" inputmode="numeric" min="0" data-crafting-field="gatheringYieldQuantity" value="${escapeHtml(String(crafting.gatheringYieldQuantity))}">
+            </label>
+            <label class="play-crafting-field">
+              <strong>Lucky Yield</strong>
+              <input data-crafting-field="gatheringLuckyYieldName" value="${escapeHtml(crafting.gatheringLuckyYieldName)}">
+            </label>
+            <label class="play-crafting-field">
+              <strong>Lucky Yield Qty</strong>
+              <input type="number" inputmode="numeric" min="0" data-crafting-field="gatheringLuckyYieldQuantity" value="${escapeHtml(String(crafting.gatheringLuckyYieldQuantity))}">
+            </label>
+            <label class="play-crafting-field">
+              <strong>Required Tool <span class="play-gathering-inline-status ${toolStatusClass}">${escapeHtml(toolStatusText)}</span></strong>
+              <input data-crafting-field="gatheringTool" value="${escapeHtml(crafting.gatheringTool)}">
+            </label>
+            <label class="play-crafting-field">
+              <strong>Required Ability</strong>
+              <input data-crafting-field="gatheringRequiredAbility" value="${escapeHtml(crafting.gatheringRequiredAbility)}">
+            </label>
+          </div>
+          <label class="play-crafting-field">
+            <strong>Discovery / Identification</strong>
+            <textarea data-crafting-field="gatheringDiscovery" placeholder="Which check finds or identifies this node?">${escapeHtml(crafting.gatheringDiscovery || "")}</textarea>
+          </label>
+          <label class="play-crafting-field">
+            <strong>Gathering Notes</strong>
+            <textarea data-crafting-field="gatheringNotes" placeholder="Discovery result, hazards, node variation, or GM rulings.">${escapeHtml(crafting.gatheringNotes)}</textarea>
+          </label>
+        </div>
+      `;
+  }
+  var CRAFTING_WIZARD_STEPS = [
+    {
+      id: "recipe",
+      title: "Choose Recipe",
+      lead: "Start here. Pick the thing being made so the sheet can show its materials, tool/class needs, point cost, and final item effect.",
+      goal: "Select one recipe or switch to Item / Manual for a GM-created craft.",
+      next: "Click a recipe card, then Continue."
+    },
+    {
+      id: "materials",
+      title: "Gather Materials",
+      lead: "Compare the recipe requirements against inventory. Buy missing pieces or set a custom GM price before moving on.",
+      goal: "Make the Have / Need / Missing rows readable enough that the table can tell what still blocks the craft.",
+      next: "Buy or price missing materials, then Continue."
+    },
+    {
+      id: "support",
+      title: "Check Support",
+      lead: "Confirm whether the character has the required tool, class access, and any facility bonus. This is where the table decides if the craft is allowed.",
+      goal: "Resolve tool, facility, and class questions before rolling or spending points.",
+      next: "Pick facility level, buy missing tools if allowed, then Continue."
+    },
+    {
+      id: "rolls",
+      title: "Roll Points",
+      lead: "Roll crafting dice into crafting points and make any required crafting skill checks. Facility bonuses apply to the matching crafting skill.",
+      goal: "Generate enough points for the selected recipe and record any GM-called checks.",
+      next: "Roll d10, add generated points, spend points if needed, then Continue."
+    },
+    {
+      id: "complete",
+      title: "Resolve Craft",
+      lead: "Spend the recipe points, then resolve the craft once. Success adds the item and consumes materials; failure consumes materials as a GM-adjustable default.",
+      goal: "Finish the session without double-adding the crafted item.",
+      next: "Click Craft Succeeded or Craft Failed one time."
+    }
+  ];
+  function getCraftingWizardStepIndex(crafting = getCraftingTrackerState()) {
+    return clamp(Math.floor(toNumber(crafting.craftingWizardStep, 0)), 0, CRAFTING_WIZARD_STEPS.length - 1);
+  }
+  function setCraftingWizardStep(index, options = {}) {
+    const nextIndex = clamp(Math.floor(toNumber(index, 0)), 0, CRAFTING_WIZARD_STEPS.length - 1);
+    state.play = mergePlayState(state.play);
+    state.play.crafting.craftingWizardStep = nextIndex;
+    persistWorkingState();
+    renderPlayDashboard();
+    if (options.status !== false) {
+      setStatus(`Crafting step ${nextIndex + 1} of ${CRAFTING_WIZARD_STEPS.length}: ${CRAFTING_WIZARD_STEPS[nextIndex].title}.`);
+    }
+  }
+  function getCraftingWizardStepWarnings(stepIndex, crafting, inventory) {
+    const warnings = [];
+    const recipe = crafting.selectionMode === "recipe" ? getCraftingRecipeById(crafting.selectedRecipeId) : null;
+    const stepId = CRAFTING_WIZARD_STEPS[stepIndex]?.id || "";
+    if (stepId === "recipe" && crafting.selectionMode === "recipe" && !recipe) {
+      warnings.push("No recipe is selected yet.");
+    }
+    if (stepId === "materials" && recipe) {
+      const missing = getRecipeRequirements(recipe).map((entry) => getRecipeRequirementState(entry, inventory, recipe, crafting)).filter((entry) => entry.need > 0).map((entry) => `${entry.label} (${formatRequirementQuantity(entry.need, entry.unit)} missing)`);
+      if (missing.length) {
+        warnings.push(`Materials missing: ${missing.join(", ")}.`);
+      }
+    }
+    if (stepId === "support" && recipe) {
+      const availability = getCraftingRecipeAvailability(recipe, inventory, crafting);
+      if (!availability.available) {
+        warnings.push(`${availability.reasonLabel}`);
+      }
+    }
+    if (stepId === "rolls" && recipe) {
+      const pointCost = Math.max(0, parseNumericCost(recipe.craftingPoints));
+      if (pointCost && crafting.pointsAvailable < pointCost) {
+        warnings.push(`${recipe.name} needs ${pointCost} crafting points; ${crafting.pointsAvailable} are available.`);
+      }
+    }
+    return warnings;
+  }
+  function continueCraftingWizard() {
+    const crafting = getCraftingTrackerState();
+    const currentIndex = getCraftingWizardStepIndex(crafting);
+    if (currentIndex >= CRAFTING_WIZARD_STEPS.length - 1) {
+      setStatus("This is the final crafting step. Resolve the craft with Success or Failure.");
+      return;
+    }
+    const warnings = getCraftingWizardStepWarnings(currentIndex, crafting, getPlayInventoryEntries());
+    setCraftingWizardStep(currentIndex + 1, { status: !warnings.length });
+    if (warnings.length) {
+      setStatus(`Continuing with warnings: ${warnings.join(" ")}`);
+    }
+  }
+  function getCraftingMaterialUnitsKey(requirementState) {
+    return normalizePhrase(requirementState.record?.name || requirementState.lookupName || requirementState.label);
+  }
+  function addCraftingMaterialUnitsRemainder(requirementState, unitsKey, leftoverUnits) {
+    const units = Math.max(0, Math.floor(toNumber(leftoverUnits, 0)));
+    if (!units) {
+      return;
+    }
+    const displayName = cleanText(requirementState.record?.name || requirementState.label);
+    const existing = state.play.inventoryItems.find((entry) => normalizePhrase(entry.materialUnitsFor || "") === unitsKey);
+    if (existing) {
+      existing.quantity = Math.max(0, Math.floor(toNumber(existing.quantity, 0))) + units;
+      return;
+    }
+    state.play.inventoryItems.push({
+      uid: createInventoryUid("material-units"),
+      itemId: "",
+      custom: true,
+      equipped: false,
+      quantity: units,
+      materialUnitsFor: unitsKey,
+      name: `${displayName} (opened, loose units)`,
+      type: "Crafting Material",
+      subType: "Opened Units",
+      cost: "",
+      burden: "",
+      imageSmUrl: "assets/lyrian-symbol.png",
+      imageLgUrl: "assets/lyrian-symbol.png",
+      description: `Loose units left over after opening a package of ${displayName} for crafting. Counted toward future recipe requirements.`
+    });
+  }
+  function consumeCraftingMaterials(recipe, crafting) {
+    state.play = mergePlayState(state.play);
+    ensurePlayInventoryFromBuilder();
+    const inventory = getPlayInventoryEntries();
+    const requirements = getRecipeRequirements(recipe).map((entry) => getRecipeRequirementState(entry, inventory, recipe, crafting));
+    const consumedLines = [];
+    const shortfalls = [];
+    let climAdjustment = 0;
+    requirements.forEach((requirementState) => {
+      let remaining = Math.max(0, Math.floor(toNumber(requirementState.quantity, 0)));
+      if (!remaining) {
+        return;
+      }
+      const unitsKey = getCraftingMaterialUnitsKey(requirementState);
+      const packageQuantity = requirementState.record ? getMaterialPackageQuantity(requirementState.record, requirementState) : 1;
+      state.play.inventoryItems.forEach((entry) => {
+        if (remaining <= 0 || normalizePhrase(entry.materialUnitsFor || "") !== unitsKey) {
+          return;
+        }
+        const units = Math.max(0, Math.floor(toNumber(entry.quantity, 0)));
+        const taken = Math.min(units, remaining);
+        if (!taken) {
+          return;
+        }
+        entry.quantity = units - taken;
+        remaining -= taken;
+        consumedLines.push(`${entry.name}: ${formatRequirementQuantity(taken, requirementState.unit)}`);
+      });
+      state.play.inventoryItems.forEach((entry) => {
+        if (remaining <= 0 || !entry.custom || entry.materialUnitsFor) {
+          return;
+        }
+        if (normalizePhrase(entry.name) !== unitsKey) {
+          return;
+        }
+        const count = Math.max(0, Math.floor(toNumber(entry.quantity, 0)));
+        if (!count) {
+          return;
+        }
+        const takeCount = Math.min(count, Math.ceil(remaining / packageQuantity));
+        const takenUnits = Math.min(remaining, takeCount * packageQuantity);
+        const leftover = takeCount * packageQuantity - takenUnits;
+        entry.quantity = count - takeCount;
+        remaining -= takenUnits;
+        consumedLines.push(`${entry.name}: x${takeCount}`);
+        addCraftingMaterialUnitsRemainder(requirementState, unitsKey, leftover);
+      });
+      if (remaining > 0 && requirementState.record) {
+        const record = requirementState.record;
+        const playEntry = state.play.inventoryItems.find((entry) => entry.itemId === record.id && !entry.custom);
+        const ownedPackages = Math.max(getBuilderItemQuantity(record.id), Math.floor(toNumber(playEntry?.quantity, 0)));
+        if (ownedPackages > 0) {
+          const packagesToOpen = Math.min(ownedPackages, Math.ceil(remaining / packageQuantity));
+          const takenUnits = Math.min(remaining, packagesToOpen * packageQuantity);
+          const leftover = packagesToOpen * packageQuantity - takenUnits;
+          setBuilderItemQuantity(record.id, ownedPackages - packagesToOpen);
+          climAdjustment += parseClimCost(record.cost) * packagesToOpen;
+          remaining -= takenUnits;
+          consumedLines.push(`${record.name}: x${packagesToOpen}`);
+          addCraftingMaterialUnitsRemainder(requirementState, unitsKey, leftover);
+        }
+      }
+      if (remaining > 0) {
+        shortfalls.push(`${requirementState.label}: ${formatRequirementQuantity(remaining, requirementState.unit)} short`);
+      }
+    });
+    state.play.inventoryItems = state.play.inventoryItems.filter(
+      (entry) => !((entry.custom || entry.materialUnitsFor) && Math.floor(toNumber(entry.quantity, 1)) <= 0)
+    );
+    if (climAdjustment > 0) {
+      const earnedClim = toNumber(cleanText(state.fields["Earned Clim"]), 0);
+      updateFieldValue("Earned Clim", String(earnedClim - climAdjustment));
+    }
+    ensurePlayInventoryFromBuilder();
+    syncBuilderSelectionsIntoSheet2();
+    return { consumedLines, shortfalls, climAdjustment };
+  }
+  function createCraftOutcomeSnapshot() {
+    ensurePlayInventoryFromBuilder();
+    return {
+      inventoryItems: JSON.parse(JSON.stringify(state.play.inventoryItems)),
+      selectedItemIds: [...state.builder.selectedItemIds],
+      itemQuantities: JSON.parse(JSON.stringify(state.builder.itemQuantities || {})),
+      earnedClim: cleanText(state.fields["Earned Clim"]),
+      combatInventoryFieldsSynced: true
+    };
+  }
+  function resolveCraftOutcome(didSucceed) {
+    const crafting = getCraftingTrackerState();
+    const recipe = crafting.selectionMode === "recipe" ? getCraftingRecipeById(crafting.selectedRecipeId) : null;
+    if (!recipe) {
+      setStatus("Select a recipe before resolving a craft outcome.");
+      return;
+    }
+    if (crafting.lastCraftOutcome?.snapshot) {
+      setStatus("This craft is already resolved. Undo the last outcome or start a new crafting session before resolving again.");
+      return;
+    }
+    state.play = mergePlayState(state.play);
+    const snapshot = createCraftOutcomeSnapshot();
+    const consumption = consumeCraftingMaterials(recipe, crafting);
+    let craftedLine = "";
+    if (didSucceed) {
+      state.play.inventoryItems.push({
+        uid: createInventoryUid("crafted"),
+        itemId: recipe.id,
+        custom: true,
+        equipped: false,
+        quantity: 1,
+        name: recipe.name,
+        type: cleanText(recipe.type || "Crafted Item"),
+        subType: cleanText(recipe.subType || ""),
+        cost: "",
+        burden: cleanText(recipe.burden || ""),
+        imageSmUrl: recipe.imageSmUrl || "assets/lyrian-symbol.png",
+        imageLgUrl: recipe.imageLgUrl || recipe.imageSmUrl || "assets/lyrian-symbol.png",
+        description: `Crafted by this character. ${cleanText(recipe.description || "")}`.trim()
+      });
+      craftedLine = `Crafted: 1 x ${recipe.name} (added to inventory).`;
+    }
+    state.play.crafting.craftedOutcomePending = false;
+    state.play.crafting.lastCraftOutcome = {
+      type: didSucceed ? "success" : "failure",
+      recipeId: recipe.id,
+      recipeName: recipe.name,
+      at: (/* @__PURE__ */ new Date()).toISOString(),
+      snapshot
+    };
+    appendPlayLog(didSucceed ? "Craft Succeeded" : "Craft Failed", [
+      `Recipe: ${recipe.name}`,
+      consumption.consumedLines.length ? `Materials consumed: ${consumption.consumedLines.join(", ")}` : "Materials consumed: none tracked",
+      consumption.shortfalls.length ? `Shortfall (GM ruled it proceeded): ${consumption.shortfalls.join(", ")}` : "",
+      craftedLine,
+      didSucceed ? "" : "Failure consumption note: the official rules do not spell out failure costs. Materials were consumed as the default; use Undo Last Outcome if the GM rules otherwise.",
+      "Undo Last Outcome (final crafting step) restores materials and removes the crafted item."
+    ].filter(Boolean));
+    persistWorkingState();
+    renderPlayDashboard();
+    setStatus(didSucceed ? `Craft succeeded: ${recipe.name} added to inventory and materials consumed.` : `Craft failed: materials consumed by default. Undo is available if the GM rules otherwise.`);
+  }
+  function undoLastCraftOutcome() {
+    const crafting = getCraftingTrackerState();
+    const outcome = crafting.lastCraftOutcome;
+    if (!outcome || !outcome.snapshot) {
+      setStatus("There is no craft outcome to undo.");
+      return;
+    }
+    state.play = mergePlayState(state.play);
+    state.play.inventoryItems = Array.isArray(outcome.snapshot.inventoryItems) ? JSON.parse(JSON.stringify(outcome.snapshot.inventoryItems)) : state.play.inventoryItems;
+    state.builder.selectedItemIds = Array.isArray(outcome.snapshot.selectedItemIds) ? [...outcome.snapshot.selectedItemIds] : state.builder.selectedItemIds;
+    state.builder.itemQuantities = outcome.snapshot.itemQuantities && typeof outcome.snapshot.itemQuantities === "object" ? JSON.parse(JSON.stringify(outcome.snapshot.itemQuantities)) : state.builder.itemQuantities;
+    updateFieldValue("Earned Clim", cleanText(outcome.snapshot.earnedClim));
+    state.play.crafting.lastCraftOutcome = null;
+    ensurePlayInventoryFromBuilder();
+    syncBuilderSelectionsIntoSheet2();
+    appendPlayLog("Craft Outcome Undone", [
+      `Recipe: ${outcome.recipeName}`,
+      `Reversed ${outcome.type === "success" ? "a successful craft (item removed, materials restored)" : "a failed craft (materials restored)"}.`
+    ]);
+    persistWorkingState();
+    renderPlayDashboard();
+    setStatus(`Undid the last craft outcome for ${outcome.recipeName}.`);
+  }
+  function renderCraftingWizardSummary(crafting, inventory) {
+    const recipe = crafting.selectionMode === "recipe" ? getCraftingRecipeById(crafting.selectedRecipeId) : null;
+    const chips = [];
+    chips.push(`<span class="selected-chip">${escapeHtml(recipe ? recipe.name : crafting.selectionMode === "recipe" ? "No recipe selected" : cleanText(crafting.recipeName) || "Manual item")}</span>`);
+    if (recipe) {
+      const requirementStates = getRecipeRequirements(recipe).map((entry) => getRecipeRequirementState(entry, inventory, recipe, crafting));
+      const covered = requirementStates.filter((entry) => entry.need <= 0).length;
+      const inferredCount = requirementStates.filter((entry) => entry.inferred).length;
+      chips.push(`<span class="selected-chip ${covered === requirementStates.length ? "is-good" : "is-warn"}">Materials ${covered}/${requirementStates.length}${inferredCount ? ` (${inferredCount} inferred)` : ""}</span>`);
+      const availability = getCraftingRecipeAvailability(recipe, inventory, crafting);
+      chips.push(`<span class="selected-chip ${availability.available ? "is-good" : "is-warn"}">${escapeHtml(availability.available ? "Support ready" : availability.missingSummary)}</span>`);
+      const pointCost = Math.max(0, parseNumericCost(recipe.craftingPoints));
+      chips.push(`<span class="selected-chip ${!pointCost || crafting.pointsAvailable >= pointCost ? "is-good" : "is-warn"}">Points ${crafting.pointsAvailable}${pointCost ? ` / ${pointCost} needed` : ""}</span>`);
+    } else {
+      chips.push(`<span class="selected-chip">Points ${crafting.pointsAvailable}</span>`);
+    }
+    chips.push(`<span class="selected-chip">Dice ${crafting.diceRemaining} / ${crafting.diceMax}</span>`);
+    return `<div class="selected-chip-list play-wizard-summary">${chips.join("")}</div>`;
+  }
+  function renderCraftingWizardNav(currentIndex) {
+    return `
+        <div class="play-wizard-nav" style="--wizard-step-count: ${CRAFTING_WIZARD_STEPS.length};" role="tablist" aria-label="Crafting steps">
+          ${CRAFTING_WIZARD_STEPS.map((step, index) => `
+            <button type="button"
+              class="play-wizard-nav-step${index === currentIndex ? " is-active" : ""}${index < currentIndex ? " is-done" : ""}"
+              data-crafting-wizard-goto="${index}"
+              aria-current="${index === currentIndex ? "step" : "false"}">
+              <span class="play-wizard-nav-number">${index + 1}</span>
+              <span class="play-wizard-nav-title">${escapeHtml(step.title)}</span>
+            </button>
+          `).join("")}
+        </div>
+      `;
+  }
+  function getWizardBackLabel(steps, currentIndex) {
+    return currentIndex > 0 && steps[currentIndex - 1] ? `Back to ${steps[currentIndex - 1].title}` : "Back";
+  }
+  function getWizardContinueLabel(steps, currentIndex, warnings = []) {
+    const nextStep = steps[currentIndex + 1];
+    if (!nextStep) {
+      return "Continue";
+    }
+    return `${warnings.length ? "Continue Anyway to" : "Continue to"} ${nextStep.title}`;
+  }
+  function renderWizardStepCoach(step, modeLabel, warnings = []) {
+    return `
+        <div class="play-wizard-coach">
+          <div>
+            <span class="eyebrow">${escapeHtml(modeLabel)} step guide</span>
+            <strong>${escapeHtml(step.goal || step.lead || "")}</strong>
+          </div>
+          <div>
+            <span class="eyebrow">Next action</span>
+            <strong>${escapeHtml(step.next || "Review this step, then continue.")}</strong>
+          </div>
+          ${warnings.length ? `
+            <div class="play-wizard-coach-warning">
+              <span class="eyebrow">Check before moving on</span>
+              <strong>${escapeHtml(warnings.join(" "))}</strong>
+            </div>
+          ` : ""}
+        </div>
+      `;
+  }
+  function renderCraftingWizardCompleteStep(crafting, inventory) {
+    const recipe = crafting.selectionMode === "recipe" ? getCraftingRecipeById(crafting.selectedRecipeId) : null;
+    const pointCost = recipe ? Math.max(0, parseNumericCost(recipe.craftingPoints)) : 0;
+    const availability = recipe ? getCraftingRecipeAvailability(recipe, inventory, crafting) : null;
+    const requirementStates = recipe ? getRecipeRequirements(recipe).map((entry) => getRecipeRequirementState(entry, inventory, recipe, crafting)) : [];
+    const missing = requirementStates.filter((entry) => entry.need > 0);
+    const lastOutcome = crafting.lastCraftOutcome;
+    const outcomeResolved = Boolean(lastOutcome?.snapshot);
+    return `
+        <div class="play-wizard-complete">
+          <div class="play-recipe-selected-summary">
+            <strong>${escapeHtml(recipe ? recipe.name : "No recipe selected")}</strong>
+            <span>${escapeHtml(recipe ? [recipe.craftingType, recipe.subType, pointCost ? `${pointCost} crafting points` : "No numeric point cost"].filter(Boolean).join(" | ") : "Go back to step 1 and pick a recipe before resolving a craft.")}</span>
+            ${recipe ? renderCraftingAvailabilityNotice(recipe, inventory, crafting) : ""}
+          </div>
+          <div class="play-crafting-card">
+            <strong>Spend Recipe Points</strong>
+            <p>${escapeHtml(recipe ? `${recipe.name} costs ${pointCost || "no numeric"} crafting points. ${crafting.pointsAvailable} points are available.` : "Select a recipe first.")}</p>
+            <button type="button" data-crafting-action="spend-recipe" ${recipe && pointCost && (availability ? availability.available : true) && crafting.pointsAvailable >= pointCost ? "" : "disabled"}>Spend ${escapeHtml(String(pointCost || 0))} Points</button>
+          </div>
+          ${missing.length ? `
+            <p class="play-recipe-inferred-note">Missing before resolving: ${escapeHtml(missing.map((entry) => `${entry.label} (${formatRequirementQuantity(entry.need, entry.unit)})`).join(", "))}. You can still resolve the craft if the GM allows it; the shortfall is logged.</p>
+          ` : ""}
+          <div class="play-wizard-outcome-row">
+            <button type="button" class="play-wizard-outcome-success" data-crafting-action="craft-success" ${recipe && !outcomeResolved ? "" : "disabled"}>Craft Succeeded</button>
+            <button type="button" class="play-wizard-outcome-failure" data-crafting-action="craft-failure" ${recipe && !outcomeResolved ? "" : "disabled"}>Craft Failed</button>
+            ${lastOutcome ? `<button type="button" class="secondary" data-crafting-action="craft-undo">Undo Last Outcome</button>` : ""}
+            ${lastOutcome ? `<button type="button" class="secondary" data-crafting-action="reset-session">Start New Craft</button>` : ""}
+          </div>
+          <p class="play-recipe-inferred-note">${escapeHtml(outcomeResolved ? "This outcome is locked so it cannot be resolved twice. Undo restores the pre-resolution state; Start New Craft keeps this outcome and clears the wizard for another craft." : "Success adds the crafted item to inventory and consumes the recipe materials (packages are opened; loose units stay visible and count toward future crafts). Failure also consumes materials, but the official rules do not spell out failure costs, so treat that consumption as a GM-adjustable default and use Undo if the table rules otherwise.")}</p>
+          ${lastOutcome ? `
+            <div class="play-recipe-selected-summary">
+              <strong>Last outcome</strong>
+              <span>${escapeHtml(`${lastOutcome.type === "success" ? "Success" : "Failure"} - ${lastOutcome.recipeName}`)}</span>
+            </div>
+          ` : ""}
+        </div>
+      `;
+  }
+  var GATHERING_WIZARD_STEPS = [
+    {
+      id: "node",
+      title: "Choose Node",
+      lead: "Start here. Pick the kind of resource and load a node draft. Drafts are editable because the GM still controls the exact location, rarity, and yield.",
+      goal: "Choose the resource the character is trying to gather.",
+      next: "Pick a node type, click a resource draft, then Continue."
+    },
+    {
+      id: "readiness",
+      title: "Check Access",
+      lead: "Check the required tool and ability, use GM override if the table allows the attempt anyway, and make any discovery checks.",
+      goal: "Confirm whether the character can formally harvest this node.",
+      next: "Resolve missing tool/ability or toggle GM override, then Continue."
+    },
+    {
+      id: "strikes",
+      title: "Roll Strikes",
+      lead: "Spend strike dice on Basic Strike, Lucky Strike, or class actions. These are d10 + gathering skill + extra modifier rolls.",
+      goal: "Build enough Node Points for base yield and Lucky Points for rare yield.",
+      next: "Use the roll buttons until ready, then Continue."
+    },
+    {
+      id: "finish",
+      title: "Resolve Gather",
+      lead: "Finish the attempt to collect the earned yield, reduce node HP, then repeat the node or pick a new one.",
+      goal: "Turn the progress bars into actual gathered materials.",
+      next: "Click Finish Attempt, Repeat This Node, or Pick A New Node."
+    }
+  ];
+  function getGatheringWizardStepIndex(crafting = getCraftingTrackerState()) {
+    return clamp(Math.floor(toNumber(crafting.gatheringWizardStep, 0)), 0, GATHERING_WIZARD_STEPS.length - 1);
+  }
+  function setGatheringWizardStep(index, options = {}) {
+    const nextIndex = clamp(Math.floor(toNumber(index, 0)), 0, GATHERING_WIZARD_STEPS.length - 1);
+    state.play = mergePlayState(state.play);
+    state.play.crafting.gatheringWizardStep = nextIndex;
+    persistWorkingState();
+    renderPlayDashboard();
+    if (options.status !== false) {
+      setStatus(`Gathering step ${nextIndex + 1} of ${GATHERING_WIZARD_STEPS.length}: ${GATHERING_WIZARD_STEPS[nextIndex].title}.`);
+    }
+  }
+  function getGatheringWizardStepWarnings(stepIndex, crafting, inventory) {
+    const warnings = [];
+    const stepId = GATHERING_WIZARD_STEPS[stepIndex]?.id || "";
+    const readiness = getGatheringReadiness(crafting, inventory);
+    const lastOutcome = getCurrentGatheringOutcome(crafting);
+    if (stepId === "readiness" && !readiness.canGather) {
+      const missing = [
+        readiness.hasTool ? "" : `tool (${crafting.gatheringTool || "GM-required tool"})`,
+        readiness.hasAbility ? "" : `ability (${crafting.gatheringRequiredAbility || "GM-required ability"})`
+      ].filter(Boolean).join(" and ");
+      warnings.push(`Missing ${missing}. Use the GM override below if the table allows the attempt anyway.`);
+    }
+    if (stepId === "strikes") {
+      if (lastOutcome) {
+        warnings.push(lastOutcome.gained?.length ? "This attempt has already been resolved. Continue to Resolve Gather to review what was awarded." : "This attempt has already been resolved with no yield. Continue to Resolve Gather to review the result and choose the next node.");
+      } else if (crafting.gatheringHpRemaining <= 0) {
+        warnings.push("This node is depleted. Pick a new node from step 1.");
+      } else if (crafting.gatheringStrikeDiceRemaining <= 0) {
+        warnings.push("No strike dice remain for this attempt. Continue to Finish to resolve it.");
+      }
+    }
+    if (stepId === "finish") {
+      if (lastOutcome) {
+        if (lastOutcome.gained?.length) {
+          warnings.push(`Last attempt already awarded ${lastOutcome.gained.join(" and ")}.`);
+        } else {
+          warnings.push(`Last attempt earned no yield because Node Points were ${lastOutcome.nodeProgress} / ${lastOutcome.nodeTarget} when it was finished.`);
+        }
+      } else if (crafting.gatheringNodeTarget > 0 && crafting.gatheringNodeProgress < crafting.gatheringNodeTarget) {
+        warnings.push(`Node Points are at ${crafting.gatheringNodeProgress} / ${crafting.gatheringNodeTarget}. Finishing now will not award the base yield.`);
+      }
+    }
+    return warnings;
+  }
+  function continueGatheringWizard() {
+    const crafting = getCraftingTrackerState();
+    const currentIndex = getGatheringWizardStepIndex(crafting);
+    if (currentIndex >= GATHERING_WIZARD_STEPS.length - 1) {
+      setStatus("This is the final gathering step. Use Finish Attempt to resolve it.");
+      return;
+    }
+    const warnings = getGatheringWizardStepWarnings(currentIndex, crafting, getPlayInventoryEntries());
+    setGatheringWizardStep(currentIndex + 1, { status: !warnings.length });
+    if (warnings.length) {
+      setStatus(`Continuing with warnings: ${warnings.join(" ")}`);
+    }
+  }
+  function renderGatheringWizardSummary(crafting, readiness) {
+    const chips = [];
+    chips.push(`<span class="selected-chip">${escapeHtml(crafting.gatheringNodeName || "Resource Node")}</span>`);
+    chips.push(`<span class="selected-chip ${crafting.gatheringHpRemaining > 0 ? "is-good" : "is-warn"}">${escapeHtml(`${getGatheringHealthLabel(crafting)} ${crafting.gatheringHpRemaining}/${crafting.gatheringHpMax}`)}</span>`);
+    chips.push(`<span class="selected-chip ${readiness.canGather ? "is-good" : "is-warn"}">${escapeHtml(readiness.canGather ? "Ready" : readiness.gmOverride ? "GM override" : "Not ready")}</span>`);
+    chips.push(`<span class="selected-chip">${escapeHtml(`NP ${crafting.gatheringNodeProgress}/${crafting.gatheringNodeTarget}`)}</span>`);
+    chips.push(`<span class="selected-chip">${escapeHtml(`LP ${crafting.gatheringLuckyProgress}/${crafting.gatheringLuckyTarget}`)}</span>`);
+    chips.push(`<span class="selected-chip">${escapeHtml(`Strike Dice ${crafting.gatheringStrikeDiceRemaining}/${crafting.gatheringStrikeDiceMax}`)}</span>`);
+    return `<div class="selected-chip-list play-wizard-summary">${chips.join("")}</div>`;
+  }
+  function renderGatheringWizardNav(currentIndex) {
+    return `
+        <div class="play-wizard-nav" style="--wizard-step-count: ${GATHERING_WIZARD_STEPS.length};" role="tablist" aria-label="Gathering steps">
+          ${GATHERING_WIZARD_STEPS.map((step, index) => `
+            <button type="button"
+              class="play-wizard-nav-step${index === currentIndex ? " is-active" : ""}${index < currentIndex ? " is-done" : ""}"
+              data-gathering-wizard-goto="${index}"
+              aria-current="${index === currentIndex ? "step" : "false"}">
+              <span class="play-wizard-nav-number">${index + 1}</span>
+              <span class="play-wizard-nav-title">${escapeHtml(step.title)}</span>
+            </button>
+          `).join("")}
+        </div>
+      `;
+  }
+  function renderGatheringReadinessCard(crafting, inventory) {
+    const readiness = getGatheringReadiness(crafting, inventory);
+    const toolLine = crafting.gatheringTool ? `Tool: ${readiness.hasTool ? "Found" : "Missing"} - ${crafting.gatheringTool}` : "Tool: GM decides";
+    const abilityLine = crafting.gatheringRequiredAbility ? `Ability: ${readiness.hasAbility ? "Found" : "Missing"} - ${crafting.gatheringRequiredAbility}` : "Ability: GM decides";
+    return `
+        <div class="play-gathering-tool-check ${readiness.canGather ? "is-ready" : readiness.gmOverride ? "is-neutral" : "is-missing"}">
+          <strong>${readiness.canGather ? readiness.gmOverride && !(readiness.hasTool && readiness.hasAbility) ? "GM Override Active" : "Gathering Ready" : "Gathering Locked"}</strong>
+          <span>${escapeHtml(`${toolLine} | ${abilityLine}${readiness.gmOverride && !(readiness.hasTool && readiness.hasAbility) ? " | GM allows the attempt, but missing tool or ability bonuses are not added." : ""}`)}</span>
+          <label class="play-gathering-override-toggle">
+            <input type="checkbox" data-gathering-gm-override ${readiness.gmOverride ? "checked" : ""}>
+            <span>GM override</span>
+          </label>
+        </div>
+        <p>Discovery is a normal d20 skill check made with the row below before the GM declares this node usable.</p>
+      `;
+  }
+  function renderGatheringWizardFinishStep(crafting, inventory) {
+    const readiness = getGatheringReadiness(crafting, inventory);
+    const clearedNode = crafting.gatheringNodeTarget > 0 && crafting.gatheringNodeProgress >= crafting.gatheringNodeTarget;
+    const clearedLucky = clearedNode && crafting.gatheringLuckyTarget > 0 && crafting.gatheringLuckyProgress >= crafting.gatheringLuckyTarget;
+    const depleted = crafting.gatheringHpRemaining <= 0;
+    const lastOutcome = getCurrentGatheringOutcome(crafting);
+    const hasOutcome = Boolean(lastOutcome);
+    const outcomeGained = Array.isArray(lastOutcome?.gained) ? lastOutcome.gained : [];
+    const outcomeDepleted = hasOutcome && toNumber(lastOutcome.hpAfter, crafting.gatheringHpRemaining) <= 0;
+    const resultTitle = hasOutcome ? outcomeGained.length ? "Attempt Resolved / Yield Awarded" : "Attempt Resolved / No Yield" : clearedNode ? "Ready to Finish / Yield Earned" : "Ready to Finish / No Yield Yet";
+    const resultMessage = hasOutcome ? outcomeGained.length ? `This attempt already awarded ${outcomeGained.join(" and ")}. Progress bars were reset after resolution.` : `This attempt already finished with no gathered material because Node Points were ${lastOutcome.nodeProgress} / ${lastOutcome.nodeTarget}${lastOutcome.luckyTarget ? ` and Lucky Points were ${lastOutcome.luckyProgress} / ${lastOutcome.luckyTarget}` : ""} when it was resolved. Progress bars were reset afterward.` : clearedNode ? `Finishing now awards ${crafting.gatheringYieldQuantity} ${crafting.gatheringYieldName}${clearedLucky ? ` and ${crafting.gatheringLuckyYieldQuantity} ${crafting.gatheringLuckyYieldName}` : ""}.` : "Node Points are not cleared yet. You can still finish, but the base yield will not be awarded.";
+    const afterMessage = hasOutcome ? outcomeDepleted ? "The node lost its final HP and is depleted. Pick a new node to keep gathering." : "The node still has HP. Repeat this node to make another attempt, or pick a new node." : "Finish Attempt consumes 1 node HP, awards any cleared yield tracks, then resets NP/LP for the next attempt.";
+    return `
+        <div class="play-wizard-complete">
+          <div class="play-recipe-selected-summary">
+            <strong>${escapeHtml(resultTitle)}</strong>
+            <span>${escapeHtml(crafting.gatheringNodeName || "Resource Node")}</span>
+            <span>${escapeHtml(hasOutcome ? `Resolved at NP ${lastOutcome.nodeProgress} / ${lastOutcome.nodeTarget} | LP ${lastOutcome.luckyProgress} / ${lastOutcome.luckyTarget} | ${lastOutcome.healthLabel || getGatheringHealthLabel(crafting)} ${lastOutcome.hpAfter} / ${lastOutcome.hpMax}` : `Node Points ${crafting.gatheringNodeProgress} / ${crafting.gatheringNodeTarget} | Lucky Points ${crafting.gatheringLuckyProgress} / ${crafting.gatheringLuckyTarget}`)}</span>
+          </div>
+          <p class="play-recipe-inferred-note">
+            ${escapeHtml(resultMessage)}
+          </p>
+          <p class="play-recipe-inferred-note">${escapeHtml(afterMessage)}</p>
+          <div class="play-wizard-outcome-row">
+            ${hasOutcome ? `<button type="button" class="play-wizard-outcome-success" disabled>Attempt Resolved</button>` : `<button type="button" class="play-wizard-outcome-success" data-crafting-action="gather-finish" ${readiness.canGather && !depleted ? "" : "disabled"}>Finish Attempt</button>`}
+            <button type="button" class="secondary" data-crafting-action="gather-reset" ${hasOutcome ? "disabled" : ""}>Reset Attempt</button>
+          </div>
+          <div class="play-wizard-controls">
+            <button type="button" class="play-wizard-continue" data-gathering-wizard-repeat ${hasOutcome ? outcomeDepleted ? "disabled" : "" : depleted ? "disabled" : ""}>Repeat This Node</button>
+            <button type="button" class="play-wizard-continue" data-gathering-wizard-new-node>Pick A New Node</button>
+          </div>
+        </div>
+      `;
+  }
+  function renderPlayCraftingPanel(forcedActivityMode = "") {
+    const resolvedActivityMode = cleanText(forcedActivityMode) === "gathering" ? "gathering" : "crafting";
+    const crafting = {
+      ...getCraftingTrackerState(),
+      activityMode: resolvedActivityMode
+    };
+    const inventory = getPlayInventoryEntries();
+    const ownedSupport = inventory.filter(isOwnedCraftingSupportItem);
+    const ownedGatheringTools = inventory.filter(isGatheringToolOrGearItem);
+    const isGatheringMode = crafting.activityMode === "gathering";
+    const gatheringTypeConfig = GATHERING_NODE_TYPES[getGatheringNodeTypeKey(crafting.gatheringNodeType)] || GATHERING_NODE_TYPES.mining;
+    const activeRecipe = crafting.selectionMode === "recipe" ? getCraftingRecipeById(crafting.selectedRecipeId) : null;
+    const activeRecipeAvailability = activeRecipe ? getCraftingRecipeAvailability(activeRecipe, inventory, crafting) : null;
+    const activeRecipeRequirementsMet = activeRecipeAvailability ? activeRecipeAvailability.available : true;
+    const activeRecipePointCost = activeRecipe ? Math.max(0, parseNumericCost(activeRecipe.craftingPoints)) : 0;
+    const activeRecipeSpendLabel = activeRecipe ? `${activeRecipe.name}: ${activeRecipePointCost || "No numeric"} points${activeRecipeRequirementsMet ? "" : " | Requirements not met"}` : "Select a recipe";
+    const referenceEntries = lookup.items.entries.filter(isCraftingOrGatheringReference).filter((entry) => !ownedSupport.some((owned) => normalizePhrase(owned.name) === normalizePhrase(entry.name)));
+    const materials = referenceEntries.filter(
+      (entry) => !entry.materialReferenceCard && !entry.generatedMaterial && (includesPhrase(entry.type, "Crafting") || includesPhrase(entry.subType, "Materials") || includesPhrase(entry.name, "Materials") || includesPhrase(entry.name, "Facilities"))
+    );
+    const toolsAndGathering = referenceEntries.filter(
+      (entry) => !materials.includes(entry) && !entry.materialReferenceCard && (includesPhrase(entry.subType, "Tool") || /gather|forag|mining|farming|lumber|core crafting tool/i.test([entry.name, entry.description].join(" ")))
+    ).slice(0, 8);
+    const gatheringToolReferences = lookup.items.entries.filter(isGatheringToolOrGearItem).filter((entry) => !ownedGatheringTools.some((owned) => normalizePhrase(owned.name) === normalizePhrase(entry.name))).slice().sort((left, right) => cleanText(left.name).localeCompare(cleanText(right.name))).slice(0, 12);
+    const skillRows = getSkillRowsData();
+    const craftingSkills = skillRows.filter((skill) => {
+      const definition = SKILL_DEFINITIONS[skill.index - 1];
+      return definition?.group === "crafting" || ["Artifice", "Appraise", "Magic", "Medicine"].some((name) => normalizePhrase(skill.name) === normalizePhrase(name));
+    });
+    const gatheringSkills = skillRows.filter((skill) => {
+      const definition = SKILL_DEFINITIONS[skill.index - 1];
+      return definition?.group === "gathering" || ["Survival", "Perception", "Animal Husbandry"].some((name) => normalizePhrase(skill.name) === normalizePhrase(name));
+    });
+    const discoverySkills = skillRows.filter(
+      (skill) => ["Perception", "Appraise", "Common Knowledge", "Expert Knowledge", "Magic", "Artifice", "Magic Perception", "Insight"].some((name) => normalizePhrase(skill.name) === normalizePhrase(name))
+    );
+    const renderCraftingSkillRows = (rows, emptyText) => rows.length ? rows.map((skill) => {
+      const contextualBonus = getActiveCraftingSkillCheckBonus(skill);
+      const breakdownParts = getSkillBreakdownParts(skill);
+      if (contextualBonus) {
+        breakdownParts.push(`${contextualBonus.label} ${formatModifier(contextualBonus.bonus)}`);
+      }
+      return `
+          <div class="play-skill-mini-row">
+            <div class="play-skill-mini-copy">
+              <strong>${escapeHtml(skill.name)}</strong>
+              <span>${escapeHtml(breakdownParts.join(" | "))}</span>
+            </div>
+            ${renderPlaySkillRollControls(skill, "play-skill-roll", { contextualBonus })}
+          </div>
+        `;
+    }).join("") : `<p class="play-empty">${escapeHtml(emptyText)}</p>`;
+    const workflowStepClass = (step) => !isGatheringMode && step ? " play-workflow-step" : "";
+    const workflowStepBadge = (step) => !isGatheringMode && step ? `<span class="play-workflow-badge" aria-label="${escapeHtml(`Crafting workflow step ${step}`)}">${escapeHtml(String(step))}</span>` : "";
+    const gatheringWorkflowStepClass = (step) => isGatheringMode && step ? " play-workflow-step play-gathering-workflow-step" : "";
+    const gatheringWorkflowStepBadge = (step) => isGatheringMode && step ? `<span class="play-workflow-badge" aria-label="${escapeHtml(`Gathering workflow step ${step}`)}">${escapeHtml(String(step))}</span>` : "";
+    if (!isGatheringMode) {
+      const wizardIndex = getCraftingWizardStepIndex(crafting);
+      const stepMeta = CRAFTING_WIZARD_STEPS[wizardIndex];
+      const stepWarnings = getCraftingWizardStepWarnings(wizardIndex, crafting, inventory);
+      const craftingContinueBlocked = stepMeta.id === "recipe" && crafting.selectionMode === "recipe" && !activeRecipe;
+      let stepContent = "";
+      if (stepMeta.id === "recipe") {
+        stepContent = `
+            ${renderDowntimeRuleGuide("crafting")}
+            <div class="play-wizard-panel">
+              <div>
+                <p class="eyebrow">Recipe / Item</p>
+                <h3>Pick What You Are Crafting</h3>
+              </div>
+              ${renderCraftingRecipeItemPanel(crafting, inventory)}
+            </div>
+          `;
+      } else if (stepMeta.id === "materials") {
+        stepContent = `
+            <div class="play-wizard-two-col">
+              <div class="play-wizard-panel">
+                <div>
+                  <p class="eyebrow">Recipe Material Costs</p>
+                  <h3>Have, Need, Cost, and Purchase</h3>
+                </div>
+                ${renderCraftingRequirementPanel(crafting, inventory)}
+              </div>
+              <div class="play-wizard-panel">
+                <div>
+                  <p class="eyebrow">Recipe Blueprint</p>
+                  <h3>Build Outline</h3>
+                </div>
+                ${renderCraftingBlueprintPanel(crafting, inventory)}
+              </div>
+            </div>
+          `;
+      } else if (stepMeta.id === "support") {
+        stepContent = `
+            <div class="play-wizard-panel">
+              <div>
+                <p class="eyebrow">Session Support</p>
+                <h3>Tool, Facility, and Class</h3>
+              </div>
+              ${renderCraftingSupportPanel(crafting, inventory)}
+            </div>
+            <div class="play-wizard-panel">
+              <details class="play-crafting-collapse">
+                <summary>
+                  <span class="play-crafting-collapse-title">
+                    <span class="eyebrow">Owned Support</span>
+                    <strong>Tools, Materials, and Gathering Gear</strong>
+                  </span>
+                </summary>
+                <div class="play-crafting-collapse-body">
+                  <div class="play-action-stack">
+                    ${ownedSupport.length ? ownedSupport.map((entry) => renderPlayCraftingCard(entry, { badge: entry.equipped ? "Equipped" : "Inventory" })).join("") : `<p class="play-empty">No crafting tools, material bags, or gathering gear are currently in this character's inventory.</p>`}
+                  </div>
+                </div>
+              </details>
+            </div>
+          `;
+      } else if (stepMeta.id === "rolls") {
+        stepContent = `
+            <div class="play-wizard-panel">
+              ${renderCraftingSessionPanel(crafting, {
+          activeRecipe,
+          activeRecipePointCost,
+          activeRecipeSpendLabel,
+          activeRecipeRequirementsMet
+        })}
+            </div>
+            <div class="play-wizard-panel">
+              <div>
+                <p class="eyebrow">Skill Shortcuts</p>
+                <h3>Crafting Checks</h3>
+              </div>
+              <div class="play-skill-mini-list">
+                ${renderCraftingSkillRows(craftingSkills, "No crafting skill rows are available yet.")}
+              </div>
+            </div>
+          `;
+      } else {
+        stepContent = `
+            ${renderCraftingWizardCompleteStep(crafting, inventory)}
+            <div class="play-wizard-panel">
+              <details class="play-crafting-collapse">
+                <summary>
+                  <span class="play-crafting-collapse-title">
+                    <span class="eyebrow">Craft Notes</span>
+                    <strong>Mods, Alloys, and Session Notes</strong>
+                  </span>
+                </summary>
+                <div class="play-crafting-collapse-body">
+                  ${renderCraftingNotesPanel(crafting)}
+                </div>
+              </details>
+            </div>
+          `;
+      }
+      return `
+          <div class="play-crafting-mode-grid is-crafting-mode is-wizard-mode">
+            <section class="play-panel play-crafting-dashboard-panel play-crafting-wide-panel play-wizard-shell">
+              <div>
+                <p class="eyebrow">Crafting Wizard - Step ${wizardIndex + 1} of ${CRAFTING_WIZARD_STEPS.length}</p>
+                <h3>${escapeHtml(stepMeta.title)}</h3>
+                <p class="play-wizard-lead">${escapeHtml(stepMeta.lead)}</p>
+              </div>
+              ${renderCraftingWizardNav(wizardIndex)}
+              ${renderCraftingWizardSummary(crafting, inventory)}
+              ${renderWizardStepCoach(stepMeta, "Crafting", stepWarnings)}
+              <div class="play-wizard-step-body">
+                ${stepContent}
+              </div>
+              <div class="play-wizard-controls">
+                <button type="button" class="secondary" data-crafting-wizard-back ${wizardIndex === 0 ? "disabled" : ""}>${escapeHtml(getWizardBackLabel(CRAFTING_WIZARD_STEPS, wizardIndex))}</button>
+                ${wizardIndex < CRAFTING_WIZARD_STEPS.length - 1 ? `<button type="button" class="play-wizard-continue" data-crafting-wizard-continue ${craftingContinueBlocked ? "disabled" : ""}>${escapeHtml(craftingContinueBlocked ? "Pick a Recipe to Continue" : getWizardContinueLabel(CRAFTING_WIZARD_STEPS, wizardIndex, stepWarnings))}</button>` : ""}
+              </div>
+            </section>
+
+            <section class="play-panel play-crafting-dashboard-panel play-crafting-rules-panel">
+              <details class="play-crafting-collapse">
+                <summary>
+                  <span class="play-crafting-collapse-title">
+                    <span class="eyebrow">Rules Clarification</span>
+                    <strong>Open Questions to Confirm</strong>
+                  </span>
+                </summary>
+                <div class="play-crafting-collapse-body">
+                  ${renderCraftingClarificationPanel(false)}
+                </div>
+              </details>
+            </section>
+
+            <section class="play-panel play-crafting-dashboard-panel play-crafting-rules-panel">
+              <details class="play-crafting-collapse">
+                <summary>
+                  <span class="play-crafting-collapse-title">
+                    <span class="eyebrow">Rules Reference</span>
+                    <strong>Materials, Mods, Facilities, and Tools</strong>
+                  </span>
+                </summary>
+                <div class="play-crafting-collapse-body">
+                  <div class="play-crafting-reference-columns">
+                    <div>
+                      <h4>Materials, Facilities, and Mods</h4>
+                      <div class="play-action-stack">
+                        ${materials.length ? materials.map((entry) => renderPlayCraftingCard(entry, { badge: "Reference", long: true, purchase: false })).join("") : `<p class="play-empty">No crafting material references were found in the loaded rules data.</p>`}
+                      </div>
+                    </div>
+                    <div>
+                      <h4>Related Equipment References</h4>
+                      <div class="play-action-stack">
+                        ${toolsAndGathering.length ? toolsAndGathering.map((entry) => renderPlayCraftingCard(entry, { badge: "Reference", purchase: false })).join("") : `<p class="play-empty">No gathering-specific tool references were found in the loaded rules data.</p>`}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </details>
+            </section>
+          </div>
+        `;
+    }
+    {
+      const gatheringWizardIndex = getGatheringWizardStepIndex(crafting);
+      const gatheringStepMeta = GATHERING_WIZARD_STEPS[gatheringWizardIndex];
+      const gatheringStepWarnings = getGatheringWizardStepWarnings(gatheringWizardIndex, crafting, inventory);
+      const gatheringReadiness = getGatheringReadiness(crafting, inventory);
+      let gatheringStepContent = "";
+      if (gatheringStepMeta.id === "node") {
+        gatheringStepContent = `
+            ${renderDowntimeRuleGuide("gathering")}
+            <div class="play-wizard-panel">
+              <div>
+                <p class="eyebrow">Gathering Node</p>
+                <h3>Pick A Node Type And Template</h3>
+              </div>
+              ${renderGatheringSetupPanel(crafting, inventory)}
+            </div>
+          `;
+      } else if (gatheringStepMeta.id === "readiness") {
+        gatheringStepContent = `
+            <div class="play-wizard-two-col">
+              <div class="play-wizard-panel">
+                <div>
+                  <p class="eyebrow">Readiness</p>
+                  <h3>Tool, Ability, and GM Override</h3>
+                </div>
+                ${renderGatheringReadinessCard(crafting, inventory)}
+                <div class="play-skill-mini-list">
+                  ${renderCraftingSkillRows(discoverySkills, "No discovery skill rows are available yet.")}
+                </div>
+              </div>
+              <div class="play-wizard-panel">
+                <div>
+                  <p class="eyebrow">Resource Node</p>
+                  <h3>${escapeHtml(gatheringTypeConfig.label)} Tracker</h3>
+                </div>
+                ${renderGatheringNodePanel(crafting, inventory)}
+              </div>
+            </div>
+          `;
+      } else if (gatheringStepMeta.id === "strikes") {
+        gatheringStepContent = `
+            <div class="play-wizard-panel">
+              ${renderGatheringSessionPanel(crafting, inventory)}
+            </div>
+            <div class="play-wizard-panel">
+              <div>
+                <p class="eyebrow">Skill Shortcuts</p>
+                <h3>Gathering Checks</h3>
+              </div>
+              <div class="play-skill-mini-list">
+                ${renderCraftingSkillRows(gatheringSkills, "No gathering skill rows are available yet.")}
+              </div>
+            </div>
+          `;
+      } else {
+        gatheringStepContent = `
+            ${renderGatheringWizardFinishStep(crafting, inventory)}
+            <div class="play-wizard-panel">
+              <details class="play-crafting-collapse">
+                <summary>
+                  <span class="play-crafting-collapse-title">
+                    <span class="eyebrow">After Gather</span>
+                    <strong>Carry, Sell, or Convert</strong>
+                  </span>
+                </summary>
+                <div class="play-crafting-collapse-body">
+                  <div class="play-gathering-aftercare">
+                    <div class="play-recipe-selected-summary">
+                      <strong>Raw Material Handling</strong>
+                      <span>Gathered units are added to inventory as raw materials. Save them, sell them, or convert them during Interlude when a rule allows it.</span>
+                    </div>
+                    <div class="play-recipe-selected-summary">
+                      <strong>Iron Example</strong>
+                      <span>500 Iron units can become 1 Iron ingot through Create Ingot during Interlude. Raw material sale guideline: 2 units for 1 Clim.</span>
+                    </div>
+                  </div>
+                </div>
+              </details>
+              <details class="play-crafting-collapse">
+                <summary>
+                  <span class="play-crafting-collapse-title">
+                    <span class="eyebrow">Gathering Tools</span>
+                    <strong>Tools for Gathering</strong>
+                  </span>
+                </summary>
+                <div class="play-crafting-collapse-body">
+                  <div class="play-crafting-reference-columns play-gathering-tools-columns">
+                    <div>
+                      <h4>In Inventory</h4>
+                      <div class="play-action-stack">
+                        ${ownedGatheringTools.length ? ownedGatheringTools.map((entry) => renderPlayCraftingCard(entry, { badge: entry.equipped ? "Equipped" : "Inventory", long: true })).join("") : `<p class="play-empty">No gathering tools or gathering gear are currently in this character's inventory.</p>`}
+                      </div>
+                    </div>
+                    <div>
+                      <h4>Tool References</h4>
+                      <div class="play-action-stack">
+                        ${gatheringToolReferences.length ? gatheringToolReferences.map((entry) => renderPlayCraftingCard(entry, { badge: "Gathering Tool", long: true })).join("") : `<p class="play-empty">No gathering tool references were found in the loaded rules data.</p>`}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </details>
+            </div>
+          `;
+      }
+      return `
+          <div class="play-crafting-mode-grid is-gathering-mode is-wizard-mode">
+            <section class="play-panel play-crafting-dashboard-panel play-crafting-wide-panel play-wizard-shell">
+              <div>
+                <p class="eyebrow">Gathering Wizard - Step ${gatheringWizardIndex + 1} of ${GATHERING_WIZARD_STEPS.length}</p>
+                <h3>${escapeHtml(gatheringStepMeta.title)}</h3>
+                <p class="play-wizard-lead">${escapeHtml(gatheringStepMeta.lead)}</p>
+              </div>
+              ${renderGatheringWizardNav(gatheringWizardIndex)}
+              ${renderGatheringWizardSummary(crafting, gatheringReadiness)}
+              ${renderWizardStepCoach(gatheringStepMeta, "Gathering", gatheringStepWarnings)}
+              <div class="play-wizard-step-body">
+                ${gatheringStepContent}
+              </div>
+              <div class="play-wizard-controls">
+                <button type="button" class="secondary" data-gathering-wizard-back ${gatheringWizardIndex === 0 ? "disabled" : ""}>${escapeHtml(getWizardBackLabel(GATHERING_WIZARD_STEPS, gatheringWizardIndex))}</button>
+                ${gatheringWizardIndex < GATHERING_WIZARD_STEPS.length - 1 ? `<button type="button" class="play-wizard-continue" data-gathering-wizard-continue>${escapeHtml(getWizardContinueLabel(GATHERING_WIZARD_STEPS, gatheringWizardIndex, gatheringStepWarnings))}</button>` : ""}
+              </div>
+            </section>
+          </div>
+        `;
+    }
   }
   function renderPlayInventoryPanel(funds) {
     const inventory = getPlayInventoryEntries();
@@ -11722,36 +16039,16 @@ ${message}`);
       return {
         name,
         source: "Inventory",
-        summary: "Gain 1 RP and increase max RP by 1 until the encounter ends.",
-        duration: "Until end of encounter",
-        rules: {
-          id: "inventory-bear-elixir",
-          sourceType: "inventory",
-          detailLines: ["Gain 1 RP and increase maximum RP by 1 until the encounter ends."],
-          automationLines: ["RP max is increased by 1 while this chip remains active. One current RP is granted when the chip is first applied."],
-          modifiers: { rpMax: 1 },
-          resourceGrant: { rpCurrent: 1 }
-        }
+        summary: "Gain 1 RP and increase max RP by 1 until the encounter ends. RP gain is tracked; max RP is still a manual adjustment.",
+        duration: "Until end of encounter"
       };
     }
     if (/axolotl elixir/.test(normalizedName)) {
-      const toughness = getCurrentToughnessValue();
       return {
         name,
         source: "Inventory",
-        summary: `At the start of each turn, regain HP equal to Toughness (${toughness}). Clear this if the encounter ends or the initial true damage dropped HP to 0.`,
-        duration: "Until end of encounter",
-        rules: {
-          id: "inventory-axolotl-elixir",
-          sourceType: "inventory",
-          detailLines: [
-            "At the start of each turn, regain HP equal to Toughness.",
-            `This sheet used the current character's Toughness: Toughness ${toughness} = ${toughness} HP.`
-          ],
-          automationLines: [`Resolved healing reminder: ${toughness} HP at the start of your turn.`],
-          modifiers: {},
-          resourceGrant: {}
-        }
+        summary: "At the start of each turn, regain HP equal to Toughness. Clear this if the encounter ends or the initial true damage dropped HP to 0.",
+        duration: "Until end of encounter"
       };
     }
     if (/\belixir\b/.test(normalizedName) && /\buntil (?:the )?(?:end of )?(?:combat|encounter)\b/.test(normalizedText)) {
@@ -11960,6 +16257,13 @@ ${secondaryStatText}`),
     state.builder.autoExpBank = expWasAuto ? String(nextExp) : "";
     state.builder.autoSpiritCore = spiritWasAuto ? String(nextSpirit) : "";
   }
+  function applyBreakthroughExpDelta(beforeBudget, beforeClassBudget = getClassUnlockBudgetState()) {
+    const afterBudget = getBreakthroughBudgetState();
+    const delta = Math.floor(toNumber(afterBudget.generalSpent, 0) - toNumber(beforeBudget?.generalSpent, 0));
+    if (delta) {
+      applyClassExpDelta(delta, beforeClassBudget);
+    }
+  }
   function syncClassSelectionsToFields() {
     CLASS_ROWS.forEach((row) => {
       updateFieldValue(`Class${row}`, "");
@@ -11976,7 +16280,8 @@ ${secondaryStatText}`),
       updateFieldValue(`Cost${row}`, String(progressEntry.cost));
     });
     const budget = getClassUnlockBudgetState();
-    const nextSpiritCore = String(budget.spentExp);
+    const breakthroughBudget = getBreakthroughBudgetState();
+    const nextSpiritCore = String(budget.spentExp + breakthroughBudget.generalSpent);
     const currentSpiritCore = cleanText(state.fields["Spirit Core"]);
     if (!currentSpiritCore || currentSpiritCore === cleanText(state.builder.autoSpiritCore)) {
       updateFieldValue("Spirit Core", nextSpiritCore);
@@ -12200,7 +16505,7 @@ ${secondaryStatText}`),
     }
     return BUILDER_STEPS.length - 1;
   }
-  function setMode2(mode) {
+  function setMode(mode) {
     state.ui.mode = mode;
     updateModeVisibility();
     if (mode === "sheet") {
@@ -12701,19 +17006,23 @@ ${secondaryStatText}`),
     const cost = Math.max(0, parseNumericCost(entry.cost));
     const overBudget = cost > budget.remaining;
     const locked = !requirementStatus.met || overBudget || !availableOptions.length;
-    const note = !requirementStatus.met ? `Prerequisites not met. ${requirementStatus.reasons.join(" ")}` : overBudget ? `Unavailable: costs ${cost} breakthrough EXP, but only ${budget.remaining} remains.` : !availableOptions.length ? "Every available element has already been chosen." : "Choose an element, then add this breakthrough purchase.";
+    const expanded = state.builder.inspected.breakthrough === entry.id || selectedElements.length > 0 || !locked;
+    const note = !requirementStatus.met ? `Prerequisites not met. ${requirementStatus.reasons.join(" ")}` : overBudget ? `Unavailable: costs ${cost} EXP, but only ${budget.remaining} remains across creation breakthrough EXP and normal XP.` : !availableOptions.length ? "Every available element has already been chosen." : "Choose an element, then add this breakthrough purchase.";
     const statusText = selectedElements.length ? `Selected x${selectedElements.length}` : locked ? "Locked" : "";
     const cardClasses = [
       "builder-option-card",
       "breakthrough-option-card",
       "builder-elemental-affinity-card",
+      expanded ? "is-expanded" : "is-compact",
       selectedElements.length ? "selected" : "",
       locked ? "locked" : ""
     ].filter(Boolean).join(" ");
     const selectId = "elemental-affinity-pick";
+    const wrapperOpen = expanded ? `<div class="builder-equipment-inspect">` : `<button type="button" class="builder-equipment-inspect" data-builder-action="inspect-breakthrough" data-id="${escapeHtml(entry.id)}">`;
+    const wrapperClose = expanded ? "</div>" : "</button>";
     return `
         <div class="${cardClasses}">
-          <div class="builder-equipment-inspect">
+          ${wrapperOpen}
             ${entry.imageSmUrl || entry.imageLgUrl ? `<img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl)}" alt="${escapeHtml(entry.name)}">` : renderBreakthroughArt(entry)}
             <div class="builder-option-copy">
               <div class="builder-option-header">
@@ -12722,8 +17031,8 @@ ${secondaryStatText}`),
               </div>
               ${renderCardMeta([entry.cost ? `Cost ${entry.cost}` : "", entry.requirements].filter(Boolean))}
               <p>${escapeHtml(cleanText(entry.description).slice(0, 180))}</p>
-              ${note ? `<p class="builder-option-note">${escapeHtml(note)}</p>` : ""}
-              ${selectedElements.length ? `
+              ${expanded && note ? `<p class="builder-option-note">${escapeHtml(note)}</p>` : ""}
+              ${expanded && selectedElements.length ? `
                 <div class="selected-chip-list">
                   ${selectedElements.map((element) => `
                     <span class="selected-chip">
@@ -12733,7 +17042,7 @@ ${secondaryStatText}`),
                   `).join("")}
                 </div>
               ` : ""}
-              <div class="builder-inline-action-row">
+              ${expanded ? `<div class="builder-inline-action-row">
                 <label class="builder-filter-field" for="${selectId}">
                   <span>Element</span>
                   <select id="${selectId}" class="builder-inline-input" data-elemental-affinity-select ${availableOptions.length ? "" : "disabled"}>
@@ -12742,9 +17051,9 @@ ${secondaryStatText}`),
                   </select>
                 </label>
                 <button type="button" data-builder-action="add-elemental-affinity" data-id="${escapeHtml(entry.id)}" ${locked ? "disabled" : ""}>Add Elemental Affinity</button>
-              </div>
+              </div>` : ""}
             </div>
-          </div>
+          ${wrapperClose}
         </div>
       `;
   }
@@ -12755,19 +17064,23 @@ ${secondaryStatText}`),
     const cost = Math.max(0, parseNumericCost(entry.cost));
     const overBudget = cost > budget.remaining;
     const locked = !requirementStatus.met || overBudget || !availableOptions.length && !config.allowCustom;
-    const note = !requirementStatus.met ? `Prerequisites not met. ${requirementStatus.reasons.join(" ")}` : overBudget ? `Unavailable: costs ${cost} breakthrough EXP, but only ${budget.remaining} remains.` : !availableOptions.length && !config.allowCustom ? "Every available option has already been chosen." : "Choose an option, then add this breakthrough purchase.";
+    const expanded = state.builder.inspected.breakthrough === entry.id || selectedChoices.length > 0 || !locked;
+    const note = !requirementStatus.met ? `Prerequisites not met. ${requirementStatus.reasons.join(" ")}` : overBudget ? `Unavailable: costs ${cost} EXP, but only ${budget.remaining} remains across creation breakthrough EXP and normal XP.` : !availableOptions.length && !config.allowCustom ? "Every available option has already been chosen." : "Choose an option, then add this breakthrough purchase.";
     const statusText = selectedChoices.length ? `Selected x${selectedChoices.length}` : locked ? "Locked" : "";
     const cardClasses = [
       "builder-option-card",
       "breakthrough-option-card",
       "builder-repeatable-choice-card",
+      expanded ? "is-expanded" : "is-compact",
       selectedChoices.length ? "selected" : "",
       locked ? "locked" : ""
     ].filter(Boolean).join(" ");
     const selectId = `${entry.id}-repeatable-pick`;
+    const wrapperOpen = expanded ? `<div class="builder-equipment-inspect">` : `<button type="button" class="builder-equipment-inspect" data-builder-action="inspect-breakthrough" data-id="${escapeHtml(entry.id)}">`;
+    const wrapperClose = expanded ? "</div>" : "</button>";
     return `
         <div class="${cardClasses}">
-          <div class="builder-equipment-inspect">
+          ${wrapperOpen}
             ${entry.imageSmUrl || entry.imageLgUrl ? `<img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl)}" alt="${escapeHtml(entry.name)}">` : renderBreakthroughArt(entry)}
             <div class="builder-option-copy">
               <div class="builder-option-header">
@@ -12776,8 +17089,8 @@ ${secondaryStatText}`),
               </div>
               ${renderCardMeta([entry.cost ? `Cost ${entry.cost}` : "", entry.requirements].filter(Boolean))}
               <p>${escapeHtml(cleanText(entry.description).slice(0, 180))}</p>
-              ${note ? `<p class="builder-option-note">${escapeHtml(note)}</p>` : ""}
-              ${selectedChoices.length ? `
+              ${expanded && note ? `<p class="builder-option-note">${escapeHtml(note)}</p>` : ""}
+              ${expanded && selectedChoices.length ? `
                 <div class="selected-chip-list">
                   ${selectedChoices.map((choice) => `
                     <span class="selected-chip">
@@ -12787,7 +17100,7 @@ ${secondaryStatText}`),
                   `).join("")}
                 </div>
               ` : ""}
-              <div class="builder-inline-action-row">
+              ${expanded ? `<div class="builder-inline-action-row">
                 <label class="builder-filter-field" for="${selectId}">
                   <span>${escapeHtml(config.selectLabel)}</span>
                   <select id="${selectId}" class="builder-inline-input" data-repeatable-breakthrough-select ${availableOptions.length || config.allowCustom ? "" : "disabled"}>
@@ -12803,9 +17116,9 @@ ${secondaryStatText}`),
                   </label>
                 ` : ""}
                 <button type="button" data-builder-action="add-repeatable-breakthrough-choice" data-id="${escapeHtml(entry.id)}" ${locked ? "disabled" : ""}>${escapeHtml(config.addLabel || `Add ${entry.name}`)}</button>
-              </div>
+              </div>` : ""}
             </div>
-          </div>
+          ${wrapperClose}
         </div>
       `;
   }
@@ -12814,17 +17127,21 @@ ${secondaryStatText}`),
     const cost = Math.max(0, parseNumericCost(entry.cost));
     const overBudget = cost > budget.remaining;
     const locked = !requirementStatus.met || overBudget;
-    const note = !requirementStatus.met ? `Prerequisites not met. ${requirementStatus.reasons.join(" ")}` : overBudget ? `Unavailable: costs ${cost} breakthrough EXP, but only ${budget.remaining} remains.` : "Add another purchase of this repeatable breakthrough.";
+    const expanded = state.builder.inspected.breakthrough === entry.id || count > 0 || !locked;
+    const note = !requirementStatus.met ? `Prerequisites not met. ${requirementStatus.reasons.join(" ")}` : overBudget ? `Unavailable: costs ${cost} EXP, but only ${budget.remaining} remains across creation breakthrough EXP and normal XP.` : "Add another purchase of this repeatable breakthrough.";
     const cardClasses = [
       "builder-option-card",
       "breakthrough-option-card",
       "builder-repeatable-choice-card",
+      expanded ? "is-expanded" : "is-compact",
       count ? "selected" : "",
       locked && !count ? "locked" : ""
     ].filter(Boolean).join(" ");
+    const wrapperOpen = expanded ? `<div class="builder-equipment-inspect">` : `<button type="button" class="builder-equipment-inspect" data-builder-action="inspect-breakthrough" data-id="${escapeHtml(entry.id)}">`;
+    const wrapperClose = expanded ? "</div>" : "</button>";
     return `
         <div class="${cardClasses}">
-          <div class="builder-equipment-inspect">
+          ${wrapperOpen}
             ${entry.imageSmUrl || entry.imageLgUrl ? `<img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl)}" alt="${escapeHtml(entry.name)}">` : renderBreakthroughArt(entry)}
             <div class="builder-option-copy">
               <div class="builder-option-header">
@@ -12833,13 +17150,13 @@ ${secondaryStatText}`),
               </div>
               ${renderCardMeta([entry.cost ? `Cost ${entry.cost}` : "", entry.requirements].filter(Boolean))}
               <p>${escapeHtml(cleanText(entry.description).slice(0, 180))}</p>
-              ${note ? `<p class="builder-option-note">${escapeHtml(note)}</p>` : ""}
-              <div class="builder-inline-action-row">
+              ${expanded && note ? `<p class="builder-option-note">${escapeHtml(note)}</p>` : ""}
+              ${expanded ? `<div class="builder-inline-action-row">
                 <button type="button" data-builder-action="remove-stackable-breakthrough" data-id="${escapeHtml(entry.id)}" ${count ? "" : "disabled"}>Remove One</button>
                 <button type="button" data-builder-action="add-stackable-breakthrough" data-id="${escapeHtml(entry.id)}" ${locked ? "disabled" : ""}>Add ${escapeHtml(entry.name)}</button>
-              </div>
+              </div>` : ""}
             </div>
-          </div>
+          ${wrapperClose}
         </div>
       `;
   }
@@ -13111,8 +17428,9 @@ ${secondaryStatText}`),
             <p>Only breakthroughs that fit the current race, ancestry, and already-selected prerequisite breakthroughs are shown here.</p>
           </div>
           <div class="selected-chip-list">
-            <span class="selected-chip">Breakthrough EXP: ${budget.spent} / ${budget.budget}</span>
-            <span class="selected-chip">Remaining: ${budget.remaining}</span>
+            <span class="selected-chip">Creation Breakthrough EXP: ${budget.creationSpent} / ${budget.budget}</span>
+            <span class="selected-chip">Normal XP Spent: ${budget.generalSpent}</span>
+            <span class="selected-chip">Available: ${budget.remaining}</span>
             <span class="selected-chip">Remaining Clim: ${funds.availableClim}</span>
           </div>
           ${renderBuilderChoiceSection("breakthroughs", "Breakthrough Choices")}
@@ -13143,9 +17461,10 @@ ${secondaryStatText}`),
       const requirementStatus = getBreakthroughRequirementStatus(entry, selectedIds);
       const cost = Math.max(0, parseNumericCost(entry.cost));
       const overBudget = !selected && cost > budget.remaining;
-      const locked = !selected && (!requirementStatus.met || overBudget);
-      const note = !requirementStatus.met ? `Prerequisites not met. ${requirementStatus.reasons.join(" ")}` : overBudget ? `Unavailable: costs ${cost} breakthrough EXP, but only ${budget.remaining} remains.` : "";
-      const statusText = selected ? "Selected" : !requirementStatus.met ? "Prerequisites not met" : overBudget ? "Not enough EXP" : "";
+      const needsGmApproval = !selected && !requirementStatus.met && requirementStatus.manualOnly;
+      const locked = !selected && (!requirementStatus.met || overBudget) && !needsGmApproval;
+      const note = needsGmApproval ? `Needs manual confirmation: ${requirementStatus.manualLabels.join(", ") || "GM Approval"}. Click to record the GM's approval and add it.` : !requirementStatus.met ? `Prerequisites not met. ${requirementStatus.reasons.join(" ")}` : overBudget ? `Unavailable: costs ${cost} EXP, but only ${budget.remaining} remains across creation breakthrough EXP and normal XP.` : selected && requirementStatus.gmApproved ? "Added with recorded GM approval." : "";
+      const statusText = selected ? requirementStatus.gmApproved ? "Selected (GM approved)" : "Selected" : needsGmApproval ? "GM approval needed" : !requirementStatus.met ? "Prerequisites not met" : overBudget ? "Not enough EXP" : "";
       return renderOptionCard({
         id: entry.id,
         mediaHtml: entry.imageSmUrl || entry.imageLgUrl ? `<img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl)}" alt="${escapeHtml(entry.name)}">` : renderBreakthroughArt(entry),
@@ -13844,24 +18163,60 @@ ${secondaryStatText}`),
       addStackableBreakthroughPurchase(id);
       return;
     }
-    const requirementStatus = getBreakthroughRequirementStatus(record);
+    let requirementStatus = getBreakthroughRequirementStatus(record);
+    if (!alreadySelected && !requirementStatus.met && requirementStatus.manualOnly && record) {
+      const approvalLabels = requirementStatus.manualLabels.join(", ") || "GM Approval";
+      const confirmed = window.confirm(
+        `${record.name} needs manual confirmation: ${approvalLabels}.
+
+The app cannot verify this requirement. Has the GM approved it for this character?`
+      );
+      if (!confirmed) {
+        setStatus(`${record.name} was not added. It still needs manual confirmation: ${approvalLabels}.`);
+        renderBuilder();
+        return;
+      }
+      if (!Array.isArray(state.builder.gmApprovedBreakthroughIds)) {
+        state.builder.gmApprovedBreakthroughIds = [];
+      }
+      state.builder.gmApprovedBreakthroughIds.push(record.id);
+      requirementStatus = getBreakthroughRequirementStatus(record);
+    }
     if (!alreadySelected && !requirementStatus.met) {
       setStatus(`Cannot select ${record?.name || "that breakthrough"} yet. ${requirementStatus.reasons.join(" ")}`);
       renderBuilder();
       return;
     }
+    if (alreadySelected && record && Array.isArray(state.builder.gmApprovedBreakthroughIds)) {
+      state.builder.gmApprovedBreakthroughIds = state.builder.gmApprovedBreakthroughIds.filter((entryId) => entryId !== record.id);
+    }
     if (!alreadySelected && record) {
       const budget = getBreakthroughBudgetState();
       const nextCost = Math.max(0, parseNumericCost(record.cost));
       if (nextCost > budget.remaining) {
-        setStatus(`${record.name} costs ${nextCost} breakthrough EXP, but only ${budget.remaining} remains in the creation pool.`);
+        if (Array.isArray(state.builder.gmApprovedBreakthroughIds)) {
+          state.builder.gmApprovedBreakthroughIds = state.builder.gmApprovedBreakthroughIds.filter((entryId) => entryId !== record.id);
+        }
+        setStatus(`${record.name} costs ${nextCost} EXP, but only ${budget.remaining} remains across creation breakthrough EXP and normal XP.`);
         renderBuilder();
         return;
       }
     }
+    const beforeBudget = getBreakthroughBudgetState();
+    const beforeClassBudget = getClassUnlockBudgetState();
     toggleSelection("selectedBreakthroughIds", id, 0, "breakthrough");
+    applyBreakthroughExpDelta(beforeBudget, beforeClassBudget);
     syncBuilderSelectionsIntoSheet2();
     setStatus("Updated breakthrough selections.");
+    renderBuilder();
+  }
+  function inspectBuilderBreakthrough(id) {
+    const record = lookup.breakthroughs.resolve(id);
+    if (!record) {
+      return;
+    }
+    state.builder.inspected.breakthrough = record.id;
+    setStatus(`Viewing ${record.name}.`);
     renderBuilder();
   }
   function addElementalAffinitySelection(elementValue) {
@@ -13888,11 +18243,13 @@ ${secondaryStatText}`),
     const nextCost = Math.max(0, parseNumericCost(record.cost));
     const budget = getBreakthroughBudgetState();
     if (nextCost > budget.remaining) {
-      setStatus(`${record.name} costs ${nextCost} breakthrough EXP, but only ${budget.remaining} remains in the creation pool.`);
+      setStatus(`${record.name} costs ${nextCost} EXP, but only ${budget.remaining} remains across creation breakthrough EXP and normal XP.`);
       renderBuilder();
       return;
     }
+    const beforeClassBudget = getClassUnlockBudgetState();
     setSelectedElementalAffinityElements([...selected, element]);
+    applyBreakthroughExpDelta(budget, beforeClassBudget);
     syncBuilderSelectionsIntoSheet2();
     setStatus(`Added Elemental Affinity: ${element}.`);
     renderBuilder();
@@ -13903,8 +18260,11 @@ ${secondaryStatText}`),
       return;
     }
     const removeKey = getElementalMasteryCanonicalKey(element);
+    const beforeBudget = getBreakthroughBudgetState();
+    const beforeClassBudget = getClassUnlockBudgetState();
     const nextElements = getSelectedElementalAffinityElements().filter((entry) => getElementalMasteryCanonicalKey(entry) !== removeKey);
     setSelectedElementalAffinityElements(nextElements);
+    applyBreakthroughExpDelta(beforeBudget, beforeClassBudget);
     syncBuilderSelectionsIntoSheet2();
     setStatus(`Removed Elemental Affinity: ${element}.`);
     renderBuilder();
@@ -13938,11 +18298,13 @@ ${secondaryStatText}`),
     const nextCost = Math.max(0, parseNumericCost(record.cost));
     const budget = getBreakthroughBudgetState();
     if (nextCost > budget.remaining) {
-      setStatus(`${record.name} costs ${nextCost} breakthrough EXP, but only ${budget.remaining} remains in the creation pool.`);
+      setStatus(`${record.name} costs ${nextCost} EXP, but only ${budget.remaining} remains across creation breakthrough EXP and normal XP.`);
       renderBuilder();
       return;
     }
+    const beforeClassBudget = getClassUnlockBudgetState();
     setSelectedRepeatableBreakthroughChoices(config, [...selected, value]);
+    applyBreakthroughExpDelta(budget, beforeClassBudget);
     syncBuilderSelectionsIntoSheet2();
     setStatus(`Added ${record.name}: ${value}.`);
     renderBuilder();
@@ -13954,8 +18316,11 @@ ${secondaryStatText}`),
       return;
     }
     const removeKey = normalizePhrase(value);
+    const beforeBudget = getBreakthroughBudgetState();
+    const beforeClassBudget = getClassUnlockBudgetState();
     const nextChoices = getSelectedRepeatableBreakthroughChoices(config).filter((entry) => normalizePhrase(entry) !== removeKey);
     setSelectedRepeatableBreakthroughChoices(config, nextChoices);
+    applyBreakthroughExpDelta(beforeBudget, beforeClassBudget);
     syncBuilderSelectionsIntoSheet2();
     setStatus(`Removed ${record.name}: ${value}.`);
     renderBuilder();
@@ -13975,11 +18340,13 @@ ${secondaryStatText}`),
     const nextCost = Math.max(0, parseNumericCost(record.cost));
     const budget = getBreakthroughBudgetState();
     if (nextCost > budget.remaining) {
-      setStatus(`${record.name} costs ${nextCost} breakthrough EXP, but only ${budget.remaining} remains in the creation pool.`);
+      setStatus(`${record.name} costs ${nextCost} EXP, but only ${budget.remaining} remains across creation breakthrough EXP and normal XP.`);
       renderBuilder();
       return;
     }
+    const beforeClassBudget = getClassUnlockBudgetState();
     state.builder.selectedBreakthroughIds = [...state.builder.selectedBreakthroughIds || [], record.id];
+    applyBreakthroughExpDelta(budget, beforeClassBudget);
     syncBuilderSelectionsIntoSheet2();
     setStatus(`Added ${record.name}.`);
     renderBuilder();
@@ -13993,7 +18360,10 @@ ${secondaryStatText}`),
     if (index < 0) {
       return;
     }
+    const beforeBudget = getBreakthroughBudgetState();
+    const beforeClassBudget = getClassUnlockBudgetState();
     state.builder.selectedBreakthroughIds.splice(index, 1);
+    applyBreakthroughExpDelta(beforeBudget, beforeClassBudget);
     clearIrrelevantBuilderChoices();
     syncBuilderSelectionsIntoSheet2();
     setStatus(`Removed one ${record.name}.`);
@@ -14192,6 +18562,9 @@ ${secondaryStatText}`),
     const builder = snapshot.builder || {};
     const searches = builder.searches || {};
     return removeEmptyExportValues({
+      ui: {
+        gameVersion: snapshot.ui?.gameVersion || ""
+      },
       fields: snapshot.fields || {},
       abilitySelections: snapshot.abilitySelections || {},
       builder: {
@@ -14202,6 +18575,7 @@ ${secondaryStatText}`),
         selectedItemIds: builder.selectedItemIds || [],
         itemQuantities: builder.itemQuantities || {},
         selectedBreakthroughIds: builder.selectedBreakthroughIds || [],
+        gmApprovedBreakthroughIds: builder.gmApprovedBreakthroughIds || [],
         importedFinalStats: Boolean(builder.importedFinalStats),
         skillExpertiseEntries: builder.skillExpertiseEntries || [],
         choiceSelections: builder.choiceSelections || {},
@@ -15476,6 +19850,8 @@ ${secondaryStatText}`),
         setBuilderAncestry(id);
       } else if (action === "toggle-breakthrough") {
         toggleBuilderBreakthrough(id);
+      } else if (action === "inspect-breakthrough") {
+        inspectBuilderBreakthrough(id);
       } else if (action === "add-elemental-affinity") {
         const card = trigger.closest(".builder-elemental-affinity-card");
         const select = card?.querySelector("[data-elemental-affinity-select]");
@@ -15664,7 +20040,7 @@ ${secondaryStatText}`),
       renderBuilderStepContent();
     });
     document.getElementById("return-to-builder").addEventListener("click", () => {
-      setMode2("builder");
+      setMode("builder");
       setStatus("Returned to the builder.");
     });
     document.getElementById("play-resource-grid").addEventListener("input", (event) => {
@@ -15839,6 +20215,11 @@ ${secondaryStatText}`),
       renderPlayReferenceDetail();
     });
     document.getElementById("play-header-card").addEventListener("click", (event) => {
+      const modeButton = event.target.closest("[data-play-mode]");
+      if (modeButton) {
+        setPlayMode(modeButton.dataset.playMode);
+        return;
+      }
       const classReferenceButton = event.target.closest("[data-play-class-reference]");
       if (!classReferenceButton) {
         return;
@@ -15862,8 +20243,67 @@ ${secondaryStatText}`),
     document.getElementById("play-skills").addEventListener("click", (event) => {
       handlePlaySkillRollClick(event);
     });
-    document.getElementById("play-crafting").addEventListener("click", (event) => {
+    const handlePlayCraftingPanelClick = (event) => {
       if (handlePlaySkillRollClick(event)) {
+        return;
+      }
+      const guideModeButton = event.target.closest("[data-downtime-guide-mode]");
+      if (guideModeButton) {
+        const guidePanel = guideModeButton.closest(".play-crafting-guide-panel");
+        const mode = guideModeButton.dataset.downtimeGuideMode;
+        if (guidePanel && mode) {
+          guidePanel.querySelectorAll("[data-downtime-guide-mode]").forEach((button) => {
+            const active = button.dataset.downtimeGuideMode === mode;
+            button.classList.toggle("is-active", active);
+            button.setAttribute("aria-pressed", active ? "true" : "false");
+          });
+          guidePanel.querySelectorAll("[data-downtime-guide-section]").forEach((section) => {
+            section.classList.toggle("is-active", section.dataset.downtimeGuideSection === mode);
+          });
+        }
+        return;
+      }
+      const activityModeButton = event.target.closest("[data-crafting-activity-mode]");
+      if (activityModeButton) {
+        setCraftingActivityMode(activityModeButton.dataset.craftingActivityMode);
+        return;
+      }
+      const gatheringNodeTypeButton = event.target.closest("[data-gathering-node-type]");
+      if (gatheringNodeTypeButton) {
+        setGatheringNodeType(gatheringNodeTypeButton.dataset.gatheringNodeType);
+        return;
+      }
+      const gatheringResourceButton = event.target.closest("[data-gathering-resource]");
+      if (gatheringResourceButton) {
+        loadGatheringResourceDraft(
+          gatheringResourceButton.dataset.gatheringResource,
+          gatheringResourceButton.dataset.gatheringResourceType
+        );
+        return;
+      }
+      const modeButton = event.target.closest("[data-crafting-selection-mode]");
+      if (modeButton) {
+        setCraftingSelectionMode(modeButton.dataset.craftingSelectionMode);
+        return;
+      }
+      const categoryButton = event.target.closest("[data-crafting-recipe-category]");
+      if (categoryButton) {
+        setCraftingRecipeCategory(categoryButton.dataset.craftingRecipeCategory);
+        return;
+      }
+      const subcategoryButton = event.target.closest("[data-crafting-recipe-subcategory]");
+      if (subcategoryButton) {
+        setCraftingRecipeSubcategory(subcategoryButton.dataset.craftingRecipeSubcategory);
+        return;
+      }
+      const recipeButton = event.target.closest("[data-crafting-select-recipe]");
+      if (recipeButton) {
+        selectCraftingRecipe(recipeButton.dataset.craftingSelectRecipe);
+        return;
+      }
+      const requirementPurchaseButton = event.target.closest("[data-crafting-purchase-requirement]");
+      if (requirementPurchaseButton) {
+        purchaseCraftingRequirement(requirementPurchaseButton.dataset.craftingPurchaseRequirement);
         return;
       }
       const purchaseButton = event.target.closest("[data-crafting-purchase-item]");
@@ -15871,29 +20311,148 @@ ${secondaryStatText}`),
         addOfficialInventoryItem(purchaseButton.dataset.craftingPurchaseItem, { confirmPurchase: true });
         return;
       }
+      const facilityLevelButton = event.target.closest("[data-crafting-facility-level]");
+      if (facilityLevelButton) {
+        setCraftingFacilityLevel(facilityLevelButton.dataset.craftingFacilityLevel);
+        return;
+      }
+      const wizardGotoButton = event.target.closest("[data-crafting-wizard-goto]");
+      if (wizardGotoButton) {
+        setCraftingWizardStep(wizardGotoButton.dataset.craftingWizardGoto);
+        return;
+      }
+      const wizardContinueButton = event.target.closest("[data-crafting-wizard-continue]");
+      if (wizardContinueButton) {
+        continueCraftingWizard();
+        return;
+      }
+      const wizardBackButton = event.target.closest("[data-crafting-wizard-back]");
+      if (wizardBackButton) {
+        setCraftingWizardStep(getCraftingWizardStepIndex() - 1);
+        return;
+      }
+      const gatheringWizardGotoButton = event.target.closest("[data-gathering-wizard-goto]");
+      if (gatheringWizardGotoButton) {
+        setGatheringWizardStep(gatheringWizardGotoButton.dataset.gatheringWizardGoto);
+        return;
+      }
+      const gatheringWizardContinueButton = event.target.closest("[data-gathering-wizard-continue]");
+      if (gatheringWizardContinueButton) {
+        continueGatheringWizard();
+        return;
+      }
+      const gatheringWizardBackButton = event.target.closest("[data-gathering-wizard-back]");
+      if (gatheringWizardBackButton) {
+        setGatheringWizardStep(getGatheringWizardStepIndex() - 1);
+        return;
+      }
+      const gatheringWizardRepeatButton = event.target.closest("[data-gathering-wizard-repeat]");
+      if (gatheringWizardRepeatButton) {
+        resetGatheringAttempt();
+        setGatheringWizardStep(2, { status: false });
+        setStatus("Reset the current gathering attempt. Ready for another round of strikes.");
+        return;
+      }
+      const gatheringWizardNewNodeButton = event.target.closest("[data-gathering-wizard-new-node]");
+      if (gatheringWizardNewNodeButton) {
+        setGatheringWizardStep(0);
+        return;
+      }
       const actionButton = event.target.closest("[data-crafting-action]");
       if (!actionButton) {
         return;
       }
       const action = actionButton.dataset.craftingAction;
+      if (action === "craft-success") {
+        resolveCraftOutcome(true);
+        return;
+      }
+      if (action === "craft-failure") {
+        resolveCraftOutcome(false);
+        return;
+      }
+      if (action === "craft-undo") {
+        undoLastCraftOutcome();
+        return;
+      }
+      const gatheringActionKey = GATHERING_ACTION_BY_CRAFTING_ACTION[action];
+      if (gatheringActionKey && action !== "gather-finish" && action !== "gather-reset") {
+        setGatheringActiveAction(gatheringActionKey, { render: true });
+      }
       if (action === "roll-die") {
         rollCraftingDie();
       } else if (action === "add-points") {
         addCraftingPoints();
       } else if (action === "spend-points") {
         spendCraftingPoints("spend");
+      } else if (action === "spend-recipe") {
+        spendSelectedRecipePoints();
+      } else if (action === "facility-fill-uses") {
+        setFacilityUsesFromLevel();
+      } else if (action === "facility-spend-use") {
+        spendFacilityUse();
       } else if (action === "refund-points") {
         spendCraftingPoints("refund");
       } else if (action === "reset-session") {
         resetCraftingSession();
+      } else if (action === "load-dark-iron-outcrop") {
+        loadGatheringTemplate("dark-iron-outcrop");
+      } else if (action === "gather-basic") {
+        rollGatheringStrike("basic");
+      } else if (action === "gather-lucky") {
+        rollGatheringStrike("lucky");
+      } else if (action === "gather-power-rock") {
+        rollGatheringAbility("power-rock");
+      } else if (action === "gather-efficient") {
+        rollGatheringAbility("efficient");
+      } else if (action === "gather-verdant") {
+        rollGatheringAbility("verdant");
+      } else if (action === "gather-petalfall") {
+        rollGatheringAbility("petalfall");
+      } else if (action === "gather-focused-node") {
+        rollGatheringAbility("focused-node");
+      } else if (action === "gather-focused-lucky") {
+        rollGatheringAbility("focused-lucky");
+      } else if (action === "gather-take-easy") {
+        useTakeItEasyGathering();
+      } else if (action === "gather-finish") {
+        finishGatheringAttempt();
+      } else if (action === "gather-reset") {
+        resetGatheringAttempt();
       }
-    });
-    document.getElementById("play-crafting").addEventListener("input", (event) => {
+    };
+    const handlePlayCraftingPanelInput = (event) => {
+      if (event.target.dataset.craftingRequirementCustomCost) {
+        setCraftingRequirementCustomCost(event.target.dataset.craftingRequirementCustomCost, event.target.value);
+        return;
+      }
       const fieldName = event.target.dataset.craftingField;
       if (!fieldName) {
         return;
       }
       setCraftingField(fieldName, event.target.value);
+    };
+    const handlePlayCraftingPanelChange = (event) => {
+      if (event.target.dataset.gatheringGmOverride !== void 0) {
+        state.play = mergePlayState(state.play);
+        state.play.crafting.gatheringGmOverride = Boolean(event.target.checked);
+        persistWorkingState();
+        renderPlayDashboard();
+        setStatus(event.target.checked ? "GM override enabled for this gathering attempt. Missing bonuses are not added." : "GM override disabled for this gathering attempt.");
+        return;
+      }
+      if (event.target.dataset.gatheringTemplateSelect !== void 0) {
+        loadGatheringTemplate(event.target.value);
+      }
+    };
+    ["play-crafting", "play-gathering"].forEach((panelId) => {
+      const panel = document.getElementById(panelId);
+      if (!panel) {
+        return;
+      }
+      panel.addEventListener("click", handlePlayCraftingPanelClick);
+      panel.addEventListener("input", handlePlayCraftingPanelInput);
+      panel.addEventListener("change", handlePlayCraftingPanelChange);
     });
     document.getElementById("play-senses").addEventListener("click", (event) => {
       handlePlaySkillRollClick(event);
@@ -16312,6 +20871,7 @@ ${secondaryStatText}`),
       ui: {
         mode: "builder",
         builderStep: 0,
+        playMode: "combat",
         sheetTab: "actions",
         showPdf: false,
         activeSaveSlotId: "",
@@ -16339,6 +20899,7 @@ ${secondaryStatText}`),
         selectedItemIds: [],
         itemQuantities: {},
         selectedBreakthroughIds: [],
+        gmApprovedBreakthroughIds: [],
         skillExpertiseEntries: [],
         choiceSelections: {},
         inspected: {
@@ -16387,6 +20948,10 @@ ${secondaryStatText}`),
           description: ""
         },
         crafting: {
+          activityMode: "crafting",
+          craftingWizardStep: 0,
+          craftedOutcomePending: false,
+          gatheringWizardStep: 0,
           diceMax: 0,
           diceRemaining: 0,
           pointsGenerated: 0,
@@ -16395,8 +20960,45 @@ ${secondaryStatText}`),
           pendingPointSpend: 0,
           recipeName: "",
           materialCost: "",
+          selectionMode: "recipe",
+          recipeCategory: "all",
+          recipeSubcategory: "all",
+          selectedRecipeId: "",
+          materialCustomCosts: {},
+          facilityLevel: 0,
+          facilityUsesRemaining: 0,
+          facilityUsesMax: 0,
+          facilityNotes: "",
           selectedMods: "",
-          notes: ""
+          notes: "",
+          gatheringNodeType: "mining",
+          gatheringTemplateId: "dark-iron-outcrop",
+          gatheringSelectedResource: "",
+          gatheringNodeName: "Normal Dark Iron Outcrop",
+          gatheringVariation: "Normal",
+          gatheringTier: 1,
+          gatheringHpMax: 3,
+          gatheringHpRemaining: 3,
+          gatheringNodeTarget: 40,
+          gatheringNodeProgress: 0,
+          gatheringLuckyTarget: 15,
+          gatheringLuckyProgress: 0,
+          gatheringStrikeDiceMax: 5,
+          gatheringStrikeDiceRemaining: 5,
+          gatheringSkill: "Mining",
+          gatheringBonus: 0,
+          gatheringQueuedDice: "",
+          gatheringActiveAction: "basic",
+          gatheringTool: "Pickaxe",
+          gatheringRequiredAbility: "Miner: Rock and Stone",
+          gatheringGmOverride: false,
+          gatheringDiscovery: "Find or identify with Perception, Appraise, Common Knowledge, Expert Knowledge, Magic, Artifice, or another GM-approved check.",
+          gatheringYieldName: "Iron",
+          gatheringYieldQuantity: 500,
+          gatheringLuckyYieldName: "Dark Iron",
+          gatheringLuckyYieldQuantity: 500,
+          gatheringNotes: "",
+          lastGatheringOutcome: null
         },
         diceTray: {
           isOpen: false,
@@ -16433,6 +21035,7 @@ ${secondaryStatText}`),
       selectedItemIds,
       itemQuantities,
       selectedBreakthroughIds: Array.isArray(source.selectedBreakthroughIds) ? source.selectedBreakthroughIds.filter(Boolean) : [...defaults.selectedBreakthroughIds],
+      gmApprovedBreakthroughIds: Array.isArray(source.gmApprovedBreakthroughIds) ? source.gmApprovedBreakthroughIds.filter(Boolean) : [...defaults.gmApprovedBreakthroughIds],
       skillExpertiseEntries: Array.isArray(source.skillExpertiseEntries) ? source.skillExpertiseEntries.map((entry) => ({
         skillIndex: Math.max(1, Math.floor(toNumber(entry.skillIndex, 0))),
         name: cleanText(entry.name).slice(0, 80),
@@ -16498,7 +21101,10 @@ ${secondaryStatText}`),
       },
       crafting: {
         ...defaults.crafting,
-        ...source.crafting || {}
+        ...source.crafting || {},
+        materialCustomCosts: source.crafting?.materialCustomCosts && typeof source.crafting.materialCustomCosts === "object" ? Object.fromEntries(
+          Object.entries(source.crafting.materialCustomCosts).map(([key, value]) => [cleanText(key), cleanText(value)]).filter(([key]) => key)
+        ) : { ...defaults.crafting.materialCustomCosts }
       },
       diceTray: {
         ...defaults.diceTray,

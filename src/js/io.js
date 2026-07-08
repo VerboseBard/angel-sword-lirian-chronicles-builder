@@ -1166,7 +1166,7 @@ const requirementStatus = getBreakthroughRequirementStatus(breakthrough);
 const budget = getBreakthroughBudgetState();
 const nextCost = Math.max(0, parseNumericCost(breakthrough.cost));
       if (!state.builder.selectedBreakthroughIds.includes(breakthrough.id) && nextCost > budget.remaining) {
-        setStatus(`${breakthrough.name} costs ${nextCost} breakthrough EXP, but only ${budget.remaining} remains in the creation pool.`);
+        setStatus(`${breakthrough.name} costs ${nextCost} EXP, but only ${budget.remaining} remains across creation breakthrough EXP and normal XP.`);
         return;
       }
       if (!state.builder.selectedBreakthroughIds.includes(breakthrough.id)) {
