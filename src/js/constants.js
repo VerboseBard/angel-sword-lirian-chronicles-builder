@@ -260,8 +260,8 @@ export const BASE_STARTING_CLIM = 3000;
 export const MAIN_STAT_CREATION_ARRAY = [5, 4, 4, 3];
 export const SECONDARY_STAT_CREATION_ARRAY = [5, 4, 3, 2, 1];
 export const MAIN_STATS = [
-      { key: "Power", description: "Increases the damage dealt by attacks and increases your max Mana." },
       { key: "Focus", description: "Increases the accuracy of your attacks and raises the difficulty of saves against your effects." },
+      { key: "Power", description: "Increases the damage dealt by attacks and increases your max Mana." },
       { key: "Agility", description: "Increases your Evasion, RP, and Initiative." },
       { key: "Toughness", description: "Increases your HP, Save bonus, and Guard value." }
     ];
