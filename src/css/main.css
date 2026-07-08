@@ -599,6 +599,48 @@
       line-height: 1.52;
     }
 
+    .builder-equipment-sticky-funds {
+      position: sticky;
+      top: 8px;
+      z-index: 18;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      padding: 10px 12px;
+      border: 1px solid rgba(255, 231, 151, 0.36);
+      border-radius: 8px;
+      background: rgba(34, 28, 21, 0.96);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(12px);
+    }
+
+    .builder-equipment-sticky-funds.is-over-budget {
+      border-color: rgba(255, 138, 106, 0.62);
+      background: rgba(53, 31, 24, 0.97);
+    }
+
+    .builder-equipment-sticky-funds div {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .builder-equipment-sticky-funds span {
+      color: rgba(255, 238, 193, 0.75);
+      font-size: 0.7rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    .builder-equipment-sticky-funds strong {
+      color: #fff4d6;
+      font-size: 1.05rem;
+      line-height: 1.15;
+      overflow-wrap: anywhere;
+    }
+
     .builder-inline-action-row {
       display: flex;
       align-items: end;
@@ -734,6 +776,13 @@
       padding-left: 8px;
     }
 
+    .builder-food-unit-actions {
+      max-width: 260px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
     .builder-equipment-add-stack {
       display: grid;
       justify-items: center;
@@ -776,13 +825,28 @@
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 8px 18px rgba(0, 0, 0, 0.22);
     }
 
+    .builder-food-unit-button {
+      min-width: 44px;
+      min-height: 34px;
+      border: 1px solid rgba(255, 226, 155, 0.42);
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(255, 221, 112, 0.98), rgba(224, 166, 0, 0.96));
+      color: var(--ink-strong);
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 8px 18px rgba(0, 0, 0, 0.18);
+    }
+
     .builder-icon-stepper:hover:not(:disabled),
-    .builder-icon-stepper:focus-visible:not(:disabled) {
+    .builder-icon-stepper:focus-visible:not(:disabled),
+    .builder-food-unit-button:hover:not(:disabled),
+    .builder-food-unit-button:focus-visible:not(:disabled) {
       border-color: rgba(255, 244, 198, 0.7);
       transform: translateY(-1px);
     }
 
-    .builder-icon-stepper:disabled {
+    .builder-icon-stepper:disabled,
+    .builder-food-unit-button:disabled {
       opacity: 0.42;
       cursor: default;
       filter: saturate(0.55);
@@ -3676,8 +3740,39 @@
       margin-top: 8px;
     }
 
+    .play-inventory-quantity-adjust {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      padding: 8px;
+      border: 1px solid rgba(0, 92, 187, 0.12);
+      border-radius: 12px;
+      background: rgba(0, 92, 187, 0.06);
+    }
+
+    .play-inventory-quantity-adjust span {
+      color: var(--ink-soft);
+      font-size: 0.84rem;
+      font-weight: 900;
+    }
+
+    .play-inventory-quantity-input {
+      width: 76px;
+      min-height: 36px;
+      border: 1px solid rgba(21, 18, 12, 0.12);
+      border-radius: 10px;
+      background: #fffaf0;
+      color: var(--ink);
+      font: inherit;
+      font-weight: 800;
+      padding: 7px 9px;
+    }
+
     .play-inventory-toolbar button,
     .play-inventory-actions button,
+    .play-inventory-quantity-adjust button,
     .play-inventory-catalog-head button,
     .play-custom-item-form button {
       border: 1px solid rgba(171, 199, 255, 0.34);
@@ -7559,6 +7654,7 @@
       .play-command-strip,
       .review-grid,
       .builder-filter-row,
+      .builder-equipment-sticky-funds,
       .builder-skill-row,
       .builder-skill-expertise-form,
       .play-overview-strip,

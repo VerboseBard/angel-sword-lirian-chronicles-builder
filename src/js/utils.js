@@ -119,8 +119,32 @@ function createGeneratedMaterialEntry(source, details) {
         materialCategory: category,
         materialSourceId: source.id,
         materialUnitLabel: unitCostText || "",
+        materialUnitsFor: readableMaterialText(details.materialUnitsFor || ""),
+        rawMaterialPackage: Boolean(details.rawMaterialPackage),
         generatedMaterial: true
       };
+    }
+function createRawUnitPackageEntry(source, details) {
+      const unitName = readableMaterialText(details.unitName || details.materialName || "Material units");
+      const quantity = Math.max(1, parseMaterialNumber(details.quantity || 100));
+      const climCost = Math.max(0, parseMaterialNumber(details.climCost || quantity));
+      const targetName = readableMaterialText(details.targetName || "");
+      const name = details.name || titleMaterialUnit(unitName);
+      return createGeneratedMaterialEntry(source, {
+        name,
+        materialName: unitName,
+        subType: details.subType || "Raw Units",
+        climCost,
+        unitLabel: `${quantity} units`,
+        unitCostText: `${quantity} ${unitName}`,
+        materialUnitsFor: targetName || name,
+        rawMaterialPackage: true,
+        extraText: details.note || [
+          `Raw ${unitName} package.`,
+          targetName ? `Counts as ${quantity} loose units toward ${targetName}.` : `Counts as ${quantity} loose units.`,
+          "Use this when a recipe asks for raw crafting units instead of a finished material."
+        ].join(" ")
+      });
     }
 function collectRegexMatches(text, pattern) {
       const matches = [];
@@ -142,7 +166,7 @@ function expandAlchemyMaterials(source) {
         ["Mystic", [600, 500, 550, 550, 650]],
         ["Supreme", [1200, 1000, 1100, 1100, 1300]]
       ];
-      return rows.flatMap(([rarity, costs]) => elements.map((element, index) => createGeneratedMaterialEntry(source, {
+      const herbEntries = rows.flatMap(([rarity, costs]) => elements.map((element, index) => createGeneratedMaterialEntry(source, {
         name: `Alchemy Herb - ${rarity} ${element}`,
         materialName: `${rarity} ${element}`,
         subType: "Alchemy Herb",
@@ -151,12 +175,23 @@ function expandAlchemyMaterials(source) {
         unitCostText: "1 herb",
         extraText: "Use this as the specific herb purchase for alchemy recipes."
       })));
+      return [
+        ...herbEntries,
+        createRawUnitPackageEntry(source, {
+          name: "Alchemy Units",
+          unitName: "Alchemy Units",
+          targetName: "Alchemy Units",
+          quantity: 100,
+          climCost: 100,
+          note: "Generic alchemy stock used by recipes that ask for Alchemy Units. This builder package prices 100 Alchemy Units at 100 Clim; adjust with the GM if your table uses a different market rate."
+        })
+      ];
     }
 function expandClimUnitMaterials(source, text) {
       const pattern = /-\s*([^:-]+?)(?::-)?-?\s*Clim Cost per\s+([^:]+):\s*([\d,]+)\s*Clim\s*-\s*Unit cost per\s+([^:]+):\s*([\d,]+)\s*([A-Za-z][A-Za-z\s]+?units?)(?=\.|\s*-)/gi;
-      return collectRegexMatches(text, pattern).map(({ match }) => {
+      return collectRegexMatches(text, pattern).flatMap(({ match }) => {
         const [, materialName, climUnit, climCost, unitCostLabel, unitCost, unitName] = match;
-        return createGeneratedMaterialEntry(source, {
+        const materialEntry = createGeneratedMaterialEntry(source, {
           materialName,
           subType: "Base Material",
           climCost,
@@ -164,6 +199,20 @@ function expandClimUnitMaterials(source, text) {
           unitCostText: `${parseMaterialNumber(unitCost)} ${readableMaterialText(unitName)} per ${readableMaterialText(unitCostLabel || climUnit)}`,
           extraText: "Base crafting material parsed from the source materials table."
         });
+        const unitQuantity = parseMaterialNumber(unitCost);
+        const rawUnitEntry = createRawUnitPackageEntry(source, {
+          name: `${singularMaterialCategory(source)} - ${titleMaterialUnit(unitName)}`,
+          unitName,
+          targetName: materialEntry.name,
+          quantity: unitQuantity,
+          climCost,
+          note: [
+            `Raw ${readableMaterialText(unitName)} package parsed from the source materials table.`,
+            `The source lists ${unitQuantity} ${readableMaterialText(unitName)} per ${readableMaterialText(unitCostLabel || climUnit)} at ${parseMaterialNumber(climCost)} Clim.`,
+            `Counts toward ${materialEntry.name} when opened for crafting.`
+          ].join(" ")
+        });
+        return [materialEntry, rawUnitEntry];
       });
     }
 function expandSpecialMaterialRows(source, text) {
@@ -221,6 +270,19 @@ function expandFarmingMaterials(source, text) {
       });
       return [...seedEntries, ...fertilizerEntries];
     }
+function expandCulinarianIngredients(source) {
+      return [
+        createRawUnitPackageEntry(source, {
+          name: "Food Units",
+          unitName: "Food Units",
+          targetName: "Food Units",
+          subType: "Food Units",
+          climCost: 1,
+          quantity: 1,
+          note: "Generic culinary food or filler material used by food recipes. This builder prices Food Units at 1 Clim each; buy any amount your table allows."
+        })
+      ];
+    }
 function expandMaterialBundle(source) {
       const nameKey = normalizeKey(source?.name);
       if (!isMaterialBundleName(nameKey)) {
@@ -232,6 +294,9 @@ function expandMaterialBundle(source) {
       }
       if (nameKey === "farming materials") {
         return expandFarmingMaterials(source, text);
+      }
+      if (nameKey === "culinarian ingredients") {
+        return expandCulinarianIngredients(source);
       }
       const generated = [
         ...expandClimUnitMaterials(source, text),

@@ -5137,6 +5137,10 @@ var LyrianApp = (() => {
       lookup.classes.entries.map((entry) => toNumber(entry.tier, 0)).filter((value) => value > 0)
     )).sort((a, b) => a - b);
   }
+  var FOOD_UNIT_PURCHASE_AMOUNTS = [1, 5, 10, 50, 100];
+  function isFoodUnitEntry(entry = {}) {
+    return normalizePhrase(entry?.name) === "food units";
+  }
   function isStackableBuilderItem(entry) {
     return Boolean(entry?.id);
   }
@@ -5173,6 +5177,9 @@ var LyrianApp = (() => {
       return "";
     }
     const quantity = getBuilderItemQuantity(entry?.id);
+    if (isFoodUnitEntry(entry)) {
+      return quantity > 0 ? `${entry.name} x${quantity}` : entry.name;
+    }
     return quantity > 1 ? `${entry.name} x${quantity}` : entry.name;
   }
   function getSelectedEquipmentCost() {
@@ -5306,6 +5313,64 @@ var LyrianApp = (() => {
       return /bayonet|melee weapon range|melee attacks?/i.test(getBaseItemRulesText(item));
     }
     return true;
+  }
+  function getWeaponProficiencySearchVariants(label) {
+    const base = cleanText(label);
+    const variants = /* @__PURE__ */ new Set([base]);
+    [
+      [/\bWeapons\b/i, "Weapon"],
+      [/\bSwords\b/i, "Sword"],
+      [/\bDaggers\b/i, "Dagger"],
+      [/\bAxes\b/i, "Axe"],
+      [/\bPolearms\b/i, "Polearm"],
+      [/\bMissiles\b/i, "Missile"],
+      [/\bGauntlets\b/i, "Gauntlet"],
+      [/\bStaves\b/i, "Staff"]
+    ].forEach(([pattern, replacement]) => {
+      variants.add(base.replace(pattern, replacement));
+    });
+    if (normalizePhrase(base) === "magic staff") {
+      variants.add("Staff");
+    }
+    if (normalizePhrase(base) === "saboteur thread daggers") {
+      variants.add("Thread Daggers");
+    }
+    return Array.from(variants).map(cleanText).filter(Boolean);
+  }
+  function getLikelyWeaponProficiencyLabels(item = {}) {
+    if (!isWeaponItem(item)) {
+      return [];
+    }
+    const text = [item.name, item.type, item.subType, getBaseItemRulesText(item)].filter(Boolean).join(" ");
+    const labels = [...COMMON_WEAPON_GROUP_OPTIONS, ...SPECIALITY_WEAPON_GROUP_OPTIONS];
+    return labels.filter(
+      (label) => getWeaponProficiencySearchVariants(label).some((variant) => includesPhrase(text, variant))
+    );
+  }
+  function getItemWeaponProficiencyProfile(item = {}) {
+    if (!isWeaponItem(item)) {
+      return null;
+    }
+    const labels = getLikelyWeaponProficiencyLabels(item);
+    const tracked = labels.filter((label) => hasTrackedSpecificProficiency(getWeaponProficiencySearchVariants(label)));
+    return {
+      labels,
+      tracked,
+      hasTracked: tracked.length > 0
+    };
+  }
+  function getWeaponProficiencyHintText(item = {}) {
+    const profile = getItemWeaponProficiencyProfile(item);
+    if (!profile) {
+      return "";
+    }
+    if (profile.hasTracked) {
+      return `Proficiency tracked: ${profile.tracked.join(", ")}.`;
+    }
+    if (profile.labels.length) {
+      return `Proficiency needed: ${profile.labels.join(" or ")} is not tracked yet. Choose a matching race or breakthrough weapon group, or confirm with the GM.`;
+    }
+    return "Weapon proficiency: check the Proficiencies tab or confirm the weapon group with the GM.";
   }
   function getWeaponRangeLabel(item) {
     const rangeMatch = getBaseItemRulesText(item).match(/\bRange:\s*([^\n.]+)/i);
@@ -5507,6 +5572,13 @@ var LyrianApp = (() => {
       ...state.builder.choiceSelections || {},
       [choiceId]: cleanText(value || "")
     };
+  }
+  function clearBuilderChoiceValue(choiceId) {
+    const id = cleanText(choiceId);
+    if (!id || !state.builder.choiceSelections) {
+      return;
+    }
+    delete state.builder.choiceSelections[id];
   }
   function clearIrrelevantBuilderChoices() {
     const validChoiceIds = new Set(getBuilderChoiceDefinitions().map((choice) => choice.id));
@@ -6206,6 +6278,7 @@ var LyrianApp = (() => {
   function renderBuilderChoiceControl(choice) {
     const currentValue = getBuilderChoiceValue(choice.id);
     const helpText = choice.amount ? `${choice.source} grants ${choice.amount > 0 ? `+${choice.amount}` : choice.amount} ${choice.type === "skill-points" || choice.type === "racial-skill-pool" || choice.type === "class-skill-pool" ? "skill points" : "bonus"} here.` : choice.source;
+    const clearButton = currentValue ? `<button type="button" class="secondary builder-choice-clear" data-builder-choice-clear="${escapeHtml(choice.id)}">Clear</button>` : "";
     if (choice.type === "racial-skill-pool") {
       const pool = getRacialSkillPoolState(choice);
       const allowed = getChoiceOptionList(choice).map((entry) => entry.label).join(", ");
@@ -6246,6 +6319,7 @@ var LyrianApp = (() => {
                 `).join("")}
                 ${choice.allowCustom ? `<option value="__custom__" ${isCustom ? "selected" : ""}>Custom...</option>` : ""}
               </select>
+              ${clearButton}
               ${choice.allowCustom && (isCustom || selectValue === "__custom__") ? `
                 <input
                   class="builder-inline-input builder-choice-custom-input"
@@ -6267,6 +6341,7 @@ var LyrianApp = (() => {
               data-builder-choice-field="${escapeHtml(choice.id)}"
               value="${escapeHtml(currentValue)}"
               placeholder="${escapeHtml(choice.placeholder || "")}">
+            ${clearButton}
             <p>${escapeHtml(currentValue ? cleanText(choice.resolvedText?.(currentValue) || currentValue) : choice.pendingText || helpText)}</p>
           </label>
         `;
@@ -6281,11 +6356,12 @@ var LyrianApp = (() => {
               <option value="${escapeHtml(entry.value)}" ${cleanText(entry.value) === currentValue ? "selected" : ""}>${escapeHtml(entry.label)}</option>
             `).join("")}
           </select>
+          ${clearButton}
           <p>${escapeHtml(currentValue ? cleanText(choice.resolvedText?.(currentValue) || currentValue) : choice.pendingText || helpText)}</p>
         </label>
       `;
   }
-  function renderBuilderChoiceSection(stepId, title, includeResolved = false) {
+  function renderBuilderChoiceSection(stepId, title, includeResolved = true) {
     const pending = getPendingBuilderChoices(stepId);
     const resolved = includeResolved ? getResolvedBuilderChoices(stepId) : [];
     if (!pending.length && !resolved.length) {
@@ -7169,8 +7245,14 @@ var LyrianApp = (() => {
         const savedLevel = Math.max(1, toNumber(state.fields[`ClassLevel${row}`], 1));
         const savedCost = Math.max(0, toNumber(state.fields[`Cost${row}`], 0));
         const abilityCount = getClassProgressSlotCount(record);
-        const countFromLevel = savedLevel > 1 ? savedLevel - 1 : 0;
-        const countFromCost = savedCost > getClassUnlockCost(record) ? Math.floor((savedCost - getClassUnlockCost(record)) / 100) : 0;
+        const unlockCost = getClassUnlockCost(record);
+        const countFromCost = savedCost > unlockCost ? Math.floor((savedCost - unlockCost) / 100) : 0;
+        let countFromLevel = savedLevel;
+        if (savedLevel === 1 && savedCost <= unlockCost && countFromCost === 0) {
+          countFromLevel = 0;
+        } else if (countFromCost > 0 && savedLevel === countFromCost + 1) {
+          countFromLevel = countFromCost;
+        }
         progress[record.id] = clamp(Math.max(countFromLevel, countFromCost), 0, abilityCount);
       });
       state.builder.classAbilityProgress = progress;
@@ -7204,8 +7286,12 @@ var LyrianApp = (() => {
     if (!state.builder.inspected.race) {
       state.builder.inspected.race = getSelectedRaceDetail()?.id || detailLookup.races.entries[0]?.id || "";
     }
-    if (!state.builder.inspected.ancestry) {
-      state.builder.inspected.ancestry = getSelectedAncestryDetail()?.id || filteredAncestries()[0]?.id || detailLookup.ancestries.entries[0]?.id || "";
+    const ancestryOptions = filteredAncestries();
+    const inspectedAncestry = ancestryOptions.find((entry) => normalizeKey(entry.id) === normalizeKey(state.builder.inspected.ancestry));
+    if (!inspectedAncestry) {
+      const selectedAncestry = getSelectedAncestryDetail();
+      const selectedInCurrentOptions = selectedAncestry && ancestryOptions.some((entry) => normalizeKey(entry.id) === normalizeKey(selectedAncestry.id));
+      state.builder.inspected.ancestry = selectedInCurrentOptions ? selectedAncestry.id : ancestryOptions[0]?.id || "";
     }
     if (!state.builder.inspected.class) {
       state.builder.inspected.class = getSelectedClassDetails()[0]?.id || detailLookup.classes.entries[0]?.id || "";
@@ -10936,10 +11022,223 @@ var LyrianApp = (() => {
   }
   function getInventoryCatalogEntries() {
     const search = normalizeKey(state.play.inventorySearch || "");
-    return lookup.items.entries.filter((entry) => {
-      const haystack = [entry.name, entry.type, entry.subType, entry.description].map(normalizeKey).join(" ");
+    const entries = lookup.items.entries.filter((entry) => {
+      const haystack = [entry.name, entry.type, entry.subType, entry.cost, entry.materialUnitLabel, entry.materialCategory, entry.description].map(normalizeKey).join(" ");
       return !search || haystack.includes(search);
     });
+    return sortItemsForSearch(entries, search);
+  }
+  function getItemSearchRelevance(entry, search) {
+    if (!search) {
+      return 0;
+    }
+    const name = normalizeKey(entry.name);
+    if (name === search) {
+      return 0;
+    }
+    if (name.startsWith(search)) {
+      return 1;
+    }
+    if (name.includes(search)) {
+      return 2;
+    }
+    const secondaryHaystack = [entry.type, entry.subType, entry.cost, entry.materialUnitLabel, entry.materialCategory].map(normalizeKey).join(" ");
+    if (secondaryHaystack.includes(search)) {
+      return 3;
+    }
+    return 4;
+  }
+  function sortItemsForSearch(entries, search) {
+    if (!search) {
+      return entries;
+    }
+    return [...entries].sort(
+      (a, b) => getItemSearchRelevance(a, search) - getItemSearchRelevance(b, search) || normalizeKey(a.materialCategory).localeCompare(normalizeKey(b.materialCategory)) || normalizeKey(a.name).localeCompare(normalizeKey(b.name))
+    );
+  }
+  var EQUIPMENT_SORT_OPTIONS = [
+    { value: "default", label: "Default" },
+    { value: "name", label: "Alphabetical" },
+    { value: "price-asc", label: "Price: Low to High" },
+    { value: "price-desc", label: "Price: High to Low" },
+    { value: "category", label: "Category Groups" },
+    { value: "type", label: "Type / Subtype" },
+    { value: "material", label: "Material Discipline" }
+  ];
+  var EQUIPMENT_CATEGORY_OPTIONS = [
+    { value: "", label: "All Categories" },
+    { value: "weapons", label: "Weapons", matches: (entry) => isWeaponEquipmentEntry(entry) },
+    { value: "armor", label: "Armor & Shields", matches: (entry) => isArmorEquipmentEntry(entry) },
+    { value: "adventuring", label: "Adventuring Gear", matches: (entry) => isAdventuringGearEntry(entry) },
+    { value: "food", label: "Food & Cooking", matches: (entry) => isFoodEquipmentEntry(entry) },
+    { value: "consumables", label: "Consumables", matches: (entry) => isConsumableEquipmentEntry(entry) },
+    { value: "materials", label: "Crafting Materials", matches: (entry) => isCraftingMaterialEntry(entry) },
+    { value: "mods", label: "Crafting Mods & Facilities", matches: (entry) => isCraftingModOrFacilityEntry(entry) },
+    { value: "artifices", label: "Artifices", matches: (entry) => normalizePhrase(entry?.type) === "artifice" },
+    { value: "mounts", label: "Mounts & Vehicles", matches: (entry) => isMountOrVehicleEntry(entry) },
+    { value: "relics", label: "Relics & Special Items", matches: (entry) => isRelicOrSpecialEntry(entry) }
+  ];
+  var EQUIPMENT_CONSUMABLE_OPTIONS = [
+    { value: "", label: "All Consumables" },
+    { value: "potion", label: "Potions", matches: (entry) => normalizePhrase(entry?.subType) === "potion" },
+    { value: "elixir", label: "Elixirs", matches: (entry) => normalizePhrase(entry?.subType) === "elixir" },
+    { value: "flask", label: "Flasks", matches: (entry) => normalizePhrase(entry?.subType) === "flask" },
+    { value: "poison", label: "Poisons", matches: (entry) => normalizePhrase(entry?.subType) === "poison" },
+    { value: "food", label: "Food", matches: (entry) => isFoodEquipmentEntry(entry) },
+    { value: "fuel", label: "Fuel", matches: (entry) => equipmentTextMatches(entry, /\bfuel\b/) },
+    { value: "ration", label: "Rations", matches: (entry) => equipmentTextMatches(entry, /\bration\b/) }
+  ];
+  var EQUIPMENT_RESOURCE_OPTIONS = [
+    { value: "", label: "All Resources" },
+    { value: "raw-units", label: "Raw Units", matches: (entry) => Boolean(entry?.rawMaterialPackage) || normalizePhrase(entry?.subType).includes("raw units") || /\bunits\b/.test(normalizePhrase(entry?.name)) },
+    { value: "base-materials", label: "Base Materials", matches: (entry) => normalizePhrase(entry?.subType) === "base material" },
+    { value: "special-materials", label: "Special Materials", matches: (entry) => normalizePhrase(entry?.subType) === "special material" },
+    { value: "alchemy-herbs", label: "Alchemy Herbs", matches: (entry) => normalizePhrase(entry?.subType) === "alchemy herb" },
+    { value: "seeds", label: "Seeds", matches: (entry) => normalizePhrase(entry?.subType) === "seed" },
+    { value: "fertilizer", label: "Fertilizer", matches: (entry) => normalizePhrase(entry?.subType) === "fertilizer" },
+    { value: "mods", label: "Mods", matches: (entry) => normalizePhrase(entry?.subType) === "mods" }
+  ];
+  var EQUIPMENT_DISCIPLINE_OPTIONS = [
+    { value: "", label: "All Disciplines" },
+    { value: "alchemy", label: "Alchemy", matches: (entry) => equipmentTextMatches(entry, /\balchemy\b|\balchemist\b/) },
+    { value: "metal", label: "Blacksmithing / Metal", matches: (entry) => equipmentTextMatches(entry, /\bblacksmithing\b|\bmetal\b|\biron\b|\bsteel\b|\bweapon mod\b/) },
+    { value: "wood", label: "Carpenter / Wood", matches: (entry) => equipmentTextMatches(entry, /\bcarpenter\b|\bwood\b|\bpine\b|\blumber\b/) },
+    { value: "armorsmithing", label: "Armorsmithing", matches: (entry) => equipmentTextMatches(entry, /\barmorsmithing\b|\barmor mod\b|\barmour mod\b/) },
+    { value: "artificer", label: "Artificer", matches: (entry) => equipmentTextMatches(entry, /\bartificer\b|\bartifice\b/) },
+    { value: "culinarian", label: "Culinarian / Food", matches: (entry) => isFoodEquipmentEntry(entry) || equipmentTextMatches(entry, /\bculinarian\b|\bcooking\b|\bgourmet\b/) },
+    { value: "farming", label: "Farming", matches: (entry) => equipmentTextMatches(entry, /\bfarming\b|\bseed\b|\bfertilizer\b/) }
+  ];
+  function getEquipmentFilterText(entry = {}) {
+    return [
+      entry.name,
+      entry.type,
+      entry.subType,
+      entry.cost,
+      entry.materialUnitLabel,
+      entry.materialCategory,
+      entry.materialUnitsFor,
+      entry.description,
+      entry.descriptionText
+    ].map(cleanText).join(" ");
+  }
+  function equipmentTextMatches(entry, pattern) {
+    return pattern.test(normalizePhrase(getEquipmentFilterText(entry)));
+  }
+  function isWeaponEquipmentEntry(entry = {}) {
+    return /\bweapon\b|\bweapons\b/.test(normalizePhrase([entry.name, entry.subType].join(" ")));
+  }
+  function isArmorEquipmentEntry(entry = {}) {
+    if (normalizePhrase(entry.type) === "alchemy") {
+      return false;
+    }
+    return /\barmor\b|\barmour\b|\bshield\b|\bcloak\b/.test(normalizePhrase([entry.name, entry.subType, entry.materialCategory].join(" ")));
+  }
+  function isFoodEquipmentEntry(entry = {}) {
+    return equipmentTextMatches(entry, /\bfood\b|\bculinarian\b|\bcooking\b|\bgourmet\b|\bration\b/);
+  }
+  function isConsumableEquipmentEntry(entry = {}) {
+    const subType = normalizePhrase(entry.subType);
+    return normalizePhrase(entry.type) === "alchemy" || ["potion", "elixir", "flask", "poison"].includes(subType) || isFoodEquipmentEntry(entry) || equipmentTextMatches(entry, /\bfuel\b|\bration\b/);
+  }
+  function isCraftingMaterialEntry(entry = {}) {
+    const subType = normalizePhrase(entry.subType);
+    return Boolean(entry.generatedMaterial) || Boolean(cleanText(entry.materialCategory)) || subType === "materials" || subType === "base material" || subType === "special material" || subType === "alchemy herb" || subType === "seed" || subType === "fertilizer" || Boolean(entry.rawMaterialPackage);
+  }
+  function isCraftingModOrFacilityEntry(entry = {}) {
+    return normalizePhrase(entry.subType) === "mods" || equipmentTextMatches(entry, /\bfacilit(?:y|ies)\b|\bmods?\b/);
+  }
+  function isAdventuringGearEntry(entry = {}) {
+    const type = normalizePhrase(entry.type);
+    const subType = normalizePhrase(entry.subType);
+    return type === "adventuring essentials" || ["kit", "storage", "tool"].includes(subType);
+  }
+  function isMountOrVehicleEntry(entry = {}) {
+    return normalizePhrase(entry.type) === "mount" || equipmentTextMatches(entry, /\bairship\b|\bcart\b|\bvehicle\b/);
+  }
+  function isRelicOrSpecialEntry(entry = {}) {
+    return ["astra relic", "divine arms", "talisman"].includes(normalizePhrase(entry.type));
+  }
+  function getEquipmentOptionByValue(options, value) {
+    const normalized = cleanText(value);
+    return options.find((entry) => entry.value === normalized) || options[0];
+  }
+  function matchesEquipmentOption(entry, options, value) {
+    const option = getEquipmentOptionByValue(options, value);
+    return !option?.value || option.matches?.(entry);
+  }
+  function getPrimaryEquipmentCategoryOption(entry = {}) {
+    if (isFoodEquipmentEntry(entry)) {
+      return EQUIPMENT_CATEGORY_OPTIONS.find((option) => option.value === "food");
+    }
+    return EQUIPMENT_CATEGORY_OPTIONS.find((option) => option.value && option.matches?.(entry)) || { value: "other", label: "Other" };
+  }
+  function getEquipmentDisciplineOption(entry = {}) {
+    return EQUIPMENT_DISCIPLINE_OPTIONS.find((option) => option.value && option.matches?.(entry)) || { value: "other", label: "Other" };
+  }
+  function compareEquipmentByName(a, b) {
+    return cleanText(a?.name).localeCompare(cleanText(b?.name));
+  }
+  function compareEquipmentByPrice(a, b, direction = 1) {
+    return (parseClimCost(a?.cost) - parseClimCost(b?.cost)) * direction || compareEquipmentByName(a, b);
+  }
+  function sortEquipmentEntries(entries, search, sortMode = "default") {
+    const mode = cleanText(sortMode) || "default";
+    if (mode === "name") {
+      return [...entries].sort(compareEquipmentByName);
+    }
+    if (mode === "price-asc") {
+      return [...entries].sort((a, b) => compareEquipmentByPrice(a, b, 1));
+    }
+    if (mode === "price-desc") {
+      return [...entries].sort((a, b) => compareEquipmentByPrice(a, b, -1));
+    }
+    if (mode === "category") {
+      const categoryOrder = EQUIPMENT_CATEGORY_OPTIONS.map((option) => option.value);
+      const categoryIndex = (entry) => {
+        const index = categoryOrder.indexOf(getPrimaryEquipmentCategoryOption(entry).value);
+        return index === -1 ? categoryOrder.length : index;
+      };
+      return [...entries].sort(
+        (a, b) => categoryIndex(a) - categoryIndex(b) || compareEquipmentByName(a, b)
+      );
+    }
+    if (mode === "type") {
+      return [...entries].sort(
+        (a, b) => cleanText(a?.type).localeCompare(cleanText(b?.type)) || cleanText(a?.subType).localeCompare(cleanText(b?.subType)) || compareEquipmentByName(a, b)
+      );
+    }
+    if (mode === "material") {
+      return [...entries].sort(
+        (a, b) => cleanText(a?.materialCategory || getEquipmentDisciplineOption(a).label).localeCompare(cleanText(b?.materialCategory || getEquipmentDisciplineOption(b).label)) || compareEquipmentByName(a, b)
+      );
+    }
+    return sortItemsForSearch(entries, search);
+  }
+  function getEquipmentGroupLabel(entry = {}, sortMode = "default") {
+    const mode = cleanText(sortMode) || "default";
+    if (mode === "category") {
+      return getPrimaryEquipmentCategoryOption(entry).label;
+    }
+    if (mode === "type") {
+      return [entry.type, entry.subType].map(cleanText).filter(Boolean).join(" / ") || "Other";
+    }
+    if (mode === "material") {
+      return cleanText(entry.materialCategory) || getEquipmentDisciplineOption(entry).label;
+    }
+    if (mode === "default") {
+      return cleanText(entry.materialCategory);
+    }
+    return "";
+  }
+  function renderEquipmentFilterSelect(searchKey, label, options, selectedValue) {
+    return `
+        <label class="builder-filter-field">
+          <span>${escapeHtml(label)}</span>
+          <select class="builder-inline-input" data-builder-search="${escapeHtml(searchKey)}">
+            ${options.map((option) => `<option value="${escapeHtml(option.value)}" ${cleanText(selectedValue) === option.value ? "selected" : ""}>${escapeHtml(option.label)}</option>`).join("")}
+          </select>
+        </label>
+      `;
   }
   function renderCustomItemForm() {
     if (!state.play.showCustomItemForm) {
@@ -10980,10 +11279,10 @@ var LyrianApp = (() => {
                 <img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl || "assets/lyrian-symbol.png")}" alt="${escapeHtml(entry.name)}">
                 <div>
                   <strong>${escapeHtml(entry.name)}</strong>
-                  <p>${escapeHtml([entry.type, entry.subType, entry.cost, entry.burden].filter(Boolean).join(" | "))}</p>
+                  <p>${escapeHtml([entry.type, entry.subType, entry.cost, entry.materialUnitLabel || entry.burden].filter(Boolean).join(" | "))}</p>
                   <p>${escapeHtml(getFirstSentence(entry.description).slice(0, 170))}</p>
                 </div>
-                <button type="button" data-inventory-add-item="${escapeHtml(entry.id)}">Add</button>
+                <button type="button" data-inventory-add-item="${escapeHtml(entry.id)}">${escapeHtml(parseClimCost(entry.cost) > 0 ? `Buy (${parseClimCost(entry.cost)} Clim)` : "Add")}</button>
               </div>
             `).join("") || `<p class="play-empty">No items match that search.</p>`}
           </div>
@@ -11043,6 +11342,16 @@ var LyrianApp = (() => {
     if (isConsumableInventoryItem(item)) {
       flags.consumable = true;
       addBadge("Consumable", "consumable");
+    }
+    if (isWeaponItem(item)) {
+      const proficiency = getItemWeaponProficiencyProfile(item);
+      if (proficiency?.hasTracked) {
+        addBadge("Proficiency Tracked", "ready");
+        addNote(`Tracked weapon group: ${proficiency.tracked.join(", ")}.`);
+      } else {
+        addBadge("Check Proficiency", "warning");
+        addWarning(getWeaponProficiencyHintText(item));
+      }
     }
     if (/\beasy access\b/.test(normalized)) {
       flags.quickAccess = true;
@@ -11185,6 +11494,27 @@ var LyrianApp = (() => {
       costLabel: ""
     }];
   }
+  function renderInventoryQuantityAdjuster(entry, quantity) {
+    if (!isFoodUnitEntry(entry)) {
+      return "";
+    }
+    return `
+        <div class="play-inventory-quantity-adjust" aria-label="${escapeHtml(`${entry.name} quantity controls`)}">
+          <span>${escapeHtml(`${quantity} food unit${quantity === 1 ? "" : "s"} available`)}</span>
+          <input
+            class="play-inventory-quantity-input"
+            type="number"
+            inputmode="numeric"
+            min="1"
+            step="1"
+            data-inventory-quantity-amount="${escapeHtml(entry.uid)}"
+            value="1"
+            aria-label="${escapeHtml(`${entry.name} adjustment amount`)}">
+          <button type="button" data-inventory-adjust-quantity="${escapeHtml(entry.uid)}" data-inventory-quantity-delta="-1">Consume</button>
+          <button type="button" data-inventory-adjust-quantity="${escapeHtml(entry.uid)}" data-inventory-quantity-delta="1">Add</button>
+        </div>
+      `;
+  }
   function renderInventoryItemRow(entry) {
     const isEquipped = !!entry.equipped;
     const quantity = Math.max(1, Math.floor(toNumber(entry.quantity, 1)));
@@ -11200,6 +11530,7 @@ var LyrianApp = (() => {
             ${renderInventoryReadinessProfile(readinessProfile)}
             ${isWeaponItem(entry) ? `<p>${escapeHtml(`Weapon attacks: ${getWeaponRangeLabel(entry)} | ${getWeaponDamageType(entry)} damage`)}</p>` : ""}
             ${baseText ? `<p class="play-item-notes">${escapeHtml(getFirstSentence(baseText).slice(0, 240))}</p>` : ""}
+            ${renderInventoryQuantityAdjuster(entry, quantity)}
             <div class="play-inventory-actions">
               ${useOptions.map((option) => `<button type="button" data-inventory-use="${escapeHtml(entry.uid)}" data-inventory-use-cost-label="${escapeHtml(option.costLabel)}">${escapeHtml(option.label)}</button>`).join("")}
               <button type="button" data-inventory-toggle-equip="${escapeHtml(entry.uid)}">${isEquipped ? "Unequip" : "Equip"}</button>
@@ -11590,7 +11921,8 @@ var LyrianApp = (() => {
       label: "Food Units",
       lookupName: "Food Units",
       quantity,
-      unit: "units"
+      unit: "units",
+      standardUnitCost: 1
     });
     const isTwoHanded = /\btwo\s+handed\b|\btwohanded\b/.test(text);
     const isLongsword = /\blongsword\b/.test(text);
@@ -11705,7 +12037,7 @@ var LyrianApp = (() => {
     if (!wanted) {
       return null;
     }
-    if (wanted === "alchemy materials" || wanted === "food units" || wanted === "alchemy units") {
+    if (wanted === "alchemy materials") {
       return null;
     }
     const entries = lookup.items.entries.filter((entry) => !entry.materialReferenceCard);
@@ -11724,13 +12056,25 @@ var LyrianApp = (() => {
       (entry) => entry.generatedMaterial && (normalizePhrase(entry.name).includes(wanted) || wanted.includes(normalizePhrase(entry.name)) || normalizePhrase(entry.materialCategory).includes(wanted))
     ) || null;
   }
+  function getInventoryEntryMaterialProfile(entry = {}, requirement = {}) {
+    const record = entry.itemId ? lookup.items.resolve(entry.itemId) : null;
+    const rawMaterialPackage = Boolean(entry.rawMaterialPackage || record?.rawMaterialPackage);
+    return {
+      record,
+      rawMaterialPackage,
+      materialUnitsFor: cleanText(entry.materialUnitsFor || record?.materialUnitsFor || ""),
+      packageQuantity: rawMaterialPackage ? getMaterialPackageQuantity(record || entry, requirement) : 1
+    };
+  }
   function getOwnedRequirementQuantity(record, requirement, inventory) {
     const safeRecord = record || {};
     const packageQuantity = getMaterialPackageQuantity(safeRecord, requirement);
     const wanted = normalizePhrase(safeRecord.name || requirement.lookupName || requirement.label);
     return inventory.reduce((total, entry) => {
-      if (normalizePhrase(entry.materialUnitsFor || "") === wanted) {
-        return total + Math.max(0, Math.floor(toNumber(entry.quantity, 0)));
+      const materialProfile = getInventoryEntryMaterialProfile(entry, requirement);
+      if (normalizePhrase(materialProfile.materialUnitsFor) === wanted) {
+        const count = Math.max(0, Math.floor(toNumber(entry.quantity, 0)));
+        return total + count * materialProfile.packageQuantity;
       }
       const sameRecord = safeRecord.id && entry.itemId === safeRecord.id;
       const sameName = normalizePhrase(entry.name) === wanted;
@@ -14999,17 +15343,30 @@ var LyrianApp = (() => {
       const unitsKey = getCraftingMaterialUnitsKey(requirementState);
       const packageQuantity = requirementState.record ? getMaterialPackageQuantity(requirementState.record, requirementState) : 1;
       state.play.inventoryItems.forEach((entry) => {
-        if (remaining <= 0 || normalizePhrase(entry.materialUnitsFor || "") !== unitsKey) {
+        const materialProfile = getInventoryEntryMaterialProfile(entry, requirementState);
+        if (remaining <= 0 || normalizePhrase(materialProfile.materialUnitsFor) !== unitsKey) {
           return;
         }
-        const units = Math.max(0, Math.floor(toNumber(entry.quantity, 0)));
-        const taken = Math.min(units, remaining);
-        if (!taken) {
+        const count = Math.max(0, Math.floor(toNumber(entry.quantity, 0)));
+        if (!count) {
           return;
         }
-        entry.quantity = units - taken;
+        const displayName = cleanText(entry.name || materialProfile.record?.name || requirementState.record?.name || requirementState.label);
+        if (materialProfile.rawMaterialPackage) {
+          const entryPackageQuantity = Math.max(1, materialProfile.packageQuantity);
+          const packagesToOpen = Math.min(count, Math.ceil(remaining / entryPackageQuantity));
+          const openedUnits = packagesToOpen * entryPackageQuantity;
+          const takenUnits = Math.min(remaining, openedUnits);
+          entry.quantity = count - packagesToOpen;
+          remaining -= takenUnits;
+          consumedLines.push(`${displayName}: x${packagesToOpen}`);
+          addCraftingMaterialUnitsRemainder(requirementState, unitsKey, openedUnits - takenUnits);
+          return;
+        }
+        const taken = Math.min(count, remaining);
+        entry.quantity = count - taken;
         remaining -= taken;
-        consumedLines.push(`${entry.name}: ${formatRequirementQuantity(taken, requirementState.unit)}`);
+        consumedLines.push(`${displayName}: ${formatRequirementQuantity(taken, requirementState.unit)}`);
       });
       state.play.inventoryItems.forEach((entry) => {
         if (remaining <= 0 || !entry.custom || entry.materialUnitsFor) {
@@ -15979,6 +16336,40 @@ ${message}`);
     renderPlayDashboard();
     setStatus(entry ? `Removed ${mergeInventoryEntryWithRecord(entry).name} from inventory.` : "Removed inventory item.");
   }
+  function adjustInventoryItemQuantity(uid, direction) {
+    state.play = mergePlayState(state.play);
+    const entry = state.play.inventoryItems.find((item2) => item2.uid === uid);
+    if (!entry) {
+      setStatus("Could not find that inventory item.");
+      return;
+    }
+    const item = mergeInventoryEntryWithRecord(entry);
+    if (!isFoodUnitEntry(item)) {
+      setStatus(`${item.name} does not use the food-unit quantity tracker.`);
+      return;
+    }
+    const amountInput = document.querySelector(`[data-inventory-quantity-amount="${cssEscape(uid)}"]`);
+    const amount = Math.max(1, Math.floor(toNumber(amountInput?.value, 1)));
+    const currentQuantity = Math.max(0, Math.floor(toNumber(entry.quantity, 0)));
+    const signedDirection = toNumber(direction, 0) < 0 ? -1 : 1;
+    const nextQuantity = Math.max(0, currentQuantity + signedDirection * amount);
+    if (nextQuantity <= 0) {
+      state.play.inventoryItems = state.play.inventoryItems.filter((inventoryItem) => inventoryItem.uid !== uid);
+      if (entry.itemId) {
+        setBuilderItemQuantity(entry.itemId, 0);
+      }
+    } else {
+      entry.quantity = nextQuantity;
+      if (entry.itemId) {
+        setBuilderItemQuantity(entry.itemId, nextQuantity);
+      }
+    }
+    syncBuilderSelectionsIntoSheet2();
+    renderBuilderSummary();
+    renderPlayDashboard();
+    persistWorkingState();
+    setStatus(nextQuantity > 0 ? `${signedDirection < 0 ? "Consumed" : "Added"} ${amount} ${item.name}. ${nextQuantity} remaining.` : `Consumed ${amount} ${item.name}. ${item.name} removed.`);
+  }
   function consumeInventoryItemUse(uid, item) {
     if (!isConsumableInventoryItem(item)) {
       return "";
@@ -16276,7 +16667,7 @@ ${secondaryStatText}`),
       const row = CLASS_ROWS[index];
       updateFieldValue(`Class${row}`, entry.name);
       updateFieldValue(`ClassTier${row}`, entry.tier ? String(entry.tier) : "");
-      updateFieldValue(`ClassLevel${row}`, String(progressEntry.level));
+      updateFieldValue(`ClassLevel${row}`, String(progressEntry.purchasedCount));
       updateFieldValue(`Cost${row}`, String(progressEntry.cost));
     });
     const budget = getClassUnlockBudgetState();
@@ -16332,6 +16723,7 @@ ${secondaryStatText}`),
     const classes = getSelectedClassDetails();
     const items = getSelectedItemRecords();
     const funds = getStartingFundsState();
+    const classBudget = getClassUnlockBudgetState();
     const breakthroughEffects = funds.effects;
     const profSections = [];
     if (race) {
@@ -16377,6 +16769,14 @@ ${secondaryStatText}`),
         ].filter(Boolean).join("\n");
       });
       profSections.push(classSections.join("\n\n"));
+    }
+    if (classBudget.gmExtraInterlude) {
+      profSections.push([
+        "GM Class IP Override",
+        `Base Interlude Points: ${classBudget.baseInterludeBudget}`,
+        `GM Additional IP: +${classBudget.gmExtraInterlude}`,
+        `Allowed Class Unlock IP: ${classBudget.interludeBudget}`
+      ].join("\n"));
     }
     const resolvedClassChoiceNotes = getResolvedBuilderChoices().filter((choice) => choice.id.startsWith("class-")).map((choice) => {
       if (choice.type === "class-skill-pool") {
@@ -16867,6 +17267,7 @@ ${secondaryStatText}`),
           <div class="detail-section">
             <h3>${escapeHtml(record.name)}</h3>
             <p>${escapeHtml([record.type, record.subType, record.cost, record.materialUnitLabel || record.burden].filter(Boolean).join(" | "))}</p>
+            ${getWeaponProficiencyHintText(record) ? `<p><strong>Proficiency:</strong> ${escapeHtml(getWeaponProficiencyHintText(record))}</p>` : ""}
             ${paragraphize(record.description)}
           </div>
         </div>
@@ -16903,7 +17304,10 @@ ${secondaryStatText}`),
       const record = detailLookup.races.resolve(state.builder.inspected.race) || getSelectedRaceDetail() || detailLookup.races.entries[0];
       html = renderRaceDetailCard(record);
     } else if (stepId === "ancestry") {
-      const record = getAncestryDetail(state.builder.inspected.ancestry) || getSelectedAncestryDetail() || filteredAncestries()[0];
+      const ancestryOptions = filteredAncestries();
+      const selectedAncestry = getSelectedAncestryDetail();
+      const selectedInCurrentOptions = selectedAncestry && ancestryOptions.some((entry) => normalizeKey(entry.id) === normalizeKey(selectedAncestry.id));
+      const record = ancestryOptions.find((entry) => normalizeKey(entry.id) === normalizeKey(state.builder.inspected.ancestry)) || (selectedInCurrentOptions ? selectedAncestry : null) || ancestryOptions[0] || null;
       html = renderAncestryDetailCard(record);
     } else if (stepId === "classes") {
       const record = getClassDetail(state.builder.inspected.class) || getSelectedClassDetails()[0] || detailLookup.classes.entries[0];
@@ -17160,12 +17564,45 @@ ${secondaryStatText}`),
         </div>
       `;
   }
+  function renderFoodUnitPurchaseActions(entry, quantity, selected, inventoryFull, funds) {
+    const itemCost = parseClimCost(entry.cost);
+    const canBuyAmount = (amount) => !inventoryFull && (!itemCost || itemCost * amount <= funds.availableClim);
+    return `
+        <div class="builder-equipment-actions builder-food-unit-actions" aria-label="${escapeHtml(`${entry.name} purchase controls`)}">
+          <button
+            type="button"
+            class="builder-icon-stepper"
+            data-builder-action="remove-item"
+            data-id="${escapeHtml(entry.id)}"
+            data-item-quantity-delta="1"
+            ${selected ? "" : "disabled"}
+            title="${escapeHtml(selected ? `Remove 1 ${entry.name}.` : "No Food Units purchased.")}"
+            aria-label="${escapeHtml(`Remove 1 ${entry.name}`)}">-1</button>
+          <span class="builder-equipment-quantity-count${selected ? "" : " is-empty"}" aria-label="${escapeHtml(`${quantity} food units purchased`)}">${selected ? escapeHtml(String(quantity)) : ""}</span>
+          ${FOOD_UNIT_PURCHASE_AMOUNTS.map((amount) => {
+      const enabled = canBuyAmount(amount);
+      const cost = itemCost * amount;
+      const title = enabled ? `Buy ${amount} ${entry.name}${cost ? ` for ${cost} Clim` : ""}.` : inventoryFull ? "All inventory rows are already filled." : `Buying ${amount} ${entry.name} costs ${cost} Clim, but only ${funds.availableClim} Clim remains.`;
+      return `<button
+              type="button"
+              class="builder-food-unit-button"
+              data-builder-action="add-item"
+              data-id="${escapeHtml(entry.id)}"
+              data-item-quantity-delta="${escapeHtml(String(amount))}"
+              ${enabled ? "" : "disabled"}
+              title="${escapeHtml(title)}"
+              aria-label="${escapeHtml(`Buy ${amount} ${entry.name}`)}">+${escapeHtml(String(amount))}</button>`;
+    }).join("")}
+        </div>
+      `;
+  }
   function renderEquipmentOptionCard(entry, selectedIds, funds) {
     const stackable = isStackableBuilderItem(entry);
     const quantity = getBuilderItemQuantity(entry.id);
     const selected = quantity > 0 || selectedIds.has(entry.id);
     const itemCost = parseClimCost(entry.cost);
     const metaLabels = [entry.type, entry.subType, entry.cost, entry.materialUnitLabel || entry.burden].filter(Boolean);
+    const proficiencyHint = getWeaponProficiencyHintText(entry);
     const inventoryFull = !selected && state.builder.selectedItemIds.length >= INVENTORY_ROWS.length;
     const canAdd = (stackable || !selected) && !inventoryFull && (!itemCost || itemCost <= funds.availableClim);
     const cardClasses = [
@@ -17174,7 +17611,7 @@ ${secondaryStatText}`),
       selected ? "selected" : "",
       state.builder.inspected.item === entry.id ? "inspected" : ""
     ].filter(Boolean).join(" ");
-    const statusText = selected ? stackable && quantity > 1 ? `Purchased x${quantity}` : "Purchased" : "";
+    const statusText = selected ? isFoodUnitEntry(entry) ? `Purchased ${quantity}` : stackable && quantity > 1 ? `Purchased x${quantity}` : "Purchased" : "";
     const addTitle = selected && !stackable ? "Item already purchased." : inventoryFull ? "All inventory rows are already filled." : itemCost > funds.availableClim ? `${entry.name} costs ${itemCost} Clim, but only ${funds.availableClim} Clim remains.` : `${selected ? "Purchase another" : "Purchase"} ${entry.name}.`;
     return `
         <div class="${cardClasses}">
@@ -17187,21 +17624,22 @@ ${secondaryStatText}`),
               </div>
               ${renderCardMeta(metaLabels)}
               <p>${escapeHtml(cleanText(entry.description).slice(0, 190))}</p>
+              ${proficiencyHint ? `<p class="builder-option-note">${escapeHtml(proficiencyHint)}</p>` : ""}
             </div>
           </button>
-          <div class="builder-equipment-actions" aria-label="${escapeHtml(`${entry.name} purchase controls`)}">
+          ${isFoodUnitEntry(entry) ? renderFoodUnitPurchaseActions(entry, quantity, selected, inventoryFull, funds) : `<div class="builder-equipment-actions" aria-label="${escapeHtml(`${entry.name} purchase controls`)}">
             <button type="button" class="builder-icon-stepper" data-builder-action="remove-item" data-id="${escapeHtml(entry.id)}" ${selected ? "" : "disabled"} title="${escapeHtml(selected ? `Remove ${entry.name}.` : "Item is not purchased.")}" aria-label="${escapeHtml(`Remove ${entry.name}`)}">-</button>
             <div class="builder-equipment-add-stack">
               <span class="builder-equipment-quantity-count${selected ? "" : " is-empty"}" aria-label="${escapeHtml(`${quantity} purchased`)}">${selected ? escapeHtml(String(quantity)) : ""}</span>
               <button type="button" class="builder-icon-stepper" data-builder-action="add-item" data-id="${escapeHtml(entry.id)}" ${canAdd ? "" : "disabled"} title="${escapeHtml(addTitle)}" aria-label="${escapeHtml(`Purchase ${entry.name}`)}">+</button>
             </div>
-          </div>
+          </div>`}
         </div>
       `;
   }
-  function renderEquipmentEntryList(entries, selectedIds, funds) {
-    const materialCounts = entries.reduce((counts, entry) => {
-      const category = cleanText(entry.materialCategory);
+  function renderEquipmentEntryList(entries, selectedIds, funds, sortMode = "default") {
+    const groupCounts = entries.reduce((counts, entry) => {
+      const category = getEquipmentGroupLabel(entry, sortMode);
       if (category) {
         counts.set(category, (counts.get(category) || 0) + 1);
       }
@@ -17209,8 +17647,8 @@ ${secondaryStatText}`),
     }, /* @__PURE__ */ new Map());
     let activeCategory = "";
     return entries.map((entry) => {
-      const category = cleanText(entry.materialCategory);
-      const header = category && category !== activeCategory ? `<div class="builder-group-heading builder-equipment-group-heading"><strong>${escapeHtml(category)}</strong><span>${materialCounts.get(category)} material${materialCounts.get(category) === 1 ? "" : "s"}</span></div>` : "";
+      const category = getEquipmentGroupLabel(entry, sortMode);
+      const header = category && category !== activeCategory ? `<div class="builder-group-heading builder-equipment-group-heading"><strong>${escapeHtml(category)}</strong><span>${groupCounts.get(category)} item${groupCounts.get(category) === 1 ? "" : "s"}</span></div>` : "";
       activeCategory = category;
       return `${header}${renderEquipmentOptionCard(entry, selectedIds, funds)}`;
     }).join("");
@@ -17509,16 +17947,24 @@ ${secondaryStatText}`),
     });
     return `
         <div class="builder-content-grid">
-          <p class="builder-note">Class creation starts with <strong>${STARTING_CLASS_EXP} EXP</strong> and <strong>${STARTING_INTERLUDE_POINTS} Interlude Points</strong>. EXP added on the character sheet is also available here. Unlocking a class costs <strong>1 Interlude Point + 100 EXP per tier</strong>, and the class key ability comes online as soon as that class is unlocked.</p>
+          <p class="builder-note">Class creation starts with <strong>${STARTING_CLASS_EXP} EXP</strong> and <strong>${STARTING_INTERLUDE_POINTS} Interlude Points</strong>. EXP added on the character sheet is also available here, and a GM can grant extra class-unlock IP below. Unlocking a class costs <strong>1 Interlude Point + 100 EXP per tier</strong>, and the class key ability comes online as soon as that class is unlocked.</p>
           <div class="builder-search-row">
             <input class="builder-search-input" type="text" autocomplete="off" data-builder-search="class" placeholder="Search classes" value="${escapeHtml(state.builder.searches.class)}">
             <p>Classes are grouped by role by default. Locked cards stay grayed out until the tracked build meets their official prerequisites.</p>
           </div>
+          <div class="builder-filter-row">
+            <label class="builder-filter-field">
+              <span>GM Additional IP</span>
+              <input class="builder-inline-input" type="number" inputmode="numeric" min="0" data-class-ip-field="GM Extra IP" value="${escapeHtml(state.fields["GM Extra IP"] || "")}" placeholder="0">
+            </label>
+          </div>
           <div class="selected-chip-list">
             <span class="selected-chip">Class EXP: ${budget.spentExp} / ${budget.expBudget}</span>
             <span class="selected-chip">Interlude: ${budget.spentInterlude} / ${budget.interludeBudget}</span>
+            ${budget.gmExtraInterlude ? `<span class="selected-chip">GM Extra IP: +${escapeHtml(String(budget.gmExtraInterlude))}</span>` : ""}
             <span class="selected-chip">Remaining EXP: ${budget.remainingExp}</span>
             <span class="selected-chip">Remaining IP: ${budget.remainingInterlude}</span>
+            ${budget.overInterlude ? `<span class="selected-chip">Over IP: ${escapeHtml(String(budget.overInterlude))}</span>` : ""}
           </div>
           ${selectedIds.size ? `<div class="selected-chip-list">${getSelectedClassDetails().map((entry) => `<button type="button" class="selected-chip selected-chip-button" data-builder-action="toggle-class" data-id="${escapeHtml(entry.id)}" aria-label="Remove ${escapeHtml(entry.name)} from your character">${escapeHtml(entry.name)}</button>`).join("")}</div>` : ""}
           ${renderSelectedClassProgressPanel(budget)}
@@ -17875,16 +18321,23 @@ ${secondaryStatText}`),
       `;
   }
   function renderEquipmentStep() {
-    const search = normalizeKey(state.builder.searches.item);
+    const searches = state.builder.searches || {};
+    const search = normalizeKey(searches.item);
+    const sortMode = cleanText(searches.itemSort) || "default";
+    const categoryFilter = cleanText(searches.itemCategory);
+    const consumableFilter = cleanText(searches.itemConsumable);
+    const resourceFilter = cleanText(searches.itemResource);
+    const disciplineFilter = cleanText(searches.itemDiscipline);
     const selectedIds = new Set(state.builder.selectedItemIds);
-    const entries = lookup.items.entries.filter((entry) => {
+    const entries = sortEquipmentEntries(lookup.items.entries.filter((entry) => {
       if (entry.hiddenFromBuilderEquipment) {
         return false;
       }
       const haystack = [entry.name, entry.type, entry.subType, entry.cost, entry.materialUnitLabel, entry.materialCategory, entry.description].map(normalizeKey).join(" ");
-      return !search || haystack.includes(search);
-    });
+      return (!search || haystack.includes(search)) && matchesEquipmentOption(entry, EQUIPMENT_CATEGORY_OPTIONS, categoryFilter) && matchesEquipmentOption(entry, EQUIPMENT_CONSUMABLE_OPTIONS, consumableFilter) && matchesEquipmentOption(entry, EQUIPMENT_RESOURCE_OPTIONS, resourceFilter) && matchesEquipmentOption(entry, EQUIPMENT_DISCIPLINE_OPTIONS, disciplineFilter);
+    }), search, sortMode);
     const funds = getStartingFundsState();
+    const selectedItemCount = getSelectedItemRecords().reduce((total, entry) => total + Math.max(1, getBuilderItemQuantity(entry.id)), 0);
     return `
         <div class="builder-content-grid">
           <p class="builder-note">Each character starts with 3000 Clim they can spend on basic equipment and items. Breakthrough bonuses update that pool here automatically, and you can use the manual override if the GM starts the character with a different amount.</p>
@@ -17917,12 +18370,33 @@ ${secondaryStatText}`),
             <p>${escapeHtml(funds.hasOverride ? "The override is currently setting the available total shown above." : "Leave blank to use the standard total plus any breakthrough bonuses.")}</p>
           </label>
           <div class="builder-search-row">
-            <input class="builder-search-input" type="text" autocomplete="off" data-builder-search="item" placeholder="Search items" value="${escapeHtml(state.builder.searches.item)}">
+            <input class="builder-search-input" type="text" autocomplete="off" data-builder-search="item" placeholder="Search items" value="${escapeHtml(searches.item)}">
             <p>Selected items seed the combat inventory rows and the items page notes.</p>
+          </div>
+          <div class="builder-filter-row">
+            ${renderEquipmentFilterSelect("itemSort", "Group / Sort", EQUIPMENT_SORT_OPTIONS, sortMode)}
+            ${renderEquipmentFilterSelect("itemCategory", "Category", EQUIPMENT_CATEGORY_OPTIONS, categoryFilter)}
+            ${renderEquipmentFilterSelect("itemConsumable", "Consumable Type", EQUIPMENT_CONSUMABLE_OPTIONS, consumableFilter)}
+            ${renderEquipmentFilterSelect("itemResource", "Resource Type", EQUIPMENT_RESOURCE_OPTIONS, resourceFilter)}
+            ${renderEquipmentFilterSelect("itemDiscipline", "Crafting Discipline", EQUIPMENT_DISCIPLINE_OPTIONS, disciplineFilter)}
+          </div>
+          <div class="builder-equipment-sticky-funds${funds.overBudgetClim ? " is-over-budget" : ""}" aria-label="Starting funds summary">
+            <div>
+              <span>Remaining Clim</span>
+              <strong>${escapeHtml(String(funds.availableClim))}</strong>
+            </div>
+            <div>
+              <span>Equipment Cost</span>
+              <strong>${escapeHtml(String(funds.selectedEquipmentCost))}</strong>
+            </div>
+            <div>
+              <span>Selected Items</span>
+              <strong>${escapeHtml(String(selectedItemCount))}</strong>
+            </div>
           </div>
           ${selectedIds.size ? `<div class="selected-chip-list">${getSelectedItemRecords().map((entry) => `<span class="selected-chip">${escapeHtml(getBuilderItemDisplayName(entry))}</span>`).join("")}</div>` : ""}
           <div class="builder-option-list">
-            ${renderEquipmentEntryList(entries, selectedIds, funds)}
+            ${entries.length ? renderEquipmentEntryList(entries, selectedIds, funds, sortMode) : `<p class="builder-empty">No items matched the current search and filters.</p>`}
           </div>
         </div>
       `;
@@ -17986,7 +18460,7 @@ ${secondaryStatText}`),
         creationArray: MAIN_STAT_CREATION_ARRAY,
         stepId: "main-stats",
         modeKey: "mainStatMode",
-        note: (entryMode) => entryMode === "custom" ? "Main stats are the base values that drive your combat math. Custom mode lets you type whatever manual Power, Focus, Agility, and Toughness values you want instead of using the standard array, and the sheet recalculates the derived combat numbers from those values immediately." : "Main stats are base values you assign during character creation. The standard Lyrian array is 5, 4, 4, 3 for Power, Focus, Agility, and Toughness, and array mode only offers those legal remaining values. You can switch Entry Mode to Custom Values any time if you want a manual build instead."
+        note: (entryMode) => entryMode === "custom" ? "Main stats are the base values that drive your combat math. Custom mode lets you type whatever manual Focus, Power, Agility, and Toughness values you want instead of using the standard array, and the sheet recalculates the derived combat numbers from those values immediately." : "Main stats are base values you assign during character creation. The standard Lyrian array is 5, 4, 4, 3 for Focus, Power, Agility, and Toughness, and array mode only offers those legal remaining values. You can switch Entry Mode to Custom Values any time if you want a manual build instead."
       });
     } else if (step.id === "secondary-stats") {
       html = renderStatStep(SECONDARY_STATS, {
@@ -18106,11 +18580,14 @@ ${secondaryStatText}`),
     if (!race) {
       return;
     }
+    const previousRaceId = state.builder.selectedRaceId;
+    const raceChanged = Boolean(previousRaceId && previousRaceId !== race.id);
     state.builder.selectedRaceId = race.id;
     state.builder.inspected.race = race.id;
+    state.builder.inspected.ancestry = "";
     updateFieldValue("Primary Race", race.name);
     const ancestry = getSelectedAncestryDetail();
-    if (getCurrentSecondaryLineageMode(race) === "none" || ancestry && normalizeKey(ancestry.primaryRace) !== normalizeKey(race.name)) {
+    if (raceChanged || getCurrentSecondaryLineageMode(race) === "none" || ancestry && normalizeKey(ancestry.primaryRace) !== normalizeKey(race.name)) {
       state.builder.selectedAncestryId = "";
       state.builder.inspected.ancestry = "";
       updateFieldValue("Sub Race", "");
@@ -18383,7 +18860,7 @@ The app cannot verify this requirement. Has the GM approved it for this characte
       const budget = getClassUnlockBudgetState();
       const unlockCost = getClassUnlockCost(record);
       if (budget.remainingInterlude <= 0) {
-        setStatus(`You have already committed all ${STARTING_INTERLUDE_POINTS} starting Interlude Points to class unlocks.`);
+        setStatus(`You have already committed all ${budget.interludeBudget} allowed Interlude Points to class unlocks. Add GM Additional IP if the GM is allowing more class unlocks.`);
         renderBuilder();
         return;
       }
@@ -18395,7 +18872,7 @@ The app cannot verify this requirement. Has the GM approved it for this characte
     }
     const budgetBefore = getClassUnlockBudgetState();
     const expDelta = alreadySelected && record ? -getClassProgressCost(record) : record ? getClassUnlockCost(record) : 0;
-    if (!toggleSelection("selectedClassIds", id, STARTING_INTERLUDE_POINTS, "class unlock")) {
+    if (!toggleSelection("selectedClassIds", id, budgetBefore.interludeBudget, "class unlock")) {
       return;
     }
     if (alreadySelected && record?.id && state.builder.classAbilityProgress) {
@@ -18463,13 +18940,14 @@ The app cannot verify this requirement. Has the GM approved it for this characte
     renderBuilderDetail();
     setStatus(`Viewing ${record.name}. Use + to purchase it.`);
   }
-  function addBuilderItem(id) {
+  function addBuilderItem(id, amount = 1) {
     state.builder.inspected.item = id;
     const record = lookup.items.resolve(id);
     if (!record) {
       setStatus("Could not find that equipment item.");
       return;
     }
+    const purchaseQuantity = Math.max(1, Math.floor(toNumber(amount, 1)));
     const stackable = isStackableBuilderItem(record);
     const currentQuantity = getBuilderItemQuantity(record.id);
     if (!stackable && currentQuantity > 0) {
@@ -18484,23 +18962,25 @@ The app cannot verify this requirement. Has the GM approved it for this characte
     }
     const cost = parseClimCost(record.cost);
     const funds = getStartingFundsState();
-    if (cost > 0 && cost > funds.availableClim) {
-      setStatus(`${record.name} costs ${cost} Clim, but only ${funds.availableClim} Clim remains. Use the manual override if the GM is granting extra funds.`);
+    const totalCost = cost * purchaseQuantity;
+    if (totalCost > 0 && totalCost > funds.availableClim) {
+      setStatus(`${record.name} costs ${totalCost} Clim for ${purchaseQuantity}, but only ${funds.availableClim} Clim remains. Use the manual override if the GM is granting extra funds.`);
       renderBuilder();
       return;
     }
-    const nextQuantity = setBuilderItemQuantity(record.id, currentQuantity + 1);
+    const nextQuantity = setBuilderItemQuantity(record.id, currentQuantity + (stackable ? purchaseQuantity : 1));
     syncBuilderSelectionsIntoSheet2();
-    setStatus(stackable && nextQuantity > 1 ? `Purchased another ${record.name}. Quantity: ${nextQuantity}.` : `Purchased ${record.name}.`);
+    setStatus(stackable && nextQuantity > 1 ? `Purchased ${purchaseQuantity} ${record.name}. Quantity: ${nextQuantity}.` : `Purchased ${record.name}.`);
     renderBuilder();
   }
-  function removeBuilderItem(id) {
+  function removeBuilderItem(id, amount = 1) {
     state.builder.inspected.item = id;
     const record = lookup.items.resolve(id);
     if (!record) {
       setStatus("Could not find that equipment item.");
       return;
     }
+    const removeQuantity = Math.max(1, Math.floor(toNumber(amount, 1)));
     const stackable = isStackableBuilderItem(record);
     const currentQuantity = getBuilderItemQuantity(record.id);
     if (currentQuantity <= 0) {
@@ -18508,7 +18988,7 @@ The app cannot verify this requirement. Has the GM approved it for this characte
       renderBuilder();
       return;
     }
-    const nextQuantity = stackable ? setBuilderItemQuantity(record.id, currentQuantity - 1) : setBuilderItemQuantity(record.id, 0);
+    const nextQuantity = stackable ? setBuilderItemQuantity(record.id, currentQuantity - removeQuantity) : setBuilderItemQuantity(record.id, 0);
     syncBuilderSelectionsIntoSheet2();
     setStatus(nextQuantity > 0 ? `Reduced ${record.name} to quantity ${nextQuantity}.` : `Removed ${record.name}.`);
     renderBuilder();
@@ -19754,6 +20234,18 @@ The app cannot verify this requirement. Has the GM approved it for this characte
       goToBuilderStep(Number(button.dataset.stepIndex));
     });
     document.getElementById("builder-step-content").addEventListener("click", (event) => {
+      const clearChoice = event.target.closest("[data-builder-choice-clear]");
+      if (clearChoice) {
+        clearBuilderChoiceValue(clearChoice.dataset.builderChoiceClear);
+        syncBuilderSelectionsIntoSheet2();
+        renderBuilderStepContent();
+        renderBuilderDetail();
+        renderBuilderSummary();
+        renderPlayDashboardIfVisible();
+        scheduleWorkingStatePersist();
+        setStatus("Cleared that builder choice.");
+        return;
+      }
       const expertiseSummary = event.target.closest(".builder-skill-expertise-summary");
       if (expertiseSummary) {
         loadBuilderSkillExpertisePanel(expertiseSummary.closest(".builder-skill-expertise-panel"));
@@ -19878,9 +20370,9 @@ The app cannot verify this requirement. Has the GM approved it for this characte
       } else if (action === "inspect-item") {
         inspectBuilderItem(id);
       } else if (action === "add-item") {
-        addBuilderItem(id);
+        addBuilderItem(id, trigger.dataset.itemQuantityDelta || 1);
       } else if (action === "remove-item") {
-        removeBuilderItem(id);
+        removeBuilderItem(id, trigger.dataset.itemQuantityDelta || 1);
       } else if (action === "start-over-builder") {
         startOverCharacter();
       } else if (action === "finish-builder") {
@@ -19891,6 +20383,12 @@ The app cannot verify this requirement. Has the GM approved it for this characte
       if (event.target.dataset.builderSearch) {
         const key = event.target.dataset.builderSearch;
         state.builder.searches[key] = event.target.value;
+        if (event.target.tagName === "SELECT") {
+          renderBuilderStepContent();
+          renderBuilderSummary();
+          scheduleWorkingStatePersist();
+          return;
+        }
         scheduleBuilderSearchRender(key);
         return;
       }
@@ -19957,6 +20455,14 @@ The app cannot verify this requirement. Has the GM approved it for this characte
         renderBuilderSummary();
         return;
       }
+      if (event.target.dataset.classIpField) {
+        updateFieldValue(event.target.dataset.classIpField, event.target.value);
+        syncBuilderSelectionsIntoSheet2();
+        renderBuilderStepContent();
+        renderPlayDashboardIfVisible();
+        scheduleWorkingStatePersist();
+        return;
+      }
       if (event.target.dataset.currencyField) {
         updateFieldValue(event.target.dataset.currencyField, event.target.value);
         syncDerivedBuilderFields();
@@ -19967,6 +20473,13 @@ The app cannot verify this requirement. Has the GM approved it for this characte
       }
     });
     document.getElementById("builder-step-content").addEventListener("change", (event) => {
+      if (event.target.dataset.builderSearch && event.target.tagName === "SELECT") {
+        state.builder.searches[event.target.dataset.builderSearch] = event.target.value;
+        renderBuilderStepContent();
+        renderBuilderSummary();
+        scheduleWorkingStatePersist();
+        return;
+      }
       if (event.target.dataset.builderMode) {
         const key = event.target.dataset.builderMode;
         state.builder.searches[key] = cleanText(event.target.value) === "custom" ? "custom" : "array";
@@ -20029,6 +20542,14 @@ The app cannot verify this requirement. Has the GM approved it for this characte
         renderBuilderSummary();
         renderPlayDashboardIfVisible();
         renderBuilderStepContent();
+        return;
+      }
+      if (event.target.dataset.classIpField) {
+        updateFieldValue(event.target.dataset.classIpField, event.target.value);
+        syncBuilderSelectionsIntoSheet2();
+        renderBuilderStepContent();
+        renderPlayDashboardIfVisible();
+        scheduleWorkingStatePersist();
         return;
       }
       if (!event.target.dataset.statField) {
@@ -20542,6 +21063,11 @@ The app cannot verify this requirement. Has the GM approved it for this characte
         useInventoryItem(useItem.dataset.inventoryUse, useItem.dataset.inventoryUseCostLabel || "");
         return;
       }
+      const adjustQuantity = event.target.closest("[data-inventory-adjust-quantity]");
+      if (adjustQuantity) {
+        adjustInventoryItemQuantity(adjustQuantity.dataset.inventoryAdjustQuantity, adjustQuantity.dataset.inventoryQuantityDelta);
+        return;
+      }
       const equipButton = event.target.closest("[data-inventory-toggle-equip]");
       if (equipButton) {
         toggleInventoryEquipped(equipButton.dataset.inventoryToggleEquip);
@@ -20690,8 +21216,32 @@ The app cannot verify this requirement. Has the GM approved it for this characte
       materialCategory: category,
       materialSourceId: source.id,
       materialUnitLabel: unitCostText || "",
+      materialUnitsFor: readableMaterialText(details.materialUnitsFor || ""),
+      rawMaterialPackage: Boolean(details.rawMaterialPackage),
       generatedMaterial: true
     };
+  }
+  function createRawUnitPackageEntry(source, details) {
+    const unitName = readableMaterialText(details.unitName || details.materialName || "Material units");
+    const quantity = Math.max(1, parseMaterialNumber(details.quantity || 100));
+    const climCost = Math.max(0, parseMaterialNumber(details.climCost || quantity));
+    const targetName = readableMaterialText(details.targetName || "");
+    const name = details.name || titleMaterialUnit(unitName);
+    return createGeneratedMaterialEntry(source, {
+      name,
+      materialName: unitName,
+      subType: details.subType || "Raw Units",
+      climCost,
+      unitLabel: `${quantity} units`,
+      unitCostText: `${quantity} ${unitName}`,
+      materialUnitsFor: targetName || name,
+      rawMaterialPackage: true,
+      extraText: details.note || [
+        `Raw ${unitName} package.`,
+        targetName ? `Counts as ${quantity} loose units toward ${targetName}.` : `Counts as ${quantity} loose units.`,
+        "Use this when a recipe asks for raw crafting units instead of a finished material."
+      ].join(" ")
+    });
   }
   function collectRegexMatches(text, pattern) {
     const matches = [];
@@ -20713,7 +21263,7 @@ The app cannot verify this requirement. Has the GM approved it for this characte
       ["Mystic", [600, 500, 550, 550, 650]],
       ["Supreme", [1200, 1e3, 1100, 1100, 1300]]
     ];
-    return rows.flatMap(([rarity, costs]) => elements.map((element, index) => createGeneratedMaterialEntry(source, {
+    const herbEntries = rows.flatMap(([rarity, costs]) => elements.map((element, index) => createGeneratedMaterialEntry(source, {
       name: `Alchemy Herb - ${rarity} ${element}`,
       materialName: `${rarity} ${element}`,
       subType: "Alchemy Herb",
@@ -20722,12 +21272,23 @@ The app cannot verify this requirement. Has the GM approved it for this characte
       unitCostText: "1 herb",
       extraText: "Use this as the specific herb purchase for alchemy recipes."
     })));
+    return [
+      ...herbEntries,
+      createRawUnitPackageEntry(source, {
+        name: "Alchemy Units",
+        unitName: "Alchemy Units",
+        targetName: "Alchemy Units",
+        quantity: 100,
+        climCost: 100,
+        note: "Generic alchemy stock used by recipes that ask for Alchemy Units. This builder package prices 100 Alchemy Units at 100 Clim; adjust with the GM if your table uses a different market rate."
+      })
+    ];
   }
   function expandClimUnitMaterials(source, text) {
     const pattern = /-\s*([^:-]+?)(?::-)?-?\s*Clim Cost per\s+([^:]+):\s*([\d,]+)\s*Clim\s*-\s*Unit cost per\s+([^:]+):\s*([\d,]+)\s*([A-Za-z][A-Za-z\s]+?units?)(?=\.|\s*-)/gi;
-    return collectRegexMatches(text, pattern).map(({ match }) => {
+    return collectRegexMatches(text, pattern).flatMap(({ match }) => {
       const [, materialName, climUnit, climCost, unitCostLabel, unitCost, unitName] = match;
-      return createGeneratedMaterialEntry(source, {
+      const materialEntry = createGeneratedMaterialEntry(source, {
         materialName,
         subType: "Base Material",
         climCost,
@@ -20735,6 +21296,20 @@ The app cannot verify this requirement. Has the GM approved it for this characte
         unitCostText: `${parseMaterialNumber(unitCost)} ${readableMaterialText(unitName)} per ${readableMaterialText(unitCostLabel || climUnit)}`,
         extraText: "Base crafting material parsed from the source materials table."
       });
+      const unitQuantity = parseMaterialNumber(unitCost);
+      const rawUnitEntry = createRawUnitPackageEntry(source, {
+        name: `${singularMaterialCategory(source)} - ${titleMaterialUnit(unitName)}`,
+        unitName,
+        targetName: materialEntry.name,
+        quantity: unitQuantity,
+        climCost,
+        note: [
+          `Raw ${readableMaterialText(unitName)} package parsed from the source materials table.`,
+          `The source lists ${unitQuantity} ${readableMaterialText(unitName)} per ${readableMaterialText(unitCostLabel || climUnit)} at ${parseMaterialNumber(climCost)} Clim.`,
+          `Counts toward ${materialEntry.name} when opened for crafting.`
+        ].join(" ")
+      });
+      return [materialEntry, rawUnitEntry];
     });
   }
   function expandSpecialMaterialRows(source, text) {
@@ -20790,6 +21365,19 @@ The app cannot verify this requirement. Has the GM approved it for this characte
     });
     return [...seedEntries, ...fertilizerEntries];
   }
+  function expandCulinarianIngredients(source) {
+    return [
+      createRawUnitPackageEntry(source, {
+        name: "Food Units",
+        unitName: "Food Units",
+        targetName: "Food Units",
+        subType: "Food Units",
+        climCost: 1,
+        quantity: 1,
+        note: "Generic culinary food or filler material used by food recipes. This builder prices Food Units at 1 Clim each; buy any amount your table allows."
+      })
+    ];
+  }
   function expandMaterialBundle(source) {
     const nameKey = normalizeKey(source?.name);
     if (!isMaterialBundleName(nameKey)) {
@@ -20801,6 +21389,9 @@ The app cannot verify this requirement. Has the GM approved it for this characte
     }
     if (nameKey === "farming materials") {
       return expandFarmingMaterials(source, text);
+    }
+    if (nameKey === "culinarian ingredients") {
+      return expandCulinarianIngredients(source);
     }
     const generated = [
       ...expandClimUnitMaterials(source, text),
