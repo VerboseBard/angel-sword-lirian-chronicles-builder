@@ -1,5 +1,6 @@
-Lyrian Chronicles Character Builder - Beta Version 1.9 New Player Downtime UX
+Lyrian Chronicles Character Builder - Beta Version 1.91 Feedback Hotpatch
 Copied from the hardened Beta 1.8 guided crafting and gathering baseline (2026-07-06).
 This package does not include the Beta 1.6 API provider layer.
-Focus: tightening the crafting and gathering play modes for new-player readability,
-with clearer step labels, next-action guidance, and safer guided outcomes.
+Focus: carrying the Beta 1.9 downtime UX forward with the tester-feedback
+hotpatch fixes for character creation, equipment shopping, food units, and
+live sheet clarity.

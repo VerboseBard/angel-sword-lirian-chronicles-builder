@@ -653,6 +653,30 @@
       min-width: min(240px, 100%);
     }
 
+    .builder-class-ip-control {
+      gap: 8px;
+    }
+
+    .builder-class-ip-stepper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .builder-class-ip-stepper strong {
+      min-width: 34px;
+      color: #fff4d6;
+      font-size: 1.05rem;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .builder-class-ip-control small {
+      color: rgba(255, 238, 193, 0.76);
+      font-size: 0.76rem;
+      line-height: 1.35;
+    }
+
     .builder-option-list {
       display: grid;
       gap: 12px;

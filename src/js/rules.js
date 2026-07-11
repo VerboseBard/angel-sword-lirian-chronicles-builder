@@ -333,6 +333,8 @@ const selectedClasses = classProgress.map((entry) => entry.record);
 const spentExp = classProgress.reduce((total, entry) => total + entry.cost, 0);
 const spentInterlude = selectedClasses.length;
 const expBankText = cleanText(state.fields.Exp);
+const gmExtraInterlude = Math.max(0, Math.floor(toNumber(state.fields["GM Extra IP"], 0)));
+const interludeBudget = STARTING_INTERLUDE_POINTS + gmExtraInterlude;
 const remainingExp = expBankText
         ? Math.max(0, toNumber(expBankText, 0))
         : Math.max(0, STARTING_CLASS_EXP - spentExp);
@@ -340,11 +342,14 @@ const remainingExp = expBankText
         selectedClasses,
         classProgress,
         expBudget: spentExp + remainingExp,
-        interludeBudget: STARTING_INTERLUDE_POINTS,
+        baseInterludeBudget: STARTING_INTERLUDE_POINTS,
+        gmExtraInterlude,
+        interludeBudget,
         spentExp,
         spentInterlude,
         remainingExp,
-        remainingInterlude: Math.max(0, STARTING_INTERLUDE_POINTS - spentInterlude)
+        remainingInterlude: Math.max(0, interludeBudget - spentInterlude),
+        overInterlude: Math.max(0, spentInterlude - interludeBudget)
       };
     }
 export function getSelectedBreakthroughRecords() {

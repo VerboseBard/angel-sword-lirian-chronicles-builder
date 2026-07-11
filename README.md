@@ -1,12 +1,12 @@
-# Lyrian Chronicles Character Builder - Beta 1.9 New Player Downtime UX
+# Lyrian Chronicles Character Builder - Beta 1.91 Feedback Hotpatch
 
-This is the local Beta 1.9 static/public working copy for the Angel Sword character builder and live play sheet.
+This is the local Beta 1.91 static/public working copy for the Angel Sword character builder and live play sheet.
 
 It starts as a copy of the hardened Beta 1.8 guided crafting and gathering baseline (2026-07-06). It intentionally does not include the Beta 1.6 API provider layer.
 
 ## Workstream
 
-Beta 1.9 keeps the guided crafting and gathering wizard from Beta 1.8, then tightens it for new players with clearer step names, visible goal/next-action coaching, and safer outcome language.
+Beta 1.91 keeps the guided crafting and gathering wizard from Beta 1.9, then adds the tester-feedback hotpatch fixes for clearer character creation, equipment shopping, food units, and live sheet clarity.
 
 Crafting and gathering both run as guided downtime workflows. Each step shows what the player is trying to do, what to click next, and which warnings are soft GM gates rather than hard app failures.
 

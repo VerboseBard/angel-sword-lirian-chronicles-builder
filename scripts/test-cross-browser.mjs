@@ -97,7 +97,7 @@ async function runDirectFileStartupAssertion() {
       && result.cardCount > 0
       && result.navCount > 0
       && result.summaryText.includes('Identity')
-      && result.buildLabel.includes('Beta 1.9');
+      && result.buildLabel.includes('Beta 1.91');
 
     if (!startupIsValid || errors.length || failedFileRequests.length) {
       throw new Error(`Direct file startup regression failed: ${JSON.stringify({ result, errors, failedFileRequests }, null, 2)}`);
@@ -857,6 +857,53 @@ const browsers = [
       classRequirementResult.evilEye.locked
     ) {
       throw new Error(`Class requirement unlock regression failed: ${JSON.stringify(classRequirementResult)}`);
+    }
+
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'builder', gameVersion: '0.13.0' },
+        fields: { Name: 'Dogfolk Paladin Tester' },
+        builder: {
+          selectedRaceId: 'chimera',
+          selectedAncestryId: 'dogfolk',
+          selectedBreakthroughIds: [
+            'the-unknown-paladin',
+            'light-armor-training',
+            'medium-armor-training',
+            'weapon-training'
+          ],
+          choiceSelections: {
+            'breakthrough-weapon-training-groups': 'Bludgeoning Weapons'
+          }
+        }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-step-index="6"]');
+    await page.waitForSelector('.builder-option-card', { timeout: 5000 });
+
+    const unknownPaladinRequirementResult = await page.evaluate(() => {
+      const getClassCardState = (name) => {
+        const card = [...document.querySelectorAll('.builder-option-card')]
+          .find((entry) => entry.querySelector('strong')?.textContent?.trim() === name);
+        return card ? {
+          found: true,
+          locked: card.classList.contains('locked'),
+          labels: card.querySelector('.builder-option-meta')?.textContent?.replace(/\s+/g, ' ').trim() || '',
+          note: card.querySelector('.builder-option-note')?.textContent?.replace(/\s+/g, ' ').trim() || ''
+        } : { found: false };
+      };
+      return {
+        shieldPaladin: getClassCardState('Shield Paladin')
+      };
+    });
+
+    if (
+      !unknownPaladinRequirementResult.shieldPaladin.found ||
+      unknownPaladinRequirementResult.shieldPaladin.locked
+    ) {
+      throw new Error(`The Unknown Paladin human requirement regression failed: ${JSON.stringify(unknownPaladinRequirementResult)}`);
     }
 
     await page.evaluate(() => {
@@ -2564,7 +2611,7 @@ const browsers = [
             const contentValid = stepContent && stepContent.children.length > 0 && stepContent.textContent.trim().length > 0;
             const navValid = stepNav && stepNav.querySelectorAll('button').length > 0;
             const versionsValid = versionSelect && versionSelect.querySelectorAll('option').length > 0;
-            const builderBuildValid = builderBuildVersion && builderBuildVersion.textContent.includes('Beta 1.9');
+            const builderBuildValid = builderBuildVersion && builderBuildVersion.textContent.includes('Beta 1.91');
 
             return {
               contentValid,

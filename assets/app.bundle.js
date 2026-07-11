@@ -1723,16 +1723,21 @@ var LyrianApp = (() => {
     const spentExp = classProgress.reduce((total, entry) => total + entry.cost, 0);
     const spentInterlude = selectedClasses.length;
     const expBankText = cleanText(state.fields.Exp);
+    const gmExtraInterlude = Math.max(0, Math.floor(toNumber(state.fields["GM Extra IP"], 0)));
+    const interludeBudget = STARTING_INTERLUDE_POINTS + gmExtraInterlude;
     const remainingExp = expBankText ? Math.max(0, toNumber(expBankText, 0)) : Math.max(0, STARTING_CLASS_EXP - spentExp);
     return {
       selectedClasses,
       classProgress,
       expBudget: spentExp + remainingExp,
-      interludeBudget: STARTING_INTERLUDE_POINTS,
+      baseInterludeBudget: STARTING_INTERLUDE_POINTS,
+      gmExtraInterlude,
+      interludeBudget,
       spentExp,
       spentInterlude,
       remainingExp,
-      remainingInterlude: Math.max(0, STARTING_INTERLUDE_POINTS - spentInterlude)
+      remainingInterlude: Math.max(0, interludeBudget - spentInterlude),
+      overInterlude: Math.max(0, spentInterlude - interludeBudget)
     };
   }
   function getSelectedBreakthroughRecords() {
@@ -2451,7 +2456,7 @@ var LyrianApp = (() => {
   async function checkForVersionUpdates() {
     const connected = versionRuntime.serverAvailable || await detectVersionServer();
     if (!connected) {
-      setStatus("This web build is updated by published site deployments. Refresh after a new Beta 1.9 update is pushed.");
+      setStatus("This web build is updated by published site deployments. Refresh after a new Beta 1.91 update is pushed.");
       renderVersionManager();
       return;
     }
@@ -4263,6 +4268,12 @@ var LyrianApp = (() => {
       entry.clanTitle
     ].some((candidate) => normalizePhrase(candidate) === target));
   }
+  function isPaladinClassRecord(record) {
+    return [record?.name, record?.classId, record?.id].map((value) => normalizePhrase(value)).some((value) => /\bpaladin\b/.test(value));
+  }
+  function hasUnknownPaladinHumanRequirementOverride(record) {
+    return isPaladinClassRecord(record) && hasSelectedBreakthroughName("The Unknown Paladin");
+  }
   function getSelectedClassAccessRuleSources() {
     const sources = [];
     const push = (sourceType, sourceLabel, text) => {
@@ -4838,7 +4849,7 @@ var LyrianApp = (() => {
     }
     return { met: hasSelectedClassName([target]) || hasMasteredClassName([target]), trackable: true, label: normalizedClause };
   }
-  function evaluateLineageRequirement(clause) {
+  function evaluateLineageRequirement(clause, context = {}) {
     const normalizedClause = normalizeRequirementClause(clause);
     let match = normalizedClause.match(/^(?:must\s+be\s+(?:an|a|the)?\s*|be\s+(?:an|a|the)?\s*|an\s+|a\s+)?(.+?)(?:\s+only)?$/i);
     if (!match) {
@@ -4852,6 +4863,9 @@ var LyrianApp = (() => {
     ];
     if (!knownRaceNames.includes(normalizePhrase(target)) && !knownLineageNames.includes(normalizePhrase(target))) {
       return null;
+    }
+    if (normalizePhrase(target) === "human" && hasUnknownPaladinHumanRequirementOverride(context.record)) {
+      return { met: true, trackable: true, label: normalizedClause };
     }
     return { met: hasSelectedLineage(target), trackable: true, label: normalizedClause };
   }
@@ -5060,7 +5074,7 @@ var LyrianApp = (() => {
     if (classMasteryResult) {
       return classMasteryResult;
     }
-    const lineageResult = evaluateLineageRequirement(normalizedClause);
+    const lineageResult = evaluateLineageRequirement(normalizedClause, context);
     if (lineageResult) {
       return lineageResult;
     }
@@ -7196,7 +7210,11 @@ var LyrianApp = (() => {
       const selectedIds = new Set(state.builder.selectedBreakthroughIds);
       const nextIds = state.builder.selectedBreakthroughIds.filter((id) => {
         const record = lookup.breakthroughs.resolve(id);
-        return record && isBreakthroughEligible(record, selectedIds);
+        if (!record) {
+          return false;
+        }
+        const status = getBreakthroughRequirementStatus(record, selectedIds);
+        return status.met || status.manualOnly;
       });
       if (nextIds.length !== state.builder.selectedBreakthroughIds.length) {
         state.builder.selectedBreakthroughIds = nextIds;
@@ -17921,6 +17939,16 @@ ${secondaryStatText}`),
         </div>
       `;
   }
+  function adjustGmClassIp(delta) {
+    const change = Math.trunc(toNumber(delta, 0));
+    if (!change) {
+      return;
+    }
+    const current = Math.max(0, Math.floor(toNumber(state.fields["GM Extra IP"], 0)));
+    const next = Math.max(0, current + change);
+    updateFieldValue("GM Extra IP", next ? String(next) : "");
+    setStatus(next ? `GM Additional IP set to +${next}. Class unlock pool increased to ${STARTING_INTERLUDE_POINTS + next} IP.` : `GM Additional IP cleared. Class unlock pool reset to ${STARTING_INTERLUDE_POINTS} IP.`);
+  }
   function renderClassesStep() {
     const search = normalizeKey(state.builder.searches.class);
     const roleFilter = cleanText(state.builder.searches.classRole);
@@ -17953,10 +17981,15 @@ ${secondaryStatText}`),
             <p>Classes are grouped by role by default. Locked cards stay grayed out until the tracked build meets their official prerequisites.</p>
           </div>
           <div class="builder-filter-row">
-            <label class="builder-filter-field">
+            <div class="builder-filter-field builder-class-ip-control">
               <span>GM Additional IP</span>
-              <input class="builder-inline-input" type="number" inputmode="numeric" min="0" data-class-ip-field="GM Extra IP" value="${escapeHtml(state.fields["GM Extra IP"] || "")}" placeholder="0">
-            </label>
+              <div class="builder-class-ip-stepper" aria-label="GM Additional IP controls">
+                <button type="button" class="builder-icon-stepper" data-adjust-class-ip="-1" ${budget.gmExtraInterlude ? "" : "disabled"} aria-label="Remove one GM Additional IP">-</button>
+                <strong>${escapeHtml(String(budget.gmExtraInterlude || 0))}</strong>
+                <button type="button" class="builder-icon-stepper" data-adjust-class-ip="1" aria-label="Add one GM Additional IP">+</button>
+              </div>
+              <small>Use only when the GM allows extra class unlock Interlude Points.</small>
+            </div>
           </div>
           <div class="selected-chip-list">
             <span class="selected-chip">Class EXP: ${budget.spentExp} / ${budget.expBudget}</span>
@@ -20323,6 +20356,17 @@ The app cannot verify this requirement. Has the GM approved it for this characte
           adjustClassSkill.dataset.classSkillKind,
           adjustClassSkill.dataset.adjustClassSkill
         );
+        renderBuilderStepContent();
+        renderBuilderDetail();
+        renderBuilderSummary();
+        renderPlayDashboardIfVisible();
+        scheduleWorkingStatePersist();
+        return;
+      }
+      const adjustClassIp = event.target.closest("[data-adjust-class-ip]");
+      if (adjustClassIp) {
+        adjustGmClassIp(adjustClassIp.dataset.adjustClassIp);
+        syncBuilderSelectionsIntoSheet2();
         renderBuilderStepContent();
         renderBuilderDetail();
         renderBuilderSummary();
