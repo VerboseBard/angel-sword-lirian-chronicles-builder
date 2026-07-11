@@ -1,0 +1,23 @@
+# Beta 1.92 Hotpatch Notes: Fixes
+
+- Main stat display order corrected to: Focus / Power / Agility / Toughness.
+- Demon racial bonus choices can now be cleared or undone.
+- Other clearable racial and builder choices checked and working.
+- Step 2 ancestry preview no longer gets stuck on the wrong right-side card after race changes.
+- Final sheet no longer grants an extra tier 2 class level.
+- Equipment section now has category and resource filters.
+- Weapon purchases now show clearer proficiency hints.
+- Remaining Clim stays visible while scrolling equipment.
+- Food, Pine, Iron, and Alchemy unit resources are now buyable.
+- Food Units can now be bought in 1 / 5 / 10 / 50 / 100 amounts.
+- Food Units stack into one inventory card.
+- Food Units can be consumed or added directly from the character sheet inventory.
+- Current Build summary now follows character creation order: Identity / Stats / Breakthroughs / Classes / Skills / Equipment.
+- Shield Paladin now unlocks correctly for characters who qualify through The Unknown Paladin, including the reported Dogfolk breakthrough route.
+- Class requirements that allow either of two expertise options are now handled correctly.
+- Bard-related class paths now accept either Art (Singing) or Art (Idol) expertise where the rules allow it.
+- Shield Paladin level benefits now appear in the same order as the rulebook.
+- The corrected progression order is applied to every class: Key Ability / Ability / Skills / Ability / Heart / Ability / Soul / Ultimate.
+- All 180 current classes were checked for the same progression issue.
+- All 53 race, ancestry, Human, and Demon clan paths were checked against the full class catalog.
+- Version labels and browser asset versions were updated to Beta 1.92 so browsers load the current hotpatch.

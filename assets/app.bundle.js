@@ -42,9 +42,9 @@ var LyrianApp = (() => {
   var STARTING_INTERLUDE_POINTS = 3;
   var CLASS_PURCHASABLE_LEVELS = 7;
   var CLASS_PASSIVE_SLOTS = {
-    heart: 2,
-    soul: 4,
-    skills: 6
+    skills: 2,
+    heart: 4,
+    soul: 6
   };
   var CLASS_GROUP_ROLE_ORDER = ["Controller", "Defender", "Healer", "Striker", "Support", "Utility", "Specialist", "Artisan", "Gatherer"];
   var BUILDER_STEPS = [
@@ -2456,7 +2456,7 @@ var LyrianApp = (() => {
   async function checkForVersionUpdates() {
     const connected = versionRuntime.serverAvailable || await detectVersionServer();
     if (!connected) {
-      setStatus("This web build is updated by published site deployments. Refresh after a new Beta 1.91 update is pushed.");
+      setStatus("This web build is updated by published site deployments. Refresh after a new Beta 1.92 update is pushed.");
       renderVersionManager();
       return;
     }
@@ -3825,33 +3825,35 @@ var LyrianApp = (() => {
       "Class ability",
       "Ultimate ability"
     ];
-    const passiveSlots = [
-      {
+    const passiveSlots = {
+      heart: {
         type: "passive",
         passiveType: "heart",
         label: "Heart passive",
         name: "Heart",
         description: cleanText(record?.heart) || "Class Heart passive bonus."
       },
-      {
+      soul: {
         type: "passive",
         passiveType: "soul",
         label: "Soul passive",
         name: "Soul",
         description: cleanText(record?.soul) || "Class Soul passive bonus."
       },
-      {
+      skills: {
         type: "passive",
         passiveType: "skills",
         label: "Class skill passive",
         name: "Class Skills",
         description: cleanText(record?.skills) || "Class skill passive bonus."
       }
-    ];
+    };
+    const passiveSlotsByNumber = new Map(Object.entries(CLASS_PASSIVE_SLOTS).map(([passiveType, slotNumber]) => [slotNumber, passiveType]));
     return Array.from({ length: CLASS_PURCHASABLE_LEVELS }, (_, index) => {
       const slotNumber = index + 1;
-      if (slotNumber % 2 === 0) {
-        return passiveSlots[slotNumber / 2 - 1];
+      const passiveType = passiveSlotsByNumber.get(slotNumber);
+      if (passiveType) {
+        return passiveSlots[passiveType];
       }
       const activeIndex = (slotNumber - 1) / 2;
       const ability = activeAbilities[activeIndex] || null;
@@ -4977,6 +4979,22 @@ var LyrianApp = (() => {
       const met = getSkillRowsData().some(
         (entry) => normalizePhrase(entry.name) === normalizePhrase(skillName) && entry.skillPoints >= required
       );
+      return { met, trackable: true, label: normalizedClause };
+    }
+    match = normalizedClause.match(/^(?:have\s+)?(?:at least\s+)?(\d+|one|two|three|five|ten)\s+(?:skill\s+)?points?\s+in\s+(?:the\s+)?(.+?)\s+expertise,\s*(.+?)\s+expertise$/i);
+    if (match) {
+      const required = getRequirementCount(match[1]);
+      const targets = [match[2], match[3]].map((entry) => cleanText(entry).replace(/^an\s+/i, "")).filter(Boolean);
+      const met = targets.some((target) => {
+        const parenthetical = target.match(/^(.+?)\s*\((.+?)\)$/);
+        const skillName = parenthetical ? parenthetical[1] : target;
+        const expertiseName = parenthetical ? parenthetical[2] : "";
+        return getSkillRowsData().some(
+          (entry) => normalizePhrase(entry.name) === normalizePhrase(skillName) && entry.expertiseGroups.some(
+            (group) => group.bonus >= required && (!expertiseName || normalizePhrase(group.name) === normalizePhrase(expertiseName) || normalizePhrase(group.name) === normalizePhrase(target))
+          )
+        );
+      });
       return { met, trackable: true, label: normalizedClause };
     }
     match = normalizedClause.match(/^(?:have\s+)?(?:at least\s+)?(\d+|one|two|three|five|ten)\s+(?:skill\s+)?points?\s+in\s+(?:the\s+|an\s+)?(.+?)\s+expertise(?:\s+skill|\s+of\s+an\s+instrument)?$/i);
@@ -16642,9 +16660,9 @@ ${message}`);
       renderSummaryCard("Identity", [state.fields.Name || "Unnamed character", race?.name || "No primary race", ancestry?.name || `No ${getSecondaryLineageLabels(race).short.toLowerCase()}`].filter(Boolean).join(" | ")),
       renderSummaryCard("Stats", `${mainStatText}
 ${secondaryStatText}`),
-      renderSummaryCard("Skills", topSkills.length ? topSkills.map((entry) => `${entry.name} ${formatModifier(entry.total)}`).join(", ") : "No trained skills yet."),
-      renderSummaryCard("Classes", classes.length ? classes.map((entry) => entry.name).join(", ") : "No classes chosen yet."),
       renderSummaryCard("Breakthroughs", breakthroughs.length ? breakthroughs.map((entry) => entry.displayName).join(", ") : "No breakthroughs chosen yet."),
+      renderSummaryCard("Classes", classes.length ? classes.map((entry) => entry.name).join(", ") : "No classes chosen yet."),
+      renderSummaryCard("Skills", topSkills.length ? topSkills.map((entry) => `${entry.name} ${formatModifier(entry.total)}`).join(", ") : "No trained skills yet."),
       renderSummaryCard("Equipment", getEquipmentSummaryText(items, funds), "summary-card-equipment")
     ].join("");
   }

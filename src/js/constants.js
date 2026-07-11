@@ -45,9 +45,9 @@ export const PAGE_BACKGROUNDS = {
     export const STARTING_INTERLUDE_POINTS = 3;
     export const CLASS_PURCHASABLE_LEVELS = 7;
     export const CLASS_PASSIVE_SLOTS = {
-      heart: 2,
-      soul: 4,
-      skills: 6
+      skills: 2,
+      heart: 4,
+      soul: 6
     };
     export const CLASS_GROUP_ROLE_ORDER = ["Controller", "Defender", "Healer", "Striker", "Support", "Utility", "Specialist", "Artisan", "Gatherer"];
     export const BUILDER_STEPS = [
@@ -366,4 +366,4 @@ export const INVENTORY_ROWS = Array.from(new Set(
           .map((match) => Number(match[1]))
       )
     )).sort((a, b) => a - b);
-
+

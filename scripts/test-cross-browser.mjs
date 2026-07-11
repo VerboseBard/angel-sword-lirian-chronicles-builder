@@ -97,7 +97,7 @@ async function runDirectFileStartupAssertion() {
       && result.cardCount > 0
       && result.navCount > 0
       && result.summaryText.includes('Identity')
-      && result.buildLabel.includes('Beta 1.91');
+      && result.buildLabel.includes('Beta 1.92');
 
     if (!startupIsValid || errors.length || failedFileRequests.length) {
       throw new Error(`Direct file startup regression failed: ${JSON.stringify({ result, errors, failedFileRequests }, null, 2)}`);
@@ -295,7 +295,172 @@ const browsers = [
     await page.reload({ waitUntil: 'load' });
   }
 
+  async function runAllClassProgressionAssertions(page) {
+    const versions = await page.evaluate(() => (window.LYRIAN_VERSION_MANIFEST?.versions || [])
+      .filter((entry) => entry.local)
+      .map((entry) => entry.id));
+    const audited = [];
+
+    for (const version of versions) {
+      await page.evaluate((gameVersion) => {
+        localStorage.clear();
+        localStorage.setItem('lyrian-chronicles-selected-game-version-v2', gameVersion);
+        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.0');
+        localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+          ui: { mode: 'builder', gameVersion },
+          fields: { Name: `All Class Progression Audit ${gameVersion}` },
+          builder: { selectedRaceId: 'human' }
+        }));
+      }, version);
+      await page.reload({ waitUntil: 'load' });
+      await page.waitForFunction((gameVersion) => window.LYRIAN_DATA?.version === gameVersion, version);
+
+      const classes = await page.evaluate(() => window.LYRIAN_DATA.classes.map(({ id, name }) => ({ id, name })));
+      const batchSize = 12;
+      for (let offset = 0; offset < classes.length; offset += batchSize) {
+        const batch = classes.slice(offset, offset + batchSize);
+        await page.evaluate(({ gameVersion, selectedClasses }) => {
+          localStorage.clear();
+          localStorage.setItem('lyrian-chronicles-selected-game-version-v2', gameVersion);
+          localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.0');
+          localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+            ui: { mode: 'builder', gameVersion },
+            fields: { Name: `All Class Progression Audit ${gameVersion}` },
+            builder: {
+              selectedRaceId: 'human',
+              selectedClassIds: selectedClasses.map((entry) => entry.id),
+              classAbilityProgress: Object.fromEntries(selectedClasses.map((entry) => [entry.id, 0]))
+            }
+          }));
+        }, { gameVersion: version, selectedClasses: batch });
+        await page.reload({ waitUntil: 'load' });
+        await page.waitForFunction((gameVersion) => window.LYRIAN_DATA?.version === gameVersion, version);
+        await page.click('[data-step-index="6"]');
+        await page.waitForSelector('.class-progress-card', { timeout: 5000 });
+
+        const rendered = await page.evaluate(() => [...document.querySelectorAll('.class-progress-card')].map((card) => ({
+          name: card.querySelector('h4')?.textContent?.trim() || '',
+          hasKeyAbility: /Key:\s*\S/.test(card.textContent || ''),
+          levels: [...card.querySelectorAll('.class-progress-list li span:first-child')]
+            .map((entry) => entry.textContent.replace(/\s+/g, ' ').trim())
+        })));
+        const expectedNames = batch.map((entry) => entry.name).sort();
+        const renderedNames = rendered.map((entry) => entry.name).sort();
+        const badProgressions = rendered.filter((entry) => (
+          !entry.hasKeyAbility
+          || entry.levels.length !== 7
+          || entry.levels[1] !== 'Level 3: Class Skills'
+          || entry.levels[3] !== 'Level 5: Heart'
+          || entry.levels[5] !== 'Level 7: Soul'
+          || [0, 2, 4, 6].some((index) => /Level \d+: (?:Class Skills|Heart|Soul)$/.test(entry.levels[index] || ''))
+        ));
+        if (
+          renderedNames.join('|') !== expectedNames.join('|')
+          || badProgressions.length
+        ) {
+          throw new Error(`All-class progression audit failed for ${version}: ${JSON.stringify({
+            expectedNames,
+            renderedNames,
+            badProgressions
+          })}`);
+        }
+        audited.push(...batch.map((entry) => `${version}:${entry.id}`));
+      }
+    }
+
+    console.log(`   Audited ${audited.length} rendered class progressions across ${versions.length} local rules versions.`);
+  }
+
+  async function runRaceClassMatrixAssertions(page) {
+    const matrix = await page.evaluate(() => {
+      const ancestriesByRace = new Map();
+      for (const ancestry of window.LYRIAN_DETAIL_DATA.ancestries || []) {
+        const key = String(ancestry.primaryRace || '').toLowerCase();
+        const entries = ancestriesByRace.get(key) || [];
+        entries.push({ id: ancestry.id, name: ancestry.name });
+        ancestriesByRace.set(key, entries);
+      }
+      const normalizeId = (value) => String(value || '').trim().toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+      return (window.LYRIAN_DETAIL_DATA.races || []).flatMap((race) => {
+        const raceKey = String(race.name || '').toLowerCase();
+        if (raceKey === 'human') {
+          return [{ raceId: race.id, raceName: race.name, ancestryId: '', ancestryName: 'No ancestry' }];
+        }
+        if (raceKey === 'demon') {
+          return Object.values(race.lineageChoices || {})
+            .filter((choice) => choice?.title)
+            .map((choice) => ({
+              raceId: race.id,
+              raceName: race.name,
+              ancestryId: `demon-clan-${normalizeId(choice.code)}`,
+              ancestryName: choice.title
+            }));
+        }
+        return (ancestriesByRace.get(raceKey) || []).map((ancestry) => ({
+          raceId: race.id,
+          raceName: race.name,
+          ancestryId: ancestry.id,
+          ancestryName: ancestry.name
+        }));
+      });
+    });
+    const expectedClassCount = await page.evaluate(() => window.LYRIAN_DATA.classes.length);
+    let evaluatedClassCards = 0;
+
+    for (const identity of matrix) {
+      await page.evaluate(({ raceId, ancestryId }) => {
+        localStorage.clear();
+        localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.0');
+        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.0');
+        localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+          ui: { mode: 'builder', gameVersion: '0.13.0' },
+          fields: { Name: 'Race and Class Matrix Audit' },
+          builder: {
+            selectedRaceId: raceId,
+            selectedAncestryId: ancestryId
+          }
+        }));
+      }, identity);
+      await page.reload({ waitUntil: 'load' });
+      await page.waitForFunction(() => window.LYRIAN_DATA?.version === '0.13.0');
+      await page.click('[data-step-index="6"]');
+      await page.waitForFunction((classCount) => (
+        document.querySelectorAll('[data-builder-action="toggle-class"]').length === classCount
+      ), expectedClassCount);
+
+      const result = await page.evaluate(() => {
+        const cards = [...document.querySelectorAll('[data-builder-action="toggle-class"]')];
+        return {
+          count: cards.length,
+          uniqueIds: new Set(cards.map((card) => card.dataset.id)).size,
+          unresolved: cards.filter((card) => {
+            const meta = card.querySelector('.builder-option-meta')?.textContent || '';
+            const isLocked = card.classList.contains('locked');
+            const note = card.querySelector('.builder-option-note')?.textContent || '';
+            return isLocked
+              ? (!meta.includes('Locked') || !note.includes('Prerequisites not met'))
+              : !meta.includes('Available');
+          }).map((card) => card.dataset.id)
+        };
+      });
+      if (
+        result.count !== expectedClassCount
+        || result.uniqueIds !== expectedClassCount
+        || result.unresolved.length
+      ) {
+        throw new Error(`Race/class matrix audit failed for ${identity.raceName} / ${identity.ancestryName}: ${JSON.stringify(result)}`);
+      }
+      evaluatedClassCards += result.count;
+    }
+
+    console.log(`   Audited ${evaluatedClassCards} class availability states across ${matrix.length} race and ancestry paths.`);
+  }
+
   async function runRulesRegressionAssertions(page) {
+    await runAllClassProgressionAssertions(page);
+    await runRaceClassMatrixAssertions(page);
     await runSpreadsheetVisibleGridImportAssertion(page);
     await runCraftingOutcomeResolutionAssertion(page);
     await runGatheringNoYieldResolutionAssertion(page);
@@ -775,7 +940,7 @@ const browsers = [
 
     if (
       summaryEquipmentLayout.topCardCount !== 5 ||
-      summaryEquipmentLayout.titles.join('|') !== 'Identity|Stats|Skills|Classes|Breakthroughs|Equipment' ||
+      summaryEquipmentLayout.titles.join('|') !== 'Identity|Stats|Breakthroughs|Classes|Skills|Equipment' ||
       !summaryEquipmentLayout.equipment?.isEquipment ||
       !summaryEquipmentLayout.equipmentSpansPanel ||
       !summaryEquipmentLayout.equipmentBelowTopCards ||
@@ -859,6 +1024,42 @@ const browsers = [
       throw new Error(`Class requirement unlock regression failed: ${JSON.stringify(classRequirementResult)}`);
     }
 
+    const bardExpertiseUnlockResults = [];
+    for (const expertiseName of ['Singing', 'Idol']) {
+      await page.evaluate((selectedExpertiseName) => {
+        localStorage.clear();
+        localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+          ui: { mode: 'builder', gameVersion: '0.13.0' },
+          fields: { Name: `Bard ${selectedExpertiseName} Expertise Tester` },
+          builder: {
+            selectedRaceId: 'human',
+            skillExpertiseEntries: [{
+              skillIndex: 19,
+              name: selectedExpertiseName,
+              source: 'creation',
+              points: 3
+            }]
+          }
+        }));
+      }, expertiseName);
+      await page.reload({ waitUntil: 'load' });
+      await page.click('[data-step-index="6"]');
+      await page.waitForSelector('.builder-option-card', { timeout: 5000 });
+      bardExpertiseUnlockResults.push(await page.evaluate((selectedExpertiseName) => {
+        const card = [...document.querySelectorAll('.builder-option-card')]
+          .find((entry) => entry.querySelector('strong')?.textContent?.trim() === 'Bard');
+        return {
+          expertiseName: selectedExpertiseName,
+          found: Boolean(card),
+          locked: card?.classList.contains('locked') || false
+        };
+      }, expertiseName));
+    }
+
+    if (bardExpertiseUnlockResults.some((entry) => !entry.found || entry.locked)) {
+      throw new Error(`Bard named expertise requirement regression failed: ${JSON.stringify(bardExpertiseUnlockResults)}`);
+    }
+
     await page.evaluate(() => {
       localStorage.clear();
       localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
@@ -904,6 +1105,47 @@ const browsers = [
       unknownPaladinRequirementResult.shieldPaladin.locked
     ) {
       throw new Error(`The Unknown Paladin human requirement regression failed: ${JSON.stringify(unknownPaladinRequirementResult)}`);
+    }
+
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'builder', gameVersion: '0.13.0' },
+        fields: { Name: 'Shield Paladin Progression Tester' },
+        builder: {
+          selectedRaceId: 'human',
+          selectedClassIds: ['shield-paladin'],
+          classAbilityProgress: { 'shield-paladin': 0 }
+        }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-step-index="6"]');
+    await page.waitForSelector('.class-progress-card', { timeout: 5000 });
+
+    const shieldPaladinProgressionResult = await page.evaluate(() => {
+      const card = [...document.querySelectorAll('.class-progress-card')]
+        .find((entry) => entry.querySelector('h4')?.textContent?.trim() === 'Shield Paladin');
+      return card ? {
+        key: card.textContent.includes('Key: Holy Weapon'),
+        levels: [...card.querySelectorAll('.class-progress-list li span:first-child')]
+          .map((entry) => entry.textContent.replace(/\s+/g, ' ').trim())
+      } : null;
+    });
+    const expectedShieldPaladinLevels = [
+      'Level 2: Holy Shield',
+      'Level 3: Class Skills',
+      'Level 4: Aura of Protection',
+      'Level 5: Heart',
+      'Level 6: Divine Smite II',
+      'Level 7: Soul',
+      'Level 8: Lay on Hands'
+    ];
+    if (
+      !shieldPaladinProgressionResult?.key
+      || shieldPaladinProgressionResult.levels.join('|') !== expectedShieldPaladinLevels.join('|')
+    ) {
+      throw new Error(`Shield Paladin progression order regression failed: ${JSON.stringify(shieldPaladinProgressionResult)}`);
     }
 
     await page.evaluate(() => {
@@ -2611,7 +2853,7 @@ const browsers = [
             const contentValid = stepContent && stepContent.children.length > 0 && stepContent.textContent.trim().length > 0;
             const navValid = stepNav && stepNav.querySelectorAll('button').length > 0;
             const versionsValid = versionSelect && versionSelect.querySelectorAll('option').length > 0;
-            const builderBuildValid = builderBuildVersion && builderBuildVersion.textContent.includes('Beta 1.91');
+            const builderBuildValid = builderBuildVersion && builderBuildVersion.textContent.includes('Beta 1.92');
 
             return {
               contentValid,
