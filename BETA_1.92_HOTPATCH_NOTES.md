@@ -20,4 +20,6 @@
 - The corrected progression order is applied to every class: Key Ability / Ability / Skills / Ability / Heart / Ability / Soul / Ultimate.
 - All 180 current classes were checked for the same progression issue.
 - All 53 race, ancestry, Human, and Demon clan paths were checked against the full class catalog.
+- Classes that grant a selectable weapon, armor, or shield proficiency now prompt for that choice in the Classes step instead of leaving it unresolved on the final sheet.
+- Acolyte, Fighter, and every equivalent selectable class-proficiency grant were audited; 25 choices across 16 classes are now covered by browser regression tests.
 - Version labels and browser asset versions were updated to Beta 1.92 so browsers load the current hotpatch.

@@ -3998,6 +3998,170 @@ function getBreakthroughChoiceId(breakthrough, suffix) {
 function getClassChoiceId(record, suffix) {
       return `class-${record.id}-${suffix}`;
     }
+const COMMON_MELEE_WEAPON_GROUP_OPTIONS = COMMON_WEAPON_GROUP_OPTIONS.filter((entry) => ![
+      "Thrown",
+      "Set of Missiles",
+      "Bow",
+      "Crossbow",
+      "Musket",
+      "Sling"
+    ].includes(entry));
+const COMMON_RANGED_WEAPON_GROUP_OPTIONS = COMMON_WEAPON_GROUP_OPTIONS.filter((entry) => !COMMON_MELEE_WEAPON_GROUP_OPTIONS.includes(entry));
+const ALL_WEAPON_PROFICIENCY_OPTIONS = [...COMMON_WEAPON_GROUP_OPTIONS, ...SPECIALITY_WEAPON_GROUP_OPTIONS];
+const CLASS_PROFICIENCY_CHOICE_CONFIGS = {
+      acolyte: [{
+        suffix: "weapon-proficiency",
+        label: "Acolyte: choose the common or channeling weapon proficiency",
+        options: [...COMMON_WEAPON_GROUP_OPTIONS, "Wand", "Magic Staff"]
+      }],
+      adventurer: [
+        {
+          suffix: "common-weapon-proficiency",
+          label: "Adventurer: choose the common weapon proficiency",
+          options: COMMON_WEAPON_GROUP_OPTIONS,
+          uniqueGroup: "adventurer-weapons"
+        },
+        {
+          suffix: "extra-weapon-proficiency",
+          label: "Adventurer: choose the additional common or specialized weapon proficiency",
+          options: ALL_WEAPON_PROFICIENCY_OPTIONS,
+          uniqueGroup: "adventurer-weapons"
+        },
+        {
+          suffix: "armor-proficiency",
+          label: "Adventurer: choose the armor or shield proficiency",
+          options: ["Light Armor", "Medium Armor", "Heavy Armor", "Shields", "Greatshields"]
+        }
+      ],
+      alchemist: [{
+        suffix: "basic-weapon-proficiency",
+        label: "Alchemist: choose the basic weapon proficiency",
+        options: COMMON_WEAPON_GROUP_OPTIONS,
+        allowCustom: true
+      }],
+      armorsmith: [
+        {
+          suffix: "basic-melee-weapon-proficiency",
+          label: "Armorsmith: choose the basic melee weapon proficiency",
+          options: COMMON_MELEE_WEAPON_GROUP_OPTIONS,
+          allowCustom: true
+        },
+        {
+          suffix: "heart-proficiency",
+          label: "Armorsmith Heart: choose Heavy Armor or Greatshields proficiency",
+          options: ["Heavy Armor", "Greatshields"],
+          passiveType: "heart"
+        }
+      ],
+      blacksmith: [{
+        suffix: "smithing-weapon-proficiency",
+        label: "Blacksmith: choose the smithing weapon proficiency",
+        options: ALL_WEAPON_PROFICIENCY_OPTIONS,
+        allowCustom: true
+      }],
+      carpenter: [{
+        suffix: "ranged-weapon-proficiency",
+        label: "Carpenter: choose Bows or Crossbows proficiency",
+        options: ["Bow", "Crossbow"]
+      }],
+      cavalier: [{
+        suffix: "extra-common-weapon-proficiency",
+        label: "Cavalier: choose the additional common weapon proficiency",
+        options: COMMON_WEAPON_GROUP_OPTIONS.filter((entry) => entry !== "Polearms")
+      }],
+      cultivator: [{
+        suffix: "extra-weapon-proficiency",
+        label: "Cultivator: choose the additional weapon proficiency",
+        options: ALL_WEAPON_PROFICIENCY_OPTIONS,
+        allowCustom: true
+      }],
+      fighter: Array.from({ length: 5 }, (_, index) => ({
+        suffix: `common-weapon-proficiency-${index + 1}`,
+        label: `Fighter: choose common weapon proficiency ${index + 1} of 5`,
+        options: COMMON_WEAPON_GROUP_OPTIONS,
+        uniqueGroup: "fighter-common-weapons"
+      })),
+      forager: [{
+        suffix: "gathering-weapon-proficiency",
+        label: "Forager: choose Axes or Hori proficiency",
+        options: ["Axes", "Hori"]
+      }],
+      merchant: [{
+        suffix: "common-weapon-proficiency",
+        label: "Merchant: choose the common weapon proficiency",
+        options: COMMON_WEAPON_GROUP_OPTIONS
+      }],
+      mime: [
+        {
+          suffix: "common-weapon-proficiency",
+          label: "Mime: choose the common weapon proficiency",
+          options: COMMON_WEAPON_GROUP_OPTIONS
+        },
+        {
+          suffix: "specialized-weapon-proficiency",
+          label: "Mime: choose the specialized weapon proficiency",
+          options: SPECIALITY_WEAPON_GROUP_OPTIONS
+        }
+      ],
+      miner: [{
+        suffix: "armor-proficiency",
+        label: "Miner: choose the armor or shield proficiency",
+        options: ["Light Armor", "Medium Armor", "Heavy Armor", "Shields"]
+      }],
+      ranger: [
+        {
+          suffix: "ranged-weapon-proficiency",
+          label: "Ranger: choose the common ranged weapon proficiency",
+          options: COMMON_RANGED_WEAPON_GROUP_OPTIONS
+        },
+        {
+          suffix: "melee-weapon-proficiency",
+          label: "Ranger: choose the common melee weapon proficiency",
+          options: COMMON_MELEE_WEAPON_GROUP_OPTIONS
+        }
+      ],
+      rogue: [{
+        suffix: "weapon-proficiency",
+        label: "Rogue: choose the weapon group proficiency",
+        options: ["Small Weapons", "Light Swords", "Dueling Weapons", "Set of Missiles"]
+      }],
+      transmuter: [{
+        suffix: "basic-weapon-proficiency",
+        label: "Transmuter: choose the basic weapon proficiency",
+        options: COMMON_WEAPON_GROUP_OPTIONS,
+        allowCustom: true
+      }]
+    };
+function getClassProficiencyChoiceDefinitions(record) {
+      const specs = CLASS_PROFICIENCY_CHOICE_CONFIGS[normalizeKey(record?.id || record?.name)] || [];
+      return specs
+        .filter((spec) => !spec.passiveType || isClassPassiveUnlocked(record, spec.passiveType))
+        .map((spec) => {
+          const id = getClassChoiceId(record, spec.suffix);
+          const currentValue = getBuilderChoiceValue(id);
+          const otherSelections = new Set(spec.uniqueGroup
+            ? specs
+              .filter((other) => other.uniqueGroup === spec.uniqueGroup && other.suffix !== spec.suffix)
+              .map((other) => getBuilderChoiceValue(getClassChoiceId(record, other.suffix)))
+              .filter(Boolean)
+            : []);
+          const options = spec.options.filter((option) => option === currentValue || !otherSelections.has(option));
+          return {
+            id,
+            source: `${record.name} class`,
+            step: "classes",
+            type: "text",
+            effectType: "class-proficiency",
+            label: spec.label,
+            options,
+            allowCustom: Boolean(spec.allowCustom),
+            customLabel: "Custom GM-approved proficiency",
+            placeholder: "Write the GM-approved weapon proficiency",
+            pendingText: `${record.name}: choose the granted proficiency.`,
+            resolvedText: (value) => `${record.name}: ${value} proficiency.`
+          };
+        });
+    }
 function getStatOptionsFromText(text, stats) {
       const source = cleanText(text);
       return stats
@@ -4198,6 +4362,7 @@ const ancestry = getSelectedAncestryDetail();
       getSelectedClassProgress().forEach((progressEntry) => {
         const { record } = progressEntry;
         const source = `${record.name} class`;
+        getClassProficiencyChoiceDefinitions(record).forEach((choice) => definitions.push(choice));
 const heartOptions = getStatOptionsFromText(record.heart, SECONDARY_STATS);
         if (isClassPassiveUnlocked(record, "heart") && heartOptions.length > 1) {
           definitions.push({
@@ -4682,7 +4847,7 @@ const resolved = choices.filter((choice) => isBuilderChoiceResolved(choice));
       return `
         <div class="review-panel">
           <strong>Class Benefit Choices</strong>
-          <p>These are bonuses granted by selected classes. Stat choices can be picked here; class skill pools are spent on the Skills step where the skill rows live.</p>
+          <p>These are bonuses granted by selected classes. Proficiency and stat choices can be picked here; class skill pools are spent on the Skills step where the skill rows live.</p>
           <div class="stat-grid">
             ${pending.map((choice) => renderBuilderChoiceControl(choice)).join("")}
             ${resolved.map((choice) => renderBuilderChoiceControl(choice)).join("")}

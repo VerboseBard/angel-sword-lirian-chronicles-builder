@@ -458,9 +458,152 @@ const browsers = [
     console.log(`   Audited ${evaluatedClassCards} class availability states across ${matrix.length} race and ancestry paths.`);
   }
 
+  async function runClassProficiencyChoiceAssertions(page) {
+    const expectedByClass = {
+      acolyte: ['class-acolyte-weapon-proficiency'],
+      adventurer: [
+        'class-adventurer-common-weapon-proficiency',
+        'class-adventurer-extra-weapon-proficiency',
+        'class-adventurer-armor-proficiency'
+      ],
+      alchemist: ['class-alchemist-basic-weapon-proficiency'],
+      armorsmith: ['class-armorsmith-basic-melee-weapon-proficiency'],
+      blacksmith: ['class-blacksmith-smithing-weapon-proficiency'],
+      carpenter: ['class-carpenter-ranged-weapon-proficiency'],
+      cavalier: ['class-cavalier-extra-common-weapon-proficiency'],
+      cultivator: ['class-cultivator-extra-weapon-proficiency'],
+      fighter: Array.from({ length: 5 }, (_, index) => `class-fighter-common-weapon-proficiency-${index + 1}`),
+      forager: ['class-forager-gathering-weapon-proficiency'],
+      merchant: ['class-merchant-common-weapon-proficiency'],
+      mime: ['class-mime-common-weapon-proficiency', 'class-mime-specialized-weapon-proficiency'],
+      miner: ['class-miner-armor-proficiency'],
+      ranger: ['class-ranger-ranged-weapon-proficiency', 'class-ranger-melee-weapon-proficiency'],
+      rogue: ['class-rogue-weapon-proficiency'],
+      transmuter: ['class-transmuter-basic-weapon-proficiency']
+    };
+    const expectedClassIds = Object.keys(expectedByClass).sort();
+    const sourceClassIds = await page.evaluate(() => window.LYRIAN_DETAIL_DATA.classes
+      .filter((record) => {
+        const key = record.keyAbility || {};
+        return [key.benefit1, key.benefit2, key.benefit3, key.benefit4, record.heart]
+          .filter(Boolean)
+          .some((text) => /proficien/i.test(text) && /(?:your choice|of your choosing|choice between|\beither\b|one other|another weapon|\b(?:1|5|single)\s+(?:common|basic|smithing|armor)|common ranged weapon|common melee weapon|one of the following)/i.test(text));
+      })
+      .map((record) => record.id)
+      .sort());
+    if (sourceClassIds.join('|') !== expectedClassIds.join('|')) {
+      throw new Error(`Selectable class proficiency source audit failed: ${JSON.stringify({ expectedClassIds, sourceClassIds })}`);
+    }
+
+    const entries = Object.entries(expectedByClass);
+    for (let offset = 0; offset < entries.length; offset += 12) {
+      const batch = entries.slice(offset, offset + 12);
+      await page.evaluate((selectedClasses) => {
+        localStorage.clear();
+        localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.0');
+        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.0');
+        localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+          ui: { mode: 'builder', gameVersion: '0.13.0' },
+          fields: { Name: 'Class Proficiency Choice Audit' },
+          builder: {
+            selectedRaceId: 'human',
+            selectedClassIds: selectedClasses.map(([classId]) => classId),
+            classAbilityProgress: Object.fromEntries(selectedClasses.map(([classId]) => [classId, 0]))
+          }
+        }));
+      }, batch);
+      await page.reload({ waitUntil: 'load' });
+      await page.waitForFunction(() => window.LYRIAN_DATA?.version === '0.13.0');
+      await page.click('[data-step-index="6"]');
+      const expectedIds = batch.flatMap(([, ids]) => ids).sort();
+      await page.waitForFunction((count) => (
+        document.querySelectorAll('[data-builder-choice-select*="proficiency"]').length === count
+      ), expectedIds.length);
+      const actualIds = await page.evaluate(() => [...document.querySelectorAll('[data-builder-choice-select*="proficiency"]')]
+        .map((entry) => entry.dataset.builderChoiceSelect)
+        .sort());
+      if (actualIds.join('|') !== expectedIds.join('|')) {
+        throw new Error(`Class proficiency dropdown coverage failed: ${JSON.stringify({ expectedIds, actualIds })}`);
+      }
+    }
+
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.0');
+      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.0');
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'builder', gameVersion: '0.13.0' },
+        fields: { Name: 'Acolyte Fighter Proficiency Audit' },
+        builder: {
+          selectedRaceId: 'human',
+          selectedClassIds: ['acolyte', 'fighter'],
+          classAbilityProgress: { acolyte: 0, fighter: 0 }
+        }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-step-index="6"]');
+    await page.selectOption('[data-builder-choice-select="class-acolyte-weapon-proficiency"]', 'Wand');
+    const fighterSelections = ['Small Weapons', 'Polearms', 'Light Swords', 'Longsword', 'Dueling Weapons'];
+    for (let index = 0; index < fighterSelections.length; index += 1) {
+      const selector = `[data-builder-choice-select="class-fighter-common-weapon-proficiency-${index + 1}"]`;
+      const previouslySelected = fighterSelections.slice(0, index);
+      const duplicateOptions = await page.locator(selector).locator('option').evaluateAll((options, blocked) => (
+        options.filter((option) => blocked.includes(option.value)).map((option) => option.value)
+      ), previouslySelected);
+      if (duplicateOptions.length) {
+        throw new Error(`Fighter proficiency uniqueness failed before choice ${index + 1}: ${JSON.stringify(duplicateOptions)}`);
+      }
+      await page.selectOption(selector, fighterSelections[index]);
+    }
+    const resolvedProficiencyResult = await page.evaluate(() => {
+      const panel = [...document.querySelectorAll('.review-panel')]
+        .find((entry) => entry.querySelector('strong')?.textContent?.trim() === 'Class Benefit Choices');
+      return {
+        panelText: panel?.textContent?.replace(/\s+/g, ' ').trim() || '',
+        values: [...document.querySelectorAll('[data-builder-choice-select*="class-fighter-common-weapon-proficiency"]')]
+          .map((entry) => entry.value)
+      };
+    });
+    if (
+      !resolvedProficiencyResult.panelText.includes('Acolyte: Wand proficiency.')
+      || new Set(resolvedProficiencyResult.values).size !== 5
+    ) {
+      throw new Error(`Resolved class proficiency choices failed: ${JSON.stringify(resolvedProficiencyResult)}`);
+    }
+
+    const setArmorsmithProgress = async (progress) => {
+      await page.evaluate((classProgress) => {
+        localStorage.clear();
+        localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.0');
+        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.0');
+        localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+          ui: { mode: 'builder', gameVersion: '0.13.0' },
+          fields: { Name: 'Armorsmith Heart Proficiency Audit' },
+          builder: {
+            selectedRaceId: 'human',
+            selectedClassIds: ['armorsmith'],
+            classAbilityProgress: { armorsmith: classProgress }
+          }
+        }));
+      }, progress);
+      await page.reload({ waitUntil: 'load' });
+      await page.click('[data-step-index="6"]');
+      return page.locator('[data-builder-choice-select="class-armorsmith-heart-proficiency"]').count();
+    };
+    const beforeHeart = await setArmorsmithProgress(3);
+    const afterHeart = await setArmorsmithProgress(4);
+    if (beforeHeart !== 0 || afterHeart !== 1) {
+      throw new Error(`Armorsmith Heart proficiency level gate failed: ${JSON.stringify({ beforeHeart, afterHeart })}`);
+    }
+
+    console.log('   Audited 25 selectable proficiency grants across 16 classes.');
+  }
+
   async function runRulesRegressionAssertions(page) {
     await runAllClassProgressionAssertions(page);
     await runRaceClassMatrixAssertions(page);
+    await runClassProficiencyChoiceAssertions(page);
     await runSpreadsheetVisibleGridImportAssertion(page);
     await runCraftingOutcomeResolutionAssertion(page);
     await runGatheringNoYieldResolutionAssertion(page);
