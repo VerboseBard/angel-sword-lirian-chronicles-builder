@@ -97,7 +97,7 @@ async function runDirectFileStartupAssertion() {
       && result.cardCount > 0
       && result.navCount > 0
       && result.summaryText.includes('Identity')
-      && result.buildLabel.includes('Beta 1.92');
+      && result.buildLabel.includes('Beta 1.94');
 
     if (!startupIsValid || errors.length || failedFileRequests.length) {
       throw new Error(`Direct file startup regression failed: ${JSON.stringify({ result, errors, failedFileRequests }, null, 2)}`);
@@ -105,6 +105,65 @@ async function runDirectFileStartupAssertion() {
   } finally {
     await browser.close();
   }
+}
+
+async function runMobileChoiceOverlayAssertions(page, browserName) {
+  await page.evaluate(() => localStorage.clear());
+  await page.reload({ waitUntil: 'load' });
+
+  const humanCard = page.locator('[data-builder-action="pick-race"]').filter({ hasText: 'Human' }).first();
+  await humanCard.click();
+  await page.waitForSelector('#builder-mobile-choice-overlay:not([hidden])', { timeout: 5000 });
+
+  const openResult = await page.evaluate(() => ({
+    overlayOpen: !document.getElementById('builder-mobile-choice-overlay')?.hidden,
+    modalTitle: document.getElementById('builder-mobile-choice-title')?.textContent?.trim() || '',
+    acceptLabel: document.getElementById('builder-mobile-choice-accept')?.textContent?.trim() || '',
+    acceptEnabled: !document.getElementById('builder-mobile-choice-accept')?.disabled,
+    bodyLocked: document.body.classList.contains('builder-mobile-choice-open'),
+    raceStillPending: document.getElementById('builder-race-chip')?.textContent?.includes('pending') || false
+  }));
+  if (
+    !openResult.overlayOpen
+    || openResult.modalTitle !== 'Human'
+    || !openResult.acceptLabel.includes('Accept Species')
+    || !openResult.acceptEnabled
+    || !openResult.bodyLocked
+    || !openResult.raceStillPending
+  ) {
+    throw new Error(`Mobile species overlay regression failed: ${JSON.stringify(openResult)}`);
+  }
+
+  if (browserName.startsWith('Chromium')) {
+    const overlayPath = path.join(QA_DIR, 'screenshot-chromium-mobile-choice-overlay.png');
+    await page.screenshot({ path: overlayPath });
+    console.log('   Captured: qa-test-results/screenshot-chromium-mobile-choice-overlay.png');
+  }
+
+  await page.click('[data-mobile-choice-close].builder-mobile-choice-cancel');
+  const closeResult = await page.evaluate(() => ({
+    overlayClosed: document.getElementById('builder-mobile-choice-overlay')?.hidden || false,
+    bodyUnlocked: !document.body.classList.contains('builder-mobile-choice-open'),
+    raceStillPending: document.getElementById('builder-race-chip')?.textContent?.includes('pending') || false
+  }));
+  if (!closeResult.overlayClosed || !closeResult.bodyUnlocked || !closeResult.raceStillPending) {
+    throw new Error(`Mobile overlay close regression failed: ${JSON.stringify(closeResult)}`);
+  }
+
+  await humanCard.click();
+  await page.click('#builder-mobile-choice-accept');
+  await page.waitForSelector('#builder-mobile-choice-overlay[hidden]', { state: 'attached', timeout: 5000 });
+  const acceptResult = await page.evaluate(() => ({
+    raceChip: document.getElementById('builder-race-chip')?.textContent?.trim() || '',
+    stepTitle: document.getElementById('builder-step-title')?.textContent?.trim() || '',
+    overlayClosed: document.getElementById('builder-mobile-choice-overlay')?.hidden || false
+  }));
+  if (!acceptResult.raceChip.includes('Human') || !acceptResult.overlayClosed || !/ancestry|clan|secondary lineage/i.test(acceptResult.stepTitle)) {
+    throw new Error(`Mobile overlay accept-and-continue regression failed: ${JSON.stringify(acceptResult)}`);
+  }
+
+  await page.evaluate(() => localStorage.clear());
+  await page.reload({ waitUntil: 'load' });
 }
 
 function isLocalTestUrl(url) {
@@ -2996,7 +3055,7 @@ const browsers = [
             const contentValid = stepContent && stepContent.children.length > 0 && stepContent.textContent.trim().length > 0;
             const navValid = stepNav && stepNav.querySelectorAll('button').length > 0;
             const versionsValid = versionSelect && versionSelect.querySelectorAll('option').length > 0;
-            const builderBuildValid = builderBuildVersion && builderBuildVersion.textContent.includes('Beta 1.92');
+            const builderBuildValid = builderBuildVersion && builderBuildVersion.textContent.includes('Beta 1.94');
 
             return {
               contentValid,
@@ -3039,6 +3098,10 @@ const browsers = [
 
           if (browserInfo.name.startsWith('Chromium') && vp.name === 'Desktop') {
             await runRulesRegressionAssertions(page);
+          }
+
+          if (vp.name === 'Mobile') {
+            await runMobileChoiceOverlayAssertions(page, browserInfo.name);
           }
 
           // Take screenshot

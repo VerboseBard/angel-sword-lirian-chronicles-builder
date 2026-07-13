@@ -2324,6 +2324,9 @@ var LyrianApp = (() => {
   var playerNotesAutosaveTimer = 0;
   var builderSearchRenderTimer = 0;
   var versionProgressTicker = 0;
+  var MOBILE_BUILDER_CHOICE_QUERY = "(max-width: 700px)";
+  var mobileBuilderChoiceState = null;
+  var mobileBuilderChoiceReturnFocus = null;
   function stopVersionProgressTicker() {
     window.clearInterval(versionProgressTicker);
     versionProgressTicker = 0;
@@ -2456,7 +2459,7 @@ var LyrianApp = (() => {
   async function checkForVersionUpdates() {
     const connected = versionRuntime.serverAvailable || await detectVersionServer();
     if (!connected) {
-      setStatus("This web build is updated by published site deployments. Refresh after a new Beta 1.92 update is pushed.");
+      setStatus("This web build is updated by published site deployments. Refresh after a new Beta 1.94 update is pushed.");
       renderVersionManager();
       return;
     }
@@ -17572,6 +17575,188 @@ ${secondaryStatText}`),
     }
     document.getElementById("builder-detail-card").innerHTML = html;
   }
+  function isMobileBuilderChoiceMode() {
+    return Boolean(
+      window.matchMedia?.(MOBILE_BUILDER_CHOICE_QUERY).matches && !document.getElementById("builder-view")?.classList.contains("is-hidden")
+    );
+  }
+  function getMobileBuilderChoiceConfig(action, id, trigger) {
+    if (action === "pick-race") {
+      const record = detailLookup.races.resolve(id);
+      if (!record) {
+        return null;
+      }
+      state.builder.inspected.race = record.id;
+      return {
+        kind: "race",
+        id: record.id,
+        eyebrow: "Review Species",
+        title: record.name,
+        primaryLabel: "Accept Species & Continue",
+        advanceAfterAccept: true,
+        disabled: false,
+        unavailableReason: ""
+      };
+    }
+    if (action === "pick-ancestry") {
+      const record = getAncestryDetail(id);
+      if (!record) {
+        return null;
+      }
+      const labels = getSecondaryLineageLabels(getSelectedRaceDetail());
+      state.builder.inspected.ancestry = record.id;
+      return {
+        kind: "ancestry",
+        id: record.id,
+        eyebrow: `Review ${labels.short}`,
+        title: record.name,
+        primaryLabel: `Accept ${labels.short} & Continue`,
+        advanceAfterAccept: true,
+        disabled: false,
+        unavailableReason: ""
+      };
+    }
+    if (action === "toggle-class") {
+      const record = getClassDetail(id);
+      if (!record) {
+        return null;
+      }
+      const alreadySelected = state.builder.selectedClassIds.includes(record.id);
+      const requirementStatus = getClassRequirementStatus(record);
+      const budget = getClassUnlockBudgetState();
+      const unlockCost = getClassUnlockCost(record);
+      let unavailableReason = "";
+      if (!alreadySelected && !requirementStatus.met) {
+        unavailableReason = `Requirements not met: ${requirementStatus.requirementsText}`;
+      } else if (!alreadySelected && budget.remainingInterlude <= 0) {
+        unavailableReason = `All ${budget.interludeBudget} available Interlude Points are already committed to class unlocks.`;
+      } else if (!alreadySelected && unlockCost > budget.remainingExp) {
+        unavailableReason = `${record.name} costs ${unlockCost} class EXP, but only ${budget.remainingExp} EXP remains.`;
+      }
+      state.builder.inspected.class = record.id;
+      return {
+        kind: "class",
+        id: record.id,
+        eyebrow: alreadySelected ? "Selected Class" : "Review Class",
+        title: record.name,
+        primaryLabel: alreadySelected ? "Continue With This Class" : "Accept Class & Continue",
+        advanceAfterAccept: true,
+        alreadySelected,
+        disabled: Boolean(unavailableReason),
+        unavailableReason
+      };
+    }
+    if (action === "inspect-item" || action === "add-item") {
+      const record = lookup.items.resolve(id);
+      if (!record) {
+        return null;
+      }
+      const purchaseQuantity = Math.max(1, Math.floor(toNumber(trigger?.dataset.itemQuantityDelta, 1)));
+      const stackable = isStackableBuilderItem(record);
+      const currentQuantity = getBuilderItemQuantity(record.id);
+      const inventoryFull = currentQuantity <= 0 && state.builder.selectedItemIds.length >= INVENTORY_ROWS.length;
+      const totalCost = parseClimCost(record.cost) * purchaseQuantity;
+      const funds = getStartingFundsState();
+      let unavailableReason = "";
+      if (!stackable && currentQuantity > 0) {
+        unavailableReason = `${record.name} is already purchased.`;
+      } else if (inventoryFull) {
+        unavailableReason = `All ${INVENTORY_ROWS.length} inventory rows are already filled.`;
+      } else if (totalCost > funds.availableClim) {
+        unavailableReason = `${record.name} costs ${totalCost} Clim, but only ${funds.availableClim} Clim remains.`;
+      }
+      state.builder.inspected.item = record.id;
+      return {
+        kind: "item",
+        id: record.id,
+        eyebrow: currentQuantity > 0 ? "Buy Another Item" : "Review Item",
+        title: record.name,
+        primaryLabel: unavailableReason ? currentQuantity > 0 && !stackable ? "Already Purchased" : "Purchase Unavailable" : purchaseQuantity > 1 ? `Buy ${purchaseQuantity}` : currentQuantity > 0 ? "Buy Another" : "Buy Item",
+        purchaseQuantity,
+        advanceAfterAccept: false,
+        disabled: Boolean(unavailableReason),
+        unavailableReason
+      };
+    }
+    return null;
+  }
+  function openMobileBuilderChoiceOverlay(action, id, trigger) {
+    if (!isMobileBuilderChoiceMode()) {
+      return false;
+    }
+    const config = getMobileBuilderChoiceConfig(action, id, trigger);
+    if (!config) {
+      return false;
+    }
+    renderBuilderDetail();
+    const overlay = document.getElementById("builder-mobile-choice-overlay");
+    const detail = document.getElementById("builder-detail-card");
+    const content = document.getElementById("builder-mobile-choice-content");
+    const accept = document.getElementById("builder-mobile-choice-accept");
+    document.getElementById("builder-mobile-choice-eyebrow").textContent = config.eyebrow;
+    document.getElementById("builder-mobile-choice-title").textContent = config.title;
+    content.innerHTML = `
+        ${config.unavailableReason ? `<div class="builder-mobile-choice-warning" role="status">${escapeHtml(config.unavailableReason)}</div>` : ""}
+        <div class="builder-detail-card">${detail.innerHTML}</div>
+      `;
+    accept.textContent = config.primaryLabel;
+    accept.disabled = config.disabled;
+    mobileBuilderChoiceState = config;
+    mobileBuilderChoiceReturnFocus = trigger instanceof HTMLElement ? trigger : document.activeElement;
+    overlay.hidden = false;
+    overlay.setAttribute("aria-hidden", "false");
+    document.body.classList.add("builder-mobile-choice-open");
+    window.requestAnimationFrame(() => {
+      (config.disabled ? document.getElementById("builder-mobile-choice-close") : accept)?.focus({ preventScroll: true });
+    });
+    return true;
+  }
+  function closeMobileBuilderChoiceOverlay(restoreFocus = true) {
+    const overlay = document.getElementById("builder-mobile-choice-overlay");
+    if (!overlay || overlay.hidden) {
+      return;
+    }
+    overlay.hidden = true;
+    overlay.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("builder-mobile-choice-open");
+    document.getElementById("builder-mobile-choice-content").innerHTML = "";
+    mobileBuilderChoiceState = null;
+    if (restoreFocus && mobileBuilderChoiceReturnFocus?.isConnected) {
+      mobileBuilderChoiceReturnFocus.focus({ preventScroll: true });
+    }
+    mobileBuilderChoiceReturnFocus = null;
+  }
+  function acceptMobileBuilderChoiceOverlay(advanceBuilder) {
+    const choice = mobileBuilderChoiceState;
+    if (!choice || choice.disabled) {
+      return;
+    }
+    let accepted = false;
+    if (choice.kind === "race") {
+      setBuilderRace(choice.id);
+      accepted = normalizeKey(state.builder.selectedRaceId) === normalizeKey(choice.id);
+    } else if (choice.kind === "ancestry") {
+      setBuilderAncestry(choice.id);
+      accepted = normalizeKey(state.builder.selectedAncestryId) === normalizeKey(choice.id);
+    } else if (choice.kind === "class") {
+      if (!choice.alreadySelected) {
+        toggleBuilderClass(choice.id);
+      }
+      accepted = state.builder.selectedClassIds.includes(choice.id);
+    } else if (choice.kind === "item") {
+      const quantityBefore = getBuilderItemQuantity(choice.id);
+      addBuilderItem(choice.id, choice.purchaseQuantity);
+      accepted = getBuilderItemQuantity(choice.id) > quantityBefore;
+    }
+    if (!accepted) {
+      return;
+    }
+    const shouldAdvance = choice.advanceAfterAccept;
+    closeMobileBuilderChoiceOverlay(false);
+    if (shouldAdvance) {
+      advanceBuilder();
+    }
+  }
   function renderCardMeta(labels) {
     return labels.length ? `<div class="builder-option-meta">${labels.map((label) => `<span class="builder-pill">${escapeHtml(label)}</span>`).join("")}</div>` : "";
   }
@@ -17903,7 +18088,7 @@ ${secondaryStatText}`),
     const selected = getSelectedRaceDetail();
     return `
         <div class="builder-content-grid">
-          <p class="builder-note">Choose a race to anchor the rest of the build. Clicking a card selects it and updates the right-side detail panel with the richer site pull.</p>
+          <p class="builder-note">Choose a race to anchor the rest of the build. Open a card to review its complete information before accepting the selection.</p>
           <div class="builder-option-list">
             ${detailLookup.races.entries.map((entry) => renderOptionCard({
       id: entry.id,
@@ -20435,6 +20620,19 @@ The app cannot verify this requirement. Has the GM approved it for this characte
     document.getElementById("builder-next-top").addEventListener("click", advanceBuilder);
     document.getElementById("builder-sheet-shortcut-top").addEventListener("click", openSheetViewFromShortcut);
     document.getElementById("builder-start-over-sidebar").addEventListener("click", startOverCharacter);
+    document.getElementById("builder-mobile-choice-overlay").addEventListener("click", (event) => {
+      if (event.target.closest("[data-mobile-choice-close]")) {
+        closeMobileBuilderChoiceOverlay();
+      }
+    });
+    document.getElementById("builder-mobile-choice-accept").addEventListener("click", () => {
+      acceptMobileBuilderChoiceOverlay(advanceBuilder);
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !document.getElementById("builder-mobile-choice-overlay").hidden) {
+        closeMobileBuilderChoiceOverlay();
+      }
+    });
     document.getElementById("builder-step-nav").addEventListener("click", (event) => {
       const button = event.target.closest("[data-step-index]");
       if (!button) {
@@ -20556,6 +20754,10 @@ The app cannot verify this requirement. Has the GM approved it for this characte
       }
       const action = trigger.dataset.builderAction;
       const id = trigger.dataset.id;
+      const opensMobileChoice = (action === "pick-race" || action === "pick-ancestry") && trigger.classList.contains("builder-option-card") || action === "toggle-class" && trigger.classList.contains("builder-option-card") || action === "inspect-item" || action === "add-item";
+      if (opensMobileChoice && openMobileBuilderChoiceOverlay(action, id, trigger)) {
+        return;
+      }
       if (action === "pick-race") {
         setBuilderRace(id);
       } else if (action === "pick-ancestry") {

@@ -1,4 +1,4 @@
-Lyrian Chronicles Character Builder - Beta Version 1.91 Feedback Hotpatch
+Lyrian Chronicles Character Builder - Beta Version 1.94 Mobile Interaction Update
 Copied from the hardened Beta 1.8 guided crafting and gathering baseline (2026-07-06).
 This package does not include the Beta 1.6 API provider layer.
 Focus: carrying the Beta 1.9 downtime UX forward with the tester-feedback
