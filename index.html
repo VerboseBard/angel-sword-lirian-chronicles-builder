@@ -7,18 +7,15 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Lyrian Sheet">
-  <title>Lyrian Chronicles Character Builder - Beta 2.1</title>
+  <title>Lyrian Chronicles Character Builder - Beta 2.11</title>
   <link rel="icon" type="image/png" href="assets/lyrian-symbol.png">
   <link rel="apple-touch-icon" href="assets/lyrian-symbol.png">
   <link rel="manifest" href="manifest.webmanifest">
-  <script src="assets/lyrian-form-map.js"></script>
-  <script src="assets/lyrian-data.js"></script>
-  <script src="assets/lyrian-detail-data.js"></script>
-  <script src="assets/versions/manifest.js"></script>
-  <script src="assets/pdf-lib.min.js"></script>
-  <script src="assets/xlsx.full.min.js"></script>
-  <script src="assets/jszip.min.js"></script>
-  <link rel="stylesheet" href="./src/css/main.css?v=2.1.0-mirane-quick-build-20260715">
+  <script defer src="assets/lyrian-form-map.js"></script>
+  <script defer src="assets/versions/0.13.0/lyrian-data.js"></script>
+  <script defer src="assets/versions/0.13.0/lyrian-detail-data.js"></script>
+  <script defer src="assets/versions/manifest.js"></script>
+  <link rel="stylesheet" href="./src/css/main.css?v=2.11.0-iphone-layout-20260718">
 </head>
 <body>
   <section id="builder-view" class="builder-view">
@@ -29,7 +26,7 @@
           <section class="version-manager" aria-label="Game version manager">
             <div class="builder-build-version" aria-label="Builder build version">
               <span>Builder build</span>
-              <strong>Beta 2.1</strong>
+              <strong>Beta 2.11</strong>
             </div>
             <label for="game-version-select">Select game version</label>
             <select id="game-version-select"></select>
@@ -455,13 +452,6 @@
   <input id="import-file" type="file" accept=".json,.pdf,.xlsx,.xls,application/json,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" hidden>
   <input id="portrait-file" type="file" accept="image/*" hidden>
 
-  <script src="assets/export-assets.js"></script>
-  <script src="assets/vendor/three.min.js"></script>
-  <script src="assets/vendor/GLTFLoader.js"></script>
-  <script>window.LYRIAN_DISABLE_LEGACY_GLB_DICE = true;</script>
-  <script src="assets/dice-3d/dice-3d-embedded.js"></script>
-  <script src="assets/dice-3d/new-angelsword-dice-face-art.384-webp.js?v=new-angelsword-384-webp-test-1"></script>
-  <script src="assets/dice-3d/lyrian-accurate-dice.js?v=alpha4-new-angelsword-sidecar-27-d4-triangle-pivot"></script>
-  <script src="assets/app.bundle.js?v=2.1.0-mirane-quick-build-20260715"></script>
+  <script defer src="assets/app.bundle.js?v=2.11.0-iphone-layout-20260718"></script>
 </body>
 </html>

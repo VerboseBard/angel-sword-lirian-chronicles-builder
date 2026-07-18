@@ -10179,3 +10179,168 @@
         padding-bottom: 5px;
       }
     }
+
+    /* iPhone layout hardening. Keep every primary control inside the visual
+       viewport and prefer wrapping over partially hidden horizontal rails. */
+    @media (max-width: 700px) {
+      html,
+      body,
+      .builder-view,
+      .app-shell,
+      #builder-view,
+      #sheet-view,
+      #builder-view .builder-shell,
+      #builder-view .builder-stage-panel,
+      #sheet-view .sheet-stage,
+      #sheet-view .play-dashboard,
+      #sheet-view .play-command-strip,
+      #sheet-view [data-play-mode-panel],
+      #sheet-view .play-wizard-shell {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+      }
+
+      html,
+      body,
+      #builder-view,
+      #sheet-view {
+        overflow-x: clip;
+      }
+
+      .builder-step-nav {
+        grid-auto-flow: row;
+        grid-auto-columns: auto;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        overflow-x: visible;
+        scroll-snap-type: none;
+      }
+
+      .builder-step-button {
+        min-width: 0;
+        padding: 8px 7px;
+      }
+
+      .builder-step-button strong,
+      .builder-step-button span {
+        overflow-wrap: anywhere;
+      }
+
+      .builder-stage-summary .summary-grid {
+        grid-auto-flow: row;
+        grid-auto-columns: auto;
+        grid-template-columns: minmax(0, 1fr);
+        overflow-x: visible;
+        scroll-snap-type: none;
+      }
+
+      .builder-controls {
+        position: static;
+        bottom: auto;
+        margin-top: 0;
+      }
+
+      #sheet-view .play-mobile-page-nav {
+        grid-auto-flow: row;
+        grid-auto-columns: auto;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        overflow-x: visible;
+        scroll-snap-type: none;
+      }
+
+      #sheet-view .play-mobile-page-nav button {
+        width: 100%;
+        scroll-snap-align: none;
+      }
+
+      #sheet-view[data-mobile-sheet-page="character"] .play-tab-nav {
+        grid-auto-flow: row;
+        grid-auto-columns: auto;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 5px;
+        overflow-x: visible;
+        scroll-snap-type: none;
+      }
+
+      #sheet-view[data-mobile-sheet-page="character"] .play-tab-nav button {
+        min-width: 0;
+        padding: 7px 4px;
+        font-size: clamp(0.66rem, 3.25vw, 0.78rem);
+        overflow-wrap: anywhere;
+        scroll-snap-align: none;
+      }
+
+      #sheet-view[data-mobile-sheet-page="character"] .play-right-column {
+        min-height: 0;
+        align-content: start;
+        grid-template-rows: auto auto;
+      }
+
+      #sheet-view .play-wizard-nav {
+        grid-auto-flow: row;
+        grid-auto-columns: auto;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 7px;
+        overflow-x: visible;
+        scroll-snap-type: none;
+      }
+
+      #sheet-view .play-wizard-nav-step {
+        width: 100%;
+        min-width: 0;
+        padding: 8px;
+        scroll-snap-align: none;
+      }
+
+      #sheet-view .play-wizard-nav-step:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+      }
+
+      #sheet-view .play-wizard-nav-step .play-wizard-nav-title {
+        overflow: visible;
+        text-overflow: clip;
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+
+      #sheet-view .play-wizard-coach,
+      #sheet-view .play-wizard-panel,
+      #sheet-view .play-crafting-mode-grid,
+      #sheet-view .play-crafting-dashboard-panel,
+      #sheet-view .play-gathering-setup-top-panel {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+      }
+
+      #sheet-dice-tray {
+        right: max(10px, env(safe-area-inset-right));
+        left: auto;
+        bottom: calc(12px + env(safe-area-inset-bottom));
+      }
+
+      #sheet-dice-tray .dice-tray-fab {
+        width: 50px;
+        height: 50px;
+      }
+
+      #sheet-dice-tray .dice-fab-mark {
+        width: 37px;
+      }
+
+      #sheet-view[data-mobile-play-mode="gathering"] ~ #sheet-dice-tray,
+      #sheet-view[data-mobile-play-mode="crafting"] ~ #sheet-dice-tray {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 350px) {
+      .builder-step-nav,
+      #sheet-view .play-mobile-page-nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      #sheet-view[data-mobile-sheet-page="character"] .play-tab-nav {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }

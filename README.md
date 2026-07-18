@@ -1,12 +1,14 @@
-# Lyrian Chronicles Character Builder - Beta 2.1 Mirane and Quick Build Update
+# Lyrian Chronicles Character Builder - Beta 2.11 Mobile Performance and iPhone Layout Hotpatch
 
-This is the complete local Beta 2.1 static/public working copy for the Angel Sword character builder and live play sheet.
+This is the complete local Beta 2.11 static/public working copy for the Angel Sword character builder and live play sheet.
 
 It starts as a copy of the hardened Beta 1.8 guided crafting and gathering baseline (2026-07-06). It intentionally does not include the Beta 1.6 API provider layer.
 
 ## Workstream
 
 Beta 2.1 keeps the full Beta 1.94 responsive builder and live sheet, then adds Standard Play and Mirane Expedition starts throughout guided and Quick Build creation. Mirane restrictions, starting funds, material purchasing, crafting pricing, review-page retirement options, and campaign-unavailable choices are represented in the builder. Quick Build now includes twelve optimized newcomer packages, Slimefolk, race-aware substitutions and shortcuts, complete class/skill/gear summaries, and validated tier-one/tier-two class paths.
+
+Beta 2.11 keeps those features and adds faster phone startup, on-demand PDF/spreadsheet/3D-dice loading, and iPhone layout fixes for clipped, overlapping, or partially hidden controls.
 
 Crafting and gathering both run as guided downtime workflows. Each step shows what the player is trying to do, what to click next, and which warnings are soft GM gates rather than hard app failures.
 

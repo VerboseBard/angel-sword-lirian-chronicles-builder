@@ -414,6 +414,95 @@ var LyrianApp = (() => {
     )
   )).sort((a, b) => a - b);
 
+  // src/js/runtime-loader.js
+  var scriptPromises = /* @__PURE__ */ new Map();
+  function loadScript(src) {
+    if (scriptPromises.has(src)) {
+      return scriptPromises.get(src);
+    }
+    const existing = Array.from(document.scripts).find((script) => script.getAttribute("src") === src);
+    if (existing?.dataset.runtimeReady === "true") {
+      return Promise.resolve();
+    }
+    const promise = new Promise((resolve, reject) => {
+      const script = existing || document.createElement("script");
+      script.addEventListener("load", () => {
+        script.dataset.runtimeReady = "true";
+        resolve();
+      }, { once: true });
+      script.addEventListener("error", () => {
+        scriptPromises.delete(src);
+        reject(new Error(`Could not load ${src}.`));
+      }, { once: true });
+      if (!existing) {
+        script.src = src;
+        script.async = false;
+        document.head.appendChild(script);
+      }
+    });
+    scriptPromises.set(src, promise);
+    return promise;
+  }
+  async function loadScriptsInOrder(sources) {
+    for (const src of sources) {
+      await loadScript(src);
+    }
+  }
+  var exportAssetsPromise = null;
+  function ensureExportAssetsLoaded() {
+    if (window.location.protocol !== "file:" || window.LYRIAN_EXPORT_ASSETS) {
+      return Promise.resolve();
+    }
+    exportAssetsPromise || (exportAssetsPromise = loadScript("assets/export-assets.js"));
+    return exportAssetsPromise;
+  }
+  var pdfRuntimePromise = null;
+  function ensurePdfRuntimeLoaded({ includeExportAssets = false } = {}) {
+    pdfRuntimePromise || (pdfRuntimePromise = window.PDFLib ? Promise.resolve() : loadScript("assets/pdf-lib.min.js"));
+    return Promise.all([
+      pdfRuntimePromise,
+      includeExportAssets ? ensureExportAssetsLoaded() : Promise.resolve()
+    ]);
+  }
+  var spreadsheetRuntimePromise = null;
+  function ensureSpreadsheetRuntimeLoaded({ includeExportAssets = false } = {}) {
+    spreadsheetRuntimePromise || (spreadsheetRuntimePromise = Promise.resolve().then(async () => {
+      if (!window.XLSX) {
+        await loadScript("assets/xlsx.full.min.js");
+      }
+      if (!window.JSZip) {
+        await loadScript("assets/jszip.min.js");
+      }
+    }));
+    return Promise.all([
+      spreadsheetRuntimePromise,
+      includeExportAssets ? ensureExportAssetsLoaded() : Promise.resolve()
+    ]);
+  }
+  var diceRuntimePromise = null;
+  function isDiceRuntimeLoaded() {
+    return Boolean(window.LyrianAccurateDiceRoller);
+  }
+  function ensureDiceRuntimeLoaded() {
+    if (isDiceRuntimeLoaded()) {
+      return Promise.resolve();
+    }
+    if (!diceRuntimePromise) {
+      window.LYRIAN_DISABLE_LEGACY_GLB_DICE = true;
+      diceRuntimePromise = loadScriptsInOrder([
+        "assets/vendor/three.min.js",
+        "assets/vendor/GLTFLoader.js",
+        "assets/dice-3d/dice-3d-embedded.js",
+        "assets/dice-3d/new-angelsword-dice-face-art.384-webp.js?v=new-angelsword-384-webp-test-1",
+        "assets/dice-3d/lyrian-accurate-dice.js?v=alpha4-new-angelsword-sidecar-27-d4-triangle-pivot"
+      ]).catch((error) => {
+        diceRuntimePromise = null;
+        throw error;
+      });
+    }
+    return diceRuntimePromise;
+  }
+
   // src/js/io.js
   function parseNumericCost(value) {
     const match = cleanText(value).match(/-?\d+/);
@@ -1246,11 +1335,9 @@ var LyrianApp = (() => {
     }
   }
   async function exportPdfState() {
-    if (!window.PDFLib) {
-      setStatus("PDF export is not available yet.");
-      return;
-    }
     try {
+      setStatus("Loading PDF export tools...");
+      await ensurePdfRuntimeLoaded({ includeExportAssets: true });
       await updateSheetModalProgress("Preparing the official-style PDF sheet.", 5, "Gathering character fields and derived sheet values.");
       setStatus("Generating PDF character sheet...");
       const portraitWasNormalized = await normalizeCurrentPortraitDataUrl();
@@ -1308,11 +1395,9 @@ var LyrianApp = (() => {
     }
   }
   async function exportSpreadsheetState() {
-    if (!window.XLSX) {
-      setStatus("Spreadsheet export is not available yet.");
-      return;
-    }
     try {
+      setStatus("Loading spreadsheet export tools...");
+      await ensureSpreadsheetRuntimeLoaded({ includeExportAssets: true });
       await updateSheetModalProgress("Preparing the filled spreadsheet workbook.", 5, "Gathering character fields and derived sheet values.");
       setStatus("Generating spreadsheet workbook...");
       const portraitWasNormalized = await normalizeCurrentPortraitDataUrl();
@@ -1348,10 +1433,8 @@ var LyrianApp = (() => {
     }
   }
   async function importPdfState(file) {
-    if (!window.PDFLib) {
-      setStatus("PDF import is not available yet.");
-      return false;
-    }
+    setStatus("Loading PDF import tools...");
+    await ensurePdfRuntimeLoaded();
     const pdfBytes = await readFileAsArrayBuffer(file);
     const pdfDoc = await window.PDFLib.PDFDocument.load(pdfBytes);
     const form = pdfDoc.getForm();
@@ -1380,10 +1463,8 @@ var LyrianApp = (() => {
     return didLoad;
   }
   async function importSpreadsheetState(file) {
-    if (!window.XLSX) {
-      setStatus("Spreadsheet import is not available yet.");
-      return false;
-    }
+    setStatus("Loading spreadsheet import tools...");
+    await ensureSpreadsheetRuntimeLoaded();
     const workbook = window.XLSX.read(await readFileAsArrayBuffer(file), { type: "array" });
     const embedded = await extractSpreadsheetMetadata(workbook);
     if (embedded) {
@@ -2492,7 +2573,7 @@ var LyrianApp = (() => {
   async function checkForVersionUpdates() {
     const connected = versionRuntime.serverAvailable || await detectVersionServer();
     if (!connected) {
-      setStatus("This web build is updated by published site deployments. Refresh after a new Beta 2.1 update is pushed.");
+      setStatus("This web build is updated by published site deployments. Refresh after a new Beta 2.11 update is pushed.");
       renderVersionManager();
       return;
     }
@@ -9437,6 +9518,21 @@ var LyrianApp = (() => {
     }).filter(Boolean).join(" + ");
   }
   function animateRollDice(results = [], options = {}) {
+    if (!isDiceRuntimeLoaded()) {
+      setStatus("Loading 3D dice for the first roll...");
+      ensureDiceRuntimeLoaded().then(() => animateRollDice(results, options)).catch((error) => {
+        console.warn("Could not load the 3D dice runtime; using the lightweight dice animation.", error);
+        const layer2 = document.getElementById("dice-flight-layer");
+        const diceResults2 = normalizeRollResults(results).slice(0, 24);
+        if (!layer2 || !diceResults2.length) {
+          return;
+        }
+        const width2 = Math.max(360, window.innerWidth || document.documentElement.clientWidth || 1200);
+        const height2 = Math.max(420, window.innerHeight || document.documentElement.clientHeight || 800);
+        animate3DDice(layer2, diceResults2, width2, height2);
+      });
+      return;
+    }
     const layer = document.getElementById("dice-flight-layer");
     const diceResults = normalizeRollResults(results).slice(0, 24);
     if (!layer || !diceResults.length) {
@@ -11043,8 +11139,13 @@ var LyrianApp = (() => {
     }
     if (scroll && isMobileSheetLayout()) {
       requestAnimationFrame(() => {
-        document.getElementById("play-mobile-sheet-dock")?.scrollIntoView({ behavior: "smooth", block: "start" });
-        document.querySelector(`[data-mobile-sheet-page="${cssEscape(nextPage)}"]`)?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+        document.getElementById("play-mobile-sheet-dock")?.scrollIntoView({ behavior: "auto", block: "start" });
+        const nav = document.getElementById("play-mobile-page-nav");
+        const activeButton = nav?.querySelector(`[data-mobile-sheet-page="${cssEscape(nextPage)}"]`);
+        if (nav && activeButton && nav.scrollWidth > nav.clientWidth + 1) {
+          const left = activeButton.offsetLeft - (nav.clientWidth - activeButton.offsetWidth) / 2;
+          nav.scrollTo({ left: Math.max(0, left), behavior: "auto" });
+        }
       });
     }
   }
@@ -24432,7 +24533,6 @@ The app cannot verify this requirement. Has the GM approved it for this characte
         flushScheduledWorkingStatePersist();
       }
     });
-    preloadDiceSetFaceArt();
   }
   initialize().catch((error) => {
     console.error(error);
