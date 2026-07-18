@@ -257,6 +257,31 @@ export const DEMON_CLAN_SKILL_OPTIONS = {
 export const CREATION_SKILL_POINT_BUDGET = 10;
 export const BREAKTHROUGH_CREATION_BUDGET = 300;
 export const BASE_STARTING_CLIM = 3000;
+export const DEFAULT_CHARACTER_START_MODE = "standard";
+export const MIRANE_START_MODE_ID = "mirane";
+export const MIRANE_STARTING_CLIM_BONUS = 1000;
+export const MIRANE_RAW_MATERIAL_CLIM_LIMIT = 2500;
+export const MIRANE_SINGLE_MATERIAL_CLIM_LIMIT = 1000;
+export const MIRANE_CRAFTING_INTERLUDE_EXP = 20;
+export const MIRANE_JOB_BASE_CLIM = 150;
+export const MIRANE_JOB_ARTISAN_BONUS_CLIM = 50;
+export const MIRANE_GATHER_BASE_UNITS = 300;
+export const MIRANE_GATHER_MASTERY_BONUS_UNITS = 300;
+export const MIRANE_IP_SHOP_PRICE_CAP = 4000;
+export const MIRANE_IP_SHOP_SLOT_LIMIT = 10;
+export const MIRANE_IP_SHOP_SALE_PERCENT_CAP = 130;
+export const CHARACTER_START_MODES = [
+      {
+        id: DEFAULT_CHARACTER_START_MODE,
+        label: "Standard Play",
+        summary: "Rules-as-written character creation with the normal 3000 starting Clim."
+      },
+      {
+        id: MIRANE_START_MODE_ID,
+        label: "Mirane Expedition",
+        summary: "Standard character creation plus 1000 Clim and Mirane's restricted-creation and starting-material rules."
+      }
+    ];
 export const MAIN_STAT_CREATION_ARRAY = [5, 4, 4, 3];
 export const SECONDARY_STAT_CREATION_ARRAY = [5, 4, 3, 2, 1];
 export const MAIN_STATS = [

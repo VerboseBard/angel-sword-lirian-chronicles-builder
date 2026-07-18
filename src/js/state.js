@@ -1,4 +1,4 @@
-import { ACTIVE_SAVE_SLOT_KEY, DEFAULT_DICE_SET_ID, SAVE_SLOTS_KEY, STORAGE_KEY } from "./constants.js";
+import { ACTIVE_SAVE_SLOT_KEY, DEFAULT_CHARACTER_START_MODE, DEFAULT_DICE_SET_ID, MIRANE_START_MODE_ID, SAVE_SLOTS_KEY, STORAGE_KEY } from "./constants.js";
 import { cleanText, cssEscape, toNumber } from "./utils.js";
 import { hasManualHpHistory } from "./rules.js";
 import { deriveSaveSlotName, getSavedSlotStore, persistSavedSlotStoreQuietly } from "./io.js";
@@ -19,9 +19,13 @@ export function createDefaultState() {
           builderStep: 0,
           playMode: "combat",
           sheetTab: "actions",
+          mobileSheetPage: "overview",
+          mobileCharacterTab: "proficiencies",
           showPdf: false,
           activeSaveSlotId: "",
-          gameVersion: ""
+          gameVersion: "",
+          quickBuildActive: false,
+          quickBuildStep: 0
         },
         fields: {},
         abilitySelections: {},
@@ -35,6 +39,7 @@ export function createDefaultState() {
           ability: ""
         },
         builder: {
+          startMode: DEFAULT_CHARACTER_START_MODE,
           portraitDataUrl: "",
           selectedRaceId: "",
           selectedAncestryId: "",
@@ -65,6 +70,12 @@ export function createDefaultState() {
             breakthrough: "",
             mainStatMode: "array",
             secondaryStatMode: "array"
+          },
+          quickBuild: {
+            speciesId: "",
+            buildId: "",
+            appliedBuildId: "",
+            summary: ""
           }
         },
         play: {
@@ -107,10 +118,15 @@ export function createDefaultState() {
             recipeName: "",
             materialCost: "",
             selectionMode: "recipe",
+            availableRecipesOnly: false,
             recipeCategory: "all",
             recipeSubcategory: "all",
             selectedRecipeId: "",
             materialCustomCosts: {},
+            miraneMarketPrices: {},
+            miraneUnavailableItemIds: [],
+            miraneUseNaturalIp: false,
+            miraneInterludeExpClaimed: false,
             facilityLevel: 0,
             facilityUsesRemaining: 0,
             facilityUsesMax: 0,
@@ -177,6 +193,7 @@ export function mergeBuilderState(source = {}) {
       return {
         ...defaults,
         ...source,
+        startMode: cleanText(source.startMode) === MIRANE_START_MODE_ID ? MIRANE_START_MODE_ID : DEFAULT_CHARACTER_START_MODE,
         portraitDataUrl: cleanText(source.portraitDataUrl || defaults.portraitDataUrl),
         selectedRaceId: cleanText(source.selectedRaceId || defaults.selectedRaceId),
         selectedAncestryId: cleanText(source.selectedAncestryId || defaults.selectedAncestryId),
@@ -268,7 +285,20 @@ const sourceHasHpFlag = Object.prototype.hasOwnProperty.call(source, "hpHasManua
                 .map(([key, value]) => [cleanText(key), cleanText(value)])
                 .filter(([key]) => key)
             )
-            : { ...defaults.crafting.materialCustomCosts }
+            : { ...defaults.crafting.materialCustomCosts },
+          miraneMarketPrices: source.crafting?.miraneMarketPrices && typeof source.crafting.miraneMarketPrices === "object"
+            ? Object.fromEntries(
+              Object.entries(source.crafting.miraneMarketPrices)
+                .map(([key, value]) => [cleanText(key), cleanText(value)])
+                .filter(([key]) => key)
+            )
+            : { ...defaults.crafting.miraneMarketPrices },
+          miraneUnavailableItemIds: Array.isArray(source.crafting?.miraneUnavailableItemIds)
+            ? Array.from(new Set(source.crafting.miraneUnavailableItemIds.map(cleanText).filter(Boolean)))
+            : [...defaults.crafting.miraneUnavailableItemIds],
+          miraneUseNaturalIp: Boolean(source.crafting?.miraneUseNaturalIp),
+          miraneInterludeExpClaimed: Boolean(source.crafting?.miraneInterludeExpClaimed),
+          availableRecipesOnly: Boolean(source.crafting?.availableRecipesOnly)
         },
         diceTray: {
           ...defaults.diceTray,

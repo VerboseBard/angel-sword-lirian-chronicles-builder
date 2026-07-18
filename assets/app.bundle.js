@@ -285,6 +285,31 @@ var LyrianApp = (() => {
   var CREATION_SKILL_POINT_BUDGET = 10;
   var BREAKTHROUGH_CREATION_BUDGET = 300;
   var BASE_STARTING_CLIM = 3e3;
+  var DEFAULT_CHARACTER_START_MODE = "standard";
+  var MIRANE_START_MODE_ID = "mirane";
+  var MIRANE_STARTING_CLIM_BONUS = 1e3;
+  var MIRANE_RAW_MATERIAL_CLIM_LIMIT = 2500;
+  var MIRANE_SINGLE_MATERIAL_CLIM_LIMIT = 1e3;
+  var MIRANE_CRAFTING_INTERLUDE_EXP = 20;
+  var MIRANE_JOB_BASE_CLIM = 150;
+  var MIRANE_JOB_ARTISAN_BONUS_CLIM = 50;
+  var MIRANE_GATHER_BASE_UNITS = 300;
+  var MIRANE_GATHER_MASTERY_BONUS_UNITS = 300;
+  var MIRANE_IP_SHOP_PRICE_CAP = 4e3;
+  var MIRANE_IP_SHOP_SLOT_LIMIT = 10;
+  var MIRANE_IP_SHOP_SALE_PERCENT_CAP = 130;
+  var CHARACTER_START_MODES = [
+    {
+      id: DEFAULT_CHARACTER_START_MODE,
+      label: "Standard Play",
+      summary: "Rules-as-written character creation with the normal 3000 starting Clim."
+    },
+    {
+      id: MIRANE_START_MODE_ID,
+      label: "Mirane Expedition",
+      summary: "Standard character creation plus 1000 Clim and Mirane's restricted-creation and starting-material rules."
+    }
+  ];
   var MAIN_STAT_CREATION_ARRAY = [5, 4, 4, 3];
   var SECONDARY_STAT_CREATION_ARRAY = [5, 4, 3, 2, 1];
   var MAIN_STATS = [
@@ -1774,11 +1799,17 @@ var LyrianApp = (() => {
     computedBonusesCacheValue = bonuses;
     return bonuses;
   }
+  function getCharacterStartMode() {
+    const requestedId = cleanText(state.builder?.startMode) || DEFAULT_CHARACTER_START_MODE;
+    return CHARACTER_START_MODES.find((entry) => entry.id === requestedId) || CHARACTER_START_MODES.find((entry) => entry.id === DEFAULT_CHARACTER_START_MODE) || CHARACTER_START_MODES[0];
+  }
   function getStartingFundsState() {
     const effects = getSelectedBreakthroughEffects();
+    const startMode = getCharacterStartMode();
+    const campaignBonusClim = startMode.id === MIRANE_START_MODE_ID ? MIRANE_STARTING_CLIM_BONUS : 0;
     const overrideRaw = cleanText(state.fields["Clim Override"]);
     const earnedClim = toNumber(cleanText(state.fields["Earned Clim"]), 0);
-    const suggestedTotal = BASE_STARTING_CLIM + effects.bonusClim;
+    const suggestedTotal = BASE_STARTING_CLIM + campaignBonusClim + effects.bonusClim;
     const hasOverride = overrideRaw !== "";
     const overrideValue = hasOverride ? Math.max(0, toNumber(overrideRaw, suggestedTotal)) : null;
     const startingClim = hasOverride ? overrideValue : suggestedTotal;
@@ -1787,6 +1818,8 @@ var LyrianApp = (() => {
     const availableClim = totalClim - selectedEquipmentCost;
     return {
       baseClim: BASE_STARTING_CLIM,
+      startMode,
+      campaignBonusClim,
       bonusClim: effects.bonusClim,
       suggestedTotal,
       hasOverride,
@@ -2459,7 +2492,7 @@ var LyrianApp = (() => {
   async function checkForVersionUpdates() {
     const connected = versionRuntime.serverAvailable || await detectVersionServer();
     if (!connected) {
-      setStatus("This web build is updated by published site deployments. Refresh after a new Beta 1.94 update is pushed.");
+      setStatus("This web build is updated by published site deployments. Refresh after a new Beta 2.1 update is pushed.");
       renderVersionManager();
       return;
     }
@@ -5220,6 +5253,249 @@ var LyrianApp = (() => {
   function getSelectedEquipmentCost() {
     return getSelectedItemRecords().reduce((total, entry) => total + parseClimCost(entry.cost) * Math.max(1, getBuilderItemQuantity(entry.id)), 0);
   }
+  function isMiraneStart() {
+    return getCharacterStartMode()?.id === MIRANE_START_MODE_ID;
+  }
+  var MIRANE_RULE_OVERRIDES = {
+    "divine providence": "This ability refreshes only after the character has both rested and entered a new encounter.",
+    "create talisman": "This is a Mirane Crafting/Class Special IP action. Spending at least 1 natural IP grants 20 EXP in addition to the normal effect, subject to Mirane's once-per-interlude-phase 20 EXP cap. Non-natural IP, such as Gobbo Fuel, does not qualify.",
+    "receive oracle": "Receive Oracle may be used once per expedition instead of once per rest. In town, using it costs both 1 Interlude Point and 1 Errand Point.",
+    procurement: "Procurement gains 500 points for each week that passes instead of when the character gains an Interlude Point. If the goal is reached during an expedition, the item is purchased immediately when the expedition finishes, provided the character has the money.",
+    "floor rest": "Rest recovery is reduced by one tier in Mirane. Floor Rest recovers 0 HP.",
+    "camp / basic rest": "Rest recovery is reduced by one tier in Mirane. Camp / Basic Rest recovers 1x Toughness HP.",
+    "luxury rest": "Rest recovery is reduced by one tier in Mirane. Luxury Rest recovers 2x Toughness HP.",
+    "military ration": "Mirane reduces this food recovery to 1 Mana.",
+    "culinary kit": "Mirane reduces the basic Culinary Kit meal recovery to 1 Mana."
+  };
+  var MIRANE_CLASS_RULE_OVERRIDES = {
+    onmyoji: MIRANE_RULE_OVERRIDES["create talisman"],
+    oracle: MIRANE_RULE_OVERRIDES["receive oracle"],
+    merchant: MIRANE_RULE_OVERRIDES.procurement,
+    necromancer: "Necromancers may bring corpses they did not raise back to Mirane. Each corpse uses 1 Burden, cannot be stored in an Armiger's Armory, cannot be traded, and remains stored until taken on an adventure. A Necromancer may store up to 8 corpses.",
+    "death knight": "Death Knights may bring corpses they did not raise back to Mirane under the campaign corpse-storage rule. Each corpse uses 1 Burden, cannot be stored in an Armiger's Armory, cannot be traded, and the shared storage limit is 8."
+  };
+  function getMiraneRuleOverride(record = {}) {
+    if (!isMiraneStart()) {
+      return "";
+    }
+    return MIRANE_RULE_OVERRIDES[normalizePhrase(record?.name || record)] || "";
+  }
+  function getMiraneClassRuleOverride(record = {}) {
+    if (!isMiraneStart()) {
+      return "";
+    }
+    return MIRANE_CLASS_RULE_OVERRIDES[normalizePhrase(record?.name || record)] || "";
+  }
+  function renderMiraneRuleOverride(value) {
+    const text = typeof value === "string" ? cleanText(value) : getMiraneRuleOverride(value);
+    if (!text || !isMiraneStart()) {
+      return "";
+    }
+    return `<div class="mirane-rule-override"><strong>Mirane Expedition override</strong><p>${escapeHtml(text)}</p></div>`;
+  }
+  function isMiraneRestrictedBreakthrough(entry) {
+    if (!entry || !isMiraneStart()) {
+      return false;
+    }
+    const name = normalizePhrase(entry.name);
+    const requirements = normalizePhrase(entry.requirements);
+    return ["angelblooded (human) (restricted)", "curse of vampirism", "touched by death"].includes(name) || name.includes("restricted") || requirements.includes("requires gm approval");
+  }
+  function isMiraneRestrictedClass(entry) {
+    if (!entry || !isMiraneStart()) {
+      return false;
+    }
+    return ["angelblooded", "shinigami eyes", "true shinigami eyes", "vampire", "vampire lord"].includes(normalizePhrase(entry.name));
+  }
+  function isMiraneRawCraftingMaterial(entry) {
+    if (!entry || isFoodUnitEntry(entry)) {
+      return false;
+    }
+    if (entry.generatedMaterial || entry.rawMaterialPackage) {
+      return true;
+    }
+    const text = normalizePhrase([
+      entry.name,
+      entry.type,
+      entry.subType,
+      entry.materialCategory,
+      entry.materialUnitLabel
+    ].filter(Boolean).join(" "));
+    return /\b(materials?|ingots?|blocks?|raw ore|raw hide|lumber|herbs?|seeds?|fertilizer)\b/.test(text) && !/\b(tool|kit|bag|container|reference)\b/.test(text);
+  }
+  function getMiraneMaterialSelectionState() {
+    const entries = getSelectedItemRecords().filter(isMiraneRawCraftingMaterial);
+    const totalClim = entries.reduce((total, entry) => total + parseClimCost(entry.cost) * Math.max(1, getBuilderItemQuantity(entry.id)), 0);
+    return {
+      entries,
+      totalClim,
+      remainingClim: Math.max(0, MIRANE_RAW_MATERIAL_CLIM_LIMIT - totalClim)
+    };
+  }
+  function getMiraneMaterialPurchaseStatus(entry, quantity = 1) {
+    if (!isMiraneStart() || !isMiraneRawCraftingMaterial(entry)) {
+      return { allowed: true, reason: "" };
+    }
+    const itemCost = parseClimCost(entry.cost);
+    if (itemCost >= MIRANE_SINGLE_MATERIAL_CLIM_LIMIT) {
+      return {
+        allowed: false,
+        reason: `${entry.name} has a base value of ${itemCost} Clim. Mirane characters cannot start with crafting materials valued at ${MIRANE_SINGLE_MATERIAL_CLIM_LIMIT} Clim or more.`
+      };
+    }
+    const purchaseCost = itemCost * Math.max(1, Math.floor(toNumber(quantity, 1)));
+    const materialState = getMiraneMaterialSelectionState();
+    if (materialState.totalClim + purchaseCost > MIRANE_RAW_MATERIAL_CLIM_LIMIT) {
+      return {
+        allowed: false,
+        reason: `Mirane characters may bring at most ${MIRANE_RAW_MATERIAL_CLIM_LIMIT} Clim of ingots and raw crafting materials. ${materialState.totalClim} Clim is already selected.`
+      };
+    }
+    return { allowed: true, reason: "" };
+  }
+  function enforceMiraneStartSelections() {
+    if (!isMiraneStart()) {
+      return [];
+    }
+    const removed = [];
+    const blockedBreakthroughIds = new Set(lookup.breakthroughs.entries.filter(isMiraneRestrictedBreakthrough).map((entry) => entry.id));
+    const blockedClassIds = new Set(lookup.classes.entries.map((entry) => getClassDetail(entry.id) || entry).filter(isMiraneRestrictedClass).map((entry) => entry.id));
+    state.builder.selectedBreakthroughIds = state.builder.selectedBreakthroughIds.filter((id) => {
+      if (!blockedBreakthroughIds.has(id)) {
+        return true;
+      }
+      removed.push(lookup.breakthroughs.resolve(id)?.name || id);
+      return false;
+    });
+    state.builder.gmApprovedBreakthroughIds = state.builder.gmApprovedBreakthroughIds.filter((id) => !blockedBreakthroughIds.has(id));
+    state.builder.selectedClassIds = state.builder.selectedClassIds.filter((id) => {
+      if (!blockedClassIds.has(id)) {
+        return true;
+      }
+      removed.push(getClassDetail(id)?.name || id);
+      if (state.builder.classAbilityProgress) {
+        delete state.builder.classAbilityProgress[id];
+      }
+      return false;
+    });
+    let rawMaterialClim = 0;
+    [...state.builder.selectedItemIds].forEach((id) => {
+      const entry = lookup.items.resolve(id);
+      if (!isMiraneRawCraftingMaterial(entry)) {
+        return;
+      }
+      const itemCost = parseClimCost(entry.cost);
+      const quantity = Math.max(1, getBuilderItemQuantity(id));
+      if (itemCost >= MIRANE_SINGLE_MATERIAL_CLIM_LIMIT) {
+        removed.push(entry.name);
+        setBuilderItemQuantity(id, 0);
+        return;
+      }
+      const allowedQuantity = itemCost > 0 ? Math.min(quantity, Math.max(0, Math.floor((MIRANE_RAW_MATERIAL_CLIM_LIMIT - rawMaterialClim) / itemCost))) : quantity;
+      if (allowedQuantity < quantity) {
+        removed.push(allowedQuantity ? `${entry.name} x${quantity - allowedQuantity}` : entry.name);
+        setBuilderItemQuantity(id, allowedQuantity);
+      }
+      rawMaterialClim += itemCost * allowedQuantity;
+    });
+    return removed;
+  }
+  function setCharacterStartMode(modeId) {
+    const nextMode = CHARACTER_START_MODES.find((entry) => entry.id === cleanText(modeId)) || CHARACTER_START_MODES[0];
+    const currentMode = getCharacterStartMode();
+    if (nextMode.id === MIRANE_START_MODE_ID && currentMode.id !== MIRANE_START_MODE_ID) {
+      const confirmed = typeof window.confirm !== "function" || window.confirm(
+        "Mirane Expedition uses a different set of campaign restrictions. Are you sure you want to create this character for the Mirane setting?\n\nThis applies the extra starting Clim and removes selections that are unavailable in this campaign. Standard creation EXP and Interlude Point requirements do not change."
+      );
+      if (!confirmed) {
+        setStatus("Mirane Expedition start was not enabled.");
+        return false;
+      }
+    }
+    state.builder.startMode = nextMode.id;
+    const removed = enforceMiraneStartSelections();
+    syncBuilderSelectionsIntoSheet2();
+    setStatus(removed.length ? `${nextMode.label} enabled. Removed campaign-ineligible selections: ${removed.join(", ")}.` : `${nextMode.label} start rules enabled.`);
+    return true;
+  }
+  function getMiraneItemMarketState(record = {}) {
+    const basePrice = Math.max(0, parseClimCost(record.cost));
+    if (!isMiraneStart() || !record.id) {
+      return {
+        active: false,
+        available: true,
+        basePrice,
+        hasMarketPrice: false,
+        marketPriceText: "",
+        purchasePrice: basePrice
+      };
+    }
+    const crafting = getCraftingTrackerState();
+    const marketPriceText = cleanText(crafting.miraneMarketPrices?.[record.id] || "");
+    const hasMarketPrice = marketPriceText !== "";
+    const unavailableIds = new Set(crafting.miraneUnavailableItemIds || []);
+    return {
+      active: true,
+      available: !unavailableIds.has(record.id),
+      basePrice,
+      hasMarketPrice,
+      marketPriceText,
+      purchasePrice: hasMarketPrice ? Math.max(0, Math.floor(toNumber(marketPriceText, 0))) : basePrice
+    };
+  }
+  function setMiraneMarketPrice(itemId, value) {
+    if (!isMiraneStart()) {
+      return;
+    }
+    const record = lookup.items.resolve(itemId);
+    if (!record) {
+      return;
+    }
+    state.play = mergePlayState(state.play);
+    const cleaned = cleanText(value);
+    if (cleaned === "") {
+      delete state.play.crafting.miraneMarketPrices[record.id];
+    } else {
+      state.play.crafting.miraneMarketPrices[record.id] = String(Math.max(0, Math.floor(toNumber(cleaned, 0))));
+    }
+    persistWorkingState();
+  }
+  function toggleMiraneMarketAvailability(itemId) {
+    if (!isMiraneStart()) {
+      return;
+    }
+    const record = lookup.items.resolve(itemId);
+    if (!record) {
+      return;
+    }
+    state.play = mergePlayState(state.play);
+    const ids = new Set(state.play.crafting.miraneUnavailableItemIds || []);
+    if (ids.has(record.id)) {
+      ids.delete(record.id);
+    } else {
+      ids.add(record.id);
+    }
+    state.play.crafting.miraneUnavailableItemIds = [...ids];
+    persistWorkingState();
+    renderPlayDashboard();
+    setStatus(`${record.name} marked ${ids.has(record.id) ? "unavailable" : "available"} in the current Mirane market.`);
+  }
+  function renderMiraneMarketControls(record = {}, options = {}) {
+    if (!isMiraneStart() || !record.id || parseClimCost(record.cost) <= 0) {
+      return "";
+    }
+    const market = getMiraneItemMarketState(record);
+    return `
+        <div class="mirane-market-controls">
+          <label>
+            <span>Current Mirane price</span>
+            <input type="number" inputmode="numeric" min="0" data-mirane-market-price="${escapeHtml(record.id)}" value="${escapeHtml(market.marketPriceText)}" placeholder="Base ${escapeHtml(String(market.basePrice))}">
+          </label>
+          <button type="button" class="secondary" data-mirane-market-availability="${escapeHtml(record.id)}">${escapeHtml(market.available ? "Mark Unavailable" : "Mark Available")}</button>
+          <small>${escapeHtml(market.available ? `${market.hasMarketPrice ? `Current price ${market.purchasePrice}` : `Using base price ${market.basePrice}`} Clim. Base value remains ${market.basePrice} Clim for rule checks.` : `Unavailable in the current Mirane market.${options.compact ? "" : ` Base value ${market.basePrice} Clim.`}`)}</small>
+        </div>
+      `;
+  }
   function createInventoryUid(prefix = "custom") {
     return `${prefix}:${Date.now().toString(36)}:${Math.random().toString(36).slice(2, 8)}`;
   }
@@ -7481,14 +7757,14 @@ var LyrianApp = (() => {
   }
   function seedBuilderInspection() {
     if (!state.builder.inspected.race) {
-      state.builder.inspected.race = getSelectedRaceDetail()?.id || detailLookup.races.entries[0]?.id || "";
+      state.builder.inspected.race = getSelectedRaceDetail()?.id || "";
     }
     const ancestryOptions = filteredAncestries();
     const inspectedAncestry = ancestryOptions.find((entry) => normalizeKey(entry.id) === normalizeKey(state.builder.inspected.ancestry));
     if (!inspectedAncestry) {
       const selectedAncestry = getSelectedAncestryDetail();
       const selectedInCurrentOptions = selectedAncestry && ancestryOptions.some((entry) => normalizeKey(entry.id) === normalizeKey(selectedAncestry.id));
-      state.builder.inspected.ancestry = selectedInCurrentOptions ? selectedAncestry.id : ancestryOptions[0]?.id || "";
+      state.builder.inspected.ancestry = selectedInCurrentOptions ? selectedAncestry.id : "";
     }
     if (!state.builder.inspected.class) {
       state.builder.inspected.class = getSelectedClassDetails()[0]?.id || detailLookup.classes.entries[0]?.id || "";
@@ -8176,6 +8452,7 @@ var LyrianApp = (() => {
           </div>
           ${meta.length ? `<div class="play-action-meta">${meta.map((entry) => `<span>${escapeHtml(entry)}</span>`).join("")}</div>` : ""}
           <div class="library-preview">${paragraphize(description || "No pulled reference text is available for this entry.")}</div>
+          ${renderMiraneRuleOverride(record)}
         </div>
       `;
   }
@@ -9908,10 +10185,11 @@ var LyrianApp = (() => {
     return Math.max(0, toNumber(state.fields.Toughness, 0) + (bonuses.mainStats.Toughness || 0));
   }
   function performPlayRest(restType) {
+    const miraneTierReduction = isMiraneStart() ? 1 : 0;
     const restOptions = {
-      floor: { label: "Floor Rest", multiplier: 1 },
-      camp: { label: "Camp / Basic Rest", multiplier: 2 },
-      luxury: { label: "Luxury Rest", multiplier: 3 }
+      floor: { label: "Floor Rest", multiplier: Math.max(0, 1 - miraneTierReduction) },
+      camp: { label: "Camp / Basic Rest", multiplier: Math.max(0, 2 - miraneTierReduction) },
+      luxury: { label: "Luxury Rest", multiplier: Math.max(0, 3 - miraneTierReduction) }
     };
     const option = restOptions[restType] || restOptions.camp;
     state.play = mergePlayState(state.play);
@@ -9930,6 +10208,7 @@ var LyrianApp = (() => {
     appendPlayLog(option.label, [
       `Recovered ${healing} HP (${option.multiplier}x Toughness ${toughness}).`,
       `Current HP: ${nextHp} / ${derived.hpMax}`,
+      isMiraneStart() ? "Mirane recovery rule: rest healing is reduced by one tier." : "",
       "Food mana recovery is available again.",
       removedRestEffects ? `${removedRestEffects} rest-duration active effect removed.` : ""
     ]);
@@ -10486,6 +10765,7 @@ var LyrianApp = (() => {
   function renderPlayRestAndEffectsPanel() {
     state.play = mergePlayState(state.play);
     const foodStatus = state.play.foodUsedSinceRest ? "Used until next rest" : "Available";
+    const miraneRestRules = isMiraneStart() ? `<div class="mirane-rule-override"><strong>Mirane Expedition recovery</strong><p>Rest healing is reduced one tier: Floor Rest 0x Toughness, Camp / Basic Rest 1x, and Luxury Rest 2x. Military Rations and basic Culinary Kit meals recover only 1 Mana.</p></div>` : "";
     return `
         <div class="play-action-card play-rest-card">
           <div class="play-action-copy">
@@ -10495,6 +10775,7 @@ var LyrianApp = (() => {
               <span>Food mana recovery: ${escapeHtml(foodStatus)}</span>
             </div>
             <p>Use AP Recovery at the start of your turn. Use Rest when the GM calls for rest; it heals by Toughness and makes food-based mana recovery available again.</p>
+            ${miraneRestRules}
           </div>
           <div class="play-action-buttons">
             <button type="button" data-play-recover-ap>Recover AP</button>
@@ -10588,6 +10869,13 @@ var LyrianApp = (() => {
     crafting: "Crafting",
     gathering: "Gathering"
   };
+  var MOBILE_SHEET_PAGE_ORDER = ["overview", "combat", "skills", "abilities", "inventory", "character"];
+  var MOBILE_CHARACTER_TABS = /* @__PURE__ */ new Set(["proficiencies", "breakthroughs", "notes"]);
+  var MOBILE_SHEET_PAGE_TABS = {
+    combat: "actions",
+    abilities: "abilities",
+    inventory: "inventory"
+  };
   var DOWNTIME_PLAY_MODES = /* @__PURE__ */ new Set(["crafting", "gathering"]);
   function normalizePlayMode(mode) {
     const cleaned = cleanText(mode);
@@ -10620,6 +10908,7 @@ var LyrianApp = (() => {
     try {
       renderPlayDashboard();
       renderPlayModePanels(nextMode);
+      scheduleWorkingStatePersist(false);
       setStatus(`Switched to ${PLAY_MODE_LABELS[nextMode]} mode.`);
     } catch (error) {
       console.error(error);
@@ -10635,7 +10924,11 @@ var LyrianApp = (() => {
               data-play-mode="${escapeHtml(mode)}"
               class="${mode === activeMode ? "is-active" : ""}"
               aria-pressed="${mode === activeMode ? "true" : "false"}"
-            >${escapeHtml(label)}</button>
+              aria-label="${escapeHtml(mode === "combat" ? "Character Sheet" : label)}"
+            >
+              <span class="play-mode-label-desktop" aria-hidden="true">${escapeHtml(label)}</span>
+              <span class="play-mode-label-mobile" aria-hidden="true">${escapeHtml(mode === "combat" ? "Character Sheet" : label)}</span>
+            </button>
           `).join("")}
         </div>
       `;
@@ -10682,6 +10975,84 @@ var LyrianApp = (() => {
     document.querySelectorAll("[data-play-tab-panel]").forEach((panel) => {
       panel.classList.toggle("is-hidden", panel.dataset.playTabPanel !== activeTab);
     });
+  }
+  function isMobileSheetLayout() {
+    return window.matchMedia("(max-width: 700px)").matches;
+  }
+  function normalizeMobileSheetPage(page) {
+    const cleaned = cleanText(page);
+    return MOBILE_SHEET_PAGE_ORDER.includes(cleaned) ? cleaned : "overview";
+  }
+  function getMobileSheetPageForTab(tab) {
+    if (tab === "actions") {
+      return "combat";
+    }
+    if (tab === "abilities") {
+      return "abilities";
+    }
+    if (tab === "inventory") {
+      return "inventory";
+    }
+    if (MOBILE_CHARACTER_TABS.has(tab)) {
+      return "character";
+    }
+    return "overview";
+  }
+  function applyMobileSheetPresentation() {
+    const sheetView = document.getElementById("sheet-view");
+    const dock = document.getElementById("play-mobile-sheet-dock");
+    const nav = document.getElementById("play-mobile-page-nav");
+    const walkthroughNav = document.getElementById("play-mobile-walkthrough-nav");
+    if (!sheetView || !dock || !nav || !walkthroughNav) {
+      return;
+    }
+    const activeMode = getActivePlayMode();
+    const activePage = normalizeMobileSheetPage(state.ui.mobileSheetPage);
+    const isCharacterSheet = activeMode === "combat";
+    state.ui.mobileSheetPage = activePage;
+    sheetView.dataset.mobileSheetPage = activePage;
+    sheetView.dataset.mobilePlayMode = activeMode;
+    dock.classList.toggle("is-walkthrough-mode", !isCharacterSheet);
+    nav.hidden = !isCharacterSheet;
+    nav.setAttribute("aria-hidden", isCharacterSheet ? "false" : "true");
+    walkthroughNav.hidden = isCharacterSheet;
+    walkthroughNav.setAttribute("aria-hidden", isCharacterSheet ? "true" : "false");
+    walkthroughNav.querySelectorAll("[data-play-mode]").forEach((button) => {
+      const isActive = button.dataset.playMode === activeMode;
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
+    nav.querySelectorAll("[data-mobile-sheet-page]").forEach((button) => {
+      const isActive = button.dataset.mobileSheetPage === activePage;
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-current", isActive ? "page" : "false");
+    });
+  }
+  function setMobileSheetPage(page, { persist = true, scroll = true } = {}) {
+    const nextPage = normalizeMobileSheetPage(page);
+    state.ui.mobileSheetPage = nextPage;
+    if (MOBILE_SHEET_PAGE_TABS[nextPage]) {
+      state.ui.sheetTab = MOBILE_SHEET_PAGE_TABS[nextPage];
+    } else if (nextPage === "character") {
+      state.ui.sheetTab = MOBILE_CHARACTER_TABS.has(state.ui.mobileCharacterTab) ? state.ui.mobileCharacterTab : "proficiencies";
+    }
+    renderPlayTabs();
+    applyMobileSheetPresentation();
+    if (persist) {
+      scheduleWorkingStatePersist(false);
+    }
+    if (scroll && isMobileSheetLayout()) {
+      requestAnimationFrame(() => {
+        document.getElementById("play-mobile-sheet-dock")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        document.querySelector(`[data-mobile-sheet-page="${cssEscape(nextPage)}"]`)?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+      });
+    }
+  }
+  function cycleMobileSheetPage(direction) {
+    const currentPage = normalizeMobileSheetPage(state.ui.mobileSheetPage);
+    const currentIndex = MOBILE_SHEET_PAGE_ORDER.indexOf(currentPage);
+    const nextIndex = (currentIndex + direction + MOBILE_SHEET_PAGE_ORDER.length) % MOBILE_SHEET_PAGE_ORDER.length;
+    setMobileSheetPage(MOBILE_SHEET_PAGE_ORDER[nextIndex]);
   }
   function renderPlayDerivedCard(label, value, summary = "", cardClass = "") {
     return `
@@ -10907,17 +11278,23 @@ var LyrianApp = (() => {
     document.getElementById("play-header-card").innerHTML = `
         <div class="play-header-portrait"><img src="${portrait}" alt="${escapeHtml(getPlayHeaderTitle())} portrait"></div>
         <div class="play-header-copy">
-          <div>
-            <p class="eyebrow">Character</p>
-            <h3>${escapeHtml(getPlayHeaderTitle())}</h3>
+          <div class="play-header-title-row">
+            <div>
+              <p class="eyebrow">Character</p>
+              <h3>${escapeHtml(getPlayHeaderTitle())}</h3>
+            </div>
+            <div class="play-mobile-header-actions" aria-label="Character tools">
+              <button type="button" data-mobile-return-builder>Builder</button>
+              <button type="button" data-mobile-sheet-tools>Tools</button>
+            </div>
           </div>
           <div class="tag-list">
             ${race ? `<span class="detail-pill">${escapeHtml(race.name)}</span>` : ""}
             ${ancestry ? `<span class="detail-pill">${escapeHtml(ancestry.name)}</span>` : ""}
             ${state.fields["Spirit Core"] ? `<span class="detail-pill">Spirit Core ${escapeHtml(state.fields["Spirit Core"])}</span>` : ""}
           </div>
-          <p>${escapeHtml(classes.length ? classes.map((entry) => entry.name).join(", ") : "No classes selected yet.")}</p>
-          <p>${escapeHtml([state.fields.Gender, state.fields.Age ? `Age ${state.fields.Age}` : "", state.fields.Height, state.fields.Weight].filter(Boolean).join(" | ") || "Profile details can be filled in from the builder profile step at any time.")}</p>
+          <p class="play-header-class-names">${escapeHtml(classes.length ? classes.map((entry) => entry.name).join(", ") : "No classes selected yet.")}</p>
+          <p class="play-header-profile">${escapeHtml([state.fields.Gender, state.fields.Age ? `Age ${state.fields.Age}` : "", state.fields.Height, state.fields.Weight].filter(Boolean).join(" | ") || "Profile details can be filled in from the builder profile step at any time.")}</p>
           ${renderPlayModeSwitch(activePlayMode)}
         </div>
         ${classArtMarkup}
@@ -10950,6 +11327,18 @@ var LyrianApp = (() => {
       renderPlayResourceCard("AP", "apCurrent", "apMax", resources),
       renderPlayResourceCard("RP", "rpCurrent", "rpMax", resources)
     ].join("");
+    document.getElementById("play-mobile-character-name").textContent = getPlayHeaderTitle();
+    document.getElementById("play-mobile-hp-status").innerHTML = `<span>HP</span><strong>${escapeHtml(String(resources.hpCurrent))} / ${escapeHtml(String(resources.hpMax))}</strong>${toNumber(resources.tempHp, 0) ? `<small>+${escapeHtml(String(toNumber(resources.tempHp, 0)))} temp</small>` : ""}`;
+    document.getElementById("play-mobile-resource-bar").innerHTML = [
+      ["Mana", "mana", resources.manaCurrent, resources.manaMax],
+      ["AP", "ap", resources.apCurrent, resources.apMax],
+      ["RP", "rp", resources.rpCurrent, resources.rpMax]
+    ].map(([label, resource, current, maximum]) => `
+        <button type="button" data-mobile-sheet-resource="${escapeHtml(resource)}" aria-label="Open ${escapeHtml(label)} controls">
+          <span>${escapeHtml(label)}</span>
+          <strong>${escapeHtml(String(current))} / ${escapeHtml(String(maximum))}</strong>
+        </button>
+      `).join("");
     document.getElementById("play-derived-grid").innerHTML = [
       renderPlayEditableDerivedCard({
         label: "EXP",
@@ -11067,6 +11456,7 @@ var LyrianApp = (() => {
     renderSheetBuildSummary();
     renderDiceTray();
     renderPlayTabs();
+    applyMobileSheetPresentation();
   }
   function renderPlayResourceCard(label, currentKey, maxKey, resources) {
     const isApCard = currentKey === "apCurrent";
@@ -11210,6 +11600,7 @@ var LyrianApp = (() => {
               ${ability.range ? `<span>${escapeHtml(ability.range)}</span>` : ""}
             </div>
             <p>${renderLinkedReferenceText(description)}</p>
+            ${renderMiraneRuleOverride(ability)}
           </div>
           <div class="play-action-buttons">
             ${actionButtons}
@@ -11469,9 +11860,12 @@ var LyrianApp = (() => {
             <button type="button" data-inventory-custom-open>Add Custom Item</button>
             <button type="button" class="secondary" data-inventory-toggle-catalog>Close Catalog</button>
           </div>
+          ${isMiraneStart() ? `<div class="review-panel mirane-economy-note"><strong>Mirane market pricing</strong><p>Supply is limited, so prices and availability can fluctuate. Set the currently posted price below or mark an item unavailable. Base value remains unchanged for crafting limits and other rule checks.</p></div>` : ""}
           <input class="play-inventory-search" data-inventory-search value="${escapeHtml(state.play.inventorySearch || "")}" placeholder="Search equipment and items">
           <div class="play-item-catalog-grid">
-            ${entries.map((entry) => `
+            ${entries.map((entry) => {
+      const market = getMiraneItemMarketState(entry);
+      return `
               <div class="play-item-catalog-card is-reference-clickable" data-play-reference-name="${escapeHtml(entry.name)}">
                 <img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl || "assets/lyrian-symbol.png")}" alt="${escapeHtml(entry.name)}">
                 <div>
@@ -11479,9 +11873,11 @@ var LyrianApp = (() => {
                   <p>${escapeHtml([entry.type, entry.subType, entry.cost, entry.materialUnitLabel || entry.burden].filter(Boolean).join(" | "))}</p>
                   <p>${escapeHtml(getFirstSentence(entry.description).slice(0, 170))}</p>
                 </div>
-                <button type="button" data-inventory-add-item="${escapeHtml(entry.id)}">${escapeHtml(parseClimCost(entry.cost) > 0 ? `Buy (${parseClimCost(entry.cost)} Clim)` : "Add")}</button>
+                ${renderMiraneMarketControls(entry, { compact: true })}
+                <button type="button" data-inventory-add-item="${escapeHtml(entry.id)}" ${market.available ? "" : "disabled"}>${escapeHtml(parseClimCost(entry.cost) > 0 ? market.available ? `Buy (${market.purchasePrice} Clim)` : "Unavailable in Mirane" : "Add")}</button>
               </div>
-            `).join("") || `<p class="play-empty">No items match that search.</p>`}
+            `;
+    }).join("") || `<p class="play-empty">No items match that search.</p>`}
           </div>
         </div>
       `;
@@ -11769,10 +12165,11 @@ var LyrianApp = (() => {
     const description = cleanText(entry.descriptionText || entry.description || "");
     const meta = [entry.type, entry.subType, entry.cost, entry.materialUnitLabel || entry.burden].filter(Boolean);
     const purchaseCost = parseClimCost(entry.cost);
+    const market = getMiraneItemMarketState(entry);
     const canPurchase = options.purchase !== false && Boolean(entry.id) && purchaseCost > 0 && Boolean(lookup.items.resolve(entry.id));
     const stackable = isStackableBuilderItem(entry);
     const alreadyOwned = canPurchase && isOfficialItemOwned(entry.id);
-    const purchaseLabel = alreadyOwned && !stackable ? "In Inventory" : `${alreadyOwned ? "Purchase Another" : "Purchase Item"} (${purchaseCost} Clim)`;
+    const purchaseLabel = alreadyOwned && !stackable ? "In Inventory" : market.available ? `${alreadyOwned ? "Purchase Another" : "Purchase Item"} (${market.purchasePrice} Clim)` : "Unavailable in Mirane";
     return `
         <div class="play-action-card">
           <div class="play-action-copy">
@@ -11782,9 +12179,10 @@ var LyrianApp = (() => {
               ${options.badge ? `<span>${escapeHtml(options.badge)}</span>` : ""}
             </div>
             <p>${escapeHtml((getFirstSentence(description) || description || "No pulled description available.").slice(0, options.long ? 360 : 220))}</p>
+            ${renderMiraneMarketControls(entry, { compact: true })}
             ${canPurchase ? `
               <div class="play-inventory-actions">
-                <button type="button" data-crafting-purchase-item="${escapeHtml(entry.id)}" ${alreadyOwned && !stackable ? "disabled" : ""}>${escapeHtml(purchaseLabel)}</button>
+                <button type="button" data-crafting-purchase-item="${escapeHtml(entry.id)}" ${alreadyOwned && !stackable || !market.available ? "disabled" : ""}>${escapeHtml(purchaseLabel)}</button>
               </div>
             ` : ""}
           </div>
@@ -11834,15 +12232,19 @@ var LyrianApp = (() => {
   function getCraftingRecipeSubcategories(recipes, category) {
     return Array.from(new Set(getCraftingRecipesForCategory(recipes, category).map((entry) => cleanText(entry.subType || entry.type || "Other")).filter(Boolean))).sort((a, b) => a.localeCompare(b));
   }
-  function getFilteredCraftingRecipes(recipes, crafting) {
+  function getFilteredCraftingRecipes(recipes, crafting, inventory = []) {
     const category = cleanText(crafting.recipeCategory || CRAFTING_RECIPE_ALL);
     const subcategory = cleanText(crafting.recipeSubcategory || CRAFTING_RECIPE_ALL);
-    return getCraftingRecipesForCategory(recipes, category).filter((entry) => {
+    const filtered = getCraftingRecipesForCategory(recipes, category).filter((entry) => {
       if (normalizePhrase(subcategory) === CRAFTING_RECIPE_ALL) {
         return true;
       }
       return normalizePhrase(entry.subType || entry.type || "Other") === normalizePhrase(subcategory);
     });
+    if (!crafting.availableRecipesOnly) {
+      return filtered;
+    }
+    return filtered.filter((entry) => getCraftingRecipeAvailability(entry, inventory, crafting).available);
   }
   function getCraftingShopCategory(entry = {}) {
     const text = normalizePhrase([
@@ -12291,6 +12693,7 @@ var LyrianApp = (() => {
     const standardCost = record ? standardUnitCost * packagesNeeded : standardUnitCost * need;
     const customCosts = crafting.materialCustomCosts && typeof crafting.materialCustomCosts === "object" ? crafting.materialCustomCosts : {};
     const customCost = cleanText(customCosts[`${recipe.id}::${requirement.key}`] || "");
+    const marketState = record ? getMiraneItemMarketState(record) : null;
     return {
       ...requirement,
       record,
@@ -12300,6 +12703,8 @@ var LyrianApp = (() => {
       packagesNeeded,
       standardUnitCost,
       standardCost,
+      marketState,
+      marketCost: marketState ? marketState.purchasePrice * packagesNeeded : standardCost,
       customCost,
       customCostKey: `${recipe.id}::${requirement.key}`
     };
@@ -14198,6 +14603,13 @@ var LyrianApp = (() => {
     renderPlayDashboard();
     setStatus(state.play.crafting.recipeSubcategory === CRAFTING_RECIPE_ALL ? "Showing all recipe types." : `Showing ${state.play.crafting.recipeSubcategory} recipes.`);
   }
+  function setCraftingAvailabilityFilter(enabled) {
+    state.play = mergePlayState(state.play);
+    state.play.crafting.availableRecipesOnly = Boolean(enabled);
+    persistWorkingState();
+    renderPlayDashboard();
+    setStatus(state.play.crafting.availableRecipesOnly ? "Showing only recipes currently supported by this character's class and core tools." : "Showing all recipes.");
+  }
   function selectCraftingRecipe(recipeId) {
     const recipe = getCraftingRecipeById(recipeId);
     if (!recipe) {
@@ -14236,11 +14648,15 @@ var LyrianApp = (() => {
     const hasCustomPrice = customText !== "";
     const customPrice = Math.max(0, Math.floor(toNumber(customText, 0)));
     const standardPrice = Math.max(0, Math.floor(toNumber(requirement?.standardCost, 0)));
+    const hasMarketPrice = Boolean(requirement?.marketState?.active && requirement.marketState.hasMarketPrice);
+    const marketPrice = Math.max(0, Math.floor(toNumber(requirement?.marketCost, standardPrice)));
     return {
       hasCustomPrice,
+      hasMarketPrice,
       customPrice,
+      marketPrice,
       standardPrice,
-      purchasePrice: hasCustomPrice ? customPrice : standardPrice
+      purchasePrice: hasCustomPrice ? customPrice : hasMarketPrice ? marketPrice : standardPrice
     };
   }
   function applyCraftingRequirementPurchasePrice(trackedStandardCost, purchaseCost) {
@@ -14307,6 +14723,10 @@ var LyrianApp = (() => {
       return;
     }
     const priceInfo = getCraftingRequirementPurchasePrice(requirement);
+    if (requirement.marketState?.active && !requirement.marketState.available) {
+      setStatus(`${requirement.record?.name || requirement.label} is unavailable in the current Mirane market.`);
+      return;
+    }
     if (!requirement.record && !priceInfo.purchasePrice && !priceInfo.hasCustomPrice) {
       setStatus(`Set a custom price before buying ${requirement.label}.`);
       return;
@@ -14315,7 +14735,7 @@ var LyrianApp = (() => {
     const record = requirement.record;
     const purchaseName = record?.name || requirement.lookupName || requirement.label;
     const trackedStandardTotal = record ? Math.max(0, requirement.standardUnitCost * packages) : 0;
-    const priceLabel = priceInfo.hasCustomPrice ? "custom price" : "standard price";
+    const priceLabel = priceInfo.hasCustomPrice ? "recipe price override" : priceInfo.hasMarketPrice ? "current Mirane market price" : "standard price";
     const funds = getStartingFundsState();
     if (priceInfo.purchasePrice > 0 && priceInfo.purchasePrice > funds.availableClim) {
       setStatus(`${purchaseName} costs ${priceInfo.purchasePrice} Clim, but only ${funds.availableClim} Clim remains.`);
@@ -14345,7 +14765,7 @@ var LyrianApp = (() => {
     appendPlayLog("Recipe Requirement Purchased", [
       `Recipe: ${recipe.name}`,
       record ? `${record.name}: x${packages}` : `${purchaseName}: ${formatRequirementQuantity(requirement.need, requirement.unit)}`,
-      `${priceInfo.hasCustomPrice ? "Custom price" : "Standard price"}: ${priceInfo.purchasePrice || 0} Clim`,
+      `${priceInfo.hasCustomPrice ? "Recipe price override" : priceInfo.hasMarketPrice ? "Mirane market price" : "Standard price"}: ${priceInfo.purchasePrice || 0} Clim`,
       `Remaining Clim: ${updatedFunds.availableClim}`
     ]);
     persistWorkingState();
@@ -14359,7 +14779,8 @@ var LyrianApp = (() => {
     const categories = getCraftingRecipeCategories(recipes);
     const category = cleanText(crafting.recipeCategory || CRAFTING_RECIPE_ALL);
     const subcategories = getCraftingRecipeSubcategories(recipes, category);
-    const filteredRecipes = getFilteredCraftingRecipes(recipes, crafting);
+    const filteredRecipes = getFilteredCraftingRecipes(recipes, crafting, inventory);
+    const availableRecipesOnly = Boolean(crafting.availableRecipesOnly);
     const selectedRecipe = getCraftingRecipeById(crafting.selectedRecipeId);
     const renderModeButton = (value, label) => `
         <button type="button" data-crafting-selection-mode="${escapeHtml(value)}" class="${mode === value ? "is-active" : ""}">${escapeHtml(label)}</button>
@@ -14428,12 +14849,14 @@ var LyrianApp = (() => {
         <div class="play-recipe-filter-group">
           <strong>Recipe Category</strong>
           <div class="play-recipe-filter-buttons">
-            <button type="button" data-crafting-recipe-category="${CRAFTING_RECIPE_ALL}" class="${normalizePhrase(category) === CRAFTING_RECIPE_ALL ? "is-active" : ""}">See All Recipes</button>
+            <button type="button" data-crafting-recipe-category="${CRAFTING_RECIPE_ALL}" class="${normalizePhrase(category) === CRAFTING_RECIPE_ALL ? "is-active" : ""}">All Recipes</button>
+            <button type="button" data-crafting-availability-filter="available" class="${availableRecipesOnly ? "is-active" : ""}" aria-pressed="${availableRecipesOnly ? "true" : "false"}">Available Recipes</button>
             ${categories.map((entry) => `
               <button type="button" data-crafting-recipe-category="${escapeHtml(entry)}" class="${normalizePhrase(category) === normalizePhrase(entry) ? "is-active" : ""}">${escapeHtml(entry)}</button>
             `).join("")}
           </div>
         </div>
+        ${availableRecipesOnly ? `<p class="play-recipe-availability-filter-note">Only recipes whose current class and required core tool checks are met are shown. Materials, facility access, and Mirane market conditions still need checking.</p>` : ""}
         <div class="play-recipe-filter-group">
           <strong>Quick Option</strong>
           <div class="play-recipe-filter-buttons">
@@ -14456,7 +14879,7 @@ var LyrianApp = (() => {
                   <span class="play-recipe-requirement-note">${escapeHtml(availability.reasonLabel)}</span>
                 </button>
               `;
-    }).join("") : `<p class="play-empty">No recipes match those filters.</p>`}
+    }).join("") : `<p class="play-empty">${availableRecipesOnly ? "No currently available recipes match those filters." : "No recipes match those filters."}</p>`}
         </div>
         ${selectedRecipe ? `
           <div class="play-recipe-selected-summary">
@@ -14500,9 +14923,10 @@ var LyrianApp = (() => {
         <div class="play-recipe-requirement-list">
           ${requirements.length ? requirements.map((entry) => {
       const priceInfo = getCraftingRequirementPurchasePrice(entry);
-      const canPurchase = entry.need > 0 && (entry.record || priceInfo.purchasePrice > 0 || priceInfo.hasCustomPrice);
+      const marketAvailable = !entry.marketState?.active || entry.marketState.available;
+      const canPurchase = marketAvailable && entry.need > 0 && (entry.record || priceInfo.purchasePrice > 0 || priceInfo.hasCustomPrice);
       const missingPrice = priceInfo.purchasePrice ? ` (${priceInfo.purchasePrice} Clim)` : "";
-      const purchaseLabel = entry.need <= 0 ? "Covered" : canPurchase ? `Buy Missing${entry.record && entry.packagesNeeded > 1 ? ` x${entry.packagesNeeded}` : ""}${missingPrice}` : "Set Price";
+      const purchaseLabel = entry.need <= 0 ? "Covered" : !marketAvailable ? "Unavailable in Mirane" : canPurchase ? `Buy Missing${entry.record && entry.packagesNeeded > 1 ? ` x${entry.packagesNeeded}` : ""}${missingPrice}` : "Set Price";
       return `
                 <div class="play-recipe-requirement-row">
                   <div class="play-recipe-requirement-name">
@@ -14514,11 +14938,13 @@ var LyrianApp = (() => {
                     <span>Have ${escapeHtml(formatRequirementQuantity(entry.have, entry.unit))}</span>
                     <span>Missing ${escapeHtml(formatRequirementQuantity(entry.need, entry.unit))}</span>
                     <span>Standard ${escapeHtml(entry.standardCost ? `${entry.standardCost} Clim` : "--")}</span>
+                    ${entry.marketState?.active ? `<span>Mirane ${escapeHtml(entry.marketState.available ? `${entry.marketCost} Clim` : "Unavailable")}</span>` : ""}
                   </div>
                   <div class="play-recipe-requirement-actions">
                     <input type="number" inputmode="numeric" min="0" data-crafting-requirement-custom-cost="${escapeHtml(entry.customCostKey)}" value="${escapeHtml(entry.customCost)}" placeholder="Custom Price" aria-label="${escapeHtml(`${entry.label} custom price`)}">
                     <button type="button" data-crafting-purchase-requirement="${escapeHtml(entry.customCostKey)}" ${canPurchase ? "" : "disabled"}>${escapeHtml(purchaseLabel)}</button>
                   </div>
+                  ${entry.record ? renderMiraneMarketControls(entry.record, { compact: true }) : ""}
                 </div>
               `;
     }).join("") : `<p class="play-empty">No material requirements were parsed for this recipe yet.</p>`}
@@ -14568,7 +14994,10 @@ var LyrianApp = (() => {
                     <strong>${escapeHtml(helper.label)} / ${escapeHtml(helper.hasItem ? "Have" : "Missing")}</strong>
                     <span>${escapeHtml(helper.note)}</span>
                   </div>
-                  ${helper.record && !helper.hasItem ? `<button type="button" data-crafting-purchase-item="${escapeHtml(helper.record.id)}">Buy (${escapeHtml(helper.record.cost || "Cost unknown")})</button>` : ""}
+                  ${helper.record && !helper.hasItem ? `
+                    ${renderMiraneMarketControls(helper.record, { compact: true })}
+                    <button type="button" data-crafting-purchase-item="${escapeHtml(helper.record.id)}" ${getMiraneItemMarketState(helper.record).available ? "" : "disabled"}>${escapeHtml(getMiraneItemMarketState(helper.record).available ? `Buy (${getMiraneItemMarketState(helper.record).purchasePrice} Clim)` : "Unavailable in Mirane")}</button>
+                  ` : ""}
                 </div>
               `).join("")}
             </div>
@@ -14589,7 +15018,8 @@ var LyrianApp = (() => {
             <strong>Required Tool / ${escapeHtml(toolStatusText)}</strong>
             <span>${escapeHtml(support.tool ? `${support.tool.label}. ${support.tool.note}` : "No rule-backed core tool was mapped for this recipe type yet.")}</span>
             ${support.tool?.record && !support.hasTool ? `
-              <button type="button" data-crafting-purchase-item="${escapeHtml(support.tool.record.id)}">Buy Tool (${escapeHtml(support.tool.record.cost || "Cost unknown")})</button>
+              ${renderMiraneMarketControls(support.tool.record, { compact: true })}
+              <button type="button" data-crafting-purchase-item="${escapeHtml(support.tool.record.id)}" ${getMiraneItemMarketState(support.tool.record).available ? "" : "disabled"}>${escapeHtml(getMiraneItemMarketState(support.tool.record).available ? `Buy Tool (${getMiraneItemMarketState(support.tool.record).purchasePrice} Clim)` : "Unavailable in Mirane")}</button>
             ` : ""}
           </div>
           <div class="play-gathering-tool-check ${facilityStatusClass}">
@@ -14845,6 +15275,36 @@ var LyrianApp = (() => {
             <strong>Session Notes</strong>
             <textarea data-crafting-field="notes" placeholder="Crafting dice used, GM rulings, facility notes, gathered units, or complications.">${escapeHtml(crafting.notes)}</textarea>
           </label>
+        </div>
+      `;
+  }
+  function renderMiraneDowntimeRulesPanel(crafting, mode = "crafting") {
+    if (!isMiraneStart()) {
+      return "";
+    }
+    const isCraftingMode = mode === "crafting";
+    return `
+        <div class="review-panel mirane-downtime-rules">
+          <strong>Mirane ${isCraftingMode ? "crafting" : "gathering"} rules</strong>
+          ${isCraftingMode ? `
+            <p>Run the craft in the Mirane crafting channel. Before rolling, state what you are making and which material you are using. Declare an ability before the roll; otherwise the attempt is treated as Basic Craft.</p>
+            <label class="mirane-natural-ip-toggle">
+              <input type="checkbox" data-mirane-natural-ip ${crafting.miraneUseNaturalIp ? "checked" : ""}>
+              <span>This craft spends at least 1 natural IP and can grant ${MIRANE_CRAFTING_INTERLUDE_EXP} EXP.</span>
+            </label>
+            <div class="mirane-interlude-exp-status">
+              <span>${escapeHtml(crafting.miraneInterludeExpClaimed ? `The ${MIRANE_CRAFTING_INTERLUDE_EXP} EXP award has already been claimed this interlude phase.` : `The once-per-interlude-phase ${MIRANE_CRAFTING_INTERLUDE_EXP} EXP award is available.`)}</span>
+              <button type="button" class="secondary" data-mirane-reset-interlude-exp ${crafting.miraneInterludeExpClaimed ? "" : "disabled"}>Start New Interlude Phase</button>
+            </div>
+          ` : `
+            <p>Mirane's Gather interlude action grants ${MIRANE_GATHER_BASE_UNITS} units of a related basic material, plus ${MIRANE_GATHER_MASTERY_BONUS_UNITS} units when the related tier-1 gathering class is mastered. Expedition hunting instead yields 30 + the Survival or similar skill roll in food units.</p>
+            <p>Farmers may place Spiritual Ground in Mirane without owning a plot of land.</p>
+          `}
+          <div class="mirane-economy-reference">
+            <span><strong>Job:</strong> ${MIRANE_JOB_BASE_CLIM} Clim base; +${MIRANE_JOB_ARTISAN_BONUS_CLIM} Clim with Artisan mastery.</span>
+            <span><strong>IP shop:</strong> ${MIRANE_IP_SHOP_SLOT_LIMIT} item slots, ${MIRANE_IP_SHOP_PRICE_CAP} Clim maximum listing price, and ${MIRANE_IP_SHOP_SALE_PERCENT_CAP}% maximum sale price.</span>
+            <span><strong>Market:</strong> prices and availability fluctuate; use the current Mirane price fields instead of changing base values.</span>
+          </div>
         </div>
       `;
   }
@@ -15638,6 +16098,17 @@ var LyrianApp = (() => {
     state.play = mergePlayState(state.play);
     const snapshot = createCraftOutcomeSnapshot();
     const consumption = consumeCraftingMaterials(recipe, crafting);
+    let miraneExpLine = "";
+    if (isMiraneStart() && crafting.miraneUseNaturalIp) {
+      if (crafting.miraneInterludeExpClaimed) {
+        miraneExpLine = `Mirane natural-IP EXP: already claimed this interlude phase; no additional EXP awarded.`;
+      } else {
+        const expBank = Math.max(0, toNumber(cleanText(state.fields.Exp), 0));
+        updateFieldValue("Exp", String(expBank + MIRANE_CRAFTING_INTERLUDE_EXP));
+        state.play.crafting.miraneInterludeExpClaimed = true;
+        miraneExpLine = `Mirane natural-IP EXP: +${MIRANE_CRAFTING_INTERLUDE_EXP} EXP (once-per-interlude-phase award claimed).`;
+      }
+    }
     let craftedLine = "";
     if (didSucceed) {
       state.play.inventoryItems.push({
@@ -15669,6 +16140,7 @@ var LyrianApp = (() => {
       `Recipe: ${recipe.name}`,
       consumption.consumedLines.length ? `Materials consumed: ${consumption.consumedLines.join(", ")}` : "Materials consumed: none tracked",
       consumption.shortfalls.length ? `Shortfall (GM ruled it proceeded): ${consumption.shortfalls.join(", ")}` : "",
+      miraneExpLine,
       craftedLine,
       didSucceed ? "" : "Failure consumption note: the official rules do not spell out failure costs. Materials were consumed as the default; use Undo Last Outcome if the GM rules otherwise.",
       "Undo Last Outcome (final crafting step) restores materials and removes the crafted item."
@@ -16133,6 +16605,7 @@ var LyrianApp = (() => {
               </div>
               ${renderCraftingWizardNav(wizardIndex)}
               ${renderCraftingWizardSummary(crafting, inventory)}
+              ${renderMiraneDowntimeRulesPanel(crafting, "crafting")}
               ${renderWizardStepCoach(stepMeta, "Crafting", stepWarnings)}
               <div class="play-wizard-step-body">
                 ${stepContent}
@@ -16301,6 +16774,7 @@ var LyrianApp = (() => {
               </div>
               ${renderGatheringWizardNav(gatheringWizardIndex)}
               ${renderGatheringWizardSummary(crafting, gatheringReadiness)}
+              ${renderMiraneDowntimeRulesPanel(crafting, "gathering")}
               ${renderWizardStepCoach(gatheringStepMeta, "Gathering", gatheringStepWarnings)}
               <div class="play-wizard-step-body">
                 ${gatheringStepContent}
@@ -16378,16 +16852,22 @@ var LyrianApp = (() => {
       return;
     }
     const confirmPurchase = Boolean(options.confirmPurchase);
+    const market = getMiraneItemMarketState(record);
+    const baseCost = market.basePrice;
+    const cost = market.purchasePrice;
+    if (!market.available) {
+      setStatus(`${record.name} is unavailable in the current Mirane market.`);
+      return;
+    }
     state.play = mergePlayState(state.play);
     const stackable = isStackableBuilderItem(record);
     const alreadySelected = state.builder.selectedItemIds.includes(record.id);
     const alreadyCarried = state.play.inventoryItems.some((entry) => entry.itemId === record.id);
     if (alreadySelected || alreadyCarried) {
       if (stackable) {
-        const cost2 = parseClimCost(record.cost);
         const funds2 = getStartingFundsState();
-        if (cost2 > 0 && cost2 > funds2.availableClim) {
-          const message = `${record.name} costs ${cost2} Clim, but only ${funds2.availableClim} Clim remains.`;
+        if (cost > 0 && cost > funds2.availableClim) {
+          const message = `${record.name} costs ${cost} Clim, but only ${funds2.availableClim} Clim remains.`;
           if (confirmPurchase && typeof window.alert === "function") {
             window.alert(`You do not have enough Clim to purchase another ${record.name}.
 
@@ -16404,8 +16884,8 @@ ${message}`);
           setStatus(message);
           return;
         }
-        if (confirmPurchase && cost2 > 0 && typeof window.confirm === "function") {
-          const confirmed = window.confirm(`Are you sure you wish to purchase another ${record.name} for ${cost2} Clim?`);
+        if (confirmPurchase && cost > 0 && typeof window.confirm === "function") {
+          const confirmed = window.confirm(`Are you sure you wish to purchase another ${record.name} for ${cost} Clim?`);
           if (!confirmed) {
             setStatus(`Purchase cancelled for ${record.name}.`);
             return;
@@ -16414,13 +16894,14 @@ ${message}`);
         const carriedEntry = state.play.inventoryItems.find((entry) => entry.itemId === record.id);
         const currentQuantity = Math.max(getBuilderItemQuantity(record.id), Math.floor(toNumber(carriedEntry?.quantity, 0)));
         const nextQuantity = setBuilderItemQuantity(record.id, currentQuantity + 1);
+        applyCraftingRequirementPurchasePrice(baseCost, cost);
         ensurePlayInventoryFromBuilder();
         syncOfficialItemToSheetInventory(record);
         syncBuilderSelectionsIntoSheet2();
         if (confirmPurchase) {
           const updatedFunds = getStartingFundsState();
           appendPlayLog("Item Purchased", [
-            `${record.name}: ${cost2} Clim`,
+            `${record.name}: ${cost} Clim`,
             `Quantity: ${nextQuantity}`,
             `Remaining Clim: ${updatedFunds.availableClim}`
           ]);
@@ -16448,7 +16929,6 @@ ${message}`);
       setStatus(message);
       return;
     }
-    const cost = parseClimCost(record.cost);
     const funds = getStartingFundsState();
     if (cost > 0 && cost > funds.availableClim) {
       const message = `${record.name} costs ${cost} Clim, but only ${funds.availableClim} Clim remains.`;
@@ -16475,6 +16955,7 @@ ${message}`);
       }
     }
     setBuilderItemQuantity(record.id, 1);
+    applyCraftingRequirementPurchasePrice(baseCost, cost);
     ensurePlayInventoryFromBuilder();
     const uid = getOfficialInventoryUid(record.id);
     if (!state.play.inventoryItems.some((entry) => entry.uid === uid)) {
@@ -16732,13 +17213,16 @@ ${message}`);
     if (nameField && nameField.value !== nameValue) {
       nameField.value = nameValue;
     }
-    const raceChip = document.getElementById("builder-race-chip");
-    const ancestryChip = document.getElementById("builder-ancestry-chip");
-    const race = getSelectedRaceDetail();
-    const ancestry = getSelectedAncestryDetail();
-    const lineageLabels = getSecondaryLineageLabels(race);
-    raceChip.textContent = race ? race.name : "Primary race pending";
-    ancestryChip.textContent = ancestry ? ancestry.name : `${lineageLabels.short} pending`;
+    const startMode = getCharacterStartMode();
+    document.querySelectorAll("[data-character-start-mode]").forEach((button) => {
+      const selected = button.dataset.characterStartMode === startMode.id;
+      button.classList.toggle("selected", selected);
+      button.setAttribute("aria-pressed", selected ? "true" : "false");
+    });
+    const startModeNote = document.getElementById("builder-start-mode-note");
+    if (startModeNote) {
+      startModeNote.textContent = startMode.id === MIRANE_START_MODE_ID ? "Mirane campaign restrictions, costs, and starting funds are active." : "Standard rules-as-written character creation.";
+    }
     const portraitImage = document.getElementById("builder-portrait-image");
     const portraitPlaceholder = document.getElementById("builder-portrait-placeholder");
     if (state.builder.portraitDataUrl) {
@@ -17018,11 +17502,14 @@ ${secondaryStatText}`),
   function syncDerivedBuilderFields() {
     const funds = getStartingFundsState();
     updateFieldValue("Base Clim", String(funds.baseClim));
+    updateFieldValue("Start Mode", funds.startMode.label);
+    updateFieldValue("Start Mode Clim Bonus", String(funds.campaignBonusClim));
     updateFieldValue("Breakthrough Clim Bonus", String(funds.bonusClim));
     updateFieldValue("Available Clim", String(funds.availableClim));
     updateFieldValue("Equipment Cost", String(funds.selectedEquipmentCost));
   }
   function syncBuilderSelectionsIntoSheet2() {
+    enforceMiraneStartSelections();
     pruneIneligibleBreakthroughSelections();
     normalizeElementalAffinitySelections();
     clearIrrelevantBuilderChoices();
@@ -17263,6 +17750,7 @@ ${secondaryStatText}`),
           <div class="detail-rule-body">
             ${description ? paragraphize(description) : ""}
             ${requirement ? `<p><strong>Requirement:</strong> ${escapeHtml(requirement)}</p>` : ""}
+            ${renderMiraneRuleOverride(record)}
           </div>
         </article>
       `;
@@ -17352,6 +17840,7 @@ ${secondaryStatText}`),
     const keyAbilityLines = keyAbility ? [keyAbility.name, keyAbility.benefit1, keyAbility.benefit2, keyAbility.benefit3, keyAbility.benefit4].filter(Boolean) : [];
     const leadText = getClassLeadText(record) || getClassFallbackSummary(record);
     const guideText = getClassGuideText(record);
+    const miraneClassRule = getMiraneClassRuleOverride(record);
     return `
         ${renderDetailImage(record.imageLgUrl || record.imageSmUrl, record.name)}
         <div class="detail-copy detail-copy-scroll">
@@ -17360,6 +17849,7 @@ ${secondaryStatText}`),
             <p>${escapeHtml([record.tier ? `Tier ${record.tier}` : "", record.role1, record.role2, record.difficulty ? `Difficulty ${record.difficulty}` : ""].filter(Boolean).join(" | "))}</p>
             <p><strong>Unlock Cost:</strong> 1 Interlude Point + ${getClassUnlockCost(record)} EXP</p>
             ${paragraphize(leadText)}
+            ${renderMiraneRuleOverride(miraneClassRule)}
           </div>
           ${requirementsText ? `<div class="detail-section"><h4>Requirements</h4><p>${escapeHtml(requirementsText)}</p></div>` : ""}
           ${record.heart || record.soul ? `<div class="detail-section"><h4>Heart / Soul</h4>${renderDetailList([record.heart, record.soul].filter(Boolean))}</div>` : ""}
@@ -17498,14 +17988,14 @@ ${secondaryStatText}`),
     const stepId = currentStep().id;
     let html = "";
     if (stepId === "race") {
-      const record = detailLookup.races.resolve(state.builder.inspected.race) || getSelectedRaceDetail() || detailLookup.races.entries[0];
-      html = renderRaceDetailCard(record);
+      const record = detailLookup.races.resolve(state.builder.inspected.race) || getSelectedRaceDetail() || null;
+      html = record ? renderRaceDetailCard(record) : `<div class="detail-copy"><h3>Choose a Primary Race</h3><p>Race artwork and traits will appear here after you select or review an option.</p></div>`;
     } else if (stepId === "ancestry") {
       const ancestryOptions = filteredAncestries();
       const selectedAncestry = getSelectedAncestryDetail();
       const selectedInCurrentOptions = selectedAncestry && ancestryOptions.some((entry) => normalizeKey(entry.id) === normalizeKey(selectedAncestry.id));
-      const record = ancestryOptions.find((entry) => normalizeKey(entry.id) === normalizeKey(state.builder.inspected.ancestry)) || (selectedInCurrentOptions ? selectedAncestry : null) || ancestryOptions[0] || null;
-      html = renderAncestryDetailCard(record);
+      const record = ancestryOptions.find((entry) => normalizeKey(entry.id) === normalizeKey(state.builder.inspected.ancestry)) || (selectedInCurrentOptions ? selectedAncestry : null) || null;
+      html = record ? renderAncestryDetailCard(record) : `<div class="detail-copy"><h3>Choose a Secondary Lineage</h3><p>Lineage artwork and traits will appear here after you select or review an option.</p></div>`;
     } else if (stepId === "classes") {
       const record = getClassDetail(state.builder.inspected.class) || getSelectedClassDetails()[0] || detailLookup.classes.entries[0];
       html = renderClassDetailCard(record);
@@ -17747,6 +18237,9 @@ ${secondaryStatText}`),
       const quantityBefore = getBuilderItemQuantity(choice.id);
       addBuilderItem(choice.id, choice.purchaseQuantity);
       accepted = getBuilderItemQuantity(choice.id) > quantityBefore;
+    } else if (choice.kind === "quick-build") {
+      state.builder.quickBuild.buildId = choice.id;
+      accepted = normalizePhrase(state.builder.quickBuild.buildId) === normalizePhrase(choice.id);
     }
     if (!accepted) {
       return;
@@ -17983,15 +18476,17 @@ ${secondaryStatText}`),
     const metaLabels = [entry.type, entry.subType, entry.cost, entry.materialUnitLabel || entry.burden].filter(Boolean);
     const proficiencyHint = getWeaponProficiencyHintText(entry);
     const inventoryFull = !selected && state.builder.selectedItemIds.length >= INVENTORY_ROWS.length;
-    const canAdd = (stackable || !selected) && !inventoryFull && (!itemCost || itemCost <= funds.availableClim);
+    const miraneMaterialStatus = getMiraneMaterialPurchaseStatus(entry, 1);
+    const canAdd = (stackable || !selected) && !inventoryFull && miraneMaterialStatus.allowed && (!itemCost || itemCost <= funds.availableClim);
     const cardClasses = [
       "builder-option-card",
       "builder-equipment-card",
       selected ? "selected" : "",
+      !miraneMaterialStatus.allowed ? "locked" : "",
       state.builder.inspected.item === entry.id ? "inspected" : ""
     ].filter(Boolean).join(" ");
-    const statusText = selected ? isFoodUnitEntry(entry) ? `Purchased ${quantity}` : stackable && quantity > 1 ? `Purchased x${quantity}` : "Purchased" : "";
-    const addTitle = selected && !stackable ? "Item already purchased." : inventoryFull ? "All inventory rows are already filled." : itemCost > funds.availableClim ? `${entry.name} costs ${itemCost} Clim, but only ${funds.availableClim} Clim remains.` : `${selected ? "Purchase another" : "Purchase"} ${entry.name}.`;
+    const statusText = selected ? isFoodUnitEntry(entry) ? `Purchased ${quantity}` : stackable && quantity > 1 ? `Purchased x${quantity}` : "Purchased" : !miraneMaterialStatus.allowed ? "Unavailable in Mirane" : "";
+    const addTitle = selected && !stackable ? "Item already purchased." : !miraneMaterialStatus.allowed ? miraneMaterialStatus.reason : inventoryFull ? "All inventory rows are already filled." : itemCost > funds.availableClim ? `${entry.name} costs ${itemCost} Clim, but only ${funds.availableClim} Clim remains.` : `${selected ? "Purchase another" : "Purchase"} ${entry.name}.`;
     return `
         <div class="${cardClasses}">
           <button type="button" class="builder-equipment-inspect" data-builder-action="inspect-item" data-id="${escapeHtml(entry.id)}">
@@ -18004,6 +18499,7 @@ ${secondaryStatText}`),
               ${renderCardMeta(metaLabels)}
               <p>${escapeHtml(cleanText(entry.description).slice(0, 190))}</p>
               ${proficiencyHint ? `<p class="builder-option-note">${escapeHtml(proficiencyHint)}</p>` : ""}
+              ${!miraneMaterialStatus.allowed ? `<p class="builder-option-note">${escapeHtml(miraneMaterialStatus.reason)}</p>` : ""}
             </div>
           </button>
           ${isFoodUnitEntry(entry) ? renderFoodUnitPurchaseActions(entry, quantity, selected, inventoryFull, funds) : `<div class="builder-equipment-actions" aria-label="${escapeHtml(`${entry.name} purchase controls`)}">
@@ -18059,8 +18555,9 @@ ${secondaryStatText}`),
           <div class="builder-option-list">
             ${entries.map((entry) => {
       const requirementStatus = getClassRequirementStatus(entry);
-      const locked = !requirementStatus.met && !selectedIds.has(entry.id);
-      const note = locked ? `Prerequisites not met. ${requirementStatus.requirementsText}` : !requirementStatus.met && selectedIds.has(entry.id) ? `Currently selected, but the tracked build no longer meets: ${requirementStatus.requirementsText}` : "";
+      const campaignLocked = isMiraneRestrictedClass(entry);
+      const locked = campaignLocked || !requirementStatus.met && !selectedIds.has(entry.id);
+      const note = campaignLocked ? "Unavailable for new Mirane Expedition characters under the campaign's restricted-creation rules." : locked ? `Prerequisites not met. ${requirementStatus.requirementsText}` : !requirementStatus.met && selectedIds.has(entry.id) ? `Currently selected, but the tracked build no longer meets: ${requirementStatus.requirementsText}` : "";
       return renderOptionCard({
         id: entry.id,
         image: entry.imageSmUrl || entry.imageLgUrl,
@@ -18071,7 +18568,7 @@ ${secondaryStatText}`),
           entry.role1,
           entry.role2,
           `Unlock ${getClassUnlockCost(entry)} EXP`,
-          locked ? "Locked" : "Available"
+          campaignLocked ? "Unavailable in Mirane" : locked ? "Locked" : "Available"
         ].filter(Boolean),
         selected: selectedIds.has(entry.id),
         locked,
@@ -18140,26 +18637,52 @@ ${secondaryStatText}`),
       `;
   }
   function renderProfileStep() {
-    return `
-        <div class="builder-content-grid">
-          <p class="builder-note">The profile fields below feed directly into the corresponding PDF-backed fields on page 1.</p>
-          <p class="builder-note"><strong>Spirit Core:</strong> Spirit Core tracks EXP spent. It starts at 0, but a fresh character normally spends 1000 EXP on starting classes during creation, so most finished starting characters will usually land at Spirit Core 1000. The separate 300 breakthrough-only EXP from character creation does not count toward Spirit Core. <strong>These are awarded at the correct points already; do not add additional Spirit Cores unless you have a special start condition (such as higher-level campaign starts).</strong></p>
-          ${renderBuilderChoiceSection("profile", "Profile Choices")}
-          <div class="stat-grid">
-            ${[
+    const profileFields = [
       { field: "Name", label: "Character Name" },
-      { field: "Spirit Core", label: "Spirit Core" },
       { field: "Gender", label: "Gender" },
       { field: "Age", label: "Age" },
       { field: "Height", label: "Height" },
       { field: "Weight", label: "Weight" }
-    ].map((entry) => `
+    ];
+    return `
+        <div class="builder-content-grid">
+          <p class="builder-note">The profile fields below feed directly into the corresponding PDF-backed fields on page 1.</p>
+          <p class="builder-note"><strong>Spirit Core:</strong> Spirit Core tracks EXP spent. It starts at 0, but a fresh character normally spends 1000 EXP on starting classes during creation, so most finished starting characters will usually land at Spirit Core 1000. The separate 300 breakthrough-only EXP from character creation does not count toward Spirit Core. <strong>These are awarded at the correct points already; do not add additional Spirit Cores unless you have a special start condition (such as higher-level campaign starts).</strong></p>
+          ${state.ui.quickBuildActive ? renderQuickBuildStartModeControl() : ""}
+          ${renderBuilderChoiceSection("profile", "Profile Choices")}
+          <div class="stat-grid">
+            ${(state.ui.quickBuildActive ? profileFields : [
+      profileFields[0],
+      { field: "Spirit Core", label: "Spirit Core" },
+      ...profileFields.slice(1)
+    ]).map((entry) => `
               <div class="stat-card">
                 <strong>${escapeHtml(entry.label)}</strong>
                 <input class="builder-inline-input" type="text" data-profile-field="${escapeHtml(entry.field)}" value="${escapeHtml(state.fields[entry.field] || "")}" placeholder="${escapeHtml(entry.label)}">
               </div>
             `).join("")}
           </div>
+        </div>
+      `;
+  }
+  var QUICK_BUILD_STANDARD_SPIRIT_CORE = 1e3;
+  function renderQuickBuildStartModeControl() {
+    const mode = getCharacterStartMode();
+    const funds = getStartingFundsState();
+    return `
+        <div class="stat-card quick-spirit-core-card">
+          <strong>Character Start</strong>
+          <div class="quick-spirit-core-toggle" role="group" aria-label="Quick Build character start">
+            <button type="button" class="${mode.id === "standard" ? "selected" : ""}" data-quick-start-mode="standard" aria-pressed="${mode.id === "standard" ? "true" : "false"}">
+              <span>Standard Play</span>
+              <small>3000 starting Clim</small>
+            </button>
+            <button type="button" class="${mode.id === MIRANE_START_MODE_ID ? "selected" : ""}" data-quick-start-mode="${MIRANE_START_MODE_ID}" aria-pressed="${mode.id === MIRANE_START_MODE_ID ? "true" : "false"}">
+              <span>Mirane Expedition</span>
+              <small>4000 starting Clim + restrictions</small>
+            </button>
+          </div>
+          <p>${escapeHtml(mode.id === MIRANE_START_MODE_ID ? `Mirane rules are active: ${funds.suggestedTotal} starting Clim before equipment, restricted creation paths are unavailable, and starting-material limits apply. Creation EXP, breakthrough EXP, and Interlude Points stay standard.` : `Standard rules-as-written character creation with ${funds.suggestedTotal} starting Clim before equipment.`)}</p>
         </div>
       `;
   }
@@ -18278,10 +18801,11 @@ ${secondaryStatText}`),
       const requirementStatus = getBreakthroughRequirementStatus(entry, selectedIds);
       const cost = Math.max(0, parseNumericCost(entry.cost));
       const overBudget = !selected && cost > budget.remaining;
-      const needsGmApproval = !selected && !requirementStatus.met && requirementStatus.manualOnly;
-      const locked = !selected && (!requirementStatus.met || overBudget) && !needsGmApproval;
-      const note = needsGmApproval ? `Needs manual confirmation: ${requirementStatus.manualLabels.join(", ") || "GM Approval"}. Click to record the GM's approval and add it.` : !requirementStatus.met ? `Prerequisites not met. ${requirementStatus.reasons.join(" ")}` : overBudget ? `Unavailable: costs ${cost} EXP, but only ${budget.remaining} remains across creation breakthrough EXP and normal XP.` : selected && requirementStatus.gmApproved ? "Added with recorded GM approval." : "";
-      const statusText = selected ? requirementStatus.gmApproved ? "Selected (GM approved)" : "Selected" : needsGmApproval ? "GM approval needed" : !requirementStatus.met ? "Prerequisites not met" : overBudget ? "Not enough EXP" : "";
+      const campaignLocked = isMiraneRestrictedBreakthrough(entry);
+      const needsGmApproval = !campaignLocked && !selected && !requirementStatus.met && requirementStatus.manualOnly;
+      const locked = campaignLocked || !selected && (!requirementStatus.met || overBudget) && !needsGmApproval;
+      const note = campaignLocked ? "Unavailable for new Mirane Expedition characters under the campaign's restricted-creation rules." : needsGmApproval ? `Needs manual confirmation: ${requirementStatus.manualLabels.join(", ") || "GM Approval"}. Click to record the GM's approval and add it.` : !requirementStatus.met ? `Prerequisites not met. ${requirementStatus.reasons.join(" ")}` : overBudget ? `Unavailable: costs ${cost} EXP, but only ${budget.remaining} remains across creation breakthrough EXP and normal XP.` : selected && requirementStatus.gmApproved ? "Added with recorded GM approval." : "";
+      const statusText = selected ? requirementStatus.gmApproved ? "Selected (GM approved)" : "Selected" : campaignLocked ? "Unavailable in Mirane" : needsGmApproval ? "GM approval needed" : !requirementStatus.met ? "Prerequisites not met" : overBudget ? "Not enough EXP" : "";
       return renderOptionCard({
         id: entry.id,
         mediaHtml: entry.imageSmUrl || entry.imageLgUrl ? `<img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl)}" alt="${escapeHtml(entry.name)}">` : renderBreakthroughArt(entry),
@@ -18337,6 +18861,7 @@ ${secondaryStatText}`),
     return `
         <div class="builder-content-grid">
           <p class="builder-note">Class creation starts with <strong>${STARTING_CLASS_EXP} EXP</strong> and <strong>${STARTING_INTERLUDE_POINTS} Interlude Points</strong>. EXP added on the character sheet is also available here, and a GM can grant extra class-unlock IP below. Unlocking a class costs <strong>1 Interlude Point + 100 EXP per tier</strong>, and the class key ability comes online as soon as that class is unlocked.</p>
+          ${isMiraneStart() ? `<div class="mirane-rule-override mirane-class-start-note"><strong>Mirane Favor training</strong><p>A Mirane character may receive class training for 1 Favor for a Tier 1 or Tier 2 class, or 2 Favor for a Tier 3 class. Requirements still apply, and the campaign document says this does not cost an Errand Point. Track the Favor exchange with the campaign staff; the normal builder budget remains visible for the rules-as-written start.</p></div>` : ""}
           <div class="builder-search-row">
             <input class="builder-search-input" type="text" autocomplete="off" data-builder-search="class" placeholder="Search classes" value="${escapeHtml(state.builder.searches.class)}">
             <p>Classes are grouped by role by default. Locked cards stay grayed out until the tracked build meets their official prerequisites.</p>
@@ -18732,13 +19257,18 @@ ${secondaryStatText}`),
     }), search, sortMode);
     const funds = getStartingFundsState();
     const selectedItemCount = getSelectedItemRecords().reduce((total, entry) => total + Math.max(1, getBuilderItemQuantity(entry.id)), 0);
+    const miraneMaterials = getMiraneMaterialSelectionState();
     return `
         <div class="builder-content-grid">
-          <p class="builder-note">Each character starts with 3000 Clim they can spend on basic equipment and items. Breakthrough bonuses update that pool here automatically, and you can use the manual override if the GM starts the character with a different amount.</p>
+          <p class="builder-note">${escapeHtml(funds.startMode.label)} uses ${funds.baseClim + funds.campaignBonusClim} starting Clim before breakthrough bonuses. You can use the manual override if the GM starts the character with a different total.</p>
           <div class="review-grid">
             <div class="review-panel">
               <strong>Base Clim</strong>
               <p>${funds.baseClim}</p>
+            </div>
+            <div class="review-panel">
+              <strong>Start Mode Bonus</strong>
+              <p>${funds.campaignBonusClim}</p>
             </div>
             <div class="review-panel">
               <strong>Breakthrough Bonus</strong>
@@ -18757,11 +19287,15 @@ ${secondaryStatText}`),
               <p>${funds.availableClim}</p>
             </div>
           </div>
+          ${isMiraneStart() ? `<div class="review-panel">
+            <strong>Mirane starting-material limits</strong>
+            <p>Raw crafting materials selected: ${escapeHtml(String(miraneMaterials.totalClim))} / ${escapeHtml(String(MIRANE_RAW_MATERIAL_CLIM_LIMIT))} Clim. The builder blocks any individual crafting material with a base value of ${escapeHtml(String(MIRANE_SINGLE_MATERIAL_CLIM_LIMIT))} Clim or more. A lead DM must still confirm that non-food materials are things this character could harvest or use.</p>
+          </div>` : ""}
           ${funds.overBudgetClim ? `<div class="review-panel"><strong>Over Budget</strong><p>${escapeHtml(`Selected equipment is ${funds.overBudgetClim} Clim over the current available funds.`)}</p></div>` : ""}
           <label class="stat-card">
             <strong>Manual Clim Override</strong>
             <input class="builder-inline-input" type="number" inputmode="numeric" min="0" data-currency-field="Clim Override" value="${escapeHtml(state.fields["Clim Override"] || "")}" placeholder="Optional GM-set total">
-            <p>${escapeHtml(funds.hasOverride ? "The override is currently setting the available total shown above." : "Leave blank to use the standard total plus any breakthrough bonuses.")}</p>
+            <p>${escapeHtml(funds.hasOverride ? "The override is currently setting the available total shown above." : "Leave blank to use the selected start mode plus any breakthrough bonuses.")}</p>
           </label>
           <div class="builder-search-row">
             <input class="builder-search-input" type="text" autocomplete="off" data-builder-search="item" placeholder="Search items" value="${escapeHtml(searches.item)}">
@@ -18795,15 +19329,110 @@ ${secondaryStatText}`),
         </div>
       `;
   }
+  function formatMiraneLegacyValue(value) {
+    const numeric = Math.max(0, toNumber(value, 0));
+    return Number.isInteger(numeric) ? String(numeric) : numeric.toFixed(1).replace(/\.0$/, "");
+  }
+  function renderMiraneLegacyPlanner() {
+    if (!isMiraneStart()) {
+      return "";
+    }
+    const spiritCore = Math.max(0, toNumber(cleanText(state.fields["Spirit Core"]), 0));
+    const earnedAbove1000 = Math.max(0, spiritCore - 1e3);
+    const earnedAbove1100 = Math.max(0, spiritCore - 1100);
+    const halfTransfer1000 = earnedAbove1000 / 2;
+    const halfTransfer1100 = earnedAbove1100 / 2;
+    const highSpiritTransfer = spiritCore > 3e3 ? spiritCore - 1e3 : null;
+    const trackedItemValue = getSelectedEquipmentCost();
+    const itemTransferEstimate = trackedItemValue * 0.2;
+    const masteredClasses = getMasteredClassProgressEntries();
+    const canUseAdvancedModdedStart = spiritCore > 3e3;
+    const canUseBaseModdedStart = spiritCore > 2e3;
+    const equipmentEligibility = canUseAdvancedModdedStart ? "Eligible for the above-3000 Spirit Core equipment option: modded weapons or armor up to 4050 Clim each and no more than 105 crafting points each. Materials such as tamahagane may be included." : canUseBaseModdedStart ? "Eligible for the above-2000 Spirit Core equipment option: modded weapons or armor using base material and no more than 20 total mod points." : "Not currently eligible for the above-2000 Spirit Core modded-equipment options.";
+    const expSummary = highSpiritTransfer === null ? `Estimated transfer: ${formatMiraneLegacyValue(halfTransfer1000)} EXP when 1000 base Spirit Core is excluded, or ${formatMiraneLegacyValue(halfTransfer1100)} EXP when the 1100 base applies.` : `Available EXP choices: the normal half-earned estimate (${formatMiraneLegacyValue(halfTransfer1000)} with a 1000 base, or ${formatMiraneLegacyValue(halfTransfer1100)} with a 1100 base), or start the replacement at ${formatMiraneLegacyValue(highSpiritTransfer)} Spirit Core.`;
+    return `
+        <section class="review-panel mirane-legacy-planner">
+          <div class="mirane-legacy-heading">
+            <div>
+              <span class="eyebrow">Mirane Legacy Planning</span>
+              <strong>Retirement and Death Options</strong>
+            </div>
+            <p>Open an option for a short explanation and this character's currently tracked eligibility. Opening a choice does not retire, delete, or replace the character.</p>
+          </div>
+          <div class="mirane-legacy-summary-grid">
+            <div><span>Current Spirit Core</span><strong>${escapeHtml(formatMiraneLegacyValue(spiritCore))}</strong></div>
+            <div><span>Tracked Item Value</span><strong>${escapeHtml(`${formatMiraneLegacyValue(trackedItemValue)} Clim`)}</strong></div>
+            <div><span>20% Item Estimate</span><strong>${escapeHtml(`${formatMiraneLegacyValue(itemTransferEstimate)} Clim`)}</strong></div>
+            <div><span>Mastered Classes</span><strong>${escapeHtml(String(masteredClasses.length))}</strong></div>
+          </div>
+          <p class="mirane-legacy-calculation-note">${escapeHtml(expSummary)} The campaign uses the character's highest qualifying Spirit Core; Slow Starter EXP and EXP supplied by books or similar items do not count. Ayra or Leaflit determines final item value.</p>
+          <div class="mirane-legacy-options">
+            <details class="mirane-legacy-option">
+              <summary>
+                <span>Retire This Character</span>
+                <small>Voluntarily close this character and prepare a replacement.</small>
+              </summary>
+              <div>
+                <p>Your replacement keeps either half of qualifying earned EXP, or\u2014when the qualifying Spirit Core is above 3000\u2014the current Spirit Core minus 1000 option.</p>
+                <ul>
+                  <li>${escapeHtml(expSummary)}</li>
+                  <li>Estimated item allowance: ${escapeHtml(`${formatMiraneLegacyValue(itemTransferEstimate)} Clim`)} from the currently tracked ${escapeHtml(`${formatMiraneLegacyValue(trackedItemValue)} Clim`)} value. Final value is lead-DM determined.</li>
+                  <li>No single item bought during replacement creation may cost more than 4000 Clim.</li>
+                  <li>${escapeHtml(equipmentEligibility)}</li>
+                  <li>Any current expedition lockout still applies after retirement.</li>
+                  <li>A replacement receiving extra EXP cannot take Slow Starter.</li>
+                </ul>
+              </div>
+            </details>
+            <details class="mirane-legacy-option">
+              <summary>
+                <span>Normal Death Replacement</span>
+                <small>Use the standard Mirane death and replacement rules.</small>
+              </summary>
+              <div>
+                <p>The replacement uses the same qualifying EXP and 20% item-value choices as retirement, but a character who died during an expedition or event does not pass that lockout to the replacement.</p>
+                <ul>
+                  <li>${escapeHtml(expSummary)}</li>
+                  <li>Items in the locker and items carried on the dead character are lost and cannot be looted. A loaned item may be retrieved under the campaign's loan rules.</li>
+                  <li>${escapeHtml(equipmentEligibility)}</li>
+                  <li>${escapeHtml(masteredClasses.length >= 3 ? `${masteredClasses.length} mastered classes are tracked. If the replacement masters three classes and still has EXP, additional classes may be learned without IP until one remains unmastered.` : `${masteredClasses.length} mastered classes are tracked; the extra-class rule begins after the replacement has three mastered classes and EXP remaining.`)}</li>
+                  <li>A replacement receiving extra EXP cannot take Slow Starter.</li>
+                </ul>
+              </div>
+            </details>
+            <details class="mirane-legacy-option">
+              <summary>
+                <span>Expedition Death \u2014 Option 2</span>
+                <small>Keep the expedition EXP instead of its loot before making the replacement.</small>
+              </summary>
+              <div>
+                <p>This option is only available when the character dies on an expedition. The dead character receives the expedition EXP but not its loot, and the player remains locked out until the expedition's normal lockout ends.</p>
+                <ul>
+                  <li>When the replacement is made, that expedition EXP transfers at the normal 50% rate.</li>
+                  <li>The 50% treatment still applies even if the replacement otherwise uses the Spirit Core minus 1000 option.</li>
+                  <li>EXP or loot from the fatal expedition does not count toward the normal pre-death transfer calculation unless Option 2 specifically says to add that expedition EXP.</li>
+                  <li>The campaign forbids intentional or staged deaths used to bypass lockouts.</li>
+                </ul>
+              </div>
+            </details>
+          </div>
+        </section>
+      `;
+  }
   function renderReviewStep() {
     const classes = getSelectedClassDetails();
     const breakthroughs = getSelectedBreakthroughRecords();
     const items = getSelectedItemRecords();
     const topSkills = getTopSkillRows(6);
     const funds = getStartingFundsState();
+    const miraneMaterials = getMiraneMaterialSelectionState();
     return `
         <div class="builder-content-grid">
           <p class="builder-note">This is the point where the guided builder hands off into the final interactive sheet. The live dashboard is the default play surface.</p>
+          <div class="review-panel">
+            <strong>Character Start: ${escapeHtml(funds.startMode.label)}</strong>
+            <p>${escapeHtml(isMiraneStart() ? `Standard rules-as-written creation with +${funds.campaignBonusClim} Clim. Restricted creation paths are disabled. Raw crafting materials: ${miraneMaterials.totalClim} / ${MIRANE_RAW_MATERIAL_CLIM_LIMIT} Clim; lead-DM approval is still required before play.` : "Standard rules-as-written character creation with the normal starting funds and availability rules.")}</p>
+          </div>
           ${renderBuilderChoiceSection("", "Choices Pending / Resolved", true)}
           <div class="review-grid">
             <div class="review-panel">
@@ -18836,8 +19465,1242 @@ ${secondaryStatText}`),
             <strong>Equipment</strong>
             <p>${escapeHtml(getEquipmentSummaryText(items, funds, "None selected yet."))}</p>
           </div>
+          ${renderMiraneLegacyPlanner()}
         </div>
       `;
+  }
+  var QUICK_BUILD_STEPS = [
+    {
+      id: "species",
+      short: "Species",
+      title: "Quick Build Species",
+      lead: "Pick the character fantasy first. Most choices resolve race and lineage immediately; Demon and Human are optimized after the build is selected."
+    },
+    {
+      id: "profile",
+      short: "Profile",
+      title: "Name the Character",
+      lead: "Add the identity details you already know. You can leave anything blank and customize it later."
+    },
+    {
+      id: "build",
+      short: "Role",
+      title: "Choose a Quick Build",
+      lead: "Pick the playstyle. The builder will spend the starting EXP, assign stats and skills, choose starter benefits, and buy practical equipment."
+    },
+    {
+      id: "review",
+      short: "Review",
+      title: "Review Quick Build",
+      lead: "Check what the quick build selected, why it selected those choices, and either use it or customize it in the full builder."
+    }
+  ];
+  var QUICK_BUILD_SPECIES = [
+    { id: "bearfolk", label: "Bearfolk", race: "Chimera", ancestry: "Bearfolk", note: "Durable animal-folk pick for sturdy frontliners." },
+    { id: "catfolk", label: "Catfolk", race: "Chimera", ancestry: "Catfolk", note: "Agile animal-folk pick for scouts and skirmishers." },
+    { id: "phoenix", label: "Phoenix", race: "Chimera", ancestry: "Phoenix", note: "Flashy rebirth-flavored pick for casters and heroic supports." },
+    { id: "rabbitfolk", label: "Rabbitfolk", race: "Chimera", ancestry: "Rabbitfolk", note: "Fast, playful pick for rogues, scouts, and thieves." },
+    { id: "horsefolk", label: "Horse-Folk", race: "Chimera", ancestry: "Horse-Folk", note: "Mobile adventurer pick for martial or explorer builds." },
+    { id: "lamiafolk", label: "Lamiafolk", race: "Chimera", ancestry: "Lamiafolk", note: "Serpentine pick for control, charm, and unusual melee styles." },
+    { id: "slimefolk", label: "Slimefolk", race: "Chimera", ancestry: "Slimefolk", note: "Adaptable gelatinous pick with unusual defensive and item-storage techniques." },
+    { id: "demon", label: "Demon", race: "Demon", defer: "Demon clan is chosen after role selection.", note: "The clan and bonus are picked to support the chosen role." },
+    { id: "pixie", label: "Pixie", race: "Fae", ancestry: "Pixie", note: "Tiny fae pick for magic, scouting, and trickery." },
+    { id: "dryad", label: "Dryad", race: "Fae", ancestry: "Dryad", note: "Nature-flavored fae pick for support, control, and magic." },
+    { id: "unseelie", label: "Unseelie", race: "Fae", ancestry: "Unseelie", note: "Darker fae pick for magic, stealth, or social builds." },
+    { id: "human", label: "Human", race: "Human", defer: "Human bonuses are chosen after role selection.", note: "Human bonus choices are optimized around the selected class." },
+    { id: "tengu", label: "Tengu", race: "Youkai", ancestry: "Tengu", note: "Winged youkai pick for mobile fighters and ranged builds." },
+    { id: "kitsune", label: "Kitsune", race: "Youkai", ancestry: "Kitsune", note: "Fox-spirit pick for magic, charm, trickery, and social characters." },
+    { id: "oni", label: "Oni", race: "Youkai", ancestry: "Oni", note: "Powerful youkai pick for heavy melee and intimidation." },
+    { id: "jiangshi", label: "Jiangshi", race: "Youkai", ancestry: "Jiangshi", note: "Undead youkai pick for strange, resilient supernatural builds." },
+    { id: "dullahan", label: "Dullahan", race: "Fae", ancestry: "Dullahan", note: "Death-aware armored fae pick for shield, striker, or support builds." },
+    { id: "wolf-folk", label: "Wolf-folk", race: "Chimera", ancestry: "Wolf-folk", note: "Keen hunter pick for ranger, archer, marksman, and team-focused builds." }
+  ];
+  var QUICK_BUILD_ROLES = [
+    {
+      id: "frontline",
+      label: "Frontline / Tank",
+      builds: [
+        {
+          id: "shield-warrior",
+          label: "Shield Warrior",
+          className: "Fighter",
+          targetClass: "Guardian",
+          classPlan: [{ name: "Fighter", purchasedCount: 7 }, { name: "Guardian", purchasedCount: 0 }],
+          role: "Defender",
+          mainStats: { Focus: 4, Power: 4, Agility: 3, Toughness: 5 },
+          secondaryStats: { Fitness: 5, Cunning: 2, Reason: 3, Awareness: 4, Presence: 1 },
+          skills: { Athletics: 4, Perception: 3, Intimidation: 2, "Common Knowledge": 1 },
+          items: ["Armor (Medium)", "Shield (Great)", "Longsword (One-Handed/Two-Handed)", "Adventurer's Kit", "Military Ration"],
+          breakthroughPlan: [
+            { name: "Greatshield Training" },
+            { name: "Secondary Stat Training", choice: "Fitness" }
+          ],
+          weaponGroup: "Longsword",
+          humanStat: "Toughness",
+          humanSecondary: "Fitness",
+          demonClan: "d",
+          why: "Built to stand in front, block attacks, and protect allies. Toughness, Fitness, armor, and a shield are prioritized.",
+          playstyle: "A deliberate front-line defender. You occupy the dangerous space, force enemies to deal with you, and spend reactions to block the attacks that would punish your allies.",
+          gameplayLoop: ["Close the gap with Fighter movement tools.", "Use the greatshield and Guardian's Controlled Opportunities to hold a lane.", "Slam, reposition, or protect an ally when an enemy tries to pass you."],
+          bestFor: "Choose this if you want to be the dependable wall of the party and do not mind trading speed for protection.",
+          classPathWhy: "Fighter is the strongest Guardian prerequisite for a combat tank: Charge, Slam, and Defensive Flexibility all support positioning and protection, while the alternate Armorsmith route spends its mastery on crafting.",
+          nextClass: "Protector",
+          laterClass: "Protector",
+          nextClassWhy: "Protector is the direct Tier 3 continuation after Guardian mastery and turns the shield package into a stronger party-cover defender."
+        },
+        {
+          id: "great-weapon-striker",
+          label: "Great Weapon Striker",
+          className: "Fighter",
+          targetClass: "Highlander",
+          classPlan: [{ name: "Fighter", purchasedCount: 7 }, { name: "Highlander", purchasedCount: 0 }],
+          role: "Striker",
+          mainStats: { Focus: 4, Power: 5, Agility: 4, Toughness: 3 },
+          secondaryStats: { Fitness: 5, Cunning: 2, Reason: 3, Awareness: 1, Presence: 4 },
+          skills: { Athletics: 4, Intimidation: 3, Perception: 2, "Common Knowledge": 1 },
+          items: ["Armor (Light)", "Axe (Two-Handed)", "Adventurer's Kit", "Military Ration", "Healing Potion"],
+          breakthroughPlan: [
+            { name: "Secondary Stat Training", choice: "Fitness" },
+            { name: "Skill Training", choice: "Athletics" },
+            { name: "Skill Training", choice: "Intimidation" },
+            { name: "Skill Training", choice: "Perception" },
+            { name: "Skill Training", choice: "Common Knowledge" }
+          ],
+          weaponGroup: "Axes",
+          humanStat: "Power",
+          humanSecondary: "Fitness",
+          demonClan: "d",
+          why: "Built for simple heavy hits. Power and Athletics support a direct melee plan with a two-handed weapon.",
+          playstyle: "A straightforward heavy striker. You use Fighter's mobility and setup attacks to reach priority targets, then let a two-handed axe and Highlander's Aftershocks turn clean hits into extra pressure.",
+          gameplayLoop: ["Charge or move into a strong melee position.", "Set up a heavy attack with Fighter abilities.", "Use the Highlander key to make successful heavy hits hurt more."],
+          bestFor: "Choose this if you want a direct, low-fuss melee character built around large weapon hits.",
+          classPathWhy: "Highlander accepts several mastered foundations, but Fighter contributes the best immediate combat package for a dedicated two-handed striker; the other routes trade combat abilities for exploration, farming, mining, or crafting.",
+          nextClass: "Reaver",
+          laterClass: "Reaver",
+          nextClassWhy: "Reaver is the direct Tier 3 Highlander continuation and keeps investing in two-handed heavy attacks and Aftershock."
+        }
+      ]
+    },
+    {
+      id: "agile",
+      label: "Agile / Skirmisher",
+      builds: [
+        {
+          id: "sneak-thief",
+          label: "Sneak Thief",
+          className: "Rogue",
+          targetClass: "Mage",
+          classPlan: [{ name: "Rogue", purchasedCount: 7 }, { name: "Mage", purchasedCount: 1 }],
+          role: "Utility",
+          mainStats: { Focus: 5, Power: 3, Agility: 4, Toughness: 4 },
+          secondaryStats: { Fitness: 2, Cunning: 5, Reason: 3, Awareness: 4, Presence: 1 },
+          skills: { Stealth: 4, Roguecraft: 3, Perception: 2, Deception: 1 },
+          items: ["Armor (Light)", "Small Weapons (One-Handed)", "Wand (One-Handed)", "Adventurer's Kit", "Smoke Flask", "Military Ration"],
+          breakthroughPlan: [
+            { name: "Secondary Stat Training", choice: "Cunning" },
+            { name: "Skill Training", choice: "Stealth" },
+            { name: "Skill Training", choice: "Roguecraft" },
+            { name: "Skill Training", choice: "Perception" },
+            { name: "Skill Training", choice: "Deception" }
+          ],
+          weaponGroup: "Small Weapons",
+          humanStat: "Focus",
+          humanSecondary: "Cunning",
+          demonClan: "wi",
+          why: "Built to sneak, solve problems, and strike from advantage. Focus and Cunning support stealthy play.",
+          playstyle: "A mobile infiltrator and problem-solver. Rogue supplies stealth, feints, evasive movement, and sneak attacks; Mage adds Decipher Magic now so magical locks, wards, and the Tier\u20112 Thief path are already covered.",
+          gameplayLoop: ["Scout ahead and enter fights from concealment.", "Use Evasive Maneuver and Movement Burst to keep a safe angle.", "Exploit Sneak Attack, Roguecraft, and Decipher Magic to solve both combat and dungeon problems."],
+          bestFor: "Choose this if you want stealth, locks, traps, clever movement, and a clear route into the true Thief class.",
+          classPathWhy: "Mastered Rogue is the strongest immediate thief foundation. Spending the remaining 200 EXP on Mage and Decipher Magic is better than a bare Scout key because it adds magical investigation and completes Thief's prerequisites; Thief can then be unlocked with the next 200 class EXP.",
+          nextClass: "Thief",
+          nextClassWhy: "Rogue is already mastered and Decipher Magic is already learned, so the next 200 class EXP unlocks Thief without backtracking.",
+          laterClass: "Time Thief",
+          laterClassWhy: "After Thief is developed, Time Thief is the strongest supernatural utility continuation for this package."
+        },
+        {
+          id: "unarmed-monk",
+          label: "Unarmed Monk",
+          className: "Martial Artist",
+          targetClass: "Cultivator",
+          classPlan: [{ name: "Martial Artist", purchasedCount: 7 }, { name: "Cultivator", purchasedCount: 1 }],
+          role: "Striker",
+          mainStats: { Focus: 4, Power: 4, Agility: 5, Toughness: 3 },
+          secondaryStats: { Fitness: 5, Cunning: 2, Reason: 1, Awareness: 4, Presence: 3 },
+          skills: { Athletics: 4, Perception: 3, Insight: 2, Medicine: 1 },
+          items: ["Armor (Light)", "Gauntlets (One-handed)", "Adventurer's Kit", "Speed Potion", "Military Ration"],
+          breakthroughPlan: [
+            { name: "Secondary Stat Training", choice: "Fitness" },
+            { name: "Skill Training", choice: "Athletics" },
+            { name: "Skill Training", choice: "Perception" },
+            { name: "Skill Training", choice: "Insight" },
+            { name: "Skill Training", choice: "Medicine" }
+          ],
+          weaponGroup: "Gauntlets",
+          humanStat: "Agility",
+          humanSecondary: "Fitness",
+          demonClan: "d",
+          why: "Built for fast close-range pressure. Agility, Athletics, and gauntlets support a mobile martial style.",
+          playstyle: "A fast unarmed combo fighter. Martial Artist provides the complete opening combo package, while Cultivator adds Ki Circulation so you can clear disabling conditions and keep your turn moving.",
+          gameplayLoop: ["Approach with speed and choose the best adjacent target.", "Chain the Martial Artist attacks in their intended combo order.", "Use Ki Circulation when a condition would interrupt your pressure."],
+          bestFor: "Choose this if you want mobile close combat, martial-arts combos, and self-sufficient ki techniques.",
+          classPathWhy: "Martial Artist mastery establishes the full unarmed combo engine. Cultivator's key and Ki Circulation provide more immediate value than Monk's key alone and still satisfy Monk's alternate prerequisite; the next 200 class EXP unlocks Monk.",
+          nextClass: "Monk",
+          nextClassWhy: "Martial Artist is mastered and the Cultivator package is online, so the next 200 class EXP unlocks Monk and Empty Body.",
+          laterClass: "Zen Warrior",
+          laterClassWhy: "After Monk mastery, Zen Warrior advances both the striker and defensive sides of the unarmed role."
+        }
+      ]
+    },
+    {
+      id: "ranged",
+      label: "Ranged / Explorer",
+      builds: [
+        {
+          id: "hunter-archer",
+          label: "Hunter Archer",
+          className: "Ranger",
+          targetClass: "Rogue",
+          classPlan: [{ name: "Ranger", purchasedCount: 7 }, { name: "Rogue", purchasedCount: 1 }],
+          role: "Striker",
+          mainStats: { Focus: 5, Power: 4, Agility: 4, Toughness: 3 },
+          secondaryStats: { Fitness: 2, Cunning: 3, Reason: 1, Awareness: 5, Presence: 4 },
+          skills: { Survival: 3, Perception: 3, Stealth: 2, "Animal Husbandry": 2 },
+          items: ["Armor (Light)", "Bow (Two-Handed)", "Small Weapons (One-Handed)", "Adventurer's Kit", "Camping Kit", "Military Ration"],
+          breakthroughPlan: [
+            { name: "Secondary Stat Training", choice: "Awareness" },
+            { name: "Skill Training", choice: "Survival" },
+            { name: "Skill Training", choice: "Perception" },
+            { name: "Skill Training", choice: "Stealth" },
+            { name: "Skill Training", choice: "Animal Husbandry" }
+          ],
+          weaponGroup: "Bow",
+          humanStat: "Focus",
+          humanSecondary: "Awareness",
+          demonClan: "ar",
+          why: "Built for wilderness scouting and reliable ranged attacks. Awareness and Focus support finding and hitting targets.",
+          playstyle: "A practical wilderness archer. Ranger provides tracking, aim support, crippling shots, and field skills; Rogue adds Evasive Maneuver and a concealed sidearm so you are not helpless when enemies close in.",
+          gameplayLoop: ["Track or spot the target before the fight.", "Use Guided Aim and ranged attacks from a protected angle.", "Sidestep with Evasive Maneuver and draw the hidden sidearm if the line collapses."],
+          bestFor: "Choose this if you want a bow user who is also the party's tracker, scout, and outdoor problem-solver.",
+          classPathWhy: "Ranger mastery is the required Archer foundation. Rogue plus Evasive Maneuver gives more immediate mobility and defensive value than Archer's key alone while preserving the direct Archer unlock for the next 200 class EXP.",
+          nextClass: "Archer",
+          nextClassWhy: "Ranger is already mastered, so the next 200 class EXP unlocks Archer and Status Assessment II.",
+          laterClass: "Deadeye",
+          laterClassWhy: "After Archer mastery, Deadeye is the flexible precision continuation for the general bow role."
+        },
+        {
+          id: "scout-sniper-path",
+          label: "Scout Sniper Path",
+          className: "Ranger",
+          targetClass: "Rogue",
+          classPlan: [{ name: "Ranger", purchasedCount: 7 }, { name: "Rogue", purchasedCount: 1 }],
+          role: "Striker",
+          mainStats: { Focus: 5, Power: 4, Agility: 3, Toughness: 4 },
+          secondaryStats: { Fitness: 1, Cunning: 4, Reason: 2, Awareness: 5, Presence: 3 },
+          skills: { Perception: 4, Stealth: 3, Survival: 2, Medicine: 1 },
+          items: ["Armor (Light)", "Crossbow (Two-Handed)", "Small Weapons (One-Handed)", "Binoculars", "Adventurer's Kit", "Military Ration"],
+          breakthroughPlan: [
+            { name: "Secondary Stat Training", choice: "Awareness" },
+            { name: "Skill Training", choice: "Perception" },
+            { name: "Skill Training", choice: "Stealth" },
+            { name: "Skill Training", choice: "Survival" },
+            { name: "Skill Training", choice: "Medicine" }
+          ],
+          weaponGroup: "Crossbow",
+          humanStat: "Focus",
+          humanSecondary: "Awareness",
+          demonClan: "ar",
+          why: "Built as a careful ranged setup that can grow toward precision shooting. Perception and Stealth are emphasized.",
+          playstyle: "A patient ranged skirmisher preparing for the sniper route. Ranger supplies accuracy and target control; Rogue adds a reaction sidestep, stealth tools, and a hidden backup weapon for emergencies.",
+          gameplayLoop: ["Use binoculars and Perception to identify the safest firing lane.", "Aim and fire from concealment or cover.", "Use Evasive Maneuver to preserve distance instead of trading blows."],
+          bestFor: "Choose this if you enjoy careful positioning, long sight lines, stealth, and growing into a dedicated sniper.",
+          classPathWhy: "Ranger mastery is the exact Marksman prerequisite. Rogue and Evasive Maneuver are the stronger creation purchase because they protect the firing position now; the next 200 class EXP then unlocks Marksman.",
+          nextClass: "Marksman",
+          nextClassWhy: "Ranger is already mastered, so the next 200 class EXP unlocks Marksman and its key ability.",
+          laterClass: "Sniper",
+          laterClassWhy: "After Marksman mastery, Sniper is the most role-specific precision continuation."
+        }
+      ]
+    },
+    {
+      id: "arcane",
+      label: "Arcane Caster",
+      builds: [
+        {
+          id: "control-wizard",
+          label: "Control Wizard",
+          className: "Mage",
+          targetClass: "Elementalist",
+          classPlan: [{ name: "Mage", purchasedCount: 7 }, { name: "Elementalist", purchasedCount: 0 }],
+          role: "Controller",
+          mainStats: { Focus: 5, Power: 4, Agility: 3, Toughness: 4 },
+          secondaryStats: { Fitness: 1, Cunning: 2, Reason: 5, Awareness: 4, Presence: 3 },
+          skills: { Magic: 4, History: 2, Appraise: 2, "Common Knowledge": 2 },
+          items: ["Armor (Clothing)", "Wand (One-Handed)", "Research Kit", "Adventurer's Kit", "Healing Potion"],
+          breakthroughPlan: [
+            { name: "Secondary Stat Training", choice: "Reason" },
+            { name: "Skill Training", choice: "Magic" },
+            { name: "Skill Training", choice: "History" },
+            { name: "Skill Training", choice: "Appraise" },
+            { name: "Skill Training", choice: "Common Knowledge" }
+          ],
+          weaponGroup: "Wand",
+          humanStat: "Focus",
+          humanSecondary: "Reason",
+          demonClan: "lu",
+          why: "Built around reliable spell accuracy and utility. Focus and Reason support magic checks and control play.",
+          playstyle: "A battlefield problem-solver rather than a pure damage caster. Mage gives barriers, revealing magic, and dependable arcane attacks; Elemental Convergence lets you change the element you need from encounter to encounter.",
+          gameplayLoop: ["Identify the encounter's important threat or terrain problem.", "Use barriers, Glittershards, or elemental effects to change the battlefield.", "Finish exposed targets with accurate spells rather than chasing maximum burst damage."],
+          bestFor: "Choose this if you like having the right magical tool, protecting allies, and controlling where enemies can safely stand.",
+          classPathWhy: "Elementalist can follow Mage or Sorcerer. Mage is the stronger controller foundation because Decipher Magic, Arcane Barrier, Glittershards, Reason, and Magic Missile provide more control and utility than Sorcerer's damage-first progression.",
+          nextClass: "Gravitect",
+          laterClass: "Gravitect",
+          nextClassWhy: "Once Mage and a Tier 2 class are mastered, Gravitect is the strongest direct Tier 3 controller branch and turns forced movement into the core plan."
+        },
+        {
+          id: "elemental-blaster",
+          label: "Elemental Blaster",
+          className: "Sorcerer",
+          targetClass: "Pyromancer",
+          classPlan: [{ name: "Pyromancer", purchasedCount: 7 }, { name: "Sorcerer", purchasedCount: 0 }],
+          role: "Striker",
+          mainStats: { Focus: 5, Power: 4, Agility: 3, Toughness: 4 },
+          secondaryStats: { Fitness: 1, Cunning: 3, Reason: 5, Awareness: 2, Presence: 4 },
+          skills: { Magic: 4, Intimidation: 2, Deception: 2, Religion: 2 },
+          items: ["Armor (Clothing)", "Staff (Two-Handed)", "Adventurer's Kit", "Shielding Potion", "Healing Potion"],
+          weaponGroup: "Wand",
+          humanStat: "Focus",
+          humanSecondary: "Reason",
+          demonClan: "lu",
+          why: "Built for magical damage. Focus keeps attacks accurate while Power and Magic support the blaster plan.",
+          playstyle: "A fire-first spell striker. The alternate Fire Mastery entry lets Pyromancer reach mastery at creation, giving you its full damage kit; Sorcerer's key then adds a flexible arcane fallback.",
+          gameplayLoop: ["Open with the fire effect that best fits the enemy grouping.", "Use Controlled Blaze and Pyromancer abilities to sustain pressure.", "Fall back on Sorcerer's arcane channeling when fire is a poor answer."],
+          bestFor: "Choose this if you want immediate spell damage, explosive turns, and a very clear fire-specialist identity.",
+          classStrategy: "specialty-first",
+          classPathWhy: "Pyromancer can be entered through Fire Mastery without mastering a Tier 1 class. Using that alternate prerequisite lets this package master Pyromancer for 900 EXP and unlock Sorcerer for 100 EXP, putting the complete fire-damage kit online at creation.",
+          nextClass: "Pyromaster",
+          nextClassWhy: "Because Pyromancer is already mastered, bank the next 300 class EXP for Pyromaster instead of delaying the direct Tier 3 fire-specialist continuation."
+        }
+      ]
+    },
+    {
+      id: "support",
+      label: "Healer / Holy / Performance Support",
+      builds: [
+        {
+          id: "cleric-support",
+          label: "Cleric Support",
+          className: "Acolyte",
+          targetClass: "Medic",
+          classPlan: [{ name: "Acolyte", purchasedCount: 7 }, { name: "Medic", purchasedCount: 1 }],
+          role: "Healer",
+          mainStats: { Focus: 4, Power: 3, Agility: 4, Toughness: 5 },
+          secondaryStats: { Fitness: 2, Cunning: 1, Reason: 4, Awareness: 3, Presence: 5 },
+          skills: { Medicine: 3, Religion: 3, Insight: 2, Negotiation: 2 },
+          items: ["Armor (Light)", "Shield", "Staff (One-Handed)", "Medical Kit", "Military Ration"],
+          breakthroughPlan: [
+            { name: "Secondary Stat Training", choice: "Presence" },
+            { name: "Skill Training", choice: "Medicine" },
+            { name: "Skill Training", choice: "Religion" },
+            { name: "Skill Training", choice: "Insight" },
+            { name: "Skill Training", choice: "Negotiation" }
+          ],
+          weaponGroup: "Wand",
+          humanStat: "Toughness",
+          humanSecondary: "Presence",
+          demonClan: "vi",
+          why: "Built to keep allies alive and stabilize rough fights. Toughness, Presence, Medicine, and Religion are emphasized.",
+          playstyle: "A sturdy combat healer. Acolyte supplies magical healing, protection, and Sanctuary; Medic adds First Aid plus a medical kit so you have a practical recovery option when mana or crafted supplies are tight.",
+          gameplayLoop: ["Stay close enough to reach endangered allies without standing in the front rank.", "Use Cure Touch or Acolyte protection when the fight swings.", "Use First Aid and the medical kit for efficient stabilization and recovery."],
+          bestFor: "Choose this if you want the party to survive mistakes and prefer several kinds of healing over a single narrow trick.",
+          classPathWhy: "Acolyte mastery supplies the complete magical support foundation. Medic and First Aid are more useful at creation than Priest's social key alone, and Acolyte mastery still leaves Priest as the next 200-EXP unlock.",
+          nextClass: "Priest",
+          nextClassWhy: "Acolyte is already mastered, so the next 200 class EXP unlocks Priest and continues the divine-healer route.",
+          laterClass: "High Priest",
+          laterClassWhy: "After Priest mastery, High Priest is the strongest pure-healing continuation."
+        },
+        {
+          id: "performance-support",
+          label: "Performance Support",
+          className: "Idol",
+          targetClass: "Jewel Idol",
+          classPlan: [{ name: "Idol", purchasedCount: 7 }, { name: "Jewel Idol", purchasedCount: 0 }],
+          role: "Support",
+          mainStats: { Focus: 4, Power: 3, Agility: 4, Toughness: 5 },
+          secondaryStats: { Fitness: 1, Cunning: 3, Reason: 2, Awareness: 4, Presence: 5 },
+          skills: { Art: 4, Negotiation: 3, Insight: 2, Linguistics: 1 },
+          items: ["Armor (Light)", "Small Weapons (One-Handed)", "Adventurer's Kit", "Healing Potion", "Smoke Flask"],
+          breakthroughPlan: [
+            { name: "Secondary Stat Training", choice: "Presence" },
+            { name: "Skill Training", choice: "Art" },
+            { name: "Skill Training", choice: "Negotiation" },
+            { name: "Skill Training", choice: "Insight" },
+            { name: "Skill Training", choice: "Linguistics" }
+          ],
+          weaponGroup: "Small Weapons",
+          humanStat: "Toughness",
+          humanSecondary: "Presence",
+          demonClan: "un",
+          why: "Built as a social and performance-based support. Presence and Art are prioritized for the support fantasy.",
+          playstyle: "A mobile party buffer whose songs shape the whole encounter. Idol provides the core performance engine and support songs; Jewel Idol's Cool Spotlight makes that engine more reliable immediately.",
+          gameplayLoop: ["Choose the song that best answers the party's current problem.", "Use movement and Twinkle Step to keep the performance safely positioned.", "Maintain support while using social skills and a hidden weapon when direct action is needed."],
+          bestFor: "Choose this if you want to make everyone else better, solve social scenes, and play a flashy performer rather than a traditional healer.",
+          classPathWhy: "Jewel Idol specifically requires Idol mastery. Idol's three foundational songs and Mashup are more valuable to a new performance support than using an expertise shortcut to enter Bard without the Idol song engine.",
+          nextClass: "Bard",
+          laterClass: "Bard",
+          nextClassWhy: "After Jewel Idol is mastered, Bard is the strongest thematic support branch because it adds more performance tools without abandoning the song role."
+        }
+      ]
+    },
+    {
+      id: "inventor",
+      label: "Inventor / Crafter",
+      builds: [
+        {
+          id: "gadgeteer",
+          label: "Gadgeteer",
+          className: "Artificer",
+          targetClass: "Magitechnician",
+          classPlan: [{ name: "Artificer", purchasedCount: 7 }, { name: "Magitechnician", purchasedCount: 0 }],
+          role: "Artisan",
+          mainStats: { Focus: 5, Power: 3, Agility: 4, Toughness: 4 },
+          secondaryStats: { Fitness: 2, Cunning: 1, Reason: 5, Awareness: 4, Presence: 3 },
+          skills: { Artifice: 4, Magic: 2, History: 2, Flight: 2 },
+          items: ["Artificer's Kit", "Artificer's Multitool", "Small Shell", "Adventurer's Kit", "Musket (Two-Handed)"],
+          breakthrough: "Rich Parents",
+          weaponGroup: "Musket",
+          humanStat: "Focus",
+          humanSecondary: "Reason",
+          demonClan: "ni",
+          why: "Built to use tools and artifice immediately. Rich Parents gives extra starting funds for the expensive inventor kit.",
+          playstyle: "A prepared gadget user who solves problems with devices, repairs, shells, and a firearm. Artificer supplies the working toolkit; Magitechnician's Advanced Artificing opens the stronger constructions immediately.",
+          gameplayLoop: ["Prepare or repair the device the scenario is likely to need.", "Use Blackbird, Overclock, or a shell to create an advantage.", "Fire the musket from range while the inventions do the specialized work."],
+          bestFor: "Choose this if you enjoy equipment, crafting decisions, drones, and turning preparation into battlefield advantages.",
+          classPathWhy: "Magitechnician specifically requires Artificer mastery. Artificer supplies the core crafting permission, Artificing points, scouting drone, Overclock, and reload tool that its advanced class assumes.",
+          nextClass: "Transmuter",
+          laterClass: "Transmuter",
+          nextClassWhy: "There is no direct Tier 3 Magitechnician class in the current data. After mastering it, Transmuter is the broadest complementary Tier 1 crafting branch and can later lead to Alkahest."
+        },
+        {
+          id: "potion-healer",
+          label: "Potion Healer",
+          className: "Alchemist",
+          targetClass: "Acolyte",
+          classPlan: [{ name: "Alchemist", purchasedCount: 7 }, { name: "Acolyte", purchasedCount: 1 }],
+          role: "Artisan",
+          mainStats: { Focus: 5, Power: 3, Agility: 4, Toughness: 4 },
+          secondaryStats: { Fitness: 1, Cunning: 2, Reason: 5, Awareness: 3, Presence: 4 },
+          skills: { Medicine: 4, Magic: 3, "Common Knowledge": 3 },
+          items: ["Armor (Light)", "Small Weapons (One-Handed)", "Alchemy Rig (Deluxe)", "Healing Potion", "Healing Potion", "Cleansing Potion", "Antidote Shot Potion", "Adventurer's Kit"],
+          breakthrough: "Rich Parents",
+          weaponGroup: "Small Weapons",
+          humanStat: "Focus",
+          humanSecondary: "Reason",
+          demonClan: "vi",
+          why: "Built around potions, recovery, and alchemy support. Rich Parents funds the alchemy package.",
+          playstyle: "A supply-based healer and battlefield chemist. Mastered Alchemist makes potions efficient to craft, draw, and throw; Acolyte adds Cure Touch so one injured ally does not always consume valuable stock.",
+          gameplayLoop: ["Prepare the recovery and counter-potions the mission is likely to need.", "Throw or quickdraw the correct potion when a condition appears.", "Use Cure Touch for routine healing and save expensive consumables for decisive moments."],
+          bestFor: "Choose this if you enjoy preparation, crafting, inventory choices, and supporting the party with the right consumable.",
+          classPathWhy: "Alchemist mastery supplies the complete potion engine. Acolyte plus Cure Touch is a stronger creation purchase than Alchemeister's key alone because it prevents routine healing from draining crafted stock; Alchemeister remains the next 200-EXP unlock.",
+          nextClass: "Alchemeister",
+          nextClassWhy: "Alchemist is already mastered, so the next 200 class EXP unlocks Alchemeister and its advanced infusion tools.",
+          laterClass: "Acolyte",
+          laterClassWhy: "Acolyte is already started; after Alchemeister is established, continuing Acolyte expands the non-consumable healing side of the package."
+        }
+      ]
+    }
+  ];
+  function getQuickBuildStep() {
+    return QUICK_BUILD_STEPS[state.ui.quickBuildStep] || QUICK_BUILD_STEPS[0];
+  }
+  function getQuickBuildSpecies(id = state.builder.quickBuild?.speciesId) {
+    return QUICK_BUILD_SPECIES.find((entry) => entry.id === id) || null;
+  }
+  function getQuickBuildById(id = state.builder.quickBuild?.buildId) {
+    return QUICK_BUILD_ROLES.flatMap((role) => role.builds.map((build) => ({ ...build, roleGroup: role.label }))).find((entry) => entry.id === id) || null;
+  }
+  function getQuickBuildResolvedClassPlan(build, species = getQuickBuildSpecies()) {
+    if (!build) {
+      return [];
+    }
+    let plan = asArray(build.classPlan).map((entry) => ({
+      name: cleanText(entry.name),
+      purchasedCount: Math.max(0, Math.min(CLASS_PURCHASABLE_LEVELS, Math.floor(toNumber(entry.purchasedCount, 0)))),
+      raceGranted: false
+    })).filter((entry) => entry.name);
+    if (!plan.length) {
+      plan = [
+        { name: build.className, purchasedCount: build.classStrategy === "specialty-first" ? 0 : CLASS_PURCHASABLE_LEVELS, raceGranted: false },
+        { name: build.targetClass, purchasedCount: build.classStrategy === "specialty-first" ? CLASS_PURCHASABLE_LEVELS : 0, raceGranted: false }
+      ].filter((entry) => entry.name);
+    }
+    const { race, ancestry } = getQuickBuildSpeciesRecords(species, build);
+    const raceName = normalizePhrase(race?.name);
+    const ancestryName = normalizePhrase(ancestry?.name);
+    if (raceName === "demon") {
+      if (build.id === "sneak-thief") {
+        plan.push({ name: "Saboteur", purchasedCount: 0, raceGranted: true });
+      } else if (build.id === "cleric-support") {
+        plan = plan.map((entry) => normalizePhrase(entry.name) === "medic" ? { ...entry, purchasedCount: 2, raceGranted: true } : entry);
+      } else if (build.id === "potion-healer") {
+        plan = plan.filter((entry) => normalizePhrase(entry.name) !== "acolyte");
+        plan.push({ name: "Medic", purchasedCount: 2, raceGranted: true });
+      } else if (build.id === "performance-support") {
+        plan.push({ name: "Maid", purchasedCount: 0, raceGranted: true });
+      }
+    }
+    if (ancestryName === "gnome" && plan.length < STARTING_INTERLUDE_POINTS && !plan.some((entry) => normalizePhrase(entry.name) === "miner")) {
+      plan.push({ name: "Miner", purchasedCount: 0, raceGranted: true });
+    }
+    return plan.slice(0, STARTING_INTERLUDE_POINTS);
+  }
+  function getQuickBuildClassPathLabel(build) {
+    return getQuickBuildResolvedClassPlan(build).map((entry) => {
+      if (entry.purchasedCount >= CLASS_PURCHASABLE_LEVELS) {
+        return `${entry.name} mastery`;
+      }
+      return entry.purchasedCount > 0 ? `${entry.name} +${entry.purchasedCount}` : `${entry.name} key`;
+    }).join(" + ");
+  }
+  function getQuickBuildClassProgressEntry(name) {
+    const target = normalizePhrase(name);
+    return getSelectedClassProgress().find((entry) => normalizePhrase(entry.record?.name) === target) || null;
+  }
+  function getQuickBuildClassPlanState(build = getQuickBuildById()) {
+    if (!build) {
+      return null;
+    }
+    const resolvedPlan = getQuickBuildResolvedClassPlan(build);
+    const entries = resolvedPlan.map((planned) => ({
+      planned,
+      progress: getQuickBuildClassProgressEntry(planned.name)
+    })).filter((entry) => entry.progress);
+    const budget = getClassUnlockBudgetState();
+    if (entries.length !== resolvedPlan.length) {
+      return null;
+    }
+    const prerequisiteSource = cleanText(state.builder.quickBuild?.classPrerequisiteSource || "");
+    const allocationText = entries.map(({ planned, progress }) => {
+      const levelText = planned.purchasedCount >= CLASS_PURCHASABLE_LEVELS ? "mastery" : planned.purchasedCount > 0 ? `key + ${planned.purchasedCount} learned ${planned.purchasedCount === 1 ? "ability" : "abilities"}` : "key ability";
+      return `${progress.record.name} ${levelText} (${progress.cost} EXP)`;
+    }).join(", ");
+    return {
+      resolvedPlan,
+      entries,
+      budget,
+      currentPlanText: `Class plan: ${allocationText} = ${budget.spentExp} EXP.`,
+      prerequisiteSource
+    };
+  }
+  function getQuickBuildRoadmapState(build = getQuickBuildById()) {
+    const plan = getQuickBuildClassPlanState(build);
+    if (!plan) {
+      return null;
+    }
+    const incompleteTierTwo = plan.entries.find(({ progress }) => toNumber(progress.record?.tier, 0) >= 2 && progress.purchasedCount < CLASS_PURCHASABLE_LEVELS);
+    const focusRecord = incompleteTierTwo?.progress.record || findRecordByName(lookup.classes.entries, build.nextClass);
+    if (!focusRecord) {
+      return null;
+    }
+    const focusEntry = getQuickBuildClassProgressEntry(focusRecord.name);
+    const purchasedCount = focusEntry?.purchasedCount || 0;
+    const unlockCost = focusEntry ? 0 : getClassUnlockCost(focusRecord);
+    const unlockTotal = plan.budget.spentExp + unlockCost;
+    const slots = getClassProgressSlots(focusRecord);
+    const milestones = [];
+    if (!focusEntry) {
+      milestones.push({
+        totalExp: unlockTotal,
+        label: `Unlock ${focusRecord.name} and gain ${getClassKeyAbilityRecord(focusRecord)?.name || "its key ability"}`,
+        isUnlock: true
+      });
+    }
+    slots.slice(purchasedCount).forEach((slot, index) => {
+      milestones.push({
+        totalExp: unlockTotal + (index + 1) * 100,
+        label: `Learn ${slot.name || slot.label}`,
+        isMastery: purchasedCount + index + 1 === slots.length
+      });
+    });
+    const masteryTotal = milestones[milestones.length - 1]?.totalExp || unlockTotal;
+    const laterClass = findRecordByName(lookup.classes.entries, build.laterClass);
+    const laterEntry = laterClass ? getQuickBuildClassProgressEntry(laterClass.name) : null;
+    const laterUnlockTotal = laterClass ? masteryTotal + (laterEntry ? 0 : getClassUnlockCost(laterClass)) : 0;
+    return {
+      plan,
+      focusRecord,
+      milestones,
+      masteryTotal,
+      laterClass,
+      laterUnlockTotal,
+      bankForUnlock: !focusEntry && unlockCost > 100
+    };
+  }
+  function renderQuickBuildClassRoadmap(build = getQuickBuildById()) {
+    const roadmap = getQuickBuildRoadmapState(build);
+    if (!roadmap) {
+      return "";
+    }
+    const plan = roadmap.plan;
+    const prerequisiteNote = plan.prerequisiteSource ? `<p><strong>Prerequisite route:</strong> ${escapeHtml(plan.prerequisiteSource)}</p>` : "";
+    const futureNote = roadmap.laterClass ? `<p><strong>After ${escapeHtml(String(roadmap.masteryTotal))} total EXP:</strong> ${escapeHtml(build.laterClassWhy || build.nextClassWhy || `Continue toward ${roadmap.laterClass.name}.`)}${getQuickBuildClassProgressEntry(roadmap.laterClass.name) ? "" : ` The ${escapeHtml(roadmap.laterClass.name)} key ability can be unlocked at <strong>${escapeHtml(String(roadmap.laterUnlockTotal))} total EXP</strong>.`}</p>` : `<p><strong>Direct continuation:</strong> ${escapeHtml(build.nextClassWhy || "Continue the selected specialty.")}</p>`;
+    return `
+        <details class="review-panel quick-build-class-roadmap" open>
+          <summary>
+            <span>Class Path and Extra-EXP Roadmap</span>
+            <small>${escapeHtml(`${plan.budget.spentExp} EXP now | ${roadmap.masteryTotal} EXP through ${roadmap.focusRecord.name} mastery`)}</small>
+          </summary>
+          <div class="quick-build-class-roadmap-body">
+            <p><strong>Current allocation:</strong> ${escapeHtml(plan.currentPlanText.replace(/^Class plan:\s*/i, ""))}</p>
+            ${prerequisiteNote}
+            <p>${escapeHtml(build.classPathWhy || "The selected foundation satisfies the specialty prerequisite and supports the advertised role.")}</p>
+            ${roadmap.bankForUnlock ? `<p><strong>Bank the next ${escapeHtml(String(getClassUnlockCost(roadmap.focusRecord)))} EXP.</strong> Buying unrelated levels first delays this direct specialty unlock.</p>` : `<p><strong>Recommended extra EXP:</strong> continue ${escapeHtml(roadmap.focusRecord.name)} in its fixed order.</p>`}
+            <ol class="quick-build-class-milestones">
+              ${roadmap.milestones.map((entry) => `
+                <li>
+                  <strong>${escapeHtml(String(entry.totalExp))} total EXP</strong>
+                  <span>${escapeHtml(`${entry.label}${entry.isMastery ? `; ${roadmap.focusRecord.name} mastered` : ""}.`)}</span>
+                </li>
+              `).join("")}
+            </ol>
+            ${futureNote}
+            <p class="builder-note">Class levels are learned in order. Quick Build spends all 1000 starting class EXP. Some roles take a Tier 2 key immediately; others buy the first ability of a complementary Tier 1 class because that creates a stronger starting kit and leaves the advertised Tier 2 class as the next 200-EXP unlock.</p>
+          </div>
+        </details>
+      `;
+  }
+  function findRecordByName(entries, name) {
+    const normalized = normalizePhrase(name);
+    return entries.find((entry) => normalizePhrase(entry.name) === normalized) || null;
+  }
+  function resolveQuickBuildRace(species) {
+    return findRecordByName(detailLookup.races.entries, species?.race || "");
+  }
+  function resolveQuickBuildAncestry(species, build, race) {
+    if (!species || !race) {
+      return null;
+    }
+    if (normalizePhrase(race.name) === "demon") {
+      const code = cleanText(build?.demonClan || "none").toUpperCase();
+      return getDemonClanOptions(race).find((entry) => normalizePhrase(entry.lineageCode) === normalizePhrase(code)) || getDemonClanOptions(race)[0] || null;
+    }
+    if (!species.ancestry) {
+      return null;
+    }
+    return getAllSecondaryLineageOptions().find(
+      (entry) => normalizePhrase(entry.name) === normalizePhrase(species.ancestry) && normalizePhrase(entry.primaryRace) === normalizePhrase(race.name)
+    ) || null;
+  }
+  function getQuickBuildSpeciesRecords(species, build = getQuickBuildById()) {
+    const race = resolveQuickBuildRace(species);
+    return {
+      race,
+      ancestry: resolveQuickBuildAncestry(species, build, race)
+    };
+  }
+  function getQuickBuildSpeciesImage(species, build = getQuickBuildById()) {
+    const records = getQuickBuildSpeciesRecords(species, build);
+    return records.ancestry?.imageSmUrl || records.ancestry?.imageLgUrl || records.race?.imageSmUrl || records.race?.imageLgUrl || "assets/lyrian-symbol.png";
+  }
+  function getBriefRecordDescription(record, fallback = "") {
+    const first = getFirstSentence(record?.descriptionText || record?.description || "");
+    return first || fallback;
+  }
+  function getQuickBuildSpeciesCardSummary(species) {
+    const { race, ancestry } = getQuickBuildSpeciesRecords(species);
+    return ancestry ? getBriefRecordDescription(ancestry, species.note) : getBriefRecordDescription(race, species.note || species.defer);
+  }
+  function getQuickBuildSpeciesDetailText(species) {
+    if (!species) {
+      return "Choose a quick species option. Details and artwork will appear here before the quick build applies mechanical choices.";
+    }
+    const { race, ancestry } = getQuickBuildSpeciesRecords(species);
+    const raceIntro = race ? `${race.name}: ${getBriefRecordDescription(race, `${race.name} is the primary race selected for this quick build.`)}` : "";
+    if (ancestry) {
+      return [
+        raceIntro,
+        `${ancestry.name}: ${getBriefRecordDescription(ancestry, species.note)}`
+      ].filter(Boolean).join("\n\n");
+    }
+    if (normalizePhrase(species.id) === "demon") {
+      return [
+        raceIntro,
+        "Quick Build chooses the Demon clan after you pick a role, so the clan technique and bonus support the class package."
+      ].filter(Boolean).join("\n\n");
+    }
+    if (normalizePhrase(species.id) === "human") {
+      return [
+        raceIntro,
+        "Quick Build chooses the Human stat, skill, language, and weapon benefits after you pick a class package."
+      ].filter(Boolean).join("\n\n");
+    }
+    return raceIntro || species.note;
+  }
+  function getQuickBuildPreviewBreakthroughPlan(build, species = getQuickBuildSpecies()) {
+    const ancestryName = normalizePhrase(getQuickBuildSpeciesRecords(species, build).ancestry?.name);
+    if (build?.classStrategy === "specialty-first") {
+      return ancestryName === "phoenix" ? getQuickBuildBreakthroughPlan(build, true) : [{ name: "Elemental Affinity", choice: "Fire" }, { name: "Wide Circuits I" }];
+    }
+    return getQuickBuildBreakthroughPlan(build);
+  }
+  function getQuickBuildClassPlanPreview(build) {
+    return getQuickBuildResolvedClassPlan(build).map((planned) => {
+      const indexRecord = findRecordByName(lookup.classes.entries, planned.name);
+      const record = indexRecord ? getClassDetail(indexRecord.id) || indexRecord : null;
+      if (!record) {
+        return "";
+      }
+      const keyAbility = getClassKeyAbilityRecord(record);
+      const learnedSlots = getClassProgressSlots(record).slice(0, planned.purchasedCount);
+      const levelLabel = planned.purchasedCount >= CLASS_PURCHASABLE_LEVELS ? "Mastered" : planned.purchasedCount > 0 ? `Key + ${planned.purchasedCount} ${planned.purchasedCount === 1 ? "ability" : "abilities"}` : "Key ability only";
+      const skillText = firstReadableText(record.skillsText, record.skills);
+      const proficiencyText = firstReadableText(record.proficienciesText, record.proficiencyText, record.proficiencies);
+      return `
+          <article class="quick-build-class-preview">
+            <header>
+              <strong>${escapeHtml(record.name)}</strong>
+              <span>Tier ${escapeHtml(String(record.tier || "?"))} | ${escapeHtml(levelLabel)}${planned.raceGranted ? " | race-granted unlock" : ""}</span>
+            </header>
+            ${keyAbility?.name ? `<p><strong>Key \u2014 ${escapeHtml(keyAbility.name)}:</strong> ${escapeHtml(getBriefRecordDescription(keyAbility, "Granted when the class is unlocked."))}</p>` : ""}
+            ${learnedSlots.length ? `<p><strong>Learned from class EXP:</strong> ${escapeHtml(learnedSlots.map((slot) => slot.name || slot.label).join(", "))}.</p>` : ""}
+            ${skillText ? `<p><strong>Class skills:</strong> ${escapeHtml(skillText)}</p>` : ""}
+            ${proficiencyText ? `<p><strong>Proficiencies:</strong> ${escapeHtml(proficiencyText)}</p>` : ""}
+          </article>
+        `;
+    }).join("");
+  }
+  function renderQuickBuildBuildDetail(build) {
+    if (!build) {
+      return "<p>Pick a role package to inspect its gameplay, exact class levels, skills, perks, and equipment before applying it.</p>";
+    }
+    const skillList = Object.entries(build.skills || {}).map(([name, amount]) => `<li><strong>${escapeHtml(name)}</strong> +${escapeHtml(String(amount))}</li>`).join("");
+    const perks = getQuickBuildPreviewBreakthroughPlan(build).map((entry) => `${entry.name}${entry.choice ? ` (${entry.choice})` : ""}`);
+    return `
+        <section class="quick-build-detail-section">
+          <h4>How It Plays</h4>
+          <p>${escapeHtml(build.playstyle || build.why)}</p>
+          <ol>${asArray(build.gameplayLoop).map((entry) => `<li>${escapeHtml(entry)}</li>`).join("")}</ol>
+          <p class="quick-build-fit"><strong>Good fit:</strong> ${escapeHtml(build.bestFor || build.why)}</p>
+        </section>
+        <section class="quick-build-detail-section">
+          <h4>Starting Class Package</h4>
+          <p>${escapeHtml(build.classPathWhy || "The classes are selected to support the advertised role.")}</p>
+          <div class="quick-build-class-preview-list">${getQuickBuildClassPlanPreview(build)}</div>
+        </section>
+        <section class="quick-build-detail-section">
+          <h4>Skills You Start With</h4>
+          <ul class="quick-build-detail-list">${skillList}</ul>
+          <p class="builder-note">These are the ten general creation skill points. Class, race, and Skill Training grants are added on top and assigned to compatible skills automatically.</p>
+        </section>
+        <section class="quick-build-detail-section">
+          <h4>Equipment and Perks</h4>
+          <p><strong>Gear:</strong> ${escapeHtml((build.items || []).join(", "))}.</p>
+          <p><strong>Breakthroughs:</strong> ${escapeHtml(perks.join(", "))}.</p>
+          <p>${escapeHtml(getQuickBuildRaceOptimizationNote(build))}</p>
+        </section>
+      `;
+  }
+  function openMobileQuickBuildDetailOverlay(build, trigger) {
+    if (!build || !isMobileBuilderChoiceMode()) {
+      return false;
+    }
+    const overlay = document.getElementById("builder-mobile-choice-overlay");
+    const content = document.getElementById("builder-mobile-choice-content");
+    const accept = document.getElementById("builder-mobile-choice-accept");
+    document.getElementById("builder-mobile-choice-eyebrow").textContent = "Quick Build Playstyle";
+    document.getElementById("builder-mobile-choice-title").textContent = build.label;
+    content.innerHTML = `
+        <div class="builder-detail-card">
+          ${renderDetailImage(getQuickBuildSpecies() ? getQuickBuildSpeciesImage(getQuickBuildSpecies(), build) : "assets/lyrian-symbol.png", build.label)}
+          <div class="detail-copy">
+            <div class="detail-section">
+              <h3>${escapeHtml(build.label)}</h3>
+              ${renderQuickBuildBuildDetail(build)}
+            </div>
+          </div>
+        </div>
+      `;
+    accept.textContent = "Choose This Build";
+    accept.disabled = false;
+    mobileBuilderChoiceState = {
+      kind: "quick-build",
+      id: build.id,
+      disabled: false,
+      advanceAfterAccept: false
+    };
+    mobileBuilderChoiceReturnFocus = trigger instanceof HTMLElement ? trigger : document.activeElement;
+    overlay.hidden = false;
+    overlay.setAttribute("aria-hidden", "false");
+    document.body.classList.add("builder-mobile-choice-open");
+    window.requestAnimationFrame(() => accept.focus({ preventScroll: true }));
+    return true;
+  }
+  function getQuickBuildSkillIndex(skillName) {
+    const canonical = getCanonicalSkillName(skillName);
+    return SKILL_DEFINITIONS.findIndex((entry) => entry.name === canonical) + 1;
+  }
+  function clearQuickBuildGeneratedFields() {
+    state.builder.selectedClassIds = [];
+    state.builder.classAbilityProgress = {};
+    state.builder.selectedItemIds = [];
+    state.builder.itemQuantities = {};
+    state.builder.selectedBreakthroughIds = [];
+    state.builder.gmApprovedBreakthroughIds = [];
+    state.builder.choiceSelections = {};
+    MAIN_STATS.forEach((entry) => updateFieldValue(entry.key, ""));
+    SECONDARY_STATS.forEach((entry) => updateFieldValue(entry.key, ""));
+    SKILL_DEFINITIONS.forEach((entry, index) => {
+      const row = index + 1;
+      updateFieldValue(`SkillPoint${row}`, "");
+      updateFieldValue(`Expertise${row}`, "");
+    });
+    Object.keys(state.fields).forEach((fieldName) => {
+      if (/^(?:RacialSkillPoint|ClassSkillPoint|ClassExpertiseSpend):/.test(fieldName)) {
+        updateFieldValue(fieldName, "");
+      }
+    });
+    updateFieldValue("Exp", "");
+    state.builder.autoExpBank = "";
+    updateFieldValue("Clim Override", "");
+    updateFieldValue("Earned Clim", "");
+  }
+  function setQuickBuildStats(build) {
+    MAIN_STATS.forEach((entry) => updateFieldValue(entry.key, String(build.mainStats?.[entry.key] || "")));
+    SECONDARY_STATS.forEach((entry) => updateFieldValue(entry.key, String(build.secondaryStats?.[entry.key] || "")));
+  }
+  function setQuickBuildSkills(build) {
+    Object.entries(build.skills || {}).forEach(([skillName, amount]) => {
+      const row = getQuickBuildSkillIndex(skillName);
+      if (row > 0) {
+        updateFieldValue(`SkillPoint${row}`, String(amount));
+      }
+    });
+  }
+  function addQuickBuildItem(name) {
+    const record = findRecordByName(lookup.items.entries, name);
+    if (!record) {
+      return false;
+    }
+    setBuilderItemQuantity(record.id, getBuilderItemQuantity(record.id) + 1);
+    return true;
+  }
+  function isQuickBuildAutoEquipItem(record) {
+    if (!record || isConsumableInventoryItem(record)) {
+      return false;
+    }
+    const subType = normalizePhrase(record.subType);
+    const name = normalizePhrase(record.name);
+    return (/* @__PURE__ */ new Set(["armor", "weapon", "kit", "tool", "storage"])).has(subType) || name === "binoculars";
+  }
+  function equipQuickBuildLoadout(build) {
+    state.play = mergePlayState(state.play);
+    const autoEquipRecords = (build?.items || []).map((name) => findRecordByName(lookup.items.entries, name)).filter((record) => isQuickBuildAutoEquipItem(record));
+    const autoEquipIds = new Set(autoEquipRecords.map((record) => record.id));
+    state.play.inventoryItems.forEach((entry) => {
+      if (entry.itemId && state.builder.selectedItemIds.includes(entry.itemId)) {
+        entry.equipped = autoEquipIds.has(entry.itemId);
+      }
+    });
+    return autoEquipRecords.map((record) => record.name);
+  }
+  function addQuickBuildBreakthrough(name, fallback = "Skill Training") {
+    const record = findRecordByName(lookup.breakthroughs.entries, name) || findRecordByName(lookup.breakthroughs.entries, fallback);
+    if (!record) {
+      return "";
+    }
+    state.builder.selectedBreakthroughIds.push(record.id);
+    return record.name;
+  }
+  function getQuickBuildBreakthroughPlan(build, hasNativeFireMastery = false) {
+    if (build?.classStrategy === "specialty-first") {
+      return [
+        { name: "Wide Circuits I" },
+        ...hasNativeFireMastery ? Array.from({ length: 6 }, () => ({ name: "Skill Training", choice: "Magic" })) : []
+      ];
+    }
+    if (asArray(build?.breakthroughPlan).length) {
+      return build.breakthroughPlan;
+    }
+    return [{ name: build?.breakthrough || "Skill Training", choice: Object.keys(build?.skills || {})[0] || "" }];
+  }
+  function applyQuickBuildBreakthroughPlan(build) {
+    if (build.classStrategy === "specialty-first") {
+      const existingFireMastery = hasTrackedElementalMastery("Fire");
+      if (!existingFireMastery) {
+        setSelectedElementalAffinityElements(["Fire"]);
+      }
+      getQuickBuildBreakthroughPlan(build, existingFireMastery).forEach((entry) => addQuickBuildBreakthrough(entry.name, ""));
+      return existingFireMastery ? `${getSelectedAncestryDetail()?.name || "The selected lineage"} already grants Fire Mastery, so Pyromancer's alternate prerequisite is satisfied without breakthrough EXP. Wide Circuits I and six Magic skill trainings spend the full 300-EXP breakthrough budget on the fire kit.` : "Elemental Affinity (Fire) supplies Fire Mastery, satisfying Pyromancer's alternate prerequisite without a mastered Tier 1 class. Wide Circuits I uses the other 150 breakthrough EXP to support the mana-heavy fire kit.";
+    }
+    getQuickBuildBreakthroughPlan(build).forEach((entry) => addQuickBuildBreakthrough(entry.name));
+    return "";
+  }
+  function applyQuickBuildClassProgress(build) {
+    getQuickBuildResolvedClassPlan(build).forEach((planned) => {
+      const record = findRecordByName(lookup.classes.entries, planned.name);
+      if (!record || state.builder.selectedClassIds.includes(record.id)) {
+        return;
+      }
+      state.builder.selectedClassIds.push(record.id);
+      setClassPurchasedAbilityCount(record.id, planned.purchasedCount);
+    });
+  }
+  function setFirstMatchingBuilderChoice(choiceId, preferred = []) {
+    const choice = getBuilderChoiceDefinitions().find((entry) => entry.id === choiceId);
+    if (!choice || !Array.isArray(choice.options) || !choice.options.length) {
+      return "";
+    }
+    const options = choice.options.map((entry) => typeof entry === "string" ? entry : entry.value || entry.label || "");
+    const selected = preferred.find((value) => options.some((option) => normalizePhrase(option) === normalizePhrase(value))) || options[0];
+    setBuilderChoiceValue(choice.id, selected);
+    return selected;
+  }
+  function assignQuickBuildRacialAndClassChoices(build) {
+    const preferredSkills = Object.keys(build.skills || {});
+    setBuilderChoiceValue("race-human-main-stat", build.humanStat || "Focus");
+    setBuilderChoiceValue("race-human-secondary-stat", build.humanSecondary || "Reason");
+    setFirstMatchingBuilderChoice("race-human-language", ["Sorthen", "Sylvan"]);
+    setFirstMatchingBuilderChoice("race-human-weapon-group", [build.weaponGroup, "Small Weapons"]);
+    if (getBuilderChoiceDefinitions().some((choice) => choice.id === "race-human-skill")) {
+      const choice = getBuilderChoiceDefinitions().find((entry) => entry.id === "race-human-skill");
+      const skill = preferredSkills.find((name) => choice.options.includes(name)) || choice.options[0];
+      const row = getQuickBuildSkillIndex(skill);
+      if (row > 0) {
+        setRacialSkillAllocation(choice.id, row, 5);
+      }
+    }
+    setBuilderChoiceValue("race-demon-bonus-mode", "skill");
+    if (getBuilderChoiceDefinitions().some((choice) => choice.id === "race-demon-clan-skill")) {
+      const choice = getBuilderChoiceDefinitions().find((entry) => entry.id === "race-demon-clan-skill");
+      const skill = preferredSkills.find((name) => choice.options.includes(name)) || choice.options[0];
+      const row = getQuickBuildSkillIndex(skill);
+      if (row > 0) {
+        setRacialSkillAllocation(choice.id, row, 5);
+      }
+    } else {
+      setFirstMatchingBuilderChoice("race-demon-weapon-group", [build.weaponGroup, "Small Weapons"]);
+    }
+    getSelectedClassProgress().forEach((progressEntry) => {
+      const record = progressEntry.record;
+      getClassProficiencyChoiceDefinitions(record).forEach((choice) => {
+        setFirstMatchingBuilderChoice(choice.id, [build.weaponGroup, "Wand", "Magic Staff", "Small Weapons", "Light Armor", "Shields"]);
+      });
+      setFirstMatchingBuilderChoice(getClassChoiceId(record, "heart-stat"), [build.humanSecondary, "Fitness", "Reason", "Presence"]);
+      setFirstMatchingBuilderChoice(getClassChoiceId(record, "soul-stat"), [build.humanStat, "Focus", "Power", "Toughness", "Agility"]);
+    });
+    getVisibleClassSkillPoolChoices().forEach((choice) => {
+      const skill = preferredSkills.find((name) => choice.options.includes(name)) || choice.options[0];
+      const row = getQuickBuildSkillIndex(skill);
+      if (row > 0) {
+        setClassSkillPoolAllocation(choice.id, row, "skill", choice.amount || 0);
+      }
+    });
+    const nativeFireMastery = build.classStrategy === "specialty-first" && hasTrackedElementalMastery("Fire") && getSelectedElementalAffinityElements().length === 0;
+    const breakthroughPlan = getQuickBuildBreakthroughPlan(build, nativeFireMastery);
+    const secondaryChoices = breakthroughPlan.filter((entry) => normalizePhrase(entry.name) === "secondary stat training");
+    const skillChoices = breakthroughPlan.filter((entry) => normalizePhrase(entry.name) === "skill training");
+    getBuilderChoiceDefinitions().forEach((choice) => {
+      const source = cleanText(choice.source);
+      const occurrenceMatch = source.match(/#(\d+)$/);
+      const occurrence = occurrenceMatch ? Math.max(1, toNumber(occurrenceMatch[1], 1)) : 1;
+      if (normalizePhrase(source).startsWith("secondary stat training") && /choose the \+1 stat/i.test(choice.label)) {
+        setBuilderChoiceValue(choice.id, secondaryChoices[occurrence - 1]?.choice || build.humanSecondary || "Reason");
+      }
+      if (normalizePhrase(source).startsWith("skill training")) {
+        if (/skill point or expertise/i.test(choice.label)) {
+          setBuilderChoiceValue(choice.id, "skill");
+        } else if (/choose the skill for \+1/i.test(choice.label)) {
+          setBuilderChoiceValue(choice.id, skillChoices[occurrence - 1]?.choice || preferredSkills[0] || choice.options?.[0] || "");
+        }
+      }
+    });
+  }
+  function getQuickBuildRaceOptimizationNote(build, species = getQuickBuildSpecies()) {
+    const { race, ancestry } = getQuickBuildSpeciesRecords(species, build);
+    const raceName = normalizePhrase(race?.name);
+    const ancestryName = normalizePhrase(ancestry?.name);
+    if (raceName === "demon" && build.id === "sneak-thief") {
+      return "Demon optimization: clan WI enters Saboteur for 0 EXP, so its key is added as a third class without delaying Rogue, Decipher Magic, or the future Thief unlock.";
+    }
+    if (raceName === "demon" && build.id === "cleric-support") {
+      return "Demon optimization: clan VI enters Medic for 0 EXP, buying both First Aid and Code Blue while keeping the full Acolyte foundation.";
+    }
+    if (raceName === "demon" && build.id === "potion-healer") {
+      return "Demon optimization: clan VI enters Medic for 0 EXP, replacing the generic Acolyte dip with First Aid and Code Blue at the same 1000-EXP total.";
+    }
+    if (raceName === "demon" && build.id === "performance-support") {
+      return "Demon optimization: clan UN enters Maid for 0 EXP, adding Maid Training as a third key ability without delaying Jewel Idol.";
+    }
+    if (ancestryName === "phoenix" && build.classStrategy === "specialty-first") {
+      return "Phoenix optimization: native Fire Mastery opens Pyromancer without Elemental Affinity, so the freed 150 breakthrough EXP becomes six additional Magic skill points.";
+    }
+    if (ancestryName === "rabbitfolk" && build.id === "sneak-thief") {
+      return "Rabbitfolk fit: Fast Runner, Instinct, and Escape Artist all reinforce the Rogue/Mage infiltration plan; no class or equipment path is closed.";
+    }
+    return `${ancestry?.name || race?.name || species?.label || "This species"} can use every class and item in this package; no fallback is required.`;
+  }
+  function applyQuickBuildPreset() {
+    const species = getQuickBuildSpecies();
+    const build = getQuickBuildById();
+    if (!species || !build) {
+      setStatus("Choose a species and quick build before applying the preset.");
+      return false;
+    }
+    const race = resolveQuickBuildRace(species);
+    if (!race) {
+      setStatus(`Could not find the ${species.race} race data for Quick Build.`);
+      return false;
+    }
+    clearQuickBuildGeneratedFields();
+    state.builder.selectedRaceId = race.id;
+    state.builder.inspected.race = race.id;
+    const ancestry = resolveQuickBuildAncestry(species, build, race);
+    state.builder.selectedAncestryId = ancestry?.id || "";
+    state.builder.inspected.ancestry = ancestry?.id || "";
+    setQuickBuildStats(build);
+    setQuickBuildSkills(build);
+    const classPrerequisiteSource = applyQuickBuildBreakthroughPlan(build);
+    applyQuickBuildClassProgress(build);
+    (build.items || []).forEach(addQuickBuildItem);
+    assignQuickBuildRacialAndClassChoices(build);
+    const removedForMirane = enforceMiraneStartSelections();
+    syncBuilderSelectionsIntoSheet2();
+    ensurePlayInventoryFromBuilder();
+    const autoEquippedItems = equipQuickBuildLoadout(build);
+    state.builder.quickBuild.appliedBuildId = build.id;
+    state.builder.quickBuild.classPrerequisiteSource = classPrerequisiteSource;
+    const classPlan = getQuickBuildClassPlanState(build);
+    state.builder.quickBuild.summary = [
+      `${build.label} applied for ${species.label}.`,
+      `Character start: ${getCharacterStartMode().label}.`,
+      build.why,
+      classPlan?.currentPlanText || `Class plan: master ${build.className}${build.targetClass ? ` and unlock ${build.targetClass}` : ""}.`,
+      classPrerequisiteSource ? `Prerequisite route: ${classPrerequisiteSource}` : "",
+      getQuickBuildRaceOptimizationNote(build, species),
+      build.classPathWhy,
+      `Gear package: ${(build.items || []).join(", ")}.`,
+      autoEquippedItems.length ? `Auto-equipped loadout: ${autoEquippedItems.join(", ")}. Consumables remain carried for use.` : "",
+      removedForMirane.length ? `Unavailable in Mirane and removed: ${removedForMirane.join(", ")}.` : ""
+    ].filter(Boolean).join("\n");
+    scheduleWorkingStatePersist();
+    setStatus(`Quick Build applied: ${build.label}.`);
+    return true;
+  }
+  function quickBuildCanAdvance(showStatus = false) {
+    const step = getQuickBuildStep();
+    const message = step.id === "species" && !getQuickBuildSpecies() ? "Choose a Quick Build species before continuing." : step.id === "build" && !getQuickBuildById() ? "Choose a Quick Build role package before continuing." : "";
+    if (message && showStatus) {
+      setStatus(message);
+    }
+    return !message;
+  }
+  function renderQuickBuildSpeciesStep() {
+    const selectedId = state.builder.quickBuild?.speciesId || "";
+    return `
+        <div class="builder-content-grid quick-build-content">
+          <p class="builder-note">These are the fast-start ancestry fantasies selected for Quick Build. Demon and Human wait until role selection before their best mechanical choices are assigned.</p>
+          <div class="quick-build-card-grid">
+            ${QUICK_BUILD_SPECIES.map((entry) => `
+              <button type="button" class="quick-build-card${entry.id === selectedId ? " selected" : ""}" data-quick-build-action="select-species" data-id="${escapeHtml(entry.id)}">
+                <span class="quick-build-card-media">
+                  <img src="${escapeHtml(getQuickBuildSpeciesImage(entry))}" alt="">
+                </span>
+                <span class="quick-build-card-copy">
+                  <strong>${escapeHtml(entry.label)}</strong>
+                  <span>${escapeHtml(entry.defer || `${entry.race}${entry.ancestry ? ` / ${entry.ancestry}` : ""}`)}</span>
+                  <p>${escapeHtml(getQuickBuildSpeciesCardSummary(entry))}</p>
+                </span>
+              </button>
+            `).join("")}
+          </div>
+        </div>
+      `;
+  }
+  function renderQuickBuildProfileStep() {
+    return renderProfileStep();
+  }
+  function renderQuickBuildBuildStep() {
+    const selectedId = state.builder.quickBuild?.buildId || "";
+    return `
+        <div class="builder-content-grid quick-build-content">
+          ${QUICK_BUILD_ROLES.map((role) => `
+            <section class="quick-build-role-section">
+              <h3>${escapeHtml(role.label)}</h3>
+              <div class="quick-build-card-grid">
+                ${role.builds.map((build) => `
+                  <button type="button" class="quick-build-card quick-build-role-card${build.id === selectedId ? " selected" : ""}" data-quick-build-action="select-build" data-id="${escapeHtml(build.id)}">
+                    <strong>${escapeHtml(build.label)}</strong>
+                    <span>${escapeHtml(getQuickBuildClassPathLabel(build))}</span>
+                    <p>${escapeHtml(build.why)}</p>
+                    <small>${escapeHtml(build.bestFor || "Select to inspect the full package.")}</small>
+                  </button>
+                `).join("")}
+              </div>
+            </section>
+          `).join("")}
+        </div>
+      `;
+  }
+  function renderQuickBuildReviewStep() {
+    const species = getQuickBuildSpecies();
+    const build = getQuickBuildById();
+    const funds = getStartingFundsState();
+    return `
+        <div class="builder-content-grid quick-build-content">
+          <div class="review-grid">
+            <div class="review-panel"><strong>Species</strong><p>${escapeHtml([getSelectedRaceDetail()?.name, getSelectedAncestryDetail()?.name].filter(Boolean).join(" / ") || species?.label || "Not selected")}</p></div>
+            <div class="review-panel"><strong>Build</strong><p>${escapeHtml(build ? `${build.label} (${getQuickBuildClassPathLabel(build)})` : "Not selected")}</p></div>
+            <div class="review-panel"><strong>EXP</strong><p>${escapeHtml(`Spent ${getClassUnlockBudgetState().spentExp} / ${getClassUnlockBudgetState().expBudget}; remaining ${getClassUnlockBudgetState().remainingExp}`)}</p></div>
+            <div class="review-panel"><strong>Clim</strong><p>${escapeHtml(`Spent ${funds.selectedEquipmentCost}; remaining ${funds.availableClim}`)}</p></div>
+          </div>
+          <div class="review-panel">
+            <strong>Why This Build</strong>
+            ${paragraphize(state.builder.quickBuild?.summary || build?.why || "Choose a build to generate the quick build review.")}
+          </div>
+          ${renderQuickBuildClassRoadmap(build)}
+          <div class="review-panel review-equipment-panel">
+            <strong>Selected Gear</strong>
+            <p>${escapeHtml(getEquipmentSummaryText(getSelectedItemRecords(), funds, "No gear selected yet."))}</p>
+          </div>
+          ${renderMiraneLegacyPlanner()}
+          <div class="quick-build-review-actions">
+            <button type="button" data-quick-build-action="finish">Use This Character</button>
+            <button type="button" class="secondary" data-quick-build-action="customize">Customize Build</button>
+            <button type="button" class="secondary" data-quick-build-action="back-to-build">Back</button>
+          </div>
+        </div>
+      `;
+  }
+  function renderQuickBuildStepContent() {
+    const content = document.getElementById("builder-step-content");
+    const step = getQuickBuildStep();
+    if (step.id === "species") {
+      content.innerHTML = renderQuickBuildSpeciesStep();
+    } else if (step.id === "profile") {
+      content.innerHTML = renderQuickBuildProfileStep();
+    } else if (step.id === "build") {
+      content.innerHTML = renderQuickBuildBuildStep();
+    } else {
+      content.innerHTML = renderQuickBuildReviewStep();
+    }
+    renderQuickBuildDetail();
+  }
+  function renderQuickBuildDetail() {
+    const step = getQuickBuildStep();
+    const species = getQuickBuildSpecies();
+    const build = getQuickBuildById();
+    let title = "Quick Build";
+    let body = "Choose a species fantasy and role package. The generated character still uses the regular builder underneath.";
+    let bodyHtml = "";
+    if (step.id === "species") {
+      title = species ? species.label : "Choose a Species";
+      body = getQuickBuildSpeciesDetailText(species);
+    } else if (step.id === "build") {
+      title = build ? build.label : "Choose a Role";
+      bodyHtml = renderQuickBuildBuildDetail(build);
+    } else if (step.id === "review") {
+      title = "Ready to Play";
+      body = state.builder.quickBuild?.summary || "The quick build review appears after a package is applied.";
+    }
+    document.getElementById("builder-detail-card").innerHTML = `
+        ${renderDetailImage((step.id === "species" || step.id === "build") && species ? getQuickBuildSpeciesImage(species, build) : "assets/lyrian-symbol.png", title || "Quick Build")}
+        <div class="detail-copy detail-copy-scroll">
+          <div class="detail-section">
+            <h3>${escapeHtml(title)}</h3>
+            ${bodyHtml || paragraphize(body)}
+          </div>
+        </div>
+      `;
+  }
+  function renderQuickBuildHeader() {
+    const step = getQuickBuildStep();
+    document.getElementById("builder-step-title").textContent = step.title;
+    document.getElementById("builder-step-lead").textContent = step.lead;
+    document.getElementById("builder-progress-text").textContent = `Quick Build ${state.ui.quickBuildStep + 1} of ${QUICK_BUILD_STEPS.length}`;
+  }
+  function renderQuickBuildStepNav() {
+    const container = document.getElementById("builder-step-nav");
+    container.innerHTML = QUICK_BUILD_STEPS.map((step, index) => `
+        <button type="button" class="builder-step-button${index === state.ui.quickBuildStep ? " active" : ""}" data-step-index="${index}">
+          <strong>${index + 1}. ${escapeHtml(step.short)}</strong>
+          <span>${escapeHtml(step.title)}</span>
+        </button>
+      `).join("");
+  }
+  function updateQuickBuildControls() {
+    const back = document.getElementById("builder-back");
+    const next = document.getElementById("builder-next");
+    const nextTop = document.getElementById("builder-next-top");
+    const sheetShortcutTop = document.getElementById("builder-sheet-shortcut-top");
+    const isReview = getQuickBuildStep().id === "review";
+    back.disabled = state.ui.quickBuildStep === 0;
+    next.disabled = !quickBuildCanAdvance(false);
+    next.textContent = isReview ? "Use This Character" : "Continue";
+    if (nextTop) {
+      nextTop.disabled = next.disabled;
+      nextTop.textContent = next.textContent;
+    }
+    if (sheetShortcutTop) {
+      sheetShortcutTop.classList.toggle("is-hidden", true);
+    }
+  }
+  function renderQuickBuild() {
+    refreshBuilderIdentity();
+    renderQuickBuildHeader();
+    renderQuickBuildStepNav();
+    renderBuilderSummary();
+    renderQuickBuildStepContent();
+    updateQuickBuildControls();
+  }
+  function enterQuickBuildMode() {
+    state.ui.quickBuildActive = true;
+    state.ui.quickBuildStep = 0;
+    state.builder.quickBuild = {
+      ...state.builder.quickBuild || {},
+      speciesId: "",
+      buildId: "",
+      appliedBuildId: "",
+      summary: "",
+      classPrerequisiteSource: ""
+    };
+    state.builder.startMode = "standard";
+    updateFieldValue("Spirit Core", String(QUICK_BUILD_STANDARD_SPIRIT_CORE));
+    state.builder.autoSpiritCore = String(QUICK_BUILD_STANDARD_SPIRIT_CORE);
+    renderBuilder();
+    setStatus("Quick Build started.");
+  }
+  function exitQuickBuildToCustomize() {
+    state.ui.quickBuildActive = false;
+    state.ui.builderStep = BUILDER_STEPS.length - 1;
+    renderBuilder();
+    setStatus("Opened the full builder with the Quick Build selections ready to customize.");
+  }
+  function advanceQuickBuild() {
+    const step = getQuickBuildStep();
+    if (step.id === "review") {
+      openSheetView();
+      return;
+    }
+    if (!quickBuildCanAdvance(true)) {
+      return;
+    }
+    if (step.id === "build" && !applyQuickBuildPreset()) {
+      return;
+    }
+    state.ui.quickBuildStep = Math.min(QUICK_BUILD_STEPS.length - 1, state.ui.quickBuildStep + 1);
+    renderBuilder();
+  }
+  function goToQuickBuildStep(index) {
+    const target = Math.max(0, Math.min(QUICK_BUILD_STEPS.length - 1, Math.floor(toNumber(index, 0))));
+    if (target > state.ui.quickBuildStep && !quickBuildCanAdvance(true)) {
+      return;
+    }
+    if (target === QUICK_BUILD_STEPS.length - 1 && !state.builder.quickBuild?.appliedBuildId && getQuickBuildById()) {
+      if (!applyQuickBuildPreset()) {
+        return;
+      }
+    }
+    state.ui.quickBuildStep = target;
+    renderBuilder();
   }
   function renderBuilderStepContent() {
     const step = currentStep();
@@ -18944,6 +20807,10 @@ ${secondaryStatText}`),
     document.getElementById("builder-progress-text").textContent = `Step ${state.ui.builderStep + 1} of ${BUILDER_STEPS.length}`;
   }
   function renderBuilder() {
+    if (state.ui.quickBuildActive) {
+      renderQuickBuild();
+      return;
+    }
     seedBuilderInspection();
     refreshBuilderIdentity();
     renderBuilderHeader();
@@ -19020,6 +20887,11 @@ ${secondaryStatText}`),
     state.builder.inspected.breakthrough = id;
     const alreadySelected = state.builder.selectedBreakthroughIds.includes(id);
     const record = lookup.breakthroughs.resolve(id);
+    if (!alreadySelected && isMiraneRestrictedBreakthrough(record)) {
+      setStatus(`${record?.name || "That breakthrough"} is unavailable for new Mirane Expedition characters.`);
+      renderBuilder();
+      return;
+    }
     if (record && normalizePhrase(record.name) === "elemental affinity") {
       setStatus("Choose an element on the Elemental Affinity card, then add it. Each element can only be chosen once.");
       renderBuilder();
@@ -19245,6 +21117,11 @@ The app cannot verify this requirement. Has the GM approved it for this characte
     const alreadySelected = state.builder.selectedClassIds.includes(id);
     const record = getClassDetail(id);
     const requirementStatus = getClassRequirementStatus(record);
+    if (!alreadySelected && isMiraneRestrictedClass(record)) {
+      setStatus(`${record?.name || "That class"} is unavailable for new Mirane Expedition characters.`);
+      renderBuilder();
+      return;
+    }
     if (!alreadySelected && !requirementStatus.met) {
       setStatus(`Cannot select ${record?.name || "that class"} yet. Requirements: ${requirementStatus.requirementsText}`);
       renderBuilder();
@@ -19357,6 +21234,12 @@ The app cannot verify this requirement. Has the GM approved it for this characte
     const cost = parseClimCost(record.cost);
     const funds = getStartingFundsState();
     const totalCost = cost * purchaseQuantity;
+    const miraneMaterialStatus = getMiraneMaterialPurchaseStatus(record, purchaseQuantity);
+    if (!miraneMaterialStatus.allowed) {
+      setStatus(miraneMaterialStatus.reason);
+      renderBuilder();
+      return;
+    }
     if (totalCost > 0 && totalCost > funds.availableClim) {
       setStatus(`${record.name} costs ${totalCost} Clim for ${purchaseQuantity}, but only ${funds.availableClim} Clim remains. Use the manual override if the GM is granting extra funds.`);
       renderBuilder();
@@ -20431,6 +22314,23 @@ The app cannot verify this requirement. Has the GM approved it for this characte
         `
     });
   }
+  function openMobileSheetTools() {
+    openSheetModal({
+      eyebrow: "Character Tools",
+      title: "Save, Load, and Manage",
+      lead: "These are the same character tools available on the desktop sheet.",
+      content: `
+          <div class="sheet-modal-option-grid">
+            <button type="button" class="sheet-modal-option" data-mobile-sheet-tool="save-browser"><strong>Save to Browser</strong><span>Save or update a character slot.</span></button>
+            <button type="button" class="sheet-modal-option" data-mobile-sheet-tool="load-browser"><strong>Load Saved</strong><span>Open a saved character.</span></button>
+            <button type="button" class="sheet-modal-option" data-mobile-sheet-tool="export-json"><strong>Export Character</strong><span>Choose JSON, PDF, or spreadsheet export.</span></button>
+            <button type="button" class="sheet-modal-option" data-mobile-sheet-tool="import-json"><strong>Import Character</strong><span>Load a character file from this device.</span></button>
+            <button type="button" class="sheet-modal-option" data-mobile-sheet-tool="recalc-basics"><strong>Recalculate</strong><span>Refresh derived statistics and resources.</span></button>
+            <button type="button" class="sheet-modal-option" data-mobile-sheet-tool="start-over"><strong>Reset Character</strong><span>Start over after confirmation.</span></button>
+          </div>
+        `
+    });
+  }
   async function bindEvents() {
     document.addEventListener("input", () => {
       invalidateExportCache();
@@ -20504,6 +22404,17 @@ The app cannot verify this requirement. Has the GM approved it for this characte
     document.getElementById("sheet-modal").addEventListener("click", async (event) => {
       if (event.target.closest("[data-sheet-modal-close]") || event.target.closest("#sheet-modal-close")) {
         closeSheetModal();
+        return;
+      }
+      const mobileSheetTool = event.target.closest("[data-mobile-sheet-tool]");
+      if (mobileSheetTool) {
+        const toolId = mobileSheetTool.dataset.mobileSheetTool;
+        closeSheetModal();
+        if (toolId === "start-over") {
+          startOverCharacter();
+        } else {
+          document.getElementById(toolId)?.click();
+        }
         return;
       }
       if (event.target.closest("[data-reset-character-confirm]")) {
@@ -20603,10 +22514,38 @@ The app cannot verify this requirement. Has the GM approved it for this characte
     document.getElementById("builder-name-header").addEventListener("input", (event) => {
       syncNameFields(event.target.value, "Name");
     });
+    document.getElementById("quick-build-entry")?.addEventListener("click", () => {
+      const confirmed = window.confirm("Are you sure you want to go to Quick Build? This opens the guided fast-start path and can later fill in starter choices for you.");
+      if (confirmed) {
+        enterQuickBuildMode();
+      }
+    });
+    document.querySelector(".builder-identity-banner")?.addEventListener("click", (event) => {
+      const startMode = event.target.closest("[data-character-start-mode]");
+      if (!startMode || !setCharacterStartMode(startMode.dataset.characterStartMode)) {
+        return;
+      }
+      refreshBuilderIdentity();
+      if (state.ui.quickBuildActive) {
+        renderQuickBuildStepContent();
+      } else {
+        renderBuilderStepContent();
+      }
+      renderBuilderSummary();
+      scheduleWorkingStatePersist();
+    });
     document.getElementById("builder-back").addEventListener("click", () => {
+      if (state.ui.quickBuildActive) {
+        goToQuickBuildStep(state.ui.quickBuildStep - 1);
+        return;
+      }
       goToBuilderStep(state.ui.builderStep - 1);
     });
     const advanceBuilder = () => {
+      if (state.ui.quickBuildActive) {
+        advanceQuickBuild();
+        return;
+      }
       if (state.ui.builderStep === BUILDER_STEPS.length - 1) {
         openSheetView();
         return;
@@ -20638,9 +22577,52 @@ The app cannot verify this requirement. Has the GM approved it for this characte
       if (!button) {
         return;
       }
+      if (state.ui.quickBuildActive) {
+        goToQuickBuildStep(Number(button.dataset.stepIndex));
+        return;
+      }
       goToBuilderStep(Number(button.dataset.stepIndex));
     });
     document.getElementById("builder-step-content").addEventListener("click", (event) => {
+      const startMode = event.target.closest("[data-quick-start-mode]");
+      if (startMode) {
+        if (!setCharacterStartMode(startMode.dataset.quickStartMode)) {
+          return;
+        }
+        if (state.ui.quickBuildActive) {
+          renderQuickBuildStepContent();
+        } else {
+          renderBuilderStepContent();
+        }
+        renderBuilderSummary();
+        scheduleWorkingStatePersist();
+        return;
+      }
+      const quickTrigger = event.target.closest("[data-quick-build-action]");
+      if (quickTrigger) {
+        const action2 = quickTrigger.dataset.quickBuildAction;
+        const id2 = quickTrigger.dataset.id || "";
+        if (action2 === "select-species") {
+          state.builder.quickBuild.speciesId = id2;
+          renderBuilder();
+        } else if (action2 === "select-build") {
+          state.builder.quickBuild.buildId = id2;
+          state.builder.quickBuild.appliedBuildId = "";
+          state.builder.quickBuild.summary = "";
+          renderBuilder();
+          const selectedBuild = getQuickBuildById(id2);
+          const renderedTrigger = document.querySelector(`[data-quick-build-action="select-build"][data-id="${CSS.escape(id2)}"]`);
+          openMobileQuickBuildDetailOverlay(selectedBuild, renderedTrigger);
+        } else if (action2 === "finish") {
+          openSheetView();
+        } else if (action2 === "customize") {
+          exitQuickBuildToCustomize();
+        } else if (action2 === "back-to-build") {
+          goToQuickBuildStep(2);
+        }
+        scheduleWorkingStatePersist();
+        return;
+      }
       const clearChoice = event.target.closest("[data-builder-choice-clear]");
       if (clearChoice) {
         clearBuilderChoiceValue(clearChoice.dataset.builderChoiceClear);
@@ -21158,6 +23140,15 @@ The app cannot verify this requirement. Has the GM approved it for this characte
       renderPlayReferenceDetail();
     });
     document.getElementById("play-header-card").addEventListener("click", (event) => {
+      if (event.target.closest("[data-mobile-return-builder]")) {
+        setMode("builder");
+        setStatus("Returned to the builder.");
+        return;
+      }
+      if (event.target.closest("[data-mobile-sheet-tools]")) {
+        openMobileSheetTools();
+        return;
+      }
       const modeButton = event.target.closest("[data-play-mode]");
       if (modeButton) {
         setPlayMode(modeButton.dataset.playMode);
@@ -21170,6 +23161,62 @@ The app cannot verify this requirement. Has the GM approved it for this characte
       event.preventDefault();
       openPlayClassReference(classReferenceButton.dataset.playClassReference);
     });
+    document.getElementById("play-mobile-sheet-dock").addEventListener("click", (event) => {
+      const modeButton = event.target.closest("[data-play-mode]");
+      if (modeButton) {
+        setPlayMode(modeButton.dataset.playMode);
+        return;
+      }
+      const pageButton = event.target.closest("[data-mobile-sheet-page]");
+      if (pageButton) {
+        setMobileSheetPage(pageButton.dataset.mobileSheetPage);
+        return;
+      }
+      const resourceButton = event.target.closest("[data-mobile-sheet-resource]");
+      if (!resourceButton) {
+        return;
+      }
+      if (getActivePlayMode() !== "combat") {
+        setPlayMode("combat");
+      }
+      setMobileSheetPage("overview", { scroll: false });
+      const targetId = resourceButton.dataset.mobileSheetResource === "hp" ? "play-hit-points" : "play-resource-grid";
+      requestAnimationFrame(() => {
+        document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+    let mobileSheetSwipeStart = null;
+    const mobileSwipeSurface = document.querySelector("#sheet-view .play-dashboard");
+    mobileSwipeSurface.addEventListener("touchstart", (event) => {
+      if (!isMobileSheetLayout() || getActivePlayMode() !== "combat" || event.touches.length !== 1) {
+        mobileSheetSwipeStart = null;
+        return;
+      }
+      if (event.target.closest("button, input, select, textarea, a, summary, nav, .play-skill-expertise-options")) {
+        mobileSheetSwipeStart = null;
+        return;
+      }
+      mobileSheetSwipeStart = {
+        x: event.touches[0].clientX,
+        y: event.touches[0].clientY
+      };
+    }, { passive: true });
+    mobileSwipeSurface.addEventListener("touchend", (event) => {
+      if (!mobileSheetSwipeStart || event.changedTouches.length !== 1) {
+        mobileSheetSwipeStart = null;
+        return;
+      }
+      const deltaX = event.changedTouches[0].clientX - mobileSheetSwipeStart.x;
+      const deltaY = event.changedTouches[0].clientY - mobileSheetSwipeStart.y;
+      mobileSheetSwipeStart = null;
+      if (Math.abs(deltaX) < 70 || Math.abs(deltaX) < Math.abs(deltaY) * 1.35) {
+        return;
+      }
+      cycleMobileSheetPage(deltaX < 0 ? 1 : -1);
+    }, { passive: true });
+    mobileSwipeSurface.addEventListener("touchcancel", () => {
+      mobileSheetSwipeStart = null;
+    }, { passive: true });
     const handlePlaySkillRollClick = (event) => {
       const expertiseButton = event.target.closest("[data-play-roll-skill-expertise]");
       if (expertiseButton) {
@@ -21187,6 +23234,20 @@ The app cannot verify this requirement. Has the GM approved it for this characte
       handlePlaySkillRollClick(event);
     });
     const handlePlayCraftingPanelClick = (event) => {
+      const marketAvailabilityButton = event.target.closest("[data-mirane-market-availability]");
+      if (marketAvailabilityButton) {
+        toggleMiraneMarketAvailability(marketAvailabilityButton.dataset.miraneMarketAvailability);
+        return;
+      }
+      const resetMiraneInterludeExpButton = event.target.closest("[data-mirane-reset-interlude-exp]");
+      if (resetMiraneInterludeExpButton) {
+        state.play = mergePlayState(state.play);
+        state.play.crafting.miraneInterludeExpClaimed = false;
+        persistWorkingState();
+        renderPlayDashboard();
+        setStatus("Started a new Mirane interlude phase. The natural-IP 20 EXP award is available again.");
+        return;
+      }
       if (handlePlaySkillRollClick(event)) {
         return;
       }
@@ -21227,6 +23288,11 @@ The app cannot verify this requirement. Has the GM approved it for this characte
       const modeButton = event.target.closest("[data-crafting-selection-mode]");
       if (modeButton) {
         setCraftingSelectionMode(modeButton.dataset.craftingSelectionMode);
+        return;
+      }
+      const availabilityFilterButton = event.target.closest("[data-crafting-availability-filter]");
+      if (availabilityFilterButton) {
+        setCraftingAvailabilityFilter(!Boolean(state.play?.crafting?.availableRecipesOnly));
         return;
       }
       const categoryButton = event.target.closest("[data-crafting-recipe-category]");
@@ -21365,6 +23431,10 @@ The app cannot verify this requirement. Has the GM approved it for this characte
       }
     };
     const handlePlayCraftingPanelInput = (event) => {
+      if (event.target.dataset.miraneMarketPrice) {
+        setMiraneMarketPrice(event.target.dataset.miraneMarketPrice, event.target.value);
+        return;
+      }
       if (event.target.dataset.craftingRequirementCustomCost) {
         setCraftingRequirementCustomCost(event.target.dataset.craftingRequirementCustomCost, event.target.value);
         return;
@@ -21376,6 +23446,18 @@ The app cannot verify this requirement. Has the GM approved it for this characte
       setCraftingField(fieldName, event.target.value);
     };
     const handlePlayCraftingPanelChange = (event) => {
+      if (event.target.dataset.miraneNaturalIp !== void 0) {
+        state.play = mergePlayState(state.play);
+        state.play.crafting.miraneUseNaturalIp = Boolean(event.target.checked);
+        persistWorkingState();
+        renderPlayDashboard();
+        setStatus(event.target.checked ? "This Mirane craft is marked as spending natural IP; the 20 EXP award will be applied when the outcome is resolved if it is still available this phase." : "Natural IP is not marked for this craft.");
+        return;
+      }
+      if (event.target.dataset.miraneMarketPrice) {
+        renderPlayDashboard();
+        return;
+      }
       if (event.target.dataset.gatheringGmOverride !== void 0) {
         state.play = mergePlayState(state.play);
         state.play.crafting.gatheringGmOverride = Boolean(event.target.checked);
@@ -21447,6 +23529,11 @@ The app cannot verify this requirement. Has the GM approved it for this characte
       rollPlayCheck(rollButton.dataset.playRoll, { feedbackId: "play-action-feedback", action });
     });
     document.getElementById("play-inventory").addEventListener("click", (event) => {
+      const marketAvailabilityButton = event.target.closest("[data-mirane-market-availability]");
+      if (marketAvailabilityButton) {
+        toggleMiraneMarketAvailability(marketAvailabilityButton.dataset.miraneMarketAvailability);
+        return;
+      }
       const toggleCatalog = event.target.closest("[data-inventory-toggle-catalog]");
       if (toggleCatalog) {
         state.play = mergePlayState(state.play);
@@ -21506,6 +23593,10 @@ The app cannot verify this requirement. Has the GM approved it for this characte
       }
     });
     document.getElementById("play-inventory").addEventListener("input", (event) => {
+      if (event.target.matches("[data-mirane-market-price]")) {
+        setMiraneMarketPrice(event.target.dataset.miraneMarketPrice, event.target.value);
+        return;
+      }
       if (event.target.matches("[data-inventory-search]")) {
         state.play = mergePlayState(state.play);
         state.play.inventorySearch = event.target.value;
@@ -21515,6 +23606,11 @@ The app cannot verify this requirement. Has the GM approved it for this characte
       if (event.target.matches("[data-custom-item-field]")) {
         state.play = mergePlayState(state.play);
         state.play.customItemDraft[event.target.dataset.customItemField] = event.target.value;
+      }
+    });
+    document.getElementById("play-inventory").addEventListener("change", (event) => {
+      if (event.target.matches("[data-mirane-market-price]")) {
+        renderPlayDashboard();
       }
     });
     document.getElementById("play-restore-turn").addEventListener("click", (event) => {
@@ -21541,6 +23637,19 @@ The app cannot verify this requirement. Has the GM approved it for this characte
         return;
       }
       state.ui.sheetTab = button.dataset.playTab;
+      if (isMobileSheetLayout()) {
+        const mobilePage = getMobileSheetPageForTab(state.ui.sheetTab);
+        state.ui.mobileSheetPage = mobilePage;
+        if (MOBILE_CHARACTER_TABS.has(state.ui.sheetTab)) {
+          state.ui.mobileCharacterTab = state.ui.sheetTab;
+        }
+        applyMobileSheetPresentation();
+        scheduleWorkingStatePersist(false);
+      }
+      renderPlayTabs();
+    });
+    window.matchMedia("(max-width: 700px)").addEventListener("change", () => {
+      applyMobileSheetPresentation();
       renderPlayTabs();
     });
     document.querySelectorAll("[data-jump]").forEach((button) => {
@@ -21886,9 +23995,13 @@ The app cannot verify this requirement. Has the GM approved it for this characte
         builderStep: 0,
         playMode: "combat",
         sheetTab: "actions",
+        mobileSheetPage: "overview",
+        mobileCharacterTab: "proficiencies",
         showPdf: false,
         activeSaveSlotId: "",
-        gameVersion: ""
+        gameVersion: "",
+        quickBuildActive: false,
+        quickBuildStep: 0
       },
       fields: {},
       abilitySelections: {},
@@ -21902,6 +24015,7 @@ The app cannot verify this requirement. Has the GM approved it for this characte
         ability: ""
       },
       builder: {
+        startMode: DEFAULT_CHARACTER_START_MODE,
         portraitDataUrl: "",
         selectedRaceId: "",
         selectedAncestryId: "",
@@ -21932,6 +24046,12 @@ The app cannot verify this requirement. Has the GM approved it for this characte
           breakthrough: "",
           mainStatMode: "array",
           secondaryStatMode: "array"
+        },
+        quickBuild: {
+          speciesId: "",
+          buildId: "",
+          appliedBuildId: "",
+          summary: ""
         }
       },
       play: {
@@ -21974,10 +24094,15 @@ The app cannot verify this requirement. Has the GM approved it for this characte
           recipeName: "",
           materialCost: "",
           selectionMode: "recipe",
+          availableRecipesOnly: false,
           recipeCategory: "all",
           recipeSubcategory: "all",
           selectedRecipeId: "",
           materialCustomCosts: {},
+          miraneMarketPrices: {},
+          miraneUnavailableItemIds: [],
+          miraneUseNaturalIp: false,
+          miraneInterludeExpClaimed: false,
           facilityLevel: 0,
           facilityUsesRemaining: 0,
           facilityUsesMax: 0,
@@ -22038,6 +24163,7 @@ The app cannot verify this requirement. Has the GM approved it for this characte
     return {
       ...defaults,
       ...source,
+      startMode: cleanText(source.startMode) === MIRANE_START_MODE_ID ? MIRANE_START_MODE_ID : DEFAULT_CHARACTER_START_MODE,
       portraitDataUrl: cleanText(source.portraitDataUrl || defaults.portraitDataUrl),
       selectedRaceId: cleanText(source.selectedRaceId || defaults.selectedRaceId),
       selectedAncestryId: cleanText(source.selectedAncestryId || defaults.selectedAncestryId),
@@ -22117,7 +24243,14 @@ The app cannot verify this requirement. Has the GM approved it for this characte
         ...source.crafting || {},
         materialCustomCosts: source.crafting?.materialCustomCosts && typeof source.crafting.materialCustomCosts === "object" ? Object.fromEntries(
           Object.entries(source.crafting.materialCustomCosts).map(([key, value]) => [cleanText(key), cleanText(value)]).filter(([key]) => key)
-        ) : { ...defaults.crafting.materialCustomCosts }
+        ) : { ...defaults.crafting.materialCustomCosts },
+        miraneMarketPrices: source.crafting?.miraneMarketPrices && typeof source.crafting.miraneMarketPrices === "object" ? Object.fromEntries(
+          Object.entries(source.crafting.miraneMarketPrices).map(([key, value]) => [cleanText(key), cleanText(value)]).filter(([key]) => key)
+        ) : { ...defaults.crafting.miraneMarketPrices },
+        miraneUnavailableItemIds: Array.isArray(source.crafting?.miraneUnavailableItemIds) ? Array.from(new Set(source.crafting.miraneUnavailableItemIds.map(cleanText).filter(Boolean))) : [...defaults.crafting.miraneUnavailableItemIds],
+        miraneUseNaturalIp: Boolean(source.crafting?.miraneUseNaturalIp),
+        miraneInterludeExpClaimed: Boolean(source.crafting?.miraneInterludeExpClaimed),
+        availableRecipesOnly: Boolean(source.crafting?.availableRecipesOnly)
       },
       diceTray: {
         ...defaults.diceTray,

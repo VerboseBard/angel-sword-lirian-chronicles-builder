@@ -1,4 +1,4 @@
-name: Deploy Beta 1.9 Web
+name: Deploy Beta 2.1 Web
 
 on:
   push:
@@ -28,7 +28,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p dist/src/css
-          rsync -a index.html dist/
+          rsync -a index.html manifest.webmanifest dist/
           rsync -a assets/ dist/assets/
           rsync -a src/css/main.css dist/src/css/main.css
           touch dist/.nojekyll

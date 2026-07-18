@@ -4,8 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#0d1521">
-  <title>Lyrian Chronicles Character Builder - Beta 1.94</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Lyrian Sheet">
+  <title>Lyrian Chronicles Character Builder - Beta 2.1</title>
   <link rel="icon" type="image/png" href="assets/lyrian-symbol.png">
+  <link rel="apple-touch-icon" href="assets/lyrian-symbol.png">
+  <link rel="manifest" href="manifest.webmanifest">
   <script src="assets/lyrian-form-map.js"></script>
   <script src="assets/lyrian-data.js"></script>
   <script src="assets/lyrian-detail-data.js"></script>
@@ -13,7 +18,7 @@
   <script src="assets/pdf-lib.min.js"></script>
   <script src="assets/xlsx.full.min.js"></script>
   <script src="assets/jszip.min.js"></script>
-  <link rel="stylesheet" href="./src/css/main.css?v=1.94.0-mobile-20260713">
+  <link rel="stylesheet" href="./src/css/main.css?v=2.1.0-mirane-quick-build-20260715">
 </head>
 <body>
   <section id="builder-view" class="builder-view">
@@ -24,7 +29,7 @@
           <section class="version-manager" aria-label="Game version manager">
             <div class="builder-build-version" aria-label="Builder build version">
               <span>Builder build</span>
-              <strong>Beta 1.94</strong>
+              <strong>Beta 2.1</strong>
             </div>
             <label for="game-version-select">Select game version</label>
             <select id="game-version-select"></select>
@@ -70,11 +75,24 @@
               Character Name
               <input id="builder-name-header" class="builder-inline-input" type="text" placeholder="Enter your character name">
             </label>
-            <div class="identity-chips">
-              <span id="builder-race-chip" class="identity-chip">Primary race pending</span>
-              <span id="builder-ancestry-chip" class="identity-chip">Ancestry pending</span>
+            <div class="quick-spirit-core-toggle builder-start-toggle" role="group" aria-label="Character start rules">
+              <button type="button" class="selected" data-character-start-mode="standard" aria-pressed="true">
+                <span>Standard Play</span>
+                <small>Core creation rules</small>
+              </button>
+              <button type="button" data-character-start-mode="mirane" aria-pressed="false">
+                <span>Mirane Expedition</span>
+                <small>Campaign restrictions</small>
+              </button>
             </div>
+            <p id="builder-start-mode-note" class="builder-start-mode-note">Standard rules-as-written character creation.</p>
           </div>
+
+          <button class="quick-build-entry" id="quick-build-entry" type="button" aria-labelledby="quick-build-entry-title">
+            <p class="eyebrow">Fast Start</p>
+            <h3 id="quick-build-entry-title">Quick Build</h3>
+            <p>Pick a character fantasy and role, then let the builder fill in a ready-to-play starter path.</p>
+          </button>
         </section>
 
         <div class="builder-stage-header">
@@ -157,6 +175,27 @@
       <section class="play-dashboard" aria-label="Play dashboard">
         <div class="play-command-strip">
           <div id="play-header-card" class="play-panel play-header-card"></div>
+        </div>
+
+        <div id="play-mobile-sheet-dock" class="play-mobile-sheet-dock" aria-label="Mobile character sheet navigation">
+          <div class="play-mobile-compact-status">
+            <strong id="play-mobile-character-name">Character</strong>
+            <button id="play-mobile-hp-status" type="button" data-mobile-sheet-resource="hp" aria-label="Open hit point controls">HP — / —</button>
+          </div>
+          <div id="play-mobile-resource-bar" class="play-mobile-resource-bar" aria-label="Current character resources"></div>
+          <nav id="play-mobile-page-nav" class="play-mobile-page-nav" aria-label="Character sheet pages">
+            <button type="button" data-mobile-sheet-page="overview"><strong>Overview</strong><span>Stats</span></button>
+            <button type="button" data-mobile-sheet-page="combat"><strong>Combat</strong><span>Actions</span></button>
+            <button type="button" data-mobile-sheet-page="skills"><strong>Skills</strong><span>Checks</span></button>
+            <button type="button" data-mobile-sheet-page="abilities"><strong>Abilities</strong><span>Powers</span></button>
+            <button type="button" data-mobile-sheet-page="inventory"><strong>Inventory</strong><span>Items</span></button>
+            <button type="button" data-mobile-sheet-page="character"><strong>Character</strong><span>Details</span></button>
+          </nav>
+          <nav id="play-mobile-walkthrough-nav" class="play-mobile-walkthrough-nav" aria-label="Mobile play modes" hidden>
+            <button type="button" data-play-mode="combat">Character Sheet</button>
+            <button type="button" data-play-mode="gathering">Gathering</button>
+            <button type="button" data-play-mode="crafting">Crafting</button>
+          </nav>
         </div>
 
         <div class="play-overview-strip" data-play-mode-panel="combat" hidden>
@@ -423,6 +462,6 @@
   <script src="assets/dice-3d/dice-3d-embedded.js"></script>
   <script src="assets/dice-3d/new-angelsword-dice-face-art.384-webp.js?v=new-angelsword-384-webp-test-1"></script>
   <script src="assets/dice-3d/lyrian-accurate-dice.js?v=alpha4-new-angelsword-sidecar-27-d4-triangle-pivot"></script>
-  <script src="assets/app.bundle.js?v=1.94.0-mobile-choice-overlay-20260713"></script>
+  <script src="assets/app.bundle.js?v=2.1.0-mirane-quick-build-20260715"></script>
 </body>
 </html>

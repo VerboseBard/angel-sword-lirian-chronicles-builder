@@ -30,6 +30,7 @@ async function copyDeploymentArtifact() {
   await fs.rm(DEPLOY_TEMP_DIR, { recursive: true, force: true });
   await fs.mkdir(path.join(DEPLOY_TEMP_DIR, 'src', 'css'), { recursive: true });
   await fs.copyFile(path.join(PROJECT_ROOT, 'index.html'), path.join(DEPLOY_TEMP_DIR, 'index.html'));
+  await fs.copyFile(path.join(PROJECT_ROOT, 'manifest.webmanifest'), path.join(DEPLOY_TEMP_DIR, 'manifest.webmanifest'));
   await copyDirectory(path.join(PROJECT_ROOT, 'assets'), path.join(DEPLOY_TEMP_DIR, 'assets'));
   await fs.copyFile(
     path.join(PROJECT_ROOT, 'src', 'css', 'main.css'),
@@ -87,7 +88,9 @@ async function runDirectFileStartupAssertion() {
         cardCount: stepContent?.querySelectorAll('.builder-option-card').length || 0,
         navCount: stepNav?.querySelectorAll('button').length || 0,
         summaryText: summary?.textContent?.replace(/\s+/g, ' ').trim() || '',
-        buildLabel: document.querySelector('.builder-build-version')?.textContent || ''
+        buildLabel: document.querySelector('.builder-build-version')?.textContent || '',
+        startModes: [...document.querySelectorAll('[data-character-start-mode]')].map((button) => button.dataset.characterStartMode),
+        activeStartMode: document.querySelector('[data-character-start-mode][aria-pressed="true"]')?.dataset.characterStartMode || ''
       };
     });
 
@@ -97,7 +100,9 @@ async function runDirectFileStartupAssertion() {
       && result.cardCount > 0
       && result.navCount > 0
       && result.summaryText.includes('Identity')
-      && result.buildLabel.includes('Beta 1.94');
+      && result.buildLabel.includes('Beta 2.1')
+      && result.startModes.join('|') === 'standard|mirane'
+      && result.activeStartMode === 'standard';
 
     if (!startupIsValid || errors.length || failedFileRequests.length) {
       throw new Error(`Direct file startup regression failed: ${JSON.stringify({ result, errors, failedFileRequests }, null, 2)}`);
@@ -111,6 +116,44 @@ async function runMobileChoiceOverlayAssertions(page, browserName) {
   await page.evaluate(() => localStorage.clear());
   await page.reload({ waitUntil: 'load' });
 
+  const portraitLabel = await page.evaluate(() => {
+    const frame = document.querySelector('.builder-identity-banner .portrait-frame');
+    const placeholder = document.getElementById('builder-portrait-placeholder');
+    if (!frame || !placeholder) return { present: false };
+    const frameRect = frame.getBoundingClientRect();
+    const range = document.createRange();
+    range.selectNodeContents(placeholder);
+    const textRect = range.getBoundingClientRect();
+    return {
+      present: true,
+      text: placeholder.textContent?.trim() || '',
+      fontSize: Number.parseFloat(getComputedStyle(placeholder).fontSize),
+      fullyInside: textRect.left >= frameRect.left - 1
+        && textRect.right <= frameRect.right + 1
+        && textRect.top >= frameRect.top - 1
+        && textRect.bottom <= frameRect.bottom + 1
+    };
+  });
+  if (!portraitLabel.present || portraitLabel.text !== 'Add portrait' || !portraitLabel.fullyInside || portraitLabel.fontSize > 12) {
+    throw new Error(`Mobile Add portrait readability regression failed: ${JSON.stringify(portraitLabel)}`);
+  }
+
+  page.once('dialog', async (dialog) => dialog.accept());
+  await page.click('[data-character-start-mode="mirane"]');
+  const miraneHeader = await page.evaluate(() => ({
+    active: document.querySelector('[data-character-start-mode="mirane"]')?.getAttribute('aria-pressed') === 'true',
+    note: document.getElementById('builder-start-mode-note')?.textContent || '',
+    summary: document.querySelector('.builder-stage-summary')?.textContent || ''
+  }));
+  if (!miraneHeader.active || !miraneHeader.note.includes('Mirane campaign restrictions') || !miraneHeader.summary.includes('Remaining Clim 4000')) {
+    throw new Error(`Mobile Mirane header selector regression failed: ${JSON.stringify(miraneHeader)}`);
+  }
+  await page.click('[data-character-start-mode="standard"]');
+  const standardHeaderActive = await page.locator('[data-character-start-mode="standard"][aria-pressed="true"]').count();
+  if (standardHeaderActive !== 1) {
+    throw new Error('Mobile Standard Play header selector did not reactivate after the Mirane check.');
+  }
+
   const humanCard = page.locator('[data-builder-action="pick-race"]').filter({ hasText: 'Human' }).first();
   await humanCard.click();
   await page.waitForSelector('#builder-mobile-choice-overlay:not([hidden])', { timeout: 5000 });
@@ -121,7 +164,7 @@ async function runMobileChoiceOverlayAssertions(page, browserName) {
     acceptLabel: document.getElementById('builder-mobile-choice-accept')?.textContent?.trim() || '',
     acceptEnabled: !document.getElementById('builder-mobile-choice-accept')?.disabled,
     bodyLocked: document.body.classList.contains('builder-mobile-choice-open'),
-    raceStillPending: document.getElementById('builder-race-chip')?.textContent?.includes('pending') || false
+    raceStillPending: document.querySelector('.builder-stage-summary')?.textContent?.includes('No primary race') || false
   }));
   if (
     !openResult.overlayOpen
@@ -144,7 +187,7 @@ async function runMobileChoiceOverlayAssertions(page, browserName) {
   const closeResult = await page.evaluate(() => ({
     overlayClosed: document.getElementById('builder-mobile-choice-overlay')?.hidden || false,
     bodyUnlocked: !document.body.classList.contains('builder-mobile-choice-open'),
-    raceStillPending: document.getElementById('builder-race-chip')?.textContent?.includes('pending') || false
+    raceStillPending: document.querySelector('.builder-stage-summary')?.textContent?.includes('No primary race') || false
   }));
   if (!closeResult.overlayClosed || !closeResult.bodyUnlocked || !closeResult.raceStillPending) {
     throw new Error(`Mobile overlay close regression failed: ${JSON.stringify(closeResult)}`);
@@ -154,12 +197,175 @@ async function runMobileChoiceOverlayAssertions(page, browserName) {
   await page.click('#builder-mobile-choice-accept');
   await page.waitForSelector('#builder-mobile-choice-overlay[hidden]', { state: 'attached', timeout: 5000 });
   const acceptResult = await page.evaluate(() => ({
-    raceChip: document.getElementById('builder-race-chip')?.textContent?.trim() || '',
+    raceSelected: document.querySelector('.builder-stage-summary')?.textContent?.includes('Human') || false,
     stepTitle: document.getElementById('builder-step-title')?.textContent?.trim() || '',
     overlayClosed: document.getElementById('builder-mobile-choice-overlay')?.hidden || false
   }));
-  if (!acceptResult.raceChip.includes('Human') || !acceptResult.overlayClosed || !/ancestry|clan|secondary lineage/i.test(acceptResult.stepTitle)) {
+  if (!acceptResult.raceSelected || !acceptResult.overlayClosed || !/ancestry|clan|secondary lineage/i.test(acceptResult.stepTitle)) {
     throw new Error(`Mobile overlay accept-and-continue regression failed: ${JSON.stringify(acceptResult)}`);
+  }
+
+  await page.evaluate(() => localStorage.clear());
+  await page.reload({ waitUntil: 'load' });
+}
+
+async function runMobileQuickBuildDetailAssertions(page, browserName) {
+  await page.evaluate(() => localStorage.clear());
+  await page.reload({ waitUntil: 'load' });
+  page.once('dialog', async (dialog) => dialog.accept());
+  await page.click('#quick-build-entry');
+  await page.locator('[data-quick-build-action="select-species"][data-id="slimefolk"]').click();
+  await page.click('#builder-next');
+  await page.click('#builder-next');
+  await page.locator('[data-quick-build-action="select-build"][data-id="sneak-thief"]').click();
+  await page.waitForSelector('#builder-mobile-choice-overlay:not([hidden])', { timeout: 5000 });
+
+  const result = await page.evaluate(() => ({
+    title: document.getElementById('builder-mobile-choice-title')?.textContent?.trim() || '',
+    acceptLabel: document.getElementById('builder-mobile-choice-accept')?.textContent?.trim() || '',
+    detail: document.getElementById('builder-mobile-choice-content')?.textContent?.replace(/\s+/g, ' ').trim() || '',
+    bodyLocked: document.body.classList.contains('builder-mobile-choice-open')
+  }));
+  if (
+    result.title !== 'Sneak Thief'
+    || result.acceptLabel !== 'Choose This Build'
+    || !result.bodyLocked
+    || !result.detail.includes('How It Plays')
+    || !result.detail.includes('Starting Class Package')
+    || !result.detail.includes('Evasive Maneuver')
+    || !result.detail.includes('Decipher Magic')
+    || !result.detail.includes('Equipment and Perks')
+  ) {
+    throw new Error(`Mobile Quick Build class-detail regression failed: ${JSON.stringify(result)}`);
+  }
+
+  if (browserName.startsWith('Chromium')) {
+    const detailPath = path.join(QA_DIR, 'screenshot-chromium-mobile-quick-build-detail.png');
+    await page.screenshot({ path: detailPath });
+    console.log('   Captured: qa-test-results/screenshot-chromium-mobile-quick-build-detail.png');
+  }
+
+  await page.click('#builder-mobile-choice-accept');
+  await page.waitForSelector('#builder-mobile-choice-overlay[hidden]', { state: 'attached', timeout: 5000 });
+  const closed = await page.evaluate(() => ({
+    overlayClosed: document.getElementById('builder-mobile-choice-overlay')?.hidden || false,
+    nextEnabled: !document.getElementById('builder-next')?.disabled
+  }));
+  if (!closed.overlayClosed || !closed.nextEnabled) {
+    throw new Error(`Mobile Quick Build detail close regression failed: ${JSON.stringify(closed)}`);
+  }
+
+  await page.evaluate(() => localStorage.clear());
+  await page.reload({ waitUntil: 'load' });
+}
+
+async function runMobileSheetAppAssertions(page, browserName) {
+  await page.evaluate(() => {
+    localStorage.clear();
+    localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+      ui: {
+        mode: 'sheet',
+        sheetTab: 'actions',
+        mobileSheetPage: 'overview',
+        playMode: 'combat',
+        gameVersion: '0.13.0'
+      },
+      builder: {
+        selectedRaceId: 'human',
+        selectedClassIds: ['fighter'],
+        classAbilityProgress: { fighter: 3 }
+      },
+      fields: {
+        Name: 'Mobile Test Hero',
+        Focus: '2',
+        Power: '2',
+        Agility: '2',
+        Toughness: '2'
+      }
+    }));
+  });
+  await page.reload({ waitUntil: 'load' });
+  await page.waitForSelector('#sheet-view:not(.is-hidden)', { timeout: 5000 });
+  await page.waitForSelector('#play-mobile-page-nav:not([hidden])', { timeout: 5000 });
+  await page.waitForFunction(() => document.querySelector('#play-header-card')?.textContent?.includes('Mobile Test Hero'));
+
+  const initial = await page.evaluate(() => {
+    const modeButtons = [...document.querySelectorAll('#play-header-card [data-play-mode]')];
+    const positions = Object.fromEntries(modeButtons.map((button) => [button.dataset.playMode, Math.round(button.getBoundingClientRect().x)]));
+    return {
+      visibleModeLabels: modeButtons.map((button) => button.innerText.trim()),
+      positions,
+      toolbarHidden: getComputedStyle(document.querySelector('#sheet-view .sheet-toolbar')).display === 'none',
+      dockVisible: getComputedStyle(document.getElementById('play-mobile-sheet-dock')).display !== 'none',
+      dockSticky: getComputedStyle(document.getElementById('play-mobile-sheet-dock')).position === 'sticky',
+      page: document.getElementById('sheet-view').dataset.mobileSheetPage,
+      manifest: document.querySelector('link[rel="manifest"]')?.getAttribute('href') || '',
+      noHorizontalOverflow: document.documentElement.scrollWidth <= document.documentElement.clientWidth
+    };
+  });
+
+  const labelsValid = initial.visibleModeLabels.join('|') === 'Character Sheet|Crafting|Gathering';
+  const visualOrderValid = initial.positions.combat < initial.positions.gathering && initial.positions.gathering < initial.positions.crafting;
+  if (
+    !labelsValid ||
+    !visualOrderValid ||
+    !initial.toolbarHidden ||
+    !initial.dockVisible ||
+    !initial.dockSticky ||
+    initial.page !== 'overview' ||
+    initial.manifest !== 'manifest.webmanifest' ||
+    !initial.noHorizontalOverflow
+  ) {
+    throw new Error(`Mobile sheet header regression failed: ${JSON.stringify(initial)}`);
+  }
+
+  await page.click('[data-mobile-sheet-page="skills"]');
+  await page.waitForSelector('#play-skills .play-skill-mini-row', { state: 'visible', timeout: 5000 });
+  await page.locator('#play-skills [data-play-roll-skill]').first().click();
+  await page.waitForFunction(() => (document.querySelector('#play-log')?.textContent || '').includes('Check'));
+  const skillResult = await page.evaluate(() => ({
+    page: document.getElementById('sheet-view').dataset.mobileSheetPage,
+    centerVisible: getComputedStyle(document.querySelector('.play-center-column')).display !== 'none',
+    rightHidden: getComputedStyle(document.querySelector('.play-right-column')).display === 'none',
+    rollLogged: (document.querySelector('#play-log')?.textContent || '').includes('Check')
+  }));
+  if (skillResult.page !== 'skills' || !skillResult.centerVisible || !skillResult.rightHidden || !skillResult.rollLogged) {
+    throw new Error(`Mobile skills/roll regression failed: ${JSON.stringify(skillResult)}`);
+  }
+
+  const referenceClose = page.locator('[data-play-reference-close]');
+  if (await referenceClose.isVisible().catch(() => false)) {
+    await referenceClose.click();
+  }
+
+  await page.click('[data-mobile-sheet-page="abilities"]');
+  const abilitiesResult = await page.evaluate(() => ({
+    page: document.getElementById('sheet-view').dataset.mobileSheetPage,
+    abilitiesVisible: getComputedStyle(document.querySelector('[data-play-tab-panel="abilities"]')).display !== 'none',
+    actionsHidden: getComputedStyle(document.querySelector('[data-play-tab-panel="actions"]')).display === 'none'
+  }));
+  if (abilitiesResult.page !== 'abilities' || !abilitiesResult.abilitiesVisible || !abilitiesResult.actionsHidden) {
+    throw new Error(`Mobile abilities page regression failed: ${JSON.stringify(abilitiesResult)}`);
+  }
+
+  await page.click('#play-header-card [data-play-mode="gathering"]');
+  await page.waitForSelector('#play-gathering:not([hidden])', { state: 'visible', timeout: 5000 });
+  const gatheringVisible = await page.locator('#play-gathering').isVisible();
+  const walkthroughNavVisible = await page.locator('#play-mobile-walkthrough-nav').isVisible();
+  await page.click('#play-mobile-walkthrough-nav [data-play-mode="crafting"]');
+  await page.waitForSelector('#play-crafting:not([hidden])', { state: 'visible', timeout: 5000 });
+  const craftingVisible = await page.locator('#play-crafting').isVisible();
+  if (!gatheringVisible || !walkthroughNavVisible || !craftingVisible) {
+    throw new Error(`Mobile walkthrough routing regression failed: ${JSON.stringify({ gatheringVisible, walkthroughNavVisible, craftingVisible })}`);
+  }
+
+  await page.click('#play-mobile-walkthrough-nav [data-play-mode="combat"]');
+  await page.click('[data-mobile-sheet-page="overview"]');
+  await page.waitForFunction(() => document.querySelector('#play-header-card')?.textContent?.includes('Mobile Test Hero'));
+  if (browserName.startsWith('Chromium')) {
+    const sheetPath = path.join(QA_DIR, 'screenshot-chromium-mobile-sheet.png');
+    await page.screenshot({ path: sheetPath });
+    console.log('   Captured: qa-test-results/screenshot-chromium-mobile-sheet.png');
   }
 
   await page.evaluate(() => localStorage.clear());
@@ -466,55 +672,101 @@ const browsers = [
       });
     });
     const expectedClassCount = await page.evaluate(() => window.LYRIAN_DATA.classes.length);
+    const expectedMiraneRestricted = [
+      'angelblooded',
+      'shinigami-eyes',
+      'true-shinigami-eyes',
+      'vampire',
+      'vampire-lord'
+    ];
     let evaluatedClassCards = 0;
 
     for (const identity of matrix) {
-      await page.evaluate(({ raceId, ancestryId }) => {
-        localStorage.clear();
-        localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.0');
-        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.0');
-        localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
-          ui: { mode: 'builder', gameVersion: '0.13.0' },
-          fields: { Name: 'Race and Class Matrix Audit' },
-          builder: {
-            selectedRaceId: raceId,
-            selectedAncestryId: ancestryId
-          }
-        }));
-      }, identity);
-      await page.reload({ waitUntil: 'load' });
-      await page.waitForFunction(() => window.LYRIAN_DATA?.version === '0.13.0');
-      await page.click('[data-step-index="6"]');
-      await page.waitForFunction((classCount) => (
-        document.querySelectorAll('[data-builder-action="toggle-class"]').length === classCount
-      ), expectedClassCount);
+      let standardStates = null;
+      for (const startMode of ['standard', 'mirane']) {
+        await page.evaluate(({ raceId, ancestryId, startMode }) => {
+          localStorage.clear();
+          localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.0');
+          localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.0');
+          localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+            ui: { mode: 'builder', gameVersion: '0.13.0' },
+            fields: { Name: `Race and Class Matrix Audit ${startMode}` },
+            builder: {
+              startMode,
+              selectedRaceId: raceId,
+              selectedAncestryId: ancestryId
+            }
+          }));
+        }, { ...identity, startMode });
+        await page.reload({ waitUntil: 'load' });
+        await page.waitForFunction(() => window.LYRIAN_DATA?.version === '0.13.0');
+        await page.click('[data-step-index="6"]');
+        await page.waitForFunction((classCount) => (
+          document.querySelectorAll('[data-builder-action="toggle-class"]').length === classCount
+        ), expectedClassCount);
 
-      const result = await page.evaluate(() => {
-        const cards = [...document.querySelectorAll('[data-builder-action="toggle-class"]')];
-        return {
-          count: cards.length,
-          uniqueIds: new Set(cards.map((card) => card.dataset.id)).size,
-          unresolved: cards.filter((card) => {
+        const result = await page.evaluate(() => {
+          const cards = [...document.querySelectorAll('[data-builder-action="toggle-class"]')];
+          const states = cards.map((card) => {
             const meta = card.querySelector('.builder-option-meta')?.textContent || '';
-            const isLocked = card.classList.contains('locked');
             const note = card.querySelector('.builder-option-note')?.textContent || '';
-            return isLocked
-              ? (!meta.includes('Locked') || !note.includes('Prerequisites not met'))
-              : !meta.includes('Available');
-          }).map((card) => card.dataset.id)
-        };
-      });
-      if (
-        result.count !== expectedClassCount
-        || result.uniqueIds !== expectedClassCount
-        || result.unresolved.length
-      ) {
-        throw new Error(`Race/class matrix audit failed for ${identity.raceName} / ${identity.ancestryName}: ${JSON.stringify(result)}`);
+            const campaignLocked = meta.includes('Unavailable in Mirane');
+            const available = meta.includes('Available');
+            return {
+              id: card.dataset.id,
+              status: campaignLocked ? 'campaign' : (available ? 'available' : 'locked'),
+              unlock: [...card.querySelectorAll('.builder-pill')].map((pill) => pill.textContent.trim()).find((value) => value.startsWith('Unlock ')) || '',
+              campaignLocked,
+              classLocked: card.classList.contains('locked'),
+              note
+            };
+          });
+          return {
+            count: cards.length,
+            uniqueIds: new Set(cards.map((card) => card.dataset.id)).size,
+            budgetText: [...document.querySelectorAll('.selected-chip')].map((chip) => chip.textContent.replace(/\s+/g, ' ').trim()).join(' | '),
+            states,
+            unresolved: states.filter((entry) => (
+              (entry.status === 'available' && entry.classLocked)
+              || (entry.status !== 'available' && !entry.classLocked)
+              || (entry.status === 'campaign' && !entry.note.includes('Unavailable for new Mirane Expedition characters'))
+              || (entry.status === 'locked' && !entry.note.includes('Prerequisites not met'))
+            )).map((entry) => entry.id)
+          };
+        });
+        if (
+          result.count !== expectedClassCount
+          || result.uniqueIds !== expectedClassCount
+          || result.unresolved.length
+          || !result.budgetText.includes('Class EXP: 0 / 1000')
+          || !result.budgetText.includes('Interlude: 0 / 3')
+        ) {
+          throw new Error(`Race/class matrix audit failed for ${startMode} ${identity.raceName} / ${identity.ancestryName}: ${JSON.stringify(result)}`);
+        }
+
+        if (startMode === 'standard') {
+          const unexpectedCampaignLocks = result.states.filter((entry) => entry.campaignLocked).map((entry) => entry.id);
+          if (unexpectedCampaignLocks.length) {
+            throw new Error(`Standard Play exposed Mirane class locks for ${identity.raceName} / ${identity.ancestryName}: ${unexpectedCampaignLocks.join(', ')}`);
+          }
+          standardStates = new Map(result.states.map((entry) => [entry.id, entry]));
+        } else {
+          const campaignLockedIds = result.states.filter((entry) => entry.campaignLocked).map((entry) => entry.id).sort();
+          const expectedIds = [...expectedMiraneRestricted].sort();
+          const mismatched = result.states.filter((entry) => (
+            !entry.campaignLocked
+            && standardStates
+            && (entry.status !== standardStates.get(entry.id)?.status || entry.unlock !== standardStates.get(entry.id)?.unlock)
+          )).map((entry) => entry.id);
+          if (campaignLockedIds.join('|') !== expectedIds.join('|') || mismatched.length) {
+            throw new Error(`Dual-start class rules differ unexpectedly for ${identity.raceName} / ${identity.ancestryName}: ${JSON.stringify({ campaignLockedIds, expectedIds, mismatched })}`);
+          }
+        }
+        evaluatedClassCards += result.count;
       }
-      evaluatedClassCards += result.count;
     }
 
-    console.log(`   Audited ${evaluatedClassCards} class availability states across ${matrix.length} race and ancestry paths.`);
+    console.log(`   Audited ${evaluatedClassCards} class availability states across ${matrix.length} race and ancestry paths in both Standard and Mirane starts.`);
   }
 
   async function runClassProficiencyChoiceAssertions(page) {
@@ -659,7 +911,659 @@ const browsers = [
     console.log('   Audited 25 selectable proficiency grants across 16 classes.');
   }
 
+  async function runQuickBuildStartModeAssertion(page) {
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'load' });
+
+    page.once('dialog', async (dialog) => dialog.accept());
+    await page.click('#quick-build-entry');
+    const quickSpecies = await page.evaluate(() => ({
+      count: document.querySelectorAll('[data-quick-build-action="select-species"]').length,
+      slimefolkText: document.querySelector('[data-quick-build-action="select-species"][data-id="slimefolk"]')?.textContent?.replace(/\s+/g, ' ').trim() || '',
+      slimefolkImage: document.querySelector('[data-quick-build-action="select-species"][data-id="slimefolk"] img')?.getAttribute('src') || '',
+      dullahanText: document.querySelector('[data-quick-build-action="select-species"][data-id="dullahan"]')?.textContent?.replace(/\s+/g, ' ').trim() || '',
+      wolfFolkText: document.querySelector('[data-quick-build-action="select-species"][data-id="wolf-folk"]')?.textContent?.replace(/\s+/g, ' ').trim() || ''
+    }));
+    if (
+      quickSpecies.count !== 18
+      || !quickSpecies.slimefolkText.includes('Chimera / Slimefolk')
+      || !quickSpecies.slimefolkImage.includes('Slime_GIrl')
+      || !quickSpecies.dullahanText.includes('Fae / Dullahan')
+      || !quickSpecies.wolfFolkText.includes('Chimera / Wolf-folk')
+    ) {
+      throw new Error(`Quick Build Slimefolk species regression failed: ${JSON.stringify(quickSpecies)}`);
+    }
+    await page.locator('[data-quick-build-action="select-species"][data-id="slimefolk"]').click();
+    await page.click('#builder-next');
+    await page.waitForSelector('[data-quick-start-mode="standard"]', { timeout: 5000 });
+
+    const initial = await page.evaluate(() => ({
+      standardPressed: document.querySelector('[data-quick-start-mode="standard"]')?.getAttribute('aria-pressed'),
+      miranePressed: document.querySelector('[data-quick-start-mode="mirane"]')?.getAttribute('aria-pressed'),
+      text: document.querySelector('.quick-spirit-core-card')?.textContent?.replace(/\s+/g, ' ').trim() || ''
+    }));
+    if (initial.standardPressed !== 'true' || initial.miranePressed !== 'false' || !initial.text.includes('3000 starting Clim')) {
+      throw new Error(`Quick Build standard start regression failed: ${JSON.stringify(initial)}`);
+    }
+
+    let dismissedPrompt = '';
+    page.once('dialog', async (dialog) => {
+      dismissedPrompt = dialog.message();
+      await dialog.dismiss();
+    });
+    await page.click('[data-quick-start-mode="mirane"]');
+    const afterDismiss = await page.locator('[data-quick-start-mode="standard"]').getAttribute('aria-pressed');
+    if (afterDismiss !== 'true' || !dismissedPrompt.includes('different set of campaign restrictions')) {
+      throw new Error(`Quick Build Mirane confirmation/cancel regression failed: ${JSON.stringify({ afterDismiss, dismissedPrompt })}`);
+    }
+
+    page.once('dialog', async (dialog) => dialog.accept());
+    await page.click('[data-quick-start-mode="mirane"]');
+    const mirane = await page.evaluate(() => ({
+      pressed: document.querySelector('[data-quick-start-mode="mirane"]')?.getAttribute('aria-pressed'),
+      text: document.querySelector('.quick-spirit-core-card')?.textContent?.replace(/\s+/g, ' ').trim() || '',
+      status: document.getElementById('status-message')?.textContent || ''
+    }));
+    if (
+      mirane.pressed !== 'true'
+      || !mirane.text.includes('4000 starting Clim')
+      || !mirane.text.includes('Creation EXP, breakthrough EXP, and Interlude Points stay standard')
+    ) {
+      throw new Error(`Quick Build Mirane start regression failed: ${JSON.stringify(mirane)}`);
+    }
+
+    await page.click('#builder-next');
+    await page.locator('[data-quick-build-action="select-build"]').first().click();
+    await page.click('#builder-next');
+    await page.waitForSelector('.mirane-legacy-planner', { timeout: 5000 });
+    const quickReviewSpecies = await page.locator('.review-panel').filter({ hasText: 'Species' }).first().textContent();
+    if (!quickReviewSpecies?.includes('Chimera / Slimefolk')) {
+      throw new Error(`Quick Build Slimefolk review regression failed: ${quickReviewSpecies}`);
+    }
+    const quickLegacyOptions = await page.locator('.mirane-legacy-option').count();
+    if (quickLegacyOptions !== 3) {
+      throw new Error(`Quick Build Mirane review did not show all three legacy options: ${quickLegacyOptions}`);
+    }
+
+    await page.waitForTimeout(500);
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'load' });
+  }
+
+  async function runAllQuickBuildPackageAssertions(page) {
+    const expectedClassPlans = {
+      'shield-warrior': [{ name: 'Fighter', purchasedCount: 7 }, { name: 'Guardian', purchasedCount: 0 }],
+      'great-weapon-striker': [{ name: 'Fighter', purchasedCount: 7 }, { name: 'Highlander', purchasedCount: 0 }],
+      'sneak-thief': [{ name: 'Rogue', purchasedCount: 7 }, { name: 'Mage', purchasedCount: 1 }],
+      'unarmed-monk': [{ name: 'Martial Artist', purchasedCount: 7 }, { name: 'Cultivator', purchasedCount: 1 }],
+      'hunter-archer': [{ name: 'Ranger', purchasedCount: 7 }, { name: 'Rogue', purchasedCount: 1 }],
+      'scout-sniper-path': [{ name: 'Ranger', purchasedCount: 7 }, { name: 'Rogue', purchasedCount: 1 }],
+      'control-wizard': [{ name: 'Mage', purchasedCount: 7 }, { name: 'Elementalist', purchasedCount: 0 }],
+      'elemental-blaster': [{ name: 'Pyromancer', purchasedCount: 7 }, { name: 'Sorcerer', purchasedCount: 0 }],
+      'cleric-support': [{ name: 'Acolyte', purchasedCount: 7 }, { name: 'Medic', purchasedCount: 1 }],
+      'performance-support': [{ name: 'Idol', purchasedCount: 7 }, { name: 'Jewel Idol', purchasedCount: 0 }],
+      gadgeteer: [{ name: 'Artificer', purchasedCount: 7 }, { name: 'Magitechnician', purchasedCount: 0 }],
+      'potion-healer': [{ name: 'Alchemist', purchasedCount: 7 }, { name: 'Acolyte', purchasedCount: 1 }]
+    };
+    const audited = [];
+    for (const startMode of ['standard', 'mirane']) {
+      await page.evaluate(() => localStorage.clear());
+      await page.reload({ waitUntil: 'load' });
+
+      page.once('dialog', async (dialog) => dialog.accept());
+      await page.click('#quick-build-entry');
+      await page.locator('[data-quick-build-action="select-species"][data-id="slimefolk"]').click();
+      await page.click('#builder-next');
+      await page.waitForSelector('[data-quick-start-mode="standard"]', { timeout: 5000 });
+      if (startMode === 'mirane') {
+        page.once('dialog', async (dialog) => dialog.accept());
+        await page.click('[data-quick-start-mode="mirane"]');
+      }
+      await page.click('#builder-next');
+      await page.waitForSelector('[data-quick-build-action="select-build"]', { timeout: 5000 });
+
+      const buildIds = await page.locator('[data-quick-build-action="select-build"]').evaluateAll((cards) => cards.map((card) => card.dataset.id));
+      if (buildIds.length !== 12 || new Set(buildIds).size !== buildIds.length) {
+        throw new Error(`Quick Build package inventory regression failed for ${startMode}: ${JSON.stringify(buildIds)}`);
+      }
+
+      for (const buildId of buildIds) {
+        await page.locator(`[data-quick-build-action="select-build"][data-id="${buildId}"]`).click();
+        const detailText = (await page.locator('#builder-detail-card').textContent())?.replace(/\s+/g, ' ').trim() || '';
+        if (
+          !detailText.includes('How It Plays')
+          || !detailText.includes('Starting Class Package')
+          || !detailText.includes('Skills You Start With')
+          || !detailText.includes('Equipment and Perks')
+          || !expectedClassPlans[buildId].every((entry) => detailText.includes(entry.name))
+        ) {
+          throw new Error(`Quick Build newcomer detail regression failed for ${buildId}: ${detailText}`);
+        }
+        const detailScroll = await page.evaluate(() => {
+          const copy = document.querySelector('#builder-detail-card .detail-copy-scroll');
+          if (!copy) {
+            return { exists: false };
+          }
+          const styles = getComputedStyle(copy);
+          return {
+            exists: true,
+            overflowY: styles.overflowY,
+            clientHeight: copy.clientHeight,
+            scrollHeight: copy.scrollHeight,
+            clientWidth: copy.clientWidth,
+            scrollWidth: copy.scrollWidth
+          };
+        });
+        if (
+          !detailScroll.exists
+          || !['auto', 'scroll'].includes(detailScroll.overflowY)
+          || detailScroll.clientHeight <= 0
+          || detailScroll.scrollHeight < detailScroll.clientHeight
+          || detailScroll.scrollWidth > detailScroll.clientWidth + 1
+        ) {
+          throw new Error(`Quick Build detail overflow regression failed for ${buildId}: ${JSON.stringify(detailScroll)}`);
+        }
+        await page.click('#builder-next');
+        await page.waitForSelector('.quick-build-review-actions', { timeout: 5000 });
+        await page.waitForTimeout(150);
+
+        const result = await page.evaluate(() => {
+          const panels = [...document.querySelectorAll('.review-panel')].map((panel) => panel.textContent.replace(/\s+/g, ' ').trim());
+          const saved = JSON.parse(localStorage.getItem('lyrian-chronicles-character-suite-v2') || '{}');
+          const classNames = new Map((window.LYRIAN_DETAIL_DATA?.classes || []).map((entry) => [entry.id, entry.name]));
+          const breakthroughNames = new Map((window.LYRIAN_DATA?.breakthroughs || []).map((entry) => [entry.id, entry.name]));
+          const breakthroughCosts = new Map((window.LYRIAN_DATA?.breakthroughs || []).map((entry) => [entry.id, Number.parseInt(entry.cost, 10) || 0]));
+          const itemNames = new Map((window.LYRIAN_DATA?.items || []).map((entry) => [entry.id, entry.name]));
+          const selectedClassIds = saved.builder?.selectedClassIds || [];
+          return {
+            selectedClassIds,
+            selectedClassNames: selectedClassIds.map((id) => classNames.get(id) || id),
+            classProgress: selectedClassIds.map((id) => ({
+              name: classNames.get(id) || id,
+              purchasedCount: Number(saved.builder?.classAbilityProgress?.[id] || 0)
+            })),
+            breakthroughNames: (saved.builder?.selectedBreakthroughIds || []).map((id) => breakthroughNames.get(id) || id),
+            breakthroughSpend: (saved.builder?.selectedBreakthroughIds || []).reduce((total, id) => total + (breakthroughCosts.get(id) || 0), 0),
+            inventory: (saved.play?.inventoryItems || []).map((entry) => ({
+              name: itemNames.get(entry.itemId) || entry.name || entry.itemId || '',
+              equipped: Boolean(entry.equipped)
+            })),
+            elementalAffinity: saved.builder?.choiceSelections?.['breakthrough-elemental-affinity-elements'] || '',
+            startMode: saved.builder?.startMode || '',
+            startModeField: saved.fields?.['Start Mode'] || '',
+            expPanel: panels.find((text) => text.startsWith('EXP')) || '',
+            climPanel: panels.find((text) => text.startsWith('Clim')) || '',
+            summary: panels.find((text) => text.startsWith('Why This Build')) || '',
+            roadmap: panels.find((text) => text.startsWith('Class Path and Extra-EXP Roadmap')) || '',
+            status: document.getElementById('status-message')?.textContent || ''
+          };
+        });
+        const expMatch = result.expPanel.match(/Spent (\d+) \/ (\d+); remaining (-?\d+)/);
+        const climMatch = result.climPanel.match(/Spent (\d+); remaining (-?\d+)/);
+        const expectedModeLabel = startMode === 'mirane' ? 'Mirane Expedition' : 'Standard Play';
+        const restrictedClasses = result.selectedClassNames.filter((name) => /^(?:Angelblooded|Shinigami Eyes|True Shinigami Eyes|Vampire|Vampire Lord)$/i.test(name));
+        const expectedClassPlan = expectedClassPlans[buildId];
+        const classAllocationValid = JSON.stringify(result.classProgress) === JSON.stringify(expectedClassPlan)
+          && (buildId === 'elemental-blaster'
+            ? result.breakthroughNames.includes('Elemental Affinity')
+            && result.breakthroughNames.includes('Wide Circuits I')
+            && result.elementalAffinity === 'Fire'
+            : true);
+        if (
+          result.startMode !== startMode
+          || result.startModeField !== expectedModeLabel
+          || result.selectedClassIds.length !== 2
+          || new Set(result.selectedClassIds).size !== 2
+          || !classAllocationValid
+          || restrictedClasses.length
+          || !expMatch
+          || Number(expMatch[1]) !== 1000
+          || Number(expMatch[2]) !== 1000
+          || Number(expMatch[3]) !== 0
+          || result.breakthroughSpend !== 300
+          || !climMatch
+          || Number(climMatch[2]) < 0
+          || !result.summary.includes('Class plan:')
+          || !result.summary.includes('= 1000 EXP')
+          || !result.summary.includes('Gear package:')
+          || !result.roadmap.includes('total EXP')
+          || !result.roadmap.includes('mastered')
+          || result.summary.includes('Unavailable in Mirane and removed:')
+        ) {
+          throw new Error(`Quick Build package failed for ${startMode}/${buildId}: ${JSON.stringify(result)}`);
+        }
+        const autoEquipCandidates = result.inventory.filter(({ name }) => {
+          const normalized = name.toLowerCase();
+          return !/(potion|elixir|flask|ration|food|salve|poison|shell)/.test(normalized)
+            && /(armor|weapon|binocular|kit|multitool|rig)/.test(normalized);
+        });
+        const missingAutoEquips = autoEquipCandidates.filter((entry) => !entry.equipped).map((entry) => entry.name);
+        const equippedConsumables = result.inventory
+          .filter((entry) => entry.equipped && /(potion|elixir|flask|ration|food|salve|poison|shell)/.test(entry.name.toLowerCase()))
+          .map((entry) => entry.name);
+        if (!autoEquipCandidates.length || missingAutoEquips.length || equippedConsumables.length) {
+          throw new Error(`Quick Build equipment loadout regression failed for ${startMode}/${buildId}: ${JSON.stringify({ inventory: result.inventory, missingAutoEquips, equippedConsumables })}`);
+        }
+        audited.push(`${startMode}:${buildId}`);
+
+        await page.click('[data-quick-build-action="back-to-build"]');
+        await page.waitForSelector('[data-quick-build-action="select-build"]', { timeout: 5000 });
+      }
+    }
+
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'load' });
+    page.once('dialog', async (dialog) => dialog.accept());
+    await page.click('#quick-build-entry');
+    await page.locator('[data-quick-build-action="select-species"][data-id="phoenix"]').click();
+    await page.click('#builder-next');
+    await page.click('#builder-next');
+    await page.locator('[data-quick-build-action="select-build"][data-id="elemental-blaster"]').click();
+    await page.click('#builder-next');
+    await page.waitForSelector('.quick-build-class-roadmap', { timeout: 5000 });
+    await page.waitForTimeout(250);
+    const phoenixElementalPlan = await page.evaluate(() => {
+      const saved = JSON.parse(localStorage.getItem('lyrian-chronicles-character-suite-v2') || '{}');
+      const classNames = new Map((window.LYRIAN_DETAIL_DATA?.classes || []).map((entry) => [entry.id, entry.name]));
+      const breakthroughNames = new Map((window.LYRIAN_DATA?.breakthroughs || []).map((entry) => [entry.id, entry.name]));
+      return {
+        progress: (saved.builder?.selectedClassIds || []).map((id) => ({
+          name: classNames.get(id) || id,
+          purchasedCount: Number(saved.builder?.classAbilityProgress?.[id] || 0)
+        })),
+        breakthroughs: (saved.builder?.selectedBreakthroughIds || []).map((id) => breakthroughNames.get(id) || id),
+        summary: document.querySelector('.review-panel.quick-build-class-roadmap')?.textContent.replace(/\s+/g, ' ').trim() || ''
+      };
+    });
+    if (
+      !phoenixElementalPlan.progress.some((entry) => entry.name === 'Pyromancer' && entry.purchasedCount === 7)
+      || !phoenixElementalPlan.progress.some((entry) => entry.name === 'Sorcerer' && entry.purchasedCount === 0)
+      || phoenixElementalPlan.breakthroughs.includes('Elemental Affinity')
+      || !phoenixElementalPlan.breakthroughs.includes('Wide Circuits I')
+      || !phoenixElementalPlan.summary.includes('Phoenix already grants Fire Mastery')
+    ) {
+      throw new Error(`Quick Build Phoenix Fire Mastery shortcut regression failed: ${JSON.stringify(phoenixElementalPlan)}`);
+    }
+
+    const demonOptimizations = {
+      'sneak-thief': [
+        { name: 'Rogue', purchasedCount: 7 },
+        { name: 'Mage', purchasedCount: 1 },
+        { name: 'Saboteur', purchasedCount: 0 }
+      ],
+      'cleric-support': [
+        { name: 'Acolyte', purchasedCount: 7 },
+        { name: 'Medic', purchasedCount: 2 }
+      ],
+      'performance-support': [
+        { name: 'Idol', purchasedCount: 7 },
+        { name: 'Jewel Idol', purchasedCount: 0 },
+        { name: 'Maid', purchasedCount: 0 }
+      ],
+      'potion-healer': [
+        { name: 'Alchemist', purchasedCount: 7 },
+        { name: 'Medic', purchasedCount: 2 }
+      ]
+    };
+    for (const [buildId, expectedProgress] of Object.entries(demonOptimizations)) {
+      await page.evaluate(() => localStorage.clear());
+      await page.reload({ waitUntil: 'load' });
+      page.once('dialog', async (dialog) => dialog.accept());
+      await page.click('#quick-build-entry');
+      await page.locator('[data-quick-build-action="select-species"][data-id="demon"]').click();
+      await page.click('#builder-next');
+      await page.click('#builder-next');
+      await page.locator(`[data-quick-build-action="select-build"][data-id="${buildId}"]`).click();
+      const demonDetail = (await page.locator('#builder-detail-card').textContent())?.replace(/\s+/g, ' ').trim() || '';
+      if (!expectedProgress.every((entry) => demonDetail.includes(entry.name)) || !demonDetail.includes('Demon optimization:')) {
+        throw new Error(`Quick Build Demon detail optimization failed for ${buildId}: ${demonDetail}`);
+      }
+      await page.click('#builder-next');
+      await page.waitForSelector('.quick-build-class-roadmap', { timeout: 5000 });
+      await page.waitForTimeout(250);
+      const demonResult = await page.evaluate(() => {
+        const saved = JSON.parse(localStorage.getItem('lyrian-chronicles-character-suite-v2') || '{}');
+        const classNames = new Map((window.LYRIAN_DETAIL_DATA?.classes || []).map((entry) => [entry.id, entry.name]));
+        return {
+          progress: (saved.builder?.selectedClassIds || []).map((id) => ({
+            name: classNames.get(id) || id,
+            purchasedCount: Number(saved.builder?.classAbilityProgress?.[id] || 0)
+          })),
+          expText: [...document.querySelectorAll('.review-panel')]
+            .map((panel) => panel.textContent.replace(/\s+/g, ' ').trim())
+            .find((text) => text.startsWith('EXP')) || '',
+          summary: [...document.querySelectorAll('.review-panel')]
+            .map((panel) => panel.textContent.replace(/\s+/g, ' ').trim())
+            .find((text) => text.startsWith('Why This Build')) || ''
+        };
+      });
+      if (
+        JSON.stringify(demonResult.progress) !== JSON.stringify(expectedProgress)
+        || !demonResult.expText.includes('Spent 1000 / 1000; remaining 0')
+        || !demonResult.summary.includes('Demon optimization:')
+      ) {
+        throw new Error(`Quick Build Demon class shortcut failed for ${buildId}: ${JSON.stringify(demonResult)}`);
+      }
+    }
+
+    console.log(`   Audited ${audited.length} Quick Build class-and-gear packages across Standard and Mirane starts, plus Phoenix and Demon race shortcuts.`);
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'load' });
+  }
+
+  async function runMiraneLegacyPlannerAssertion(page) {
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.0');
+      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.0');
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'builder', builderStep: 9, gameVersion: '0.13.0' },
+        fields: { Name: 'Mirane Legacy Audit', 'Spirit Core': '3200' },
+        builder: { startMode: 'mirane', selectedRaceId: 'human' }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.waitForSelector('.mirane-legacy-planner', { timeout: 5000 });
+
+    const planner = page.locator('.mirane-legacy-planner');
+    const summary = await planner.innerText();
+    if (
+      !summary.includes('Current Spirit Core')
+      || !summary.includes('3200')
+      || !summary.includes('2200 Spirit Core')
+      || await planner.locator('.mirane-legacy-option').count() !== 3
+    ) {
+      throw new Error(`Mirane legacy planner summary regression failed: ${summary}`);
+    }
+
+    await planner.locator('.mirane-legacy-option').filter({ hasText: 'Retire This Character' }).locator('summary').click();
+    const retirementText = await planner.locator('.mirane-legacy-option').filter({ hasText: 'Retire This Character' }).innerText();
+    if (!retirementText.includes('lockout still applies') || !retirementText.includes('Slow Starter') || !retirementText.includes('4050 Clim')) {
+      throw new Error(`Mirane retirement explanation regression failed: ${retirementText}`);
+    }
+
+    await planner.locator('.mirane-legacy-option').filter({ hasText: 'Expedition Death — Option 2' }).locator('summary').click();
+    const optionTwoText = await planner.locator('.mirane-legacy-option').filter({ hasText: 'Expedition Death — Option 2' }).innerText();
+    if (!optionTwoText.includes('50% rate') || !optionTwoText.includes('remains locked out')) {
+      throw new Error(`Mirane expedition death Option 2 regression failed: ${optionTwoText}`);
+    }
+
+    await page.evaluate(() => {
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'builder', builderStep: 9, gameVersion: '0.13.0' },
+        fields: { Name: 'Standard Legacy Audit', 'Spirit Core': '3200' },
+        builder: { startMode: 'standard', selectedRaceId: 'human' }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    if (await page.locator('.mirane-legacy-planner').count()) {
+      throw new Error('Mirane legacy planner appeared during Standard Play.');
+    }
+
+    await page.waitForTimeout(500);
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'load' });
+  }
+
+  async function runMiraneEconomyAndCraftingAssertion(page) {
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.0');
+      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.0');
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'sheet', playMode: 'crafting', sheetTab: 'actions', gameVersion: '0.13.0' },
+        fields: { Name: 'Mirane Economy Audit', Exp: '0' },
+        builder: { startMode: 'mirane', selectedRaceId: 'human' },
+        play: { crafting: { activityMode: 'crafting' } }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.waitForSelector('#play-crafting:not([hidden])', { timeout: 5000 });
+
+    const rulesText = await page.locator('#play-crafting .mirane-downtime-rules').first().innerText();
+    if (
+      !rulesText.includes('Mirane crafting rules')
+      || !rulesText.includes('crafting channel')
+      || !rulesText.includes('Basic Craft')
+      || !rulesText.includes('150 Clim base')
+      || !rulesText.includes('4000 Clim maximum listing price')
+    ) {
+      throw new Error(`Mirane crafting/economy rules panel regression failed: ${rulesText}`);
+    }
+
+    const rulesContrast = await page.evaluate(() => {
+      const panel = document.querySelector('#play-crafting .mirane-downtime-rules');
+      const paragraph = panel?.querySelector(':scope > p');
+      return {
+        paragraphColor: paragraph ? getComputedStyle(paragraph).color : '',
+        panelBackground: panel ? getComputedStyle(panel).backgroundColor : ''
+      };
+    });
+    if (!/26,\s*27,\s*31/.test(rulesContrast.paragraphColor)) {
+      throw new Error(`Mirane crafting rules contrast regression failed: ${JSON.stringify(rulesContrast)}`);
+    }
+
+    const allRecipeCount = await page.locator('#play-crafting [data-crafting-select-recipe]').count();
+    const availabilityFilter = page.locator('#play-crafting [data-crafting-availability-filter="available"]');
+    if (await availabilityFilter.count() !== 1) {
+      throw new Error('Crafting Available Recipes filter control was not rendered.');
+    }
+    const recipeCategoryFilterGroup = page.locator('#play-crafting .play-recipe-filter-group').filter({ hasText: 'Recipe Category' });
+    if (await recipeCategoryFilterGroup.locator('[data-crafting-availability-filter="available"]').count() !== 1) {
+      throw new Error('Crafting Available Recipes filter is not beside the recipe category choices.');
+    }
+    await availabilityFilter.click();
+    const filteredRecipeCount = await page.locator('#play-crafting [data-crafting-select-recipe]').count();
+    const unavailableRecipeCount = await page.locator('#play-crafting .play-recipe-option.is-unavailable').count();
+    const availabilityNote = await page.locator('#play-crafting .play-recipe-availability-filter-note').innerText();
+    const availabilityPressed = await availabilityFilter.getAttribute('aria-pressed');
+    if (availabilityPressed !== 'true' || unavailableRecipeCount !== 0 || !availabilityNote.includes('class and required core tool')) {
+      throw new Error(`Crafting Available Recipes filter regression failed: ${JSON.stringify({ allRecipeCount, filteredRecipeCount, unavailableRecipeCount, availabilityNote, availabilityPressed })}`);
+    }
+    await availabilityFilter.click();
+    const restoredRecipeCount = await page.locator('#play-crafting [data-crafting-select-recipe]').count();
+    if (restoredRecipeCount !== allRecipeCount) {
+      throw new Error(`Crafting recipe filter did not restore the full list: ${JSON.stringify({ allRecipeCount, restoredRecipeCount })}`);
+    }
+
+    await page.click('#play-crafting [data-crafting-selection-mode="shop"]');
+    const marketPriceInput = page.locator('#play-crafting [data-mirane-market-price]').first();
+    const marketItemId = await marketPriceInput.getAttribute('data-mirane-market-price');
+    if (!marketItemId) {
+      throw new Error('Mirane crafting shop did not expose a current market price field.');
+    }
+    const availabilitySelector = `#play-crafting [data-mirane-market-availability="${marketItemId}"]`;
+    const purchaseSelector = `#play-crafting [data-crafting-purchase-item="${marketItemId}"]`;
+    await page.click(availabilitySelector);
+    const unavailable = await page.locator(purchaseSelector).isDisabled();
+    if (!unavailable) {
+      throw new Error('Mirane market availability toggle did not disable purchasing.');
+    }
+    await page.click(availabilitySelector);
+    await page.locator(`#play-crafting [data-mirane-market-price="${marketItemId}"]`).fill('1');
+    await page.locator(`#play-crafting [data-mirane-market-price="${marketItemId}"]`).press('Tab');
+    page.once('dialog', async (dialog) => dialog.accept());
+    await page.click(purchaseSelector);
+    await page.waitForFunction(() => (document.getElementById('status-pill')?.textContent || '').includes('1 Clim'));
+
+    await page.click('#play-crafting [data-crafting-selection-mode="recipe"]');
+    await page.locator('#play-crafting [data-crafting-select-recipe]').first().click();
+    await page.locator('#play-crafting [data-mirane-natural-ip]').check();
+    await page.click('#play-crafting [data-crafting-wizard-goto="4"]');
+    await page.click('#play-crafting [data-crafting-action="craft-failure"]');
+    const firstAward = await page.locator('[data-field="Exp"]').first().inputValue();
+    if (firstAward !== '20') {
+      throw new Error(`Mirane natural-IP crafting EXP was not awarded once: ${firstAward}`);
+    }
+
+    await page.click('#play-crafting [data-crafting-action="reset-session"]');
+    await page.locator('#play-crafting [data-crafting-select-recipe]').first().click();
+    await page.click('#play-crafting [data-crafting-wizard-goto="4"]');
+    await page.click('#play-crafting [data-crafting-action="craft-failure"]');
+    const secondAward = await page.locator('[data-field="Exp"]').first().inputValue();
+    if (secondAward !== '20') {
+      throw new Error(`Mirane once-per-interlude EXP cap failed: ${secondAward}`);
+    }
+
+    await page.click('#play-crafting [data-mirane-reset-interlude-exp]');
+    const resetText = await page.locator('#play-crafting .mirane-interlude-exp-status').first().innerText();
+    if (!resetText.includes('award is available')) {
+      throw new Error(`Mirane interlude phase reset failed: ${resetText}`);
+    }
+
+    await page.click('#play-header-card [data-play-mode="gathering"]');
+    await page.waitForSelector('#play-gathering .mirane-downtime-rules', { timeout: 5000 });
+    const gatheringRulesText = await page.locator('#play-gathering .mirane-downtime-rules').first().innerText();
+    if (!gatheringRulesText.includes('Mirane gathering rules') || !gatheringRulesText.includes('Gather interlude') || !gatheringRulesText.includes('Spiritual Ground')) {
+      throw new Error(`Mirane gathering rules panel regression failed: ${gatheringRulesText}`);
+    }
+    const gatheringRulesContrast = await page.evaluate(() => {
+      const panel = document.querySelector('#play-gathering .mirane-downtime-rules');
+      const paragraph = panel?.querySelector(':scope > p');
+      return {
+        paragraphColor: paragraph ? getComputedStyle(paragraph).color : '',
+        panelBackground: panel ? getComputedStyle(panel).backgroundColor : ''
+      };
+    });
+    if (!/26,\s*27,\s*31/.test(gatheringRulesContrast.paragraphColor)) {
+      throw new Error(`Mirane gathering rules contrast regression failed: ${JSON.stringify(gatheringRulesContrast)}`);
+    }
+
+    await page.waitForTimeout(500);
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'load' });
+  }
+
+  async function runDualStartGameplayOverrideAssertion(page) {
+    const miraneClasses = ['onmyoji-', 'oracle', 'merchant', 'necromancer', 'death-knight'];
+    await page.evaluate((selectedClassIds) => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.0');
+      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.0');
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'sheet', playMode: 'combat', sheetTab: 'actions', gameVersion: '0.13.0' },
+        fields: { Name: 'Mirane Gameplay Override Audit', Toughness: '5' },
+        builder: {
+          startMode: 'mirane',
+          selectedRaceId: 'human',
+          selectedClassIds,
+          classAbilityProgress: Object.fromEntries(selectedClassIds.map((id) => [id, 4]))
+        },
+        play: { hpHasManualChange: true, resources: { hpCurrent: 1 } }
+      }));
+    }, miraneClasses);
+    await page.reload({ waitUntil: 'load' });
+    await page.waitForSelector('.play-rest-card', { timeout: 5000 });
+
+    const miraneRestText = await page.locator('.play-rest-card').innerText();
+    if (
+      !miraneRestText.includes('Floor Rest 0x Toughness')
+      || !miraneRestText.includes('Camp / Basic Rest 1x')
+      || !miraneRestText.includes('Luxury Rest 2x')
+      || !miraneRestText.includes('recover only 1 Mana')
+    ) {
+      throw new Error(`Mirane recovery rule summary regression failed: ${miraneRestText}`);
+    }
+    const miraneRecoveryContrast = await page.evaluate(() => {
+      const override = document.querySelector('.play-rest-card .mirane-rule-override');
+      const paragraph = override?.querySelector('p');
+      const normalParagraph = document.querySelector('.play-rest-card .play-action-copy > p');
+      return {
+        overrideTextColor: paragraph ? getComputedStyle(paragraph).color : '',
+        normalTextColor: normalParagraph ? getComputedStyle(normalParagraph).color : '',
+        backgroundColor: override ? getComputedStyle(override).backgroundColor : ''
+      };
+    });
+    if (
+      !miraneRecoveryContrast.overrideTextColor
+      || miraneRecoveryContrast.overrideTextColor === miraneRecoveryContrast.normalTextColor
+      || !/247,\s*237,\s*207/.test(miraneRecoveryContrast.overrideTextColor)
+    ) {
+      throw new Error(`Mirane recovery contrast regression failed: ${JSON.stringify(miraneRecoveryContrast)}`);
+    }
+    await page.click('[data-play-rest="floor"]');
+    const miraneRestLog = await page.locator('#play-log').innerText();
+    if (!miraneRestLog.includes('Recovered 0 HP (0x Toughness 5)') || !miraneRestLog.includes('reduced by one tier')) {
+      throw new Error(`Mirane reduced-tier rest execution failed: ${miraneRestLog}`);
+    }
+
+    await page.click('[data-play-tab="abilities"]');
+    const overrideCards = await page.evaluate(() => {
+      const cardText = (name) => [...document.querySelectorAll('#play-quick-abilities .play-action-card')]
+        .find((card) => [...card.querySelectorAll('strong, .play-reference-title')]
+          .some((title) => title.textContent.trim() === name))?.textContent?.replace(/\s+/g, ' ').trim() || '';
+      return {
+        divineProvidence: cardText('Divine Providence'),
+        createTalisman: cardText('Create Talisman'),
+        procurement: cardText('Procurement')
+      };
+    });
+    if (
+      !overrideCards.divineProvidence.includes('both rested and entered a new encounter')
+      || !overrideCards.createTalisman.includes('natural IP grants 20 EXP')
+      || !overrideCards.procurement.includes('500 points for each week')
+    ) {
+      throw new Error(`Mirane ability override card regression failed: ${JSON.stringify(overrideCards)}`);
+    }
+
+    const classOverrideExpectations = {
+      oracle: 'once per expedition',
+      necromancer: 'store up to 8 corpses',
+      'death-knight': 'shared storage limit is 8'
+    };
+    for (const [classId, expectedText] of Object.entries(classOverrideExpectations)) {
+      await page.click(`[data-play-class-reference="${classId}"]`);
+      await page.waitForSelector('#sheet-modal:not([hidden])', { timeout: 5000 });
+      const modalText = await page.locator('#sheet-modal-content').innerText();
+      if (!modalText.includes('Mirane Expedition override') || !modalText.includes(expectedText)) {
+        throw new Error(`Mirane ${classId} class reference override failed: ${modalText}`);
+      }
+      await page.click('#sheet-modal-close');
+    }
+
+    await page.evaluate(() => {
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'builder', gameVersion: '0.13.0' },
+        fields: { Name: 'Mirane Favor Class Audit' },
+        builder: { startMode: 'mirane', selectedRaceId: 'human' }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-step-index="6"]');
+    const favorText = await page.locator('.mirane-class-start-note').innerText();
+    if (!favorText.includes('1 Favor for a Tier 1 or Tier 2 class') || !favorText.includes('2 Favor for a Tier 3 class')) {
+      throw new Error(`Mirane Favor class-training note regression failed: ${favorText}`);
+    }
+
+    await page.evaluate(() => {
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'sheet', playMode: 'combat', sheetTab: 'actions', gameVersion: '0.13.0' },
+        fields: { Name: 'Standard Gameplay Override Audit', Toughness: '5' },
+        builder: { startMode: 'standard', selectedRaceId: 'human' },
+        play: { hpHasManualChange: true, resources: { hpCurrent: 1 } }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.waitForSelector('.play-rest-card', { timeout: 5000 });
+    if (await page.locator('.play-rest-card .mirane-rule-override').count()) {
+      throw new Error('Mirane recovery override appeared during Standard Play.');
+    }
+    await page.click('[data-play-rest="floor"]');
+    const standardRestLog = await page.locator('#play-log').innerText();
+    if (!standardRestLog.includes('Recovered 5 HP (1x Toughness 5)') || standardRestLog.includes('reduced by one tier')) {
+      throw new Error(`Standard rest changed by Mirane rules: ${standardRestLog}`);
+    }
+
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'load' });
+  }
+
   async function runRulesRegressionAssertions(page) {
+    await runQuickBuildStartModeAssertion(page);
+    await runAllQuickBuildPackageAssertions(page);
+    await runMiraneLegacyPlannerAssertion(page);
+    await runMiraneEconomyAndCraftingAssertion(page);
+    await runDualStartGameplayOverrideAssertion(page);
     await runAllClassProgressionAssertions(page);
     await runRaceClassMatrixAssertions(page);
     await runClassProficiencyChoiceAssertions(page);
@@ -3055,7 +3959,7 @@ const browsers = [
             const contentValid = stepContent && stepContent.children.length > 0 && stepContent.textContent.trim().length > 0;
             const navValid = stepNav && stepNav.querySelectorAll('button').length > 0;
             const versionsValid = versionSelect && versionSelect.querySelectorAll('option').length > 0;
-            const builderBuildValid = builderBuildVersion && builderBuildVersion.textContent.includes('Beta 1.94');
+            const builderBuildValid = builderBuildVersion && builderBuildVersion.textContent.includes('Beta 2.1');
 
             return {
               contentValid,
@@ -3102,6 +4006,8 @@ const browsers = [
 
           if (vp.name === 'Mobile') {
             await runMobileChoiceOverlayAssertions(page, browserInfo.name);
+            await runMobileQuickBuildDetailAssertions(page, browserInfo.name);
+            await runMobileSheetAppAssertions(page, browserInfo.name);
           }
 
           // Take screenshot
