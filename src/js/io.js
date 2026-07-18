@@ -3,6 +3,7 @@ import { cleanText } from "./utils.js";
 import { createDefaultState, getSavedSlots, mergeBuilderState, mergePlayState, persistWorkingState, setActiveSaveSlotId, state, trySetLocalStorage } from "./state.js";
 import { alignLoadedStateGameVersion, exportPrepCache, getBreakthroughBudgetState, getClassDetail, getDefaultGameVersionId, getSelectedGameVersionId, getStartingFundsState, lookup, shouldPromoteSavedVersionToLatest } from "./rules.js";
 import { PDF_LONG_TEXT_FIELDS, appendFieldText, applyStateToDom, base64ToBytes, buildExportFileStem, buildPdfImportPayload, buildSlotId, buildSpreadsheetExportCellMap, buildSpreadsheetImportPayload, buildSpreadsheetMetadataSheet, compactSaveSlotEntry, createStateSnapshot, createStorableStateSnapshot, decodeEmbeddedStateText, fillAbilityField, firstEmptyField, getBreakthroughRequirementStatus, getStorageFailureMessage, hydrateBuilderSelectionsFromFields, normalizeCurrentPortraitDataUrl, openLoadSavedModal, openSaveSlotModal, prepareExportCache, promptForSlotName, refreshSaveSlotList, renderBuilder, setStatus, showExportFailureModal, showExportSuccessModal, syncNameFields, updateSheetModalProgress, withTimeout } from "./ui.js";
+import { ensurePdfRuntimeLoaded, ensureSpreadsheetRuntimeLoaded } from "./runtime-loader.js";
 
 
 
@@ -884,11 +885,9 @@ const confirmed = window.confirm(`Delete ${slot.name}? This cannot be undone.`);
       }
     }
 export async function exportPdfState() {
-      if (!window.PDFLib) {
-        setStatus("PDF export is not available yet.");
-        return;
-      }
       try {
+        setStatus("Loading PDF export tools...");
+        await ensurePdfRuntimeLoaded({ includeExportAssets: true });
         await updateSheetModalProgress("Preparing the official-style PDF sheet.", 5, "Gathering character fields and derived sheet values.");
         setStatus("Generating PDF character sheet...");
 const portraitWasNormalized = await normalizeCurrentPortraitDataUrl();
@@ -946,11 +945,9 @@ const fileName = `${preparedExport.fileStem}.pdf`;
       }
     }
 export async function exportSpreadsheetState() {
-      if (!window.XLSX) {
-        setStatus("Spreadsheet export is not available yet.");
-        return;
-      }
       try {
+        setStatus("Loading spreadsheet export tools...");
+        await ensureSpreadsheetRuntimeLoaded({ includeExportAssets: true });
         await updateSheetModalProgress("Preparing the filled spreadsheet workbook.", 5, "Gathering character fields and derived sheet values.");
         setStatus("Generating spreadsheet workbook...");
 const portraitWasNormalized = await normalizeCurrentPortraitDataUrl();
@@ -986,10 +983,8 @@ const fileName = `${preparedExport.fileStem}.xlsx`;
       }
     }
 async function importPdfState(file) {
-      if (!window.PDFLib) {
-        setStatus("PDF import is not available yet.");
-        return false;
-      }
+      setStatus("Loading PDF import tools...");
+      await ensurePdfRuntimeLoaded();
 const pdfBytes = await readFileAsArrayBuffer(file);
 const pdfDoc = await window.PDFLib.PDFDocument.load(pdfBytes);
 const form = pdfDoc.getForm();
@@ -1018,10 +1013,8 @@ const didLoad = loadSavedState(payload, { activeSlotId: "", statusOnFailure: tru
       return didLoad;
     }
 async function importSpreadsheetState(file) {
-      if (!window.XLSX) {
-        setStatus("Spreadsheet import is not available yet.");
-        return false;
-      }
+      setStatus("Loading spreadsheet import tools...");
+      await ensureSpreadsheetRuntimeLoaded();
 const workbook = window.XLSX.read(await readFileAsArrayBuffer(file), { type: "array" });
 const embedded = await extractSpreadsheetMetadata(workbook);
       if (embedded) {

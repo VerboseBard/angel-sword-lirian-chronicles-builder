@@ -1,7 +1,6 @@
 import { ACTIVE_SAVE_SLOT_KEY, STORAGE_KEY } from "./constants.js";
 import { flushScheduledWorkingStatePersist, getSavedSlots, hasWorkingStateStorage, setWorkingStatePersistenceReady, setWorkingStateStorageWasPresent } from "./state.js";
 import { alignLoadedStateGameVersion, loadInitialGameVersion } from "./rules.js";
-import { preloadDiceSetFaceArt } from "./dice.js";
 import { loadSavedState } from "./io.js";
 import { applyStateToDom, bindEvents, buildSheet, createDatalists, detectVersionServer, renderVersionManager, setStatus } from "./ui.js";
 
@@ -49,7 +48,6 @@ const activeSlotId = localStorage.getItem(ACTIVE_SAVE_SLOT_KEY) || "";
           flushScheduledWorkingStatePersist();
         }
       });
-      preloadDiceSetFaceArt();
     }
 
     initialize().catch((error) => {

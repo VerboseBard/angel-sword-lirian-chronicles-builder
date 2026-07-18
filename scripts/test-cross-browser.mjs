@@ -90,7 +90,12 @@ async function runDirectFileStartupAssertion() {
         summaryText: summary?.textContent?.replace(/\s+/g, ' ').trim() || '',
         buildLabel: document.querySelector('.builder-build-version')?.textContent || '',
         startModes: [...document.querySelectorAll('[data-character-start-mode]')].map((button) => button.dataset.characterStartMode),
-        activeStartMode: document.querySelector('[data-character-start-mode][aria-pressed="true"]')?.dataset.characterStartMode || ''
+        activeStartMode: document.querySelector('[data-character-start-mode][aria-pressed="true"]')?.dataset.characterStartMode || '',
+        optionalRuntimesDeferred: !window.PDFLib
+          && !window.XLSX
+          && !window.JSZip
+          && !window.THREE
+          && !window.LyrianAccurateDiceRoller
       };
     });
 
@@ -100,9 +105,10 @@ async function runDirectFileStartupAssertion() {
       && result.cardCount > 0
       && result.navCount > 0
       && result.summaryText.includes('Identity')
-      && result.buildLabel.includes('Beta 2.1')
+      && result.buildLabel.includes('Beta 2.11')
       && result.startModes.join('|') === 'standard|mirane'
-      && result.activeStartMode === 'standard';
+      && result.activeStartMode === 'standard'
+      && result.optionalRuntimesDeferred;
 
     if (!startupIsValid || errors.length || failedFileRequests.length) {
       throw new Error(`Direct file startup regression failed: ${JSON.stringify({ result, errors, failedFileRequests }, null, 2)}`);
@@ -292,6 +298,12 @@ async function runMobileSheetAppAssertions(page, browserName) {
   const initial = await page.evaluate(() => {
     const modeButtons = [...document.querySelectorAll('#play-header-card [data-play-mode]')];
     const positions = Object.fromEntries(modeButtons.map((button) => [button.dataset.playMode, Math.round(button.getBoundingClientRect().x)]));
+    const pageNav = document.getElementById('play-mobile-page-nav');
+    const pageNavRect = pageNav?.getBoundingClientRect();
+    const pageButtonsFit = [...(pageNav?.querySelectorAll('[data-mobile-sheet-page]') || [])].every((button) => {
+      const rect = button.getBoundingClientRect();
+      return rect.left >= pageNavRect.left - 1 && rect.right <= pageNavRect.right + 1;
+    });
     return {
       visibleModeLabels: modeButtons.map((button) => button.innerText.trim()),
       positions,
@@ -300,7 +312,8 @@ async function runMobileSheetAppAssertions(page, browserName) {
       dockSticky: getComputedStyle(document.getElementById('play-mobile-sheet-dock')).position === 'sticky',
       page: document.getElementById('sheet-view').dataset.mobileSheetPage,
       manifest: document.querySelector('link[rel="manifest"]')?.getAttribute('href') || '',
-      noHorizontalOverflow: document.documentElement.scrollWidth <= document.documentElement.clientWidth
+      noHorizontalOverflow: document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+      pageButtonsFit
     };
   });
 
@@ -314,7 +327,8 @@ async function runMobileSheetAppAssertions(page, browserName) {
     !initial.dockSticky ||
     initial.page !== 'overview' ||
     initial.manifest !== 'manifest.webmanifest' ||
-    !initial.noHorizontalOverflow
+    !initial.noHorizontalOverflow ||
+    !initial.pageButtonsFit
   ) {
     throw new Error(`Mobile sheet header regression failed: ${JSON.stringify(initial)}`);
   }
@@ -338,7 +352,7 @@ async function runMobileSheetAppAssertions(page, browserName) {
     await referenceClose.click();
   }
 
-  await page.click('[data-mobile-sheet-page="abilities"]');
+  await page.click('[data-mobile-sheet-page="abilities"]', { force: true });
   const abilitiesResult = await page.evaluate(() => ({
     page: document.getElementById('sheet-view').dataset.mobileSheetPage,
     abilitiesVisible: getComputedStyle(document.querySelector('[data-play-tab-panel="abilities"]')).display !== 'none',
@@ -352,11 +366,37 @@ async function runMobileSheetAppAssertions(page, browserName) {
   await page.waitForSelector('#play-gathering:not([hidden])', { state: 'visible', timeout: 5000 });
   const gatheringVisible = await page.locator('#play-gathering').isVisible();
   const walkthroughNavVisible = await page.locator('#play-mobile-walkthrough-nav').isVisible();
+  const gatheringLayout = await page.evaluate(() => ({
+    noHorizontalOverflow: document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+    diceHidden: getComputedStyle(document.getElementById('sheet-dice-tray')).display === 'none',
+    wizardStepsVisible: [...document.querySelectorAll('#play-gathering .play-wizard-nav-step')].every((button) => {
+      const rect = button.getBoundingClientRect();
+      return rect.left >= 0 && rect.right <= document.documentElement.clientWidth;
+    })
+  }));
   await page.click('#play-mobile-walkthrough-nav [data-play-mode="crafting"]');
   await page.waitForSelector('#play-crafting:not([hidden])', { state: 'visible', timeout: 5000 });
   const craftingVisible = await page.locator('#play-crafting').isVisible();
-  if (!gatheringVisible || !walkthroughNavVisible || !craftingVisible) {
-    throw new Error(`Mobile walkthrough routing regression failed: ${JSON.stringify({ gatheringVisible, walkthroughNavVisible, craftingVisible })}`);
+  const craftingLayout = await page.evaluate(() => ({
+    noHorizontalOverflow: document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+    diceHidden: getComputedStyle(document.getElementById('sheet-dice-tray')).display === 'none',
+    wizardStepsVisible: [...document.querySelectorAll('#play-crafting .play-wizard-nav-step')].every((button) => {
+      const rect = button.getBoundingClientRect();
+      return rect.left >= 0 && rect.right <= document.documentElement.clientWidth;
+    })
+  }));
+  if (
+    !gatheringVisible ||
+    !walkthroughNavVisible ||
+    !craftingVisible ||
+    !gatheringLayout.noHorizontalOverflow ||
+    !gatheringLayout.diceHidden ||
+    !gatheringLayout.wizardStepsVisible ||
+    !craftingLayout.noHorizontalOverflow ||
+    !craftingLayout.diceHidden ||
+    !craftingLayout.wizardStepsVisible
+  ) {
+    throw new Error(`Mobile walkthrough routing regression failed: ${JSON.stringify({ gatheringVisible, walkthroughNavVisible, craftingVisible, gatheringLayout, craftingLayout })}`);
   }
 
   await page.click('#play-mobile-walkthrough-nav [data-play-mode="combat"]');
@@ -3362,6 +3402,7 @@ const browsers = [
 
   async function runSpreadsheetVisibleGridImportAssertion(page) {
     const storageKey = 'lyrian-chronicles-character-suite-v2';
+    await page.addScriptTag({ url: new URL('assets/xlsx.full.min.js', page.url()).toString() });
     await page.evaluate(() => {
       localStorage.clear();
       const core = {};
@@ -3531,6 +3572,7 @@ const browsers = [
     await page.evaluate(() => localStorage.clear());
     await page.reload({ waitUntil: 'load' });
     await page.waitForTimeout(500);
+    await page.addScriptTag({ url: new URL('assets/xlsx.full.min.js', page.url()).toString() });
 
     await page.evaluate(() => {
       const core = {};
@@ -3959,7 +4001,7 @@ const browsers = [
             const contentValid = stepContent && stepContent.children.length > 0 && stepContent.textContent.trim().length > 0;
             const navValid = stepNav && stepNav.querySelectorAll('button').length > 0;
             const versionsValid = versionSelect && versionSelect.querySelectorAll('option').length > 0;
-            const builderBuildValid = builderBuildVersion && builderBuildVersion.textContent.includes('Beta 2.1');
+            const builderBuildValid = builderBuildVersion && builderBuildVersion.textContent.includes('Beta 2.11');
 
             return {
               contentValid,

@@ -4,6 +4,7 @@ import { clearSheet, createDefaultState, getSavedSlots, mergePlayState, persistW
 import { applyGameVersion, detailLookup, exportPrepCache, getAncestryDetail, getAncestryOptionsByPrimaryRace, getAncestryRequirementPhrases, getBreakthroughBudgetState, getBuilderChoiceDefinitionsCacheKey, getCampaignProgressState, getCharacterStartMode, getClassDetail, getClassUnlockBudgetState, getComputedBonuses, getCurrentSecondaryLineageMode, getDemonClanOptions, getDerivedCombatStats, getHumanRaceSkillChoiceOptions, getRaceDetail, getRaceRequirementPhrases, getSecondaryLineageLabels, getSelectedAncestryDetail, getSelectedBreakthroughRecords, getSelectedClassDetails, getSelectedClassProgress, getSelectedGameVersionId, getSelectedItemRecords, getSelectedRaceDetail, getSkillBreakdownParts, getSkillRowsData, getStartingFundsState, getVersionManifest, getVersionRecord, getVersionRecords, lookup, persistSelectedGameVersion, syncPlayResourcesFromFields, usePlayCost, versionRuntime } from "./rules.js";
 import { dicePackRuntime, preloadDiceSetFaceArt, renderDiceTray } from "./dice.js";
 import { closeSheetModal, deriveSaveSlotName, exportJsonState, exportPdfState, exportSpreadsheetState, exportState, extractAbilityHeading, getWorksheetNumberText, getWorksheetText, handleImportedCharacterFile, handleSaveSlotAction, loadFromBrowser, openSheetModal, parseClimCost, parseNumericCost, saveCurrentCharacterToActiveSlot, saveCurrentCharacterToNewSlot, saveToBrowser, setSpreadsheetExportCell } from "./io.js";
+import { ensureDiceRuntimeLoaded, isDiceRuntimeLoaded } from "./runtime-loader.js";
 
 
 
@@ -242,7 +243,7 @@ const data = await response.json();
 async function checkForVersionUpdates() {
       const connected = versionRuntime.serverAvailable || await detectVersionServer();
       if (!connected) {
-        setStatus("This web build is updated by published site deployments. Refresh after a new Beta 2.1 update is pushed.");
+        setStatus("This web build is updated by published site deployments. Refresh after a new Beta 2.11 update is pushed.");
         renderVersionManager();
         return;
       }
@@ -7820,6 +7821,23 @@ function getSettledTopReadDisplay(settledResults = []) {
         .join(" + ");
     }
 function animateRollDice(results = [], options = {}) {
+      if (!isDiceRuntimeLoaded()) {
+        setStatus("Loading 3D dice for the first roll...");
+        ensureDiceRuntimeLoaded()
+          .then(() => animateRollDice(results, options))
+          .catch((error) => {
+            console.warn("Could not load the 3D dice runtime; using the lightweight dice animation.", error);
+            const layer = document.getElementById("dice-flight-layer");
+            const diceResults = normalizeRollResults(results).slice(0, 24);
+            if (!layer || !diceResults.length) {
+              return;
+            }
+            const width = Math.max(360, window.innerWidth || document.documentElement.clientWidth || 1200);
+            const height = Math.max(420, window.innerHeight || document.documentElement.clientHeight || 800);
+            animate3DDice(layer, diceResults, width, height);
+          });
+        return;
+      }
       const layer = document.getElementById("dice-flight-layer");
 const diceResults = normalizeRollResults(results).slice(0, 24);
       if (!layer || !diceResults.length) {
@@ -9510,8 +9528,13 @@ function setMobileSheetPage(page, { persist = true, scroll = true } = {}) {
       }
       if (scroll && isMobileSheetLayout()) {
         requestAnimationFrame(() => {
-          document.getElementById("play-mobile-sheet-dock")?.scrollIntoView({ behavior: "smooth", block: "start" });
-          document.querySelector(`[data-mobile-sheet-page="${cssEscape(nextPage)}"]`)?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+          document.getElementById("play-mobile-sheet-dock")?.scrollIntoView({ behavior: "auto", block: "start" });
+          const nav = document.getElementById("play-mobile-page-nav");
+          const activeButton = nav?.querySelector(`[data-mobile-sheet-page="${cssEscape(nextPage)}"]`);
+          if (nav && activeButton && nav.scrollWidth > nav.clientWidth + 1) {
+            const left = activeButton.offsetLeft - (nav.clientWidth - activeButton.offsetWidth) / 2;
+            nav.scrollTo({ left: Math.max(0, left), behavior: "auto" });
+          }
         });
       }
     }

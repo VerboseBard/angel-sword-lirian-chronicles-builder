@@ -1,6 +1,20 @@
-# Beta 2.1 Release Notes
+# Beta 2.11 Patch Notes
 
-Beta 2.1 promotes the reviewed responsive public builder into the Mirane and Quick Build release.
+Beta 2.11 is a mobile performance and iPhone layout hotpatch for the Beta 2.1 Mirane and Quick Build release. The public link, browser save key, and game-data version stay unchanged.
+
+## Mobile performance
+
+- PDF, spreadsheet, and 3D dice libraries now load only when those tools are used instead of delaying the first screen.
+- Current rules data is loaded once during startup.
+- Cache-busted app and stylesheet assets ensure phones receive the hotpatch after deployment.
+
+## iPhone layout fixes
+
+- Builder, sheet, crafting, and gathering panels now fit the available phone width without horizontal clipping.
+- Character, page, step, and wizard navigation wraps cleanly on narrow iPhones.
+- Builder controls no longer overlap the content beneath them.
+- The dice button is smaller and repositioned on phones, and stays out of the crafting and gathering guides.
+- Long tab and wizard labels remain visible instead of being cut off.
 
 ## Character starts
 
@@ -20,4 +34,4 @@ Beta 2.1 promotes the reviewed responsive public builder into the Mirane and Qui
 
 ## Validation target
 
-The release is expected to pass the cross-browser suite in Chromium, Firefox, and WebKit at wide desktop, desktop, and phone layouts, plus all Standard/Mirane package and class-progression audits.
+The release passes the cross-browser suite in Chromium, Firefox, and WebKit at wide desktop, desktop, and phone layouts, plus all Standard/Mirane package and class-progression audits.

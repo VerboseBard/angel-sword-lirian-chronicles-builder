@@ -1,10 +1,10 @@
-Angels Sword Beta 1.7 Crafting Workstream
+Angels Sword Beta 2.11 Mobile Performance and iPhone Layout Hotpatch
 
 PUBLIC LINK
 
-Beta 1.7 is the static/public working copy for crafting, item usage, and related live sheet interaction work. It starts from the clean Beta 1.5 baseline and does not include the 1.6 API provider layer.
+Beta 2.11 keeps the Beta 2.1 Mirane and Quick Build release and improves phone startup speed and iPhone layouts. It does not include the 1.6 API provider layer.
 
-The existing GitHub Pages link stays stable until this work is intentionally pushed later.
+The existing GitHub Pages link stays unchanged.
 
 QUICK START
 
@@ -41,4 +41,4 @@ When reporting a bug, include:
 - Whether you were using the public site or a local development copy.
 
 ---
-Lyrian Chronicles Character Builder - Beta Version 1.7 Crafting Workstream
+Lyrian Chronicles Character Builder - Beta Version 2.11 Mobile Performance and iPhone Layout Hotpatch
