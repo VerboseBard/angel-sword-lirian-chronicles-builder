@@ -1,0 +1,19 @@
+{
+  "name": "Lyrian Chronicles Character Sheet",
+  "short_name": "Lyrian Sheet",
+  "description": "Build and play Lyrian Chronicles characters with live dice, combat, crafting, and gathering tools.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#07172f",
+  "theme_color": "#0d1521",
+  "icons": [
+    {
+      "src": "assets/lyrian-symbol.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

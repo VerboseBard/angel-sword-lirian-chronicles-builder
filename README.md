@@ -1,12 +1,12 @@
-# Lyrian Chronicles Character Builder - Beta 1.94 Mobile Interaction Update
+# Lyrian Chronicles Character Builder - Beta 2.1 Mirane and Quick Build Update
 
-This is the local Beta 1.94 static/public working copy for the Angel Sword character builder and live play sheet.
+This is the complete local Beta 2.1 static/public working copy for the Angel Sword character builder and live play sheet.
 
 It starts as a copy of the hardened Beta 1.8 guided crafting and gathering baseline (2026-07-06). It intentionally does not include the Beta 1.6 API provider layer.
 
 ## Workstream
 
-Beta 1.94 keeps the guided crafting and gathering wizard from Beta 1.9, includes the Beta 1.91 tester-feedback fixes and Beta 1.92 class corrections, and adds the responsive phone layout plus review-and-accept overlays for species, secondary lineages, classes, and equipment purchases. The earlier class prerequisite, progression-order, and Current Build summary corrections remain documented in `BETA_1.92_HOTPATCH_NOTES.md`.
+Beta 2.1 keeps the full Beta 1.94 responsive builder and live sheet, then adds Standard Play and Mirane Expedition starts throughout guided and Quick Build creation. Mirane restrictions, starting funds, material purchasing, crafting pricing, review-page retirement options, and campaign-unavailable choices are represented in the builder. Quick Build now includes twelve optimized newcomer packages, Slimefolk, race-aware substitutions and shortcuts, complete class/skill/gear summaries, and validated tier-one/tier-two class paths.
 
 Crafting and gathering both run as guided downtime workflows. Each step shows what the player is trying to do, what to click next, and which warnings are soft GM gates rather than hard app failures.
 
@@ -38,6 +38,10 @@ This rebuilds `assets/app.bundle.js` and runs the cross-browser regression suite
 ## Included
 
 - Interactive builder and live play sheet.
+- Standard Play and Mirane Expedition creation rules, including Mirane retirement/retraining review guidance.
+- Twelve optimized Quick Build play styles with complete classes, breakthroughs, skills, and supporting equipment.
+- Eighteen Quick Build species choices, including featured Slimefolk, Dullahan, and Wolf-folk options arranged as six complete desktop rows.
+- Race-aware Quick Build handling for Slimefolk and early-unlock or restricted race combinations.
 - Guided crafting wizard (5 steps: choose recipe, gather materials, check support, roll points, resolve craft).
 - Guided gathering wizard (4 steps: choose node, check access, roll strikes, resolve gather).
 - Local rules versions `0.12.5`, `0.12.6`, and `0.13.0`; fresh characters default to the latest local version.

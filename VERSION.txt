@@ -1,6 +1,6 @@
-Lyrian Chronicles Character Builder - Beta Version 1.94 Mobile Interaction Update
-Copied from the hardened Beta 1.8 guided crafting and gathering baseline (2026-07-06).
+Lyrian Chronicles Character Builder - Beta Version 2.1 Mirane and Quick Build Update
+Promoted from the reviewed Beta 1.94 responsive public build (2026-07-15).
 This package does not include the Beta 1.6 API provider layer.
-Focus: carrying the Beta 1.9 downtime UX forward with the tester-feedback
-hotpatch fixes for character creation, equipment shopping, food units, and
-live sheet clarity.
+Focus: Standard and Mirane starts, campaign-aware pricing and crafting,
+race-aware optimized Quick Builds, newcomer class guidance, retirement and
+retraining review options, and complete desktop/mobile validation.

@@ -1,4 +1,4 @@
-import { BASE_STARTING_CLIM, BREAKTHROUGH_CREATION_BUDGET, CLASS_ROWS, SELECTED_GAME_VERSION_KEY, SELECTED_GAME_VERSION_LATEST_KEY, SKILL_DEFINITIONS, STARTING_CLASS_EXP, STARTING_INTERLUDE_POINTS } from "./constants.js";
+import { BASE_STARTING_CLIM, BREAKTHROUGH_CREATION_BUDGET, CHARACTER_START_MODES, CLASS_ROWS, DEFAULT_CHARACTER_START_MODE, MIRANE_START_MODE_ID, MIRANE_STARTING_CLIM_BONUS, SELECTED_GAME_VERSION_KEY, SELECTED_GAME_VERSION_LATEST_KEY, SKILL_DEFINITIONS, STARTING_CLASS_EXP, STARTING_INTERLUDE_POINTS } from "./constants.js";
 import { asArray, buildLookup, clamp, cleanText, formatModifier, normalizeKey, normalizePhrase, toNumber } from "./utils.js";
 import { mergePlayState, persistWorkingState, state, trySetLocalStorage } from "./state.js";
 import { parseNumericCost } from "./io.js";
@@ -394,11 +394,19 @@ const bonuses = buildComputedBonuses();
       computedBonusesCacheValue = bonuses;
       return bonuses;
     }
+export function getCharacterStartMode() {
+      const requestedId = cleanText(state.builder?.startMode) || DEFAULT_CHARACTER_START_MODE;
+      return CHARACTER_START_MODES.find((entry) => entry.id === requestedId)
+        || CHARACTER_START_MODES.find((entry) => entry.id === DEFAULT_CHARACTER_START_MODE)
+        || CHARACTER_START_MODES[0];
+    }
 export function getStartingFundsState() {
       const effects = getSelectedBreakthroughEffects();
+const startMode = getCharacterStartMode();
+const campaignBonusClim = startMode.id === MIRANE_START_MODE_ID ? MIRANE_STARTING_CLIM_BONUS : 0;
 const overrideRaw = cleanText(state.fields["Clim Override"]);
 const earnedClim = toNumber(cleanText(state.fields["Earned Clim"]), 0);
-const suggestedTotal = BASE_STARTING_CLIM + effects.bonusClim;
+const suggestedTotal = BASE_STARTING_CLIM + campaignBonusClim + effects.bonusClim;
 const hasOverride = overrideRaw !== "";
 const overrideValue = hasOverride ? Math.max(0, toNumber(overrideRaw, suggestedTotal)) : null;
 const startingClim = hasOverride ? overrideValue : suggestedTotal;
@@ -408,6 +416,8 @@ const availableClim = totalClim - selectedEquipmentCost;
 
       return {
         baseClim: BASE_STARTING_CLIM,
+        startMode,
+        campaignBonusClim,
         bonusClim: effects.bonusClim,
         suggestedTotal,
         hasOverride,
