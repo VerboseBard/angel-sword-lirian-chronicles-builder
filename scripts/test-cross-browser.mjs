@@ -1193,6 +1193,80 @@ const browsers = [
     await page.evaluate(() => localStorage.clear());
     await page.reload({ waitUntil: 'load' });
 
+    const advancedDefault = await page.evaluate(() => ({
+      modeLabel: document.getElementById('builder-mode-label')?.textContent?.trim() || '',
+      stepCount: document.querySelectorAll('#builder-step-nav [data-step-index]').length,
+      returnHidden: document.getElementById('builder-return-advanced')?.classList.contains('is-hidden'),
+      stepTitle: document.getElementById('builder-step-title')?.textContent?.trim() || ''
+    }));
+    if (
+      advancedDefault.modeLabel !== 'Advanced Build'
+      || advancedDefault.stepCount !== 10
+      || advancedDefault.returnHidden !== true
+      || advancedDefault.stepTitle !== 'Choose a Primary Race'
+    ) {
+      throw new Error(`Advanced Build default regression failed: ${JSON.stringify(advancedDefault)}`);
+    }
+
+    await page.evaluate(() => {
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'builder', gameVersion: '0.13.1', quickBuildActive: true, quickBuildStep: 2 },
+        fields: { Name: 'Persisted Quick Build Audit' },
+        builder: { selectedRaceId: 'human' }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    const restoredDefault = await page.evaluate(() => ({
+      modeLabel: document.getElementById('builder-mode-label')?.textContent?.trim() || '',
+      stepCount: document.querySelectorAll('#builder-step-nav [data-step-index]').length,
+      returnHidden: document.getElementById('builder-return-advanced')?.classList.contains('is-hidden'),
+      name: document.getElementById('builder-name-header')?.value || ''
+    }));
+    if (
+      restoredDefault.modeLabel !== 'Advanced Build'
+      || restoredDefault.stepCount !== 10
+      || restoredDefault.returnHidden !== true
+      || restoredDefault.name !== 'Persisted Quick Build Audit'
+    ) {
+      throw new Error(`Persisted Quick Build startup regression failed: ${JSON.stringify(restoredDefault)}`);
+    }
+
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'load' });
+
+    page.once('dialog', async (dialog) => dialog.accept());
+    await page.click('#quick-build-entry');
+    const quickModeNavigation = await page.evaluate(() => ({
+      modeLabel: document.getElementById('builder-mode-label')?.textContent?.trim() || '',
+      returnText: document.getElementById('builder-return-advanced')?.textContent?.trim() || '',
+      returnHidden: document.getElementById('builder-return-advanced')?.classList.contains('is-hidden'),
+      stepCount: document.querySelectorAll('#builder-step-nav [data-step-index]').length
+    }));
+    if (
+      quickModeNavigation.modeLabel !== 'Quick Build'
+      || quickModeNavigation.returnText !== 'Return to Advanced Build'
+      || quickModeNavigation.returnHidden !== false
+      || quickModeNavigation.stepCount !== 4
+    ) {
+      throw new Error(`Quick Build return navigation regression failed: ${JSON.stringify(quickModeNavigation)}`);
+    }
+
+    await page.click('#builder-return-advanced');
+    const returnedAdvanced = await page.evaluate(() => ({
+      modeLabel: document.getElementById('builder-mode-label')?.textContent?.trim() || '',
+      stepCount: document.querySelectorAll('#builder-step-nav [data-step-index]').length,
+      returnHidden: document.getElementById('builder-return-advanced')?.classList.contains('is-hidden'),
+      status: document.getElementById('builder-status-pill')?.textContent?.trim() || ''
+    }));
+    if (
+      returnedAdvanced.modeLabel !== 'Advanced Build'
+      || returnedAdvanced.stepCount !== 10
+      || returnedAdvanced.returnHidden !== true
+      || returnedAdvanced.status !== 'Returned to Advanced Build.'
+    ) {
+      throw new Error(`Return to Advanced Build regression failed: ${JSON.stringify(returnedAdvanced)}`);
+    }
+
     page.once('dialog', async (dialog) => dialog.accept());
     await page.click('#quick-build-entry');
     const quickSpecies = await page.evaluate(() => ({

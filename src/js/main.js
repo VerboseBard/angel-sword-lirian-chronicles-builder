@@ -39,11 +39,11 @@ const activeSlotId = localStorage.getItem(ACTIVE_SAVE_SLOT_KEY) || "";
       if (!didLoad && activeSlotId) {
         const activeSlot = getSavedSlots().find((entry) => entry.id === activeSlotId);
         if (activeSlot) {
-          didLoad = loadSavedState(activeSlot.snapshot, { activeSlotId, statusOnFailure: false, promoteStaleVersion: true });
+          didLoad = loadSavedState(activeSlot.snapshot, { activeSlotId, statusOnFailure: false, promoteStaleVersion: true, startInAdvancedBuild: true });
         }
       }
       if (!didLoad) {
-        didLoad = loadSavedState(localStorage.getItem(STORAGE_KEY), { activeSlotId, statusOnFailure: false, promoteStaleVersion: true });
+        didLoad = loadSavedState(localStorage.getItem(STORAGE_KEY), { activeSlotId, statusOnFailure: false, promoteStaleVersion: true, startInAdvancedBuild: true });
       }
       if (!didLoad) {
         applyStateToDom();

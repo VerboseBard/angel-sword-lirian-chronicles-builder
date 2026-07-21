@@ -851,7 +851,7 @@ const confirmed = typeof window.confirm !== "function" || window.confirm(
 const loaded = loadSavedState(parsed, { activeSlotId: "", statusOnFailure: false });
       return { present: true, loaded, packageName, error: loaded ? "" : "The Build Lab package could not be loaded." };
     }
-function hydrateStateFromObject(parsed, { activeSlotId = "", promoteStaleVersion = false } = {}) {
+function hydrateStateFromObject(parsed, { activeSlotId = "", promoteStaleVersion = false, startInAdvancedBuild = false } = {}) {
       if (!parsed || typeof parsed !== "object") {
         return false;
       }
@@ -861,6 +861,13 @@ const defaults = createDefaultState();
         ...defaults.ui,
         ...(parsed.ui || {})
       };
+      if (startInAdvancedBuild) {
+        // Quick Build is a temporary guided path, not the site's startup mode.
+        // Preserve all character choices while returning repeat visitors to the
+        // full builder when the app restores browser state on page load.
+        state.ui.quickBuildActive = false;
+        state.ui.quickBuildStep = 0;
+      }
       if (!state.ui.gameVersion) {
         state.ui.gameVersion = getSelectedGameVersionId();
       } else if (promoteStaleVersion && shouldPromoteSavedVersionToLatest(state.ui.gameVersion)) {

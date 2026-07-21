@@ -19895,6 +19895,7 @@ function renderQuickBuildDetail() {
     }
 function renderQuickBuildHeader() {
       const step = getQuickBuildStep();
+      document.getElementById("builder-mode-label").textContent = "Quick Build";
       document.getElementById("builder-step-title").textContent = step.title;
       document.getElementById("builder-step-lead").textContent = step.lead;
       document.getElementById("builder-progress-text").textContent = `Quick Build ${state.ui.quickBuildStep + 1} of ${QUICK_BUILD_STEPS.length}`;
@@ -19913,6 +19914,7 @@ function updateQuickBuildControls() {
       const next = document.getElementById("builder-next");
       const nextTop = document.getElementById("builder-next-top");
       const sheetShortcutTop = document.getElementById("builder-sheet-shortcut-top");
+      const returnAdvanced = document.getElementById("builder-return-advanced");
       const isReview = getQuickBuildStep().id === "review";
       back.disabled = state.ui.quickBuildStep === 0;
       next.disabled = !quickBuildCanAdvance(false);
@@ -19923,6 +19925,9 @@ function updateQuickBuildControls() {
       }
       if (sheetShortcutTop) {
         sheetShortcutTop.classList.toggle("is-hidden", true);
+      }
+      if (returnAdvanced) {
+        returnAdvanced.classList.remove("is-hidden");
       }
     }
 function renderQuickBuild() {
@@ -19950,11 +19955,15 @@ function enterQuickBuildMode() {
       renderBuilder();
       setStatus("Quick Build started.");
     }
-function exitQuickBuildToCustomize() {
+function exitQuickBuildToAdvancedBuild() {
+      const hasAppliedQuickBuild = Boolean(state.builder.quickBuild?.appliedBuildId);
       state.ui.quickBuildActive = false;
-      state.ui.builderStep = BUILDER_STEPS.length - 1;
+      state.ui.quickBuildStep = 0;
+      state.ui.builderStep = hasAppliedQuickBuild ? BUILDER_STEPS.length - 1 : 0;
       renderBuilder();
-      setStatus("Opened the full builder with the Quick Build selections ready to customize.");
+      setStatus(hasAppliedQuickBuild
+        ? "Opened Advanced Build with the Quick Build selections ready to customize."
+        : "Returned to Advanced Build.");
     }
 function advanceQuickBuild() {
       const step = getQuickBuildStep();
@@ -20047,6 +20056,7 @@ const next = document.getElementById("builder-next");
 const nextTop = document.getElementById("builder-next-top");
 const sheetShortcutTop = document.getElementById("builder-sheet-shortcut-top");
 const startOverSidebar = document.getElementById("builder-start-over-sidebar");
+const returnAdvanced = document.getElementById("builder-return-advanced");
 const disabled = !canAdvanceBuilder(false);
 const isReviewStep = state.ui.builderStep === BUILDER_STEPS.length - 1;
 const label = isReviewStep ? "Continue to Character Sheet" : "Continue";
@@ -20066,6 +20076,9 @@ const label = isReviewStep ? "Continue to Character Sheet" : "Continue";
       }
       if (startOverSidebar) {
         startOverSidebar.classList.remove("is-hidden");
+      }
+      if (returnAdvanced) {
+        returnAdvanced.classList.add("is-hidden");
       }
     }
 function getBuilderStepPresentation(step = currentStep()) {
@@ -20092,6 +20105,7 @@ const mode = getCurrentSecondaryLineageMode(race);
     }
 function renderBuilderHeader() {
       const step = getBuilderStepPresentation();
+      document.getElementById("builder-mode-label").textContent = "Advanced Build";
       document.getElementById("builder-step-title").textContent = step.title;
       document.getElementById("builder-step-lead").textContent = step.lead;
       document.getElementById("builder-progress-text").textContent = `Step ${state.ui.builderStep + 1} of ${BUILDER_STEPS.length}`;
@@ -21937,6 +21951,11 @@ const portraitWasNormalized = await normalizeCurrentPortraitDataUrl();
         }
       });
 
+      document.getElementById("builder-return-advanced")?.addEventListener("click", () => {
+        exitQuickBuildToAdvancedBuild();
+        scheduleWorkingStatePersist();
+      });
+
       document.querySelector(".builder-identity-banner")?.addEventListener("click", (event) => {
         const startMode = event.target.closest("[data-character-start-mode]");
         if (!startMode || !setCharacterStartMode(startMode.dataset.characterStartMode)) {
@@ -22053,7 +22072,7 @@ const button = event.target.closest("[data-step-index]");
           } else if (action === "finish") {
             openSheetView();
           } else if (action === "customize") {
-            exitQuickBuildToCustomize();
+            exitQuickBuildToAdvancedBuild();
           } else if (action === "back-to-build") {
             goToQuickBuildStep(2);
           }
