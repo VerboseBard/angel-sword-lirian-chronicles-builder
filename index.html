@@ -15,7 +15,7 @@
   <script defer src="assets/versions/0.13.1/lyrian-data.js"></script>
   <script defer src="assets/versions/0.13.1/lyrian-detail-data.js"></script>
   <script defer src="assets/versions/manifest.js"></script>
-  <link rel="stylesheet" href="./src/css/main.css?v=2.13.0-public-20260721">
+  <link rel="stylesheet" href="./src/css/main.css?v=2.13.0-advanced-build-hotfix-20260721">
 </head>
 <body>
   <section id="builder-view" class="builder-view">
@@ -91,13 +91,14 @@
 
         <div class="builder-stage-header">
           <div>
-            <p class="eyebrow">Builder Step</p>
+            <p id="builder-mode-label" class="eyebrow">Advanced Build</p>
             <h2 id="builder-step-title">Choose a Primary Race</h2>
             <p id="builder-step-lead" class="builder-step-lead"></p>
           </div>
 
           <div class="builder-progress-box">
-            <span id="builder-progress-text">Step 1 of 9</span>
+            <span id="builder-progress-text">Step 1 of 10</span>
+            <button id="builder-return-advanced" class="tool-button builder-return-advanced is-hidden" type="button">Return to Advanced Build</button>
             <button id="builder-next-top" class="tool-button" type="button">Next</button>
             <button id="builder-sheet-shortcut-top" class="tool-button builder-sheet-shortcut" type="button">Continue to Character Sheet</button>
           </div>
@@ -449,6 +450,6 @@
   <input id="import-file" type="file" accept=".json,.pdf,.xlsx,.xls,application/json,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" hidden>
   <input id="portrait-file" type="file" accept="image/*" hidden>
 
-  <script defer src="assets/app.bundle.js?v=2.13.0-public-20260721"></script>
+  <script defer src="assets/app.bundle.js?v=2.13.0-advanced-build-hotfix-20260721"></script>
 </body>
 </html>

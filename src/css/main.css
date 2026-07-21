@@ -947,6 +947,16 @@
       margin-top: 10px;
     }
 
+    .builder-return-advanced {
+      border-color: rgba(255, 231, 151, 0.58);
+      background: linear-gradient(180deg, rgba(95, 68, 31, 0.96), rgba(44, 35, 24, 0.98));
+      color: #fff2ca;
+    }
+
+    .builder-return-advanced.is-hidden {
+      display: none;
+    }
+
     .builder-sheet-shortcut {
       border-color: rgba(255, 231, 151, 0.42);
       background: linear-gradient(180deg, rgba(95, 68, 31, 0.96), rgba(44, 35, 24, 0.98));
