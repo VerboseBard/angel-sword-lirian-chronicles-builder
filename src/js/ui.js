@@ -1,7 +1,7 @@
-import { BUILDER_STEPS, CHARACTER_START_MODES, CLASS_GROUP_ROLE_ORDER, CLASS_PASSIVE_SLOTS, CLASS_PURCHASABLE_LEVELS, CLASS_ROWS, CLICKABLE_ROLL_FIELDS, COMMON_WEAPON_GROUP_OPTIONS, CREATION_SKILL_POINT_BUDGET, DEFAULT_DICE_SET_ID, DEMON_CLAN_SKILL_OPTIONS, DICE_PREVIEW_FALLBACK_URL, DICE_SETS, DICE_SET_ID_ALIASES, DICE_SOUND_ASSETS, DICE_TRAY_TYPES, EMBEDDED_STATE_CHUNK_SIZE, EMBEDDED_STATE_FORMAT, ENABLE_ACCURATE_DICE_ROLLS, ENABLE_WEBGL_DICE_ROLLS, INVENTORY_ROWS, MAIN_STATS, MAIN_STAT_CREATION_ARRAY, MAX_DICE_TRAY_DICE, MIRANE_CRAFTING_INTERLUDE_EXP, MIRANE_GATHER_BASE_UNITS, MIRANE_GATHER_MASTERY_BONUS_UNITS, MIRANE_IP_SHOP_PRICE_CAP, MIRANE_IP_SHOP_SALE_PERCENT_CAP, MIRANE_IP_SHOP_SLOT_LIMIT, MIRANE_JOB_ARTISAN_BONUS_CLIM, MIRANE_JOB_BASE_CLIM, MIRANE_RAW_MATERIAL_CLIM_LIMIT, MIRANE_SINGLE_MATERIAL_CLIM_LIMIT, MIRANE_START_MODE_ID, MULTILINE_FIELDS, NAME_FIELDS, OFFICIAL_LANGUAGE_OPTIONS, PAGE_BACKGROUNDS, PASSIVE_READ_ONLY_FIELDS, PDF_STATE_CHUNK_FIELD_PREFIX, PDF_STATE_MANIFEST_FIELD, PLAY_BASIC_ACTIONS, PLAY_ROLLS, PORTRAIT_JPEG_QUALITY, PORTRAIT_MAX_DIMENSION, PORTRAIT_NORMALIZE_THRESHOLD, SAVE_SNAPSHOT_PORTRAIT_LIMIT, SECONDARY_STATS, SECONDARY_STAT_CREATION_ARRAY, SKILL_ALIASES, SKILL_DEFINITIONS, SKILL_EXPERTISE_OPTIONS, SKILL_OPTIONS, SPECIALITY_WEAPON_GROUP_OPTIONS, STARTING_CLASS_EXP, STARTING_INTERLUDE_POINTS, SUBSTAT_OPTIONS, VERSION_CHECK_ENDPOINT, VERSION_DOWNLOAD_ENDPOINT, VERSION_LOCAL_ENDPOINT, VERSION_STATUS_ENDPOINT } from "./constants.js";
-import { asArray, clamp, cleanText, cssEscape, escapeHtml, formatModifier, normalizeKey, normalizePhrase, toNumber } from "./utils.js";
+import { BUILDER_STEPS, CHARACTER_START_MODES, CLASS_GROUP_ROLE_ORDER, CLASS_PASSIVE_SLOTS, CLASS_PURCHASABLE_LEVELS, CLASS_ROWS, CLICKABLE_ROLL_FIELDS, COMMON_WEAPON_GROUP_OPTIONS, CREATION_SKILL_POINT_BUDGET, DEFAULT_DICE_SET_ID, DEMON_CLAN_SKILL_OPTIONS, DICE_PREVIEW_FALLBACK_URL, DICE_SETS, DICE_SET_ID_ALIASES, DICE_SOUND_ASSETS, DICE_TRAY_TYPES, EMBEDDED_STATE_CHUNK_SIZE, EMBEDDED_STATE_FORMAT, ENABLE_ACCURATE_DICE_ROLLS, ENABLE_WEBGL_DICE_ROLLS, INVENTORY_ROWS, MAIN_STATS, MAIN_STAT_CREATION_ARRAY, MAX_DICE_TRAY_DICE, MIRANE_CRAFTING_INTERLUDE_EXP, MIRANE_GATHER_BASE_UNITS, MIRANE_GATHER_MASTERY_BONUS_UNITS, MIRANE_IP_SHOP_PRICE_CAP, MIRANE_IP_SHOP_SALE_PERCENT_CAP, MIRANE_IP_SHOP_SLOT_LIMIT, MIRANE_JOB_ARTISAN_BONUS_CLIM, MIRANE_JOB_BASE_CLIM, MIRANE_RAW_MATERIAL_CLIM_LIMIT, MIRANE_SINGLE_MATERIAL_CLIM_LIMIT, MIRANE_START_MODE_ID, MULTILINE_FIELDS, NAME_FIELDS, OFFICIAL_LANGUAGE_OPTIONS, PAGE_BACKGROUNDS, PASSIVE_READ_ONLY_FIELDS, PDF_STATE_CHUNK_FIELD_PREFIX, PDF_STATE_MANIFEST_FIELD, PLAY_BASIC_ACTIONS, PLAY_ROLLS, PORTRAIT_JPEG_QUALITY, PORTRAIT_MAX_DIMENSION, PORTRAIT_NORMALIZE_THRESHOLD, SAVE_SNAPSHOT_PORTRAIT_LIMIT, SECONDARY_STATS, SECONDARY_STAT_CREATION_ARRAY, SKILL_ALIASES, SKILL_DEFINITIONS, SKILL_EXPERTISE_OPTIONS, SKILL_OPTIONS, SPECIALITY_WEAPON_GROUP_OPTIONS, STARTING_CLASS_EXP, STARTING_INTERLUDE_POINTS, SUBSTAT_OPTIONS } from "./constants.js";
+import { asArray, clamp, cleanText, cssEscape, escapeHtml, formatModifier, normalizeKey, normalizePhrase, splitSentences, toNumber } from "./utils.js";
 import { clearSheet, createDefaultState, getSavedSlots, mergePlayState, persistWorkingState, scheduleWorkingStatePersist, state, updateFieldValue } from "./state.js";
-import { applyGameVersion, detailLookup, exportPrepCache, getAncestryDetail, getAncestryOptionsByPrimaryRace, getAncestryRequirementPhrases, getBreakthroughBudgetState, getBuilderChoiceDefinitionsCacheKey, getCampaignProgressState, getCharacterStartMode, getClassDetail, getClassUnlockBudgetState, getComputedBonuses, getCurrentSecondaryLineageMode, getDemonClanOptions, getDerivedCombatStats, getHumanRaceSkillChoiceOptions, getRaceDetail, getRaceRequirementPhrases, getSecondaryLineageLabels, getSelectedAncestryDetail, getSelectedBreakthroughRecords, getSelectedClassDetails, getSelectedClassProgress, getSelectedGameVersionId, getSelectedItemRecords, getSelectedRaceDetail, getSkillBreakdownParts, getSkillRowsData, getStartingFundsState, getVersionManifest, getVersionRecord, getVersionRecords, lookup, persistSelectedGameVersion, syncPlayResourcesFromFields, usePlayCost, versionRuntime } from "./rules.js";
+import { applyGameVersion, detailLookup, exportPrepCache, getAncestryDetail, getAncestryOptionsByPrimaryRace, getAncestryRequirementPhrases, getBreakthroughBudgetState, getBuilderChoiceDefinitionsCacheKey, getCampaignProgressState, getCharacterStartMode, getClassDetail, getClassUnlockBudgetState, getComputedBonuses, getCurrentSecondaryLineageMode, getDemonClanOptions, getDerivedCombatStats, getHumanRaceSkillChoiceOptions, getRaceDetail, getRaceRequirementPhrases, getSecondaryLineageLabels, getSelectedAncestryDetail, getSelectedBreakthroughRecords, getSelectedClassDetails, getSelectedClassProgress, getSelectedGameVersionId, getSelectedItemRecords, getSelectedRaceDetail, getSkillBreakdownParts, getSkillRowsData, getStartingFundsState, getVersionRecord, getVersionRecords, lookup, syncPlayResourcesFromFields, usePlayCost, versionRuntime } from "./rules.js";
 import { dicePackRuntime, preloadDiceSetFaceArt, renderDiceTray } from "./dice.js";
 import { closeSheetModal, deriveSaveSlotName, exportJsonState, exportPdfState, exportSpreadsheetState, exportState, extractAbilityHeading, getWorksheetNumberText, getWorksheetText, handleImportedCharacterFile, handleSaveSlotAction, loadFromBrowser, openSheetModal, parseClimCost, parseNumericCost, saveCurrentCharacterToActiveSlot, saveCurrentCharacterToNewSlot, saveToBrowser, setSpreadsheetExportCell } from "./io.js";
 import { ensureDiceRuntimeLoaded, isDiceRuntimeLoaded } from "./runtime-loader.js";
@@ -105,6 +105,15 @@ const SPREADSHEET_SKILL_EXPORT_ROWS = new Map([
 let playerNotesAutosaveTimer = 0;
 let builderSearchRenderTimer = 0;
 let versionProgressTicker = 0;
+export function flushPlayerNotesAutosave() {
+      if (!playerNotesAutosaveTimer) {
+        return false;
+      }
+      window.clearTimeout(playerNotesAutosaveTimer);
+      playerNotesAutosaveTimer = 0;
+      scheduleWorkingStatePersist();
+      return true;
+    }
 const MOBILE_BUILDER_CHOICE_QUERY = "(max-width: 700px)";
 let mobileBuilderChoiceState = null;
 let mobileBuilderChoiceReturnFocus = null;
@@ -149,11 +158,9 @@ const node = document.getElementById("version-connection");
       }
     }
 export function renderVersionManager() {
-const manifest = getVersionManifest();
 const select = document.getElementById("game-version-select");
 const updateList = document.getElementById("version-update-list");
-const downloadButton = document.getElementById("version-download-button");
-      if (!select || !updateList || !downloadButton) {
+      if (!select || !updateList) {
         return;
       }
 const selectedVersion = getSelectedGameVersionId();
@@ -177,137 +184,24 @@ const entry = document.createElement("li");
         list.appendChild(entry);
       });
       updateList.appendChild(list);
-
-      if (versionRuntime.latestCheck?.hasUpdate && versionRuntime.latestCheck.latestVersion) {
-        downloadButton.hidden = false;
-        downloadButton.textContent = `Download ${versionRuntime.latestCheck.latestVersion}`;
-      } else {
-        downloadButton.hidden = true;
-      }
-
-      if (!versionRuntime.serverAvailable) {
-        updateVersionConnection("Web build. Published updates arrive here automatically.");
-      } else {
-        updateVersionConnection(`Local development server connected. Current local data: ${manifest.latestKnownVersion || selectedVersion}.`);
-      }
     }
 export function loadScriptAsset(src) {
+      // No cache-buster: rules data and dice assets live at version-specific
+      // paths, so the browser cache (and 304 revalidation) should be allowed
+      // to work. Busting here forced a multi-megabyte re-download every visit.
       return new Promise((resolve, reject) => {
         const script = document.createElement("script");
-const delimiter = src.includes("?") ? "&" : "?";
-        script.src = `${src}${delimiter}t=${Date.now()}`;
-        script.onload = () => resolve();
-        script.onerror = () => reject(new Error(`Could not load ${src}`));
+        script.src = src;
+        script.onload = () => {
+          script.remove();
+          resolve();
+        };
+        script.onerror = () => {
+          script.remove();
+          reject(new Error(`Could not load ${src}`));
+        };
         document.head.appendChild(script);
       });
-    }
-async function refreshLocalVersionManifest() {
-      if (window.location.protocol !== "file:") {
-        const response = await fetch(VERSION_LOCAL_ENDPOINT, { cache: "no-store" });
-const data = await response.json();
-        if (!response.ok || !data?.ok || !data.manifest) {
-          throw new Error(data?.message || "The local version manifest could not be refreshed.");
-        }
-        window.LYRIAN_VERSION_MANIFEST = data.manifest;
-        return data.manifest;
-      }
-
-      await loadScriptAsset("assets/versions/manifest.js");
-      return getVersionManifest();
-    }
-function shouldProbeVersionServer() {
-      if (window.location.protocol === "file:" || window.location.protocol === "https:") {
-        return false;
-      }
-const hostname = window.location.hostname.toLowerCase();
-      return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
-    }
-export async function detectVersionServer() {
-      if (!shouldProbeVersionServer()) {
-        versionRuntime.serverAvailable = false;
-        renderVersionManager();
-        return false;
-      }
-      try {
-        const response = await fetch(VERSION_STATUS_ENDPOINT, { cache: "no-store" });
-const data = await response.json();
-        versionRuntime.serverAvailable = Boolean(data?.ok);
-        renderVersionManager();
-        return versionRuntime.serverAvailable;
-      } catch {
-        versionRuntime.serverAvailable = false;
-        renderVersionManager();
-        return false;
-      }
-    }
-async function checkForVersionUpdates() {
-      const connected = versionRuntime.serverAvailable || await detectVersionServer();
-      if (!connected) {
-        setStatus("This web build is updated by published site deployments. Refresh after a new Beta 2.11 update is pushed.");
-        renderVersionManager();
-        return;
-      }
-
-      try {
-        startVersionProgressTicker(15, 70, "Reading official Lyrian manual and version API");
-const response = await fetch(VERSION_CHECK_ENDPOINT, { cache: "no-store" });
-        stopVersionProgressTicker();
-        setVersionProgress(75, "Comparing local and official versions");
-const data = await response.json();
-        if (!response.ok || !data?.ok) {
-          throw new Error(data?.message || "The official version check failed.");
-        }
-        versionRuntime.latestCheck = data;
-        if (data.hasUpdate) {
-          setStatus(`Official Lyrian data ${data.latestVersion} appears newer than local ${data.localLatest}.`);
-        } else {
-          setStatus(`No newer official Lyrian version found. Local latest is ${data.localLatest}.`);
-        }
-        setVersionProgress(100, "Update check complete");
-        setTimeout(hideVersionProgress, 500);
-        renderVersionManager();
-      } catch (error) {
-        hideVersionProgress();
-        setStatus(error.message || "Could not check for Lyrian updates.");
-        renderVersionManager();
-      }
-    }
-async function downloadVersionUpdate() {
-      const targetVersion = versionRuntime.latestCheck?.latestVersion || "";
-      if (!targetVersion) {
-        setStatus("Check for updates before downloading a rules version.");
-        return;
-      }
-
-      try {
-        startVersionProgressTicker(10, 80, `Downloading and building ${targetVersion}`);
-const response = await fetch(VERSION_DOWNLOAD_ENDPOINT, {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ version: targetVersion })
-        });
-        stopVersionProgressTicker();
-        setVersionProgress(85, "Validating updater result");
-const data = await response.json();
-        if (!response.ok || !data?.ok) {
-          throw new Error(data?.message || "The updater could not safely install this version yet.");
-        }
-        setVersionProgress(88, "Refreshing local version list");
-        await refreshLocalVersionManifest();
-        versionRuntime.latestCheck = null;
-        state.ui.gameVersion = targetVersion;
-        persistSelectedGameVersion(targetVersion);
-        renderVersionManager();
-const didApply = await applyGameVersion(targetVersion);
-        if (didApply) {
-          setVersionProgress(100, `${targetVersion} installed`);
-          setStatus(data.message || `Installed Lyrian rules version ${targetVersion}.`);
-          setTimeout(hideVersionProgress, 700);
-        }
-      } catch (error) {
-        hideVersionProgress();
-        setStatus(error.message || "Version download failed.");
-      }
     }
 function includesPhrase(text, phrase) {
       const normalizedPhrase = normalizePhrase(phrase);
@@ -1271,9 +1165,11 @@ const element = document.createElement(isMultiline ? "textarea" : "input");
       }
 
       element.addEventListener("input", () => {
-        state.fields[field.name] = element.value;
+        // Keep the revision-backed computed-bonus caches honest, but let the
+        // shared play-dashboard debounce own persistence for sheet typing.
+        updateFieldValue(field.name, element.value, { persist: false });
         if (NAME_FIELDS.includes(field.name)) {
-          syncNameFields(element.value, field.name);
+          syncNameFields(element.value, field.name, { persist: false, renderPlay: false });
         } else if (field.name === "Primary Race") {
           const race = detailLookup.races.resolve(element.value);
           if (race) {
@@ -1295,8 +1191,7 @@ const element = document.createElement(isMultiline ? "textarea" : "input");
           renderBuilderDetail();
           renderBuilderSummary();
         }
-        syncPlayResourcesFromFields(true);
-        renderPlayDashboardIfVisible();
+        schedulePlayDashboardSync();
       });
 
       element.addEventListener("change", () => {
@@ -1377,9 +1272,9 @@ const overlay = document.createElement("div");
         stack.appendChild(page);
       });
     }
-export function syncNameFields(value, sourceName = "Name") {
+export function syncNameFields(value, sourceName = "Name", options = {}) {
       NAME_FIELDS.forEach((fieldName) => {
-        updateFieldValue(fieldName, value);
+        updateFieldValue(fieldName, value, { persist: options.persist !== false });
         if (fieldName === sourceName) {
           return;
         }
@@ -1401,13 +1296,11 @@ const profileNameInput = document.querySelector('[data-profile-field="Name"]');
       refreshBuilderIdentity();
       renderBuilderDetail();
       renderBuilderSummary();
-      renderPlayDashboardIfVisible();
+      if (options.renderPlay !== false) {
+        renderPlayDashboardIfVisible();
+      }
     }
-export function applyStateToDom() {
-      state.play = mergePlayState(state.play);
-      hydrateBuilderSelectionsFromFields();
-      seedBuilderInspection();
-
+export function populateSheetFields() {
       document.querySelectorAll("[data-field]").forEach((node) => {
         const fieldName = node.dataset.field;
 const nextValue = String(state.fields[fieldName] ?? "");
@@ -1431,6 +1324,12 @@ const nextValue = String(state.abilitySelections[fieldName] ?? "");
           node.value = nextValue;
         }
       });
+    }
+export function applyStateToDom() {
+      state.play = mergePlayState(state.play);
+      hydrateBuilderSelectionsFromFields();
+      seedBuilderInspection();
+      populateSheetFields();
 const headerName = document.getElementById("builder-name-header");
       if (headerName) {
         headerName.value = cleanText(state.fields.Name);
@@ -1833,7 +1732,7 @@ export function getClassPurchasedAbilityCount(record) {
       }
       const abilityCount = getClassProgressSlotCount(record);
 const saved = toNumber(state.builder.classAbilityProgress?.[record.id], 0);
-      return clamp(Math.floor(saved), 0, abilityCount);
+      return clamp(Math.max(Math.floor(saved), getClassGrantedAbilityCount(record)), 0, abilityCount);
     }
 function setClassPurchasedAbilityCount(classId, count) {
       const record = getClassDetail(classId);
@@ -1841,14 +1740,15 @@ function setClassPurchasedAbilityCount(classId, count) {
         return;
       }
 const abilityCount = getClassProgressSlotCount(record);
-const nextCount = clamp(Math.floor(toNumber(count, 0)), 0, abilityCount);
+const nextCount = clamp(Math.max(Math.floor(toNumber(count, 0)), getClassGrantedAbilityCount(record)), 0, abilityCount);
       state.builder.classAbilityProgress = {
         ...(state.builder.classAbilityProgress || {}),
         [record.id]: nextCount
       };
     }
 export function getClassProgressCost(record, purchasedCount = getClassPurchasedAbilityCount(record)) {
-      return getClassUnlockCost(record) + (Math.max(0, purchasedCount) * 100);
+      const paidAbilityCount = Math.max(0, purchasedCount - getClassGrantedAbilityCount(record));
+      return getClassUnlockCost(record) + (paidAbilityCount * 100);
     }
 function getPurchasedClassAbilities(record) {
       return getClassProgressSlots(record)
@@ -2122,6 +2022,25 @@ function getTrackedProficiencyText() {
         ...getSelectedBreakthroughEffects().extraProficiencies
       ].filter(Boolean).map(stripClassRequirementExcludedProficiencyText).filter(Boolean).join(" | ");
     }
+function getPlayProficiencyText() {
+      const classTexts = getSelectedClassDetails().map((entry) => entry.proficiencies).filter(Boolean);
+      const sourceLines = [
+        state.fields.Proficiencies,
+        getSelectedRaceDetail()?.proficiencies,
+        ...getSelectedLineageProficiencyTexts(),
+        ...getTrackedProficiencyChoiceTexts(),
+        ...classTexts,
+        ...getSelectedBreakthroughEffects().extraProficiencies
+      ].filter(Boolean)
+        .flatMap((text) => stripClassRequirementExcludedProficiencyText(text).split(/\s*\|\s*|\n+/))
+        .map((text) => cleanText(text))
+        .filter(Boolean);
+      const masteryKeys = new Set(
+        [...getTrackedElementalMasteries()].map((key) => getElementalMasteryCanonicalKey(key)).filter(Boolean)
+      );
+      const masteryLines = [...masteryKeys].map((key) => `${key.charAt(0).toUpperCase()}${key.slice(1)} Mastery`);
+      return [...new Set([...sourceLines, ...masteryLines])].join("\n");
+    }
 function hasTrackedAnySpell() {
       return getTrackedLearnedAbilityRecords().some((record) => isTrackedSpellAbility(record));
     }
@@ -2184,7 +2103,18 @@ const weaponSignals = [
     }
 function hasTrackedSpecificProficiency(options) {
       const text = getTrackedProficiencyText();
-      return options.some((option) => includesPhrase(text, option));
+      return options.some((option) => {
+        const normalized = normalizePhrase(option);
+        const variants = new Set([normalized]);
+        if (normalized === "staves") {
+          variants.add("staff");
+        } else if (normalized.endsWith("ies") && normalized.length > 3) {
+          variants.add(`${normalized.slice(0, -3)}y`);
+        } else if (normalized.endsWith("s") && !normalized.endsWith("ss") && normalized.length > 1) {
+          variants.add(normalized.slice(0, -1));
+        }
+        return [...variants].some((variant) => includesPhrase(text, variant));
+      });
     }
 function normalizeRequirementClause(clause) {
       return cleanText(clause)
@@ -2362,18 +2292,28 @@ function getClassAccessOverride(record) {
 const result = {
         bypassRequirements: false,
         costOverride: null,
+        interludeCostOverride: null,
+        grantsStartingLevel: false,
+        grantedStartingLevel: 0,
         costReduction: 0,
         sources: []
       };
       getSelectedClassAccessRuleSources().forEach((source) => {
-        const sentences = cleanText(source.text).split(/(?<=[.!?])\s+/).filter(Boolean);
+        const sentences = splitSentences(cleanText(source.text)).filter(Boolean);
         sentences.forEach((sentence) => {
-          const match = sentence.match(/\b(?:enter|unlock)\s+(?:the\s+)?(.+?)\s+class\b/i);
+          const grantedClassMatch = sentence.match(/\bstart\s+with\s+(?:the\s+)?(.+?)\s+class\s+unlocked(?:\s+and\s+at\s+level\s+(\d+))?\b/i);
+          const accessMatch = sentence.match(/\b(?:enter|unlock)\s+(?:the\s+)?(.+?)\s+class\b/i);
+          const match = grantedClassMatch || accessMatch;
           if (!match || !classNameMatchesRequirementText(record, match[1])) {
             return;
           }
           result.bypassRequirements = true;
-          if (/\b(?:no\s+experience\s+cost|0\s*exp)\b/i.test(sentence)) {
+          if (grantedClassMatch) {
+            result.costOverride = 0;
+            result.interludeCostOverride = 0;
+            result.grantsStartingLevel = true;
+            result.grantedStartingLevel = Math.max(result.grantedStartingLevel, Math.floor(toNumber(grantedClassMatch[2], 1)));
+          } else if (/\b(?:no\s+experience\s+cost|0\s*exp)\b/i.test(sentence)) {
             result.costOverride = 0;
           }
 const reduction = sentence.match(/\breduced\s+by\s+(\d+)\s*exp\b/i);
@@ -2383,7 +2323,7 @@ const reduction = sentence.match(/\breduced\s+by\s+(\d+)\s*exp\b/i);
           result.sources.push(sentence);
         });
       });
-      return result.bypassRequirements || result.costOverride !== null || result.costReduction > 0 ? result : null;
+      return result.bypassRequirements || result.costOverride !== null || result.interludeCostOverride !== null || result.costReduction > 0 ? result : null;
     }
 function hasOpenMysticEyeSlot() {
       const maxSlots = hasSelectedBreakthroughName("Third Eye") ? 3 : 2;
@@ -2394,6 +2334,7 @@ function hasOpenMysticEyeSlot() {
     }
 const ELEMENTAL_MASTERY_ALIASES = {
       arcane: ["arcane", "magic", "magical"],
+      astra: ["astra"],
       dark: ["dark"],
       earth: ["earth"],
       fire: ["fire"],
@@ -2401,6 +2342,7 @@ const ELEMENTAL_MASTERY_ALIASES = {
       holy: ["holy"],
       ice: ["ice", "frost"],
       lightning: ["lightning", "electric", "electrical"],
+      slashing: ["slashing"],
       water: ["water"],
       wind: ["wind"]
     };
@@ -2476,11 +2418,19 @@ const UNKNOWN_PALADIN_DIVINE_OPTIONS = [
       { value: "Pandora", label: "Pandora - Arcane", damageType: "Arcane" },
       { value: "Makai", label: "Makai - Water", damageType: "Water" },
       { value: "Ayuzi Kirara", label: "Ayuzi Kirara - Fire", damageType: "Fire" },
-      { value: "Eisen", label: "Eisen - Physical", damageType: "Physical" },
+      { value: "Eisen", label: "Eisen - Slashing", damageType: "Slashing" },
       { value: "Athena", label: "Athena - Lightning", damageType: "Lightning" },
       { value: "Clio", label: "Clio - Arcane", damageType: "Arcane" },
       { value: "Yggdrasil", label: "Yggdrasil - Earth", damageType: "Earth" }
     ];
+function getSelectedDivineOption() {
+      const breakthrough = getSelectedBreakthroughRecords().find((entry) => normalizePhrase(entry.name) === "divine s chosen");
+      if (!breakthrough) {
+        return null;
+      }
+      const selected = getBuilderChoiceValue(getBreakthroughChoiceId(breakthrough, "divine"));
+      return UNKNOWN_PALADIN_DIVINE_OPTIONS.find((entry) => entry.value === selected) || null;
+    }
 function getElementalMasteryKeys(value) {
       const target = normalizePhrase(value)
         .replace(/\b(?:elemental|element|mastery|mastered|have)\b/g, "")
@@ -2717,6 +2667,14 @@ function getTrackedElementalMasteries() {
           ability.description
         ].forEach((text) => addElementalMasteriesFromText(masteries, text));
       });
+      const masteredAcolyte = getSelectedClassProgress().some((entry) =>
+        normalizePhrase(entry.record?.name) === "acolyte" && isTrackedClassMastered(entry)
+      );
+      if (masteredAcolyte) {
+        const divineOption = getSelectedDivineOption();
+        const mastery = divineOption?.damageType || (normalizePhrase(getSelectedRaceDetail()?.name) === "human" ? "Holy" : "");
+        getElementalMasteryKeys(mastery).forEach((key) => masteries.add(key));
+      }
       getSelectedElementalAffinityElements().forEach((element) => {
         getElementalMasteryKeys(element).forEach((key) => masteries.add(key));
       });
@@ -3264,7 +3222,7 @@ const preview = document.getElementById("race-preview");
         return;
       }
 const meta = [record.attributes, record.skills, record.proficiencies].filter(Boolean).join("\n\n");
-const image = record.imageSmUrl ? `<img src="${record.imageSmUrl}" alt="${escapeHtml(record.name)}" style="width:72px;height:88px;object-fit:cover;border-radius:12px;margin-bottom:10px;">` : "";
+const image = record.imageSmUrl ? `<img src="${record.imageSmUrl}" alt="${escapeHtml(record.name)}" loading="lazy" decoding="async" style="width:72px;height:88px;object-fit:cover;border-radius:12px;margin-bottom:10px;">` : "";
       preview.innerHTML = `${image}<h4>${escapeHtml(record.name)}</h4><p>${escapeHtml(record.descriptionText || record.description || "")}</p><p class="meta">${escapeHtml(meta)}</p>`;
     }
 function previewAncestry() {
@@ -3275,7 +3233,7 @@ const preview = document.getElementById("ancestry-preview");
         preview.innerHTML = getPreviewText("");
         return;
       }
-const image = record.imageSmUrl ? `<img src="${record.imageSmUrl}" alt="${escapeHtml(record.name)}" style="width:72px;height:88px;object-fit:cover;border-radius:12px;margin-bottom:10px;">` : "";
+const image = record.imageSmUrl ? `<img src="${record.imageSmUrl}" alt="${escapeHtml(record.name)}" loading="lazy" decoding="async" style="width:72px;height:88px;object-fit:cover;border-radius:12px;margin-bottom:10px;">` : "";
 const previewText = cleanText(record.descriptionText || record.description || record.clanText) || cleanText(record.traits?.[0]?.descriptionText || "");
       preview.innerHTML = `${image}<h4>${escapeHtml(record.name)}</h4><p>${escapeHtml(previewText)}</p>`;
     }
@@ -3288,7 +3246,7 @@ const preview = document.getElementById("class-preview");
         return;
       }
 const meta = [`Tier ${record.tier}`, record.role1, record.role2].filter(Boolean).join(" | ");
-const image = record.imageSmUrl ? `<img src="${record.imageSmUrl}" alt="${escapeHtml(record.name)}" style="width:72px;height:88px;object-fit:cover;border-radius:12px;margin-bottom:10px;">` : "";
+const image = record.imageSmUrl ? `<img src="${record.imageSmUrl}" alt="${escapeHtml(record.name)}" loading="lazy" decoding="async" style="width:72px;height:88px;object-fit:cover;border-radius:12px;margin-bottom:10px;">` : "";
       preview.innerHTML = `${image}<h4>${escapeHtml(record.name)}</h4><p>${escapeHtml(meta)}</p><p class="meta">${escapeHtml(getClassCardText(record))}</p>`;
     }
 function previewItem() {
@@ -3335,6 +3293,14 @@ const accessOverride = getClassAccessOverride(record);
         cost = Math.max(0, cost - accessOverride.costReduction);
       }
       return cost;
+    }
+export function getClassInterludeCost(record) {
+      const override = getClassAccessOverride(record)?.interludeCostOverride;
+      return override === null || override === undefined ? 1 : Math.max(0, toNumber(override, 1));
+    }
+export function getClassGrantedAbilityCount(record) {
+      const grantedLevel = Math.max(0, Math.floor(toNumber(getClassAccessOverride(record)?.grantedStartingLevel, 0)));
+      return clamp(grantedLevel - 1, 0, getClassProgressSlotCount(record));
     }
 function getClassRoleOptions() {
       const dynamicRoles = Array.from(new Set(
@@ -4670,7 +4636,11 @@ const keyAbilityText = [
           keyAbility.descriptionText,
           keyAbility.description
         ].filter(Boolean).join(" ");
-        if (isTrackedClassMastered(progressEntry) && hasSelectableElementalMasteryChoice(keyAbilityText)) {
+        if (
+          isTrackedClassMastered(progressEntry)
+          && normalizePhrase(record.name) !== "acolyte"
+          && hasSelectableElementalMasteryChoice(keyAbilityText)
+        ) {
           definitions.push({
             id: getClassChoiceId(record, "elemental-mastery"),
             source,
@@ -4868,6 +4838,22 @@ const idFor = (suffix) => getBreakthroughChoiceId(entry, getBreakthroughOccurren
 
         if (normalizedName === "elemental affinity") {
           return;
+        }
+
+        if (normalizedName === "divine s chosen") {
+          definitions.push({
+            id: idFor("divine"),
+            source,
+            step: "breakthroughs",
+            type: "text",
+            label: "Divine's Chosen: choose Divine",
+            options: UNKNOWN_PALADIN_DIVINE_OPTIONS,
+            pendingText: "Divine's Chosen: choose the Divine that sets Divine damage and Acolyte mastery.",
+            resolvedText: (value) => {
+              const option = UNKNOWN_PALADIN_DIVINE_OPTIONS.find((entryOption) => entryOption.value === value);
+              return option ? `Divine's Chosen: ${option.value}, damage and mastery type ${option.damageType}.` : `Divine's Chosen: ${value}.`;
+            }
+          });
         }
 
         if (normalizedName === "the unknown paladin") {
@@ -6149,7 +6135,7 @@ function refreshSheetToolbar() {
 const title = name ? `${escapeHtml(name)} - Character Sheet` : "Interactive Character Sheet";
       document.getElementById("sheet-toolbar-name").innerHTML = title;
     }
-export function appendPlayLog(title, lines = []) {
+export function appendPlayLog(title, lines = [], options = {}) {
       state.play = mergePlayState(state.play);
 const entries = Array.isArray(lines) ? lines : [lines];
       state.play.log.unshift({
@@ -6158,7 +6144,9 @@ const entries = Array.isArray(lines) ? lines : [lines];
         lines: entries.filter(Boolean).map((line) => cleanText(line))
       });
       state.play.log = state.play.log.slice(0, 24);
-      renderPlayDashboardIfVisible();
+      if (options.render !== false) {
+        renderPlayDashboardIfVisible();
+      }
     }
 export function parseResourceCost(costLabel) {
       const totals = {
@@ -9766,7 +9754,7 @@ const activePlayMode = getActivePlayMode();
 const senses = ["Perception", "Insight", "Survival"].map((name) =>
         skills.find((entry) => normalizePhrase(entry.name) === normalizePhrase(name))
       ).filter(Boolean);
-const proficienciesMarkup = renderTrainingDetails("Proficiencies", state.fields.Proficiencies);
+const proficienciesMarkup = renderTrainingDetails("Proficiencies", getPlayProficiencyText());
 const classStripClass = classProgress.length === 1
         ? "play-header-class-strip is-single"
         : "play-header-class-strip";
@@ -10441,7 +10429,7 @@ const entries = getInventoryCatalogEntries();
               const market = getMiraneItemMarketState(entry);
               return `
               <div class="play-item-catalog-card is-reference-clickable" data-play-reference-name="${escapeHtml(entry.name)}">
-                <img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl || "assets/lyrian-symbol.png")}" alt="${escapeHtml(entry.name)}">
+                <img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl || "assets/lyrian-symbol.png")}" alt="${escapeHtml(entry.name)}" loading="lazy" decoding="async">
                 <div>
                   <strong>${escapeHtml(entry.name)}</strong>
                   <p>${escapeHtml([entry.type, entry.subType, entry.cost, entry.materialUnitLabel || entry.burden].filter(Boolean).join(" | "))}</p>
@@ -10709,7 +10697,7 @@ const useOptions = getInventoryItemUseOptions(entry);
 const readinessProfile = getInventoryItemReadinessProfile(entry);
       return `
         <div class="play-compact-row play-item-row is-reference-clickable${isEquipped ? " is-equipped" : ""}" data-play-reference-name="${escapeHtml(entry.name)}">
-          <img class="play-item-thumb" src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl || "assets/lyrian-symbol.png")}" alt="${escapeHtml(entry.name)}">
+          <img class="play-item-thumb" src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl || "assets/lyrian-symbol.png")}" alt="${escapeHtml(entry.name)}" loading="lazy" decoding="async">
           <div>
             <strong>${escapeHtml(entry.name)}${quantity > 1 ? `<span class="play-item-equipped-badge">x${escapeHtml(String(quantity))}</span>` : ""}${isEquipped ? `<span class="play-item-equipped-badge">Equipped</span>` : ""}</strong>
             <p>${escapeHtml([entry.type, entry.subType, entry.cost, entry.burden, getInventoryItemActivationCost(entry) ? `Use: ${formatCostLabelForDisplay(getInventoryItemActivationCost(entry))}` : ""].filter(Boolean).join(" | "))}</p>
@@ -10963,8 +10951,7 @@ function getRecipeDisplayDescription(recipe = {}) {
       return fallback.replace(/\s+/g, " ").trim();
     }
 function getRecipeSummarySentences(recipe = {}) {
-      return getRecipeDisplayDescription(recipe)
-        .split(/(?<=[.!?])\s+/)
+      return splitSentences(getRecipeDisplayDescription(recipe))
         .map((entry) => cleanText(entry))
         .filter(Boolean);
     }
@@ -12546,9 +12533,38 @@ function setCraftingActivityMode(mode) {
       setStatus(state.play.crafting.activityMode === "gathering" ? "Gathering session mode is active." : "Crafting session mode is active.");
     }
 export function renderPlayDashboardIfVisible() {
+      if (playDashboardRenderTimer) {
+        // An immediate render supersedes a pending debounced sync; keep the
+        // autosave that the pending callback would have scheduled.
+        window.clearTimeout(playDashboardRenderTimer);
+        playDashboardRenderTimer = 0;
+        scheduleWorkingStatePersist();
+      }
       if (state.ui.mode === "sheet") {
         renderPlayDashboard();
       }
+    }
+let playDashboardRenderTimer = 0;
+export function flushPlayDashboardSync(options = {}) {
+      if (!playDashboardRenderTimer) {
+        return false;
+      }
+      const shouldRender = options.render !== false;
+      window.clearTimeout(playDashboardRenderTimer);
+      playDashboardRenderTimer = 0;
+      syncPlayResourcesFromFields(true);
+      scheduleWorkingStatePersist();
+      if (shouldRender) {
+        renderPlayDashboardIfVisible();
+      }
+      return true;
+    }
+export function schedulePlayDashboardSync(delay = 180) {
+      // Typing in a sheet field used to rebuild the entire play dashboard on
+      // every keystroke (140-200ms on desktop, far worse on phones). Batch the
+      // derived-stat sync, rerender, and autosave behind a short debounce.
+      window.clearTimeout(playDashboardRenderTimer);
+      playDashboardRenderTimer = window.setTimeout(flushPlayDashboardSync, delay);
     }
 function loadGatheringTemplate(templateId = GATHERING_DEFAULT_TEMPLATE_ID) {
       const template = GATHERING_NODE_TEMPLATES[templateId] || GATHERING_NODE_TEMPLATES[GATHERING_DEFAULT_TEMPLATE_ID];
@@ -13947,7 +13963,7 @@ function renderCraftingBlueprintPanel(crafting, inventory) {
       const effectSummary = recipe ? getRecipeDisplayEffectSummary(recipe) : { description: "", tags: [], notes: [] };
       const recipeImageUrl = recipe?.imageLgUrl || recipe?.imageSmUrl || "";
       const blueprintVisual = recipeImageUrl
-        ? `<img class="play-blueprint-item-image" src="${escapeHtml(recipeImageUrl)}" alt="${escapeHtml(title)}">`
+        ? `<img class="play-blueprint-item-image" src="${escapeHtml(recipeImageUrl)}" alt="${escapeHtml(title)}" loading="lazy" decoding="async">`
         : renderCraftingBlueprintShape(blueprintType);
       const blueprintShapeClass = recipeImageUrl ? " has-item-image" : "";
       const coreRows = Math.max(3, Math.ceil(Math.max(requirements.length, 2) / 2));
@@ -16137,9 +16153,14 @@ function getSelectedBreakthroughDisplayEntries() {
         if (normalizePhrase(entry.name) !== "elemental affinity") {
           const occurrence = (stackableIndexes.get(entry.id) || 0) + 1;
           stackableIndexes.set(entry.id, occurrence);
+          const divineChoice = normalizePhrase(entry.name) === "divine s chosen"
+            ? getBuilderChoiceValue(getBreakthroughChoiceId(entry, getBreakthroughOccurrenceSuffix("divine", occurrence)))
+            : "";
           return {
             ...entry,
-            displayName: occurrence > 1 ? `${entry.name} #${occurrence}` : entry.name,
+            displayName: divineChoice
+              ? `${entry.name}: ${divineChoice}`
+              : (occurrence > 1 ? `${entry.name} #${occurrence}` : entry.name),
             displayDescription: cleanText(entry.description)
           };
         }
@@ -16383,7 +16404,7 @@ function syncDerivedBuilderFields() {
       updateFieldValue("Available Clim", String(funds.availableClim));
       updateFieldValue("Equipment Cost", String(funds.selectedEquipmentCost));
     }
-function syncBuilderSelectionsIntoSheet() {
+export function syncBuilderSelectionsIntoSheet() {
       enforceMiraneStartSelections();
       pruneIneligibleBreakthroughSelections();
       normalizeElementalAffinitySelections();
@@ -16563,7 +16584,7 @@ const className = record?.name || "Class";
 const classId = record?.id || className;
       return `
         <button type="button" class="play-header-class-card" data-play-class-reference="${escapeHtml(classId)}" title="${escapeHtml(`Open ${className} class reference - Level ${level}`)}" aria-label="${escapeHtml(`Open ${className} class reference, level ${level}`)}">
-          <img src="${escapeHtml(image)}" alt="${escapeHtml(className)} art" style="object-position:${position};">
+          <img src="${escapeHtml(image)}" alt="${escapeHtml(className)} art" loading="lazy" decoding="async" style="object-position:${position};">
           <div class="play-header-class-info">
             <span class="play-header-class-level">Lv ${escapeHtml(String(level))}</span>
             <span class="play-header-class-name">${escapeHtml(className)}</span>
@@ -16736,7 +16757,7 @@ const miraneClassRule = getMiraneClassRuleOverride(record);
           <div class="detail-section">
             <h3>${escapeHtml(record.name)}</h3>
             <p>${escapeHtml([record.tier ? `Tier ${record.tier}` : "", record.role1, record.role2, record.difficulty ? `Difficulty ${record.difficulty}` : ""].filter(Boolean).join(" | "))}</p>
-            <p><strong>Unlock Cost:</strong> 1 Interlude Point + ${getClassUnlockCost(record)} EXP</p>
+            <p><strong>Unlock Cost:</strong> ${getClassInterludeCost(record)} Interlude Point${getClassInterludeCost(record) === 1 ? "" : "s"} + ${getClassUnlockCost(record)} EXP</p>
             ${paragraphize(leadText)}
             ${renderMiraneRuleOverride(miraneClassRule)}
           </div>
@@ -17033,7 +17054,7 @@ function getMobileBuilderChoiceConfig(action, id, trigger) {
         let unavailableReason = "";
         if (!alreadySelected && !requirementStatus.met) {
           unavailableReason = `Requirements not met: ${requirementStatus.requirementsText}`;
-        } else if (!alreadySelected && budget.remainingInterlude <= 0) {
+        } else if (!alreadySelected && getClassInterludeCost(record) > budget.remainingInterlude) {
           unavailableReason = `All ${budget.interludeBudget} available Interlude Points are already committed to class unlocks.`;
         } else if (!alreadySelected && unlockCost > budget.remainingExp) {
           unavailableReason = `${record.name} costs ${unlockCost} class EXP, but only ${budget.remainingExp} EXP remains.`;
@@ -17181,7 +17202,7 @@ function renderOptionCard({ id, image, mediaHtml = "", title, description, label
         selected ? "selected" : "",
         locked ? "locked" : ""
       ].filter(Boolean).join(" ");
-const media = mediaHtml || `<img src="${escapeHtml(image || "assets/lyrian-symbol.png")}" alt="${escapeHtml(title)}">`;
+const media = mediaHtml || `<img src="${escapeHtml(image || "assets/lyrian-symbol.png")}" alt="${escapeHtml(title)}" loading="lazy" decoding="async">`;
 
       return `
         <button type="button" class="${cardClasses}" data-builder-action="${action}" data-id="${escapeHtml(id)}">
@@ -17229,7 +17250,7 @@ function renderElementalAffinityBreakthroughCard(entry, { budget, requirementSta
         <div class="${cardClasses}">
           ${wrapperOpen}
             ${(entry.imageSmUrl || entry.imageLgUrl)
-              ? `<img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl)}" alt="${escapeHtml(entry.name)}">`
+              ? `<img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl)}" alt="${escapeHtml(entry.name)}" loading="lazy" decoding="async">`
               : renderBreakthroughArt(entry)}
             <div class="builder-option-copy">
               <div class="builder-option-header">
@@ -17296,7 +17317,7 @@ function renderRepeatableUniqueBreakthroughCard(entry, { budget, requirementStat
         <div class="${cardClasses}">
           ${wrapperOpen}
             ${(entry.imageSmUrl || entry.imageLgUrl)
-              ? `<img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl)}" alt="${escapeHtml(entry.name)}">`
+              ? `<img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl)}" alt="${escapeHtml(entry.name)}" loading="lazy" decoding="async">`
               : renderBreakthroughArt(entry)}
             <div class="builder-option-copy">
               <div class="builder-option-header">
@@ -17364,7 +17385,7 @@ function renderStackableBreakthroughCard(entry, { budget, requirementStatus }) {
         <div class="${cardClasses}">
           ${wrapperOpen}
             ${(entry.imageSmUrl || entry.imageLgUrl)
-              ? `<img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl)}" alt="${escapeHtml(entry.name)}">`
+              ? `<img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl)}" alt="${escapeHtml(entry.name)}" loading="lazy" decoding="async">`
               : renderBreakthroughArt(entry)}
             <div class="builder-option-copy">
               <div class="builder-option-header">
@@ -17456,7 +17477,7 @@ function renderEquipmentOptionCard(entry, selectedIds, funds) {
       return `
         <div class="${cardClasses}">
           <button type="button" class="builder-equipment-inspect" data-builder-action="inspect-item" data-id="${escapeHtml(entry.id)}">
-            <img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl || "assets/lyrian-symbol.png")}" alt="${escapeHtml(entry.name)}">
+            <img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl || "assets/lyrian-symbol.png")}" alt="${escapeHtml(entry.name)}" loading="lazy" decoding="async">
             <div class="builder-option-copy">
               <div class="builder-option-header">
                 <strong>${escapeHtml(entry.name)}</strong>
@@ -17819,7 +17840,7 @@ const statusText = selected
               return renderOptionCard({
                 id: entry.id,
                 mediaHtml: (entry.imageSmUrl || entry.imageLgUrl)
-                  ? `<img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl)}" alt="${escapeHtml(entry.name)}">`
+                  ? `<img src="${escapeHtml(entry.imageSmUrl || entry.imageLgUrl)}" alt="${escapeHtml(entry.name)}" loading="lazy" decoding="async">`
                   : renderBreakthroughArt(entry),
                 title: entry.name,
                 description: cleanText(entry.description).slice(0, 180),
@@ -18200,7 +18221,7 @@ const mastered = isTrackedClassMastered(entry);
                   </ul>
                   <div class="class-progress-actions">
                     <button type="button" data-builder-action="learn-class-ability" data-id="${escapeHtml(entry.record.id)}" ${canLearnNext ? "" : "disabled"}>${nextSlot ? `Learn ${escapeHtml(nextSlot.name || nextSlot.label)}` : "Class Mastered"}</button>
-                    <button type="button" class="secondary" data-builder-action="refund-class-ability" data-id="${escapeHtml(entry.record.id)}" ${entry.purchasedCount > 0 ? "" : "disabled"}>Refund Last Class Level</button>
+                    <button type="button" class="secondary" data-builder-action="refund-class-ability" data-id="${escapeHtml(entry.record.id)}" ${entry.purchasedCount > getClassGrantedAbilityCount(entry.record) ? "" : "disabled"}>Refund Last Class Level</button>
                     <button type="button" class="secondary" data-builder-action="toggle-class" data-id="${escapeHtml(entry.record.id)}">Remove Class</button>
                   </div>
                   ${nextSlot && !canLearnNext ? `<p>${escapeHtml(`Needs 100 EXP, but only ${budget.remainingExp} EXP is available.`)}</p>` : ""}
@@ -18561,11 +18582,14 @@ const QUICK_BUILD_SPECIES = [
   { id: "demon", label: "Demon", race: "Demon", defer: "Demon clan is chosen after role selection.", note: "The clan and bonus are picked to support the chosen role." },
   { id: "pixie", label: "Pixie", race: "Fae", ancestry: "Pixie", note: "Tiny fae pick for magic, scouting, and trickery." },
   { id: "dryad", label: "Dryad", race: "Fae", ancestry: "Dryad", note: "Nature-flavored fae pick for support, control, and magic." },
+  { id: "gnome", label: "Gnome", race: "Fae", ancestry: "Gnome", grantedClass: "Miner level 1", note: "Crafting-minded fae pick that starts with Miner unlocked for free." },
+  { id: "selkie", label: "Selkie", race: "Fae", ancestry: "Selkie", grantedClass: "Hydromancer level 2", note: "Aquatic fae pick that starts with Hydromancer unlocked at level 2." },
   { id: "unseelie", label: "Unseelie", race: "Fae", ancestry: "Unseelie", note: "Darker fae pick for magic, stealth, or social builds." },
   { id: "human", label: "Human", race: "Human", defer: "Human bonuses are chosen after role selection.", note: "Human bonus choices are optimized around the selected class." },
   { id: "tengu", label: "Tengu", race: "Youkai", ancestry: "Tengu", note: "Winged youkai pick for mobile fighters and ranged builds." },
   { id: "kitsune", label: "Kitsune", race: "Youkai", ancestry: "Kitsune", note: "Fox-spirit pick for magic, charm, trickery, and social characters." },
   { id: "oni", label: "Oni", race: "Youkai", ancestry: "Oni", note: "Powerful youkai pick for heavy melee and intimidation." },
+  { id: "raijin", label: "Raijin", race: "Youkai", ancestry: "Raijin", grantedClass: "Flash Star Blade Style level 1", note: "Lightning-aligned youkai pick that starts with Flash Star Blade Style unlocked for free." },
   { id: "jiangshi", label: "Jiangshi", race: "Youkai", ancestry: "Jiangshi", note: "Undead youkai pick for strange, resilient supernatural builds." },
   { id: "dullahan", label: "Dullahan", race: "Fae", ancestry: "Dullahan", note: "Death-aware armored fae pick for shield, striker, or support builds." },
   { id: "wolf-folk", label: "Wolf-folk", race: "Chimera", ancestry: "Wolf-folk", note: "Keen hunter pick for ranger, archer, marksman, and team-focused builds." }
@@ -18633,6 +18657,39 @@ const QUICK_BUILD_ROLES = [
         nextClass: "Reaver",
         laterClass: "Reaver",
         nextClassWhy: "Reaver is the direct Tier 3 Highlander continuation and keeps investing in two-handed heavy attacks and Aftershock."
+      },
+      {
+        id: "seven-sorrows-rush",
+        label: "Seven Sorrows Rush",
+        className: "Fighter",
+        targetClass: "Seven Sorrows Sword Style",
+        classPlan: [{ name: "Fighter", purchasedCount: 7 }, { name: "Seven Sorrows Sword Style", purchasedCount: 0 }],
+        role: "Striker",
+        powerBuild: true,
+        mainStats: { Focus: 4, Power: 5, Agility: 4, Toughness: 3 },
+        secondaryStats: { Fitness: 5, Cunning: 3, Reason: 1, Awareness: 2, Presence: 4 },
+        skills: { Athletics: 4, Intimidation: 3, Perception: 2, Stealth: 1 },
+        items: ["Armor (Light)", "Katana (Two-Handed)", "Adventurer's Kit", "Military Ration", "Healing Potion"],
+        breakthroughPlan: [
+          { name: "Secondary Stat Training", choice: "Fitness" },
+          { name: "Skill Training", choice: "Athletics" },
+          { name: "Skill Training", choice: "Intimidation" },
+          { name: "Skill Training", choice: "Perception" },
+          { name: "Skill Training", choice: "Stealth" }
+        ],
+        weaponGroup: "Katana",
+        weaponGroups: ["Heavy Blades", "Small Weapons", "Longsword", "Light Swords"],
+        humanStat: "Power",
+        humanSecondary: "Fitness",
+        demonClan: "un",
+        why: "A high-acceleration 0.13.1 power route: master Fighter and immediately unlock Seven Sorrows with Katana proficiency.",
+        playstyle: "A decisive lone-sword striker. Fighter supplies the complete martial foundation, while Dark Weapon and Lone Wolf Stance begin the Seven Sorrows damage route at character creation.",
+        gameplayLoop: ["Use Fighter movement to isolate the priority target.", "Enter Lone Wolf Stance when the battlefield supports fighting alone.", "Convert weapon damage to Dark and develop the three Sorrows next."],
+        bestFor: "Choose this if you want the new Seven Sorrows class immediately and are comfortable with an aggressively optimized melee route.",
+        classPathWhy: "Fighter mastery satisfies the class gate, and Fighter/Human/Demon weapon choices can supply Katana proficiency without spending another class unlock. The full 1000 class EXP buys Fighter mastery and the Seven Sorrows key.",
+        nextClass: "Seven Sorrows Sword Style",
+        laterClass: "Seven Sorrows Sword Style",
+        nextClassWhy: "Seven Sorrows is already unlocked, so future EXP advances directly through Lone Wolf Stance and the three Sorrows."
       }
     ]
   },
@@ -18859,7 +18916,7 @@ const QUICK_BUILD_ROLES = [
           { name: "Skill Training", choice: "Insight" },
           { name: "Skill Training", choice: "Negotiation" }
         ],
-        weaponGroup: "Wand",
+        weaponGroup: "Magic Staff",
         humanStat: "Toughness",
         humanSecondary: "Presence",
         demonClan: "vi",
@@ -18903,6 +18960,39 @@ const QUICK_BUILD_ROLES = [
         nextClass: "Bard",
         laterClass: "Bard",
         nextClassWhy: "After Jewel Idol is mastered, Bard is the strongest thematic support branch because it adds more performance tools without abandoning the song role."
+      },
+      {
+        id: "bard-expertise-rush",
+        label: "Bard Expertise Rush",
+        className: "Bard",
+        targetClass: "Idol",
+        classPlan: [{ name: "Bard", purchasedCount: 7 }, { name: "Idol", purchasedCount: 0 }],
+        role: "Support",
+        powerBuild: true,
+        mainStats: { Focus: 4, Power: 3, Agility: 4, Toughness: 5 },
+        secondaryStats: { Fitness: 1, Cunning: 3, Reason: 2, Awareness: 4, Presence: 5 },
+        skills: { Art: 2, Negotiation: 2, Insight: 2, Linguistics: 1 },
+        expertisePlan: [{ skill: "Art", name: "Singing", points: 3 }],
+        items: ["Armor (Light)", "Small Weapons (One-Handed)", "Adventurer's Kit", "Healing Potion", "Smoke Flask"],
+        breakthroughPlan: [
+          { name: "Secondary Stat Training", choice: "Presence" },
+          { name: "Skill Training", choice: "Art" },
+          { name: "Skill Training", choice: "Negotiation" },
+          { name: "Skill Training", choice: "Insight" },
+          { name: "Skill Training", choice: "Linguistics" }
+        ],
+        weaponGroup: "Small Weapons",
+        humanStat: "Toughness",
+        humanSecondary: "Presence",
+        demonClan: "un",
+        why: "A high-acceleration expertise route: three creation points become +6 Singing expertise, unlocking Bard without mastering Idol first.",
+        playstyle: "A fully developed Bard at character creation. The build uses the expertise alternate prerequisite, masters Bard for its complete support kit, and spends the final 100 EXP on Idol's key ability.",
+        gameplayLoop: ["Choose the Bard performance that best changes the encounter.", "Use high Presence and Singing expertise to control social and performance scenes.", "Layer Idol's key support onto the mastered Bard engine."],
+        bestFor: "Choose this if you deliberately want the strongest legal performance-class acceleration rather than the gentler Idol-first learning path.",
+        classPathWhy: "Three of the ten creation skill points convert into +6 Art (Singing) expertise and satisfy Bard's alternate gate. Bard mastery costs 900 EXP including its Tier 2 unlock; Idol's key uses the remaining 100 EXP.",
+        nextClass: "Mist Veil Elegy",
+        laterClass: "Mist Veil Elegy",
+        nextClassWhy: "Bard is already mastered. Mist Veil Elegy is the strongest direct style continuation once its remaining access conditions are satisfied."
       }
     ]
   },
@@ -18991,27 +19081,53 @@ function getQuickBuildResolvedClassPlan(build, species = getQuickBuildSpecies())
       const { race, ancestry } = getQuickBuildSpeciesRecords(species, build);
       const raceName = normalizePhrase(race?.name);
       const ancestryName = normalizePhrase(ancestry?.name);
+      const addGrantedClass = (name, purchasedCount = 0, grantedLevel = 1) => {
+        const existing = plan.find((entry) => normalizePhrase(entry.name) === normalizePhrase(name));
+        if (existing) {
+          existing.purchasedCount = Math.max(existing.purchasedCount, purchasedCount);
+          existing.raceGranted = true;
+          existing.grantedLevel = Math.max(existing.grantedLevel || 1, grantedLevel);
+          return;
+        }
+        plan.push({ name, purchasedCount, raceGranted: true, grantedLevel });
+      };
       if (raceName === "demon") {
-        if (build.id === "sneak-thief") {
-          plan.push({ name: "Saboteur", purchasedCount: 0, raceGranted: true });
-        } else if (build.id === "cleric-support") {
-          plan = plan.map((entry) => normalizePhrase(entry.name) === "medic"
-            ? { ...entry, purchasedCount: 2, raceGranted: true }
-            : entry);
-        } else if (build.id === "potion-healer") {
+        if (build.id === "potion-healer") {
           plan = plan.filter((entry) => normalizePhrase(entry.name) !== "acolyte");
-          plan.push({ name: "Medic", purchasedCount: 2, raceGranted: true });
-        } else if (build.id === "performance-support") {
-          plan.push({ name: "Maid", purchasedCount: 0, raceGranted: true });
+        }
+        const clanGrant = {
+          wi: "Saboteur",
+          vi: "Medic",
+          un: "Maid"
+        }[normalizePhrase(ancestry?.lineageCode || build?.demonClan)];
+        if (clanGrant) {
+          const purchasedCount = clanGrant === "Medic" && ["cleric-support", "potion-healer"].includes(build.id) ? 2 : 0;
+          addGrantedClass(clanGrant, purchasedCount, 1);
         }
       }
-      if (ancestryName === "gnome" && plan.length < STARTING_INTERLUDE_POINTS && !plan.some((entry) => normalizePhrase(entry.name) === "miner")) {
-        plan.push({ name: "Miner", purchasedCount: 0, raceGranted: true });
+      if (ancestryName === "gnome") {
+        addGrantedClass("Miner", 0, 1);
       }
-      return plan.slice(0, STARTING_INTERLUDE_POINTS);
+      if (ancestryName === "raijin") {
+        addGrantedClass("Flash Star Blade Style", 0, 1);
+      }
+      if (ancestryName === "selkie") {
+        addGrantedClass("Hydromancer", 0, 2);
+      }
+      let paidClassCount = 0;
+      return plan.filter((entry) => {
+        if (entry.raceGranted) {
+          return true;
+        }
+        paidClassCount += 1;
+        return paidClassCount <= STARTING_INTERLUDE_POINTS;
+      });
     }
 function getQuickBuildClassPathLabel(build) {
       return getQuickBuildResolvedClassPlan(build).map((entry) => {
+        if (entry.raceGranted && entry.grantedLevel > 1 && entry.purchasedCount === 0) {
+          return `${entry.name} granted level ${entry.grantedLevel}`;
+        }
         if (entry.purchasedCount >= CLASS_PURCHASABLE_LEVELS) {
           return `${entry.name} mastery`;
         }
@@ -19057,7 +19173,11 @@ function getQuickBuildRoadmapState(build = getQuickBuildById()) {
       if (!plan) {
         return null;
       }
-      const incompleteTierTwo = plan.entries.find(({ progress }) => toNumber(progress.record?.tier, 0) >= 2 && progress.purchasedCount < CLASS_PURCHASABLE_LEVELS);
+      const incompleteTierTwo = plan.entries.find(({ planned, progress }) =>
+        !planned.raceGranted
+        && toNumber(progress.record?.tier, 0) >= 2
+        && progress.purchasedCount < CLASS_PURCHASABLE_LEVELS
+      );
       const focusRecord = incompleteTierTwo?.progress.record || findRecordByName(lookup.classes.entries, build.nextClass);
       if (!focusRecord) {
         return null;
@@ -19226,11 +19346,13 @@ function getQuickBuildClassPlanPreview(build) {
           return "";
         }
         const keyAbility = getClassKeyAbilityRecord(record);
-        const learnedSlots = getClassProgressSlots(record).slice(0, planned.purchasedCount);
+        const grantedAbilityCount = planned.raceGranted ? getClassGrantedAbilityCount(record) : 0;
+        const displayedAbilityCount = Math.max(planned.purchasedCount, grantedAbilityCount);
+        const learnedSlots = getClassProgressSlots(record).slice(0, displayedAbilityCount);
         const levelLabel = planned.purchasedCount >= CLASS_PURCHASABLE_LEVELS
           ? "Mastered"
-          : planned.purchasedCount > 0
-            ? `Key + ${planned.purchasedCount} ${planned.purchasedCount === 1 ? "ability" : "abilities"}`
+          : displayedAbilityCount > 0
+            ? `Level ${displayedAbilityCount + 1} | Key + ${displayedAbilityCount} ${displayedAbilityCount === 1 ? "ability" : "abilities"}`
             : "Key ability only";
         const skillText = firstReadableText(record.skillsText, record.skills);
         const proficiencyText = firstReadableText(record.proficienciesText, record.proficiencyText, record.proficiencies);
@@ -19252,7 +19374,12 @@ function renderQuickBuildBuildDetail(build) {
       if (!build) {
         return "<p>Pick a role package to inspect its gameplay, exact class levels, skills, perks, and equipment before applying it.</p>";
       }
-      const skillList = Object.entries(build.skills || {}).map(([name, amount]) => `<li><strong>${escapeHtml(name)}</strong> +${escapeHtml(String(amount))}</li>`).join("");
+      const skillList = [
+        ...Object.entries(build.skills || {}).map(([name, amount]) => `<li><strong>${escapeHtml(name)}</strong> +${escapeHtml(String(amount))}</li>`),
+        ...asArray(build.expertisePlan).map((entry) => `<li><strong>${escapeHtml(`${entry.skill} (${entry.name})`)}</strong> +${escapeHtml(String(Math.max(0, toNumber(entry.points, 0)) * 2))} expertise</li>`)
+      ].join("");
+      const generalSkillSpend = Object.values(build.skills || {}).reduce((total, amount) => total + Math.max(0, toNumber(amount, 0)), 0);
+      const expertiseSpend = asArray(build.expertisePlan).reduce((total, entry) => total + Math.max(0, toNumber(entry.points, 0)), 0);
       const perks = getQuickBuildPreviewBreakthroughPlan(build).map((entry) => `${entry.name}${entry.choice ? ` (${entry.choice})` : ""}`);
       return `
         <section class="quick-build-detail-section">
@@ -19269,7 +19396,7 @@ function renderQuickBuildBuildDetail(build) {
         <section class="quick-build-detail-section">
           <h4>Skills You Start With</h4>
           <ul class="quick-build-detail-list">${skillList}</ul>
-          <p class="builder-note">These are the ten general creation skill points. Class, race, and Skill Training grants are added on top and assigned to compatible skills automatically.</p>
+          <p class="builder-note">These spend ${escapeHtml(String(generalSkillSpend + expertiseSpend))} creation skill points${expertiseSpend ? `: ${escapeHtml(String(expertiseSpend))} converted into expertise at +2 per point` : ""}. Class, race, and Skill Training grants are added on top and assigned to compatible skills automatically.</p>
         </section>
         <section class="quick-build-detail-section">
           <h4>Equipment and Perks</h4>
@@ -19326,6 +19453,7 @@ function clearQuickBuildGeneratedFields() {
       state.builder.selectedBreakthroughIds = [];
       state.builder.gmApprovedBreakthroughIds = [];
       state.builder.choiceSelections = {};
+      state.builder.skillExpertiseEntries = [];
       MAIN_STATS.forEach((entry) => updateFieldValue(entry.key, ""));
       SECONDARY_STATS.forEach((entry) => updateFieldValue(entry.key, ""));
       SKILL_DEFINITIONS.forEach((entry, index) => {
@@ -19355,6 +19483,15 @@ function setQuickBuildSkills(build) {
         }
       });
     }
+function setQuickBuildExpertise(build) {
+      const entries = asArray(build?.expertisePlan).map((entry) => ({
+        skillIndex: getQuickBuildSkillIndex(entry.skill),
+        name: entry.name,
+        source: "creation",
+        points: Math.max(0, Math.floor(toNumber(entry.points, 0)))
+      })).filter((entry) => entry.skillIndex > 0 && entry.name && entry.points > 0);
+      setStoredSkillExpertiseEntries(entries);
+    }
 function addQuickBuildItem(name) {
       const record = findRecordByName(lookup.items.entries, name);
       if (!record) {
@@ -19370,6 +19507,9 @@ function isQuickBuildAutoEquipItem(record) {
 const subType = normalizePhrase(record.subType);
 const name = normalizePhrase(record.name);
       return new Set(["armor", "weapon", "kit", "tool", "storage"]).has(subType)
+        || subType.includes("weapon")
+        || name === "shield"
+        || name === "shield great"
         || name === "binoculars";
     }
 function equipQuickBuildLoadout(build) {
@@ -19393,17 +19533,27 @@ function addQuickBuildBreakthrough(name, fallback = "Skill Training") {
       state.builder.selectedBreakthroughIds.push(record.id);
       return record.name;
     }
-function getQuickBuildBreakthroughPlan(build, hasNativeFireMastery = false) {
+function quickBuildNeedsDivinesChosen(build, species = getQuickBuildSpecies()) {
+      const { race } = getQuickBuildSpeciesRecords(species, build);
+      return normalizePhrase(race?.name) !== "human"
+        && getQuickBuildResolvedClassPlan(build, species).some((entry) => normalizePhrase(entry.name) === "acolyte");
+    }
+function getQuickBuildBreakthroughPlan(build, hasNativeFireMastery = false, species = getQuickBuildSpecies()) {
+      let plan;
       if (build?.classStrategy === "specialty-first") {
-        return [
+        plan = [
           { name: "Wide Circuits I" },
           ...(hasNativeFireMastery ? Array.from({ length: 6 }, () => ({ name: "Skill Training", choice: "Magic" })) : [])
         ];
+      } else if (asArray(build?.breakthroughPlan).length) {
+        plan = [...build.breakthroughPlan];
+      } else {
+        plan = [{ name: build?.breakthrough || "Skill Training", choice: Object.keys(build?.skills || {})[0] || "" }];
       }
-      if (asArray(build?.breakthroughPlan).length) {
-        return build.breakthroughPlan;
+      if (quickBuildNeedsDivinesChosen(build, species) && !plan.some((entry) => normalizePhrase(entry.name) === "divine s chosen")) {
+        plan.unshift({ name: "Divine's Chosen", choice: "Kari" });
       }
-      return [{ name: build?.breakthrough || "Skill Training", choice: Object.keys(build?.skills || {})[0] || "" }];
+      return plan;
     }
 function applyQuickBuildBreakthroughPlan(build) {
       if (build.classStrategy === "specialty-first") {
@@ -19464,10 +19614,33 @@ function assignQuickBuildRacialAndClassChoices(build) {
       } else {
         setFirstMatchingBuilderChoice("race-demon-weapon-group", [build.weaponGroup, "Small Weapons"]);
       }
+      getBuilderChoiceDefinitions()
+        .filter((choice) => choice.type === "racial-skill-pool" && isBuilderChoiceVisible(choice))
+        .forEach((choice) => {
+          const skill = preferredSkills.find((name) => choice.options.includes(name)) || choice.options[0];
+          const row = getQuickBuildSkillIndex(skill);
+          if (row > 0) {
+            setRacialSkillAllocation(choice.id, row, choice.amount || 0);
+          }
+        });
       getSelectedClassProgress().forEach((progressEntry) => {
         const record = progressEntry.record;
+        const selectedProficiencies = new Set();
         getClassProficiencyChoiceDefinitions(record).forEach((choice) => {
-          setFirstMatchingBuilderChoice(choice.id, [build.weaponGroup, "Wand", "Magic Staff", "Small Weapons", "Light Armor", "Shields"]);
+          const preferredProficiencies = [
+            build.weaponGroup,
+            ...asArray(build.weaponGroups),
+            "Wand",
+            "Magic Staff",
+            "Small Weapons",
+            "Light Armor",
+            "Shields",
+            ...asArray(choice.options)
+          ].filter((value) => value && !selectedProficiencies.has(normalizePhrase(value)));
+          const selected = setFirstMatchingBuilderChoice(choice.id, preferredProficiencies);
+          if (selected) {
+            selectedProficiencies.add(normalizePhrase(selected));
+          }
         });
         setFirstMatchingBuilderChoice(getClassChoiceId(record, "heart-stat"), [build.humanSecondary, "Fitness", "Reason", "Presence"]);
         setFirstMatchingBuilderChoice(getClassChoiceId(record, "soul-stat"), [build.humanStat, "Focus", "Power", "Toughness", "Agility"]);
@@ -19497,6 +19670,10 @@ function assignQuickBuildRacialAndClassChoices(build) {
             setBuilderChoiceValue(choice.id, skillChoices[occurrence - 1]?.choice || preferredSkills[0] || choice.options?.[0] || "");
           }
         }
+        if (normalizePhrase(source) === "divine s chosen") {
+          const divineChoice = breakthroughPlan.find((entry) => normalizePhrase(entry.name) === "divine s chosen")?.choice || "Kari";
+          setBuilderChoiceValue(choice.id, divineChoice);
+        }
       });
     }
 function getQuickBuildRaceOptimizationNote(build, species = getQuickBuildSpecies()) {
@@ -19504,16 +19681,31 @@ function getQuickBuildRaceOptimizationNote(build, species = getQuickBuildSpecies
       const raceName = normalizePhrase(race?.name);
       const ancestryName = normalizePhrase(ancestry?.name);
       if (raceName === "demon" && build.id === "sneak-thief") {
-        return "Demon optimization: clan WI enters Saboteur for 0 EXP, so its key is added as a third class without delaying Rogue, Decipher Magic, or the future Thief unlock.";
+        return "Demon optimization: clan WI starts with Saboteur unlocked at level 1, so its key is added as a free class without delaying Rogue, Decipher Magic, or the future Thief unlock.";
       }
       if (raceName === "demon" && build.id === "cleric-support") {
-        return "Demon optimization: clan VI enters Medic for 0 EXP, buying both First Aid and Code Blue while keeping the full Acolyte foundation.";
+        return "Demon optimization: clan VI starts with Medic unlocked at level 1, buying both First Aid and Code Blue while keeping the full Acolyte foundation.";
       }
       if (raceName === "demon" && build.id === "potion-healer") {
-        return "Demon optimization: clan VI enters Medic for 0 EXP, replacing the generic Acolyte dip with First Aid and Code Blue at the same 1000-EXP total.";
+        return "Demon optimization: clan VI starts with Medic unlocked at level 1, replacing the generic Acolyte dip with First Aid and Code Blue at the same 1000-EXP total.";
       }
       if (raceName === "demon" && build.id === "performance-support") {
-        return "Demon optimization: clan UN enters Maid for 0 EXP, adding Maid Training as a third key ability without delaying Jewel Idol.";
+        return "Demon optimization: clan UN starts with Maid unlocked at level 1, adding Maid Training as a free class without delaying Jewel Idol.";
+      }
+      if (raceName === "demon") {
+        const grant = { wi: "Saboteur", vi: "Medic", un: "Maid" }[normalizePhrase(ancestry?.lineageCode || build?.demonClan)];
+        if (grant) {
+          return `Demon optimization: this clan starts with ${grant} unlocked at level 1, adding its key ability without spending class EXP or an Interlude Point.`;
+        }
+      }
+      if (ancestryName === "gnome") {
+        return "Gnome optimization: Miner starts unlocked at level 1 for 0 EXP and 0 IP, adding Rock and Stone plus its armor/shield and Pickaxe choices to the package.";
+      }
+      if (ancestryName === "raijin") {
+        return "Raijin optimization: Flash Star Blade Style starts unlocked at level 1 for 0 EXP and 0 IP; Lightning Mastery also leaves Electromancer available as an immediate paid branch.";
+      }
+      if (ancestryName === "selkie") {
+        return "Selkie optimization: Hydromancer starts unlocked at level 2 for 0 EXP and 0 IP, adding Water Mastery, Blue Tide, and Aqua Drill without displacing the paid class plan.";
       }
       if (ancestryName === "phoenix" && build.classStrategy === "specialty-first") {
         return "Phoenix optimization: native Fire Mastery opens Pyromancer without Elemental Affinity, so the freed 150 breakthrough EXP becomes six additional Magic skill points.";
@@ -19543,6 +19735,7 @@ function applyQuickBuildPreset() {
       state.builder.inspected.ancestry = ancestry?.id || "";
       setQuickBuildStats(build);
       setQuickBuildSkills(build);
+      setQuickBuildExpertise(build);
       const classPrerequisiteSource = applyQuickBuildBreakthroughPlan(build);
       applyQuickBuildClassProgress(build);
       (build.items || []).forEach(addQuickBuildItem);
@@ -19591,11 +19784,11 @@ function renderQuickBuildSpeciesStep() {
             ${QUICK_BUILD_SPECIES.map((entry) => `
               <button type="button" class="quick-build-card${entry.id === selectedId ? " selected" : ""}" data-quick-build-action="select-species" data-id="${escapeHtml(entry.id)}">
                 <span class="quick-build-card-media">
-                  <img src="${escapeHtml(getQuickBuildSpeciesImage(entry))}" alt="">
+                  <img src="${escapeHtml(getQuickBuildSpeciesImage(entry))}" alt="" loading="lazy" decoding="async">
                 </span>
                 <span class="quick-build-card-copy">
                   <strong>${escapeHtml(entry.label)}</strong>
-                  <span>${escapeHtml(entry.defer || `${entry.race}${entry.ancestry ? ` / ${entry.ancestry}` : ""}`)}</span>
+                  <span>${escapeHtml(entry.defer || `${entry.race}${entry.ancestry ? ` / ${entry.ancestry}` : ""}${entry.grantedClass ? ` | Free Class: ${entry.grantedClass}` : ""}`)}</span>
                   <p>${escapeHtml(getQuickBuildSpeciesCardSummary(entry))}</p>
                 </span>
               </button>
@@ -19618,7 +19811,7 @@ function renderQuickBuildBuildStep() {
                 ${role.builds.map((build) => `
                   <button type="button" class="quick-build-card quick-build-role-card${build.id === selectedId ? " selected" : ""}" data-quick-build-action="select-build" data-id="${escapeHtml(build.id)}">
                     <strong>${escapeHtml(build.label)}</strong>
-                    <span>${escapeHtml(getQuickBuildClassPathLabel(build))}</span>
+                    <span>${escapeHtml(`${build.powerBuild ? "High-Acceleration | " : ""}${getQuickBuildClassPathLabel(build)}`)}</span>
                     <p>${escapeHtml(build.why)}</p>
                     <small>${escapeHtml(build.bestFor || "Select to inspect the full package.")}</small>
                   </button>
@@ -20227,7 +20420,7 @@ const requirementStatus = getClassRequirementStatus(record);
       if (!alreadySelected && record) {
         const budget = getClassUnlockBudgetState();
 const unlockCost = getClassUnlockCost(record);
-        if (budget.remainingInterlude <= 0) {
+        if (getClassInterludeCost(record) > budget.remainingInterlude) {
           setStatus(`You have already committed all ${budget.interludeBudget} allowed Interlude Points to class unlocks. Add GM Additional IP if the GM is allowing more class unlocks.`);
           renderBuilder();
           return;
@@ -20240,7 +20433,11 @@ const unlockCost = getClassUnlockCost(record);
       }
 const budgetBefore = getClassUnlockBudgetState();
 const expDelta = alreadySelected && record ? -getClassProgressCost(record) : (record ? getClassUnlockCost(record) : 0);
-      if (!toggleSelection("selectedClassIds", id, budgetBefore.interludeBudget, "class unlock")) {
+      const freeSelectedClassCount = getSelectedClassDetails().filter((entry) => getClassInterludeCost(entry) === 0).length;
+      const selectionLimit = budgetBefore.interludeBudget
+        + freeSelectedClassCount
+        + (!alreadySelected && record && getClassInterludeCost(record) === 0 ? 1 : 0);
+      if (!toggleSelection("selectedClassIds", id, selectionLimit, "class unlock")) {
         return;
       }
       if (alreadySelected && record?.id && state.builder.classAbilityProgress) {
@@ -20287,7 +20484,8 @@ const record = getClassDetail(id);
         return;
       }
 const current = getClassPurchasedAbilityCount(record);
-      if (current <= 0) {
+      const grantedCount = getClassGrantedAbilityCount(record);
+      if (current <= grantedCount) {
         setStatus(`${record.name} has no purchased class levels to refund.`);
         renderBuilder();
         return;
@@ -21544,9 +21742,6 @@ export async function bindEvents() {
         await applyGameVersion(event.target.value);
       });
 
-      document.getElementById("version-check-button")?.addEventListener("click", checkForVersionUpdates);
-      document.getElementById("version-download-button")?.addEventListener("click", downloadVersionUpdate);
-
       ["save-browser", "builder-save-browser"].forEach((id) => {
         document.getElementById(id).addEventListener("click", saveToBrowser);
       });
@@ -21833,6 +22028,19 @@ const button = event.target.closest("[data-step-index]");
           const id = quickTrigger.dataset.id || "";
           if (action === "select-species") {
             state.builder.quickBuild.speciesId = id;
+            state.builder.quickBuild.buildId = "";
+            state.builder.quickBuild.appliedBuildId = "";
+            state.builder.quickBuild.summary = "";
+            state.builder.quickBuild.classPrerequisiteSource = "";
+            clearQuickBuildGeneratedFields();
+            const species = getQuickBuildSpecies();
+            const race = resolveQuickBuildRace(species);
+            const ancestry = resolveQuickBuildAncestry(species, null, race);
+            state.builder.selectedRaceId = race?.id || "";
+            state.builder.inspected.race = race?.id || "";
+            state.builder.selectedAncestryId = ancestry?.id || "";
+            state.builder.inspected.ancestry = ancestry?.id || "";
+            syncBuilderSelectionsIntoSheet();
             renderBuilder();
           } else if (action === "select-build") {
             state.builder.quickBuild.buildId = id;
@@ -22282,6 +22490,7 @@ const button = event.target.closest("[data-play-transaction-field]");
         state.play.playerNotes = event.target.value;
         window.clearTimeout(playerNotesAutosaveTimer);
         playerNotesAutosaveTimer = window.setTimeout(() => {
+          playerNotesAutosaveTimer = 0;
           persistWorkingState();
         }, 500);
       });

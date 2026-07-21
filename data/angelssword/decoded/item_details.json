@@ -1,6 +1,6 @@
 [
   {
-    "id": "6a06299f6be32fced493058c",
+    "id": "6a2e7a0d6be32fced4930ed5",
     "indexId": "4d09c4b4-988a-4cdb-b61c-6d14641e58f2",
     "name": "Adjustable Lens Refractor Gun",
     "type": "Artifice",
@@ -20,7 +20,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305ef",
+    "id": "6a2e7a0d6be32fced4930f38",
     "indexId": "fc5c508e-74e0-47eb-861e-84949f9dfad7",
     "name": "Advanced Surgery Kit",
     "type": "Adventuring Essentials",
@@ -40,7 +40,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305bd",
+    "id": "6a2e7a0d6be32fced4930f06",
     "indexId": "d6ec0ef8-1de0-49ba-bf0e-071ebf3cebdc",
     "name": "Adventurer's Kit",
     "type": "Adventuring Essentials",
@@ -58,7 +58,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a2c540f6be32fced4930c85",
+    "id": "6a2e7a0d6be32fced4930f4c",
     "indexId": "6e662b76-2812-479e-9427-6d6c9e0ad256",
     "name": "Aerial Staff (Custom Model)",
     "type": "Artifice",
@@ -78,7 +78,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493056c",
+    "id": "6a2e7a0d6be32fced4930eb5",
     "indexId": "1ddafc37-5c04-4bdc-9476-f1c446d90150",
     "name": "Aerial Staff (Sparrow Model)",
     "type": "Artifice",
@@ -98,7 +98,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305bb",
+    "id": "6a2e7a0d6be32fced4930f04",
     "indexId": "b3d15bc6-33f9-4151-b097-6fda26ad1d7f",
     "name": "Aetherie Sensory Station",
     "type": "Artifice",
@@ -118,7 +118,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305af",
+    "id": "6a2e7a0d6be32fced4930ef8",
     "indexId": "f023145c-8c33-4199-b9ea-33a2e661e9b3",
     "name": "Alchemist's Alembic",
     "type": "Equipment",
@@ -138,7 +138,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305cf",
+    "id": "6a2e7a0d6be32fced4930f18",
     "indexId": "4ee75c29-46e9-494b-9ea4-472e07d9adad",
     "name": "Alchemy Materials",
     "type": "Crafting",
@@ -158,7 +158,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930571",
+    "id": "6a2e7a0d6be32fced4930eba",
     "indexId": "0b07b21f-6b70-4bad-bb37-4ddf5e569faa",
     "name": "Alchemy Rig",
     "type": "Adventuring Essentials",
@@ -176,7 +176,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305ce",
+    "id": "6a2e7a0d6be32fced4930f17",
     "indexId": "872c1283-510c-47ce-b5be-09cb3acaf9e8",
     "name": "Alchemy Rig (Deluxe)",
     "type": "Adventuring Essentials",
@@ -196,7 +196,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493056a",
+    "id": "6a2e7a0d6be32fced4930eb3",
     "indexId": "fb59ed29-741d-4ad9-9d6c-be0a7d4a02f7",
     "name": "Anti-Air Weapon Sight",
     "type": "Artifice",
@@ -216,7 +216,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930555",
+    "id": "6a2e7a0d6be32fced4930e9e",
     "indexId": "4a910b7e-990c-4aa4-9a41-ec87b237e588",
     "name": "Antidote Shot Potion",
     "type": "Alchemy",
@@ -236,7 +236,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305f0",
+    "id": "6a2e7a0d6be32fced4930f39",
     "indexId": "d62d3def-1486-44a6-bf9e-08c049d90618",
     "name": "Armor (Clothing)",
     "type": "Equipment",
@@ -256,7 +256,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305a5",
+    "id": "6a2e7a0d6be32fced4930eee",
     "indexId": "f527de71-25df-468d-ba42-f7327bd21ef7",
     "name": "Armor (Heavy)",
     "type": "Equipment",
@@ -276,7 +276,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305a0",
+    "id": "6a2e7a0d6be32fced4930ee9",
     "indexId": "7f711c39-5904-4075-bf34-15eda5586249",
     "name": "Armor (Light)",
     "type": "Equipment",
@@ -296,7 +296,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305a1",
+    "id": "6a2e7a0d6be32fced4930eea",
     "indexId": "81f3613b-7877-43a1-b5ea-ccc795059619",
     "name": "Armor (Medium)",
     "type": "Equipment",
@@ -316,7 +316,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305b2",
+    "id": "6a2e7a0d6be32fced4930efb",
     "indexId": "ffbffb22-fb3e-4c2a-abd2-8ebf3f506b16",
     "name": "Armor Plates",
     "type": "Equipment",
@@ -336,7 +336,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305dd",
+    "id": "6a2e7a0d6be32fced4930f26",
     "indexId": "528d233e-26f5-440b-bab9-1c42d90d390e",
     "name": "Armorsmithing Materials",
     "type": "Crafting",
@@ -356,7 +356,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305e5",
+    "id": "6a2e7a0d6be32fced4930f2e",
     "indexId": "fcbe366e-2a41-4b23-81f3-86d482be0cab",
     "name": "Artifice Limb",
     "type": "Artifice",
@@ -376,7 +376,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930562",
+    "id": "6a2e7a0d6be32fced4930eab",
     "indexId": "3aa52a29-a482-4bd9-b87c-1ca9b6be4b3e",
     "name": "Artifice Water Purifier",
     "type": "Artifice",
@@ -396,7 +396,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305dc",
+    "id": "6a2e7a0d6be32fced4930f25",
     "indexId": "f7aac36f-f5c0-4c91-81b3-089a743d0cf7",
     "name": "Artificer Materials",
     "type": "Crafting",
@@ -416,7 +416,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305c4",
+    "id": "6a2e7a0d6be32fced4930f0d",
     "indexId": "f28081d0-e4d7-4426-90c8-70c2f9cc3f3a",
     "name": "Artificer's Kit",
     "type": "Adventuring Essentials",
@@ -434,7 +434,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305db",
+    "id": "6a2e7a0d6be32fced4930f24",
     "indexId": "afa435e6-f4c5-46cc-bab9-fd1e352effde",
     "name": "Artificer's Multitool",
     "type": "Equipment",
@@ -454,7 +454,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305ee",
+    "id": "6a2e7a0d6be32fced4930f37",
     "indexId": "505751b1-d5f6-4618-a0b1-ed10f4cb5f83",
     "name": "Astra Guidance Beacon",
     "type": "Artifice",
@@ -474,7 +474,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493058e",
+    "id": "6a2e7a0d6be32fced4930ed7",
     "indexId": "ffe896b7-2397-4197-91fb-e8c77e3a6171",
     "name": "Axe (One-Handed)",
     "type": "Equipment",
@@ -494,7 +494,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930596",
+    "id": "6a2e7a0d6be32fced4930edf",
     "indexId": "2011f096-1642-42bb-8c4e-bd04bd6a8373",
     "name": "Axe (Two-Handed)",
     "type": "Equipment",
@@ -514,7 +514,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930588",
+    "id": "6a2e7a0d6be32fced4930ed1",
     "indexId": "aaf9a4a6-8414-4db6-9b85-c0f46686f316",
     "name": "Axolotl Elixir",
     "type": "Alchemy",
@@ -534,7 +534,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493056f",
+    "id": "6a2e7a0d6be32fced4930eb8",
     "indexId": "1b9cc0e1-b6ce-4da8-869a-33e7007731bd",
     "name": "Backpack",
     "type": "Adventuring Essentials",
@@ -552,7 +552,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493057a",
+    "id": "6a2e7a0d6be32fced4930ec3",
     "indexId": "6288ded7-e63b-4488-baa2-aa4f62bbee6c",
     "name": "Bear Elixir",
     "type": "Alchemy",
@@ -572,7 +572,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305b4",
+    "id": "6a2e7a0d6be32fced4930efd",
     "indexId": "32320ffb-fcbb-4af0-b27e-aa9165ad845f",
     "name": "Binoculars",
     "type": "Artifice",
@@ -592,7 +592,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305cc",
+    "id": "6a2e7a0d6be32fced4930f15",
     "indexId": "49b4c53f-035d-45d9-b125-63a44f19c0d2",
     "name": "Blacksmithing Materials",
     "type": "Crafting",
@@ -612,7 +612,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930569",
+    "id": "6a2e7a0d6be32fced4930eb2",
     "indexId": "c85996e8-5566-4c30-a19c-78c9d5d1ea5f",
     "name": "Blaster Weapon",
     "type": "Artifice",
@@ -632,7 +632,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493054a",
+    "id": "6a2e7a0d6be32fced4930e93",
     "indexId": "35a2a98d-3530-4c16-80e4-bb934590e093",
     "name": "Blood Elixir",
     "type": "Alchemy",
@@ -652,7 +652,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493058f",
+    "id": "6a2e7a0d6be32fced4930ed8",
     "indexId": "46c7e0e6-c9d5-437b-82d2-88cbb293bc4c",
     "name": "Bludgeoning Weapon (One-Handed)",
     "type": "Equipment",
@@ -672,7 +672,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930595",
+    "id": "6a2e7a0d6be32fced4930ede",
     "indexId": "c3bec1d6-6b81-4d5e-a168-6f77abbac37b",
     "name": "Bludgeoning Weapon (Two-Handed)",
     "type": "Equipment",
@@ -692,7 +692,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305c5",
+    "id": "6a2e7a0d6be32fced4930f0e",
     "indexId": "8948ccbe-f7d9-4024-9ed0-14e0f03be139",
     "name": "Boar",
     "type": "Mount",
@@ -710,7 +710,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305e4",
+    "id": "6a2e7a0d6be32fced4930f2d",
     "indexId": "ade3ef4a-f3d1-43f4-9cd0-eada2097bcf5",
     "name": "Botany Bag",
     "type": "Equipment",
@@ -730,7 +730,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493059d",
+    "id": "6a2e7a0d6be32fced4930ee6",
     "indexId": "12b293d7-6b27-4293-aabb-2ac9e363a34d",
     "name": "Bow (Two-Handed)",
     "type": "Equipment",
@@ -750,7 +750,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493057d",
+    "id": "6a2e7a0d6be32fced4930ec6",
     "indexId": "3db89738-b52b-4f00-84bb-8d0f8db29510",
     "name": "Breaching Flask",
     "type": "Alchemy",
@@ -770,7 +770,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930580",
+    "id": "6a2e7a0d6be32fced4930ec9",
     "indexId": "4b711cb4-288b-411d-9532-0d882bfd17c0",
     "name": "Bull Potion",
     "type": "Alchemy",
@@ -790,14 +790,14 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930568",
+    "id": "6a2e7a0d6be32fced4930eb1",
     "indexId": "5823a27b-3cc4-4c5c-9268-04596fc899f7",
     "name": "Buster Weapon",
     "type": "Artifice",
     "subType": "Weapon Attachment",
-    "description": "PHA+QW4gYXJ0aWZpY2UgdGhhdCBhZGRzIGFuIGV4cGxvc2l2ZSBibGFzdCB0byBpbmNyZWFzZSBmb3J3YXJkIHZlbG9jaXR5LiZuYnNwO1RoZSBtb3N0IGNvbW1vbiB0eXBlIG9mIHdlYXBvbiBhcnRpZmljZSB1c2VkIHRvIGhlbHAgb3ZlcndoZWxtIGFuIG9wcG9uZW50LiZuYnNwO0F0dGFjaGFibGUgdG8gbWVsZWUgd2VhcG9ucy4mbmJzcDs8L3A+PHA+VXNlIHdoZW4geW91IGFyZSBtYWtpbmcgYW4gYXR0YWNrIGFnYWluc3QgYW4gZW5lbXkuJm5ic3A7VGhlIGF0dGFjayBnYWlucyArMyBhY2N1cmFjeSBhbmQgKzMgZGFtYWdlLjwvcD48cD5DYW4gYmUgYXR0YWNoZWQgZm9yIDQgQVAsIGJ1dCBvbmNlIGF0dGFjaGVkLCBjYW4gb25seSBiZSByZW1vdmVkIGJ5IHNwZW5kaW5nIGFuIEVQIGluIHRvd24uPC9wPjxoND5Nb2RzPC9oND48dWw+PGxpPjxpPkEgbW9kczo8L2k+PHVsPjxsaT48c3Ryb25nPlBvd2VyZnVsIEV4cGxvc2lvbiAoMTAgcG9pbnRzKTogPC9zdHJvbmc+SW5jcmVhc2VzIHRoZSBkYW1hZ2UgYm9udXMgYnkgKzE8L2xpPjxsaT48c3Ryb25nPk9wdGltaXplZCBFeHBsb3Npb24gKDIwIHBvaW50cyk6PC9zdHJvbmc+IEluY3JlYXNlcyB0aGUgYWNjdXJhY3kgYm9udXMgYnkgKzE8L2xpPjwvdWw+PC9saT48bGk+PGk+QiBtb2RzOjwvaT48dWw+PGxpPjxzdHJvbmc+QW5nZWwgVHlwZSAoMjUgcG9pbnRzKTogPC9zdHJvbmc+V2hlbiBhbiBhdHRhY2sgZW5oYW5jZWQgYnkgdGhpcyBhcnRpZmljZSBkZWFscyBkYW1hZ2UsIGtub2NrIHRoZSB0YXJnZXQgYmFjayA1ZnQuPC9saT48bGk+PHN0cm9uZz5MYXVuY2ggU3RlcCAoNTAgcG9pbnRzKTogPC9zdHJvbmc+WW91IGNhbiB1c2UgdGhpcyBiZWZvcmUgbWFraW5nIGFuIGF0dGFjayB0byBtb3ZlIDEwZnQgYmVmb3JlIG1ha2luZyBhbiBhdHRhY2sgdGhhdCBiZW5lZml0cyBmcm9tIHRoaXMgYXJ0aWZpY2UuPC9saT48bGk+PHN0cm9uZz5TaGllbGRicmVha2VyICg4MCBwb2ludHMpOjwvc3Ryb25nPiBUaGUgYXR0YWNrIGVuaGFuY2VkIGJ5IHRoZSBhcnRpZmljZSBhbHNvIGdhaW5zIHRoZSBTaGllbGRicmVha2VyIGtleXdvcmQuPC9saT48L3VsPjwvbGk+PC91bD4=",
-    "descriptionHtml": "<p>An artifice that adds an explosive blast to increase forward velocity.&nbsp;The most common type of weapon artifice used to help overwhelm an opponent.&nbsp;Attachable to melee weapons.&nbsp;</p><p>Use when you are making an attack against an enemy.&nbsp;The attack gains +3 accuracy and +3 damage.</p><p>Can be attached for 4 AP, but once attached, can only be removed by spending an EP in town.</p><h4>Mods</h4><ul><li><i>A mods:</i><ul><li><strong>Powerful Explosion (10 points): </strong>Increases the damage bonus by +1</li><li><strong>Optimized Explosion (20 points):</strong> Increases the accuracy bonus by +1</li></ul></li><li><i>B mods:</i><ul><li><strong>Angel Type (25 points): </strong>When an attack enhanced by this artifice deals damage, knock the target back 5ft.</li><li><strong>Launch Step (50 points): </strong>You can use this before making an attack to move 10ft before making an attack that benefits from this artifice.</li><li><strong>Shieldbreaker (80 points):</strong> The attack enhanced by the artifice also gains the Shieldbreaker keyword.</li></ul></li></ul>",
-    "descriptionText": "An artifice that adds an explosive blast to increase forward velocity. The most common type of weapon artifice used to help overwhelm an opponent. Attachable to melee weapons.\n\nUse when you are making an attack against an enemy. The attack gains +3 accuracy and +3 damage.\n\nCan be attached for 4 AP, but once attached, can only be removed by spending an EP in town.\n\nMods\n\n- A mods:- Powerful Explosion (10 points): Increases the damage bonus by +1\n- Optimized Explosion (20 points): Increases the accuracy bonus by +1\n\n- B mods:- Angel Type (25 points): When an attack enhanced by this artifice deals damage, knock the target back 5ft.\n- Launch Step (50 points): You can use this before making an attack to move 10ft before making an attack that benefits from this artifice.\n- Shieldbreaker (80 points): The attack enhanced by the artifice also gains the Shieldbreaker keyword.",
+    "description": "PHA+QW4gYXJ0aWZpY2UgdGhhdCBhZGRzIGFuIGV4cGxvc2l2ZSBibGFzdCB0byBpbmNyZWFzZSBmb3J3YXJkIHZlbG9jaXR5LiZuYnNwO1RoZSBtb3N0IGNvbW1vbiB0eXBlIG9mIHdlYXBvbiBhcnRpZmljZSB1c2VkIHRvIGhlbHAgb3ZlcndoZWxtIGFuIG9wcG9uZW50LiZuYnNwO0F0dGFjaGFibGUgdG8gbWVsZWUgd2VhcG9ucy4mbmJzcDs8L3A+PHA+VXNlIHdoZW4geW91IGFyZSBtYWtpbmcgYSBtZWxlZSBhdHRhY2sgYWdhaW5zdCBhbiBlbmVteS4mbmJzcDtUaGUgYXR0YWNrIGdhaW5zICszIGFjY3VyYWN5IGFuZCArMyBkYW1hZ2UuPC9wPjxwPkNhbiBiZSBhdHRhY2hlZCBmb3IgNCBBUCwgYnV0IG9uY2UgYXR0YWNoZWQsIGNhbiBvbmx5IGJlIHJlbW92ZWQgYnkgc3BlbmRpbmcgYW4gRVAgaW4gdG93bi48L3A+PGg0Pk1vZHM8L2g0Pjx1bD48bGk+PGk+QSBtb2RzOjwvaT48dWw+PGxpPjxzdHJvbmc+UG93ZXJmdWwgRXhwbG9zaW9uICgxMCBwb2ludHMpOiA8L3N0cm9uZz5JbmNyZWFzZXMgdGhlIGRhbWFnZSBib251cyBieSArMTwvbGk+PGxpPjxzdHJvbmc+T3B0aW1pemVkIEV4cGxvc2lvbiAoMjAgcG9pbnRzKTo8L3N0cm9uZz4gSW5jcmVhc2VzIHRoZSBhY2N1cmFjeSBib251cyBieSArMTwvbGk+PC91bD48L2xpPjxsaT48aT5CIG1vZHM6PC9pPjx1bD48bGk+PHN0cm9uZz5BbmdlbCBUeXBlICgyNSBwb2ludHMpOiA8L3N0cm9uZz5XaGVuIGFuIGF0dGFjayBlbmhhbmNlZCBieSB0aGlzIGFydGlmaWNlIGRlYWxzIGRhbWFnZSwga25vY2sgdGhlIHRhcmdldCBiYWNrIDVmdC48L2xpPjxsaT48c3Ryb25nPkxhdW5jaCBTdGVwICg1MCBwb2ludHMpOiA8L3N0cm9uZz5Zb3UgY2FuIHVzZSB0aGlzIGJlZm9yZSBtYWtpbmcgYW4gYXR0YWNrIHRvIG1vdmUgMTBmdCBiZWZvcmUgbWFraW5nIGFuIGF0dGFjayB0aGF0IGJlbmVmaXRzIGZyb20gdGhpcyBhcnRpZmljZS48L2xpPjxsaT48c3Ryb25nPlNoaWVsZGJyZWFrZXIgKDgwIHBvaW50cyk6PC9zdHJvbmc+IFRoZSBhdHRhY2sgZW5oYW5jZWQgYnkgdGhlIGFydGlmaWNlIGFsc28gZ2FpbnMgdGhlIFNoaWVsZGJyZWFrZXIga2V5d29yZC48L2xpPjwvdWw+PC9saT48L3VsPg==",
+    "descriptionHtml": "<p>An artifice that adds an explosive blast to increase forward velocity.&nbsp;The most common type of weapon artifice used to help overwhelm an opponent.&nbsp;Attachable to melee weapons.&nbsp;</p><p>Use when you are making a melee attack against an enemy.&nbsp;The attack gains +3 accuracy and +3 damage.</p><p>Can be attached for 4 AP, but once attached, can only be removed by spending an EP in town.</p><h4>Mods</h4><ul><li><i>A mods:</i><ul><li><strong>Powerful Explosion (10 points): </strong>Increases the damage bonus by +1</li><li><strong>Optimized Explosion (20 points):</strong> Increases the accuracy bonus by +1</li></ul></li><li><i>B mods:</i><ul><li><strong>Angel Type (25 points): </strong>When an attack enhanced by this artifice deals damage, knock the target back 5ft.</li><li><strong>Launch Step (50 points): </strong>You can use this before making an attack to move 10ft before making an attack that benefits from this artifice.</li><li><strong>Shieldbreaker (80 points):</strong> The attack enhanced by the artifice also gains the Shieldbreaker keyword.</li></ul></li></ul>",
+    "descriptionText": "An artifice that adds an explosive blast to increase forward velocity. The most common type of weapon artifice used to help overwhelm an opponent. Attachable to melee weapons.\n\nUse when you are making a melee attack against an enemy. The attack gains +3 accuracy and +3 damage.\n\nCan be attached for 4 AP, but once attached, can only be removed by spending an EP in town.\n\nMods\n\n- A mods:- Powerful Explosion (10 points): Increases the damage bonus by +1\n- Optimized Explosion (20 points): Increases the accuracy bonus by +1\n\n- B mods:- Angel Type (25 points): When an attack enhanced by this artifice deals damage, knock the target back 5ft.\n- Launch Step (50 points): You can use this before making an attack to move 10ft before making an attack that benefits from this artifice.\n- Shieldbreaker (80 points): The attack enhanced by the artifice also gains the Shieldbreaker keyword.",
     "activationCost": "0 RP, Instant",
     "cost": "3000 Clim",
     "burden": "1",
@@ -810,7 +810,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305f3",
+    "id": "6a2e7a0d6be32fced4930f3c",
     "indexId": "6da011d8-8b15-449f-be84-1961155b3e86",
     "name": "Calibretto Device",
     "type": "Artifice",
@@ -830,7 +830,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305be",
+    "id": "6a2e7a0d6be32fced4930f07",
     "indexId": "b28a439c-18fb-4286-8913-6b0aef4f0996",
     "name": "Camping Kit",
     "type": "Adventuring Essentials",
@@ -848,14 +848,14 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a205c8b6be32fced4930c41",
+    "id": "6a2e7a0d6be32fced4930f48",
     "indexId": "1e7afb29-8420-4e1c-8b01-0fd5808fdfda",
     "name": "Cannon (Two-Handed)",
-    "type": "Equipment",
+    "type": "Artifice",
     "subType": "Specialized Weapon",
-    "description": "PHA+PHN0cm9uZz5DYW5ub248L3N0cm9uZz46IEFsbCBiYXNpYyBhdHRhY2tzIG1hZGUgd2l0aCB0aGlzIHdlYXBvbiBnYWluIHRoZSBBcnRpbGxlcnkga2V5d29yZCwgYnV0IHlvdSBjYW4gb25seSBtYWtlIDEgcmFuZ2VkIGF0dGFjayB3aXRoIHRoaXMgd2VhcG9uIHBlciByb3VuZC4gV2hlbiB5b3UgbWFrZSBhIGJhc2ljIEhlYXZ5IGF0dGFjayBhZ2FpbnN0IGFuIGVuZW15LCB5b3UgbWFrZSBhIEJsYW5rZXRpbmcgTGlnaHQgYXR0YWNrIGFnYWluc3QgYWxsIGVuZW1pZXMgd2l0aGluIDVmdCBvZiB0aGUgdGFyZ2V0IGFzIHdlbGwuPC9wPjxwPlJhbmdlOiAyNDBmdCwgcmVkdWNlZCB0byA2MGZ0IGlmIHlvdSBtb3ZlZCBiZWZvcmUgZmlyaW5nLjwvcD48aDQ+TW9kczwvaDQ+PHVsPjxsaT48aT5BIG1vZHM6PC9pPjx1bD48bGk+PHN0cm9uZz5CaWcgQm9vbSAoMjAgcG9pbnRzKTo8L3N0cm9uZz4gVGhlIGxpZ2h0IGF0dGFjayBpcyBtYWRlIGFnYWluc3QgYWxsIGVuZW1pZXMgd2l0aGluIDEwZnQgb2YgdGhlIHRhcmdldCBpbnN0ZWFkIG9mIDVmdC48L2xpPjxsaT48c3Ryb25nPkluY2VuZGlhcnkgU2hlbGwgKDIwIHBvaW50cyk6PC9zdHJvbmc+IFRoZSBMaWdodCBhdHRhY2sgZGVhbHMgRmlyZSBkYW1hZ2UgYW5kIGlnbml0ZXMgZmxhbW1hYmxlIG1hdGVyaWFscyBpbiBpdHMgcmFkaXVzLjwvbGk+PGxpPjxzdHJvbmc+TW9iaWxlIEFydGlsbGVyeSAoMzUgcG9pbnRzKTwvc3Ryb25nPjogQWZ0ZXIgbW92aW5nLCB5b3VyIHJhbmdlIGlzIHJlZHVjZWQgdG8gMTIwZnQgaW5zdGVhZCBvZiA2MGZ0LjwvbGk+PC91bD48L2xpPjxsaT48aT5CIG1vZHM6PC9pPjx1bD48bGk+PHN0cm9uZz5SZWluZm9yY2VkIEZyYW1lICgyNSBwb2ludHMpOjwvc3Ryb25nPiBZb3UgbWF5IHVzZSB0aGUgY2Fubm9uIGFzIGEgbWVsZWUgd2VhcG9uIHRoYXQgZGVhbHMgUGh5c2ljYWwoQmx1ZGdlb25pbmcpIGRhbWFnZS4gT25seSBkb2VzIDRkNiBoZWF2eSBkYW1hZ2Ugd2hlbiB1c2VkIGFzIGEgbWVsZWUgd2VhcG9uLjwvbGk+PGxpPjxzdHJvbmc+U2lkZSBCYXJyZWwgKDUwIHBvaW50cyk6PC9zdHJvbmc+IFlvdSBtYXkgdXNlIHRoZSBjYW5ub24gYSBzZWNvbmQgdGltZSBpbiBhIHJvdW5kLCBob3dldmVyIHRoaXMgc2Vjb25kIGF0dGFjayBjYW4gb25seSBiZSBhIGxpZ2h0IGF0dGFjay48L2xpPjxsaT48c3Ryb25nPlNuaXBlICg4MCBwb2ludHMpOjwvc3Ryb25nPiBJZiB5b3UgZGlkIG5vdCBtb3ZlIHRoaXMgdHVybiBvciB0aGUgcHJldmlvdXMgdHVybiB5b3UgZ2FpbiBhICsxZDQgYm9udXMgdG8geW91ciBhY2N1cmFjeSByb2xsIG9uIGF0dGFja3MgbWFkZSB3aXRoIHRoaXMgd2VhcG4uPC9saT48L3VsPjwvbGk+PC91bD4=",
-    "descriptionHtml": "<p><strong>Cannon</strong>: All basic attacks made with this weapon gain the Artillery keyword, but you can only make 1 ranged attack with this weapon per round. When you make a basic Heavy attack against an enemy, you make a Blanketing Light attack against all enemies within 5ft of the target as well.</p><p>Range: 240ft, reduced to 60ft if you moved before firing.</p><h4>Mods</h4><ul><li><i>A mods:</i><ul><li><strong>Big Boom (20 points):</strong> The light attack is made against all enemies within 10ft of the target instead of 5ft.</li><li><strong>Incendiary Shell (20 points):</strong> The Light attack deals Fire damage and ignites flammable materials in its radius.</li><li><strong>Mobile Artillery (35 points)</strong>: After moving, your range is reduced to 120ft instead of 60ft.</li></ul></li><li><i>B mods:</i><ul><li><strong>Reinforced Frame (25 points):</strong> You may use the cannon as a melee weapon that deals Physical(Bludgeoning) damage. Only does 4d6 heavy damage when used as a melee weapon.</li><li><strong>Side Barrel (50 points):</strong> You may use the cannon a second time in a round, however this second attack can only be a light attack.</li><li><strong>Snipe (80 points):</strong> If you did not move this turn or the previous turn you gain a +1d4 bonus to your accuracy roll on attacks made with this weapn.</li></ul></li></ul>",
-    "descriptionText": "Cannon: All basic attacks made with this weapon gain the Artillery keyword, but you can only make 1 ranged attack with this weapon per round. When you make a basic Heavy attack against an enemy, you make a Blanketing Light attack against all enemies within 5ft of the target as well.\n\nRange: 240ft, reduced to 60ft if you moved before firing.\n\nMods\n\n- A mods:- Big Boom (20 points): The light attack is made against all enemies within 10ft of the target instead of 5ft.\n- Incendiary Shell (20 points): The Light attack deals Fire damage and ignites flammable materials in its radius.\n- Mobile Artillery (35 points): After moving, your range is reduced to 120ft instead of 60ft.\n\n- B mods:- Reinforced Frame (25 points): You may use the cannon as a melee weapon that deals Physical(Bludgeoning) damage. Only does 4d6 heavy damage when used as a melee weapon.\n- Side Barrel (50 points): You may use the cannon a second time in a round, however this second attack can only be a light attack.\n- Snipe (80 points): If you did not move this turn or the previous turn you gain a +1d4 bonus to your accuracy roll on attacks made with this weapn.",
+    "description": "PHA+PHN0cm9uZz5DYW5ub248L3N0cm9uZz46IEFsbCBiYXNpYyBhdHRhY2tzIG1hZGUgd2l0aCB0aGlzIHdlYXBvbiBnYWluIHRoZSBBcnRpbGxlcnkga2V5d29yZCwgYnV0IHlvdSBjYW4gb25seSBtYWtlIDEgcmFuZ2VkIGF0dGFjayB3aXRoIHRoaXMgd2VhcG9uIHBlciByb3VuZC4gV2hlbiB5b3UgbWFrZSBhIGJhc2ljIEhlYXZ5IGF0dGFjayBhZ2FpbnN0IGFuIGVuZW15LCB5b3UgbWFrZSBhIEJsYW5rZXRpbmcgTGlnaHQgYXR0YWNrIGFnYWluc3QgYWxsIG90aGVyIGVuZW1pZXMgd2l0aGluIDVmdCBvZiB0aGUgdGFyZ2V0IGFzIHdlbGwuPC9wPjxwPlJhbmdlOiAyNDBmdCwgcmVkdWNlZCB0byA2MGZ0IGlmIHlvdSBtb3ZlZCBiZWZvcmUgZmlyaW5nLjwvcD48aDQ+TW9kczwvaDQ+PHVsPjxsaT48aT5BIG1vZHM6PC9pPjx1bD48bGk+PHN0cm9uZz5JRkYgT2ZmICgwIHBvaW50cyk6PC9zdHJvbmc+IFlvdXIgYmFzaWMgYXR0YWNrIHNwbGFzaCBub3cgaGl0IGFsbCB0YXJnZXRzIHdpdGhpbiByYW5nZSBpbnN0ZWFkIG9mIG9ubHkgZW5lbWllcy48L2xpPjxsaT48c3Ryb25nPlBpZSBMYXVuY2hlciAoMTAgcG9pbnRzKTo8L3N0cm9uZz4gUGllIHRvc3MgY2FuIGJlIGZpcmVkIHRocm91Z2ggdGhlIHdlYXBvbiB0byBnYWluIHRoZSBpbmNyZWFzZWQgcmFuZ2UgKGRvZXMgbm90IGFmZmVjdCB0aGUgZGFtYWdlIG9yIHRyYW5zZmVyIGFsbG95cykuPC9saT48bGk+PHN0cm9uZz5CaWcgQm9vbSAoMjAgcG9pbnRzKTo8L3N0cm9uZz4gVGhlIGxpZ2h0IGF0dGFjayBpcyBtYWRlIGFnYWluc3QgYWxsIGVuZW1pZXMgd2l0aGluIDEwZnQgb2YgdGhlIHRhcmdldCBpbnN0ZWFkIG9mIDVmdC48L2xpPjxsaT48c3Ryb25nPkluY2VuZGlhcnkgU2hlbGwgKDIwIHBvaW50cyk6PC9zdHJvbmc+IFRoZSBMaWdodCBhdHRhY2sgZGVhbHMgRmlyZSBkYW1hZ2UgYW5kIGlnbml0ZXMgZmxhbW1hYmxlIG1hdGVyaWFscyBpbiBpdHMgcmFkaXVzLjwvbGk+PGxpPjxzdHJvbmc+TW9iaWxlIEFydGlsbGVyeSAoMzUgcG9pbnRzKTwvc3Ryb25nPjogQWZ0ZXIgbW92aW5nLCB5b3VyIHJhbmdlIGlzIHJlZHVjZWQgdG8gMTIwZnQgaW5zdGVhZCBvZiA2MGZ0LjwvbGk+PC91bD48L2xpPjxsaT48aT5CIG1vZHM6PC9pPjx1bD48bGk+PHN0cm9uZz5SZWluZm9yY2VkIEZyYW1lICgyNSBwb2ludHMpOjwvc3Ryb25nPiBZb3UgbWF5IHVzZSB0aGUgY2Fubm9uIGFzIGEgbWVsZWUgd2VhcG9uIHRoYXQgZGVhbHMgUGh5c2ljYWwoQmx1ZGdlb25pbmcpIGRhbWFnZS4gT25seSBkb2VzIDRkNiBoZWF2eSBkYW1hZ2Ugd2hlbiB1c2VkIGFzIGEgbWVsZWUgd2VhcG9uLjwvbGk+PGxpPjxzdHJvbmc+U2lkZSBCYXJyZWwgKDUwIHBvaW50cyk6PC9zdHJvbmc+IFlvdSBtYXkgdXNlIHRoZSBjYW5ub24gYSBzZWNvbmQgdGltZSBpbiBhIHJvdW5kLCBob3dldmVyIHRoaXMgc2Vjb25kIGF0dGFjayBjYW4gb25seSBiZSBhIGxpZ2h0IGF0dGFjay48L2xpPjxsaT48c3Ryb25nPlNuaXBlICg4MCBwb2ludHMpOjwvc3Ryb25nPiBJZiB5b3UgZGlkIG5vdCBtb3ZlIHRoaXMgdHVybiBvciB0aGUgcHJldmlvdXMgdHVybiB5b3UgZ2FpbiBhICsxZDQgYm9udXMgdG8geW91ciBhY2N1cmFjeSByb2xsIG9uIGF0dGFja3MgbWFkZSB3aXRoIHRoaXMgd2VhcG9uLjwvbGk+PGxpPjxzdHJvbmc+QmlnZ2VyIFBpZXMgKDgwKTo8L3N0cm9uZz4gV2hlbiB5b3UgZmlyZSBhIHBpZSB0aHJvdWdoIHRoZSBsYXVuY2hlciwgeW91IG1heSBkZWFsIDEgc3VyZSBoaXQgZnVsbCBwaWVyY2UgZGFtYWdlIHRvIGFsbCBvdGhlciB0YXJnZXRzIHdpdGhpbiA1ZnQgb2YgdGhlIHRhcmdldC48L2xpPjwvdWw+PC9saT48L3VsPg==",
+    "descriptionHtml": "<p><strong>Cannon</strong>: All basic attacks made with this weapon gain the Artillery keyword, but you can only make 1 ranged attack with this weapon per round. When you make a basic Heavy attack against an enemy, you make a Blanketing Light attack against all other enemies within 5ft of the target as well.</p><p>Range: 240ft, reduced to 60ft if you moved before firing.</p><h4>Mods</h4><ul><li><i>A mods:</i><ul><li><strong>IFF Off (0 points):</strong> Your basic attack splash now hit all targets within range instead of only enemies.</li><li><strong>Pie Launcher (10 points):</strong> Pie toss can be fired through the weapon to gain the increased range (does not affect the damage or transfer alloys).</li><li><strong>Big Boom (20 points):</strong> The light attack is made against all enemies within 10ft of the target instead of 5ft.</li><li><strong>Incendiary Shell (20 points):</strong> The Light attack deals Fire damage and ignites flammable materials in its radius.</li><li><strong>Mobile Artillery (35 points)</strong>: After moving, your range is reduced to 120ft instead of 60ft.</li></ul></li><li><i>B mods:</i><ul><li><strong>Reinforced Frame (25 points):</strong> You may use the cannon as a melee weapon that deals Physical(Bludgeoning) damage. Only does 4d6 heavy damage when used as a melee weapon.</li><li><strong>Side Barrel (50 points):</strong> You may use the cannon a second time in a round, however this second attack can only be a light attack.</li><li><strong>Snipe (80 points):</strong> If you did not move this turn or the previous turn you gain a +1d4 bonus to your accuracy roll on attacks made with this weapon.</li><li><strong>Bigger Pies (80):</strong> When you fire a pie through the launcher, you may deal 1 sure hit full pierce damage to all other targets within 5ft of the target.</li></ul></li></ul>",
+    "descriptionText": "Cannon: All basic attacks made with this weapon gain the Artillery keyword, but you can only make 1 ranged attack with this weapon per round. When you make a basic Heavy attack against an enemy, you make a Blanketing Light attack against all other enemies within 5ft of the target as well.\n\nRange: 240ft, reduced to 60ft if you moved before firing.\n\nMods\n\n- A mods:- IFF Off (0 points): Your basic attack splash now hit all targets within range instead of only enemies.\n- Pie Launcher (10 points): Pie toss can be fired through the weapon to gain the increased range (does not affect the damage or transfer alloys).\n- Big Boom (20 points): The light attack is made against all enemies within 10ft of the target instead of 5ft.\n- Incendiary Shell (20 points): The Light attack deals Fire damage and ignites flammable materials in its radius.\n- Mobile Artillery (35 points): After moving, your range is reduced to 120ft instead of 60ft.\n\n- B mods:- Reinforced Frame (25 points): You may use the cannon as a melee weapon that deals Physical(Bludgeoning) damage. Only does 4d6 heavy damage when used as a melee weapon.\n- Side Barrel (50 points): You may use the cannon a second time in a round, however this second attack can only be a light attack.\n- Snipe (80 points): If you did not move this turn or the previous turn you gain a +1d4 bonus to your accuracy roll on attacks made with this weapon.\n- Bigger Pies (80): When you fire a pie through the launcher, you may deal 1 sure hit full pierce damage to all other targets within 5ft of the target.",
     "activationCost": "",
     "cost": "1000 Clim",
     "burden": "2",
@@ -868,7 +868,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305d2",
+    "id": "6a2e7a0d6be32fced4930f1b",
     "indexId": "313e2fca-9607-48b8-9f02-92b23f41e8a0",
     "name": "Carpenter Materials",
     "type": "Crafting",
@@ -888,7 +888,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305d7",
+    "id": "6a2e7a0d6be32fced4930f20",
     "indexId": "71869dbb-af73-4885-b523-c2ae04859cb1",
     "name": "Carpenter's Chisel",
     "type": "Equipment",
@@ -908,7 +908,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305e7",
+    "id": "6a2e7a0d6be32fced4930f30",
     "indexId": "cdbcee69-2646-4ad4-983a-5790b9e84868",
     "name": "Cart",
     "type": "Mount",
@@ -928,7 +928,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305cd",
+    "id": "6a2e7a0d6be32fced4930f16",
     "indexId": "0f5301de-fd78-46a5-8a88-a3510f33bb1a",
     "name": "Cartographer's Kit",
     "type": "Adventuring Essentials",
@@ -948,7 +948,7 @@
     "imageAlignment": ""
   },
   {
-    "id": "6a06299f6be32fced49305f7",
+    "id": "6a2e7a0d6be32fced4930f40",
     "indexId": "afe737a9-40c3-4e9e-b3e1-510f81decacf",
     "name": "Cat Elixir",
     "type": "Alchemy",
@@ -968,7 +968,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305d4",
+    "id": "6a2e7a0d6be32fced4930f1d",
     "indexId": "c15ddc2a-6fbb-46cd-a167-54675ed2bb59",
     "name": "Chainsaw Artifice (Two-Handed Weapon)",
     "type": "Artifice",
@@ -988,7 +988,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305f8",
+    "id": "6a2e7a0d6be32fced4930f41",
     "indexId": "345f25e5-e86b-4956-96b9-0f41b229a249",
     "name": "Cleansing Potion",
     "type": "Alchemy",
@@ -1008,7 +1008,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305de",
+    "id": "6a2e7a0d6be32fced4930f27",
     "indexId": "3b8f945f-b394-4183-8003-7febba263591",
     "name": "Cloak",
     "type": "Equipment",
@@ -1028,7 +1028,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930558",
+    "id": "6a2e7a0d6be32fced4930ea1",
     "indexId": "093f55b3-016c-4ac1-8c6b-e607ad0ffdb8",
     "name": "Corrosive Flask",
     "type": "Alchemy",
@@ -1048,7 +1048,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930567",
+    "id": "6a2e7a0d6be32fced4930eb0",
     "indexId": "b53be833-5d1f-42f5-a74e-f1a3633d4f99",
     "name": "Counter-Magic Shackles",
     "type": "Artifice",
@@ -1068,7 +1068,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493059e",
+    "id": "6a2e7a0d6be32fced4930ee7",
     "indexId": "8c4147b2-3d8f-4537-bdbd-94c25b9035ef",
     "name": "Crossbow (One-Handed)",
     "type": "Equipment",
@@ -1088,7 +1088,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493059f",
+    "id": "6a2e7a0d6be32fced4930ee8",
     "indexId": "21e3dc36-d5bb-4d9d-9086-99b4af385422",
     "name": "Crossbow (Two-Handed)",
     "type": "Equipment",
@@ -1108,7 +1108,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305e1",
+    "id": "6a2e7a0d6be32fced4930f2a",
     "indexId": "81115d7d-0b48-49da-b977-3f98c206aca5",
     "name": "Culinarian Ingredients",
     "type": "Crafting",
@@ -1128,7 +1128,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305c2",
+    "id": "6a2e7a0d6be32fced4930f0b",
     "indexId": "1f4ec179-75de-49c8-ae28-6ccf49fe742d",
     "name": "Culinary Kit",
     "type": "Adventuring Essentials",
@@ -1146,7 +1146,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930552",
+    "id": "6a2e7a0d6be32fced4930e9b",
     "indexId": "dde42c63-aa1e-41cb-af85-b4b856b5ee18",
     "name": "Demonblood Potion",
     "type": "Alchemy",
@@ -1166,7 +1166,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930554",
+    "id": "6a2e7a0d6be32fced4930e9d",
     "indexId": "63d83dac-3e33-4cb7-90e0-478945bd75b1",
     "name": "Diamondize Potion",
     "type": "Alchemy",
@@ -1186,7 +1186,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930587",
+    "id": "6a2e7a0d6be32fced4930ed0",
     "indexId": "95de76c6-e334-48d7-9b81-77feaea88a38",
     "name": "Displacement Potion",
     "type": "Alchemy",
@@ -1206,7 +1206,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930599",
+    "id": "6a2e7a0d6be32fced4930ee2",
     "indexId": "0108be4a-5e34-475b-80c4-143fc361e399",
     "name": "Dueling Weapon (One-Handed)",
     "type": "Equipment",
@@ -1226,7 +1226,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a22f9b86be32fced4930c53",
+    "id": "6a2e7a0d6be32fced4930f4a",
     "indexId": "d620e2f7-6f36-45f8-b4f6-d07d2d64014f",
     "name": "Eagle Potion",
     "type": "Alchemy",
@@ -1246,7 +1246,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a22b4606be32fced4930c51",
+    "id": "6a2e7a0d6be32fced4930f49",
     "indexId": "af644472-a6e9-4ac9-acb1-4d94d5e28547",
     "name": "Elemental Grease",
     "type": "Alchemy",
@@ -1255,7 +1255,7 @@
     "descriptionHtml": "<p>An flask that when splashed over your weapon changes the damage it deals to the element of the flask until the end of the encounter.<br><br>There exist flasks for Arcane, Fire, Water, Frost, Lightning, Wind, Earth, Holy and Dark damage.</p><p><strong>Crafting:</strong><br><strong>Materials:</strong> 350 Alchemy Materials<br><strong>Herbs:</strong></p><ul><li>1x Rare herb of matching element (Arcane for holy/dark, Wind for Lightning, Water for Frost)</li></ul>",
     "descriptionText": "An flask that when splashed over your weapon changes the damage it deals to the element of the flask until the end of the encounter.\n\nThere exist flasks for Arcane, Fire, Water, Frost, Lightning, Wind, Earth, Holy and Dark damage.\n\nCrafting:\nMaterials: 350 Alchemy Materials\nHerbs:\n\n- 1x Rare herb of matching element (Arcane for holy/dark, Wind for Lightning, Water for Frost)",
     "activationCost": "1 AP",
-    "cost": "300 Clim",
+    "cost": "301 Clim",
     "burden": "1",
     "shellSize": "",
     "fuelUsage": "",
@@ -1266,7 +1266,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930578",
+    "id": "6a2e7a0d6be32fced4930ec1",
     "indexId": "540db714-efd3-4c20-8a88-a8a88bff2943",
     "name": "Elemental Immunity Elixir",
     "type": "Alchemy",
@@ -1286,7 +1286,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930576",
+    "id": "6a2e7a0d6be32fced4930ebf",
     "indexId": "eabfcecb-f193-4661-99a6-cbe5c3bf0e4b",
     "name": "Elemental Mixture Flask",
     "type": "Alchemy",
@@ -1306,7 +1306,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930577",
+    "id": "6a2e7a0d6be32fced4930ec0",
     "indexId": "7709cd6f-13cc-4be0-961f-b32325c1cfcc",
     "name": "Elemental Resistance Elixir",
     "type": "Alchemy",
@@ -1326,7 +1326,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930537",
+    "id": "6a2e7a0d6be32fced4930e80",
     "indexId": "abcb0f83-59ae-41c5-962b-bf9e09e56b8a",
     "name": "Elemental Weapon Artifice",
     "type": "Artifice",
@@ -1346,14 +1346,14 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305c3",
+    "id": "6a2e7a0d6be32fced4930f0c",
     "indexId": "382c94c1-521c-48f8-b235-61a03f68ca03",
     "name": "Equipment Patching Kit",
     "type": "Adventuring Essentials",
     "subType": "Kit",
-    "description": "PHA+Q29udGFpbnMgYWxsIHRoZSBuZWNlc3NhcnkgbWF0ZXJpYWxzIHRvIGp1cnkgcmlnIGEgZml4IG9uIGRhbWFnZWQgd2VhcG9ucy48L3A+PHA+PHN0cm9uZz5SZXN0IEFjdGlvbjogPC9zdHJvbmc+WW91IGNhbiBwYXRjaCBhIGJyb2tlbiBwaWVjZSBvZiBlcXVpcG1lbnQsIGFsbG93aW5nIGl0IHRvIGJlIHVzYWJsZSB1bnRpbCB0aGUgZW5kIG9mIHRoZSBzY2VuYXJpbyBpZiBpdCBpcyByZXBhaXJhYmxlLiZuYnNwO1RoZSBlcXVpcG1lbnQgc3RpbGwgY291bnRzIGFzIGJyb2tlbiBhdCB0aGUgZW5kIG9mIHRoZSBzY2VuYXJpbyBhbmQgY2Fubm90IGJlIHBhdGNoZWQgYWdhaW4gdW50aWwgZnVsbHkgcmVwYWlyZWQuPC9wPg==",
-    "descriptionHtml": "<p>Contains all the necessary materials to jury rig a fix on damaged weapons.</p><p><strong>Rest Action: </strong>You can patch a broken piece of equipment, allowing it to be usable until the end of the scenario if it is repairable.&nbsp;The equipment still counts as broken at the end of the scenario and cannot be patched again until fully repaired.</p>",
-    "descriptionText": "Contains all the necessary materials to jury rig a fix on damaged weapons.\n\nRest Action: You can patch a broken piece of equipment, allowing it to be usable until the end of the scenario if it is repairable. The equipment still counts as broken at the end of the scenario and cannot be patched again until fully repaired.",
+    "description": "PHA+Q29udGFpbnMgYWxsIHRoZSBuZWNlc3NhcnkgbWF0ZXJpYWxzIHRvIGp1cnkgcmlnIGEgZml4IG9uIGRhbWFnZWQgd2VhcG9ucy48L3A+PHA+PHN0cm9uZz5SZXN0IEFjdGlvbjogPC9zdHJvbmc+WW91IGNhbiBwYXRjaCBhIGJyb2tlbiBwaWVjZSBvZiBlcXVpcG1lbnQgb3IgYWR2ZW50dXJpbmcgZXNzZW50aWFsIGl0ZW0sIGFsbG93aW5nIGl0IHRvIGJlIHVzYWJsZSB1bnRpbCB0aGUgZW5kIG9mIHRoZSBzY2VuYXJpbyBpZiBpdCBpcyByZXBhaXJhYmxlLiZuYnNwO1RoZSBlcXVpcG1lbnQgc3RpbGwgY291bnRzIGFzIGJyb2tlbiBhdCB0aGUgZW5kIG9mIHRoZSBzY2VuYXJpbyBhbmQgY2Fubm90IGJlIHBhdGNoZWQgYWdhaW4gdW50aWwgZnVsbHkgcmVwYWlyZWQuPC9wPg==",
+    "descriptionHtml": "<p>Contains all the necessary materials to jury rig a fix on damaged weapons.</p><p><strong>Rest Action: </strong>You can patch a broken piece of equipment or adventuring essential item, allowing it to be usable until the end of the scenario if it is repairable.&nbsp;The equipment still counts as broken at the end of the scenario and cannot be patched again until fully repaired.</p>",
+    "descriptionText": "Contains all the necessary materials to jury rig a fix on damaged weapons.\n\nRest Action: You can patch a broken piece of equipment or adventuring essential item, allowing it to be usable until the end of the scenario if it is repairable. The equipment still counts as broken at the end of the scenario and cannot be patched again until fully repaired.",
     "activationCost": "-",
     "cost": "500 Clim",
     "burden": "2",
@@ -1364,7 +1364,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305ba",
+    "id": "6a2e7a0d6be32fced4930f03",
     "indexId": "a3f262c5-50a0-4a9e-8f5c-29bad9bb561c",
     "name": "Eye Lens",
     "type": "Equipment",
@@ -1384,7 +1384,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305da",
+    "id": "6a2e7a0d6be32fced4930f23",
     "indexId": "ddd88096-d9c8-470a-8db8-c51432b0d29a",
     "name": "Facilities",
     "type": "Crafting",
@@ -1404,7 +1404,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493058a",
+    "id": "6a2e7a0d6be32fced4930ed3",
     "indexId": "b873b4e5-cdc4-41bf-841b-0ceb97ccf278",
     "name": "Falcon Elixir",
     "type": "Alchemy",
@@ -1424,7 +1424,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305d1",
+    "id": "6a2e7a0d6be32fced4930f1a",
     "indexId": "013dca97-fb5e-4cb1-942f-f663afc67595",
     "name": "Farming Materials",
     "type": "Crafting",
@@ -1444,14 +1444,14 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930581",
+    "id": "6a2e7a0d6be32fced4930eca",
     "indexId": "a2def0e4-4315-411b-82ba-33f7bd34e2b5",
     "name": "Fire Robe",
     "type": "Artifice",
     "subType": "Assist",
-    "description": "PHA+QSByZWQgcm9iZSB3aXRoIGEgZGVzaWduIGJhc2VkIG9mIGEgRGl2aW5lIEFybXMuIEtlZXBzIHRoZSB3ZWFyZXIgY29vbCBpbiBldmVuIHRoZSBob3R0ZXN0IG9mIHdlYXRoZXJzIGJ5IHJlcGVsbGluZyB0aGUgaGVhdC48L3A+PHA+Q2FuIGJlIGFjdGl2YXRlZCB0byBnaXZlIHRoZSB3ZWFyZXIgNSBkYW1hZ2UgcmVkdWN0aW9uIGFnYWluc3QgZmlyZSBkYW1hZ2UgdW50aWwgdGhlIGVuZCBvZiB0aGUgZW5jb3VudGVyLiBXaGVuIHRoaXMgZWZmZWN0IGVuZHMsIHRoZSBzaGVsbCBpbnNpZGUgdGhlIHJvYmUgaXMgaW1tZWRpYXRlbHkgdXNlZCB1cCBhbmQgbmVlZHMgdG8gYmUgcmVwbGFjZWQgZm9yIHRoZSB3ZWF0aGVyIHJlcGVsbGluZyBlZmZlY3QgdG8gZnVuY3Rpb24uPC9wPjxoND5Nb2RzPC9oND48dWw+PGxpPjxpPkEgbW9kczo8L2k+PHVsPjxsaT48c3Ryb25nPlF1aWNrIEFjdGl2YXRpb24gKDIwIHBvaW50cyk6IDwvc3Ryb25nPlRoZSBhY3RpdmF0aW9uIGNvc3QgaXMgcmVkdWNlZCB0byAwIEFQLjwvbGk+PC91bD48L2xpPjxsaT48aT5CIG1vZHM6PC9pPjx1bD48bGk+PHN0cm9uZz5GaXJlcHJvb2YgKDI1IHBvaW50cyk6PC9zdHJvbmc+IFdoaWxlIGl0J3MgYWN0aXZlLCB5b3UgYXJlIGltbXVuZSB0byBCdXJuaW5nLjwvbGk+PGxpPjxzdHJvbmc+SW5jcmVhc2VkIFByb3RlY3Rpb24gKDgwIHBvaW50cyk6IDwvc3Ryb25nPlRoZSBkYW1hZ2UgcmVkdWN0aW9uIGlzIGluY3JlYXNlZCB0byAxMC48L2xpPjwvdWw+PC9saT48L3VsPg==",
-    "descriptionHtml": "<p>A red robe with a design based of a Divine Arms. Keeps the wearer cool in even the hottest of weathers by repelling the heat.</p><p>Can be activated to give the wearer 5 damage reduction against fire damage until the end of the encounter. When this effect ends, the shell inside the robe is immediately used up and needs to be replaced for the weather repelling effect to function.</p><h4>Mods</h4><ul><li><i>A mods:</i><ul><li><strong>Quick Activation (20 points): </strong>The activation cost is reduced to 0 AP.</li></ul></li><li><i>B mods:</i><ul><li><strong>Fireproof (25 points):</strong> While it's active, you are immune to Burning.</li><li><strong>Increased Protection (80 points): </strong>The damage reduction is increased to 10.</li></ul></li></ul>",
-    "descriptionText": "A red robe with a design based of a Divine Arms. Keeps the wearer cool in even the hottest of weathers by repelling the heat.\n\nCan be activated to give the wearer 5 damage reduction against fire damage until the end of the encounter. When this effect ends, the shell inside the robe is immediately used up and needs to be replaced for the weather repelling effect to function.\n\nMods\n\n- A mods:- Quick Activation (20 points): The activation cost is reduced to 0 AP.\n\n- B mods:- Fireproof (25 points): While it's active, you are immune to Burning.\n- Increased Protection (80 points): The damage reduction is increased to 10.",
+    "description": "PHA+QSByZWQgcm9iZSB3aXRoIGEgZGVzaWduIGJhc2VkIG9mIGEgRGl2aW5lIEFybXMuIEtlZXBzIHRoZSB3ZWFyZXIgY29vbCBpbiBldmVuIHRoZSBob3R0ZXN0IG9mIHdlYXRoZXJzIGJ5IHJlcGVsbGluZyB0aGUgaGVhdC48L3A+PHA+Q29uc2lkZXJlZCBhIGNsb2FrIGFuZCB0YWtlcyB0aGUgY2xvYWsgc2xvdC48L3A+PHA+Q2FuIGJlIGFjdGl2YXRlZCB0byBnaXZlIHRoZSB3ZWFyZXIgNSBkYW1hZ2UgcmVkdWN0aW9uIGFnYWluc3QgZmlyZSBkYW1hZ2UgdW50aWwgdGhlIGVuZCBvZiB0aGUgZW5jb3VudGVyLiBXaGVuIHRoaXMgZWZmZWN0IGVuZHMsIHRoZSBzaGVsbCBpbnNpZGUgdGhlIHJvYmUgaXMgaW1tZWRpYXRlbHkgdXNlZCB1cCBhbmQgbmVlZHMgdG8gYmUgcmVwbGFjZWQgZm9yIHRoZSB3ZWF0aGVyIHJlcGVsbGluZyBlZmZlY3QgdG8gZnVuY3Rpb24uPC9wPjxoND5Nb2RzPC9oND48dWw+PGxpPjxpPkEgbW9kczo8L2k+PHVsPjxsaT48c3Ryb25nPlF1aWNrIEFjdGl2YXRpb24gKDIwIHBvaW50cyk6IDwvc3Ryb25nPlRoZSBhY3RpdmF0aW9uIGNvc3QgaXMgcmVkdWNlZCB0byAwIEFQLjwvbGk+PC91bD48L2xpPjxsaT48aT5CIG1vZHM6PC9pPjx1bD48bGk+PHN0cm9uZz5GaXJlcHJvb2YgKDI1IHBvaW50cyk6PC9zdHJvbmc+IFdoaWxlIGl0J3MgYWN0aXZlLCB5b3UgYXJlIGltbXVuZSB0byBCdXJuaW5nLjwvbGk+PGxpPjxzdHJvbmc+SW5jcmVhc2VkIFByb3RlY3Rpb24gKDgwIHBvaW50cyk6IDwvc3Ryb25nPlRoZSBkYW1hZ2UgcmVkdWN0aW9uIGlzIGluY3JlYXNlZCB0byAxMC48L2xpPjwvdWw+PC9saT48L3VsPg==",
+    "descriptionHtml": "<p>A red robe with a design based of a Divine Arms. Keeps the wearer cool in even the hottest of weathers by repelling the heat.</p><p>Considered a cloak and takes the cloak slot.</p><p>Can be activated to give the wearer 5 damage reduction against fire damage until the end of the encounter. When this effect ends, the shell inside the robe is immediately used up and needs to be replaced for the weather repelling effect to function.</p><h4>Mods</h4><ul><li><i>A mods:</i><ul><li><strong>Quick Activation (20 points): </strong>The activation cost is reduced to 0 AP.</li></ul></li><li><i>B mods:</i><ul><li><strong>Fireproof (25 points):</strong> While it's active, you are immune to Burning.</li><li><strong>Increased Protection (80 points): </strong>The damage reduction is increased to 10.</li></ul></li></ul>",
+    "descriptionText": "A red robe with a design based of a Divine Arms. Keeps the wearer cool in even the hottest of weathers by repelling the heat.\n\nConsidered a cloak and takes the cloak slot.\n\nCan be activated to give the wearer 5 damage reduction against fire damage until the end of the encounter. When this effect ends, the shell inside the robe is immediately used up and needs to be replaced for the weather repelling effect to function.\n\nMods\n\n- A mods:- Quick Activation (20 points): The activation cost is reduced to 0 AP.\n\n- B mods:- Fireproof (25 points): While it's active, you are immune to Burning.\n- Increased Protection (80 points): The damage reduction is increased to 10.",
     "activationCost": "1 AP",
     "cost": "3000 Clim",
     "burden": "1",
@@ -1464,7 +1464,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493055b",
+    "id": "6a2e7a0d6be32fced4930ea4",
     "indexId": "0dce9c4c-802a-4fd3-93f5-c3e54518afc6",
     "name": "Flame Oil Flask",
     "type": "Alchemy",
@@ -1484,7 +1484,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305b5",
+    "id": "6a2e7a0d6be32fced4930efe",
     "indexId": "46fd5e6f-f849-4192-b265-4bbe0a684625",
     "name": "Flamellon",
     "type": "Crafting",
@@ -1502,7 +1502,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930556",
+    "id": "6a2e7a0d6be32fced4930e9f",
     "indexId": "47c7d47f-46d8-4730-8b4c-8379b3b18a09",
     "name": "Flashbang Flask",
     "type": "Alchemy",
@@ -1522,7 +1522,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305fe",
+    "id": "6a2e7a0d6be32fced4930f47",
     "indexId": "4cabacdc-58d8-46b5-8f26-a273196b79d9",
     "name": "Food Bag",
     "type": "Equipment",
@@ -1542,7 +1542,7 @@
     "imageAlignment": ""
   },
   {
-    "id": "6a06299f6be32fced49305e0",
+    "id": "6a2e7a0d6be32fced4930f29",
     "indexId": "85c62f87-97f4-4260-a75a-68532b935e82",
     "name": "Frying Pan",
     "type": "Equipment",
@@ -1562,7 +1562,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930570",
+    "id": "6a2e7a0d6be32fced4930eb9",
     "indexId": "33e51323-27a3-42b8-bb0b-eee49cb99e20",
     "name": "Fuel Cartridge Pack",
     "type": "Adventuring Essentials",
@@ -1580,7 +1580,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305ed",
+    "id": "6a2e7a0d6be32fced4930f36",
     "indexId": "123891c0-12d9-45ea-b822-20a3ba1077b3",
     "name": "Gauntlets (One-handed)",
     "type": "Equipment",
@@ -1600,7 +1600,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493054b",
+    "id": "6a2e7a0d6be32fced4930e94",
     "indexId": "0de549d3-0293-4d56-9b6d-760e7ea48bb8",
     "name": "Ghost Elixir",
     "type": "Alchemy",
@@ -1620,7 +1620,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930573",
+    "id": "6a2e7a0d6be32fced4930ebc",
     "indexId": "939abdcd-4d4c-4515-b4fb-db8cec0f7372",
     "name": "Ghostblade",
     "type": "Divine Arms",
@@ -1638,7 +1638,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305ca",
+    "id": "6a2e7a0d6be32fced4930f13",
     "indexId": "0ca2755c-f50e-43a1-a750-1469165c2b99",
     "name": "Giant Dragonfly",
     "type": "Mount",
@@ -1656,7 +1656,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305d3",
+    "id": "6a2e7a0d6be32fced4930f1c",
     "indexId": "9cc6206c-af3d-4487-992c-a6660e24e731",
     "name": "Giant Scissors (Two-Handed)",
     "type": "Equipment",
@@ -1676,7 +1676,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305e2",
+    "id": "6a2e7a0d6be32fced4930f2b",
     "indexId": "78e4c4cd-3355-452c-83bb-d92dc9947353",
     "name": "Gourmet Cooking Stock",
     "type": "Crafting",
@@ -1696,7 +1696,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930557",
+    "id": "6a2e7a0d6be32fced4930ea0",
     "indexId": "e1113dfd-9291-4e56-b1c5-e9cdac1f1c86",
     "name": "Grapeshot Flask",
     "type": "Alchemy",
@@ -1716,7 +1716,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930539",
+    "id": "6a2e7a0d6be32fced4930e82",
     "indexId": "d2fb19ca-ebec-462c-a0b6-0045ce78988e",
     "name": "Grappling Hook Artifice",
     "type": "Artifice",
@@ -1736,7 +1736,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930553",
+    "id": "6a2e7a0d6be32fced4930e9c",
     "indexId": "b436ec50-9b85-42b8-b30e-cb7b75788eb0",
     "name": "Greater Healing Potion",
     "type": "Alchemy",
@@ -1756,7 +1756,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305fa",
+    "id": "6a2e7a0d6be32fced4930f43",
     "indexId": "006f6364-4fcd-40a7-8578-bc6af30b5346",
     "name": "Greater Shielding Potion",
     "type": "Alchemy",
@@ -1776,7 +1776,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305fc",
+    "id": "6a2e7a0d6be32fced4930f45",
     "indexId": "db128a17-7750-4ca3-b667-21388c8fd3f2",
     "name": "Greater Speed Potion",
     "type": "Alchemy",
@@ -1796,7 +1796,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305f4",
+    "id": "6a2e7a0d6be32fced4930f3d",
     "indexId": "a3a7981a-0f8e-444f-b115-320732247f92",
     "name": "Growth Potion",
     "type": "Alchemy",
@@ -1816,7 +1816,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930538",
+    "id": "6a2e7a0d6be32fced4930e81",
     "indexId": "de5f3317-b709-46c3-a8e4-2b1cb6631486",
     "name": "Healing Potion",
     "type": "Alchemy",
@@ -1836,7 +1836,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930594",
+    "id": "6a2e7a0d6be32fced4930edd",
     "indexId": "124f8451-00ce-47d0-9525-14ad89937335",
     "name": "Heavy Blade (Two-Handed)",
     "type": "Equipment",
@@ -1856,7 +1856,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305d5",
+    "id": "6a2e7a0d6be32fced4930f1e",
     "indexId": "cf60530b-7a10-474b-ae2d-53470e144dfc",
     "name": "Hori",
     "type": "Equipment",
@@ -1876,7 +1876,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305c6",
+    "id": "6a2e7a0d6be32fced4930f0f",
     "indexId": "06a4d7ca-438f-4087-a435-23139263f6b2",
     "name": "Horse",
     "type": "Mount",
@@ -1894,7 +1894,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305fd",
+    "id": "6a2e7a0d6be32fced4930f46",
     "indexId": "71ab4691-ea3b-47c7-8feb-7740235fe369",
     "name": "Horse Elixir",
     "type": "Alchemy",
@@ -1914,7 +1914,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930574",
+    "id": "6a2e7a0d6be32fced4930ebd",
     "indexId": "819b3752-cb48-45ab-ba91-025793f80b85",
     "name": "Ice Flask",
     "type": "Alchemy",
@@ -1934,7 +1934,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930579",
+    "id": "6a2e7a0d6be32fced4930ec2",
     "indexId": "d54d8018-2857-4d30-a03b-276de2444354",
     "name": "Immunity Elixir",
     "type": "Alchemy",
@@ -1954,7 +1954,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305f5",
+    "id": "6a2e7a0d6be32fced4930f3e",
     "indexId": "7f066097-f623-4dd2-9862-0695be1393ba",
     "name": "Inky Oil Flask",
     "type": "Alchemy",
@@ -1974,7 +1974,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305f1",
+    "id": "6a2e7a0d6be32fced4930f3a",
     "indexId": "98ffa348-953a-45fb-b58a-cff6761b33f0",
     "name": "Isona Poison",
     "type": "Alchemy",
@@ -1994,7 +1994,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930592",
+    "id": "6a2e7a0d6be32fced4930edb",
     "indexId": "a27dc0da-505c-405c-9c8f-3860a0720dd5",
     "name": "Katana (One-Handed)",
     "type": "Equipment",
@@ -2014,7 +2014,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930598",
+    "id": "6a2e7a0d6be32fced4930ee1",
     "indexId": "433cf8f6-bc9e-4a0b-8982-657583e12333",
     "name": "Katana (Two-Handed)",
     "type": "Equipment",
@@ -2034,7 +2034,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305bc",
+    "id": "6a2e7a0d6be32fced4930f05",
     "indexId": "990b9b05-587b-4484-8369-36cffb129306",
     "name": "Lance (One-Handed)",
     "type": "Equipment",
@@ -2054,7 +2054,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493057f",
+    "id": "6a2e7a0d6be32fced4930ec8",
     "indexId": "18de94e9-cece-411c-91c8-985ee6d7ada1",
     "name": "Lesser Diamondize Potion",
     "type": "Alchemy",
@@ -2074,7 +2074,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493058d",
+    "id": "6a2e7a0d6be32fced4930ed6",
     "indexId": "2de0a326-12bd-4f69-a0f6-6973e6731391",
     "name": "Light Sword (One-Handed)",
     "type": "Equipment",
@@ -2094,14 +2094,14 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930584",
+    "id": "6a2e7a0d6be32fced4930ecd",
     "indexId": "dec6d214-3e93-49d2-8037-38df2a31fdf2",
     "name": "Lightning Rod",
     "type": "Artifice",
     "subType": "Assist",
-    "description": "PHA+QSBzaG9ydCBtZXRhbCByb2QgdGhhdCBjYW4gYmUgZXhwYW5kZWQgd2l0aCB0aGUgcHVzaCBvZiBhIGJ1dHRvbi48L3A+PHA+V2hlbiBwbGFjZWQgaW50byB0aGUgZ3JvdW5kIGFuZCBhY3RpdmF0ZWQsIGl0IGNyZWF0ZXMgYSAyNXgyNWZ0IHpvbmUgd2l0aCBpdCBpbiB0aGUgY2VudGVyLiBFdmVyeW9uZSBpbiB0aGUgem9uZSBnYWlucyA1IGRhbWFnZSByZWR1Y3Rpb24gYWdhaW5zdCBMaWdodG5pbmcgZGFtYWdlLiBMYXN0cyB1bnRpbCB0aGUgZW5kIG9mIHRoZSBlbmNvdW50ZXIuPC9wPjxoND5Nb2RzPC9oND48dWw+PGxpPjxpPkEgbW9kczo8L2k+PHVsPjxsaT48c3Ryb25nPlRlbGVzY29waWMgUG9sZSAoMjAgcG9pbnRzKTogPC9zdHJvbmc+VGhlIHpvbmUgaW5jcmVhc2VzIHRvIDMweDMwZnQuPC9saT48bGk+PHN0cm9uZz5RdWljayBBY3RpdmF0aW9uICgzNSBwb2ludHMpOjwvc3Ryb25nPiBUaGUgYWN0aXZhdGlvbiBjb3N0IGlzIHJlZHVjZWQgYnkgMS48L2xpPjwvdWw+PC9saT48bGk+PGk+QiBtb2RzOjwvaT48dWw+PGxpPjxzdHJvbmc+U2hvY2twcm9vZiAoMjUgcG9pbnRzKTo8L3N0cm9uZz4gV2hpbGUgaXQncyBhY3RpdmUsIGV2ZXJ5b25lIGluIHRoZSBhcmVhIGFsc28gZ2FpbnMgaW1tdW5pdHkgdG8gU2hvY2suPC9saT48bGk+PHN0cm9uZz5JbmNyZWFzZWQgUHJvdGVjdGlvbiAoODAgcG9pbnRzKTogPC9zdHJvbmc+VGhlIGRhbWFnZSByZWR1Y3Rpb24gaXMgaW5jcmVhc2VkIHRvIDEwLjwvbGk+PC91bD48L2xpPjwvdWw+",
-    "descriptionHtml": "<p>A short metal rod that can be expanded with the push of a button.</p><p>When placed into the ground and activated, it creates a 25x25ft zone with it in the center. Everyone in the zone gains 5 damage reduction against Lightning damage. Lasts until the end of the encounter.</p><h4>Mods</h4><ul><li><i>A mods:</i><ul><li><strong>Telescopic Pole (20 points): </strong>The zone increases to 30x30ft.</li><li><strong>Quick Activation (35 points):</strong> The activation cost is reduced by 1.</li></ul></li><li><i>B mods:</i><ul><li><strong>Shockproof (25 points):</strong> While it's active, everyone in the area also gains immunity to Shock.</li><li><strong>Increased Protection (80 points): </strong>The damage reduction is increased to 10.</li></ul></li></ul>",
-    "descriptionText": "A short metal rod that can be expanded with the push of a button.\n\nWhen placed into the ground and activated, it creates a 25x25ft zone with it in the center. Everyone in the zone gains 5 damage reduction against Lightning damage. Lasts until the end of the encounter.\n\nMods\n\n- A mods:- Telescopic Pole (20 points): The zone increases to 30x30ft.\n- Quick Activation (35 points): The activation cost is reduced by 1.\n\n- B mods:- Shockproof (25 points): While it's active, everyone in the area also gains immunity to Shock.\n- Increased Protection (80 points): The damage reduction is increased to 10.",
+    "description": "PHA+QSBzaG9ydCBtZXRhbCByb2QgdGhhdCBjYW4gYmUgZXhwYW5kZWQgd2l0aCB0aGUgcHVzaCBvZiBhIGJ1dHRvbi48L3A+PHA+V2hlbiBwbGFjZWQgaW50byB0aGUgZ3JvdW5kIGFuZCBhY3RpdmF0ZWQsIGl0IGNyZWF0ZXMgYSAyNXgyNWZ0IHpvbmUgd2l0aCBpdCBpbiB0aGUgY2VudGVyLiBFdmVyeW9uZSBpbiB0aGUgem9uZSBnYWlucyA1IGRhbWFnZSByZWR1Y3Rpb24gYWdhaW5zdCBMaWdodG5pbmcgZGFtYWdlLiBMYXN0cyB1bnRpbCB0aGUgZW5kIG9mIHRoZSBlbmNvdW50ZXIuPC9wPjxoND5Nb2RzPC9oND48dWw+PGxpPjxpPkEgbW9kczo8L2k+PHVsPjxsaT48c3Ryb25nPlRlbGVzY29waWMgUG9sZSAoMjAgcG9pbnRzKTogPC9zdHJvbmc+VGhlIHpvbmUgaW5jcmVhc2VzIHRvIDMweDMwZnQuPC9saT48bGk+PHN0cm9uZz5RdWljayBBY3RpdmF0aW9uICgzNSBwb2ludHMpOjwvc3Ryb25nPiBUaGUgYWN0aXZhdGlvbiBjb3N0IGlzIHJlZHVjZWQgYnkgMS48L2xpPjwvdWw+PC9saT48bGk+PGk+QiBtb2RzOjwvaT48dWw+PGxpPjxzdHJvbmc+U2hvY2twcm9vZiAoMjUgcG9pbnRzKTo8L3N0cm9uZz4gV2hpbGUgaXQncyBhY3RpdmUsIGV2ZXJ5b25lIGluIHRoZSBhcmVhIGFsc28gZ2FpbnMgaW1tdW5pdHkgdG8gU3RhdGljLjwvbGk+PGxpPjxzdHJvbmc+SW5jcmVhc2VkIFByb3RlY3Rpb24gKDgwIHBvaW50cyk6IDwvc3Ryb25nPlRoZSBkYW1hZ2UgcmVkdWN0aW9uIGlzIGluY3JlYXNlZCB0byAxMC48L2xpPjwvdWw+PC9saT48L3VsPg==",
+    "descriptionHtml": "<p>A short metal rod that can be expanded with the push of a button.</p><p>When placed into the ground and activated, it creates a 25x25ft zone with it in the center. Everyone in the zone gains 5 damage reduction against Lightning damage. Lasts until the end of the encounter.</p><h4>Mods</h4><ul><li><i>A mods:</i><ul><li><strong>Telescopic Pole (20 points): </strong>The zone increases to 30x30ft.</li><li><strong>Quick Activation (35 points):</strong> The activation cost is reduced by 1.</li></ul></li><li><i>B mods:</i><ul><li><strong>Shockproof (25 points):</strong> While it's active, everyone in the area also gains immunity to Static.</li><li><strong>Increased Protection (80 points): </strong>The damage reduction is increased to 10.</li></ul></li></ul>",
+    "descriptionText": "A short metal rod that can be expanded with the push of a button.\n\nWhen placed into the ground and activated, it creates a 25x25ft zone with it in the center. Everyone in the zone gains 5 damage reduction against Lightning damage. Lasts until the end of the encounter.\n\nMods\n\n- A mods:- Telescopic Pole (20 points): The zone increases to 30x30ft.\n- Quick Activation (35 points): The activation cost is reduced by 1.\n\n- B mods:- Shockproof (25 points): While it's active, everyone in the area also gains immunity to Static.\n- Increased Protection (80 points): The damage reduction is increased to 10.",
     "activationCost": "2 AP",
     "cost": "3000 Clim",
     "burden": "1",
@@ -2114,7 +2114,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930589",
+    "id": "6a2e7a0d6be32fced4930ed2",
     "indexId": "6de8c22d-5caf-4c0d-8f8b-66766d0fc0ef",
     "name": "Lizard Elixir",
     "type": "Alchemy",
@@ -2134,7 +2134,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493053f",
+    "id": "6a2e7a0d6be32fced4930e88",
     "indexId": "4dd11713-59fc-44ad-b979-035293844d84",
     "name": "Locking Seal",
     "type": "Talisman",
@@ -2152,7 +2152,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930545",
+    "id": "6a2e7a0d6be32fced4930e8e",
     "indexId": "5f7dde56-e7dc-46be-891d-14f7e5848085",
     "name": "Long Distance Communications Array",
     "type": "Artifice",
@@ -2172,7 +2172,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930593",
+    "id": "6a2e7a0d6be32fced4930edc",
     "indexId": "b312f3c1-bb03-4a0c-9a4f-3d157c77dfde",
     "name": "Longsword (One-Handed/Two-Handed)",
     "type": "Equipment",
@@ -2192,7 +2192,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305e8",
+    "id": "6a2e7a0d6be32fced4930f31",
     "indexId": "b1273ead-930c-416d-890f-b265ff2aeb8d",
     "name": "Mage's Blood",
     "type": "Alchemy",
@@ -2212,7 +2212,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493054c",
+    "id": "6a2e7a0d6be32fced4930e95",
     "indexId": "f0b156db-41df-429d-8bb0-7b906ad46a43",
     "name": "Mana Vision Goggles",
     "type": "Artifice",
@@ -2232,7 +2232,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305b6",
+    "id": "6a2e7a0d6be32fced4930eff",
     "indexId": "dc2da1bf-c95b-4b3f-bce7-bcc99d3b9140",
     "name": "Marlone Jelly Poison",
     "type": "Alchemy",
@@ -2252,7 +2252,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305c0",
+    "id": "6a2e7a0d6be32fced4930f09",
     "indexId": "f66a3b1a-65c9-4042-be41-0bbda5672b24",
     "name": "Medical Kit",
     "type": "Adventuring Essentials",
@@ -2270,7 +2270,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930564",
+    "id": "6a2e7a0d6be32fced4930ead",
     "indexId": "2482c629-46a0-4c14-bc04-e245eee81278",
     "name": "Medium Shell",
     "type": "Artifice",
@@ -2288,7 +2288,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930551",
+    "id": "6a2e7a0d6be32fced4930e9a",
     "indexId": "5f7e7127-caa1-4505-975c-4df83e6a944c",
     "name": "Memory Bubble",
     "type": "Artifice",
@@ -2308,7 +2308,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493056e",
+    "id": "6a2e7a0d6be32fced4930eb7",
     "indexId": "39ff6f72-859e-49a0-8c7f-31ef203cda5c",
     "name": "Military Ration",
     "type": "Adventuring Essentials",
@@ -2326,7 +2326,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930586",
+    "id": "6a2e7a0d6be32fced4930ecf",
     "indexId": "3ab71729-749e-45f7-95b3-4e09481baa97",
     "name": "Mimic Potion",
     "type": "Alchemy",
@@ -2346,7 +2346,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305e3",
+    "id": "6a2e7a0d6be32fced4930f2c",
     "indexId": "37570633-f924-4f0a-90ce-8abd5f0b4da5",
     "name": "Mining Bag",
     "type": "Equipment",
@@ -2366,7 +2366,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305bf",
+    "id": "6a2e7a0d6be32fced4930f08",
     "indexId": "083c27a5-1835-4ab6-8d45-4c4dd3aa4d26",
     "name": "Minor Item",
     "type": "Adventuring Essentials",
@@ -2384,7 +2384,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305e6",
+    "id": "6a2e7a0d6be32fced4930f2f",
     "indexId": "6695f91f-de95-4838-a1bf-d0ddf70da2bb",
     "name": "Mule",
     "type": "Mount",
@@ -2404,7 +2404,7 @@
     "imageAlignment": ""
   },
   {
-    "id": "6a06299f6be32fced49305a2",
+    "id": "6a2e7a0d6be32fced4930eeb",
     "indexId": "5e2e8840-0a28-4738-8bbb-552cae4f2329",
     "name": "Musket (Two-Handed)",
     "type": "Equipment",
@@ -2424,7 +2424,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930575",
+    "id": "6a2e7a0d6be32fced4930ebe",
     "indexId": "95a4ef58-640d-4946-a4ff-e679d2e4adad",
     "name": "Netting Flask",
     "type": "Alchemy",
@@ -2444,7 +2444,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930566",
+    "id": "6a2e7a0d6be32fced4930eaf",
     "indexId": "6a03d6bb-851e-42a6-a3b6-6a1785e812f3",
     "name": "Night Vision Goggles",
     "type": "Artifice",
@@ -2464,7 +2464,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930561",
+    "id": "6a2e7a0d6be32fced4930eaa",
     "indexId": "c7da6f10-8216-4cbe-bc3e-b2362b791432",
     "name": "Northi Lantern",
     "type": "Artifice",
@@ -2484,7 +2484,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930585",
+    "id": "6a2e7a0d6be32fced4930ece",
     "indexId": "f197834c-88d4-416f-94db-09de0426e127",
     "name": "Parrot Elixir",
     "type": "Alchemy",
@@ -2504,7 +2504,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305c8",
+    "id": "6a2e7a0d6be32fced4930f11",
     "indexId": "fd2e1506-f737-470e-9edb-974658c57d05",
     "name": "Pegasus",
     "type": "Mount",
@@ -2522,7 +2522,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493053b",
+    "id": "6a2e7a0d6be32fced4930e84",
     "indexId": "a72e9249-5277-4bb7-a614-0135d03d17b1",
     "name": "Personal Camouflage Field",
     "type": "Artifice",
@@ -2542,7 +2542,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493056b",
+    "id": "6a2e7a0d6be32fced4930eb4",
     "indexId": "099302fe-11b1-45b1-bbcd-81b99a16282c",
     "name": "Photon Shield",
     "type": "Artifice",
@@ -2562,7 +2562,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305d9",
+    "id": "6a2e7a0d6be32fced4930f22",
     "indexId": "35109b82-d22c-46b4-a274-1a04ac7ff39a",
     "name": "Pickaxe (One-Handed)",
     "type": "Equipment",
@@ -2582,7 +2582,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305d6",
+    "id": "6a2e7a0d6be32fced4930f1f",
     "indexId": "6860f245-bd28-451e-a590-7c5ae54a713a",
     "name": "Pickaxe (Two-Handed)",
     "type": "Equipment",
@@ -2602,7 +2602,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305aa",
+    "id": "6a2e7a0d6be32fced4930ef3",
     "indexId": "0cd78c26-4b44-49cd-8254-fc424f977e66",
     "name": "Pistol (One-Handed)",
     "type": "Equipment",
@@ -2622,7 +2622,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305b1",
+    "id": "6a2e7a0d6be32fced4930efa",
     "indexId": "fda68ca3-87b8-4412-ab18-783767581b7f",
     "name": "Polaris Pair",
     "type": "Astra Relic",
@@ -2640,7 +2640,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930590",
+    "id": "6a2e7a0d6be32fced4930ed9",
     "indexId": "cfbf3adf-86fa-4dc7-8428-31a81af2ca73",
     "name": "Polearm (One-Handed)",
     "type": "Equipment",
@@ -2660,7 +2660,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930597",
+    "id": "6a2e7a0d6be32fced4930ee0",
     "indexId": "0d72f46e-059e-471b-b38b-a87312611e36",
     "name": "Polearm (Two-Handed)",
     "type": "Equipment",
@@ -2680,7 +2680,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930542",
+    "id": "6a2e7a0d6be32fced4930e8b",
     "indexId": "108e74c6-a755-4a81-be82-8ee064838036",
     "name": "Portable Vacuum",
     "type": "Artifice",
@@ -2700,7 +2700,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493053d",
+    "id": "6a2e7a0d6be32fced4930e86",
     "indexId": "95b68d88-12df-457a-91f2-4161bbc9b6fd",
     "name": "Portable Wall",
     "type": "Alchemy",
@@ -2720,14 +2720,14 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930546",
+    "id": "6a2e7a0d6be32fced4930e8f",
     "indexId": "3163b1ff-3bd9-4e76-9369-da115308caa3",
     "name": "Power Gauntlets",
     "type": "Artifice",
     "subType": "Weapon",
-    "description": "PHA+QSBsYXJnZSBhbmQgaGVhdnkgcGFpciBvZiBnbG92ZXMuIE9uY2UgdGhlIHdlYXJlciBpbnNlcnRzIHRoZWlyIGhhbmQgaW50byB0aGVtLCB0aGV5IHdpbGwgc2VjdXJlIHRoZW1zZWx2ZXMgcHJvcGVybHkgYXJvdW5kIHRoZWlyIGhhbmRzLiZuYnNwOzwvcD48cD5XaGVuIGFjdGl2YXRlZCwgdGhlIHdlYXJlcuKAmXMgdW5hcm1lZCBhdHRhY2tzIGRvIG5vcm1hbCB3ZWFwb24gZGFtYWdlIGluc3RlYWQgb2YgdGhlaXIgbm9ybWFsIHVuYXJtZWQgZGFtYWdlLiBJZiB0aGUgd2VhcmVyIGFscmVhZHkgaGFzIGEgZmVhdHVyZSB0aGF0IGxldHMgdGhlbSBkbyB0aGlzLCB0aGUgZ2F1bnRsZXRzIGluc3RlYWQgZ2l2ZSB0aGVtICsxIFBvd2VyIHRvIHVuYXJtZWQgYXR0YWNrcy4gV2hpbGUgd2VhcmluZyB0aGVzZSBnYXVudGxldHMsIGV2ZW4gaWYgdGhleSBhcmUgaW5hY3RpdmUsIHRoZSB3ZWFyZXIgc3VmZmVycyBhIC0xMCBwZW5hbHR5IHRvIGFsbCBjaGVja3MgdGhhdCByZXF1aXJlIGZpbmVzc2UgbW92ZW1lbnRzIHdpdGggdGhlaXIgaGFuZHMuJm5ic3A7PC9wPjxwPldlYXJpbmcgdGhlc2UgZ2F1bnRsZXRzIGFsc28gcHJldmVudHMgdGhlIHVzZXIgZnJvbSBwcm9wZXJseSBob2xkaW5nIGFuZCB1c2luZyBvdGhlciBpdGVtcyBhbmQgd2VhcG9ucyB3aXRoIHRoZW0uIEJvdGggaGFuZHMgYXJlIHRha2VuIHVwIGJ5IHRoZXNlIGdhdW50bGV0cy48L3A+PHA+V2hpbGUgdGhleSBhcmUgY29uc2lkZXJlZCBhIHR3by1oYW5kZWQgd2VhcG9uIGFzIHRoZXkgdGFrZSB0d28gaGFuZHMgdG8gdXNlLCB0aGV5IGRvIG5vdCBub3JtYWxseSBnZXQgNWQ2IGhlYXZ5IGRhbWFnZS48L3A+PHA+QWZ0ZXIgZHJhd2luZyB0aGVzZSBpbiBjb21iYXQsIHB1dHRpbmcgdGhlbSBvbiB0YWtlcyAyIEFQIChCdXQgeW91IG1heSBjaG9vc2UgdG8ganVzdCBhbHdheXMgd2VhciB0aGVtIHRvIGJ5cGFzcyB0aGlzKS4gVGFraW5nIHRoZW0gb2ZmIGFsc28gdGFrZXMgMiBBUC4mbmJzcDs8L3A+PGgyPk1vZHM6PC9oMj48dWw+PGxpPjxpPkEgbW9kczo8L2k+PHVsPjxsaT48c3Ryb25nPkZpbmUgU2l6ZSAoMTAgcG9pbnRzKTogPC9zdHJvbmc+UmVtb3ZlcyB0aGUgLTEwIHBlbmFsdHkgZm9yIGZpbmVzc2UgbW92ZW1lbnRzIHdoaWxlIHdlYXJpbmcgdGhlIGdhdW50bGV0cy48L2xpPjxsaT48c3Ryb25nPlZhdWx0IEJyZWFrZXIgKDIwIHBvaW50cyk6PC9zdHJvbmc+IFlvdXIgYXR0YWNrcyBkZWFsIGRvdWJsZSBkYW1hZ2UgYWdhaW5zdCBvYmplY3RzLjwvbGk+PC91bD48L2xpPjxsaT48aT5CIG1vZHM6PC9pPjx1bD48bGk+PHN0cm9uZz5GaW5lc3NlIEdyaXAgKDI1IHBvaW50cyk6PC9zdHJvbmc+IFlvdSBtYXkgaG9sZCBhbmQgdXNlIGl0ZW1zIG9yIHdlYXBvbnMgbGlrZSBub3JtYWwgd2hpbGUgd2VhcmluZyB0aGVzZSBnYXVudGxldHMuPC9saT48bGk+PHN0cm9uZz5IZWF2eSBwdW5jaGVzICg1MCBwb2ludHMpOiA8L3N0cm9uZz5VbmFybWVkIGF0dGFja3MgbWFkZSB3aXRoIHRoaXMgd2VhcG9uIGRlYWwgNWQ2IGRhbWFnZSBpbnN0ZWFkIG9mIDRkNi48L2xpPjwvdWw+PC9saT48L3VsPg==",
-    "descriptionHtml": "<p>A large and heavy pair of gloves. Once the wearer inserts their hand into them, they will secure themselves properly around their hands.&nbsp;</p><p>When activated, the wearer’s unarmed attacks do normal weapon damage instead of their normal unarmed damage. If the wearer already has a feature that lets them do this, the gauntlets instead give them +1 Power to unarmed attacks. While wearing these gauntlets, even if they are inactive, the wearer suffers a -10 penalty to all checks that require finesse movements with their hands.&nbsp;</p><p>Wearing these gauntlets also prevents the user from properly holding and using other items and weapons with them. Both hands are taken up by these gauntlets.</p><p>While they are considered a two-handed weapon as they take two hands to use, they do not normally get 5d6 heavy damage.</p><p>After drawing these in combat, putting them on takes 2 AP (But you may choose to just always wear them to bypass this). Taking them off also takes 2 AP.&nbsp;</p><h2>Mods:</h2><ul><li><i>A mods:</i><ul><li><strong>Fine Size (10 points): </strong>Removes the -10 penalty for finesse movements while wearing the gauntlets.</li><li><strong>Vault Breaker (20 points):</strong> Your attacks deal double damage against objects.</li></ul></li><li><i>B mods:</i><ul><li><strong>Finesse Grip (25 points):</strong> You may hold and use items or weapons like normal while wearing these gauntlets.</li><li><strong>Heavy punches (50 points): </strong>Unarmed attacks made with this weapon deal 5d6 damage instead of 4d6.</li></ul></li></ul>",
-    "descriptionText": "A large and heavy pair of gloves. Once the wearer inserts their hand into them, they will secure themselves properly around their hands.\n\nWhen activated, the wearer’s unarmed attacks do normal weapon damage instead of their normal unarmed damage. If the wearer already has a feature that lets them do this, the gauntlets instead give them +1 Power to unarmed attacks. While wearing these gauntlets, even if they are inactive, the wearer suffers a -10 penalty to all checks that require finesse movements with their hands.\n\nWearing these gauntlets also prevents the user from properly holding and using other items and weapons with them. Both hands are taken up by these gauntlets.\n\nWhile they are considered a two-handed weapon as they take two hands to use, they do not normally get 5d6 heavy damage.\n\nAfter drawing these in combat, putting them on takes 2 AP (But you may choose to just always wear them to bypass this). Taking them off also takes 2 AP.\n\nMods:\n\n- A mods:- Fine Size (10 points): Removes the -10 penalty for finesse movements while wearing the gauntlets.\n- Vault Breaker (20 points): Your attacks deal double damage against objects.\n\n- B mods:- Finesse Grip (25 points): You may hold and use items or weapons like normal while wearing these gauntlets.\n- Heavy punches (50 points): Unarmed attacks made with this weapon deal 5d6 damage instead of 4d6.",
+    "description": "PHA+QSBsYXJnZSBhbmQgaGVhdnkgcGFpciBvZiBnbG92ZXMuIE9uY2UgdGhlIHdlYXJlciBpbnNlcnRzIHRoZWlyIGhhbmQgaW50byB0aGVtLCB0aGV5IHdpbGwgc2VjdXJlIHRoZW1zZWx2ZXMgcHJvcGVybHkgYXJvdW5kIHRoZWlyIGhhbmRzLiZuYnNwOzwvcD48cD5XaGVuIGFjdGl2YXRlZCwgdGhlIHdlYXJlcuKAmXMgdW5hcm1lZCBhdHRhY2tzIGRvIG5vcm1hbCB3ZWFwb24gZGFtYWdlIGluc3RlYWQgb2YgdGhlaXIgbm9ybWFsIHVuYXJtZWQgZGFtYWdlLiBJZiB0aGUgd2VhcmVyIGFscmVhZHkgaGFzIGEgZmVhdHVyZSB0aGF0IGxldHMgdGhlbSBkbyB0aGlzLCB0aGUgZ2F1bnRsZXRzIGluc3RlYWQgZ2l2ZSB0aGVtICsxIFBvd2VyIHRvIHVuYXJtZWQgYXR0YWNrcy4gV2hpbGUgd2VhcmluZyB0aGVzZSBnYXVudGxldHMsIGV2ZW4gaWYgdGhleSBhcmUgaW5hY3RpdmUsIHRoZSB3ZWFyZXIgc3VmZmVycyBhIC0xMCBwZW5hbHR5IHRvIGFsbCBjaGVja3MgdGhhdCByZXF1aXJlIGZpbmVzc2UgbW92ZW1lbnRzIHdpdGggdGhlaXIgaGFuZHMuJm5ic3A7PC9wPjxwPldlYXJpbmcgdGhlc2UgZ2F1bnRsZXRzIGFsc28gcHJldmVudHMgdGhlIHVzZXIgZnJvbSBwcm9wZXJseSBob2xkaW5nIGFuZCB1c2luZyBvdGhlciBpdGVtcyBhbmQgd2VhcG9ucyB3aXRoIHRoZW0uIEJvdGggaGFuZHMgYXJlIHRha2VuIHVwIGJ5IHRoZXNlIGdhdW50bGV0cy48L3A+PHA+V2hpbGUgdGhleSBhcmUgY29uc2lkZXJlZCBhIHR3by1oYW5kZWQgd2VhcG9uIGFzIHRoZXkgdGFrZSB0d28gaGFuZHMgdG8gdXNlLCB0aGV5IGRvIG5vdCBub3JtYWxseSBnZXQgNWQ2IGhlYXZ5IGRhbWFnZS48L3A+PHA+QWZ0ZXIgZHJhd2luZyB0aGVzZSBpbiBjb21iYXQsIHB1dHRpbmcgdGhlbSBvbiB0YWtlcyAyIEFQIChCdXQgeW91IG1heSBjaG9vc2UgdG8ganVzdCBhbHdheXMgd2VhciB0aGVtIHRvIGJ5cGFzcyB0aGlzKS4gVGFraW5nIHRoZW0gb2ZmIGFsc28gdGFrZXMgMiBBUC4mbmJzcDs8L3A+PGgyPk1vZHM6PC9oMj48dWw+PGxpPjxpPkEgbW9kczo8L2k+PHVsPjxsaT48c3Ryb25nPkZpbmUgU2l6ZSAoMTAgcG9pbnRzKTogPC9zdHJvbmc+UmVtb3ZlcyB0aGUgLTEwIHBlbmFsdHkgZm9yIGZpbmVzc2UgbW92ZW1lbnRzIHdoaWxlIHdlYXJpbmcgdGhlIGdhdW50bGV0cy48L2xpPjxsaT48c3Ryb25nPlZhdWx0IEJyZWFrZXIgKDIwIHBvaW50cyk6PC9zdHJvbmc+IFlvdXIgYXR0YWNrcyBkZWFsIGRvdWJsZSBkYW1hZ2UgYWdhaW5zdCBvYmplY3RzLjwvbGk+PGxpPjxzdHJvbmc+QXJ0aWZpY2VyJ3MgR2xvdmVzICgzNSBwb2ludHMpOjwvc3Ryb25nPiBZb3UgbWF5IGhvbGQgYW5kIHVzZSBhcnRpZmljZXMgbGlrZSBub3JtYWwgd2hpbGUgd2VhcmluZyB0aGUgZ2F1bnRsZXRzLjwvbGk+PC91bD48L2xpPjxsaT48aT5CIG1vZHM6PC9pPjx1bD48bGk+PHN0cm9uZz5GaW5lc3NlIEdyaXAgKDI1IHBvaW50cyk6PC9zdHJvbmc+IFlvdSBtYXkgaG9sZCBhbmQgdXNlIGl0ZW1zIG9yIHdlYXBvbnMgbGlrZSBub3JtYWwgd2hpbGUgd2VhcmluZyB0aGVzZSBnYXVudGxldHMuPC9saT48bGk+PHN0cm9uZz5IZWF2eSBwdW5jaGVzICg1MCBwb2ludHMpOiA8L3N0cm9uZz5VbmFybWVkIGF0dGFja3MgbWFkZSB3aXRoIHRoaXMgd2VhcG9uIGRlYWwgNWQ2IGRhbWFnZSBpbnN0ZWFkIG9mIDRkNi48L2xpPjwvdWw+PC9saT48L3VsPg==",
+    "descriptionHtml": "<p>A large and heavy pair of gloves. Once the wearer inserts their hand into them, they will secure themselves properly around their hands.&nbsp;</p><p>When activated, the wearer’s unarmed attacks do normal weapon damage instead of their normal unarmed damage. If the wearer already has a feature that lets them do this, the gauntlets instead give them +1 Power to unarmed attacks. While wearing these gauntlets, even if they are inactive, the wearer suffers a -10 penalty to all checks that require finesse movements with their hands.&nbsp;</p><p>Wearing these gauntlets also prevents the user from properly holding and using other items and weapons with them. Both hands are taken up by these gauntlets.</p><p>While they are considered a two-handed weapon as they take two hands to use, they do not normally get 5d6 heavy damage.</p><p>After drawing these in combat, putting them on takes 2 AP (But you may choose to just always wear them to bypass this). Taking them off also takes 2 AP.&nbsp;</p><h2>Mods:</h2><ul><li><i>A mods:</i><ul><li><strong>Fine Size (10 points): </strong>Removes the -10 penalty for finesse movements while wearing the gauntlets.</li><li><strong>Vault Breaker (20 points):</strong> Your attacks deal double damage against objects.</li><li><strong>Artificer's Gloves (35 points):</strong> You may hold and use artifices like normal while wearing the gauntlets.</li></ul></li><li><i>B mods:</i><ul><li><strong>Finesse Grip (25 points):</strong> You may hold and use items or weapons like normal while wearing these gauntlets.</li><li><strong>Heavy punches (50 points): </strong>Unarmed attacks made with this weapon deal 5d6 damage instead of 4d6.</li></ul></li></ul>",
+    "descriptionText": "A large and heavy pair of gloves. Once the wearer inserts their hand into them, they will secure themselves properly around their hands.\n\nWhen activated, the wearer’s unarmed attacks do normal weapon damage instead of their normal unarmed damage. If the wearer already has a feature that lets them do this, the gauntlets instead give them +1 Power to unarmed attacks. While wearing these gauntlets, even if they are inactive, the wearer suffers a -10 penalty to all checks that require finesse movements with their hands.\n\nWearing these gauntlets also prevents the user from properly holding and using other items and weapons with them. Both hands are taken up by these gauntlets.\n\nWhile they are considered a two-handed weapon as they take two hands to use, they do not normally get 5d6 heavy damage.\n\nAfter drawing these in combat, putting them on takes 2 AP (But you may choose to just always wear them to bypass this). Taking them off also takes 2 AP.\n\nMods:\n\n- A mods:- Fine Size (10 points): Removes the -10 penalty for finesse movements while wearing the gauntlets.\n- Vault Breaker (20 points): Your attacks deal double damage against objects.\n- Artificer's Gloves (35 points): You may hold and use artifices like normal while wearing the gauntlets.\n\n- B mods:- Finesse Grip (25 points): You may hold and use items or weapons like normal while wearing these gauntlets.\n- Heavy punches (50 points): Unarmed attacks made with this weapon deal 5d6 damage instead of 4d6.",
     "activationCost": "0 AP",
     "cost": "1500 Clim",
     "burden": "1",
@@ -2740,7 +2740,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930544",
+    "id": "6a2e7a0d6be32fced4930e8d",
     "indexId": "fec9937f-3687-41d4-af44-baa45335d1b0",
     "name": "Private Communications Device",
     "type": "Artifice",
@@ -2760,7 +2760,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930565",
+    "id": "6a2e7a0d6be32fced4930eae",
     "indexId": "d1397200-c000-4a43-ba82-580a74b0066a",
     "name": "Projected Recorder Orb",
     "type": "Artifice",
@@ -2780,7 +2780,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493055c",
+    "id": "6a2e7a0d6be32fced4930ea5",
     "indexId": "29c09558-4085-4c94-8664-29b1feb3fa4a",
     "name": "Rabbit Elixir",
     "type": "Alchemy",
@@ -2800,7 +2800,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493055e",
+    "id": "6a2e7a0d6be32fced4930ea7",
     "indexId": "57aae81f-4ed3-4e80-8f4a-055043599e28",
     "name": "Reaper Elixir",
     "type": "Alchemy",
@@ -2820,7 +2820,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493058b",
+    "id": "6a2e7a0d6be32fced4930ed4",
     "indexId": "5503f1bc-fc68-404f-b60f-28b6d894c920",
     "name": "Refractor Gun",
     "type": "Artifice",
@@ -2840,7 +2840,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305cb",
+    "id": "6a2e7a0d6be32fced4930f14",
     "indexId": "75b5eb7b-e1e3-4593-b4c9-29706f2323c7",
     "name": "Research Kit",
     "type": "Adventuring Essentials",
@@ -2858,7 +2858,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930541",
+    "id": "6a2e7a0d6be32fced4930e8a",
     "indexId": "ed68eeff-570a-4d65-8091-81cbcd6cda46",
     "name": "Return Stone",
     "type": "Artifice",
@@ -2878,7 +2878,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305ae",
+    "id": "6a2e7a0d6be32fced4930ef7",
     "indexId": "9e2914c4-405f-46ef-bb87-ad55cd621f60",
     "name": "Saboteur Thread Daggers (One-Handed)",
     "type": "Equipment",
@@ -2898,7 +2898,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305d0",
+    "id": "6a2e7a0d6be32fced4930f19",
     "indexId": "feb966ee-a184-4202-b2d6-f49c7bb44da5",
     "name": "Scythe (Two-Handed)",
     "type": "Equipment",
@@ -2918,7 +2918,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493059c",
+    "id": "6a2e7a0d6be32fced4930ee5",
     "indexId": "d74285e3-dff7-42d1-bdda-a74ed94defe8",
     "name": "Set of Missiles (One-Handed)",
     "type": "Equipment",
@@ -2938,7 +2938,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493055d",
+    "id": "6a2e7a0d6be32fced4930ea6",
     "indexId": "5faada91-0ed4-446c-bf2d-91f70358dcca",
     "name": "Shark Elixir",
     "type": "Alchemy",
@@ -2958,14 +2958,14 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a2d4e136be32fced4930c8f",
+    "id": "6a2e7a0d6be32fced4930f4d",
     "indexId": "c06f5150-f0ac-4d97-8697-122a6cdade14",
     "name": "Shell Converter",
     "type": "Artifice",
     "subType": "Basic",
-    "description": "PHA+QW4gYXJ0aWZpY2UgdGhhdCBlYXNpbHkgY29udmVydHMgZnVlbCBpbnRvIHNoZWxscy4gTGVzcyBidWxreSB0byBjYXJyeSB0aGFuIGFuIGFydGlmaWNlIGtpdCwgYnV0IGNhbm5vdCBiZSB1c2VkIHRvIHJlcGFpciBhcnRpZmljZXMuPC9wPjxwPlRyZWF0ZWQgYXMgYSBraXQgZm9yIEJ1cmRlbiBwdXJwb3Nlcy48L3A+PHA+PHN0cm9uZz5SZXN0IEFjdGlvbjogPC9zdHJvbmc+WW91IGNhbiBjaG9vc2UgdG8gY3JlYXRlIGEgc21hbGwgQXJ0aWZpY2UgU2hlbGwsIHBheWluZyBpdHMgY29zdCBpbiBNYWdpY2FsIEZ1ZWwgdG8gY3JlYXRlLjwvcD48aDQ+TW9kczwvaDQ+PHVsPjxsaT48aT5BIG1vZHM6PC9pPjx1bD48bGk+PHN0cm9uZz5NZWRpdW0gQ2FwYWNpdHkgKDIwIHBvaW50cyk6PC9zdHJvbmc+IFlvdSBtYXkgYWxzbyBjcmVhdGUgTWVkaXVtIFNoZWxscyAoY29zdHMgbW9yZSBGdWVsIHN0aWxsKS48L2xpPjwvdWw+PC9saT48bGk+PGk+QiBtb2RzOjwvaT48dWw+PGxpPjxzdHJvbmc+SW5jcmVhc2VkIFByb2R1Y3Rpb24gKDI1IHBvaW50cyk6PC9zdHJvbmc+IFlvdSBtYXkgY3JlYXRlIHR3byBzaGVsbHMgaW5zdGVhZCBvZiAxLjwvbGk+PGxpPjxzdHJvbmc+TGlnaHR3ZWlnaHQgRGVzaWduICg4MCBwb2ludHMpOjwvc3Ryb25nPiBUaGlzIGFydGlmaWNlIGlzIG5vIGxvbmdlciBjb3VudGVkIGFzIGEga2l0IGFuZCBjYW4gdGh1cyBiZSBzdG9yZWQgZWFzaWx5IGluIG5vbi1jb21iYXQgaW52ZW50b3J5LjwvbGk+PC91bD48L2xpPjwvdWw+",
-    "descriptionHtml": "<p>An artifice that easily converts fuel into shells. Less bulky to carry than an artifice kit, but cannot be used to repair artifices.</p><p>Treated as a kit for Burden purposes.</p><p><strong>Rest Action: </strong>You can choose to create a small Artifice Shell, paying its cost in Magical Fuel to create.</p><h4>Mods</h4><ul><li><i>A mods:</i><ul><li><strong>Medium Capacity (20 points):</strong> You may also create Medium Shells (costs more Fuel still).</li></ul></li><li><i>B mods:</i><ul><li><strong>Increased Production (25 points):</strong> You may create two shells instead of 1.</li><li><strong>Lightweight Design (80 points):</strong> This artifice is no longer counted as a kit and can thus be stored easily in non-combat inventory.</li></ul></li></ul>",
-    "descriptionText": "An artifice that easily converts fuel into shells. Less bulky to carry than an artifice kit, but cannot be used to repair artifices.\n\nTreated as a kit for Burden purposes.\n\nRest Action: You can choose to create a small Artifice Shell, paying its cost in Magical Fuel to create.\n\nMods\n\n- A mods:- Medium Capacity (20 points): You may also create Medium Shells (costs more Fuel still).\n\n- B mods:- Increased Production (25 points): You may create two shells instead of 1.\n- Lightweight Design (80 points): This artifice is no longer counted as a kit and can thus be stored easily in non-combat inventory.",
+    "description": "PHA+QW4gYXJ0aWZpY2UgdGhhdCBlYXNpbHkgY29udmVydHMgZnVlbCBpbnRvIHNoZWxscy4gTGVzcyBidWxreSB0byBjYXJyeSB0aGFuIGFuIGFydGlmaWNlIGtpdCwgYnV0IGNhbm5vdCBiZSB1c2VkIHRvIHJlcGFpciBhcnRpZmljZXMuPC9wPjxwPlRyZWF0ZWQgYXMgYSBraXQgZm9yIEJ1cmRlbiBwdXJwb3Nlcy48L3A+PHA+PHN0cm9uZz5SZXN0IEFjdGlvbjogPC9zdHJvbmc+WW91IGNhbiBjaG9vc2UgdG8gY3JlYXRlIGEgc21hbGwgQXJ0aWZpY2UgU2hlbGwsIHBheWluZyBpdHMgY29zdCBpbiBNYWdpY2FsIEZ1ZWwgdG8gY3JlYXRlLjwvcD48aDQ+TW9kczwvaDQ+PHVsPjxsaT48aT5BIG1vZHM6PC9pPjx1bD48bGk+PHN0cm9uZz5NZWRpdW0gQ2FwYWNpdHkgKDIwIHBvaW50cyk6PC9zdHJvbmc+IFlvdSBtYXkgYWxzbyBjcmVhdGUgTWVkaXVtIFNoZWxscyAoY29zdHMgbW9yZSBGdWVsIHN0aWxsKS48L2xpPjwvdWw+PC9saT48bGk+PGk+QiBtb2RzOjwvaT48dWw+PGxpPjxzdHJvbmc+SW5jcmVhc2VkIFByb2R1Y3Rpb24gKDI1IHBvaW50cyk6PC9zdHJvbmc+IFlvdSBtYXkgY3JlYXRlIHR3byBzaGVsbHMgaW5zdGVhZCBvZiAxIChjb3N0cyBtb3JlIEZ1ZWwgc3RpbGwpLjwvbGk+PGxpPjxzdHJvbmc+TGlnaHR3ZWlnaHQgRGVzaWduICg4MCBwb2ludHMpOjwvc3Ryb25nPiBUaGlzIGFydGlmaWNlIGlzIG5vIGxvbmdlciBjb3VudGVkIGFzIGEga2l0IGFuZCBjYW4gdGh1cyBiZSBzdG9yZWQgZWFzaWx5IGluIG5vbi1jb21iYXQgaW52ZW50b3J5LjwvbGk+PC91bD48L2xpPjwvdWw+",
+    "descriptionHtml": "<p>An artifice that easily converts fuel into shells. Less bulky to carry than an artifice kit, but cannot be used to repair artifices.</p><p>Treated as a kit for Burden purposes.</p><p><strong>Rest Action: </strong>You can choose to create a small Artifice Shell, paying its cost in Magical Fuel to create.</p><h4>Mods</h4><ul><li><i>A mods:</i><ul><li><strong>Medium Capacity (20 points):</strong> You may also create Medium Shells (costs more Fuel still).</li></ul></li><li><i>B mods:</i><ul><li><strong>Increased Production (25 points):</strong> You may create two shells instead of 1 (costs more Fuel still).</li><li><strong>Lightweight Design (80 points):</strong> This artifice is no longer counted as a kit and can thus be stored easily in non-combat inventory.</li></ul></li></ul>",
+    "descriptionText": "An artifice that easily converts fuel into shells. Less bulky to carry than an artifice kit, but cannot be used to repair artifices.\n\nTreated as a kit for Burden purposes.\n\nRest Action: You can choose to create a small Artifice Shell, paying its cost in Magical Fuel to create.\n\nMods\n\n- A mods:- Medium Capacity (20 points): You may also create Medium Shells (costs more Fuel still).\n\n- B mods:- Increased Production (25 points): You may create two shells instead of 1 (costs more Fuel still).\n- Lightweight Design (80 points): This artifice is no longer counted as a kit and can thus be stored easily in non-combat inventory.",
     "activationCost": "-",
     "cost": "500c",
     "burden": "1",
@@ -2975,10 +2975,10 @@
     "craftingType": "Artificing",
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/9b1e5679-cb0f-4d49-b48b-818263e1ef6c-shellconverter.lg.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/9b1e5679-cb0f-4d49-b48b-818263e1ef6c-shellconverter.lg.webp",
-    "imageAlignment": ""
+    "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305b9",
+    "id": "6a2e7a0d6be32fced4930f02",
     "indexId": "89f64eab-82d6-40ca-8224-221e794c96fd",
     "name": "Shepherd's Sling (One-Handed)",
     "type": "Equipment",
@@ -2998,7 +2998,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305a6",
+    "id": "6a2e7a0d6be32fced4930eef",
     "indexId": "a4d00295-ac41-4600-9441-ea026254405b",
     "name": "Shield",
     "type": "Equipment",
@@ -3018,7 +3018,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305a7",
+    "id": "6a2e7a0d6be32fced4930ef0",
     "indexId": "9337bd80-4218-4b90-a835-c4063dbc1f74",
     "name": "Shield (Great)",
     "type": "Equipment",
@@ -3038,7 +3038,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493057c",
+    "id": "6a2e7a0d6be32fced4930ec5",
     "indexId": "0f7662cf-5b02-4e09-b94e-9f766a0230f7",
     "name": "Shielding Potion",
     "type": "Alchemy",
@@ -3058,7 +3058,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493053c",
+    "id": "6a2e7a0d6be32fced4930e85",
     "indexId": "8c2f9a05-9049-42a6-9a47-f363d6b58fe5",
     "name": "Shock Stick",
     "type": "Artifice",
@@ -3078,7 +3078,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930543",
+    "id": "6a2e7a0d6be32fced4930e8c",
     "indexId": "17af386b-2963-4476-9358-3626acbd2ad4",
     "name": "Short Range Communications Device",
     "type": "Artifice",
@@ -3098,7 +3098,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305ab",
+    "id": "6a2e7a0d6be32fced4930ef4",
     "indexId": "1f1f88a7-ae59-4645-980b-fa2edd9c6a67",
     "name": "Shotgun (One-Handed)",
     "type": "Equipment",
@@ -3118,7 +3118,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305ad",
+    "id": "6a2e7a0d6be32fced4930ef6",
     "indexId": "a2a58f9c-17f9-4b99-8db5-00ef4a4c0909",
     "name": "Shotgun (Two-Handed)",
     "type": "Equipment",
@@ -3138,7 +3138,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305d8",
+    "id": "6a2e7a0d6be32fced4930f21",
     "indexId": "3b1de1d5-6294-442b-8d9d-690fc1085240",
     "name": "Sickle",
     "type": "Equipment",
@@ -3158,7 +3158,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493054d",
+    "id": "6a2e7a0d6be32fced4930e96",
     "indexId": "a5bd1402-4e17-4fa1-b03b-bfecbbd1dea9",
     "name": "Silencer",
     "type": "Artifice",
@@ -3178,7 +3178,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930563",
+    "id": "6a2e7a0d6be32fced4930eac",
     "indexId": "03ab914f-af09-4abc-8734-8d50a9150e38",
     "name": "Small Shell",
     "type": "Artifice",
@@ -3196,7 +3196,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930591",
+    "id": "6a2e7a0d6be32fced4930eda",
     "indexId": "bb0d22e4-f8b1-436e-8382-8a3b426c438a",
     "name": "Small Weapons (One-Handed)",
     "type": "Equipment",
@@ -3216,7 +3216,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305b0",
+    "id": "6a2e7a0d6be32fced4930ef9",
     "indexId": "7c0bcbd7-e694-437e-9e99-ca5b0eb66902",
     "name": "Smith's Hammer (One-handed)",
     "type": "Equipment",
@@ -3236,7 +3236,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305df",
+    "id": "6a2e7a0d6be32fced4930f28",
     "indexId": "31493445-f743-45d9-9969-fa83169d9ac6",
     "name": "Smith's Hammer (Two-handed)",
     "type": "Equipment",
@@ -3256,7 +3256,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493055a",
+    "id": "6a2e7a0d6be32fced4930ea3",
     "indexId": "d7c9de38-e7b8-4b56-aec5-bb3da98c2f1b",
     "name": "Smoke Flask",
     "type": "Alchemy",
@@ -3276,7 +3276,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305ac",
+    "id": "6a2e7a0d6be32fced4930ef5",
     "indexId": "34a6f863-8adf-4423-833c-84348e431ab1",
     "name": "Sniper Rifle (Two-Handed)",
     "type": "Equipment",
@@ -3296,14 +3296,14 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930582",
+    "id": "6a2e7a0d6be32fced4930ecb",
     "indexId": "ee10eb26-e9c3-44cb-ade1-fbebfca0bafd",
     "name": "Snow Cloak",
     "type": "Artifice",
     "subType": "Assist",
-    "description": "PHA+QSB3aGl0ZSBjbG9hayBkZXNpZ25lZCBhcyB0aGUgY291bnRlcnBhcnQgdG8gdGhlIEZpcmUgUm9iZS4gS2VlcHMgdGhlIHdlYXJlciB3YXJtIGluIGV2ZW4gdGhlIGNvbGRlc3Qgb2Ygd2VhdGhlcnMuPC9wPjxwPkNhbiBiZSBhY3RpdmF0ZWQgdG8gZ2l2ZSB0aGUgd2VhcmVyIDUgZGFtYWdlIHJlZHVjdGlvbiBhZ2FpbnN0IGZyb3N0IGRhbWFnZSB1bnRpbCB0aGUgZW5kIG9mIHRoZSBlbmNvdW50ZXIuIFdoZW4gdGhpcyBlZmZlY3QgZW5kcywgdGhlIHNoZWxsIGluc2lkZSB0aGUgY2xvYWsgaXMgaW1tZWRpYXRlbHkgdXNlZCB1cCBhbmQgbmVlZHMgdG8gYmUgcmVwbGFjZWQgZm9yIHRoZSB3ZWF0aGVyIHJlcGVsbGluZyBlZmZlY3QgdG8gZnVuY3Rpb24uPC9wPjxoND5Nb2RzPC9oND48dWw+PGxpPjxpPkEgbW9kczo8L2k+PHVsPjxsaT48c3Ryb25nPlF1aWNrIEFjdGl2YXRpb24gKDIwIHBvaW50cyk6IDwvc3Ryb25nPlRoZSBhY3RpdmF0aW9uIGNvc3QgaXMgcmVkdWNlZCB0byAwIEFQLjwvbGk+PC91bD48L2xpPjxsaT48aT5CIG1vZHM6PC9pPjx1bD48bGk+PHN0cm9uZz5Tbm93cHJvb2YgKDI1IHBvaW50cyk6PC9zdHJvbmc+IFdoaWxlIGl0J3MgYWN0aXZlLCB5b3UgYXJlIGltbXVuZSB0byBTbG93aW5nIGVmZmVjdHMgY2F1c2VkIGJ5IEZyb3N0IGRhbWFnZS48L2xpPjxsaT48c3Ryb25nPkluY3JlYXNlZCBQcm90ZWN0aW9uICg4MCBwb2ludHMpOiA8L3N0cm9uZz5UaGUgZGFtYWdlIHJlZHVjdGlvbiBpcyBpbmNyZWFzZWQgdG8gMTAuPC9saT48L3VsPjwvbGk+PC91bD4=",
-    "descriptionHtml": "<p>A white cloak designed as the counterpart to the Fire Robe. Keeps the wearer warm in even the coldest of weathers.</p><p>Can be activated to give the wearer 5 damage reduction against frost damage until the end of the encounter. When this effect ends, the shell inside the cloak is immediately used up and needs to be replaced for the weather repelling effect to function.</p><h4>Mods</h4><ul><li><i>A mods:</i><ul><li><strong>Quick Activation (20 points): </strong>The activation cost is reduced to 0 AP.</li></ul></li><li><i>B mods:</i><ul><li><strong>Snowproof (25 points):</strong> While it's active, you are immune to Slowing effects caused by Frost damage.</li><li><strong>Increased Protection (80 points): </strong>The damage reduction is increased to 10.</li></ul></li></ul>",
-    "descriptionText": "A white cloak designed as the counterpart to the Fire Robe. Keeps the wearer warm in even the coldest of weathers.\n\nCan be activated to give the wearer 5 damage reduction against frost damage until the end of the encounter. When this effect ends, the shell inside the cloak is immediately used up and needs to be replaced for the weather repelling effect to function.\n\nMods\n\n- A mods:- Quick Activation (20 points): The activation cost is reduced to 0 AP.\n\n- B mods:- Snowproof (25 points): While it's active, you are immune to Slowing effects caused by Frost damage.\n- Increased Protection (80 points): The damage reduction is increased to 10.",
+    "description": "PHA+QSB3aGl0ZSBjbG9hayBkZXNpZ25lZCBhcyB0aGUgY291bnRlcnBhcnQgdG8gdGhlIEZpcmUgUm9iZS4gS2VlcHMgdGhlIHdlYXJlciB3YXJtIGluIGV2ZW4gdGhlIGNvbGRlc3Qgb2Ygd2VhdGhlcnMuPC9wPjxwPkNvbnNpZGVyZWQgYSBjbG9hayBhbmQgdGFrZXMgdGhlIGNsb2FrIHNsb3QuPC9wPjxwPkNhbiBiZSBhY3RpdmF0ZWQgdG8gZ2l2ZSB0aGUgd2VhcmVyIDUgZGFtYWdlIHJlZHVjdGlvbiBhZ2FpbnN0IGZyb3N0IGRhbWFnZSB1bnRpbCB0aGUgZW5kIG9mIHRoZSBlbmNvdW50ZXIuIFdoZW4gdGhpcyBlZmZlY3QgZW5kcywgdGhlIHNoZWxsIGluc2lkZSB0aGUgY2xvYWsgaXMgaW1tZWRpYXRlbHkgdXNlZCB1cCBhbmQgbmVlZHMgdG8gYmUgcmVwbGFjZWQgZm9yIHRoZSB3ZWF0aGVyIHJlcGVsbGluZyBlZmZlY3QgdG8gZnVuY3Rpb24uPC9wPjxoND5Nb2RzPC9oND48dWw+PGxpPjxpPkEgbW9kczo8L2k+PHVsPjxsaT48c3Ryb25nPlF1aWNrIEFjdGl2YXRpb24gKDIwIHBvaW50cyk6IDwvc3Ryb25nPlRoZSBhY3RpdmF0aW9uIGNvc3QgaXMgcmVkdWNlZCB0byAwIEFQLjwvbGk+PC91bD48L2xpPjxsaT48aT5CIG1vZHM6PC9pPjx1bD48bGk+PHN0cm9uZz5Tbm93cHJvb2YgKDI1IHBvaW50cyk6PC9zdHJvbmc+IFdoaWxlIGl0J3MgYWN0aXZlLCB5b3UgYXJlIGltbXVuZSB0byBTbG93aW5nIGVmZmVjdHMgY2F1c2VkIGJ5IEZyb3N0IGRhbWFnZS48L2xpPjxsaT48c3Ryb25nPkluY3JlYXNlZCBQcm90ZWN0aW9uICg4MCBwb2ludHMpOiA8L3N0cm9uZz5UaGUgZGFtYWdlIHJlZHVjdGlvbiBpcyBpbmNyZWFzZWQgdG8gMTAuPC9saT48L3VsPjwvbGk+PC91bD4=",
+    "descriptionHtml": "<p>A white cloak designed as the counterpart to the Fire Robe. Keeps the wearer warm in even the coldest of weathers.</p><p>Considered a cloak and takes the cloak slot.</p><p>Can be activated to give the wearer 5 damage reduction against frost damage until the end of the encounter. When this effect ends, the shell inside the cloak is immediately used up and needs to be replaced for the weather repelling effect to function.</p><h4>Mods</h4><ul><li><i>A mods:</i><ul><li><strong>Quick Activation (20 points): </strong>The activation cost is reduced to 0 AP.</li></ul></li><li><i>B mods:</i><ul><li><strong>Snowproof (25 points):</strong> While it's active, you are immune to Slowing effects caused by Frost damage.</li><li><strong>Increased Protection (80 points): </strong>The damage reduction is increased to 10.</li></ul></li></ul>",
+    "descriptionText": "A white cloak designed as the counterpart to the Fire Robe. Keeps the wearer warm in even the coldest of weathers.\n\nConsidered a cloak and takes the cloak slot.\n\nCan be activated to give the wearer 5 damage reduction against frost damage until the end of the encounter. When this effect ends, the shell inside the cloak is immediately used up and needs to be replaced for the weather repelling effect to function.\n\nMods\n\n- A mods:- Quick Activation (20 points): The activation cost is reduced to 0 AP.\n\n- B mods:- Snowproof (25 points): While it's active, you are immune to Slowing effects caused by Frost damage.\n- Increased Protection (80 points): The damage reduction is increased to 10.",
     "activationCost": "1 AP",
     "cost": "3000 Clim",
     "burden": "1",
@@ -3316,7 +3316,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930550",
+    "id": "6a2e7a0d6be32fced4930e99",
     "indexId": "109dd848-b2b1-4a17-9d09-8cb491021010",
     "name": "Soul Lamp",
     "type": "Artifice",
@@ -3336,7 +3336,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930560",
+    "id": "6a2e7a0d6be32fced4930ea9",
     "indexId": "232d9dca-581b-40de-aa5e-67adce008aec",
     "name": "Souleater Elixir",
     "type": "Alchemy",
@@ -3356,7 +3356,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930547",
+    "id": "6a2e7a0d6be32fced4930e90",
     "indexId": "c02bc0af-3d1a-4c56-b860-9bec353d1554",
     "name": "Space Time Anchor",
     "type": "Artifice",
@@ -3376,7 +3376,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493057b",
+    "id": "6a2e7a0d6be32fced4930ec4",
     "indexId": "49706d1f-f6b0-4a59-9107-63337b93e4ea",
     "name": "Speed Potion",
     "type": "Alchemy",
@@ -3396,7 +3396,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493053a",
+    "id": "6a2e7a0d6be32fced4930e83",
     "indexId": "53377525-c870-4118-bfb0-a3dfa7503360",
     "name": "Spider Shoes",
     "type": "Artifice",
@@ -3416,7 +3416,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305a9",
+    "id": "6a2e7a0d6be32fced4930ef2",
     "indexId": "4407a664-4bf7-4db4-9cb5-99dd03044d0b",
     "name": "Staff (One-Handed)",
     "type": "Equipment",
@@ -3436,7 +3436,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305a8",
+    "id": "6a2e7a0d6be32fced4930ef1",
     "indexId": "24e2c0a5-0df7-41e0-8dea-77c05004a5f8",
     "name": "Staff (Two-Handed)",
     "type": "Equipment",
@@ -3456,7 +3456,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930559",
+    "id": "6a2e7a0d6be32fced4930ea2",
     "indexId": "05ed3dc9-5e95-477b-8113-f2742a930e67",
     "name": "Sticky Glue Flask",
     "type": "Alchemy",
@@ -3476,7 +3476,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305eb",
+    "id": "6a2e7a0d6be32fced4930f34",
     "indexId": "e06e2416-b877-4305-8484-34227d94e42f",
     "name": "Stone Serpent's Kiss",
     "type": "Alchemy",
@@ -3496,7 +3496,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493054e",
+    "id": "6a2e7a0d6be32fced4930e97",
     "indexId": "42b83880-b052-4614-aee9-1d156f629c95",
     "name": "Stun Gun",
     "type": "Artifice",
@@ -3516,7 +3516,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930549",
+    "id": "6a2e7a0d6be32fced4930e92",
     "indexId": "c8be2cd8-f4f3-4659-a46a-157285fba4c1",
     "name": "Suppression Potion",
     "type": "Alchemy",
@@ -3536,7 +3536,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305c1",
+    "id": "6a2e7a0d6be32fced4930f0a",
     "indexId": "67ccd9ce-243d-4fc0-bd2e-7661a371c676",
     "name": "Surgery Kit",
     "type": "Adventuring Essentials",
@@ -3554,7 +3554,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493059a",
+    "id": "6a2e7a0d6be32fced4930ee3",
     "indexId": "169e50c9-8046-449a-9d47-2e81ac9321fb",
     "name": "Thrown (One-Handed)",
     "type": "Equipment",
@@ -3574,7 +3574,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493059b",
+    "id": "6a2e7a0d6be32fced4930ee4",
     "indexId": "0547651c-7ea4-4a97-97bd-f6176097dbbe",
     "name": "Thrown (Two-Handed)",
     "type": "Equipment",
@@ -3594,7 +3594,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930572",
+    "id": "6a2e7a0d6be32fced4930ebb",
     "indexId": "e0c3242d-80cc-45ca-8094-46986f490f84",
     "name": "Timeworn Katana",
     "type": "Astra Relic",
@@ -3612,7 +3612,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493056d",
+    "id": "6a2e7a0d6be32fced4930eb6",
     "indexId": "ad916d59-3761-421e-83d8-d060764e7141",
     "name": "Torch",
     "type": "Adventuring Essentials",
@@ -3630,7 +3630,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930540",
+    "id": "6a2e7a0d6be32fced4930e89",
     "indexId": "4ce38fa9-fa89-421a-b8b5-fef653ea1caf",
     "name": "Transforming Weapon",
     "type": "Artifice",
@@ -3650,7 +3650,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493055f",
+    "id": "6a2e7a0d6be32fced4930ea8",
     "indexId": "2279554e-b0ef-49a1-99f4-17d006866aa5",
     "name": "Tunnel Elixir",
     "type": "Alchemy",
@@ -3670,7 +3670,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305f6",
+    "id": "6a2e7a0d6be32fced4930f3f",
     "indexId": "9fa6b434-750a-4790-be42-18eb051a4b3b",
     "name": "Turtle Elixir",
     "type": "Alchemy",
@@ -3690,7 +3690,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305ea",
+    "id": "6a2e7a0d6be32fced4930f33",
     "indexId": "fb1fcc90-c33d-4545-8faf-1197555e0340",
     "name": "Twinblade (Two-handed)",
     "type": "Equipment",
@@ -3710,7 +3710,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305b7",
+    "id": "6a2e7a0d6be32fced4930f00",
     "indexId": "dcd2568c-6acd-4467-90f2-a6a31ad90637",
     "name": "Universal Armor Mods",
     "type": "Crafting",
@@ -3728,7 +3728,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a2ab7ad6be32fced4930c60",
+    "id": "6a2e7a0d6be32fced4930f4b",
     "indexId": "23ef57eb-5d7c-4571-85e2-3385e9659460",
     "name": "Universal Artifice Mods",
     "type": "Crafting",
@@ -3748,7 +3748,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305b3",
+    "id": "6a2e7a0d6be32fced4930efc",
     "indexId": "a944f982-5ae4-427b-bc92-f1910a3e4def",
     "name": "Universal Crafting Mods",
     "type": "Crafting",
@@ -3766,7 +3766,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493053e",
+    "id": "6a2e7a0d6be32fced4930e87",
     "indexId": "416fd731-dbd8-4bc7-b05e-6bec78785e42",
     "name": "Universal Translator",
     "type": "Artifice",
@@ -3786,7 +3786,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305ec",
+    "id": "6a2e7a0d6be32fced4930f35",
     "indexId": "f026291b-83e6-4d2d-b668-621012c7bd4b",
     "name": "Universal Weapon Mods",
     "type": "Crafting",
@@ -3806,7 +3806,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305a3",
+    "id": "6a2e7a0d6be32fced4930eec",
     "indexId": "4d3d3225-3f62-40f1-81b7-fb4a3705e620",
     "name": "Wand (One-Handed)",
     "type": "Equipment",
@@ -3826,7 +3826,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305a4",
+    "id": "6a2e7a0d6be32fced4930eed",
     "indexId": "9c9ce117-7bbe-4770-a1b7-fff59865b5ed",
     "name": "Wand (Two-Handed)",
     "type": "Equipment",
@@ -3846,7 +3846,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305f9",
+    "id": "6a2e7a0d6be32fced4930f42",
     "indexId": "48482fd0-8414-4468-b666-b3f69dfef798",
     "name": "Water Balloon",
     "type": "Alchemy",
@@ -3866,7 +3866,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305e9",
+    "id": "6a2e7a0d6be32fced4930f32",
     "indexId": "710cdd84-4236-407d-9a76-0c4745a0265b",
     "name": "Weak Spider Poison",
     "type": "Alchemy",
@@ -3886,7 +3886,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305f2",
+    "id": "6a2e7a0d6be32fced4930f3b",
     "indexId": "82fa269a-b13e-49b8-a563-506503c35cf7",
     "name": "Weak Wyvern Poison",
     "type": "Alchemy",
@@ -3906,7 +3906,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930548",
+    "id": "6a2e7a0d6be32fced4930e91",
     "indexId": "768406a0-f8bc-4c1b-8160-9fa84b3b2efd",
     "name": "Web Flask",
     "type": "Alchemy",
@@ -3926,7 +3926,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305b8",
+    "id": "6a2e7a0d6be32fced4930f01",
     "indexId": "d4eb7bec-6b57-4ec6-b503-1987bec693e9",
     "name": "Whip (One-Handed)",
     "type": "Equipment",
@@ -3946,7 +3946,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930583",
+    "id": "6a2e7a0d6be32fced4930ecc",
     "indexId": "72b13a53-67a3-447b-9b0a-3cf9db08a2c9",
     "name": "Wind Bubble",
     "type": "Artifice",
@@ -3966,7 +3966,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493054f",
+    "id": "6a2e7a0d6be32fced4930e98",
     "indexId": "8e908071-6efe-44f5-a5ec-2833d29519ee",
     "name": "Winged Backpack",
     "type": "Artifice",
@@ -3986,7 +3986,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305c7",
+    "id": "6a2e7a0d6be32fced4930f10",
     "indexId": "ffc2d88a-c595-4d48-b534-0555d643fde8",
     "name": "Wolf",
     "type": "Mount",
@@ -4004,7 +4004,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493057e",
+    "id": "6a2e7a0d6be32fced4930ec7",
     "indexId": "a28c931e-084c-4c1e-8fb5-2d8897bd8459",
     "name": "Wolverine Elixir",
     "type": "Alchemy",
@@ -4024,7 +4024,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305c9",
+    "id": "6a2e7a0d6be32fced4930f12",
     "indexId": "f853fd4c-8f2b-4b64-bcec-2abac9b4b5cd",
     "name": "Wyvern",
     "type": "Mount",
@@ -4042,7 +4042,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49305fb",
+    "id": "6a2e7a0d6be32fced4930f44",
     "indexId": "8effa04d-313f-4928-a263-9cb366483543",
     "name": "XL Healing Potion",
     "type": "Alchemy",

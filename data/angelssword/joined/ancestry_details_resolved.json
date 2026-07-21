@@ -1,6 +1,6 @@
 [
   {
-    "id": "6a06299f6be32fced4930416",
+    "id": "6a2e7a0d6be32fced4930d57",
     "indexId": "a2d028d9-b37d-4ff1-aa5f-69f698b4fbd7",
     "ancestryId": "ancient-marionette",
     "name": "Ancient Marionette",
@@ -14,7 +14,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/5209e9d5-9bea-4b26-91ec-093be7d3e7e2-Marionette_new_2_hand_doll_work_start.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/1a4009a7-048e-449e-bed8-104aaaaf95e1-Marionette_new_2_hand_doll_work_start.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced49309ae",
+      "id": "6a2e7a0d6be32fced4931301",
       "indexId": "51ceb0f1-9319-4a58-9fe2-23e311d8f9e4",
       "trueAbilityId": "thermal-vision",
       "name": "Thermal Vision",
@@ -30,7 +30,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced49309ad",
+      "id": "6a2e7a0d6be32fced4931300",
       "indexId": "e22bc9da-1c7c-4920-90b5-d45a6173103f",
       "trueAbilityId": "mana_eater",
       "name": "Mana Eater",
@@ -44,7 +44,7 @@
       "otherCosts": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced49309ab",
+      "id": "6a2e7a0d6be32fced49312fe",
       "indexId": "3375d248-2468-4116-a9de-78c511b7075d",
       "trueAbilityId": "adaptive-defense",
       "name": "Adaptive Defense",
@@ -61,7 +61,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced4930425",
+    "id": "6a2e7a0d6be32fced4930d66",
     "indexId": "db0454d2-d575-455a-a7fa-3f68928cee95",
     "ancestryId": "anubis",
     "name": "Anubis",
@@ -75,7 +75,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/bfaa0f98-412d-4e53-b69a-75c8093b4539-Anubis_Female_2_-_Copy.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/ced79a6b-a5d7-4a14-9513-67109727b6c4-Anubis_Female_2_-_Copy.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930acf",
+      "id": "6a2e7a0d6be32fced4931422",
       "indexId": "f2cbdcb4-45d6-4fa9-902a-19f6f1324efb",
       "trueAbilityId": "last-rites",
       "name": "Last Rites",
@@ -90,7 +90,7 @@
       "requirement": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930ace",
+      "id": "6a2e7a0d6be32fced4931421",
       "indexId": "10dee9de-23f4-4896-8ed1-26219c2da100",
       "trueAbilityId": "weighing-the-heart",
       "name": "Weighing the Heart",
@@ -105,7 +105,7 @@
       "requirement": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced49308f2",
+      "id": "6a2e7a0d6be32fced4931245",
       "indexId": "58197fd9-b76a-4006-9af4-873f8840895c",
       "trueAbilityId": "speak_with_dead",
       "name": "Speak with dead",
@@ -120,7 +120,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced493042a",
+    "id": "6a2e7a0d6be32fced4930d6b",
     "indexId": "a53cfc14-77ab-4888-b4d3-1e772c16f655",
     "ancestryId": "bearfolk",
     "name": "Bearfolk",
@@ -134,7 +134,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/5a23f930-a766-4d5b-9221-1b542a366145-Bearfolk.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/d557cd46-9074-44b6-871f-47f03c4bd57f-Bearfolk.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930b5f",
+      "id": "6a2e7a0d6be32fced49314b2",
       "indexId": "ea506b83-3efe-4989-82a2-6ea9f790a021",
       "trueAbilityId": "hibernate",
       "name": "Hibernate",
@@ -150,7 +150,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930b60",
+      "id": "6a2e7a0d6be32fced49314b3",
       "indexId": "d14d0e88-bedd-418f-a44d-9790b014c34a",
       "trueAbilityId": "bear-shock",
       "name": "Bear Shock",
@@ -166,7 +166,7 @@
       "otherCosts": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced4930b5e",
+      "id": "6a2e7a0d6be32fced49314b1",
       "indexId": "4d5a896f-c644-4c0a-888c-7a69d5a8aa76",
       "trueAbilityId": "bear-maul",
       "name": "Bear Maul",
@@ -183,7 +183,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced493042e",
+    "id": "6a2e7a0d6be32fced4930d6f",
     "indexId": "1041b9b0-406c-40ed-94ab-e15e36ad147d",
     "ancestryId": "bullfolk",
     "name": "Bullfolk",
@@ -197,7 +197,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/e40bff9a-b70d-4eaf-8fa8-ab03c91539fa-Bullfolk.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/71bfcb28-747a-423b-a117-914b5f16f973-Bullfolk.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930b8f",
+      "id": "6a2e7a0d6be32fced49314e2",
       "indexId": "18830111-c8a9-4bfd-8b51-01139babc65f",
       "trueAbilityId": "thick-skull",
       "name": "Thick Skull",
@@ -213,7 +213,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930b90",
+      "id": "6a2e7a0d6be32fced49314e3",
       "indexId": "6310060f-bec9-4127-b042-2fe5e59f645a",
       "trueAbilityId": "goring-charge",
       "name": "Goring Charge",
@@ -231,7 +231,7 @@
     "trait3Ref": null
   },
   {
-    "id": "6a06299f6be32fced4930420",
+    "id": "6a2e7a0d6be32fced4930d61",
     "indexId": "858172d9-be96-49a6-8ebe-b5820f79c45f",
     "ancestryId": "cait-sith",
     "name": "Cait Sith",
@@ -245,7 +245,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/fb8ca4ac-2b5c-4a19-a589-053a8250a5aa-Cait_Sith_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/9af2219c-607a-45c8-8657-476c205f593a-Cait_Sith_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930a41",
+      "id": "6a2e7a0d6be32fced4931394",
       "indexId": "867d18a3-9e2c-440d-a99e-1246aad6829b",
       "trueAbilityId": "cat-form",
       "name": "Cat Form",
@@ -260,7 +260,7 @@
       "requirement": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930a42",
+      "id": "6a2e7a0d6be32fced4931395",
       "indexId": "d1a62a5d-9f10-4e20-b4d9-3f932443eb20",
       "trueAbilityId": "soul-strike",
       "name": "Soul Strike",
@@ -277,7 +277,7 @@
       "requirementText": "You land a killing blow."
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced4930985",
+      "id": "6a2e7a0d6be32fced49312d8",
       "indexId": "5ac25646-582a-41a7-923d-9d98d1515c89",
       "trueAbilityId": "nightvision",
       "name": "Nightvision",
@@ -292,7 +292,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced4930411",
+    "id": "6a2e7a0d6be32fced4930d52",
     "indexId": "455436e5-7d38-43e3-beae-e3253568e4f4",
     "ancestryId": "catfolk",
     "name": "Catfolk",
@@ -306,7 +306,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/29021f50-7d80-438a-bd41-04fbe0167bc1-Catfolk_New_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/71ac2c17-03a1-4300-a701-fd44059862d6-Catfolk_New_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930985",
+      "id": "6a2e7a0d6be32fced49312d8",
       "indexId": "5ac25646-582a-41a7-923d-9d98d1515c89",
       "trueAbilityId": "nightvision",
       "name": "Nightvision",
@@ -320,7 +320,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930983",
+      "id": "6a2e7a0d6be32fced49312d6",
       "indexId": "3a37cc5d-a6fd-4ebe-86fc-a1f5de0eb965",
       "trueAbilityId": "fast_runner",
       "name": "Fast Runner",
@@ -334,7 +334,7 @@
       "otherCosts": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced493097d",
+      "id": "6a2e7a0d6be32fced49312d0",
       "indexId": "37e59228-c97b-4cf4-afea-50d819868b1f",
       "trueAbilityId": "graceful-landing",
       "name": "Graceful Landing",
@@ -351,7 +351,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced493041b",
+    "id": "6a2e7a0d6be32fced4930d5c",
     "indexId": "256ded66-c443-408d-bbdc-33943c4cb4e0",
     "ancestryId": "centaur",
     "name": "Centaur",
@@ -365,7 +365,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/2d6acf01-9565-48cf-a1ab-8d43f5d3d6fe-Centaur_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/21a33a02-8bb9-4d2e-a108-6a5d6d093e45-Centaur_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930991",
+      "id": "6a2e7a0d6be32fced49312e4",
       "indexId": "2a259932-86db-44da-b716-2bb172e14938",
       "trueAbilityId": "charge",
       "name": "Charge",
@@ -381,7 +381,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced49309f9",
+      "id": "6a2e7a0d6be32fced493134c",
       "indexId": "ac793780-57d2-41d8-bfd8-994ab8306a20",
       "trueAbilityId": "horse-body",
       "name": "Horse Body",
@@ -396,7 +396,7 @@
       "requirement": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced4930b12",
+      "id": "6a2e7a0d6be32fced4931465",
       "indexId": "264b8706-9173-452f-8808-25393ed05b41",
       "trueAbilityId": "own-mount",
       "name": "Own Mount",
@@ -413,7 +413,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced493042d",
+    "id": "6a2e7a0d6be32fced4930d6e",
     "indexId": "4ce572e0-fcff-495a-9f81-27c3a10171f9",
     "ancestryId": "cowfolk",
     "name": "Cowfolk",
@@ -427,7 +427,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/7f085395-6d99-496c-bfdc-ebd00bb52f90-cowfolk.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/94b858fb-9fe0-41e8-a091-347a05629930-cowfolk.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930b8c",
+      "id": "6a2e7a0d6be32fced49314df",
       "indexId": "8f43d38f-0f3a-4f6c-b54b-d05abd748520",
       "trueAbilityId": "provide-milk",
       "name": "Provide Milk",
@@ -443,7 +443,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930b8d",
+      "id": "6a2e7a0d6be32fced49314e0",
       "indexId": "bcc142d6-b614-4e0e-97af-744ce188995d",
       "trueAbilityId": "dense-frame",
       "name": "Dense Frame",
@@ -459,7 +459,7 @@
       "otherCosts": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced4930b8e",
+      "id": "6a2e7a0d6be32fced49314e1",
       "indexId": "8f1f08ea-226a-4c25-a953-5c8d46df146f",
       "trueAbilityId": "ruminant-metabolism",
       "name": "Ruminant Metabolism",
@@ -476,7 +476,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced4930430",
+    "id": "6a2e7a0d6be32fced4930d71",
     "indexId": "6e773d1a-d676-4af9-bcdf-d69b8dc4a06a",
     "ancestryId": "cu-sith",
     "name": "Cu Sith",
@@ -490,7 +490,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/400a6a16-e1d5-49f2-b7c9-fbe5518b8511-dog.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/65a41615-d08f-4f62-92a3-2c5bb8ff7818-dog.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930ba7",
+      "id": "6a2e7a0d6be32fced49314fa",
       "indexId": "f2e8511f-2106-43b1-8c3b-13c586665be1",
       "trueAbilityId": "dog-form",
       "name": "Dog Form",
@@ -506,7 +506,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930ba8",
+      "id": "6a2e7a0d6be32fced49314fb",
       "indexId": "e3f58539-aa7d-42c9-8407-87ae99e890ce",
       "trueAbilityId": "haunting-bark",
       "name": "Haunting Bark",
@@ -524,7 +524,7 @@
       "otherCosts": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced4930ba6",
+      "id": "6a2e7a0d6be32fced49314f9",
       "indexId": "ee2dca0a-7920-427b-b1ad-7342afb07b5c",
       "trueAbilityId": "scent",
       "name": "Scent",
@@ -541,7 +541,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced493041e",
+    "id": "6a2e7a0d6be32fced4930d5f",
     "indexId": "595c6994-60a2-49ac-8fe6-9ac86c86a061",
     "ancestryId": "dogfolk",
     "name": "Dogfolk",
@@ -555,7 +555,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/f9683abe-e632-4f5c-a8ca-68213901ecfb-Dog_Folk_1_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/106e2d91-e629-40aa-a2c1-9b3b20c3b54e-Dog_Folk_1_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930a36",
+      "id": "6a2e7a0d6be32fced4931389",
       "indexId": "c65f5df9-7b04-4eba-88cf-512a24451adb",
       "trueAbilityId": "loyalty",
       "name": "Loyalty",
@@ -570,7 +570,7 @@
       "requirement": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930a37",
+      "id": "6a2e7a0d6be32fced493138a",
       "indexId": "259ab3b9-5a51-4e9e-ae11-c351577b5cb0",
       "trueAbilityId": "guard-dog",
       "name": "Guard Dog",
@@ -589,7 +589,7 @@
     "trait3Ref": null
   },
   {
-    "id": "6a06299f6be32fced4930419",
+    "id": "6a2e7a0d6be32fced4930d5a",
     "indexId": "15d4044e-a4c2-435e-be8b-eabb2b8a7a15",
     "ancestryId": "dryad",
     "name": "Dryad",
@@ -603,7 +603,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/788952e5-495f-453d-af58-f2ac1bba7f22-Dryad_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/337cadcb-d001-4fae-84d3-0030bc3b96e2-Dryad_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced49309f4",
+      "id": "6a2e7a0d6be32fced4931347",
       "indexId": "e36116e5-cf62-4e72-9301-f93dd330b94c",
       "trueAbilityId": "forest-walker",
       "name": "Forest Walker",
@@ -618,7 +618,7 @@
       "requirement": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced49309f5",
+      "id": "6a2e7a0d6be32fced4931348",
       "indexId": "506bd99c-caf0-4162-bcb1-a6b31f46e189",
       "trueAbilityId": "nature-s-grasp",
       "name": "Nature's Grasp",
@@ -635,7 +635,7 @@
     "trait3Ref": null
   },
   {
-    "id": "6a06299f6be32fced4930421",
+    "id": "6a2e7a0d6be32fced4930d62",
     "indexId": "97839d30-3759-432e-a24b-09f3bdcdd32d",
     "ancestryId": "dullahan",
     "name": "Dullahan",
@@ -649,13 +649,13 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/84ccb202-81d6-4830-8944-6d1dc016f5f0-Dullahan_male_1_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/27ab39dc-fcd1-4b15-96fa-778131386aa7-Dullahan_male_1_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930a51",
+      "id": "6a2e7a0d6be32fced49313a4",
       "indexId": "162b3270-ffec-43b5-ae15-8f3bc47aba3c",
       "trueAbilityId": "headless",
       "name": "Headless",
-      "description": "PHA+Q3JpdGljYWwgaGl0cyByb2xsZWQgYWdhaW5zdCB5b3UgZG8gbm90IGdhaW4gRnVsbCBQaWVyY2UgYW5kIGRvIG5vdCBhdXRvbWF0aWNhbGx5IGRlYWwgbWF4aW11bSBkYW1hZ2UuPC9wPg==",
-      "descriptionHtml": "<p>Critical hits rolled against you do not gain Full Pierce and do not automatically deal maximum damage.</p>",
-      "descriptionText": "Critical hits rolled against you do not gain Full Pierce and do not automatically deal maximum damage.",
+      "description": "PHA+Q3JpdGljYWwgaGl0cyByb2xsZWQgYWdhaW5zdCB5b3UgZG8gbm90IGdhaW4gSGFsZiBQaWVyY2UgYW5kIGRvIG5vdCBhdXRvbWF0aWNhbGx5IGRlYWwgbWF4aW11bSBkYW1hZ2UuPC9wPg==",
+      "descriptionHtml": "<p>Critical hits rolled against you do not gain Half Pierce and do not automatically deal maximum damage.</p>",
+      "descriptionText": "Critical hits rolled against you do not gain Half Pierce and do not automatically deal maximum damage.",
       "manaCost": "",
       "apCost": "",
       "rpCost": "",
@@ -664,7 +664,7 @@
       "requirement": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930a52",
+      "id": "6a2e7a0d6be32fced49313a5",
       "indexId": "7a2dc631-ea1d-4a09-9cbd-5440b039620b",
       "trueAbilityId": "dullahan-s-mount",
       "name": "Dullahan's Mount",
@@ -681,7 +681,7 @@
     "trait3Ref": null
   },
   {
-    "id": "6a06299f6be32fced493040f",
+    "id": "6a2e7a0d6be32fced4930d50",
     "indexId": "f54f5057-f9cf-4c2a-a17a-ba6358570e1e",
     "ancestryId": "gnome",
     "name": "Gnome",
@@ -695,13 +695,13 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/928c7955-ff4e-4d8c-8f43-8b5f2b520a48-Gnome_New_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/cbfe009e-0f59-423f-9946-c96e091cf1ea-Gnome_New_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced493098e",
+      "id": "6a2e7a0d6be32fced49312e1",
       "indexId": "2f92a88c-c942-41aa-98b7-1211d213ebbf",
       "trueAbilityId": "mining-expertise",
       "name": "Mining Expertise",
-      "description": "PHA+WW91IG1heSB1bmxvY2sgdGhlIG1pbmVyIGNsYXNzIGZvciAwIEVYUC4gWW91IG11c3Qgc3RpbGwgc3BlbmQgdGhlIElQIG9uIGl0LjwvcD4=",
-      "descriptionHtml": "<p>You may unlock the miner class for 0 EXP. You must still spend the IP on it.</p>",
-      "descriptionText": "You may unlock the miner class for 0 EXP. You must still spend the IP on it.",
+      "description": "PHA+WW91IHN0YXJ0IHdpdGggdGhlIE1pbmVyIGNsYXNzIHVubG9ja2VkIGFuZCBhdCBsZXZlbCAxLjwvcD4=",
+      "descriptionHtml": "<p>You start with the Miner class unlocked and at level 1.</p>",
+      "descriptionText": "You start with the Miner class unlocked and at level 1.",
       "manaCost": "",
       "apCost": "",
       "rpCost": "",
@@ -711,7 +711,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced493097c",
+      "id": "6a2e7a0d6be32fced49312cf",
       "indexId": "f7e516b5-c5f4-4293-a083-76134276afae",
       "trueAbilityId": "gnome-claws",
       "name": "Gnome Claws",
@@ -727,7 +727,7 @@
       "otherCosts": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced493097a",
+      "id": "6a2e7a0d6be32fced49312cd",
       "indexId": "072c6b14-3353-4cab-b17f-4be0bbadb3ae",
       "trueAbilityId": "destroy-ground",
       "name": "Destroy Ground",
@@ -744,7 +744,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced4930423",
+    "id": "6a2e7a0d6be32fced4930d64",
     "indexId": "be78c46b-cf86-48e5-901a-2f30d3907343",
     "ancestryId": "harpy",
     "name": "Harpy",
@@ -758,7 +758,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/99a9bd79-fb97-4298-abf9-331d6d78d652-Harpy_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/0fb46f46-1d3b-4575-b67a-dfc18a39f2ac-Harpy_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced493096f",
+      "id": "6a2e7a0d6be32fced49312c2",
       "indexId": "5b304038-c45a-4521-b58f-2ad9545e1a9d",
       "trueAbilityId": "flight",
       "name": "Flight",
@@ -774,7 +774,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930a77",
+      "id": "6a2e7a0d6be32fced49313ca",
       "indexId": "f2426358-f0d7-4d7f-85a0-38a2eb59caa1",
       "trueAbilityId": "swallow-acrobatics",
       "name": "Swallow Acrobatics",
@@ -791,15 +791,15 @@
       "requirementText": "Can be used after you make a melee attack while flying."
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced493088c",
+      "id": "6a2e7a0d6be32fced49311df",
       "indexId": "b89bbfd9-2f77-49e3-af32-a58371022b35",
       "trueAbilityId": "downburst",
       "name": "Downburst",
-      "description": "PHA+WW91IG1heSBtYWtlIGEgSGVhdnkgQXR0YWNrIHRoYXQgZGVhbHMgV2luZCBkYW1hZ2UgYWdhaW5zdCB0aGUgdGFyZ2V0LiBPbiBkYW1hZ2UsIHRoZSB0YXJnZXQgaW1tZWRpYXRlbHkgcGx1bW1ldHMgdG8gdGhlIGdyb3VuZCBhbmQgdGFrZXMgZmFsbGluZyBkYW1hZ2UuIFRoaXMgZmFsbGluZyBkYW1hZ2UgY2Fubm90IGJlIG5lZ2F0ZWQgdGhyb3VnaCB0aGUgdXNlIG9mIGFiaWxpdGllcyB0aGF0IHdvdWxkIG5vcm1hbGx5IG5lZ2F0ZSBmYWxsaW5nIGRhbWFnZS48L3A+",
-      "descriptionHtml": "<p>You may make a Heavy Attack that deals Wind damage against the target. On damage, the target immediately plummets to the ground and takes falling damage. This falling damage cannot be negated through the use of abilities that would normally negate falling damage.</p>",
-      "descriptionText": "You may make a Heavy Attack that deals Wind damage against the target. On damage, the target immediately plummets to the ground and takes falling damage. This falling damage cannot be negated through the use of abilities that would normally negate falling damage.",
-      "manaCost": "",
-      "apCost": "4",
+      "description": "PHA+WW91IG1heSBtYWtlIGEgSGVhdnkgQXR0YWNrIHRoYXQgZGVhbHMgV2luZCBkYW1hZ2UgYWdhaW5zdCB0aGUgdGFyZ2V0LiZuYnNwOzwvcD48cD5PbiBkYW1hZ2UsIHRoZSB0YXJnZXQgaW1tZWRpYXRlbHkgcGx1bW1ldHMgdG8gdGhlIGdyb3VuZCBhbmQgdGFrZXMgZmFsbGluZyBkYW1hZ2UuIFRoaXMgZmFsbGluZyBkYW1hZ2UgY2Fubm90IGJlIG5lZ2F0ZWQgdGhyb3VnaCB0aGUgdXNlIG9mIGFiaWxpdGllcyB0aGF0IHdvdWxkIG5vcm1hbGx5IG5lZ2F0ZSBmYWxsaW5nIGRhbWFnZS48L3A+",
+      "descriptionHtml": "<p>You may make a Heavy Attack that deals Wind damage against the target.&nbsp;</p><p>On damage, the target immediately plummets to the ground and takes falling damage. This falling damage cannot be negated through the use of abilities that would normally negate falling damage.</p>",
+      "descriptionText": "You may make a Heavy Attack that deals Wind damage against the target.\n\nOn damage, the target immediately plummets to the ground and takes falling damage. This falling damage cannot be negated through the use of abilities that would normally negate falling damage.",
+      "manaCost": "1",
+      "apCost": "2",
       "rpCost": "",
       "keywords": "Lock On,Spell,Wind",
       "range": "720ft",
@@ -810,7 +810,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced493040c",
+    "id": "6a2e7a0d6be32fced4930d4d",
     "indexId": "1c1b58f7-41dc-44df-8c42-ebab1fbf3e38",
     "ancestryId": "high-fae",
     "name": "High Fae",
@@ -823,7 +823,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/d0109c79-5c10-49ac-8fcc-adb5a1e4c190-High_Fae_New_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/631ae117-a418-42f7-82c2-32eb407982c7-High_Fae_New_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced493098b",
+      "id": "6a2e7a0d6be32fced49312de",
       "indexId": "3445a699-ac75-4a3c-bbe5-8c0f4bcb411b",
       "trueAbilityId": "lucid_sleep",
       "name": "Lucid Sleep",
@@ -837,13 +837,13 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930977",
+      "id": "6a2e7a0d6be32fced49312ca",
       "indexId": "e6b56a2b-0a4f-41fa-8174-323065baaaab",
       "trueAbilityId": "faerie-flash-ii",
       "name": "Faerie Flash II",
-      "description": "PHA+WW91IFRlbGVwb3J0IHVwIHRvIHR3aWNlIHlvdXIgU3BlZWQgdG8gYW4gdW5vY2N1cGllZCBzcGFjZSB0aGF0IHlvdSBjYW4gc2VlLjwvcD48cD5JZiB5b3UgZ2FpbiBhbiBlZmZlY3QgdGhhdCB3b3VsZCBsZXRzIHlvdSByZWdhaW4gdGhlIHVzZSBvZiBGYWVyaWUgRmxhc2ggYW5kIHlvdSB1c2UgRmFlcmllIEZsYXNoIElJIHRoYXQgdHVybiwgaW5zdGVhZCByZWR1Y2UgdGhlIG1hbmEgY29zdCBvZiB0aGlzIGFiaWxpdHkgYnkgMSAodG8gYSBtaW5pbXVtIG9mIDApLjwvcD4=",
-      "descriptionHtml": "<p>You Teleport up to twice your Speed to an unoccupied space that you can see.</p><p>If you gain an effect that would lets you regain the use of Faerie Flash and you use Faerie Flash II that turn, instead reduce the mana cost of this ability by 1 (to a minimum of 0).</p>",
-      "descriptionText": "You Teleport up to twice your Speed to an unoccupied space that you can see.\n\nIf you gain an effect that would lets you regain the use of Faerie Flash and you use Faerie Flash II that turn, instead reduce the mana cost of this ability by 1 (to a minimum of 0).",
+      "description": "PHA+WW91IFRlbGVwb3J0IHVwIHRvIHR3aWNlIHlvdXIgU3BlZWQgdG8gYW4gdW5vY2N1cGllZCBzcGFjZSB0aGF0IHlvdSBjYW4gc2VlLjwvcD48cD5JZiB5b3UgZ2FpbiBhbiBlZmZlY3QgdGhhdCB3b3VsZCBsZXQgeW91IHJlZ2FpbiB0aGUgdXNlIG9mIEZhZXJpZSBGbGFzaCBhbmQgeW91IHVzZSBGYWVyaWUgRmxhc2ggSUkgdGhhdCB0dXJuLCBpbnN0ZWFkIHJlZHVjZSB0aGUgbWFuYSBjb3N0IG9mIHRoaXMgYWJpbGl0eSBieSAxICh0byBhIG1pbmltdW0gb2YgMCkuPC9wPg==",
+      "descriptionHtml": "<p>You Teleport up to twice your Speed to an unoccupied space that you can see.</p><p>If you gain an effect that would let you regain the use of Faerie Flash and you use Faerie Flash II that turn, instead reduce the mana cost of this ability by 1 (to a minimum of 0).</p>",
+      "descriptionText": "You Teleport up to twice your Speed to an unoccupied space that you can see.\n\nIf you gain an effect that would let you regain the use of Faerie Flash and you use Faerie Flash II that turn, instead reduce the mana cost of this ability by 1 (to a minimum of 0).",
       "manaCost": "1",
       "apCost": "1",
       "rpCost": "",
@@ -855,7 +855,7 @@
     "trait3Ref": null
   },
   {
-    "id": "6a06299f6be32fced4930429",
+    "id": "6a2e7a0d6be32fced4930d6a",
     "indexId": "a2fb89c5-6f21-4612-bdfb-dc11e7babbca",
     "ancestryId": "horse-folk",
     "name": "Horse-Folk",
@@ -869,7 +869,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/5bab2c6b-68df-49e1-827b-2bc13d44dcde-Horsefolk4tmp.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/6a6e34d9-250d-4f3d-80cc-61b337b31841-Horsefolk4tmp.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930b3e",
+      "id": "6a2e7a0d6be32fced4931491",
       "indexId": "36e78944-89c1-4f4d-bb9e-9e2198082f17",
       "trueAbilityId": "horse-step-acceleration",
       "name": "Horse Step Acceleration",
@@ -885,7 +885,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930b3f",
+      "id": "6a2e7a0d6be32fced4931492",
       "indexId": "a44049b7-da9e-45aa-a126-de0935964fff",
       "trueAbilityId": "explosive-advance",
       "name": "Explosive Advance",
@@ -903,7 +903,7 @@
     "trait3Ref": null
   },
   {
-    "id": "6a06299f6be32fced493040b",
+    "id": "6a2e7a0d6be32fced4930d4c",
     "indexId": "563deddd-6e49-4007-be6a-cbba9eea83a7",
     "ancestryId": "jiangshi",
     "name": "Jiangshi",
@@ -917,7 +917,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/0bb88010-ef02-4169-be18-51ee62c139c3-Jiangshi_New_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/abfbc85a-a78e-488d-b5ce-1159fcbffdbe-Jiangshi_New_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced493098f",
+      "id": "6a2e7a0d6be32fced49312e2",
       "indexId": "385fcb66-a616-4c17-a0c8-c32f90a9ad70",
       "trueAbilityId": "tireless_undead",
       "name": "Tireless Undead",
@@ -931,7 +931,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced493098c",
+      "id": "6a2e7a0d6be32fced49312df",
       "indexId": "3fcad3c5-5e68-4880-9ae1-403fff17ed78",
       "trueAbilityId": "hopping_zombie",
       "name": "Hopping Zombie",
@@ -945,7 +945,7 @@
       "otherCosts": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced4930975",
+      "id": "6a2e7a0d6be32fced49312c8",
       "indexId": "9d8e2f5f-0f4c-46d6-a9c6-f0e70d8b3f36",
       "trueAbilityId": "consume-enemy",
       "name": "Consume Enemy",
@@ -962,7 +962,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced493040a",
+    "id": "6a2e7a0d6be32fced4930d4b",
     "indexId": "e91bce34-b74b-4f05-835a-83f968559580",
     "ancestryId": "kitsune",
     "name": "Kitsune",
@@ -975,7 +975,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/655c0d7a-ab8a-4fbc-8a0d-b960d927569b-Kitsune_2_New_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/e31948aa-b152-412a-be42-dbc540e0ce5d-Kitsune_2_New_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930985",
+      "id": "6a2e7a0d6be32fced49312d8",
       "indexId": "5ac25646-582a-41a7-923d-9d98d1515c89",
       "trueAbilityId": "nightvision",
       "name": "Nightvision",
@@ -989,7 +989,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930976",
+      "id": "6a2e7a0d6be32fced49312c9",
       "indexId": "8ebee2a4-9b5b-4904-95f2-e8217dcb5633",
       "trueAbilityId": "fading-counter",
       "name": "Fading Counter",
@@ -1007,7 +1007,7 @@
     "trait3Ref": null
   },
   {
-    "id": "6a06299f6be32fced4930410",
+    "id": "6a2e7a0d6be32fced4930d51",
     "indexId": "e87f3039-d544-48e7-8d99-2b8c6196be2f",
     "ancestryId": "lamiafolk",
     "name": "Lamiafolk",
@@ -1021,7 +1021,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/477ad1a6-d8f3-4910-9c69-bf03f594e82b-Lamia_New_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/ea42f666-fdc6-497e-9b72-8d2b0a378962-Lamia_New_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930989",
+      "id": "6a2e7a0d6be32fced49312dc",
       "indexId": "bd909b83-128e-4f5e-950c-82d99bd86260",
       "trueAbilityId": "warm_together",
       "name": "Warm Together",
@@ -1035,7 +1035,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced493097e",
+      "id": "6a2e7a0d6be32fced49312d1",
       "indexId": "4ea2039b-62c7-45a3-94c2-05ac8307e492",
       "trueAbilityId": "just-a-hug",
       "name": "Just a hug",
@@ -1051,7 +1051,7 @@
       "otherCosts": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced4930979",
+      "id": "6a2e7a0d6be32fced49312cc",
       "indexId": "1b99ce91-3ea2-44e6-8081-eacd71f41443",
       "trueAbilityId": "hug-tight",
       "name": "Hug tight",
@@ -1070,7 +1070,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced4930424",
+    "id": "6a2e7a0d6be32fced4930d65",
     "indexId": "eb2616d8-67c0-4427-b7f4-5ecb9f4ce852",
     "ancestryId": "lizardfolk",
     "name": "Lizardfolk",
@@ -1084,7 +1084,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/2e182663-0ab1-49ec-bebe-663abb6cbc66-sirlizard.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/45e26fd0-d5cc-468c-a233-684e2c2c4900-sirlizard.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930acc",
+      "id": "6a2e7a0d6be32fced493141f",
       "indexId": "5c2990c3-c40f-4f15-bd9b-31812d7f3db0",
       "trueAbilityId": "amphibious",
       "name": "Amphibious",
@@ -1099,7 +1099,7 @@
       "requirement": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced49309ef",
+      "id": "6a2e7a0d6be32fced4931342",
       "indexId": "16704284-ef39-4795-8a88-8238db73115e",
       "trueAbilityId": "prehensile-tail",
       "name": "Prehensile Tail",
@@ -1114,7 +1114,7 @@
       "requirement": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced4930acd",
+      "id": "6a2e7a0d6be32fced4931420",
       "indexId": "af7c0392-8f3f-4c83-ab46-83cb7dbe9699",
       "trueAbilityId": "regrowing-limbs",
       "name": "Regrowing Limbs",
@@ -1132,7 +1132,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced4930426",
+    "id": "6a2e7a0d6be32fced4930d67",
     "indexId": "3393bf15-b0de-46cc-9b52-14f7d3062142",
     "ancestryId": "mothfolk",
     "name": "Mothfolk",
@@ -1146,7 +1146,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/6ccdabf7-a9f4-4f73-86cf-7a27674cc85f-Mothgirl.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/b8689286-a2ae-4838-907f-69c1ff792818-Mothgirl.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930985",
+      "id": "6a2e7a0d6be32fced49312d8",
       "indexId": "5ac25646-582a-41a7-923d-9d98d1515c89",
       "trueAbilityId": "nightvision",
       "name": "Nightvision",
@@ -1160,7 +1160,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930ae2",
+      "id": "6a2e7a0d6be32fced4931435",
       "indexId": "4d91ff77-8e83-43eb-a0f0-d651e66255ab",
       "trueAbilityId": "antennae",
       "name": "Antennae",
@@ -1176,7 +1176,7 @@
       "otherCosts": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced4930ae1",
+      "id": "6a2e7a0d6be32fced4931434",
       "indexId": "89332955-6d42-47d5-939d-3952a99ce1a0",
       "trueAbilityId": "blinding-dust",
       "name": "Blinding Dust",
@@ -1195,7 +1195,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced493042f",
+    "id": "6a2e7a0d6be32fced4930d70",
     "indexId": "7baacf0f-e608-473a-bad6-92004056e293",
     "ancestryId": "nekomata",
     "name": "Nekomata",
@@ -1209,7 +1209,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/b8683138-0ac5-41c7-b620-7fae8ce5d216-nekomata.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/9fc9400c-1040-4915-baa5-2d787b7e604e-nekomata.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930b9e",
+      "id": "6a2e7a0d6be32fced49314f1",
       "indexId": "e2c0afbc-2065-4cf9-9751-07b64e7abeb4",
       "trueAbilityId": "corpse-puppetry",
       "name": "Corpse Puppetry",
@@ -1227,7 +1227,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930b9f",
+      "id": "6a2e7a0d6be32fced49314f2",
       "indexId": "9505b9e9-0702-4137-a945-98026e267eb5",
       "trueAbilityId": "feign-death",
       "name": "Feign Death",
@@ -1243,7 +1243,7 @@
       "otherCosts": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced4930ba0",
+      "id": "6a2e7a0d6be32fced49314f3",
       "indexId": "375574c5-4598-4cc5-9e2d-12a06673fdbe",
       "trueAbilityId": "grudge",
       "name": "Grudge",
@@ -1262,7 +1262,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced4930428",
+    "id": "6a2e7a0d6be32fced4930d69",
     "indexId": "15d93b58-676f-4965-b277-79f18411f979",
     "ancestryId": "nio",
     "name": "Nio",
@@ -1276,7 +1276,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/643b0e9d-7040-4df5-88c2-08f6650934e1-Nio_Close_-_Copy.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/7e6926c9-587c-40d7-9a08-1199588e60b1-Nio_Close_-_Copy.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930b32",
+      "id": "6a2e7a0d6be32fced4931485",
       "indexId": "0af38496-8dd0-4608-ab27-8b8bb7b38b8f",
       "trueAbilityId": "stoneskin",
       "name": "Stoneskin",
@@ -1292,7 +1292,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930b34",
+      "id": "6a2e7a0d6be32fced4931487",
       "indexId": "55380db0-5fd9-4baa-b04e-c7bcf775ab0f",
       "trueAbilityId": "eternal-vigil",
       "name": "Eternal Vigil",
@@ -1308,7 +1308,7 @@
       "otherCosts": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced4930b33",
+      "id": "6a2e7a0d6be32fced4931486",
       "indexId": "2e80145d-5215-4023-aa3d-f799cc6e7ae9",
       "trueAbilityId": "statue-form",
       "name": "Statue Form",
@@ -1325,7 +1325,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced4930415",
+    "id": "6a2e7a0d6be32fced4930d56",
     "indexId": "566cb215-9328-4e92-9836-bf7e2c34b7c1",
     "ancestryId": "oni",
     "name": "Oni",
@@ -1339,7 +1339,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/c674920e-2796-4247-9f6a-d929c869dff7-Oni_New_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/007f4491-e023-4a53-8499-3f6c996f09dc-Oni_New_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced49309a7",
+      "id": "6a2e7a0d6be32fced49312fa",
       "indexId": "95522334-52e3-45ae-9ca0-b9b9ac24fbab",
       "trueAbilityId": "spirited-bravado",
       "name": "Spirited Bravado",
@@ -1355,7 +1355,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced49309a9",
+      "id": "6a2e7a0d6be32fced49312fc",
       "indexId": "0a5447ec-38aa-4eb9-a666-2cee33703936",
       "trueAbilityId": "drink_to_battle",
       "name": "Drink to Battle",
@@ -1369,7 +1369,7 @@
       "otherCosts": "2 AP or Encounter Start action"
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced49309aa",
+      "id": "6a2e7a0d6be32fced49312fd",
       "indexId": "b3c37e55-abff-4c5d-b64b-8f8fd90e0a70",
       "trueAbilityId": "gravitational_ki",
       "name": "Gravitational Ki",
@@ -1384,7 +1384,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced4930422",
+    "id": "6a2e7a0d6be32fced4930d63",
     "indexId": "34068188-ff41-47e9-9ac3-c284f0f3281d",
     "ancestryId": "phoenix",
     "name": "Phoenix",
@@ -1398,7 +1398,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/2d6e53a4-9cbf-45f2-859e-787b2829f42e-Phoenix_Folk_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/f985893c-46db-4f19-b7a3-b5cbbf23e570-Phoenix_Folk_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930a6a",
+      "id": "6a2e7a0d6be32fced49313bd",
       "indexId": "6702e7f2-80b4-4b99-8f81-f2b70e77153f",
       "trueAbilityId": "elemental-mastery--fire",
       "name": "Elemental Mastery: Fire",
@@ -1413,7 +1413,7 @@
       "requirement": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930a68",
+      "id": "6a2e7a0d6be32fced49313bb",
       "indexId": "87bdfc69-c168-4255-898f-addcc3880f91",
       "trueAbilityId": "phoenix-tears",
       "name": "Phoenix Tears",
@@ -1428,7 +1428,7 @@
       "requirement": "PHA+LTwvcD4="
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced4930a69",
+      "id": "6a2e7a0d6be32fced49313bc",
       "indexId": "ba2666cf-8881-4dbc-b381-045061ab2878",
       "trueAbilityId": "fiery-rebirth",
       "name": "Fiery Rebirth",
@@ -1446,7 +1446,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced493040d",
+    "id": "6a2e7a0d6be32fced4930d4e",
     "indexId": "fc28860f-321c-4c63-98d0-3839d7fb83d6",
     "ancestryId": "pixie",
     "name": "Pixie",
@@ -1460,7 +1460,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/26edf9e8-1d56-404a-b1e9-1041c062d5bd-Pixie_new_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/b17c598f-6db8-490d-a105-0cb3d09c2035-Pixie_new_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930987",
+      "id": "6a2e7a0d6be32fced49312da",
       "indexId": "2754bc52-fe7a-42b7-bc11-364f78dc047a",
       "trueAbilityId": "tiny-pixie",
       "name": "Tiny Pixie",
@@ -1476,7 +1476,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930988",
+      "id": "6a2e7a0d6be32fced49312db",
       "indexId": "2b213239-bcf6-46b1-a836-ad133fe93ee2",
       "trueAbilityId": "hover",
       "name": "Hover",
@@ -1492,7 +1492,7 @@
       "otherCosts": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced493096f",
+      "id": "6a2e7a0d6be32fced49312c2",
       "indexId": "5b304038-c45a-4521-b58f-2ad9545e1a9d",
       "trueAbilityId": "flight",
       "name": "Flight",
@@ -1509,7 +1509,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced4930414",
+    "id": "6a2e7a0d6be32fced4930d55",
     "indexId": "f2aabe72-bd8b-4615-bd84-a4a37a74941e",
     "ancestryId": "rabbitfolk",
     "name": "Rabbitfolk",
@@ -1523,7 +1523,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/c6143f74-80cd-4115-a655-f48dd40d86fc-RabbitFolk_New_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/718896e9-46fa-4965-90de-d45dfabfb343-RabbitFolk_New_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930983",
+      "id": "6a2e7a0d6be32fced49312d6",
       "indexId": "3a37cc5d-a6fd-4ebe-86fc-a1f5de0eb965",
       "trueAbilityId": "fast_runner",
       "name": "Fast Runner",
@@ -1537,7 +1537,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930981",
+      "id": "6a2e7a0d6be32fced49312d4",
       "indexId": "e5913b8b-9a90-4cdc-b82f-1d7659c26639",
       "trueAbilityId": "instinct",
       "name": "Instinct",
@@ -1553,7 +1553,7 @@
       "otherCosts": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced4930986",
+      "id": "6a2e7a0d6be32fced49312d9",
       "indexId": "ba03f2f5-f2d7-4ae6-b08d-8b82def7e574",
       "trueAbilityId": "escape_artist",
       "name": "Escape Artist",
@@ -1568,7 +1568,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced4930408",
+    "id": "6a2e7a0d6be32fced4930d49",
     "indexId": "60cb3c99-2953-4a53-8126-e2daaf3b1e89",
     "ancestryId": "raijin",
     "name": "Raijin",
@@ -1582,7 +1582,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/146c2bec-a405-485c-b463-f5a79dd0b544-Raijin_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/6a46af3a-d005-4170-a113-12676ad14dac-Raijin_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced49309ce",
+      "id": "6a2e7a0d6be32fced4931321",
       "indexId": "3f2c61c6-ee34-43ce-bfe6-556f98a10db2",
       "trueAbilityId": "consume-lightning",
       "name": "Consume Lightning",
@@ -1599,13 +1599,13 @@
       "requirementText": "You are about to take Lightning damage"
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930a2a",
+      "id": "6a2e7a0d6be32fced493137d",
       "indexId": "58334955-8471-49ed-815d-13c96281a75a",
-      "trueAbilityId": "lightning-weapon",
-      "name": "Lightning Weapon",
-      "description": "PHA+V2hlbiBhdHRhY2tpbmcgd2l0aCBhIHdlYXBvbiwgeW91IG1heSBjaG9vc2UgdG8gaGF2ZSB0aGUgd2VhcG9uIGRlYWwgTGlnaHRuaW5nIERhbWFnZSBpbnN0ZWFkIG9mIGl0cyBub3JtYWwgZGFtYWdlIHR5cGUuIFlvdSBtdXN0IGRlY2xhcmUgeW91IGNob3NlbiBkYW1hZ2UgdHlwZSBiZWZvcmUgbWFraW5nIHRoZSBhY2N1cmFjeSByb2xsLjwvcD4=",
-      "descriptionHtml": "<p>When attacking with a weapon, you may choose to have the weapon deal Lightning Damage instead of its normal damage type. You must declare you chosen damage type before making the accuracy roll.</p>",
-      "descriptionText": "When attacking with a weapon, you may choose to have the weapon deal Lightning Damage instead of its normal damage type. You must declare you chosen damage type before making the accuracy roll.",
+      "trueAbilityId": "lightning-weapon-expert",
+      "name": "Lightning Weapon Expert",
+      "description": "PHA+WW91IHN0YXJ0IHdpdGggdGhlIEZsYXNoIFN0YXIgQmxhZGUgU3R5bGUgY2xhc3MgdW5sb2NrZWQgYW5kIGF0IGxldmVsIDEuPC9wPg==",
+      "descriptionHtml": "<p>You start with the Flash Star Blade Style class unlocked and at level 1.</p>",
+      "descriptionText": "You start with the Flash Star Blade Style class unlocked and at level 1.",
       "manaCost": "",
       "apCost": "",
       "rpCost": "",
@@ -1614,7 +1614,7 @@
       "requirement": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced4930a2b",
+      "id": "6a2e7a0d6be32fced493137e",
       "indexId": "d35aec8e-710c-4a0c-aaf8-58321d0f8dfa",
       "trueAbilityId": "elemental-mastery--lightning",
       "name": "Elemental Mastery: Lightning",
@@ -1630,7 +1630,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced4930417",
+    "id": "6a2e7a0d6be32fced4930d58",
     "indexId": "171d9fb6-a430-4476-aec8-969e24a279a0",
     "ancestryId": "ratfolk",
     "name": "Ratfolk",
@@ -1644,7 +1644,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/e38f4317-1911-4ba0-8bdf-a28429f25370-Ratfolk_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/e5e889ea-9ade-41ca-b3bd-683d4d8ea44f-Ratfolk_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced49309ef",
+      "id": "6a2e7a0d6be32fced4931342",
       "indexId": "16704284-ef39-4795-8a88-8238db73115e",
       "trueAbilityId": "prehensile-tail",
       "name": "Prehensile Tail",
@@ -1659,7 +1659,7 @@
       "requirement": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced49309f0",
+      "id": "6a2e7a0d6be32fced4931343",
       "indexId": "398d407d-909f-4bc2-a296-8b91790ce863",
       "trueAbilityId": "plaguebringer",
       "name": "Plaguebringer",
@@ -1674,7 +1674,7 @@
       "requirement": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced49309f1",
+      "id": "6a2e7a0d6be32fced4931344",
       "indexId": "e67197de-5e9c-42fe-89dc-1bc4c9f420fc",
       "trueAbilityId": "scurry-away",
       "name": "Scurry Away",
@@ -1690,7 +1690,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced493041c",
+    "id": "6a2e7a0d6be32fced4930d5d",
     "indexId": "0a4db535-b62e-4547-938a-c23075d2a4f4",
     "ancestryId": "red-pandafolk",
     "name": "Red Pandafolk",
@@ -1704,7 +1704,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/f8abd986-8dfe-4084-bea4-11e4af0cf4bb-Red_Panda_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/cd1a5897-735d-4719-a19a-0e8608f3d8d2-Red_Panda_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930a32",
+      "id": "6a2e7a0d6be32fced4931385",
       "indexId": "38123500-a9a9-41ff-9345-94d7f690c1bf",
       "trueAbilityId": "panda-stance",
       "name": "Panda Stance",
@@ -1719,7 +1719,7 @@
       "requirement": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930a33",
+      "id": "6a2e7a0d6be32fced4931386",
       "indexId": "3e1f9581-ea05-4ffc-b40e-cb0e34ade486",
       "trueAbilityId": "panda-roll",
       "name": "Panda Roll",
@@ -1736,7 +1736,7 @@
     "trait3Ref": null
   },
   {
-    "id": "6a06299f6be32fced493042b",
+    "id": "6a2e7a0d6be32fced4930d6c",
     "indexId": "3f2fec5a-3a8f-4dc4-8384-a20800a53d16",
     "ancestryId": "ryujin",
     "name": "Ryujin",
@@ -1750,7 +1750,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/43fde452-f149-47d6-987a-1b391668ec02-Ryujin2.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/81ce0c35-30a6-4a6b-a226-dd390a8ca979-Ryujin2.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930b61",
+      "id": "6a2e7a0d6be32fced49314b4",
       "indexId": "2a103aca-0bbd-44a1-9281-749d7fdf086e",
       "trueAbilityId": "draconic-presence",
       "name": "Draconic Presence",
@@ -1766,7 +1766,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930b62",
+      "id": "6a2e7a0d6be32fced49314b5",
       "indexId": "b71f102f-6d94-4d6c-91b6-431cbfbe4e3a",
       "trueAbilityId": "ryujin-s-mastery",
       "name": "Ryujin's Mastery",
@@ -1782,7 +1782,7 @@
       "otherCosts": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced4930b63",
+      "id": "6a2e7a0d6be32fced49314b6",
       "indexId": "187de416-8c0e-4061-913a-f761990a43be",
       "trueAbilityId": "dragon-s-breath",
       "name": "Dragon's Breath",
@@ -1799,7 +1799,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced4930412",
+    "id": "6a2e7a0d6be32fced4930d53",
     "indexId": "fe3ea58c-6305-4113-9b86-10d67eccd5f8",
     "ancestryId": "salamander",
     "name": "Salamander",
@@ -1813,7 +1813,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/00d216aa-75f5-41e2-9738-2837cedb930a-Salamander_New_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/1e33828b-e230-411a-b256-b31c6c4cd29b-Salamander_New_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930907",
+      "id": "6a2e7a0d6be32fced493125a",
       "indexId": "0fe2d8bf-0ee9-4a7b-9d60-caa6f918e8d8",
       "trueAbilityId": "fireball",
       "name": "Fireball",
@@ -1829,7 +1829,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced49309a6",
+      "id": "6a2e7a0d6be32fced49312f9",
       "indexId": "6a860533-9a90-4f87-b7a8-1888861280b7",
       "trueAbilityId": "enduring-warmth",
       "name": "Enduring Warmth",
@@ -1845,7 +1845,7 @@
       "otherCosts": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced49309a8",
+      "id": "6a2e7a0d6be32fced49312fb",
       "indexId": "60581a9e-183a-437b-a517-0f4be6dd62cb",
       "trueAbilityId": "consume-fire",
       "name": "Consume Fire",
@@ -1864,7 +1864,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced493041f",
+    "id": "6a2e7a0d6be32fced4930d60",
     "indexId": "ec3bb7b2-6b9d-4f27-bd8f-959cbdc27061",
     "ancestryId": "selkie",
     "name": "Selkie",
@@ -1874,17 +1874,17 @@
     "primaryRace": "Fae",
     "trait1": "9812af4b-7784-4986-9859-0302edaa8295",
     "trait2": "24cdbcc3-fea4-40e5-82c9-a46b6994c122",
-    "trait3": "04b4593a-abd1-46da-a881-2b4a3c7efabd",
+    "trait3": "47f73e8e-4d3a-43ac-963f-bd0985d75578",
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/62453f7f-970c-4675-bd26-5528477cf4ae-Selkie_1_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/9740b3a8-d896-4167-ba88-a4cd8fbc316e-Selkie_1_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930a3e",
+      "id": "6a2e7a0d6be32fced4931391",
       "indexId": "9812af4b-7784-4986-9859-0302edaa8295",
       "trueAbilityId": "aquatic-fae",
       "name": "Aquatic Fae",
-      "description": "PHA+V2hpbGUgc3dpbW1pbmcsIHlvdXIgYmFzZSBtb3ZlbWVudCBzcGVlZCBiZWNvbWVzIDMwLCBpbiBhZGRpdGlvbiB5b3UgZ2FpbiBFbGVtZW50YWwgTWFzdGVyeTogV2F0ZXIuPC9wPjxwPllvdXIgQXF1YSBEcmlsbCBjb3N0cyAwIG1hbmEgd2hlbiB1c2VkIGFzIFJQIGFiaWxpdHkgd2hpbGUgaW4gbmF0dXJhbCB3YXRlci48L3A+",
-      "descriptionHtml": "<p>While swimming, your base movement speed becomes 30, in addition you gain Elemental Mastery: Water.</p><p>Your Aqua Drill costs 0 mana when used as RP ability while in natural water.</p>",
-      "descriptionText": "While swimming, your base movement speed becomes 30, in addition you gain Elemental Mastery: Water.\n\nYour Aqua Drill costs 0 mana when used as RP ability while in natural water.",
+      "description": "PHA+V2hpbGUgc3dpbW1pbmcsIHlvdXIgYmFzZSBtb3ZlbWVudCBzcGVlZCBiZWNvbWVzIDMwLjwvcD48cD5Zb3VyIEFxdWEgRHJpbGwgY29zdHMgMCBtYW5hIHdoZW4gdXNlZCBhcyBSUCBhYmlsaXR5IHdoaWxlIGluIG5hdHVyYWwgd2F0ZXIuPC9wPg==",
+      "descriptionHtml": "<p>While swimming, your base movement speed becomes 30.</p><p>Your Aqua Drill costs 0 mana when used as RP ability while in natural water.</p>",
+      "descriptionText": "While swimming, your base movement speed becomes 30.\n\nYour Aqua Drill costs 0 mana when used as RP ability while in natural water.",
       "manaCost": "",
       "apCost": "",
       "rpCost": "",
@@ -1893,7 +1893,7 @@
       "requirement": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930a3d",
+      "id": "6a2e7a0d6be32fced4931390",
       "indexId": "24cdbcc3-fea4-40e5-82c9-a46b6994c122",
       "trueAbilityId": "seal-cloak",
       "name": "Seal Cloak",
@@ -1908,25 +1908,24 @@
       "requirement": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced4930a3f",
-      "indexId": "04b4593a-abd1-46da-a881-2b4a3c7efabd",
-      "trueAbilityId": "aqua-drill",
-      "name": "Aqua Drill",
-      "description": "PHA+WW91IGluZnVzZSB3YXRlciB3aXRoIHlvdXIgbWFuYSBmaXJpbmcgYSBzcGlyYWxpbmcgYmxhc3Qgb2YgaGlnaCBwcmVzc3VyZSB3YXRlciwgbWFraW5nIGEgaGVhdnkgYXR0YWNrIHRoYXQgZGVhbHMgV2F0ZXIgZGFtYWdlIGFnYWluc3QgYSB0YXJnZXQgd2l0aGluIHJhbmdlLiBZb3UgY2FuIHVzZSBlaXRoZXIgdGhlIFJQIG9yIEFQIGNvc3QgZm9yIHRoZSBhYmlsaXR5LiAmbmJzcDtUaGUgd2F0ZXIgaXMgdXNlZCBhcyBhIHByb2plY3RpbGUgYW5kIHNwaWxscyBhbnl3aGVyZSB3aXRoaW4gNWZ0IG9mIHRoZSB0YXJnZXQgYXQgeW91ciBjaG9pY2UuPC9wPjxwPklmIHlvdSB1c2UgYW4gUlAgZm9yIHRoaXMgYWJpbGl0eSwgdGhlIG1hbmEgY29zdCBpbmNyZWFzZXMgYnkgMS48L3A+",
-      "descriptionHtml": "<p>You infuse water with your mana firing a spiraling blast of high pressure water, making a heavy attack that deals Water damage against a target within range. You can use either the RP or AP cost for the ability. &nbsp;The water is used as a projectile and spills anywhere within 5ft of the target at your choice.</p><p>If you use an RP for this ability, the mana cost increases by 1.</p>",
-      "descriptionText": "You infuse water with your mana firing a spiraling blast of high pressure water, making a heavy attack that deals Water damage against a target within range. You can use either the RP or AP cost for the ability.  The water is used as a projectile and spills anywhere within 5ft of the target at your choice.\n\nIf you use an RP for this ability, the mana cost increases by 1.",
+      "id": "6a5c0c8198f4934cf278b6dd",
+      "indexId": "47f73e8e-4d3a-43ac-963f-bd0985d75578",
+      "trueAbilityId": "blue-soul",
+      "name": "Blue Soul",
+      "description": "PHA+WW91IHN0YXJ0IHdpdGggdGhlIEh5ZHJvbWFuY2VyIGNsYXNzIHVubG9ja2VkIGFuZCBhdCBsZXZlbCAyLjwvcD4=",
+      "descriptionHtml": "<p>You start with the Hydromancer class unlocked and at level 2.</p>",
+      "descriptionText": "You start with the Hydromancer class unlocked and at level 2.",
       "manaCost": "",
-      "apCost": "2",
-      "rpCost": "1",
-      "keywords": "Safe,Water",
-      "range": "60ft",
-      "requirement": "PHA+WW91IGFyZSB0b3VjaGluZyBhbiBhbW91bnQgb2Ygd2F0ZXIgZXF1YWwgdG8gYSBub3JtYWwgc2l6ZWQgYnVja2V0IG9mIHdhdGVyLjwvcD4=",
-      "requirementHtml": "<p>You are touching an amount of water equal to a normal sized bucket of water.</p>",
-      "requirementText": "You are touching an amount of water equal to a normal sized bucket of water."
+      "apCost": "",
+      "rpCost": "",
+      "keywords": "",
+      "range": "",
+      "requirement": "",
+      "otherCosts": ""
     }
   },
   {
-    "id": "6a06299f6be32fced4930431",
+    "id": "6a2e7a0d6be32fced4930d72",
     "indexId": "6eb43e5a-2d8e-4172-9d4c-680c4f7a0768",
     "ancestryId": "sheepfolk",
     "name": "Sheepfolk",
@@ -1940,7 +1939,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/358ecfc9-4aef-46b6-b219-0d9ab68e71a0-sheep.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/c6b956ef-2780-44b5-bf13-addd32393b56-sheep.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930be4",
+      "id": "6a2e7a0d6be32fced4931537",
       "indexId": "1da96436-a918-4197-8525-6738bc952a70",
       "trueAbilityId": "sweet-dreams",
       "name": "Sweet Dreams",
@@ -1956,7 +1955,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930be3",
+      "id": "6a2e7a0d6be32fced4931536",
       "indexId": "ea8e7528-b33e-42b8-89ce-daf723251fd8",
       "trueAbilityId": "highly-sensitive-to-magic",
       "name": "Highly Sensitive to Magic",
@@ -1972,7 +1971,7 @@
       "otherCosts": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced4930a99",
+      "id": "6a2e7a0d6be32fced49313ec",
       "indexId": "53afdce0-f6f0-441a-876c-cd25a63f7d6d",
       "trueAbilityId": "mind-connection",
       "name": "Mind Connection",
@@ -1988,7 +1987,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced4930413",
+    "id": "6a2e7a0d6be32fced4930d54",
     "indexId": "7d0b171f-5b1f-42aa-a38a-ec6a728f3f8e",
     "ancestryId": "slimefolk",
     "name": "Slimefolk",
@@ -2001,7 +2000,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/b98ee1c4-9982-4439-9851-9bc3e150ec9a-Slime_GIrl_New_raw_1.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/f590b521-0af3-4dd8-91b6-5cabe1ec6ebc-Slime_GIrl_New_raw_1.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930982",
+      "id": "6a2e7a0d6be32fced49312d5",
       "indexId": "c4189ef6-1149-497c-b607-3eb4108f17f8",
       "trueAbilityId": "store/consume_item",
       "name": "Store/Consume Item",
@@ -2015,7 +2014,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930984",
+      "id": "6a2e7a0d6be32fced49312d7",
       "indexId": "4f0a43ed-a8c5-46d8-bc53-e6d521248335",
       "trueAbilityId": "slime-body",
       "name": "Slime Body",
@@ -2033,7 +2032,7 @@
     "trait3Ref": null
   },
   {
-    "id": "6a06299f6be32fced4930418",
+    "id": "6a2e7a0d6be32fced4930d59",
     "indexId": "e957f53c-66fd-41e7-8a42-d9b190b3f418",
     "ancestryId": "spiderfolk",
     "name": "Spiderfolk",
@@ -2047,7 +2046,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/bcbd0587-bc0f-430c-9e27-fc30009a600b-Spider_Girl_1_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/62ab72e4-7d02-45f7-9c7e-f7d1c0a94e3a-Spider_Girl_1_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced49309f2",
+      "id": "6a2e7a0d6be32fced4931345",
       "indexId": "ee2b4068-9132-44d3-b8b4-3e6b6c4c20b9",
       "trueAbilityId": "spider-climb",
       "name": "Spider Climb",
@@ -2062,7 +2061,7 @@
       "requirement": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced49309f3",
+      "id": "6a2e7a0d6be32fced4931346",
       "indexId": "6aadee27-b551-4043-894a-e7677d05afb6",
       "trueAbilityId": "extra-arms",
       "name": "Extra Arms",
@@ -2079,7 +2078,7 @@
     "trait3Ref": null
   },
   {
-    "id": "6a06299f6be32fced493042c",
+    "id": "6a2e7a0d6be32fced4930d6d",
     "indexId": "c500df27-567f-4404-aa78-3da955ebb23d",
     "ancestryId": "suryan",
     "name": "Suryan",
@@ -2093,7 +2092,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/a1ad5de2-177c-4bac-afe3-d5069b4e8511-Suryan.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/0ee1dc8b-f0f5-4260-a6b0-1e480e547d9e-Suryan.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930b64",
+      "id": "6a2e7a0d6be32fced49314b7",
       "indexId": "a5504234-ad88-4dcb-aef4-7de6300eb1ee",
       "trueAbilityId": "solar-radiance",
       "name": "Solar Radiance",
@@ -2109,7 +2108,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930b65",
+      "id": "6a2e7a0d6be32fced49314b8",
       "indexId": "3c6940d2-6d86-4567-982e-0b5cd4f1c865",
       "trueAbilityId": "elemental-mastery--holy",
       "name": "Elemental Mastery: Holy",
@@ -2125,7 +2124,7 @@
       "otherCosts": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced4930b66",
+      "id": "6a2e7a0d6be32fced49314b9",
       "indexId": "b1ed8f68-a653-4fef-b6e5-7412644d15a6",
       "trueAbilityId": "revealing-light",
       "name": "Revealing Light",
@@ -2142,7 +2141,7 @@
     }
   },
   {
-    "id": "6a1f53686be32fced4930c30",
+    "id": "6a2e7a0d6be32fced4930d73",
     "indexId": "1ae5e21e-9fff-43ea-8763-b529ec8f059a",
     "ancestryId": "sylph",
     "name": "Sylph",
@@ -2156,7 +2155,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/dc5cbccc-fb71-4454-b465-b6258cc88b36-Sylph.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/4c6b3444-130d-4423-ae63-b4ca272a074b-Sylph.lg.webp",
     "trait1Ref": {
-      "id": "6a1f53466be32fced4930c2f",
+      "id": "6a2e7a0d6be32fced493155d",
       "indexId": "041d658a-4525-4265-a8da-da2ef5478dec",
       "trueAbilityId": "elemental-mastery--wind",
       "name": "Elemental Mastery: Wind",
@@ -2172,7 +2171,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced49308cf",
+      "id": "6a2e7a0d6be32fced4931222",
       "indexId": "5d311094-af61-46cf-a7ef-395d080faacc",
       "trueAbilityId": "fly",
       "name": "Fly",
@@ -2188,7 +2187,7 @@
       "otherCosts": ""
     },
     "trait3Ref": {
-      "id": "6a1f52cd6be32fced4930c2d",
+      "id": "6a2e7a0d6be32fced493155c",
       "indexId": "7fad96d8-0ddc-42f6-93f6-59ba2b97db3e",
       "trueAbilityId": "consume-wind",
       "name": "Consume Wind",
@@ -2207,7 +2206,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced4930409",
+    "id": "6a2e7a0d6be32fced4930d4a",
     "indexId": "6b76dacd-4f65-42a5-8595-bca15e199977",
     "ancestryId": "tengu",
     "name": "Tengu",
@@ -2221,7 +2220,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/7ab01cfa-8df2-445c-a55d-716a8ca8c1f9-Tengu_New_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/f64759c9-00fa-4d10-bb31-f377f8e3d6fa-Tengu_New_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930972",
+      "id": "6a2e7a0d6be32fced49312c5",
       "indexId": "50c93638-d101-4ca3-82ab-dbe7158b0894",
       "trueAbilityId": "tengu-mask",
       "name": "Tengu Mask",
@@ -2237,7 +2236,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced493096f",
+      "id": "6a2e7a0d6be32fced49312c2",
       "indexId": "5b304038-c45a-4521-b58f-2ad9545e1a9d",
       "trueAbilityId": "flight",
       "name": "Flight",
@@ -2253,7 +2252,7 @@
       "otherCosts": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced4930a31",
+      "id": "6a2e7a0d6be32fced4931384",
       "indexId": "dc8c1fc9-e8bc-4425-a82a-c9ac393fd779",
       "trueAbilityId": "tengu-aura-weapon",
       "name": "Tengu Aura Weapon",
@@ -2269,7 +2268,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced4930427",
+    "id": "6a2e7a0d6be32fced4930d68",
     "indexId": "f061b563-e620-45c4-a13a-5ef67d5f1238",
     "ancestryId": "unseelie",
     "name": "Unseelie",
@@ -2283,7 +2282,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/21049a01-d7ca-4e0c-a793-77084ba0d948-Unseelie_-_Copy.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/2a11b3bf-0461-4104-b210-753bebbf4292-Unseelie_-_Copy.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930b30",
+      "id": "6a2e7a0d6be32fced4931483",
       "indexId": "7756b72d-2e1c-45d0-9226-2c6ea34c020f",
       "trueAbilityId": "darkvision--passive-",
       "name": "Darkvision (passive)",
@@ -2299,7 +2298,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930b31",
+      "id": "6a2e7a0d6be32fced4931484",
       "indexId": "6317a597-2bb7-42e8-8649-e293826c3a96",
       "trueAbilityId": "elemental-mastery--dark",
       "name": "Elemental Mastery: Dark",
@@ -2315,7 +2314,7 @@
       "otherCosts": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced4930b2f",
+      "id": "6a2e7a0d6be32fced4931482",
       "indexId": "32cf315e-8fae-4be8-90c5-5df75f058221",
       "trueAbilityId": "torture-techniques",
       "name": "Torture Techniques",
@@ -2334,7 +2333,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced493040e",
+    "id": "6a2e7a0d6be32fced4930d4f",
     "indexId": "8fd6d1c5-d47d-4485-99c7-c882848662d2",
     "ancestryId": "willo-wisp",
     "name": "Willo Wisp",
@@ -2348,7 +2347,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/29b6fbd8-d105-4aa1-84cc-f07f88e993d3-willowisp_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/90111b7d-d037-43fa-b86f-f6d6a5c7bdd2-willowisp_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced493098a",
+      "id": "6a2e7a0d6be32fced49312dd",
       "indexId": "473e7c4b-7e50-4107-8887-4b4e4a79bf69",
       "trueAbilityId": "hearthlight",
       "name": "Hearthlight",
@@ -2362,7 +2361,7 @@
       "otherCosts": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930988",
+      "id": "6a2e7a0d6be32fced49312db",
       "indexId": "2b213239-bcf6-46b1-a836-ad133fe93ee2",
       "trueAbilityId": "hover",
       "name": "Hover",
@@ -2378,7 +2377,7 @@
       "otherCosts": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced493097b",
+      "id": "6a2e7a0d6be32fced49312ce",
       "indexId": "6f877743-9b22-4a1f-bf13-13581477cd99",
       "trueAbilityId": "faerie-eyes--calling",
       "name": "Faerie Eyes: Calling",
@@ -2395,7 +2394,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced493041d",
+    "id": "6a2e7a0d6be32fced4930d5e",
     "indexId": "75037d60-bcff-44a5-b16d-9f0b39cbd58b",
     "ancestryId": "wolf-folk",
     "name": "Wolf-folk",
@@ -2409,7 +2408,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/bbc0991c-0884-48cb-8df2-5bd76ddfd8c5-Wolf_Folk_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/237b4224-9399-4c68-bd65-c3cf57ab8d4e-Wolf_Folk_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced4930a34",
+      "id": "6a2e7a0d6be32fced4931387",
       "indexId": "357241d8-e391-4623-b18c-70c1ebab8ec4",
       "trueAbilityId": "hunting-wolf",
       "name": "Hunting Wolf",
@@ -2426,7 +2425,7 @@
       "requirementText": "The target enemy is below half HP."
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced4930a35",
+      "id": "6a2e7a0d6be32fced4931388",
       "indexId": "20c9f87d-9b77-4e46-8188-eabac42c0e13",
       "trueAbilityId": "pack-tactics",
       "name": "Pack Tactics",
@@ -2441,7 +2440,7 @@
       "requirement": ""
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced4930a47",
+      "id": "6a2e7a0d6be32fced493139a",
       "indexId": "3a975339-64b1-4f21-b41e-fa62be7107b9",
       "trueAbilityId": "scent-of-blood",
       "name": "Scent of Blood",
@@ -2457,7 +2456,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced493041a",
+    "id": "6a2e7a0d6be32fced4930d5b",
     "indexId": "b22d8fd4-4340-443f-b657-f9daefa67451",
     "ancestryId": "yuki-onna",
     "name": "Yuki-Onna",
@@ -2471,7 +2470,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/b3f43b68-adc1-44c8-9b03-8adceecdb2d3-Yuki-Onna_raw.sm.webp",
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/c8347aaa-a6d9-491f-8371-6b54efbeb9bb-Yuki-Onna_raw.lg.webp",
     "trait1Ref": {
-      "id": "6a06299f6be32fced49309f6",
+      "id": "6a2e7a0d6be32fced4931349",
       "indexId": "bfed68be-fadb-40c5-85d0-8f3d1f78c1c9",
       "trueAbilityId": "chilling-cold",
       "name": "Chilling Cold",
@@ -2486,7 +2485,7 @@
       "requirement": ""
     },
     "trait2Ref": {
-      "id": "6a06299f6be32fced49309f7",
+      "id": "6a2e7a0d6be32fced493134a",
       "indexId": "fc48b6c4-7946-41a7-80f9-6ed30179c780",
       "trueAbilityId": "absorb-ice",
       "name": "Absorb Ice",
@@ -2503,7 +2502,7 @@
       "requirementText": "You're about to take Frost Damage."
     },
     "trait3Ref": {
-      "id": "6a06299f6be32fced49309ac",
+      "id": "6a2e7a0d6be32fced49312ff",
       "indexId": "450d6ed3-31f9-43b9-b4a3-9cbd8f53fbbf",
       "trueAbilityId": "icicle-nail",
       "name": "Icicle Nail",

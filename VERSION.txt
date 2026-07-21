@@ -1,6 +1,11 @@
-Lyrian Chronicles Character Builder - Beta Version 2.11 Mobile Performance and iPhone Layout Hotpatch
-Promoted from the reviewed Beta 2.1 Mirane and Quick Build public release (2026-07-18).
-This package does not include the Beta 1.6 API provider layer.
-Focus: Standard and Mirane starts, campaign-aware pricing and crafting,
-race-aware optimized Quick Builds, newcomer class guidance, retirement and
-retraining review options, faster mobile startup, and hardened iPhone layouts.
+Lyrian Chronicles Character Builder
+Beta 2.13 public release
+Rules default: 0.13.1
+Historical rules retained: 0.13.0, 0.12.6, 0.12.5
+Public link: https://verbosebard.github.io/angel-sword-lirian-chronicles-builder/
+
+Focus:
+- Complete 0.13.1 rules and Quick Build update.
+- Cross-browser and mobile compatibility.
+- Performance, caching, autosave, and version-switching hardening.
+- Static public deployment with the existing URL and save-data contracts.

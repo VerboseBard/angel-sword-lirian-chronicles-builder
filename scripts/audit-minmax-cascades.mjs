@@ -191,7 +191,10 @@ function selectedAccessGrantSignals() {
   const sources = [];
   const push = (sourceType, sourceName, text) => {
     const cleaned = cleanText(decodeBase64Text(text));
-    if (/\b(?:purchase|enter|unlock)\s+(?:the\s+)?(.+?)\s+class\b/i.test(cleaned)) {
+    if (
+      /\b(?:purchase|enter|unlock)\s+(?:the\s+)?(.+?)\s+class\b/i.test(cleaned)
+      || /\bstart\s+with\s+(?:the\s+)?(.+?)\s+class\s+unlocked(?:\s+and\s+at\s+level\s+1)?\b/i.test(cleaned)
+    ) {
       sources.push({ sourceType, sourceName, text: cleaned });
     }
   };

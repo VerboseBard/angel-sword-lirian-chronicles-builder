@@ -1,44 +1,25 @@
-Angels Sword Beta 2.11 Mobile Performance and iPhone Layout Hotpatch
+Angel Sword Beta 2.13 Public Release
 
 PUBLIC LINK
 
-Beta 2.11 keeps the Beta 2.1 Mirane and Quick Build release and improves phone startup speed and iPhone layouts. It does not include the 1.6 API provider layer.
+https://verbosebard.github.io/angel-sword-lirian-chronicles-builder/
 
-The existing GitHub Pages link stays unchanged.
+The link is unchanged. After the Beta 2.13 deployment completes, refresh the page. If an older copy remains open, close and reopen the tab or perform one hard refresh.
 
-QUICK START
+WHAT TO TEST
 
-1. Open the public site link or local development URL.
-2. Build or load a character.
-3. Export a JSON, PDF, or spreadsheet copy when you want a backup.
-4. Refresh the page after a new deployment if you are told an update was published.
-
-WHAT IS INCLUDED
-
-- Character builder and interactive character sheet.
-- Character builder layout and Lyrian rules system.
-- Local rules versions 0.12.5, 0.12.6, and 0.13.0. Fresh characters default to the latest local version.
-- Save/load in your browser.
-- JSON export/import.
-- PDF export/import with embedded character data.
-- Spreadsheet export/import with embedded character data.
-- Static web hosting for browser access.
-- Updated workbook import/export behavior checked with Roland and Masaru style fixtures.
+- A fresh browser starts on rules 0.13.1.
+- Rules 0.13.0, 0.12.6, and 0.12.5 remain selectable and survive reload.
+- Custom Build and Quick Build both finish successfully.
+- Gnome, Raijin, and Selkie Quick Builds receive the correct granted classes.
+- Seven Sorrows Rush and Bard Expertise Rush receive their required proficiencies, breakthroughs, and gear.
+- Character saves, JSON/PDF/spreadsheet exports, and imports work.
+- Phone layouts do not clip navigation, cards, sheets, crafting, gathering, or dice controls.
 
 SAVE DATA WARNING
 
-Characters are saved in the browser where you use the app.
-Export JSON/PDF/spreadsheet copies if you want backups or want to move a character to another browser or computer.
+Characters are saved in the browser where the site is used. Export a JSON, PDF, or spreadsheet copy before clearing browser data or moving to another device.
 
-BEST WAY TO SEND FEEDBACK
+BUG REPORTS
 
-When reporting a bug, include:
-
-- What you clicked.
-- What you expected to happen.
-- What actually happened.
-- Which browser you used.
-- Whether you were using the public site or a local development copy.
-
----
-Lyrian Chronicles Character Builder - Beta Version 2.11 Mobile Performance and iPhone Layout Hotpatch
+Include the browser and device, selected rules version, build method, steps taken, expected result, actual result, and whether the issue happened on the public site or a local copy.

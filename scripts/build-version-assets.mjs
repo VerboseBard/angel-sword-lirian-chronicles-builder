@@ -250,6 +250,7 @@ async function buildDataBundle(version) {
   const itemsRaw = await readJson("decoded/item_details.json");
   const breakthroughsRaw = await readJson("decoded/breakthroughs.json");
   const abilitiesRaw = await readJson("decoded/true_abilities.json");
+  const keywordsRaw = await readJson("decoded/keywords.json");
   const itemSummaryMap = makeItemSummaryMap(itemSummariesRaw);
   const items = await Promise.all(itemsRaw.map(async (entry) => {
     const summary = resolveItemSummary(itemSummaryMap, entry);
@@ -324,6 +325,11 @@ async function buildDataBundle(version) {
       range: normalizeSpace(entry.range),
       requirement: normalizeSpace(entry.requirementText) || maybeDecodeBase64Html(entry.requirement),
       keywords: normalizeSpace(entry.keywords).split(",").map((part) => part.trim()).filter(Boolean),
+      description: normalizeSpace(entry.descriptionText) || maybeDecodeBase64Html(entry.description)
+    })),
+    keywords: keywordsRaw.map((entry) => ({
+      id: entry.keywordId || slugify(entry.name),
+      name: normalizeSpace(entry.name),
       description: normalizeSpace(entry.descriptionText) || maybeDecodeBase64Html(entry.description)
     }))
   };
@@ -498,7 +504,8 @@ async function main() {
       classes: dataBundle.classes.length,
       items: dataBundle.items.length,
       breakthroughs: dataBundle.breakthroughs.length,
-      abilities: dataBundle.abilities.length
+      abilities: dataBundle.abilities.length,
+      keywords: dataBundle.keywords.length
     }
   }, null, 2));
 }

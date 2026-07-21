@@ -1,7 +1,7 @@
-import { CLASS_ROWS, EMBEDDED_STATE_FORMAT, INVENTORY_ROWS, PDF_STATE_CHUNK_FIELD_PREFIX, PDF_STATE_MANIFEST_FIELD, PDF_STATE_MARKER_END, PDF_STATE_MARKER_START, PDF_TEMPLATE_ASSET, PDF_VISIBLE_FIELD_TEXT_LIMIT, SAVE_SLOTS_KEY, SPREADSHEET_CELL_TEXT_LIMIT, SPREADSHEET_META_SHEET, SPREADSHEET_TEMPLATE_ASSET, XLSX_CONTENT_TYPES_NS, XLSX_MAIN_NS, XLSX_OFFICE_REL_NS, XLSX_REL_NS, XLSX_WORKSHEET_CONTENT_TYPE, XLSX_WORKSHEET_REL_TYPE } from "./constants.js";
+import { CLASS_PURCHASABLE_LEVELS, CLASS_ROWS, EMBEDDED_STATE_FORMAT, INVENTORY_ROWS, PDF_STATE_CHUNK_FIELD_PREFIX, PDF_STATE_MANIFEST_FIELD, PDF_STATE_MARKER_END, PDF_STATE_MARKER_START, PDF_TEMPLATE_ASSET, PDF_VISIBLE_FIELD_TEXT_LIMIT, SAVE_SLOTS_KEY, SPREADSHEET_CELL_TEXT_LIMIT, SPREADSHEET_META_SHEET, SPREADSHEET_TEMPLATE_ASSET, XLSX_CONTENT_TYPES_NS, XLSX_MAIN_NS, XLSX_OFFICE_REL_NS, XLSX_REL_NS, XLSX_WORKSHEET_CONTENT_TYPE, XLSX_WORKSHEET_REL_TYPE } from "./constants.js";
 import { cleanText } from "./utils.js";
 import { createDefaultState, getSavedSlots, mergeBuilderState, mergePlayState, persistWorkingState, setActiveSaveSlotId, state, trySetLocalStorage } from "./state.js";
-import { alignLoadedStateGameVersion, exportPrepCache, getBreakthroughBudgetState, getClassDetail, getDefaultGameVersionId, getSelectedGameVersionId, getStartingFundsState, lookup, shouldPromoteSavedVersionToLatest } from "./rules.js";
+import { alignLoadedStateGameVersion, exportPrepCache, getAncestryDetail, getBreakthroughBudgetState, getClassDetail, getDefaultGameVersionId, getRaceDetail, getSelectedGameVersionId, getStartingFundsState, lookup, shouldPromoteSavedVersionToLatest } from "./rules.js";
 import { PDF_LONG_TEXT_FIELDS, appendFieldText, applyStateToDom, base64ToBytes, buildExportFileStem, buildPdfImportPayload, buildSlotId, buildSpreadsheetExportCellMap, buildSpreadsheetImportPayload, buildSpreadsheetMetadataSheet, compactSaveSlotEntry, createStateSnapshot, createStorableStateSnapshot, decodeEmbeddedStateText, fillAbilityField, firstEmptyField, getBreakthroughRequirementStatus, getStorageFailureMessage, hydrateBuilderSelectionsFromFields, normalizeCurrentPortraitDataUrl, openLoadSavedModal, openSaveSlotModal, prepareExportCache, promptForSlotName, refreshSaveSlotList, renderBuilder, setStatus, showExportFailureModal, showExportSuccessModal, syncNameFields, updateSheetModalProgress, withTimeout } from "./ui.js";
 import { ensurePdfRuntimeLoaded, ensureSpreadsheetRuntimeLoaded } from "./runtime-loader.js";
 
@@ -719,11 +719,143 @@ function parseStatePayload(raw) {
         console.error(error);
         return null;
       }
+}
+const BUILD_LAB_HANDOFF_FORMAT = "LYRIAN_BUILD_LAB_V1";
+const BUILD_LAB_HANDOFF_HASH_PREFIX = "#lyrian-build=";
+function convertBuildLabPackage(parsed) {
+      if (cleanText(parsed?.format) !== BUILD_LAB_HANDOFF_FORMAT) {
+        return parsed;
+      }
+const defaults = createDefaultState();
+const character = parsed.character && typeof parsed.character === "object" ? parsed.character : {};
+const missing = [];
+const race = getRaceDetail(character.primaryRace);
+      if (character.primaryRace && !race) {
+        missing.push(`race: ${character.primaryRace}`);
+      }
+const ancestry = getAncestryDetail(character.ancestry);
+      if (character.ancestry && !ancestry) {
+        missing.push(`ancestry: ${character.ancestry}`);
+      }
+const classes = Array.isArray(character.classes)
+        ? character.classes.map((entry) => {
+          const record = getClassDetail(entry?.name);
+          if (!record && entry?.name) {
+            missing.push(`class: ${entry.name}`);
+          }
+          return record ? { record, entry } : null;
+        }).filter(Boolean).slice(0, CLASS_ROWS.length)
+        : [];
+const breakthroughs = Array.isArray(character.breakthroughs)
+        ? character.breakthroughs.map((name) => {
+          const record = lookup.breakthroughs.resolve(name);
+          if (!record && name) {
+            missing.push(`breakthrough: ${name}`);
+          }
+          return record;
+        }).filter(Boolean)
+        : [];
+const items = Array.isArray(character.items)
+        ? character.items.map((entry) => {
+          const record = lookup.items.resolve(entry?.name);
+          if (!record && entry?.name) {
+            missing.push(`item: ${entry.name}`);
+          }
+          return record ? { record, entry } : null;
+        }).filter(Boolean)
+        : [];
+const classAbilityProgress = Object.fromEntries(classes.map(({ record, entry }) => [
+        record.id,
+        Math.max(0, Math.min(CLASS_PURCHASABLE_LEVELS, Math.floor(Number(entry.purchasedAbilities) || 0)))
+      ]));
+const itemQuantities = Object.fromEntries(items.map(({ record, entry }) => [
+        record.id,
+        Math.max(1, Math.floor(Number(entry.quantity) || 1))
+      ]));
+const sourceVersion = cleanText(parsed.source?.rulesVersion);
+const packageName = cleanText(parsed.package?.name) || "Build Lab draft";
+const importNotes = [
+        cleanText(character.notes),
+        sourceVersion ? `Imported from Build Lab rules ${sourceVersion}. The builder resolved names against its currently loaded rules.` : "",
+        missing.length ? `Could not resolve: ${missing.join(", ")}. Select replacements manually.` : ""
+      ].filter(Boolean).join("\n\n");
+      return {
+        ...defaults,
+        ui: {
+          ...defaults.ui,
+          mode: "builder",
+          builderStep: 0,
+          activeSaveSlotId: "",
+          gameVersion: ""
+        },
+        fields: {
+          Name: cleanText(character.name)
+        },
+        builder: {
+          ...defaults.builder,
+          startMode: cleanText(parsed.campaign).toLowerCase() === "mirane" ? "mirane" : defaults.builder.startMode,
+          selectedRaceId: race?.id || "",
+          selectedAncestryId: ancestry?.id || "",
+          selectedClassIds: classes.map(({ record }) => record.id),
+          classAbilityProgress,
+          selectedItemIds: items.map(({ record }) => record.id),
+          itemQuantities,
+          selectedBreakthroughIds: breakthroughs.map((record) => record.id),
+          quickBuild: {
+            ...defaults.builder.quickBuild,
+            appliedBuildId: "build-lab-import",
+            summary: packageName
+          }
+        },
+        play: {
+          ...defaults.play,
+          playerNotes: importNotes
+        },
+        buildLabImport: {
+          format: BUILD_LAB_HANDOFF_FORMAT,
+          packageName,
+          sourceRulesVersion: sourceVersion,
+          missing
+        }
+      };
+    }
+function decodeBuildLabHashPayload(hash = window.location.hash) {
+      if (!String(hash || "").startsWith(BUILD_LAB_HANDOFF_HASH_PREFIX)) {
+        return null;
+      }
+const encoded = String(hash).slice(BUILD_LAB_HANDOFF_HASH_PREFIX.length).replace(/-/g, "+").replace(/_/g, "/");
+const padded = encoded + "=".repeat((4 - (encoded.length % 4)) % 4);
+const bytes = Uint8Array.from(atob(padded), (character) => character.charCodeAt(0));
+      return JSON.parse(new TextDecoder().decode(bytes));
+    }
+export function loadBuildLabHandoffFromLocation() {
+      let parsed;
+      try {
+        parsed = decodeBuildLabHashPayload();
+      } catch (error) {
+        console.error(error);
+        window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+        return { present: true, loaded: false, packageName: "", error: "The Build Lab link was unreadable." };
+      }
+      if (!parsed) {
+        return { present: false, loaded: false, packageName: "", error: "" };
+      }
+const packageName = cleanText(parsed.package?.name) || "Build Lab draft";
+const confirmed = typeof window.confirm !== "function" || window.confirm(
+        `Load “${packageName}” from Lyrian Build Lab?\n\nThis replaces the current working character, but it does not delete saved character slots.`
+      );
+      window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+      if (!confirmed) {
+        return { present: true, loaded: false, packageName, error: "Build Lab import cancelled." };
+      }
+const loaded = loadSavedState(parsed, { activeSlotId: "", statusOnFailure: false });
+      return { present: true, loaded, packageName, error: loaded ? "" : "The Build Lab package could not be loaded." };
     }
 function hydrateStateFromObject(parsed, { activeSlotId = "", promoteStaleVersion = false } = {}) {
       if (!parsed || typeof parsed !== "object") {
         return false;
       }
+      parsed = convertBuildLabPackage(parsed);
 const defaults = createDefaultState();
       state.ui = {
         ...defaults.ui,

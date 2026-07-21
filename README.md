@@ -1,62 +1,41 @@
-# Lyrian Chronicles Character Builder - Beta 2.11 Mobile Performance and iPhone Layout Hotpatch
+# Lyrian Chronicles Character Builder - Beta 2.13
 
-This is the complete local Beta 2.11 static/public working copy for the Angel Sword character builder and live play sheet.
+Beta 2.13 is the standard public web build for the Angel Sword Lyrian Chronicles character builder and live play sheet.
 
-It starts as a copy of the hardened Beta 1.8 guided crafting and gathering baseline (2026-07-06). It intentionally does not include the Beta 1.6 API provider layer.
+The existing GitHub Pages address remains unchanged:
 
-## Workstream
+https://verbosebard.github.io/angel-sword-lirian-chronicles-builder/
 
-Beta 2.1 keeps the full Beta 1.94 responsive builder and live sheet, then adds Standard Play and Mirane Expedition starts throughout guided and Quick Build creation. Mirane restrictions, starting funds, material purchasing, crafting pricing, review-page retirement options, and campaign-unavailable choices are represented in the builder. Quick Build now includes twelve optimized newcomer packages, Slimefolk, race-aware substitutions and shortcuts, complete class/skill/gear summaries, and validated tier-one/tier-two class paths.
+## What is included
 
-Beta 2.11 keeps those features and adds faster phone startup, on-demand PDF/spreadsheet/3D-dice loading, and iPhone layout fixes for clipped, overlapping, or partially hidden controls.
+- Official bundled rules 0.13.1 as the fresh-install default.
+- Selectable historical rules 0.13.0, 0.12.6, and 0.12.5.
+- Standard Play and Mirane Expedition character creation.
+- Custom Build and 14 validated Quick Build packages across 21 species choices.
+- Seven Sorrows Sword Style, Divine's Chosen, Gnome, Raijin, and Selkie support.
+- Live combat, crafting, gathering, inventory, dice, saving, and export/import tools.
+- Safari 15 syntax targeting, mobile layouts, deferred heavy runtimes, cached rules switching, and debounced sheet rendering.
+- Static GitHub Pages deployment with no in-app update checker.
 
-Crafting and gathering both run as guided downtime workflows. Each step shows what the player is trying to do, what to click next, and which warnings are soft GM gates rather than hard app failures.
-
-Do not update the local Beta 1.6, Beta 1.7, or Beta 1.8 folders from this folder until the 1.9 work is reviewed and approved for sync.
-
-## Public Web Build
-
-The live public site is published as a single browser link through GitHub Pages. Visitors open the site URL directly; they do not need to download a ZIP, install Node.js, or run a local launcher.
-
-Keep asset paths relative so the same build can run from the GitHub Pages address, a local dev server, or direct file startup.
-
-## Local Development
+## Local development
 
 ```powershell
 npm install
 npm start
 ```
 
-Then open the local URL printed by the server.
-
-## Testing
+## Required validation
 
 ```powershell
 npm test
+npm run test:rules0131
+npm run audit:minmax
 ```
 
-This rebuilds `assets/app.bundle.js` and runs the cross-browser regression suite.
+`npm test` builds the production bundle and exercises Chromium, Firefox, and WebKit at wide, 1280 px desktop, and 390 px phone viewports. It also covers direct-file startup, custom and Quick Builds, older-version switching, saving, and live-play behavior.
 
-## Included
+See `BETA_2.13_RELEASE_NOTES.md`, `BETA_2.13_PATCH_NOTES_FROM_2.1.md`, and `STANDARD_HANDOFF_README.md` for release and maintenance details.
 
-- Interactive builder and live play sheet.
-- Standard Play and Mirane Expedition creation rules, including Mirane retirement/retraining review guidance.
-- Twelve optimized Quick Build play styles with complete classes, breakthroughs, skills, and supporting equipment.
-- Eighteen Quick Build species choices, including featured Slimefolk, Dullahan, and Wolf-folk options arranged as six complete desktop rows.
-- Race-aware Quick Build handling for Slimefolk and early-unlock or restricted race combinations.
-- Guided crafting wizard (5 steps: choose recipe, gather materials, check support, roll points, resolve craft).
-- Guided gathering wizard (4 steps: choose node, check access, roll strikes, resolve gather).
-- Local rules versions `0.12.5`, `0.12.6`, and `0.13.0`; fresh characters default to the latest local version.
-- Browser save/load slots.
-- JSON, PDF, and spreadsheet export/import.
-- Official-style PDF and Google-style spreadsheet templates.
-- Static web deployment through GitHub Pages.
+## Save-data note
 
-## Tester Notes
-
-Characters are saved in the browser used to open the app. Export a JSON, PDF, or spreadsheet copy if you want a backup or need to move the character to another machine or browser.
-
-Leaflit and Asari dice are intentionally marked as coming soon in this build.
-
----
-Lyrian Chronicles Character Builder
+Characters are saved in the browser profile used to open the app. Export JSON, PDF, or spreadsheet backups before changing devices, browsers, or clearing site data.

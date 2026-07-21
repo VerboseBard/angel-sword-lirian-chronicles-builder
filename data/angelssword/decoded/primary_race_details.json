@@ -1,6 +1,6 @@
 [
   {
-    "id": "6a06299f6be32fced4930880",
+    "id": "6a2e7a0d6be32fced49311d3",
     "indexId": "675a52b4-b8b7-43f8-8a97-fdb6125f0da3",
     "primaryRaceId": "chimera",
     "name": "Chimera",
@@ -54,7 +54,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930882",
+    "id": "6a2e7a0d6be32fced49311d5",
     "indexId": "913ce48c-ee4b-4a4e-a71d-90ceb5eb1b8e",
     "primaryRaceId": "demon",
     "name": "Demon",
@@ -68,7 +68,7 @@
     "ability1": "75120cd3-9056-429b-b614-5ee38f7c8d1c",
     "ability2": "34774ae5-c638-4229-8966-72c279bc7c3a",
     "wi": {
-      "text": "Saboteurs - You gain proficiency with Saboteur Thread Daggers in addition to the ability below. You may also enter the Saboteur class at no experience cost.",
+      "text": "Saboteurs - You gain proficiency with Saboteur Thread Daggers in addition to the ability below. You start with the Saboteur class unlocked and at level 1.",
       "ability": "1e26e66c-34c5-49dc-b99f-68b157be8aee"
     },
     "lir": {
@@ -92,11 +92,11 @@
       "ability": "fbcd4a2a-8a87-465f-b5d6-66436daffccd"
     },
     "un": {
-      "text": "Maids and Butlers - You may enter the Maid class at no experience cost.",
+      "text": "Maids and Butlers - You start with the Maid class unlocked and at level 1.",
       "ability": "fd369348-a806-47d8-9d62-0c2230771ae6"
     },
     "vi": {
-      "text": "Medical and Healers - You may enter the Medic class at no experience cost.",
+      "text": "Medical and Healers - You start with the Medic class unlocked and at level 1.",
       "ability": "0e2cca4a-edc5-4f1a-a64b-6508cf7df15c"
     },
     "none": {
@@ -108,7 +108,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930881",
+    "id": "6a2e7a0d6be32fced49311d4",
     "indexId": "cb5ea351-a25c-4934-896f-74b17000992d",
     "primaryRaceId": "fae",
     "name": "Fae",
@@ -162,7 +162,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493087e",
+    "id": "6a2e7a0d6be32fced49311d1",
     "indexId": "f59714f1-f4cf-47f3-912d-39284c4a225d",
     "primaryRaceId": "human",
     "name": "Human",
@@ -216,7 +216,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493087f",
+    "id": "6a2e7a0d6be32fced49311d2",
     "indexId": "d4f38a14-5d79-4ddc-9fac-07c5e7800a1a",
     "primaryRaceId": "youkai",
     "name": "Youkai",

@@ -8,7 +8,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(__dirname, '..');
 const QA_DIR = path.join(PROJECT_ROOT, 'qa-test-results');
 const DEPLOY_TEMP_DIR = path.join(PROJECT_ROOT, 'deploy-temp-dist');
-const PORT = 4199; // Use a dedicated test port to avoid conflict with running instances
+const PORT = 4202; // Dedicated test port to avoid conflict with local development.
 
 async function copyDirectory(src, dest) {
   await fs.mkdir(dest, { recursive: true });
@@ -91,6 +91,12 @@ async function runDirectFileStartupAssertion() {
         buildLabel: document.querySelector('.builder-build-version')?.textContent || '',
         startModes: [...document.querySelectorAll('[data-character-start-mode]')].map((button) => button.dataset.characterStartMode),
         activeStartMode: document.querySelector('[data-character-start-mode][aria-pressed="true"]')?.dataset.characterStartMode || '',
+        hasSevenSorrows: (window.LYRIAN_DETAIL_DATA?.classes || []).some((entry) => entry.name === 'Seven Sorrows Sword Style'),
+        hasDivinesChosen: (window.LYRIAN_DATA?.breakthroughs || []).some((entry) => entry.name === "Divine's Chosen"),
+        hasNewKeywords: ['Divine', 'Isolated'].every((name) =>
+          (window.LYRIAN_DATA?.keywords || []).some((entry) => entry.name === name)
+        ),
+        hasBlueSoul: (window.LYRIAN_DATA?.abilities || []).some((entry) => entry.name === 'Blue Soul'),
         optionalRuntimesDeferred: !window.PDFLib
           && !window.XLSX
           && !window.JSZip
@@ -99,15 +105,19 @@ async function runDirectFileStartupAssertion() {
       };
     });
 
-    const startupIsValid = result.dataVersion === '0.13.0'
-      && result.selectedVersion === '0.13.0'
-      && result.versionCount >= 3
+    const startupIsValid = result.dataVersion === '0.13.1'
+      && result.selectedVersion === '0.13.1'
+      && result.versionCount >= 4
       && result.cardCount > 0
       && result.navCount > 0
       && result.summaryText.includes('Identity')
-      && result.buildLabel.includes('Beta 2.11')
+      && result.buildLabel.includes('Beta 2.13')
       && result.startModes.join('|') === 'standard|mirane'
       && result.activeStartMode === 'standard'
+      && result.hasSevenSorrows
+      && result.hasDivinesChosen
+      && result.hasNewKeywords
+      && result.hasBlueSoul
       && result.optionalRuntimesDeferred;
 
     if (!startupIsValid || errors.length || failedFileRequests.length) {
@@ -115,6 +125,64 @@ async function runDirectFileStartupAssertion() {
     }
   } finally {
     await browser.close();
+  }
+}
+
+async function runBuildLabHandoffAssertion(browser, targetUrl) {
+  const payload = {
+    format: 'LYRIAN_BUILD_LAB_V1',
+    source: { application: 'Lyrian Build Lab', rulesVersion: '0.13.0' },
+    campaign: 'Mirane',
+    package: { name: 'High Fae field responder', breakthroughExpBudget: 300 },
+    character: {
+      name: '',
+      primaryRace: 'Fae',
+      ancestry: 'High Fae',
+      classes: [
+        { name: 'Medic', purchasedAbilities: 7 },
+        { name: 'Acolyte', purchasedAbilities: 1 }
+      ],
+      breakthroughs: ['On the draw', 'Rapid Flash (High Fae)', 'Faerie Flash Master (Fae)'],
+      items: [{ name: 'Medical Kit', quantity: 1 }]
+    }
+  };
+  const encoded = Buffer.from(JSON.stringify(payload), 'utf8').toString('base64url');
+  const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+  const page = await context.newPage();
+  page.once('dialog', async (dialog) => dialog.accept());
+  try {
+    await page.goto(`${targetUrl}#lyrian-build=${encoded}`, { waitUntil: 'load', timeout: 15000 });
+    await page.waitForFunction(() => {
+      const saved = JSON.parse(localStorage.getItem('lyrian-chronicles-character-suite-v2') || '{}');
+      return saved?.builder?.quickBuild?.appliedBuildId === 'build-lab-import';
+    }, null, { timeout: 10000 });
+    const imported = await page.evaluate(() => {
+      const saved = JSON.parse(localStorage.getItem('lyrian-chronicles-character-suite-v2') || '{}');
+      const selectedIds = new Set(saved?.builder?.selectedBreakthroughIds || []);
+      const breakthroughNames = (window.LYRIAN_DATA?.breakthroughs || [])
+        .filter((record) => selectedIds.has(record.id))
+        .map((record) => record.name)
+        .sort();
+      return {
+        race: saved?.builder?.selectedRaceId || '',
+        ancestry: saved?.builder?.selectedAncestryId || '',
+        breakthroughNames,
+        importMissing: saved?.buildLabImport?.missing || [],
+        hashCleared: window.location.hash === ''
+      };
+    });
+    const expectedBreakthroughs = ['Faerie Flash Master (Fae)', 'On the draw', 'Rapid Flash (High Fae)'].sort();
+    if (
+      imported.race !== 'fae'
+      || imported.ancestry !== 'high-fae'
+      || JSON.stringify(imported.breakthroughNames) !== JSON.stringify(expectedBreakthroughs)
+      || imported.importMissing.length
+      || !imported.hashCleared
+    ) {
+      throw new Error(`Build Lab race/ancestry handoff regression failed: ${JSON.stringify(imported)}`);
+    }
+  } finally {
+    await context.close();
   }
 }
 
@@ -352,6 +420,9 @@ async function runMobileSheetAppAssertions(page, browserName) {
     await referenceClose.click();
   }
 
+  // Firefox reports the sticky grid button as continuously moving while the
+  // fixed dice result animation runs, even though hit-testing shows it in
+  // place. A forced pointer click mirrors the real touch behavior here.
   await page.click('[data-mobile-sheet-page="abilities"]', { force: true });
   const abilitiesResult = await page.evaluate(() => ({
     page: document.getElementById('sheet-view').dataset.mobileSheetPage,
@@ -460,6 +531,14 @@ async function main() {
   await new Promise((resolve) => setTimeout(resolve, 3000));
 
   const targetUrl = `http://127.0.0.1:${PORT}/`;
+  const removedUpdaterResponses = await Promise.all([
+    fetch(`${targetUrl}api/versions/check`),
+    fetch(`${targetUrl}api/versions/local`),
+    fetch(`${targetUrl}api/versions/download`, { method: 'POST' })
+  ]);
+  if (removedUpdaterResponses.some((response) => response.status !== 404)) {
+    throw new Error(`Removed updater endpoint regression failed: ${removedUpdaterResponses.map((response) => response.status).join(', ')}`);
+  }
   const viewports = [
     { name: 'Wide', width: 1660, height: 760 },
     { name: 'Desktop', width: 1280, height: 800 },
@@ -610,7 +689,7 @@ const browsers = [
       await page.evaluate((gameVersion) => {
         localStorage.clear();
         localStorage.setItem('lyrian-chronicles-selected-game-version-v2', gameVersion);
-        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.0');
+        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.1');
         localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
           ui: { mode: 'builder', gameVersion },
           fields: { Name: `All Class Progression Audit ${gameVersion}` },
@@ -627,7 +706,7 @@ const browsers = [
         await page.evaluate(({ gameVersion, selectedClasses }) => {
           localStorage.clear();
           localStorage.setItem('lyrian-chronicles-selected-game-version-v2', gameVersion);
-          localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.0');
+          localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.1');
           localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
             ui: { mode: 'builder', gameVersion },
             fields: { Name: `All Class Progression Audit ${gameVersion}` },
@@ -674,6 +753,165 @@ const browsers = [
     }
 
     console.log(`   Audited ${audited.length} rendered class progressions across ${versions.length} local rules versions.`);
+  }
+
+  async function runVersionSwitchAssertions(page) {
+    console.log('   Running version dropdown isolation and default-selection assertions...');
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'load' });
+    await page.waitForFunction(() => document.querySelector('#game-version-select')?.value === '0.13.1');
+    await page.click('[data-builder-action="pick-race"][data-id="human"]');
+    await page.click('[data-step-index="6"]');
+
+    const expectations = [
+      { version: '0.13.1', classes: 181, sevenSorrows: true },
+      { version: '0.13.0', classes: 180, sevenSorrows: false },
+      { version: '0.12.6', classes: 174, sevenSorrows: false },
+      { version: '0.12.5', classes: 170, sevenSorrows: false },
+      { version: '0.13.1', classes: 181, sevenSorrows: true }
+    ];
+
+    const results = [];
+    for (let expectationIndex = 0; expectationIndex < expectations.length; expectationIndex += 1) {
+      const expectation = expectations[expectationIndex];
+      if (expectationIndex > 0) {
+        await page.selectOption('#game-version-select', expectation.version);
+      }
+      await page.waitForFunction(({ version, classes }) =>
+        window.LYRIAN_DATA?.version === version
+        && document.querySelectorAll('button[data-builder-action="toggle-class"]').length === classes,
+      expectation, { timeout: 10000 });
+      results.push(await page.evaluate(() => ({
+        selected: document.querySelector('#game-version-select')?.value || '',
+        dataVersion: window.LYRIAN_DATA?.version || '',
+        classCount: document.querySelectorAll('button[data-builder-action="toggle-class"]').length,
+        sevenSorrows: Boolean(document.querySelector('button[data-builder-action="toggle-class"][data-id="seven-sorrows-sword-style"]')),
+        status: document.querySelector('#builder-status-pill')?.textContent || ''
+      })));
+    }
+
+    expectations.forEach((expectation, index) => {
+      const result = results[index];
+      if (
+        result.selected !== expectation.version
+        || result.dataVersion !== expectation.version
+        || result.classCount !== expectation.classes
+        || result.sevenSorrows !== expectation.sevenSorrows
+        || (index > 0 && !result.status.includes(`Loaded Lyrian rules version ${expectation.version}`))
+      ) {
+        throw new Error(`Version switch isolation regression failed: ${JSON.stringify({ expectation, result, results })}`);
+      }
+    });
+
+    await page.reload({ waitUntil: 'load' });
+    await page.waitForFunction(() => document.querySelector('#game-version-select')?.value === '0.13.1');
+    const persistedLatest = await page.locator('#game-version-select').inputValue();
+    if (persistedLatest !== '0.13.1') {
+      throw new Error(`Latest-version persistence regression failed: ${persistedLatest}`);
+    }
+  }
+
+  async function runPerformancePatchAssertions(page) {
+    console.log('   Running Beta 2.13 cache, lazy-image, deferred-sheet, and autosave assertions...');
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
+      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.1');
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'sheet', playMode: 'combat', sheetTab: 'actions', gameVersion: '0.13.1' },
+        fields: { Name: 'Performance Patch Audit', 'Primary Race': 'Fae', Agility: '3' },
+        builder: { selectedRaceId: 'fae' }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.waitForFunction(() => window.LYRIAN_DATA?.version === '0.13.1');
+    await page.waitForSelector('#sheet-view:not(.is-hidden)', { timeout: 5000 });
+    await page.waitForSelector('[data-field="Primary Race"]', { state: 'attached', timeout: 5000 });
+
+    const initial = await page.evaluate(() => {
+      const statValue = (name) => [...document.querySelectorAll('#play-main-stat-strip .play-main-stat-card')]
+        .find((card) => card.querySelector('strong')?.textContent?.trim() === name)
+        ?.querySelector('.play-main-stat-value')?.textContent?.trim() || '';
+      const browseImages = [...document.querySelectorAll('#builder-step-content .builder-option-list img')];
+      return {
+        agility: statValue('Agility'),
+        browseImageCount: browseImages.length,
+        browseImagesDeferred: browseImages.every((image) => image.loading === 'lazy' && image.decoding === 'async'),
+        deferredSheetElements: document.querySelectorAll('#sheet-stack *').length,
+        totalElements: document.querySelectorAll('*').length
+      };
+    });
+    if (
+      initial.agility !== '4'
+      || initial.browseImageCount === 0
+      || !initial.browseImagesDeferred
+      || initial.deferredSheetElements === 0
+      || initial.deferredSheetElements >= initial.totalElements
+    ) {
+      throw new Error(`Beta 2.13 initial performance assertion failed: ${JSON.stringify(initial)}`);
+    }
+
+    await page.evaluate(() => {
+      const raceField = document.querySelector('[data-field="Primary Race"]');
+      raceField.value = 'Human';
+      raceField.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    await page.waitForFunction(() => {
+      const agilityCard = [...document.querySelectorAll('#play-main-stat-strip .play-main-stat-card')]
+        .find((card) => card.querySelector('strong')?.textContent?.trim() === 'Agility');
+      const saved = JSON.parse(localStorage.getItem('lyrian-chronicles-character-suite-v2') || '{}');
+      return agilityCard?.querySelector('.play-main-stat-value')?.textContent?.trim() === '3'
+        && document.querySelector('#play-header-card')?.textContent?.includes('Human')
+        && saved?.fields?.['Primary Race'] === 'Human';
+    }, null, { timeout: 5000 });
+
+    const unloadFlush = await page.evaluate(() => {
+      const raceField = document.querySelector('[data-field="Primary Race"]');
+      const notesField = document.querySelector('#play-player-notes');
+      raceField.value = 'Fae';
+      raceField.dispatchEvent(new Event('input', { bubbles: true }));
+      notesField.value = 'Saved by the unload flush';
+      notesField.dispatchEvent(new Event('input', { bubbles: true }));
+      // Dispatch in the same browser task as the input. The 180 ms dashboard
+      // and 500 ms notes debounces cannot have fired, so this exercises the
+      // explicit final-save path for both pending edits.
+      window.dispatchEvent(new Event('beforeunload'));
+      const saved = JSON.parse(localStorage.getItem('lyrian-chronicles-character-suite-v2') || '{}');
+      return {
+        race: saved?.fields?.['Primary Race'] || '',
+        notes: saved?.play?.playerNotes || ''
+      };
+    });
+    if (unloadFlush.race !== 'Fae' || unloadFlush.notes !== 'Saved by the unload flush') {
+      throw new Error(`Pending-edit unload flush regression failed: ${JSON.stringify(unloadFlush)}`);
+    }
+
+    const visibilityFlush = await page.evaluate(() => {
+      const raceField = document.querySelector('[data-field="Primary Race"]');
+      const notesField = document.querySelector('#play-player-notes');
+      raceField.value = 'Human';
+      raceField.dispatchEvent(new Event('input', { bubbles: true }));
+      notesField.value = 'Saved by the visibility flush';
+      notesField.dispatchEvent(new Event('input', { bubbles: true }));
+      Object.defineProperty(document, 'visibilityState', {
+        configurable: true,
+        value: 'hidden'
+      });
+      document.dispatchEvent(new Event('visibilitychange'));
+      delete document.visibilityState;
+      const saved = JSON.parse(localStorage.getItem('lyrian-chronicles-character-suite-v2') || '{}');
+      return {
+        race: saved?.fields?.['Primary Race'] || '',
+        notes: saved?.play?.playerNotes || ''
+      };
+    });
+    if (visibilityFlush.race !== 'Human' || visibilityFlush.notes !== 'Saved by the visibility flush') {
+      throw new Error(`Pending-edit visibility flush regression failed: ${JSON.stringify(visibilityFlush)}`);
+    }
+
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'load' });
+    await page.waitForFunction(() => window.LYRIAN_DATA?.version === '0.13.1');
   }
 
   async function runRaceClassMatrixAssertions(page) {
@@ -726,10 +964,10 @@ const browsers = [
       for (const startMode of ['standard', 'mirane']) {
         await page.evaluate(({ raceId, ancestryId, startMode }) => {
           localStorage.clear();
-          localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.0');
-          localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.0');
+          localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
+          localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.1');
           localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
-            ui: { mode: 'builder', gameVersion: '0.13.0' },
+            ui: { mode: 'builder', gameVersion: '0.13.1' },
             fields: { Name: `Race and Class Matrix Audit ${startMode}` },
             builder: {
               startMode,
@@ -739,7 +977,7 @@ const browsers = [
           }));
         }, { ...identity, startMode });
         await page.reload({ waitUntil: 'load' });
-        await page.waitForFunction(() => window.LYRIAN_DATA?.version === '0.13.0');
+        await page.waitForFunction(() => window.LYRIAN_DATA?.version === '0.13.1');
         await page.click('[data-step-index="6"]');
         await page.waitForFunction((classCount) => (
           document.querySelectorAll('[data-builder-action="toggle-class"]').length === classCount
@@ -851,10 +1089,10 @@ const browsers = [
       const batch = entries.slice(offset, offset + 12);
       await page.evaluate((selectedClasses) => {
         localStorage.clear();
-        localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.0');
-        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.0');
+        localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
+        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.1');
         localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
-          ui: { mode: 'builder', gameVersion: '0.13.0' },
+          ui: { mode: 'builder', gameVersion: '0.13.1' },
           fields: { Name: 'Class Proficiency Choice Audit' },
           builder: {
             selectedRaceId: 'human',
@@ -864,7 +1102,7 @@ const browsers = [
         }));
       }, batch);
       await page.reload({ waitUntil: 'load' });
-      await page.waitForFunction(() => window.LYRIAN_DATA?.version === '0.13.0');
+      await page.waitForFunction(() => window.LYRIAN_DATA?.version === '0.13.1');
       await page.click('[data-step-index="6"]');
       const expectedIds = batch.flatMap(([, ids]) => ids).sort();
       await page.waitForFunction((count) => (
@@ -880,10 +1118,10 @@ const browsers = [
 
     await page.evaluate(() => {
       localStorage.clear();
-      localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.0');
-      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.0');
+      localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
+      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.1');
       localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
-        ui: { mode: 'builder', gameVersion: '0.13.0' },
+        ui: { mode: 'builder', gameVersion: '0.13.1' },
         fields: { Name: 'Acolyte Fighter Proficiency Audit' },
         builder: {
           selectedRaceId: 'human',
@@ -926,10 +1164,10 @@ const browsers = [
     const setArmorsmithProgress = async (progress) => {
       await page.evaluate((classProgress) => {
         localStorage.clear();
-        localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.0');
-        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.0');
+        localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
+        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.1');
         localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
-          ui: { mode: 'builder', gameVersion: '0.13.0' },
+          ui: { mode: 'builder', gameVersion: '0.13.1' },
           fields: { Name: 'Armorsmith Heart Proficiency Audit' },
           builder: {
             selectedRaceId: 'human',
@@ -962,14 +1200,20 @@ const browsers = [
       slimefolkText: document.querySelector('[data-quick-build-action="select-species"][data-id="slimefolk"]')?.textContent?.replace(/\s+/g, ' ').trim() || '',
       slimefolkImage: document.querySelector('[data-quick-build-action="select-species"][data-id="slimefolk"] img')?.getAttribute('src') || '',
       dullahanText: document.querySelector('[data-quick-build-action="select-species"][data-id="dullahan"]')?.textContent?.replace(/\s+/g, ' ').trim() || '',
-      wolfFolkText: document.querySelector('[data-quick-build-action="select-species"][data-id="wolf-folk"]')?.textContent?.replace(/\s+/g, ' ').trim() || ''
+      wolfFolkText: document.querySelector('[data-quick-build-action="select-species"][data-id="wolf-folk"]')?.textContent?.replace(/\s+/g, ' ').trim() || '',
+      gnomeText: document.querySelector('[data-quick-build-action="select-species"][data-id="gnome"]')?.textContent?.replace(/\s+/g, ' ').trim() || '',
+      raijinText: document.querySelector('[data-quick-build-action="select-species"][data-id="raijin"]')?.textContent?.replace(/\s+/g, ' ').trim() || '',
+      selkieText: document.querySelector('[data-quick-build-action="select-species"][data-id="selkie"]')?.textContent?.replace(/\s+/g, ' ').trim() || ''
     }));
     if (
-      quickSpecies.count !== 18
+      quickSpecies.count !== 21
       || !quickSpecies.slimefolkText.includes('Chimera / Slimefolk')
       || !quickSpecies.slimefolkImage.includes('Slime_GIrl')
       || !quickSpecies.dullahanText.includes('Fae / Dullahan')
       || !quickSpecies.wolfFolkText.includes('Chimera / Wolf-folk')
+      || !quickSpecies.gnomeText.includes('Free Class: Miner level 1')
+      || !quickSpecies.raijinText.includes('Free Class: Flash Star Blade Style level 1')
+      || !quickSpecies.selkieText.includes('Free Class: Hydromancer level 2')
     ) {
       throw new Error(`Quick Build Slimefolk species regression failed: ${JSON.stringify(quickSpecies)}`);
     }
@@ -1034,6 +1278,7 @@ const browsers = [
     const expectedClassPlans = {
       'shield-warrior': [{ name: 'Fighter', purchasedCount: 7 }, { name: 'Guardian', purchasedCount: 0 }],
       'great-weapon-striker': [{ name: 'Fighter', purchasedCount: 7 }, { name: 'Highlander', purchasedCount: 0 }],
+      'seven-sorrows-rush': [{ name: 'Fighter', purchasedCount: 7 }, { name: 'Seven Sorrows Sword Style', purchasedCount: 0 }],
       'sneak-thief': [{ name: 'Rogue', purchasedCount: 7 }, { name: 'Mage', purchasedCount: 1 }],
       'unarmed-monk': [{ name: 'Martial Artist', purchasedCount: 7 }, { name: 'Cultivator', purchasedCount: 1 }],
       'hunter-archer': [{ name: 'Ranger', purchasedCount: 7 }, { name: 'Rogue', purchasedCount: 1 }],
@@ -1042,8 +1287,23 @@ const browsers = [
       'elemental-blaster': [{ name: 'Pyromancer', purchasedCount: 7 }, { name: 'Sorcerer', purchasedCount: 0 }],
       'cleric-support': [{ name: 'Acolyte', purchasedCount: 7 }, { name: 'Medic', purchasedCount: 1 }],
       'performance-support': [{ name: 'Idol', purchasedCount: 7 }, { name: 'Jewel Idol', purchasedCount: 0 }],
+      'bard-expertise-rush': [{ name: 'Bard', purchasedCount: 7 }, { name: 'Idol', purchasedCount: 0 }],
       gadgeteer: [{ name: 'Artificer', purchasedCount: 7 }, { name: 'Magitechnician', purchasedCount: 0 }],
       'potion-healer': [{ name: 'Alchemist', purchasedCount: 7 }, { name: 'Acolyte', purchasedCount: 1 }]
+    };
+    const powerPackageExpectations = {
+      'seven-sorrows-rush': {
+        gear: ['Armor (Light)', 'Katana (Two-Handed)', "Adventurer's Kit", 'Military Ration', 'Healing Potion'],
+        proficiency: 'Katana',
+        secondaryStat: 'Fitness',
+        skillTargets: ['Athletics', 'Intimidation', 'Perception', 'Stealth']
+      },
+      'bard-expertise-rush': {
+        gear: ['Armor (Light)', 'Small Weapons (One-Handed)', "Adventurer's Kit", 'Healing Potion', 'Smoke Flask'],
+        expertise: { name: 'Singing', points: 3 },
+        secondaryStat: 'Presence',
+        skillTargets: ['Art', 'Negotiation', 'Insight', 'Linguistics']
+      }
     };
     const audited = [];
     for (const startMode of ['standard', 'mirane']) {
@@ -1063,7 +1323,7 @@ const browsers = [
       await page.waitForSelector('[data-quick-build-action="select-build"]', { timeout: 5000 });
 
       const buildIds = await page.locator('[data-quick-build-action="select-build"]').evaluateAll((cards) => cards.map((card) => card.dataset.id));
-      if (buildIds.length !== 12 || new Set(buildIds).size !== buildIds.length) {
+      if (buildIds.length !== 14 || new Set(buildIds).size !== buildIds.length) {
         throw new Error(`Quick Build package inventory regression failed for ${startMode}: ${JSON.stringify(buildIds)}`);
       }
 
@@ -1113,7 +1373,7 @@ const browsers = [
           const classNames = new Map((window.LYRIAN_DETAIL_DATA?.classes || []).map((entry) => [entry.id, entry.name]));
           const breakthroughNames = new Map((window.LYRIAN_DATA?.breakthroughs || []).map((entry) => [entry.id, entry.name]));
           const breakthroughCosts = new Map((window.LYRIAN_DATA?.breakthroughs || []).map((entry) => [entry.id, Number.parseInt(entry.cost, 10) || 0]));
-          const itemNames = new Map((window.LYRIAN_DATA?.items || []).map((entry) => [entry.id, entry.name]));
+          const itemRecords = new Map((window.LYRIAN_DATA?.items || []).map((entry) => [entry.id, entry]));
           const selectedClassIds = saved.builder?.selectedClassIds || [];
           return {
             selectedClassIds,
@@ -1124,8 +1384,14 @@ const browsers = [
             })),
             breakthroughNames: (saved.builder?.selectedBreakthroughIds || []).map((id) => breakthroughNames.get(id) || id),
             breakthroughSpend: (saved.builder?.selectedBreakthroughIds || []).reduce((total, id) => total + (breakthroughCosts.get(id) || 0), 0),
+            choiceSelections: saved.builder?.choiceSelections || {},
+            skillExpertiseEntries: saved.builder?.skillExpertiseEntries || [],
+            racialSkillSpend: Object.entries(saved.fields || {}).reduce((total, [fieldName, value]) =>
+              fieldName.startsWith('RacialSkillPoint:') ? total + (Number(value) || 0) : total, 0),
             inventory: (saved.play?.inventoryItems || []).map((entry) => ({
-              name: itemNames.get(entry.itemId) || entry.name || entry.itemId || '',
+              name: itemRecords.get(entry.itemId)?.name || entry.name || entry.itemId || '',
+              type: itemRecords.get(entry.itemId)?.type || '',
+              subType: itemRecords.get(entry.itemId)?.subType || '',
               equipped: Boolean(entry.equipped)
             })),
             elementalAffinity: saved.builder?.choiceSelections?.['breakthrough-elemental-affinity-elements'] || '',
@@ -1143,12 +1409,41 @@ const browsers = [
         const expectedModeLabel = startMode === 'mirane' ? 'Mirane Expedition' : 'Standard Play';
         const restrictedClasses = result.selectedClassNames.filter((name) => /^(?:Angelblooded|Shinigami Eyes|True Shinigami Eyes|Vampire|Vampire Lord)$/i.test(name));
         const expectedClassPlan = expectedClassPlans[buildId];
+        const powerExpectation = powerPackageExpectations[buildId];
+        const requiresDivineChoice = ['cleric-support', 'potion-healer'].includes(buildId);
+        const divineChoiceValid = !requiresDivineChoice || (
+          result.breakthroughNames.includes("Divine's Chosen")
+          && result.choiceSelections['breakthrough-divine-s-chosen-divine'] === 'Kari'
+        );
+        const bardExpertiseValid = buildId !== 'bard-expertise-rush' || result.skillExpertiseEntries.some((entry) =>
+          Number(entry.skillIndex) === 19
+          && entry.name === 'Singing'
+          && entry.source === 'creation'
+          && Number(entry.points) === 3
+        );
+        const powerPackageValid = !powerExpectation || (
+          powerExpectation.gear.every((name) => result.inventory.some((entry) => entry.name === name))
+          && result.breakthroughNames.filter((name) => name === 'Secondary Stat Training').length === 1
+          && result.breakthroughNames.filter((name) => name === 'Skill Training').length === 4
+          && Object.entries(result.choiceSelections).some(([id, value]) => id.includes('secondary-stat-training-secondary-stat') && value === powerExpectation.secondaryStat)
+          && powerExpectation.skillTargets.every((target) => Object.entries(result.choiceSelections).some(([id, value]) =>
+            id.includes('skill-target') && value === target
+          ))
+          && (!powerExpectation.proficiency || Object.values(result.choiceSelections).includes(powerExpectation.proficiency))
+          && (!powerExpectation.expertise || result.skillExpertiseEntries.some((entry) =>
+            entry.name === powerExpectation.expertise.name
+            && Number(entry.points) === powerExpectation.expertise.points
+          ))
+        );
         const classAllocationValid = JSON.stringify(result.classProgress) === JSON.stringify(expectedClassPlan)
           && (buildId === 'elemental-blaster'
             ? result.breakthroughNames.includes('Elemental Affinity')
             && result.breakthroughNames.includes('Wide Circuits I')
             && result.elementalAffinity === 'Fire'
-            : true);
+            : true)
+          && divineChoiceValid
+          && bardExpertiseValid
+          && powerPackageValid;
         if (
           result.startMode !== startMode
           || result.startModeField !== expectedModeLabel
@@ -1161,6 +1456,7 @@ const browsers = [
           || Number(expMatch[2]) !== 1000
           || Number(expMatch[3]) !== 0
           || result.breakthroughSpend !== 300
+          || result.racialSkillSpend !== 5
           || !climMatch
           || Number(climMatch[2]) < 0
           || !result.summary.includes('Class plan:')
@@ -1172,10 +1468,12 @@ const browsers = [
         ) {
           throw new Error(`Quick Build package failed for ${startMode}/${buildId}: ${JSON.stringify(result)}`);
         }
-        const autoEquipCandidates = result.inventory.filter(({ name }) => {
-          const normalized = name.toLowerCase();
-          return !/(potion|elixir|flask|ration|food|salve|poison|shell)/.test(normalized)
-            && /(armor|weapon|binocular|kit|multitool|rig)/.test(normalized);
+        const autoEquipCandidates = result.inventory.filter(({ name, subType }) => {
+          const normalizedName = name.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+          const normalizedSubType = subType.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+          return ['armor', 'weapon', 'kit', 'tool', 'storage'].includes(normalizedSubType)
+            || normalizedSubType.includes('weapon')
+            || ['shield', 'shield great', 'binoculars'].includes(normalizedName);
         });
         const missingAutoEquips = autoEquipCandidates.filter((entry) => !entry.equipped).map((entry) => entry.name);
         const equippedConsumables = result.inventory
@@ -1189,6 +1487,23 @@ const browsers = [
         await page.click('[data-quick-build-action="back-to-build"]');
         await page.waitForSelector('[data-quick-build-action="select-build"]', { timeout: 5000 });
       }
+    }
+
+    await page.click('[data-step-index="0"]');
+    await page.waitForSelector('[data-quick-build-action="select-species"]', { timeout: 5000 });
+    await page.locator('[data-quick-build-action="select-species"][data-id="selkie"]').click();
+    const changedSpeciesSummary = (await page.locator('#builder-summary').textContent())?.replace(/\s+/g, ' ').trim() || '';
+    await page.click('#builder-next');
+    await page.click('#builder-next');
+    await page.waitForSelector('[data-quick-build-action="select-build"]', { timeout: 5000 });
+    const staleRoleSelections = await page.locator('[data-quick-build-action="select-build"].selected').count();
+    if (
+      !changedSpeciesSummary.includes('Fae | Selkie')
+      || !changedSpeciesSummary.includes('No classes chosen yet.')
+      || changedSpeciesSummary.includes('Slimefolk')
+      || staleRoleSelections !== 0
+    ) {
+      throw new Error(`Quick Build species-change reset regression failed: ${JSON.stringify({ changedSpeciesSummary, staleRoleSelections })}`);
     }
 
     await page.evaluate(() => localStorage.clear());
@@ -1294,10 +1609,10 @@ const browsers = [
   async function runMiraneLegacyPlannerAssertion(page) {
     await page.evaluate(() => {
       localStorage.clear();
-      localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.0');
-      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.0');
+      localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
+      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.1');
       localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
-        ui: { mode: 'builder', builderStep: 9, gameVersion: '0.13.0' },
+        ui: { mode: 'builder', builderStep: 9, gameVersion: '0.13.1' },
         fields: { Name: 'Mirane Legacy Audit', 'Spirit Core': '3200' },
         builder: { startMode: 'mirane', selectedRaceId: 'human' }
       }));
@@ -1348,10 +1663,10 @@ const browsers = [
   async function runMiraneEconomyAndCraftingAssertion(page) {
     await page.evaluate(() => {
       localStorage.clear();
-      localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.0');
-      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.0');
+      localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
+      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.1');
       localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
-        ui: { mode: 'sheet', playMode: 'crafting', sheetTab: 'actions', gameVersion: '0.13.0' },
+        ui: { mode: 'sheet', playMode: 'crafting', sheetTab: 'actions', gameVersion: '0.13.1' },
         fields: { Name: 'Mirane Economy Audit', Exp: '0' },
         builder: { startMode: 'mirane', selectedRaceId: 'human' },
         play: { crafting: { activityMode: 'crafting' } }
@@ -1478,10 +1793,10 @@ const browsers = [
     const miraneClasses = ['onmyoji-', 'oracle', 'merchant', 'necromancer', 'death-knight'];
     await page.evaluate((selectedClassIds) => {
       localStorage.clear();
-      localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.0');
-      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.0');
+      localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
+      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.1');
       localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
-        ui: { mode: 'sheet', playMode: 'combat', sheetTab: 'actions', gameVersion: '0.13.0' },
+        ui: { mode: 'sheet', playMode: 'combat', sheetTab: 'actions', gameVersion: '0.13.1' },
         fields: { Name: 'Mirane Gameplay Override Audit', Toughness: '5' },
         builder: {
           startMode: 'mirane',
@@ -1563,7 +1878,7 @@ const browsers = [
 
     await page.evaluate(() => {
       localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
-        ui: { mode: 'builder', gameVersion: '0.13.0' },
+        ui: { mode: 'builder', gameVersion: '0.13.1' },
         fields: { Name: 'Mirane Favor Class Audit' },
         builder: { startMode: 'mirane', selectedRaceId: 'human' }
       }));
@@ -2209,19 +2524,21 @@ const browsers = [
     await page.evaluate(() => {
       localStorage.clear();
       localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
-        ui: { mode: 'builder', gameVersion: '0.13.0' },
+        ui: { mode: 'builder', gameVersion: '0.13.1' },
         fields: { Name: 'Dogfolk Paladin Tester' },
         builder: {
           selectedRaceId: 'chimera',
           selectedAncestryId: 'dogfolk',
           selectedBreakthroughIds: [
+            'divine-s-chosen',
             'the-unknown-paladin',
             'light-armor-training',
             'medium-armor-training',
             'weapon-training'
           ],
           choiceSelections: {
-            'breakthrough-weapon-training-groups': 'Bludgeoning Weapons'
+            'breakthrough-weapon-training-groups': 'Bludgeoning Weapons',
+            'breakthrough-divine-s-chosen-divine': 'Kari'
           }
         }
       }));
@@ -2250,13 +2567,13 @@ const browsers = [
       !unknownPaladinRequirementResult.shieldPaladin.found ||
       unknownPaladinRequirementResult.shieldPaladin.locked
     ) {
-      throw new Error(`The Unknown Paladin human requirement regression failed: ${JSON.stringify(unknownPaladinRequirementResult)}`);
+      throw new Error(`Divine's Chosen → The Unknown Paladin requirement regression failed: ${JSON.stringify(unknownPaladinRequirementResult)}`);
     }
 
     await page.evaluate(() => {
       localStorage.clear();
       localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
-        ui: { mode: 'builder', gameVersion: '0.13.0' },
+        ui: { mode: 'builder', gameVersion: '0.13.1' },
         fields: { Name: 'Shield Paladin Progression Tester' },
         builder: {
           selectedRaceId: 'human',
@@ -2273,7 +2590,7 @@ const browsers = [
       const card = [...document.querySelectorAll('.class-progress-card')]
         .find((entry) => entry.querySelector('h4')?.textContent?.trim() === 'Shield Paladin');
       return card ? {
-        key: card.textContent.includes('Key: Holy Weapon'),
+        key: card.textContent.includes('Key: Divine Weapon'),
         levels: [...card.querySelectorAll('.class-progress-list li span:first-child')]
           .map((entry) => entry.textContent.replace(/\s+/g, ' ').trim())
       } : null;
@@ -2743,6 +3060,111 @@ const browsers = [
       !phoenixMasteryResult.electromancer.locked
     ) {
       throw new Error(`Ancestry trait elemental mastery unlock regression failed: ${JSON.stringify(phoenixMasteryResult)}`);
+    }
+
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'builder', gameVersion: '0.13.1' },
+        fields: { Name: 'Selkie Grant Tester' },
+        builder: {
+          selectedRaceId: 'fae',
+          selectedAncestryId: 'selkie',
+          selectedClassIds: ['hydromancer'],
+          classAbilityProgress: { hydromancer: 0 }
+        }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-step-index="6"]');
+    await page.waitForSelector('.class-progress-card', { timeout: 5000 });
+
+    const selkieGrantResult = await page.evaluate(() => {
+      const card = [...document.querySelectorAll('.class-progress-card')]
+        .find((entry) => entry.querySelector('h4')?.textContent?.trim() === 'Hydromancer');
+      const budgetText = [...document.querySelectorAll('.selected-chip-list')]
+        .map((entry) => entry.textContent.replace(/\s+/g, ' ').trim())
+        .join(' | ');
+      return card ? {
+        found: true,
+        text: card.textContent.replace(/\s+/g, ' ').trim(),
+        refundDisabled: card.querySelector('[data-builder-action="refund-class-ability"]')?.disabled,
+        budgetText
+      } : { found: false, budgetText };
+    });
+    if (
+      !selkieGrantResult.found
+      || !selkieGrantResult.text.includes('Level 2')
+      || !selkieGrantResult.text.includes('0 EXP')
+      || selkieGrantResult.refundDisabled !== true
+      || !selkieGrantResult.budgetText.includes('Interlude: 0 / 3')
+    ) {
+      throw new Error(`Selkie Hydromancer level-2 grant regression failed: ${JSON.stringify(selkieGrantResult)}`);
+    }
+
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'builder', gameVersion: '0.13.1' },
+        fields: { Name: 'Seven Sorrows Tester' },
+        builder: {
+          selectedRaceId: 'human',
+          selectedClassIds: ['fighter'],
+          classAbilityProgress: { fighter: 7 },
+          choiceSelections: { 'race-human-weapon-group': 'Katana' }
+        }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-step-index="6"]');
+    await page.waitForSelector('.builder-option-card', { timeout: 5000 });
+    const sevenSorrowsResult = await page.evaluate(() => {
+      const card = [...document.querySelectorAll('.builder-option-card')]
+        .find((entry) => entry.querySelector('strong')?.textContent?.trim() === 'Seven Sorrows Sword Style');
+      return card ? {
+        found: true,
+        locked: card.classList.contains('locked'),
+        note: card.querySelector('.builder-option-note')?.textContent?.replace(/\s+/g, ' ').trim() || ''
+      } : { found: false };
+    });
+    if (!sevenSorrowsResult.found || sevenSorrowsResult.locked) {
+      throw new Error(`Seven Sorrows singular Human proficiency regression failed: ${JSON.stringify(sevenSorrowsResult)}`);
+    }
+
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'builder', gameVersion: '0.13.1' },
+        fields: { Name: 'Divine Choice Tester' },
+        builder: {
+          selectedRaceId: 'fae',
+          selectedAncestryId: 'pixie',
+          selectedBreakthroughIds: ['divine-s-chosen'],
+          selectedClassIds: ['acolyte'],
+          classAbilityProgress: { acolyte: 7 },
+          choiceSelections: {
+            'breakthrough-divine-s-chosen-divine': 'Heira',
+            'class-acolyte-weapon-proficiency': 'Magic Staff',
+            'class-acolyte-soul-stat': 'Power'
+          }
+        }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-step-index="5"]');
+    const divineChoiceResult = await page.evaluate(() => ({
+      selected: document.querySelector('[data-builder-choice-select="breakthrough-divine-s-chosen-divine"]')?.value || '',
+      summary: document.getElementById('builder-summary')?.textContent?.replace(/\s+/g, ' ').trim() || ''
+    }));
+    if (divineChoiceResult.selected !== 'Heira' || !divineChoiceResult.summary.includes("Divine's Chosen: Heira")) {
+      throw new Error(`Divine's Chosen selector regression failed: ${JSON.stringify(divineChoiceResult)}`);
+    }
+
+    await page.click('#builder-sheet-shortcut-top');
+    await page.waitForSelector('#sheet-view:not([hidden])', { timeout: 5000 });
+    const divineProficiencyResult = await page.locator('#play-proficiencies').textContent();
+    if (!divineProficiencyResult.includes('Magic Staff') || !divineProficiencyResult.includes('Astra Mastery')) {
+      throw new Error(`Builder proficiency sheet handoff failed: ${JSON.stringify(divineProficiencyResult)}`);
     }
 
     await page.evaluate(() => localStorage.clear());
@@ -3934,6 +4356,26 @@ const browsers = [
     }
   }
 
+  async function runDesktopBuilderLayoutAssertions(page) {
+    const layout = await page.evaluate(() => {
+      const sidebar = document.querySelector('.builder-sidebar-panel')?.getBoundingClientRect();
+      const stage = document.querySelector('.builder-stage-panel')?.getBoundingClientRect();
+      return {
+        sidebar: sidebar ? { x: sidebar.x, y: sidebar.y, right: sidebar.right, width: sidebar.width } : null,
+        stage: stage ? { x: stage.x, y: stage.y, width: stage.width } : null
+      };
+    });
+    if (
+      !layout.sidebar
+      || !layout.stage
+      || layout.stage.x < layout.sidebar.right + 8
+      || Math.abs(layout.stage.y - layout.sidebar.y) > 8
+      || layout.stage.width < 600
+    ) {
+      throw new Error(`Desktop builder layout regression failed: ${JSON.stringify(layout)}`);
+    }
+  }
+
   try {
     for (const browserInfo of browsers) {
       console.log(`\nLaunching ${browserInfo.name}...`);
@@ -4001,13 +4443,17 @@ const browsers = [
             const contentValid = stepContent && stepContent.children.length > 0 && stepContent.textContent.trim().length > 0;
             const navValid = stepNav && stepNav.querySelectorAll('button').length > 0;
             const versionsValid = versionSelect && versionSelect.querySelectorAll('option').length > 0;
-            const builderBuildValid = builderBuildVersion && builderBuildVersion.textContent.includes('Beta 2.11');
+            const builderBuildValid = builderBuildVersion && builderBuildVersion.textContent.includes('Beta 2.13');
+            const updateControlsRemoved = !document.getElementById('version-check-button')
+              && !document.getElementById('version-download-button')
+              && !document.getElementById('version-connection');
 
             return {
               contentValid,
               navValid,
               versionsValid,
               builderBuildValid,
+              updateControlsRemoved,
               contentHtml: stepContent ? stepContent.innerHTML : 'null',
               navCount: stepNav ? stepNav.querySelectorAll('button').length : 0,
               versionCount: versionSelect ? versionSelect.querySelectorAll('option').length : 0
@@ -4038,12 +4484,25 @@ const browsers = [
             testErrors.push(errText);
           }
 
+          if (!checkResults.updateControlsRemoved) {
+            const errText = 'App state check failed: obsolete rules update controls returned.';
+            console.error(`   [STATE ERROR] [${browserInfo.name} - ${vp.name}]:`, errText);
+            testErrors.push(errText);
+          }
+
           if (vp.name === 'Wide') {
             await runWideDashboardLayoutAssertions(page);
           }
 
+          if (vp.name === 'Desktop') {
+            await runDesktopBuilderLayoutAssertions(page);
+          }
+
           if (browserInfo.name.startsWith('Chromium') && vp.name === 'Desktop') {
+            await runBuildLabHandoffAssertion(browser, targetUrl);
             await runRulesRegressionAssertions(page);
+            await runVersionSwitchAssertions(page);
+            await runPerformancePatchAssertions(page);
           }
 
           if (vp.name === 'Mobile') {
@@ -4095,16 +4554,23 @@ const browsers = [
   }
 }
 
-function closeWithTimeout(closable, label, ms = 15000) {
-  return Promise.race([
-    closable.close().catch((error) => {
-      console.error(`   Warning: ${label} close reported an error:`, error.message);
-    }),
-    new Promise((resolve) => setTimeout(() => {
-      console.error(`   Warning: ${label} did not close within ${ms / 1000}s; continuing anyway.`);
-      resolve();
-    }, ms))
-  ]);
+async function closeWithTimeout(closable, label, ms = 15000) {
+  let timeoutId = 0;
+  try {
+    await Promise.race([
+      closable.close().catch((error) => {
+        console.error(`   Warning: ${label} close reported an error:`, error.message);
+      }),
+      new Promise((resolve) => {
+        timeoutId = setTimeout(() => {
+          console.error(`   Warning: ${label} did not close within ${ms / 1000}s; continuing anyway.`);
+          resolve();
+        }, ms);
+      })
+    ]);
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }
 
 main().catch((err) => {

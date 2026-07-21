@@ -231,7 +231,7 @@ export function mergeBuilderState(source = {}) {
         }
       };
     }
-export function updateFieldValue(fieldName, value) {
+export function updateFieldValue(fieldName, value, options = {}) {
       const nextValue = String(value ?? "");
 const previousValue = String(state.fields[fieldName] ?? "");
       state.fields[fieldName] = nextValue;
@@ -241,7 +241,9 @@ const node = document.querySelector(`[data-field="${cssEscape(fieldName)}"]`);
       }
       if (previousValue !== nextValue) {
         state.revision = (state.revision || 0) + 1;
-        scheduleWorkingStatePersist();
+        if (options.persist !== false) {
+          scheduleWorkingStatePersist();
+        }
       }
     }
 function clonePlayEffectRules(rules = {}) {

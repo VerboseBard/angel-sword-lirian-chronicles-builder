@@ -1,6 +1,6 @@
 [
   {
-    "id": "6a06299f6be32fced4930880",
+    "id": "6a2e7a0d6be32fced49311d3",
     "indexId": "675a52b4-b8b7-43f8-8a97-fdb6125f0da3",
     "primaryRaceId": "chimera",
     "name": "Chimera",
@@ -53,7 +53,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/1bf33da4-b9ac-44cf-ae53-ce85f84ee58f-Slime_GIrl_New_raw_1.sm.webp",
     "imageAlignment": "top",
     "ability1Ref": {
-      "id": "6a06299f6be32fced4930a1e",
+      "id": "6a2e7a0d6be32fced4931371",
       "indexId": "cadfb72a-b7a9-440f-8d69-da4d3092c0f2",
       "trueAbilityId": "fight-or-flight",
       "name": "Fight or Flight",
@@ -117,7 +117,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced4930882",
+    "id": "6a2e7a0d6be32fced49311d5",
     "indexId": "913ce48c-ee4b-4a4e-a71d-90ceb5eb1b8e",
     "primaryRaceId": "demon",
     "name": "Demon",
@@ -131,7 +131,7 @@
     "ability1": "75120cd3-9056-429b-b614-5ee38f7c8d1c",
     "ability2": "34774ae5-c638-4229-8966-72c279bc7c3a",
     "wi": {
-      "text": "Saboteurs - You gain proficiency with Saboteur Thread Daggers in addition to the ability below. You may also enter the Saboteur class at no experience cost.",
+      "text": "Saboteurs - You gain proficiency with Saboteur Thread Daggers in addition to the ability below. You start with the Saboteur class unlocked and at level 1.",
       "ability": "1e26e66c-34c5-49dc-b99f-68b157be8aee"
     },
     "lir": {
@@ -155,11 +155,11 @@
       "ability": "fbcd4a2a-8a87-465f-b5d6-66436daffccd"
     },
     "un": {
-      "text": "Maids and Butlers - You may enter the Maid class at no experience cost.",
+      "text": "Maids and Butlers - You start with the Maid class unlocked and at level 1.",
       "ability": "fd369348-a806-47d8-9d62-0c2230771ae6"
     },
     "vi": {
-      "text": "Medical and Healers - You may enter the Medic class at no experience cost.",
+      "text": "Medical and Healers - You start with the Medic class unlocked and at level 1.",
       "ability": "0e2cca4a-edc5-4f1a-a64b-6508cf7df15c"
     },
     "none": {
@@ -170,7 +170,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/7a2206e1-b5dc-433d-bc13-ee552982d128-Demon_Portrait_New_raw.sm.webp",
     "imageAlignment": "middle",
     "ability1Ref": {
-      "id": "6a06299f6be32fced4930a20",
+      "id": "6a2e7a0d6be32fced4931373",
       "indexId": "75120cd3-9056-429b-b614-5ee38f7c8d1c",
       "trueAbilityId": "divine-release",
       "name": "Divine Release",
@@ -185,7 +185,7 @@
       "requirement": ""
     },
     "ability2Ref": {
-      "id": "6a06299f6be32fced4930a28",
+      "id": "6a2e7a0d6be32fced493137b",
       "indexId": "34774ae5-c638-4229-8966-72c279bc7c3a",
       "trueAbilityId": "demonblood-regeneration",
       "name": "Demonblood Regeneration",
@@ -201,10 +201,10 @@
     },
     "lineageChoices": {
       "wi": {
-        "text": "Saboteurs - You gain proficiency with Saboteur Thread Daggers in addition to the ability below. You may also enter the Saboteur class at no experience cost.",
+        "text": "Saboteurs - You gain proficiency with Saboteur Thread Daggers in addition to the ability below. You start with the Saboteur class unlocked and at level 1.",
         "ability": "1e26e66c-34c5-49dc-b99f-68b157be8aee",
         "abilityRef": {
-          "id": "6a06299f6be32fced4930908",
+          "id": "6a2e7a0d6be32fced493125b",
           "indexId": "1e26e66c-34c5-49dc-b99f-68b157be8aee",
           "trueAbilityId": "presence-concealment",
           "name": "Presence Concealment",
@@ -224,7 +224,7 @@
         "text": "Oracles",
         "ability": "95a005b4-b06e-4596-9c6b-8e53c36ec258",
         "abilityRef": {
-          "id": "6a06299f6be32fced4930a21",
+          "id": "6a2e7a0d6be32fced4931374",
           "indexId": "95a005b4-b06e-4596-9c6b-8e53c36ec258",
           "trueAbilityId": "predict",
           "name": "Predict",
@@ -245,7 +245,7 @@
         "text": "Soldiers",
         "ability": "9ddbe44c-4360-46a3-9903-45f90f53f059",
         "abilityRef": {
-          "id": "6a06299f6be32fced4930a22",
+          "id": "6a2e7a0d6be32fced4931375",
           "indexId": "9ddbe44c-4360-46a3-9903-45f90f53f059",
           "trueAbilityId": "mana-burst",
           "name": "Mana Burst",
@@ -264,7 +264,7 @@
         "text": "Tacticians",
         "ability": "69b2d823-7c91-4ea6-96ab-a4a5e195a09f",
         "abilityRef": {
-          "id": "6a06299f6be32fced4930a23",
+          "id": "6a2e7a0d6be32fced4931376",
           "indexId": "69b2d823-7c91-4ea6-96ab-a4a5e195a09f",
           "trueAbilityId": "mind-s-eye",
           "name": "Mind's Eye",
@@ -283,7 +283,7 @@
         "text": "Mages",
         "ability": "d27cabd1-f73b-4651-8658-5f4d92657ea7",
         "abilityRef": {
-          "id": "6a06299f6be32fced4930a24",
+          "id": "6a2e7a0d6be32fced4931377",
           "indexId": "d27cabd1-f73b-4651-8658-5f4d92657ea7",
           "trueAbilityId": "dense-mana",
           "name": "Dense Mana",
@@ -302,7 +302,7 @@
         "text": "Engineers and Airship staff",
         "ability": "fbcd4a2a-8a87-465f-b5d6-66436daffccd",
         "abilityRef": {
-          "id": "6a06299f6be32fced4930a25",
+          "id": "6a2e7a0d6be32fced4931378",
           "indexId": "fbcd4a2a-8a87-465f-b5d6-66436daffccd",
           "trueAbilityId": "emergency-maneuvers",
           "name": "Emergency Maneuvers",
@@ -318,10 +318,10 @@
         }
       },
       "un": {
-        "text": "Maids and Butlers - You may enter the Maid class at no experience cost.",
+        "text": "Maids and Butlers - You start with the Maid class unlocked and at level 1.",
         "ability": "fd369348-a806-47d8-9d62-0c2230771ae6",
         "abilityRef": {
-          "id": "6a06299f6be32fced4930a26",
+          "id": "6a2e7a0d6be32fced4931379",
           "indexId": "fd369348-a806-47d8-9d62-0c2230771ae6",
           "trueAbilityId": "graceful-service",
           "name": "Graceful Service",
@@ -337,10 +337,10 @@
         }
       },
       "vi": {
-        "text": "Medical and Healers - You may enter the Medic class at no experience cost.",
+        "text": "Medical and Healers - You start with the Medic class unlocked and at level 1.",
         "ability": "0e2cca4a-edc5-4f1a-a64b-6508cf7df15c",
         "abilityRef": {
-          "id": "6a06299f6be32fced4930a27",
+          "id": "6a2e7a0d6be32fced493137a",
           "indexId": "0e2cca4a-edc5-4f1a-a64b-6508cf7df15c",
           "trueAbilityId": "first-response",
           "name": "First Response",
@@ -359,7 +359,7 @@
         "text": "Those without family skills",
         "ability": "e5913b8b-9a90-4cdc-b82f-1d7659c26639",
         "abilityRef": {
-          "id": "6a06299f6be32fced4930981",
+          "id": "6a2e7a0d6be32fced49312d4",
           "indexId": "e5913b8b-9a90-4cdc-b82f-1d7659c26639",
           "trueAbilityId": "instinct",
           "name": "Instinct",
@@ -378,7 +378,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced4930881",
+    "id": "6a2e7a0d6be32fced49311d4",
     "indexId": "cb5ea351-a25c-4934-896f-74b17000992d",
     "primaryRaceId": "fae",
     "name": "Fae",
@@ -431,7 +431,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/42158447-1039-4c70-992b-00b67e562492-Dryad_raw.sm.webp",
     "imageAlignment": "top",
     "ability1Ref": {
-      "id": "6a06299f6be32fced4930978",
+      "id": "6a2e7a0d6be32fced49312cb",
       "indexId": "cc310c04-2d58-4361-9629-49fcf0cf2e52",
       "trueAbilityId": "faerie-flash",
       "name": "Faerie Flash",
@@ -496,7 +496,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced493087e",
+    "id": "6a2e7a0d6be32fced49311d1",
     "indexId": "f59714f1-f4cf-47f3-912d-39284c4a225d",
     "primaryRaceId": "human",
     "name": "Human",
@@ -549,7 +549,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/aa638108-9b8e-48ad-9e58-c7451e054c42-Sword_Saint_New_raw.sm.webp",
     "imageAlignment": "top",
     "ability1Ref": {
-      "id": "6a06299f6be32fced4930a1b",
+      "id": "6a2e7a0d6be32fced493136e",
       "indexId": "8e02ce04-e955-4780-81ad-dc995399e404",
       "trueAbilityId": "divine-providence",
       "name": "Divine Providence",
@@ -564,7 +564,7 @@
       "requirement": ""
     },
     "ability2Ref": {
-      "id": "6a06299f6be32fced4930a1c",
+      "id": "6a2e7a0d6be32fced493136f",
       "indexId": "2e0a8599-3bfd-4efb-bee5-9098f82e2536",
       "trueAbilityId": "human-adaptability",
       "name": "Human Adaptability",
@@ -627,7 +627,7 @@
     }
   },
   {
-    "id": "6a06299f6be32fced493087f",
+    "id": "6a2e7a0d6be32fced49311d2",
     "indexId": "d4f38a14-5d79-4ddc-9fac-07c5e7800a1a",
     "primaryRaceId": "youkai",
     "name": "Youkai",
@@ -680,7 +680,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/6cdb70f8-f6b5-43c2-a494-361d0f916d92-Jiangshi_New_raw.sm.webp",
     "imageAlignment": "top",
     "ability1Ref": {
-      "id": "6a06299f6be32fced4930a1d",
+      "id": "6a2e7a0d6be32fced4931370",
       "indexId": "b447ce81-f722-4d68-8b70-7d22637b81c3",
       "trueAbilityId": "spiritual-sync",
       "name": "Spiritual Sync",

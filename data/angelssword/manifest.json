@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-06-14T18:24:39.040Z",
-  "latestVersion": "0.13.0",
+  "generatedAt": "2026-07-20T20:14:21.494Z",
+  "latestVersion": "0.13.1",
   "sourceUrls": {
     "site": "https://rpg.angelssword.com",
     "onlineManual": "https://rpg.angelssword.com/game/online-manual",
@@ -74,11 +74,11 @@
     }
   ],
   "counts": {
-    "versions": 36,
-    "classes": 180,
-    "classDetails": 180,
-    "keyAbilities": 174,
-    "trueAbilities": 931,
+    "versions": 37,
+    "classes": 181,
+    "classDetails": 181,
+    "keyAbilities": 175,
+    "trueAbilities": 937,
     "items": 206,
     "itemDetails": 206,
     "monsters": 84,
@@ -91,8 +91,8 @@
     "primaryRaceDetails": 5,
     "ancestries": 43,
     "ancestryDetails": 43,
-    "breakthroughs": 88,
-    "keywords": 85
+    "breakthroughs": 89,
+    "keywords": 87
   },
   "files": {
     "raw": "raw",
@@ -102,12 +102,12 @@
     "readme": "README.md"
   },
   "joinedHighlights": {
-    "classDetailsResolved": 180,
+    "classDetailsResolved": 181,
     "monsterDetailsResolved": 84,
     "primaryRaceDetailsResolved": 5,
     "ancestryDetailsResolved": 43
   },
   "siteSnapshots": {
-    "note": "Site snapshots skipped by the Draft 2 local updater."
+    "note": "Site snapshots skipped by the Beta 2.12 local updater."
   }
 }
