@@ -4,7 +4,6 @@ import { createReadStream } from "node:fs";
 import path from "node:path";
 import { execFile } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { discoverOfficialVersions, planVersionUpdate, readLocalManifest } from "./update-lyrian-version.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = process.env.LYRIAN_PROJECT_ROOT ? path.resolve(process.env.LYRIAN_PROJECT_ROOT) : path.resolve(__dirname, "..");
@@ -42,21 +41,6 @@ function sendJson(response, status, data) {
   response.end(body);
 }
 
-function readRequestBody(request) {
-  return new Promise((resolve, reject) => {
-    let body = "";
-    request.on("data", (chunk) => {
-      body += chunk;
-      if (body.length > 1024 * 1024) {
-        request.destroy();
-        reject(new Error("Request body is too large."));
-      }
-    });
-    request.on("end", () => resolve(body));
-    request.on("error", reject);
-  });
-}
-
 function safeStaticPath(urlPath) {
   const decoded = decodeURIComponent(urlPath.split("?")[0]);
   const normalized = path.normalize(decoded).replace(/^(\.\.[/\\])+/, "");
@@ -76,47 +60,11 @@ async function handleApi(request, response, pathname) {
       mode: "local-server",
       projectRoot: PROJECT_ROOT,
       campaignPrototype: true,
-      message: "Beta 2.11 local development server is connected."
+      message: "Beta 2.13 public build local development server is connected."
     });
-  }
-
-  if (pathname === "/api/versions/local") {
-    const manifest = await readLocalManifest(PROJECT_ROOT);
-    return sendJson(response, 200, { ok: true, manifest });
-  }
-
-  if (pathname === "/api/versions/check") {
-    const manifest = await readLocalManifest(PROJECT_ROOT);
-    const official = await discoverOfficialVersions({ manualUrl: manifest.officialManualUrl });
-    const localLatest = manifest.latestKnownVersion || manifest.defaultVersion || "";
-    return sendJson(response, 200, {
-      ...official,
-      localLatest,
-      hasUpdate: official.latestVersion ? compareVersionStrings(official.latestVersion, localLatest) > 0 : false
-    });
-  }
-
-  if (pathname === "/api/versions/download" && request.method === "POST") {
-    const raw = await readRequestBody(request);
-    const body = raw ? JSON.parse(raw) : {};
-    const result = await planVersionUpdate(PROJECT_ROOT, body.version);
-    return sendJson(response, result.ok ? 200 : 501, result);
   }
 
   return sendJson(response, 404, { ok: false, message: "Unknown local API endpoint." });
-}
-
-function compareVersionStrings(a, b) {
-  const left = String(a || "").match(/\d+/g)?.map(Number) || [];
-  const right = String(b || "").match(/\d+/g)?.map(Number) || [];
-  const length = Math.max(left.length, right.length);
-  for (let index = 0; index < length; index += 1) {
-    const diff = (left[index] || 0) - (right[index] || 0);
-    if (diff) {
-      return diff;
-    }
-  }
-  return 0;
 }
 
 async function serveStatic(response, pathname) {
@@ -204,7 +152,7 @@ async function start() {
     try {
       await listenOnPort(server, port);
       const url = `http://${HOST}:${port}/`;
-      console.log(`Lyrian Beta 2.11 running at ${url}`);
+      console.log(`Lyrian Beta 2.13 public build running at ${url}`);
       console.log("Close this terminal window to stop the local development server.");
       openBrowser(url);
       return;

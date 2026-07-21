@@ -1,6 +1,6 @@
 [
   {
-    "id": "6a06299f6be32fced493084a",
+    "id": "6a2e7a0d6be32fced493119d",
     "indexId": "4ca88f6c-c588-46d0-8a9a-6436a47063f0",
     "monsterId": "acolyte",
     "name": "Acolyte",
@@ -40,7 +40,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/37f65ff1-6c95-4310-84f3-c3ad737e0a79-Acolyte_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930861",
+    "id": "6a2e7a0d6be32fced49311b4",
     "indexId": "233b788d-924a-45b4-b085-4307d22e976c",
     "monsterId": "alchemic-golem",
     "name": "Alchemic Golem",
@@ -80,7 +80,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/dd2ec934-f0b4-4ccd-887e-06a594f48c3f-Alchemical_Golem_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930849",
+    "id": "6a2e7a0d6be32fced493119c",
     "indexId": "6b5ba9af-2073-4a0c-a109-0ee731a81aa8",
     "monsterId": "alpha-wolf",
     "name": "Alpha Wolf",
@@ -120,7 +120,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/75a65746-0025-41ec-8ade-fab0018914a2-Wolf_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493084b",
+    "id": "6a2e7a0d6be32fced493119e",
     "indexId": "3bac8963-4dd6-4851-8684-16effcb9958c",
     "monsterId": "amanita-mushroom",
     "name": "Amanita Mushroom",
@@ -160,7 +160,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/4dff64df-4e46-4736-85ca-805e783863c6-Amanita_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493084c",
+    "id": "6a2e7a0d6be32fced493119f",
     "indexId": "3acecc5b-53dd-492a-af43-9f01da2ad3c7",
     "monsterId": "animal-summoner",
     "name": "Animal Summoner",
@@ -200,7 +200,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/52a65946-c76a-42c3-8d55-cae27b24eb55-Animal_Summoner_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493084d",
+    "id": "6a2e7a0d6be32fced49311a0",
     "indexId": "8b2c538f-295f-4463-b4cc-26ce9863b452",
     "monsterId": "apprentice",
     "name": "Apprentice",
@@ -240,7 +240,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/5d4f9365-c736-49e0-a096-67d4beb2451c-Apprentice_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493084e",
+    "id": "6a2e7a0d6be32fced49311a1",
     "indexId": "3b6f4f44-90d9-4db4-96a5-1d2589195d15",
     "monsterId": "archer",
     "name": "Archer",
@@ -280,7 +280,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/bf62d103-8bc7-4399-87bf-a89e30c0f993-Archer_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930837",
+    "id": "6a2e7a0d6be32fced493118a",
     "indexId": "854fda0d-8bbc-4f48-9166-6edb2404bc4f",
     "monsterId": "armored-spider",
     "name": "Armored Spider",
@@ -320,7 +320,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/77fafa56-fe33-4378-abb2-a688f7dc9b9c-Armored_Spider_1_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493084f",
+    "id": "6a2e7a0d6be32fced49311a2",
     "indexId": "96022318-54b7-4fae-adb3-8b46b622698e",
     "monsterId": "assassin",
     "name": "Assassin",
@@ -360,7 +360,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/16c9b4a5-41da-4bbe-ab2e-38294ec98be1-Assassin_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930836",
+    "id": "6a2e7a0d6be32fced4931189",
     "indexId": "d0dd5468-6751-4483-81c6-51029d86a0a4",
     "monsterId": "astral-spider",
     "name": "Astral Spider",
@@ -400,7 +400,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/baf9a6ae-2189-47dd-a6ea-055de761516f-Astra_Spider_1_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493082a",
+    "id": "6a2e7a0d6be32fced493117d",
     "indexId": "1846638f-c9f2-4438-ba93-6d664f6f6af7",
     "monsterId": "astral-tiger",
     "name": "Astral Tiger",
@@ -440,7 +440,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/531287b3-327a-4a8c-a6c7-d1d91a7e9551-astral_tiger_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930870",
+    "id": "6a2e7a0d6be32fced49311c3",
     "indexId": "e5dd33c0-4bfa-45e6-906d-52a0af651c9a",
     "monsterId": "astran-magpie",
     "name": "Astran Magpie",
@@ -480,7 +480,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/35385d1a-5ffc-48ad-aa4e-4a2e3fd488a0-Magpie_Greater_-_Copy.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493086f",
+    "id": "6a2e7a0d6be32fced49311c2",
     "indexId": "7f8991ea-de69-4d58-896f-16ea4ed66d81",
     "monsterId": "bandersnatch",
     "name": "Bandersnatch",
@@ -520,7 +520,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/28a6c9eb-8917-46a2-98ad-2f83cf4e9374-fucam.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930845",
+    "id": "6a2e7a0d6be32fced4931198",
     "indexId": "8e04fffd-ad92-449e-b699-72857fa9224a",
     "monsterId": "bear",
     "name": "Bear",
@@ -560,7 +560,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/c6119899-df63-4c84-b512-f84157556c83-Bear_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930868",
+    "id": "6a2e7a0d6be32fced49311bb",
     "indexId": "bbfb4f94-2803-4c69-bf56-1af3b9d14ab7",
     "monsterId": "black-knight",
     "name": "Black Knight",
@@ -600,7 +600,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/826b14f5-8f91-4100-ba35-746dd63abfd0-Boss_Black_Knight_-_Raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930850",
+    "id": "6a2e7a0d6be32fced49311a3",
     "indexId": "cbe33786-1ee3-43b1-a0da-7ee572ee8fa5",
     "monsterId": "boar",
     "name": "Boar",
@@ -640,7 +640,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/fd9939fd-407a-4cca-98ff-ef9a1f32b1c6-boar_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930838",
+    "id": "6a2e7a0d6be32fced493118b",
     "indexId": "62d16871-3bef-4e81-80bd-eee89fc875d6",
     "monsterId": "broodmother",
     "name": "Broodmother",
@@ -680,7 +680,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/d1750a79-ab00-4dc8-b2ba-f12fd28c01ea-Brood_Mother_1_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930851",
+    "id": "6a2e7a0d6be32fced49311a4",
     "indexId": "179e546c-5623-493b-9553-f8869e5cbdb5",
     "monsterId": "brute",
     "name": "Brute",
@@ -720,7 +720,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/403b1ef5-2b09-4006-9d6e-acaeb1a2a58b-Brute_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930834",
+    "id": "6a2e7a0d6be32fced4931187",
     "indexId": "cad5ce5e-cf33-4101-b233-a1427d6fe81c",
     "monsterId": "burrowing-spider",
     "name": "Burrowing Spider",
@@ -760,7 +760,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/c91aa2bd-7853-485e-8893-3f4427b9e6cf-Burrowing_Spider_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493082f",
+    "id": "6a2e7a0d6be32fced4931182",
     "indexId": "045afa55-cf1c-4d03-98a2-9cad90c62872",
     "monsterId": "cheetah",
     "name": "Cheetah",
@@ -800,7 +800,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/49cefc92-0b1b-4339-8f98-916dab268d83-Cheetah_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493086a",
+    "id": "6a2e7a0d6be32fced49311bd",
     "indexId": "3b2cee74-787e-48cd-8134-634dd9cb4842",
     "monsterId": "crystal-behemoth",
     "name": "Crystal Behemoth",
@@ -840,7 +840,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/2a0b2e40-04b6-431d-bbd1-e1448dbf31d7-Crystal Eater.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930852",
+    "id": "6a2e7a0d6be32fced49311a5",
     "indexId": "69c02b17-f64d-4706-b3c4-9c3492b937a9",
     "monsterId": "deathcap-mushroom",
     "name": "Deathcap Mushroom",
@@ -880,7 +880,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/4a225dbd-f575-47c4-bc96-423ac66dc75c-Deathcap_Mushroom_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930853",
+    "id": "6a2e7a0d6be32fced49311a6",
     "indexId": "593c1495-8fcc-47f4-95c1-1c51af296b4c",
     "monsterId": "defender",
     "name": "Defender",
@@ -920,7 +920,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/beb6f9e0-167b-4c55-8563-9176ee5bcda3-Defender_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930872",
+    "id": "6a2e7a0d6be32fced49311c5",
     "indexId": "75a79747-df8a-4c59-8cad-244c72960974",
     "monsterId": "devouring-swarm",
     "name": "Devouring Swarm",
@@ -960,7 +960,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/546d103f-a981-4f72-bf09-db2ad5beca9e-Locust Swarm.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493083a",
+    "id": "6a2e7a0d6be32fced493118d",
     "indexId": "b342a5aa-c335-47d0-b876-9ca5771aec9b",
     "monsterId": "drake",
     "name": "Drake",
@@ -1000,7 +1000,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/a3f9256e-90da-46c0-8ae4-dfd2e592872d-Drake_1_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930839",
+    "id": "6a2e7a0d6be32fced493118c",
     "indexId": "ee9239b8-a900-48f3-afd5-65b8310e40c3",
     "monsterId": "drake-wyrmling--fire-",
     "name": "Drake Wyrmling (Fire)",
@@ -1040,7 +1040,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/eaac8074-6eb0-48d3-8f3b-585479e54737-Wyrmling_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930854",
+    "id": "6a2e7a0d6be32fced49311a7",
     "indexId": "594d6d22-fe9b-4774-a3ab-093fab959c79",
     "monsterId": "dreameater",
     "name": "Dreameater",
@@ -1080,7 +1080,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/6398a379-3a50-4f88-85d2-3bb11a9ad032-Dreameater_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493086e",
+    "id": "6a2e7a0d6be32fced49311c1",
     "indexId": "2de0df42-4f4c-4011-b606-247fcc22db98",
     "monsterId": "dredge-ooze",
     "name": "Dredge Ooze",
@@ -1120,7 +1120,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/12592ece-d57f-4384-8b55-f02b1a2c8161-SludgeMelee.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930878",
+    "id": "6a2e7a0d6be32fced49311cb",
     "indexId": "8e171899-a425-41c0-aaf2-1989a2f35186",
     "monsterId": "earth-slime",
     "name": "Earth Slime",
@@ -1160,7 +1160,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/c428faa0-0b52-498c-80f2-0e26f3fb7b5d-earth.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930860",
+    "id": "6a2e7a0d6be32fced49311b3",
     "indexId": "31b31570-d8a3-4f96-bca3-9d3c3544e9be",
     "monsterId": "efreet",
     "name": "Efreet",
@@ -1200,7 +1200,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/84460ecf-508f-44b4-8d65-f3b918f4b450-Efreet_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930869",
+    "id": "6a2e7a0d6be32fced49311bc",
     "indexId": "f1f68521-ca7c-4db6-9f42-b3107b39a9b5",
     "monsterId": "faewolf",
     "name": "Faewolf",
@@ -1240,7 +1240,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/a6425280-f93e-4961-82af-ba8d0a80c698-Faewolf.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930876",
+    "id": "6a2e7a0d6be32fced49311c9",
     "indexId": "54f72d3d-86a4-4ba4-9238-ecb856bae517",
     "monsterId": "fire-slime",
     "name": "Fire Slime",
@@ -1280,7 +1280,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/8348b2ba-adff-4786-a84a-618ea192da49-fire.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493086c",
+    "id": "6a2e7a0d6be32fced49311bf",
     "indexId": "2d61160f-e3da-4316-b389-1b6e5cb44092",
     "monsterId": "fortuna",
     "name": "Fortuna",
@@ -1320,7 +1320,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/65ce8c68-9dae-4d8a-aa32-a29d41f67e04-Fortuna.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493083e",
+    "id": "6a2e7a0d6be32fced4931191",
     "indexId": "037e50a4-2e9b-4429-9845-adf21cce8dca",
     "monsterId": "frost-maiden",
     "name": "Frost Maiden",
@@ -1360,7 +1360,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/2f1e15b6-27d9-4de0-9df0-4f872a2c6d28-Frost_Maiden_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930855",
+    "id": "6a2e7a0d6be32fced49311a8",
     "indexId": "6af9d154-b7e4-47f1-8f62-92557f49259f",
     "monsterId": "gargoyle",
     "name": "Gargoyle",
@@ -1400,7 +1400,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/a403cdcd-2f2d-46df-a11b-ed090294559e-Gargoyle_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493082c",
+    "id": "6a2e7a0d6be32fced493117f",
     "indexId": "af3c5a29-cd5f-4fd8-a531-7e0005d6191a",
     "monsterId": "ghost",
     "name": "Ghost",
@@ -1440,7 +1440,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/67fb952c-43ad-49df-bae6-ed2c8ec18a1e-Ghost_3_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930843",
+    "id": "6a2e7a0d6be32fced4931196",
     "indexId": "c9e2184c-ceb6-459d-9283-f3d8f190426b",
     "monsterId": "ghoul",
     "name": "Ghoul",
@@ -1480,7 +1480,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/3aabed48-25dd-4689-85ea-07467ff58ca6-Ghoul_2_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493087b",
+    "id": "6a2e7a0d6be32fced49311ce",
     "indexId": "29cd6310-8fce-43d3-b743-8f82676104e4",
     "monsterId": "giant-astra-crab",
     "name": "Giant Astra Crab",
@@ -1520,7 +1520,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/d5f18566-4b15-41fa-abb8-e4f5ca60233d-crab.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930856",
+    "id": "6a2e7a0d6be32fced49311a9",
     "indexId": "3cfa048e-ddef-4fbd-a8ce-8d25c7c1629a",
     "monsterId": "giant-mantis",
     "name": "Giant Mantis",
@@ -1560,7 +1560,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/0543af25-b7e5-4a02-bc26-6984660acd9a-Mantis_Final_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493083d",
+    "id": "6a2e7a0d6be32fced4931190",
     "indexId": "2edfb73e-c645-4f2c-a47b-8e28650dbaf0",
     "monsterId": "giant-prismatic-slime",
     "name": "Giant Prismatic Slime",
@@ -1600,7 +1600,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/db443180-03c6-49a6-b3d9-81b1d1276a98-Huge_Prismatic_Slime_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930835",
+    "id": "6a2e7a0d6be32fced4931188",
     "indexId": "2c23fbc1-3bce-4ee7-8adc-9cb61add492e",
     "monsterId": "giant-spider",
     "name": "Giant Spider",
@@ -1640,7 +1640,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/a696ef5f-bad7-424e-a9ce-edc654150599-Giant_Spider_1_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493087c",
+    "id": "6a2e7a0d6be32fced49311cf",
     "indexId": "a2b113da-ac79-4a2d-9547-f5883d125fcf",
     "monsterId": "gravity-fiend",
     "name": "Gravity Fiend",
@@ -1680,7 +1680,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/72ecafed-737b-486a-ac51-d3d2caae561e-Gravity Fiend.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930871",
+    "id": "6a2e7a0d6be32fced49311c4",
     "indexId": "faf56c97-49d3-4ee5-8aac-dee22ca2d03c",
     "monsterId": "greater-astran-magpie",
     "name": "Greater Astran Magpie",
@@ -1720,7 +1720,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/b39d5e58-cfd2-4ff1-b662-bc6e90f42d98-Magpie_Lesser_-_Copy.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930847",
+    "id": "6a2e7a0d6be32fced493119a",
     "indexId": "1ad81deb-26a8-4a67-89b0-2ba70b0e70b2",
     "monsterId": "greater-manticore",
     "name": "Greater Manticore",
@@ -1760,7 +1760,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/8afd666c-9047-4f29-985f-457fb356d955-Manticore_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930848",
+    "id": "6a2e7a0d6be32fced493119b",
     "indexId": "f70ed688-a434-4ce3-85af-72f6cde20f96",
     "monsterId": "gryphon",
     "name": "Gryphon",
@@ -1800,7 +1800,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/b163d1b7-4b9d-4f81-a67b-7c8a1596d32b-Griffon_2_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493083f",
+    "id": "6a2e7a0d6be32fced4931192",
     "indexId": "dfda600c-0e75-4290-85f4-5450b45609bc",
     "monsterId": "heliamphora",
     "name": "Heliamphora",
@@ -1840,7 +1840,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/77ae0fe7-31ee-4194-8e62-e150054d59ca-Heliamphora_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930867",
+    "id": "6a2e7a0d6be32fced49311ba",
     "indexId": "465c66ad-f229-4d88-80fc-45a04a84fd01",
     "monsterId": "hobgoblin-boar-rider",
     "name": "Hobgoblin Boar Rider",
@@ -1880,7 +1880,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/5b8a0085-45f5-4cc6-9b98-46ca9ebad2e2-Hog_Rider_-_Raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930864",
+    "id": "6a2e7a0d6be32fced49311b7",
     "indexId": "302ecf1d-2f2a-4297-ba54-7fcf6f8b658c",
     "monsterId": "hobgoblin-fighter",
     "name": "Hobgoblin Fighter",
@@ -1920,7 +1920,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/15fd91f8-ada4-4c60-b7ec-3e44032d387e-Hobgoblin.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930865",
+    "id": "6a2e7a0d6be32fced49311b8",
     "indexId": "41663996-7ee8-4f21-ac22-ecc438d5bc2a",
     "monsterId": "hobgoblin-tactician",
     "name": "Hobgoblin Tactician",
@@ -1960,7 +1960,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/ab69ea79-5bc1-4e3b-8e3b-809544925033-Hobgoblin Tactician.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930857",
+    "id": "6a2e7a0d6be32fced49311aa",
     "indexId": "f1035881-c895-4ef9-88cb-175d83bcd060",
     "monsterId": "hydra",
     "name": "Hydra",
@@ -2000,7 +2000,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/7db55312-68b8-4e34-8730-c740c2439670-Hydra_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493082b",
+    "id": "6a2e7a0d6be32fced493117e",
     "indexId": "7cab2b64-587c-4dd7-9011-6e1d6c261d56",
     "monsterId": "ice-queen",
     "name": "Ice Queen",
@@ -2040,7 +2040,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/608fa177-3e57-4618-8abf-e718be8e2c1c-Frost_Queen_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930874",
+    "id": "6a2e7a0d6be32fced49311c7",
     "indexId": "fd910e9c-9aff-4a53-8dca-b1e74a161628",
     "monsterId": "inkblight",
     "name": "Inkblight",
@@ -2080,7 +2080,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/6cdeaf1c-62df-4e1c-8a7d-a439aabf4532-InkMonster.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930873",
+    "id": "6a2e7a0d6be32fced49311c6",
     "indexId": "aeb3291a-b484-4f4e-b70a-1676aefce2ee",
     "monsterId": "ixilune",
     "name": "Ixilune",
@@ -2120,7 +2120,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/6c1bc7c0-f813-4adf-a19e-ea591966c59e-Ixilune.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493086b",
+    "id": "6a2e7a0d6be32fced49311be",
     "indexId": "f064af3a-1490-480d-9098-91ff1560a342",
     "monsterId": "jack-of-hearts",
     "name": "Jack of Hearts",
@@ -2160,7 +2160,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/6c18b37b-5444-409d-87e5-5bd5a528b9d8-Jack of Hearts.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493083c",
+    "id": "6a2e7a0d6be32fced493118f",
     "indexId": "40b25edb-fc58-44c9-9952-0105c45be630",
     "monsterId": "landshark",
     "name": "Landshark",
@@ -2200,7 +2200,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/5149d471-104e-4594-ba41-d2e88ad27a66-Land_Shark_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930858",
+    "id": "6a2e7a0d6be32fced49311ab",
     "indexId": "15a27a75-d729-4a2a-acdb-ca06c90a9ffd",
     "monsterId": "mage",
     "name": "Mage",
@@ -2240,7 +2240,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/eb4973e3-145c-41ab-8353-72a2b4b92d56-Mage_2_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493087a",
+    "id": "6a2e7a0d6be32fced49311cd",
     "indexId": "90bf4b7e-fe94-4f9c-a871-1af40a3a4a7d",
     "monsterId": "mana-slime",
     "name": "Mana Slime",
@@ -2280,7 +2280,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/bd5196ae-5817-4169-bd45-115c0b3873bb-magic.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930846",
+    "id": "6a2e7a0d6be32fced4931199",
     "indexId": "a344632b-984b-488f-8882-92f2c4e27b2f",
     "monsterId": "manticore",
     "name": "Manticore",
@@ -2320,7 +2320,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/1eace9ed-8162-431d-8b9d-3566df5b4e89-Manticore_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930842",
+    "id": "6a2e7a0d6be32fced4931195",
     "indexId": "8adae12b-9af9-451b-ae42-6709e154d07c",
     "monsterId": "minotaur",
     "name": "Minotaur",
@@ -2360,7 +2360,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/c5d950f1-1029-4a50-bfa4-bade4965ccec-Minotaur_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493082e",
+    "id": "6a2e7a0d6be32fced4931181",
     "indexId": "f8e333d6-a866-4c03-b5a1-ae713e9fd60d",
     "monsterId": "ogre",
     "name": "Ogre",
@@ -2400,7 +2400,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/004746be-4b18-4ff1-8bfb-062765545c63-Ogre_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930863",
+    "id": "6a2e7a0d6be32fced49311b6",
     "indexId": "eeb2e2d4-0ccf-493a-9d9a-d3d21be224d3",
     "monsterId": "pipoltr",
     "name": "Pipoltr",
@@ -2440,7 +2440,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/62c6c744-e9dc-4b80-9102-fdc01bb0e14e-Pipoltr_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930859",
+    "id": "6a2e7a0d6be32fced49311ac",
     "indexId": "b1f00295-d1b0-471d-93ce-c720958c22f6",
     "monsterId": "priest",
     "name": "Priest",
@@ -2480,7 +2480,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/54c7ffaf-5251-47e6-981d-1574bceded4a-Priest_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930840",
+    "id": "6a2e7a0d6be32fced4931193",
     "indexId": "c3001893-6a2f-4a2e-b72c-7e6472bb3b2d",
     "monsterId": "raiju",
     "name": "Raiju",
@@ -2520,7 +2520,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/d1e6645f-7efa-4f67-acb6-51bf3f0d9d79-Raiju_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930862",
+    "id": "6a2e7a0d6be32fced49311b5",
     "indexId": "e85b8f9d-ed30-4720-a186-00c3c5483044",
     "monsterId": "rhinoceros-beetle",
     "name": "Rhinoceros Beetle",
@@ -2560,7 +2560,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/f0094b2b-bb9d-44aa-945e-b40efa5eb597-Rhino_Beetle_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493086d",
+    "id": "6a2e7a0d6be32fced49311c0",
     "indexId": "c8f8bb67-6873-40e9-9223-d75312aac67a",
     "monsterId": "rime-vermin",
     "name": "Rime Vermin",
@@ -2600,7 +2600,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/730d23ea-b46d-45f0-950a-0298b2102c88-Ice skitterer.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493085a",
+    "id": "6a2e7a0d6be32fced49311ad",
     "indexId": "6ccfb3c5-9080-4f9e-80c6-f9d32b45c298",
     "monsterId": "rogue",
     "name": "Rogue",
@@ -2640,7 +2640,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/a998ecc2-bada-4000-8e14-39062435dc74-Rogue_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493087d",
+    "id": "6a2e7a0d6be32fced49311d0",
     "indexId": "45dd408b-8e9b-4b63-8721-fd1f61a48f2c",
     "monsterId": "skeletal-champion",
     "name": "Skeletal Champion",
@@ -2680,7 +2680,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/184695f4-1044-4bd7-8f0b-5fcaab58429e-skeletalchamp.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493085f",
+    "id": "6a2e7a0d6be32fced49311b2",
     "indexId": "b806cbe0-f4f3-40ac-bc5b-1ab9d24a5a76",
     "monsterId": "skeletal-monstrosity",
     "name": "Skeletal Monstrosity",
@@ -2720,7 +2720,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/1d468d8b-6794-4d53-9658-644690a7de87-Skeletal_Monstrosity_2_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930841",
+    "id": "6a2e7a0d6be32fced4931194",
     "indexId": "cfa979d6-cf24-4bce-8d41-8b2b429aa3ab",
     "monsterId": "skeleton",
     "name": "Skeleton",
@@ -2760,7 +2760,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/bb358e47-21d7-4860-b902-4781712d688c-Skeleton_1_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930875",
+    "id": "6a2e7a0d6be32fced49311c8",
     "indexId": "42c8941d-b6e6-4266-8540-2c001cba9c2a",
     "monsterId": "slime",
     "name": "Slime",
@@ -2800,7 +2800,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/e6ddc0d8-f8bf-4f23-bf27-b3f6f852e128-common.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493085b",
+    "id": "6a2e7a0d6be32fced49311ae",
     "indexId": "0a32f7ff-0c43-4413-87cb-3cec8c75dd57",
     "monsterId": "sniper",
     "name": "Sniper",
@@ -2840,7 +2840,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/68ddf725-ba38-4de7-a991-21e952d1f967-Sniper_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493085c",
+    "id": "6a2e7a0d6be32fced49311af",
     "indexId": "a5c968eb-7b1b-443f-bf8d-061805ba0ebd",
     "monsterId": "tactician",
     "name": "Tactician",
@@ -2880,7 +2880,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/bfb0756d-50bb-4b37-8729-1ae0f5c64840-Tactician_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493085d",
+    "id": "6a2e7a0d6be32fced49311b0",
     "indexId": "7601da34-961c-40df-bdd7-2113128d7758",
     "monsterId": "tank",
     "name": "Tank",
@@ -2920,7 +2920,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/f2a83441-038d-4a07-a7da-c7d84e78d2e7-tank_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930833",
+    "id": "6a2e7a0d6be32fced4931186",
     "indexId": "13648d76-aa41-4501-8497-bc3825c43dd3",
     "monsterId": "troll",
     "name": "Troll",
@@ -2960,7 +2960,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/84bd8016-c98d-4483-934a-3b81c248937c-Troll_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493082d",
+    "id": "6a2e7a0d6be32fced4931180",
     "indexId": "37399fa5-38a1-411d-a96e-eadb0fff9f4d",
     "monsterId": "unstable-efreet",
     "name": "Unstable Efreet",
@@ -3000,7 +3000,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/f6d9b990-40f4-41a9-9aae-a0644a8c0b64-Unstable_Efreet_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493085e",
+    "id": "6a2e7a0d6be32fced49311b1",
     "indexId": "7e01da8a-a562-4d00-a86a-65982731d597",
     "monsterId": "warrior",
     "name": "Warrior",
@@ -3040,7 +3040,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/9026f388-b063-4773-8f36-99817e9109fb-Warrior_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930877",
+    "id": "6a2e7a0d6be32fced49311ca",
     "indexId": "2694fbca-10cf-4200-8195-2ad30a0d9d10",
     "monsterId": "water-slime",
     "name": "Water Slime",
@@ -3080,7 +3080,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/cdf074ea-b23e-4f51-bc98-05eea28f523e-water.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930866",
+    "id": "6a2e7a0d6be32fced49311b9",
     "indexId": "c826e401-8801-4159-8661-f2a74e3505fc",
     "monsterId": "westrian-heavy-paladin",
     "name": "Westrian Heavy Paladin",
@@ -3120,7 +3120,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/2e5c0155-98d4-4e5c-9296-8cfc8c420785-Enemy_Paladin_-_Raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930832",
+    "id": "6a2e7a0d6be32fced4931185",
     "indexId": "cab51a10-d024-475a-a24d-dae0de8ead42",
     "monsterId": "wight",
     "name": "Wight",
@@ -3160,7 +3160,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/1d01957d-2ffc-468f-a894-3ff1d55f40c0-Wight_1_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930879",
+    "id": "6a2e7a0d6be32fced49311cc",
     "indexId": "0468641d-2948-4192-8aa7-bd97ff08c1e8",
     "monsterId": "wind-slime",
     "name": "Wind Slime",
@@ -3200,7 +3200,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/66878be7-7015-4599-abfd-c05e43bc2164-wind.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930830",
+    "id": "6a2e7a0d6be32fced4931183",
     "indexId": "2d5c74b1-57e0-4aba-a3ea-601a041a97d1",
     "monsterId": "wolf",
     "name": "Wolf",
@@ -3240,7 +3240,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/6222c72d-074d-412a-b4fa-3c5aa86d8c13-Wolf_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930831",
+    "id": "6a2e7a0d6be32fced4931184",
     "indexId": "db02a240-dd26-49f9-8784-f841d739b726",
     "monsterId": "wraith",
     "name": "Wraith",
@@ -3280,7 +3280,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/ec86ea6e-337b-4454-924c-5d7f4dc0d434-Wraith_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced493083b",
+    "id": "6a2e7a0d6be32fced493118e",
     "indexId": "a9795389-424b-4ef5-9f9d-a1959051af54",
     "monsterId": "wyrm--fire-",
     "name": "Wyrm (Fire)",
@@ -3320,7 +3320,7 @@
     "imageLgUrl": "https://cdn.angelssword.com/ttrpg/assets/71f4788e-33a6-4326-bb6a-ac90805e5f9c-Fire_Wyrm_raw.lg.webp"
   },
   {
-    "id": "6a06299f6be32fced4930844",
+    "id": "6a2e7a0d6be32fced4931197",
     "indexId": "b76c498e-5025-482b-8e31-34c5210058e2",
     "monsterId": "zombies",
     "name": "Zombies",

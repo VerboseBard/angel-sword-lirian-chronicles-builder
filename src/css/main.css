@@ -56,7 +56,7 @@
         linear-gradient(180deg, rgba(8, 20, 39, 0.44) 0%, rgba(11, 24, 46, 0.72) 44%, rgba(8, 17, 31, 0.94) 100%),
         radial-gradient(circle at top, rgba(255, 214, 79, 0.15), transparent 28%),
         radial-gradient(circle at right, rgba(0, 92, 187, 0.18), transparent 26%),
-        url("../../assets/lyrian-homepage-castle.png") center top / cover fixed no-repeat,
+        url("../../assets/lyrian-homepage-castle.webp") center top / cover fixed no-repeat,
         #0d1521;
     }
 
@@ -1018,6 +1018,7 @@
       border-radius: 8px;
       background: rgba(34, 28, 21, 0.96);
       box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+      -webkit-backdrop-filter: blur(12px);
       backdrop-filter: blur(12px);
     }
 
@@ -1969,7 +1970,7 @@
       inset: 0;
       background:
         linear-gradient(90deg, rgba(8, 28, 64, 0.95), rgba(8, 28, 64, 0.78)),
-        url("../../assets/lyrian-chronicles-logo.png") center center / min(68%, 860px) auto no-repeat;
+        url("../../assets/lyrian-chronicles-logo.webp") center center / min(68%, 860px) auto no-repeat;
       opacity: 0.24;
       pointer-events: none;
     }
@@ -8152,8 +8153,7 @@
         background-attachment: scroll;
       }
 
-      .app-shell,
-      .builder-shell {
+      .app-shell {
         grid-template-columns: 1fr;
       }
 
@@ -8570,7 +8570,7 @@
     .builder-sidebar-logo {
       height: 124px;
       width: min(100%, 220px);
-      background-image: url("../../assets/lyrian-chronicles-logo.png");
+      background-image: url("../../assets/lyrian-chronicles-logo.webp");
       background-repeat: no-repeat;
       background-position: center top;
       background-size: contain;
@@ -8662,13 +8662,6 @@
       padding-left: 18px;
     }
 
-    .version-connection {
-      padding-top: 4px;
-      border-top: 1px solid rgba(7, 21, 39, 0.24);
-      font-size: 0.72rem;
-      color: rgba(7, 21, 39, 0.78);
-    }
-
     .version-progress {
       display: grid;
       gap: 5px;
@@ -8756,6 +8749,10 @@
     }
 
     @media (max-width: 900px) {
+      .builder-shell {
+        grid-template-columns: 1fr;
+      }
+
       .builder-sidebar-logo,
       .builder-sidebar-header > .eyebrow,
       .version-manager {
@@ -9123,19 +9120,13 @@
 
       .version-manager .builder-build-version,
       .version-manager > label,
-      .version-manager .version-update-list,
-      .version-manager .version-connection {
+      .version-manager .version-update-list {
         display: none;
       }
 
       .version-manager select {
         min-width: 0;
         min-height: 44px;
-      }
-
-      .version-manager button {
-        min-height: 44px;
-        padding: 8px 12px;
       }
 
       .version-manager .version-progress {
@@ -10223,7 +10214,8 @@
 
       .builder-step-button strong,
       .builder-step-button span {
-        overflow-wrap: anywhere;
+        overflow-wrap: break-word;
+        word-break: normal;
       }
 
       .builder-stage-summary .summary-grid {

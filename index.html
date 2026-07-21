@@ -7,15 +7,15 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Lyrian Sheet">
-  <title>Lyrian Chronicles Character Builder - Beta 2.11</title>
+  <title>Lyrian Chronicles Character Builder - Beta 2.13</title>
   <link rel="icon" type="image/png" href="assets/lyrian-symbol.png">
   <link rel="apple-touch-icon" href="assets/lyrian-symbol.png">
   <link rel="manifest" href="manifest.webmanifest">
   <script defer src="assets/lyrian-form-map.js"></script>
-  <script defer src="assets/versions/0.13.0/lyrian-data.js"></script>
-  <script defer src="assets/versions/0.13.0/lyrian-detail-data.js"></script>
+  <script defer src="assets/versions/0.13.1/lyrian-data.js"></script>
+  <script defer src="assets/versions/0.13.1/lyrian-detail-data.js"></script>
   <script defer src="assets/versions/manifest.js"></script>
-  <link rel="stylesheet" href="./src/css/main.css?v=2.11.0-iphone-layout-20260718">
+  <link rel="stylesheet" href="./src/css/main.css?v=2.13.0-public-20260721">
 </head>
 <body>
   <section id="builder-view" class="builder-view">
@@ -26,21 +26,18 @@
           <section class="version-manager" aria-label="Game version manager">
             <div class="builder-build-version" aria-label="Builder build version">
               <span>Builder build</span>
-              <strong>Beta 2.11</strong>
+              <strong>Beta 2.13</strong>
             </div>
             <label for="game-version-select">Select game version</label>
             <select id="game-version-select"></select>
             <div id="version-update-list" class="version-update-list" aria-live="polite"></div>
             <div id="version-progress" class="version-progress" hidden>
               <div>
-                <span id="version-progress-label">Checking for updates</span>
+                <span id="version-progress-label">Loading rules data</span>
                 <strong id="version-progress-percent">0%</strong>
               </div>
               <span class="version-progress-track"><span id="version-progress-bar" class="version-progress-bar"></span></span>
             </div>
-            <button id="version-check-button" type="button">Check for Updates</button>
-            <button id="version-download-button" type="button" hidden>Download New Version</button>
-            <div id="version-connection" class="version-connection">Web build. Published updates arrive here.</div>
           </section>
           <p class="eyebrow">Guided Character Builder</p>
           <h1>Lyrian Chronicles</h1>
@@ -452,6 +449,6 @@
   <input id="import-file" type="file" accept=".json,.pdf,.xlsx,.xls,application/json,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" hidden>
   <input id="portrait-file" type="file" accept="image/*" hidden>
 
-  <script defer src="assets/app.bundle.js?v=2.11.0-iphone-layout-20260718"></script>
+  <script defer src="assets/app.bundle.js?v=2.13.0-public-20260721"></script>
 </body>
 </html>

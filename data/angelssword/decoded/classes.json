@@ -1,6 +1,6 @@
 [
   {
-    "id": "6a06299f6be32fced493048a",
+    "id": "6a2e7a0d6be32fced4930dcd",
     "indexId": "1e259654-b060-4062-a134-51b5cae21bb1",
     "classId": "abjurer",
     "name": "Abjurer",
@@ -15,7 +15,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304c3",
+    "id": "6a2e7a0d6be32fced4930e06",
     "indexId": "0d45401a-6db2-4a99-8d1f-b8b3e917ee33",
     "classId": "acolyte",
     "name": "Acolyte",
@@ -30,7 +30,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304ee",
+    "id": "6a2e7a0d6be32fced4930e31",
     "indexId": "12ae832c-9aba-49fc-80b1-99c7c07eeb38",
     "classId": "adventurer",
     "name": "Adventurer",
@@ -45,7 +45,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a2c29bd6be32fced4930c81",
+    "id": "6a2e7a0d6be32fced4930e7f",
     "indexId": "a31e5fcb-b322-4c95-b6ee-5e2ec2f2d943",
     "classId": "aerial-mage",
     "name": "Aerial Mage",
@@ -60,7 +60,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493048b",
+    "id": "6a2e7a0d6be32fced4930dce",
     "indexId": "02fd2a2a-516b-455b-bc8d-4218fc239704",
     "classId": "aeromancer",
     "name": "Aeromancer",
@@ -75,7 +75,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304b6",
+    "id": "6a2e7a0d6be32fced4930df9",
     "indexId": "bc7b1edc-1e2f-4a55-bf87-b5cb56bd0eb5",
     "classId": "aeromaster",
     "name": "Aeromaster",
@@ -88,7 +88,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49304ef",
+    "id": "6a2e7a0d6be32fced4930e32",
     "indexId": "c571cec0-f8e6-4732-85cb-7ad5a65501bc",
     "classId": "aetherie",
     "name": "Aetherie",
@@ -103,7 +103,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304f3",
+    "id": "6a2e7a0d6be32fced4930e36",
     "indexId": "c6b5b766-c83e-48d8-a19b-c87c65b51696",
     "classId": "agrarian",
     "name": "Agrarian",
@@ -118,7 +118,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304da",
+    "id": "6a2e7a0d6be32fced4930e1d",
     "indexId": "c499dc44-c803-4af9-af3b-829ea66cacd6",
     "classId": "alchemeister",
     "name": "Alchemeister",
@@ -133,7 +133,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304d9",
+    "id": "6a2e7a0d6be32fced4930e1c",
     "indexId": "c0bb0c42-e417-4929-b2c1-fbfdd223fb16",
     "classId": "alchemist",
     "name": "Alchemist",
@@ -148,7 +148,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304f1",
+    "id": "6a2e7a0d6be32fced4930e34",
     "indexId": "28d1ff5e-7d63-4317-9a35-a1e18dfb625a",
     "classId": "alkahest",
     "name": "Alkahest",
@@ -163,7 +163,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304d6",
+    "id": "6a2e7a0d6be32fced4930e19",
     "indexId": "94e65c9d-0d1d-498f-89c4-8808ec7bc254",
     "classId": "amanita",
     "name": "Amanita",
@@ -178,7 +178,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304b4",
+    "id": "6a2e7a0d6be32fced4930df7",
     "indexId": "bb8df19e-817f-4c62-b94c-68901de6ac58",
     "classId": "angelblooded",
     "name": "Angelblooded",
@@ -191,7 +191,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304e0",
+    "id": "6a2e7a0d6be32fced4930e23",
     "indexId": "81b6ad4e-b261-436c-875b-40520bbf4f34",
     "classId": "animal-summoner",
     "name": "Animal Summoner",
@@ -206,7 +206,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493048c",
+    "id": "6a2e7a0d6be32fced4930dcf",
     "indexId": "c2b129c2-5f5e-49be-afb0-b3524c75632b",
     "classId": "anti-mage",
     "name": "Anti-Mage",
@@ -221,7 +221,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493048d",
+    "id": "6a2e7a0d6be32fced4930dd0",
     "indexId": "da0b5f13-b284-4ec2-a77a-ca927805248a",
     "classId": "arcanist",
     "name": "Arcanist",
@@ -236,7 +236,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493048e",
+    "id": "6a2e7a0d6be32fced4930dd1",
     "indexId": "fdb96268-fa1a-43e3-8eb4-56a25efa1b1e",
     "classId": "archer",
     "name": "Archer",
@@ -251,7 +251,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304b8",
+    "id": "6a2e7a0d6be32fced4930dfb",
     "indexId": "301c37f9-5235-4149-8ffb-72ff189f6cbc",
     "classId": "archsage",
     "name": "Archsage",
@@ -264,7 +264,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304e7",
+    "id": "6a2e7a0d6be32fced4930e2a",
     "indexId": "b2710300-e545-47bd-85cf-e3675319e249",
     "classId": "armiger",
     "name": "Armiger",
@@ -279,7 +279,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304fd",
+    "id": "6a2e7a0d6be32fced4930e40",
     "indexId": "6c992890-b4b3-4286-8ba7-45d320b3d31b",
     "classId": "armorsmith",
     "name": "Armorsmith",
@@ -294,7 +294,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304fb",
+    "id": "6a2e7a0d6be32fced4930e3e",
     "indexId": "16688460-1950-4b76-b7c8-414468f49f00",
     "classId": "artificer",
     "name": "Artificer",
@@ -309,7 +309,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304b9",
+    "id": "6a2e7a0d6be32fced4930dfc",
     "indexId": "60ba55f7-ace7-4cec-8320-c8c515f8e32b",
     "classId": "assassin",
     "name": "Assassin",
@@ -324,7 +324,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493052a",
+    "id": "6a2e7a0d6be32fced4930e6d",
     "indexId": "f106d562-fd03-47eb-81d6-2e9ce2344991",
     "classId": "aurora-blade-style",
     "name": "Aurora Blade Style",
@@ -339,7 +339,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493048f",
+    "id": "6a2e7a0d6be32fced4930dd2",
     "indexId": "78728227-6d00-4933-9b42-b5338da1937e",
     "classId": "bajiquan-style",
     "name": "Bajiquan Style",
@@ -354,7 +354,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930490",
+    "id": "6a2e7a0d6be32fced4930dd3",
     "indexId": "dafe107e-13e2-449d-8a25-3397a8c80e7a",
     "classId": "bard",
     "name": "Bard",
@@ -369,7 +369,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930491",
+    "id": "6a2e7a0d6be32fced4930dd4",
     "indexId": "3415908b-0b80-493b-85be-9d8237b20a32",
     "classId": "battle-mage",
     "name": "Battle Mage",
@@ -384,7 +384,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930492",
+    "id": "6a2e7a0d6be32fced4930dd5",
     "indexId": "e09224a9-abcf-46b4-a360-5a58a5acb102",
     "classId": "battlemaster",
     "name": "Battlemaster",
@@ -397,7 +397,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930493",
+    "id": "6a2e7a0d6be32fced4930dd6",
     "indexId": "e69ada4a-53f2-4629-9bdd-e7fdb6307809",
     "classId": "berserker",
     "name": "Berserker",
@@ -410,7 +410,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930532",
+    "id": "6a2e7a0d6be32fced4930e75",
     "indexId": "92e1463f-b10d-41cb-8741-c7deb6931939",
     "classId": "biochemist",
     "name": "Biochemist",
@@ -425,7 +425,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930518",
+    "id": "6a2e7a0d6be32fced4930e5b",
     "indexId": "58bd5f2f-e84a-488a-9737-053e69c13580",
     "classId": "black-oath-style",
     "name": "Black Oath Style",
@@ -440,7 +440,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304d4",
+    "id": "6a2e7a0d6be32fced4930e17",
     "indexId": "83d421de-efef-41bb-9e40-5e71741c50ec",
     "classId": "blacksmith",
     "name": "Blacksmith",
@@ -455,7 +455,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304ce",
+    "id": "6a2e7a0d6be32fced4930e11",
     "indexId": "f7e5f612-a2a5-486e-bae2-c35f46e4475f",
     "classId": "bloodbinder",
     "name": "Bloodbinder",
@@ -470,7 +470,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930497",
+    "id": "6a2e7a0d6be32fced4930dda",
     "indexId": "57401ddc-be19-4e1b-8e49-2c98c8c15193",
     "classId": "bodyguard",
     "name": "Bodyguard",
@@ -483,7 +483,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304f5",
+    "id": "6a2e7a0d6be32fced4930e38",
     "indexId": "42c77fbf-a77f-445e-9ec5-46f391a35ebd",
     "classId": "botanist",
     "name": "Botanist",
@@ -498,7 +498,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930494",
+    "id": "6a2e7a0d6be32fced4930dd7",
     "indexId": "9999decb-b397-4868-979a-dcc972292b92",
     "classId": "brawler",
     "name": "Brawler",
@@ -513,7 +513,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a2067d66be32fced4930c49",
+    "id": "6a2e7a0d6be32fced4930e7c",
     "indexId": "06b5aefa-f860-41a8-8e63-1d0e4eac95bb",
     "classId": "cannoneer",
     "name": "Cannoneer",
@@ -528,7 +528,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304f6",
+    "id": "6a2e7a0d6be32fced4930e39",
     "indexId": "9027b070-f6a2-4bf7-8890-3405175fbf0e",
     "classId": "carpenter",
     "name": "Carpenter",
@@ -543,7 +543,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304e9",
+    "id": "6a2e7a0d6be32fced4930e2c",
     "indexId": "c0963e85-8ecb-4aa1-b9f6-9fac2f484152",
     "classId": "cavalier",
     "name": "Cavalier",
@@ -558,7 +558,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930495",
+    "id": "6a2e7a0d6be32fced4930dd8",
     "indexId": "80072b34-a3f8-4382-b742-ed6980cb5e1f",
     "classId": "chronofighter",
     "name": "Chronofighter",
@@ -571,7 +571,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49304dc",
+    "id": "6a2e7a0d6be32fced4930e1f",
     "indexId": "66e5535d-f925-43cd-9c57-31f68d8665f0",
     "classId": "chronomancer",
     "name": "Chronomancer",
@@ -586,7 +586,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304dd",
+    "id": "6a2e7a0d6be32fced4930e20",
     "indexId": "0d874c9f-26fb-4462-9957-ec5b43e42d9e",
     "classId": "colossus",
     "name": "Colossus",
@@ -601,7 +601,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304c6",
+    "id": "6a2e7a0d6be32fced4930e09",
     "indexId": "cee123fb-082a-49ff-8083-f576564eabf4",
     "classId": "cryomancer",
     "name": "Cryomancer",
@@ -614,7 +614,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304ff",
+    "id": "6a2e7a0d6be32fced4930e42",
     "indexId": "6a587a34-f1ed-42ff-b083-5ade59563aac",
     "classId": "culinarian",
     "name": "Culinarian",
@@ -629,7 +629,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493051c",
+    "id": "6a2e7a0d6be32fced4930e5f",
     "indexId": "78d3ab91-b02b-4a5e-85e3-56af3d40ef3a",
     "classId": "cultivator",
     "name": "Cultivator",
@@ -644,7 +644,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304e5",
+    "id": "6a2e7a0d6be32fced4930e28",
     "indexId": "ddf4c000-a3ce-4df4-b4f0-3ee22e02ed79",
     "classId": "curse-knight",
     "name": "Curse Knight",
@@ -659,7 +659,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930511",
+    "id": "6a2e7a0d6be32fced4930e54",
     "indexId": "b3864146-77f4-4c3a-ae8f-20dd05600809",
     "classId": "cutthroat",
     "name": "Cutthroat",
@@ -672,7 +672,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930517",
+    "id": "6a2e7a0d6be32fced4930e5a",
     "indexId": "f84ffc6f-70d6-4a21-b4aa-492850669a2b",
     "classId": "daionmyoji",
     "name": "Daionmyoji",
@@ -687,7 +687,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493050b",
+    "id": "6a2e7a0d6be32fced4930e4e",
     "indexId": "e69b9c7c-dbd9-4b6e-b0a3-a9123d078de8",
     "classId": "dark-priest",
     "name": "Dark Priest",
@@ -702,7 +702,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304ba",
+    "id": "6a2e7a0d6be32fced4930dfd",
     "indexId": "dce2c847-50ed-41b7-823e-392456fc31ac",
     "classId": "deadeye",
     "name": "Deadeye",
@@ -715,7 +715,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493050c",
+    "id": "6a2e7a0d6be32fced4930e4f",
     "indexId": "341869f2-a3ed-4f09-a74e-09610d0995a2",
     "classId": "death-knight",
     "name": "Death Knight",
@@ -730,7 +730,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304bb",
+    "id": "6a2e7a0d6be32fced4930dfe",
     "indexId": "c3622480-d0d0-494d-ae80-abd7f5fb4d59",
     "classId": "dragoon",
     "name": "Dragoon",
@@ -743,7 +743,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304bc",
+    "id": "6a2e7a0d6be32fced4930dff",
     "indexId": "88c41e0d-f47d-4cb7-9033-45eff545255c",
     "classId": "duelist",
     "name": "Duelist",
@@ -756,7 +756,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930526",
+    "id": "6a2e7a0d6be32fced4930e69",
     "indexId": "4067c319-75f6-49a4-8af0-60227631a888",
     "classId": "earthcleaving-style",
     "name": "Earthcleaving Style",
@@ -771,7 +771,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930496",
+    "id": "6a2e7a0d6be32fced4930dd9",
     "indexId": "53f21615-94ea-4f21-b4d4-c7077ac09409",
     "classId": "electromancer",
     "name": "Electromancer",
@@ -784,7 +784,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49304d3",
+    "id": "6a2e7a0d6be32fced4930e16",
     "indexId": "b14ddb6f-d8b2-4b51-a51f-ac2b856b651c",
     "classId": "electromaster",
     "name": "Electromaster",
@@ -799,7 +799,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493052c",
+    "id": "6a2e7a0d6be32fced4930e6f",
     "indexId": "3c2ed9f0-013e-4fe8-ba73-bd6ea57c406c",
     "classId": "elementalist",
     "name": "Elementalist",
@@ -814,7 +814,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930508",
+    "id": "6a2e7a0d6be32fced4930e4b",
     "indexId": "0f831cdd-01b9-4185-be0c-ac003f933b07",
     "classId": "eremancer",
     "name": "Eremancer",
@@ -829,7 +829,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930502",
+    "id": "6a2e7a0d6be32fced4930e45",
     "indexId": "6470eaaa-166a-4b7b-92ea-27d1ac309586",
     "classId": "evil-eye",
     "name": "Evil Eye",
@@ -844,7 +844,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930503",
+    "id": "6a2e7a0d6be32fced4930e46",
     "indexId": "f2267f3c-9174-43d3-8a82-cce89951f3e4",
     "classId": "exalted-blade",
     "name": "Exalted Blade",
@@ -859,7 +859,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930510",
+    "id": "6a2e7a0d6be32fced4930e53",
     "indexId": "873bdba3-5751-443c-aedf-b550bb4705f6",
     "classId": "exalted-shield",
     "name": "Exalted Shield",
@@ -874,7 +874,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304f8",
+    "id": "6a2e7a0d6be32fced4930e3b",
     "indexId": "01280ace-1ca6-449a-9e83-ef1a00427c4c",
     "classId": "excavator",
     "name": "Excavator",
@@ -889,7 +889,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930498",
+    "id": "6a2e7a0d6be32fced4930ddb",
     "indexId": "40b6ed47-b2da-45a2-a000-33d3d24b61f7",
     "classId": "executor",
     "name": "Executor",
@@ -904,7 +904,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a2bbcca6be32fced4930c70",
+    "id": "6a2e7a0d6be32fced4930e7d",
     "indexId": "f609606a-1a6d-4c64-96ca-02ce424fde45",
     "classId": "fae-knight",
     "name": "Fae Knight",
@@ -919,7 +919,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a2bc5f76be32fced4930c78",
+    "id": "6a2e7a0d6be32fced4930e7e",
     "indexId": "3e8fd2a3-698e-40bc-9674-765425132d22",
     "classId": "fae-knight--willow-style",
     "name": "Fae Knight: Willow Style",
@@ -934,7 +934,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304b7",
+    "id": "6a2e7a0d6be32fced4930dfa",
     "indexId": "671c2045-6a53-42f4-9860-bcf43abb6876",
     "classId": "faerie-light-eyes",
     "name": "Faerie Light Eyes",
@@ -947,7 +947,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304f2",
+    "id": "6a2e7a0d6be32fced4930e35",
     "indexId": "fcfde221-d565-43e4-9eca-216dd83621b2",
     "classId": "farmer",
     "name": "Farmer",
@@ -962,7 +962,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930499",
+    "id": "6a2e7a0d6be32fced4930ddc",
     "indexId": "f64bcba8-07a0-4e0c-871d-5a5b498df6fe",
     "classId": "fencer",
     "name": "Fencer",
@@ -975,7 +975,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304c1",
+    "id": "6a2e7a0d6be32fced4930e04",
     "indexId": "00622212-0ce8-4c78-9a3d-dc88188d245a",
     "classId": "fighter",
     "name": "Fighter",
@@ -990,7 +990,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930516",
+    "id": "6a2e7a0d6be32fced4930e59",
     "indexId": "cfebed91-f295-4210-8ac9-18226cc2a380",
     "classId": "five-harmonies-style",
     "name": "Five Harmonies Style",
@@ -1005,7 +1005,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304a0",
+    "id": "6a2e7a0d6be32fced4930de3",
     "indexId": "14cef376-58e4-4c4a-bf0d-4548f3f5414d",
     "classId": "flame-sentinel",
     "name": "Flame Sentinel",
@@ -1018,7 +1018,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49304df",
+    "id": "6a2e7a0d6be32fced4930e22",
     "indexId": "dc7672cc-3c78-4483-8426-ed235f939c3a",
     "classId": "flash-star-blade-style-",
     "name": "Flash Star Blade Style ",
@@ -1033,7 +1033,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493051d",
+    "id": "6a2e7a0d6be32fced4930e60",
     "indexId": "09290acb-4261-4aed-a1a0-b98b185e1e2f",
     "classId": "flowing-wind-style",
     "name": "Flowing Wind Style",
@@ -1048,7 +1048,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304f4",
+    "id": "6a2e7a0d6be32fced4930e37",
     "indexId": "56ab4411-9fc4-49ae-bf49-7814208b22d4",
     "classId": "forager",
     "name": "Forager",
@@ -1063,7 +1063,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304d5",
+    "id": "6a2e7a0d6be32fced4930e18",
     "indexId": "bce36400-9bf1-4559-a05d-e9ee80a50e14",
     "classId": "forgemaster",
     "name": "Forgemaster",
@@ -1078,7 +1078,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304e3",
+    "id": "6a2e7a0d6be32fced4930e26",
     "indexId": "42e564c5-7467-49f4-ade4-49d2e758a3db",
     "classId": "geomancer",
     "name": "Geomancer",
@@ -1093,7 +1093,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493051b",
+    "id": "6a2e7a0d6be32fced4930e5e",
     "indexId": "a723c69c-9982-4f96-9b78-8fe6a70aa428",
     "classId": "geomaster",
     "name": "Geomaster",
@@ -1108,7 +1108,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930521",
+    "id": "6a2e7a0d6be32fced4930e64",
     "indexId": "90f2001e-7c67-4844-b0d7-cb669c5e3dcc",
     "classId": "grandmaster",
     "name": "Grandmaster",
@@ -1123,7 +1123,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493051f",
+    "id": "6a2e7a0d6be32fced4930e62",
     "indexId": "616be77b-fba7-4082-9e61-d99a6ff697ef",
     "classId": "granite-warden",
     "name": "Granite Warden",
@@ -1138,7 +1138,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930522",
+    "id": "6a2e7a0d6be32fced4930e65",
     "indexId": "cbafc788-5356-4876-9edb-5b439f007d1c",
     "classId": "gravitect",
     "name": "Gravitect",
@@ -1153,7 +1153,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930523",
+    "id": "6a2e7a0d6be32fced4930e66",
     "indexId": "a6456526-ee25-4a46-8b80-5bd95d697c44",
     "classId": "graviturge",
     "name": "Graviturge",
@@ -1168,7 +1168,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304be",
+    "id": "6a2e7a0d6be32fced4930e01",
     "indexId": "1f4e151d-4fd5-421c-a89e-25bd12c5c0d3",
     "classId": "great-berserker",
     "name": "Great Berserker",
@@ -1183,7 +1183,7 @@
     "imageAlignment": "bottom"
   },
   {
-    "id": "6a06299f6be32fced49304e8",
+    "id": "6a2e7a0d6be32fced4930e2b",
     "indexId": "6883df97-1fb5-4a01-a660-73bccb9359af",
     "classId": "great-knight",
     "name": "Great Knight",
@@ -1198,7 +1198,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493049b",
+    "id": "6a2e7a0d6be32fced4930dde",
     "indexId": "d4c5ea5d-16a6-4147-9330-c760d6654ecd",
     "classId": "guardian",
     "name": "Guardian",
@@ -1211,7 +1211,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930525",
+    "id": "6a2e7a0d6be32fced4930e68",
     "indexId": "6042799b-c557-4887-a001-1b36d4be8357",
     "classId": "gun-paladin",
     "name": "Gun Paladin",
@@ -1226,7 +1226,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304cf",
+    "id": "6a2e7a0d6be32fced4930e12",
     "indexId": "5ab80caa-bd78-455e-8e06-890b0cbda577",
     "classId": "gunfu",
     "name": "Gunfu",
@@ -1241,7 +1241,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493049c",
+    "id": "6a2e7a0d6be32fced4930ddf",
     "indexId": "38c34baf-6bc6-4e3c-874d-acc6b3698404",
     "classId": "gunslinger",
     "name": "Gunslinger",
@@ -1254,7 +1254,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493051a",
+    "id": "6a2e7a0d6be32fced4930e5d",
     "indexId": "7c91a3e4-18d0-4947-a689-94bfbc0339cc",
     "classId": "harrier",
     "name": "Harrier",
@@ -1269,7 +1269,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304d8",
+    "id": "6a2e7a0d6be32fced4930e1b",
     "indexId": "6d2e2111-964c-4a7b-9ce0-7cf79435c918",
     "classId": "high-priest",
     "name": "High Priest",
@@ -1284,7 +1284,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493049d",
+    "id": "6a2e7a0d6be32fced4930de0",
     "indexId": "6aa1f956-c319-40e9-b3b6-929ca3b237ec",
     "classId": "highlander",
     "name": "Highlander",
@@ -1297,7 +1297,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304d7",
+    "id": "6a2e7a0d6be32fced4930e1a",
     "indexId": "5ccf002b-cbdd-4add-839f-d1db05cfa0c3",
     "classId": "hoarfrost",
     "name": "Hoarfrost",
@@ -1312,7 +1312,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304eb",
+    "id": "6a2e7a0d6be32fced4930e2e",
     "indexId": "45407eae-aded-40f2-95f2-081faf642f92",
     "classId": "hussar",
     "name": "Hussar",
@@ -1327,7 +1327,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493050e",
+    "id": "6a2e7a0d6be32fced4930e51",
     "indexId": "c2983124-170e-4a2a-9199-6332cf7cb927",
     "classId": "hydromancer",
     "name": "Hydromancer",
@@ -1342,7 +1342,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493049f",
+    "id": "6a2e7a0d6be32fced4930de2",
     "indexId": "48c3abec-23e7-4fb5-9e17-3ae116b6d746",
     "classId": "iai-style",
     "name": "Iai Style",
@@ -1355,7 +1355,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930520",
+    "id": "6a2e7a0d6be32fced4930e63",
     "indexId": "85c6acd0-dba9-4603-90d0-fe522f547cd9",
     "classId": "idol",
     "name": "Idol",
@@ -1370,7 +1370,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930534",
+    "id": "6a2e7a0d6be32fced4930e77",
     "indexId": "8693bc50-7461-48e6-aa02-69655073c33d",
     "classId": "jewel-idol",
     "name": "Jewel Idol",
@@ -1385,7 +1385,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930513",
+    "id": "6a2e7a0d6be32fced4930e56",
     "indexId": "8d245223-59ea-4212-b917-b02b26556e17",
     "classId": "jonin",
     "name": "Jonin",
@@ -1398,7 +1398,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930514",
+    "id": "6a2e7a0d6be32fced4930e57",
     "indexId": "210bc182-a061-499c-a0b3-b8c9e0d74854",
     "classId": "knight-paramount",
     "name": "Knight-Paramount",
@@ -1413,7 +1413,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493049e",
+    "id": "6a2e7a0d6be32fced4930de1",
     "indexId": "ab8010fc-dffa-46cf-be35-e78a64023356",
     "classId": "lancer",
     "name": "Lancer",
@@ -1426,7 +1426,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930489",
+    "id": "6a2e7a0d6be32fced4930dcc",
     "indexId": "ae8d4d72-09b5-4c3b-ba16-06e8614132b1",
     "classId": "mage",
     "name": "Mage",
@@ -1441,7 +1441,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304ec",
+    "id": "6a2e7a0d6be32fced4930e2f",
     "indexId": "f6160ec6-4760-470c-92b3-066bce176ed9",
     "classId": "mage-knight",
     "name": "Mage Knight",
@@ -1456,7 +1456,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49304fc",
+    "id": "6a2e7a0d6be32fced4930e3f",
     "indexId": "f0f605a8-7185-460a-bbf5-67be0428e293",
     "classId": "magitechnician-",
     "name": "Magitechnician ",
@@ -1471,7 +1471,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930519",
+    "id": "6a2e7a0d6be32fced4930e5c",
     "indexId": "1ad7d506-7b27-4adf-af81-14708831a3b6",
     "classId": "maid",
     "name": "Maid",
@@ -1486,7 +1486,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304a1",
+    "id": "6a2e7a0d6be32fced4930de4",
     "indexId": "c2bb890f-9f9b-40f0-85bb-3ae56761e6f3",
     "classId": "marksman",
     "name": "Marksman",
@@ -1499,7 +1499,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49304c2",
+    "id": "6a2e7a0d6be32fced4930e05",
     "indexId": "24dacde4-3713-4e25-96c0-295526d8b2fc",
     "classId": "martial-artist",
     "name": "Martial Artist",
@@ -1514,7 +1514,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304fe",
+    "id": "6a2e7a0d6be32fced4930e41",
     "indexId": "fa02fc8e-d105-479c-9229-86b2a81f7d44",
     "classId": "master-armorer",
     "name": "Master Armorer",
@@ -1529,7 +1529,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a20532c6be32fced4930c40",
+    "id": "6a2e7a0d6be32fced4930e7b",
     "indexId": "a23e4cdd-2589-4c40-b708-fc3a6dc23af9",
     "classId": "medic",
     "name": "Medic",
@@ -1544,7 +1544,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930535",
+    "id": "6a2e7a0d6be32fced4930e78",
     "indexId": "91c1f01b-3b94-4584-a4fd-c2d7c90ceb01",
     "classId": "merchant",
     "name": "Merchant",
@@ -1559,7 +1559,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493052d",
+    "id": "6a2e7a0d6be32fced4930e70",
     "indexId": "daaa3f8e-d2ed-4d63-8034-a0451b7ea540",
     "classId": "mime",
     "name": "Mime",
@@ -1574,7 +1574,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304f7",
+    "id": "6a2e7a0d6be32fced4930e3a",
     "indexId": "2d4d39f6-4022-454e-bc4a-5c9e060bc490",
     "classId": "miner",
     "name": "Miner",
@@ -1589,7 +1589,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493050f",
+    "id": "6a2e7a0d6be32fced4930e52",
     "indexId": "117d22c6-0b71-49a1-b36e-f57e4f48fb0a",
     "classId": "mist-veil-elegy",
     "name": "Mist Veil Elegy",
@@ -1604,7 +1604,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930536",
+    "id": "6a2e7a0d6be32fced4930e79",
     "indexId": "5852bacd-f4be-451d-9237-08d63e88559e",
     "classId": "mogul",
     "name": "Mogul",
@@ -1619,7 +1619,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49304a2",
+    "id": "6a2e7a0d6be32fced4930de5",
     "indexId": "67ffa099-ced9-4db5-bd7a-e62b1b6f1a0c",
     "classId": "monk",
     "name": "Monk",
@@ -1632,7 +1632,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304a3",
+    "id": "6a2e7a0d6be32fced4930de6",
     "indexId": "754371d5-5f29-4e4c-9d7c-0d8cd56577ee",
     "classId": "mycomancer",
     "name": "Mycomancer",
@@ -1645,7 +1645,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930528",
+    "id": "6a2e7a0d6be32fced4930e6b",
     "indexId": "53317683-553a-467f-8ae4-4d88ca86404b",
     "classId": "mystic-eyes-of-destruction",
     "name": "Mystic Eyes of Destruction",
@@ -1660,7 +1660,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930529",
+    "id": "6a2e7a0d6be32fced4930e6c",
     "indexId": "e0984ffb-edcc-447e-aad5-d28cacfb24de",
     "classId": "mystic-eyes-of-domination",
     "name": "Mystic Eyes of Domination",
@@ -1675,7 +1675,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a1f60b36be32fced4930c37",
+    "id": "6a2e7a0d6be32fced4930e7a",
     "indexId": "a1afe04b-a9e0-4161-aa29-40565a47868a",
     "classId": "naturalist",
     "name": "Naturalist",
@@ -1690,7 +1690,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304a4",
+    "id": "6a2e7a0d6be32fced4930de7",
     "indexId": "9217b70d-816b-4d34-861d-dde205ef8f86",
     "classId": "necromancer",
     "name": "Necromancer",
@@ -1703,7 +1703,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced4930531",
+    "id": "6a2e7a0d6be32fced4930e74",
     "indexId": "76cfd399-33a1-46f0-9e75-877968140f3c",
     "classId": "necromaster",
     "name": "Necromaster",
@@ -1718,7 +1718,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304a6",
+    "id": "6a2e7a0d6be32fced4930de9",
     "indexId": "20fe535c-ec09-4d08-af52-aa7ba7b2d160",
     "classId": "ninja",
     "name": "Ninja",
@@ -1733,7 +1733,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49304ed",
+    "id": "6a2e7a0d6be32fced4930e30",
     "indexId": "97050a94-9a5b-4b62-af39-31ac97aaf686",
     "classId": "nomad",
     "name": "Nomad",
@@ -1748,7 +1748,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304c9",
+    "id": "6a2e7a0d6be32fced4930e0c",
     "indexId": "1f50a6ca-7477-4b82-b69e-43c9d39c6df6",
     "classId": "onmyoji-",
     "name": "Onmyoji ",
@@ -1763,7 +1763,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304c7",
+    "id": "6a2e7a0d6be32fced4930e0a",
     "indexId": "edf8b86e-c4af-4b7f-8e8e-53a99b3c9c8b",
     "classId": "oracle",
     "name": "Oracle",
@@ -1778,7 +1778,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304a5",
+    "id": "6a2e7a0d6be32fced4930de8",
     "indexId": "8e486304-726e-475a-8b61-14f6ffc53a22",
     "classId": "peltast",
     "name": "Peltast",
@@ -1791,7 +1791,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930504",
+    "id": "6a2e7a0d6be32fced4930e47",
     "indexId": "536e4389-803c-4364-9fe3-a93bf1273af6",
     "classId": "phantom-thief",
     "name": "Phantom Thief",
@@ -1806,7 +1806,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930507",
+    "id": "6a2e7a0d6be32fced4930e4a",
     "indexId": "f9f0c629-7363-4ac2-8896-38b967e958e4",
     "classId": "phosphomancer",
     "name": "Phosphomancer",
@@ -1821,7 +1821,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced493052e",
+    "id": "6a2e7a0d6be32fced4930e71",
     "indexId": "ab7fbfe9-9f27-4868-adbe-90906fbfd9d5",
     "classId": "pierrot",
     "name": "Pierrot",
@@ -1836,7 +1836,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304a7",
+    "id": "6a2e7a0d6be32fced4930dea",
     "indexId": "3505f71d-242d-4620-8ae3-431591f926bb",
     "classId": "priest",
     "name": "Priest",
@@ -1851,7 +1851,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304bf",
+    "id": "6a2e7a0d6be32fced4930e02",
     "indexId": "d104862e-9767-4145-8c41-377aaa72b2ef",
     "classId": "protector",
     "name": "Protector",
@@ -1864,7 +1864,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49304a8",
+    "id": "6a2e7a0d6be32fced4930deb",
     "indexId": "4390a446-7142-42a9-aa69-a7ea4799a5c1",
     "classId": "pyromancer",
     "name": "Pyromancer",
@@ -1877,7 +1877,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304cb",
+    "id": "6a2e7a0d6be32fced4930e0e",
     "indexId": "c4ba0a3e-7c97-46e8-a378-06b6f6a73819",
     "classId": "pyromaster",
     "name": "Pyromaster",
@@ -1892,7 +1892,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304c4",
+    "id": "6a2e7a0d6be32fced4930e07",
     "indexId": "24b4e69c-1e51-434e-9e8c-a035a588ddc2",
     "classId": "ranger",
     "name": "Ranger",
@@ -1907,7 +1907,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930506",
+    "id": "6a2e7a0d6be32fced4930e49",
     "indexId": "cd6545c5-47a7-4dbb-b6a6-a76810a17b4c",
     "classId": "reaver",
     "name": "Reaver",
@@ -1922,7 +1922,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304c5",
+    "id": "6a2e7a0d6be32fced4930e08",
     "indexId": "334d2a78-9cf5-42a2-aabf-7ab88fa14c5e",
     "classId": "rogue",
     "name": "Rogue",
@@ -1937,7 +1937,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304ab",
+    "id": "6a2e7a0d6be32fced4930dee",
     "indexId": "1b273e84-fd3c-42a1-b536-cc85c8e43c6d",
     "classId": "saboteur",
     "name": "Saboteur",
@@ -1952,7 +1952,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304a9",
+    "id": "6a2e7a0d6be32fced4930dec",
     "indexId": "0bf81ca3-3dec-4c99-9744-11cee7585531",
     "classId": "sage",
     "name": "Sage",
@@ -1965,7 +1965,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930533",
+    "id": "6a2e7a0d6be32fced4930e76",
     "indexId": "804bdbf8-9375-4fbc-9db1-60c4c90c6300",
     "classId": "sanctioner",
     "name": "Sanctioner",
@@ -1980,7 +1980,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304fa",
+    "id": "6a2e7a0d6be32fced4930e3d",
     "indexId": "5238ce61-81cb-431b-9bbb-069c07a3b5d2",
     "classId": "scout",
     "name": "Scout",
@@ -1995,7 +1995,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930527",
+    "id": "6a2e7a0d6be32fced4930e6a",
     "indexId": "a179ae11-2665-4f63-9d58-8f5417309c5d",
     "classId": "searing-lotus-style",
     "name": "Searing Lotus Style",
@@ -2010,7 +2010,22 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304aa",
+    "id": "6a436fe1b1ae8a568e9cc801",
+    "indexId": "6767d709-7d39-469c-9cb1-0714a187949a",
+    "classId": "seven-sorrows-sword-style",
+    "name": "Seven Sorrows Sword Style",
+    "description": "PHA+4oCcRmF5dG8gWmhlbHRpISBJdCBpcyB0aW1lIGZvciB5b3VyIGVuZCHigJ0gTGlnaHRuaW5nIHN0cnVjayBkcmFtYXRpY2FsbHksIHRodW5kZXIgcm9sbGVkLCBhbmQgdGhlIHdpbmQgc25hcHBlZCBhdCBoZXIgY2xvYWsuPC9wPjxwPuKAnEkgYW0gVGhlIExvbmUgV29sZiBvZiBSb3NhbmlhLCBUaGUgRGFya25lc3MgQWdhaW5zdCB0aGUgV29ybGQsIHRoZSBSZWFwZXIgV2l0aCBObyBXaXRuZXNzLCBUaGUgU2V2ZW50aCBTb3Jyb3cgb2YgTHlyISBJbiB0aGUgbmFtZSBvZiBIZXIgRGFyayBSYWRpYW5jZSBIZWlyYSwgSSwgQWx5Y2lhIENsYWVzLCB3aWxsIGRlZmVhdCB5b3Uh4oCdPC9wPjxwPlNoZSByZWFkaWVkIGhlciBjb21iYXQgc3RhbmNlLCBoZXIgaGFuZCByYWlzZWQgYnkgaGVyIGZhY2UsIGhlciBzY3l0aGUgcm9pbGluZyB3aXRoIERhcmsgbWFnaWMuPC9wPjxwPuKAnEFseWNpYSEgR2V0IGRvd24gZnJvbSB0aGVyZSBiZWZvcmUgeW91IGdldCBzdHJ1Y2sgYnkgbGlnaHRuaW5nIeKAnSBoZXIgZXRlcm5hbCByaXZhbCBzaG91dGVkIGJhY2suIEFzIGlmIHRvIHB1bmN0dWF0ZSB0aGUgZGFuZ2VyLCBhbm90aGVyIGxpZ2h0bmluZyBzdHJpa2Ugc3BsaXQgYSB0cmVlIHRoYXQgd2FzIGZhciB0b28gY2xvc2UgZm9yIGNvbWZvcnQgaW4gYSBzdG9ybSBvZiBzcGxpbnRlcnMgYW5kIGVtYmVycy4gSGFzdGlseSwgQWx5Y2lhIGp1bXBlZCBkb3duIGZyb20gaGVyIHBlcmNoIHRvIGxhbmQgYmVmb3JlIGhlciByaXZhbCwgYnJ1c2hpbmcgaGVyIHNraXJ0IG91dCBhIGZldyB0aW1lcyBiZWZvcmUgcmV0dXJuaW5nIHRvIGhlciBzdGFuY2UuPC9wPjxwPuKAnEJvbGQgb2YgeW91IHRvIGF0dGVtcHQgYSBtYWdpY2FsIHNuZWFrIGF0dGFjayHigJ08L3A+PHA+4oCcSXTigJlzIGEgdGh1bmRlciBzdG9ybSBhbmQgeW91IGhhdmUgYSBtZXRhbCBwb2xlLCB0aGVyZSB3YXMgbm8gbWFnaWMgbmVlZGVkLOKAnSBGYXl0byByZXBsaWVkIGZsYXRseS4g4oCcQW5kIGRpZCB5b3UgYWRkIGFub3RoZXIgbmFtZT/igJ08YnI+Jm5ic3A7PC9wPjxwPuKAnE4tbm8hIFlvdSBhcmUgbWlzdGFrZW4h4oCdIEFseWNpYSBzaG9vayBoZXIgaGVhZCwgaGVyIHR3aW4gdGFpbHMgZmx5aW5nIGFuZCB0aGVuIHBvaW50ZWQgaGVyIHNjeXRoZSBhdCBGYXl0by4g4oCcRG9u4oCZdCBkaXN0cmFjdCBtZSEgVG9kYXkgaXMgeW91ciBlbmQhIFlvdSBjYW7igJl0IGVzY2FwZSBtZSBhZ2FpbiHigJ08L3A+PHA+RmF5dG8gZXhjaGFuZ2VkIGxvb2tzIHdpdGggaGVyIHBhcnR5LCBvYnZpb3VzbHkgcGxheWluZyBzb21ldGhpbmcgdG8gcnVuIGF3YXkgYWdhaW4uIFRoZW4gc2hlIGxvb2tlZCBhdCBBbHljaWEgc2VyaW91c2x5LCBoYW5kIG9uIGhlciBzd29yZC4g4oCcTG9vaywgaWYgeW91IGp1c3Qgd2FudGVkIHRvIHNwYXIsIGp1c3Qgc2F5IHNvLiBCdXQgd2XigJlyZSBraW5kIG9mIGluIGEgaHVycnkuIFRoZXJl4oCZcyBhIGxpZ2h0bmluZyBkcmFrZSBhdHRhY2tpbmcgdmlsbGFnZXMgbmVhcmJ5IGFuZCB3ZeKAmXJlIGh1bnRpbmcgaXQu4oCdPC9wPjxwPuKAnE9oLuKAnSBBbHljaWEgbG93ZXJlZCBoZXIgc2N5dGhlLiDigJxUaGVuIGxldOKAmXMgdmFucXVpc2ggaXQhIEksIG9idmlvdXNseSwgd2lsbCB0YWtlIHRoZSBsZWFkIGFuZCBkZWZlYXQgaXQgbXlzZWxmISBZb3UgY2FuIHN1cHBvcnQgbWUh4oCdPC9wPjxwPuKAnFllYWgsIHllYWgsIGxldOKAmXMganVzdCBnby4gSXTigJlzIHByb2JhYmx5IHJvb3N0aW5nIGluIHRoZSBtb3VudGFpbnMgdG8gdGhlIGVhc3Qu4oCdIEFseWNpYSBmZWxsIGludG8gc3RlcCB3aXRoIEZheXRvLCBsb29raW5nIGF0IGhlciByaXZhbOKAmXMgZmF0aGVyIGFuZCBicm90aGVyLiBUaGV5IGhhZCBxdWlldGx5IGFtdXNlZCBsb29rcyBvbiB0aGVpciBmYWNlcy4gQWx5Y2lhIGJpdCBoZXIgbGlwIGFzIHNoZSBzdGFyZWQgYXQgS3Jvbm8gWmhlbHRpIGFuZCBvcGVuZWQgaGVyIG1vdXRoIHRvLS08L3A+PHA+4oCcRG9u4oCZdCB5b3UgZGFyZSBzdGFydCBmbGlydGluZyB3aXRoIG15IGJyb3RoZXIgYWdhaW4u4oCdPC9wPjxwPkFseWNpYeKAmXMgbW91dGggc25hcHBlZCBzaHV0IGFuZCBzaGUgcG91dGVkLjwvcD48cD7igJxBbmQgSSBjYW7igJl0IGJlbGlldmUgeW91IGNvcGllZCBteSBoYWlyc3R5bGUsIEFseWNpYSHigJ08L3A+PHA+4oCcV2hhdD8gWW91IGRvbuKAmXQgb3duIHRoZSB0d2luIHRhaWwgc3R5bGUh4oCdPC9wPjxwPuKAnFlvdSBldmVuIGhhdmUgdGhlIHNhbWUgcmliYm9ucyBJIHVzZSEgRGlkIHlvdSBnZXQgdGhvc2UgaW4gRmxvcmVudGluZSwgdG9vP+KAnTwvcD48cD7igJxIbXBoISBZb3XigJlyZSBqdXN0IGplYWxvdXMgaXQgbG9va3MgYmV0dGVyIG9uIG1lIeKAnSBBbHljaWEgc2FpZCwgdHVybmluZyB0byBwb2ludCBhdCBGYXl0byBmb3IgZW1waGFzaXMuPC9wPjxwPuKAnFRoZXnigJlyZSBsaWtlIGxvbmcgbG9zdCBzaXN0ZXJzLOKAnSBLcm9ubyBzYWlkIHRvIGhpcyBmYXRoZXIgd2l0aCBhIHF1aWV0IGxhdWdoLjwvcD48cD7igJxLYXJpLCBnaXZlIG1lIHN0cmVuZ3RoLOKAnSBGYXl0byBzYWlkLCBwaW5jaGluZyB0aGUgYnJpZGdlIG9mIGhlciBub3NlLiDigJxBdCBsZWFzdCBjb3ZlciB5b3VyIGxlZ3MhIEl04oCZcyBpbmRlY2VudCHigJ08L3A+PHA+4oCcTXkgYm9keSBpcyB0aGUgdmVyeSBpbWFnZSBvZiBIZWlyYSwgSSB3aWxsIG5vdCHigJ0gQWx5Y2lhIGZvbGRlZCBoZXIgYXJtcyBhbmQgbG9va2VkIGF3YXkuIOKAnFBydWRlLuKAnTwvcD48cD7igJxQcnVkZT8h4oCdPC9wPjxwPktyb25vIGxvb2tlZCBhdCBoaXMgZmF0aGVyIGFuZCBoaXMgZmF0aGVyIGxvb2tlZCBhdCBoaW0uIOKAnEkgdGhpbmsgdGhleSBtaXNzZWQgZWFjaCBvdGhlci7igJ08L3A+",
+    "descriptionHtml": "<p>\u001cFayto Zhelti! It is time for your end!\u001d Lightning struck dramatically, thunder rolled, and the wind snapped at her cloak.</p><p>\u001cI am The Lone Wolf of Rosania, The Darkness Against the World, the Reaper With No Witness, The Seventh Sorrow of Lyr! In the name of Her Dark Radiance Heira, I, Alycia Claes, will defeat you!\u001d</p><p>She readied her combat stance, her hand raised by her face, her scythe roiling with Dark magic.</p><p>\u001cAlycia! Get down from there before you get struck by lightning!\u001d her eternal rival shouted back. As if to punctuate the danger, another lightning strike split a tree that was far too close for comfort in a storm of splinters and embers. Hastily, Alycia jumped down from her perch to land before her rival, brushing her skirt out a few times before returning to her stance.</p><p>\u001cBold of you to attempt a magical sneak attack!\u001d</p><p>\u001cIt\u0019s a thunder storm and you have a metal pole, there was no magic needed,\u001d Fayto replied flatly. \u001cAnd did you add another name?\u001d<br>&nbsp;</p><p>\u001cN-no! You are mistaken!\u001d Alycia shook her head, her twin tails flying and then pointed her scythe at Fayto. \u001cDon\u0019t distract me! Today is your end! You can\u0019t escape me again!\u001d</p><p>Fayto exchanged looks with her party, obviously playing something to run away again. Then she looked at Alycia seriously, hand on her sword. \u001cLook, if you just wanted to spar, just say so. But we\u0019re kind of in a hurry. There\u0019s a lightning drake attacking villages nearby and we\u0019re hunting it.\u001d</p><p>\u001cOh.\u001d Alycia lowered her scythe. \u001cThen let\u0019s vanquish it! I, obviously, will take the lead and defeat it myself! You can support me!\u001d</p><p>\u001cYeah, yeah, let\u0019s just go. It\u0019s probably roosting in the mountains to the east.\u001d Alycia fell into step with Fayto, looking at her rival\u0019s father and brother. They had quietly amused looks on their faces. Alycia bit her lip as she stared at Krono Zhelti and opened her mouth to--</p><p>\u001cDon\u0019t you dare start flirting with my brother again.\u001d</p><p>Alycia\u0019s mouth snapped shut and she pouted.</p><p>\u001cAnd I can\u0019t believe you copied my hairstyle, Alycia!\u001d</p><p>\u001cWhat? You don\u0019t own the twin tail style!\u001d</p><p>\u001cYou even have the same ribbons I use! Did you get those in Florentine, too?\u001d</p><p>\u001cHmph! You\u0019re just jealous it looks better on me!\u001d Alycia said, turning to point at Fayto for emphasis.</p><p>\u001cThey\u0019re like long lost sisters,\u001d Krono said to his father with a quiet laugh.</p><p>\u001cKari, give me strength,\u001d Fayto said, pinching the bridge of her nose. \u001cAt least cover your legs! It\u0019s indecent!\u001d</p><p>\u001cMy body is the very image of Heira, I will not!\u001d Alycia folded her arms and looked away. \u001cPrude.\u001d</p><p>\u001cPrude?!\u001d</p><p>Krono looked at his father and his father looked at him. \u001cI think they missed each other.\u001d</p>",
+    "descriptionText": "\u001cFayto Zhelti! It is time for your end!\u001d Lightning struck dramatically, thunder rolled, and the wind snapped at her cloak.\n\n\u001cI am The Lone Wolf of Rosania, The Darkness Against the World, the Reaper With No Witness, The Seventh Sorrow of Lyr! In the name of Her Dark Radiance Heira, I, Alycia Claes, will defeat you!\u001d\n\nShe readied her combat stance, her hand raised by her face, her scythe roiling with Dark magic.\n\n\u001cAlycia! Get down from there before you get struck by lightning!\u001d her eternal rival shouted back. As if to punctuate the danger, another lightning strike split a tree that was far too close for comfort in a storm of splinters and embers. Hastily, Alycia jumped down from her perch to land before her rival, brushing her skirt out a few times before returning to her stance.\n\n\u001cBold of you to attempt a magical sneak attack!\u001d\n\n\u001cIt\u0019s a thunder storm and you have a metal pole, there was no magic needed,\u001d Fayto replied flatly. \u001cAnd did you add another name?\u001d\n\n\u001cN-no! You are mistaken!\u001d Alycia shook her head, her twin tails flying and then pointed her scythe at Fayto. \u001cDon\u0019t distract me! Today is your end! You can\u0019t escape me again!\u001d\n\nFayto exchanged looks with her party, obviously playing something to run away again. Then she looked at Alycia seriously, hand on her sword. \u001cLook, if you just wanted to spar, just say so. But we\u0019re kind of in a hurry. There\u0019s a lightning drake attacking villages nearby and we\u0019re hunting it.\u001d\n\n\u001cOh.\u001d Alycia lowered her scythe. \u001cThen let\u0019s vanquish it! I, obviously, will take the lead and defeat it myself! You can support me!\u001d\n\n\u001cYeah, yeah, let\u0019s just go. It\u0019s probably roosting in the mountains to the east.\u001d Alycia fell into step with Fayto, looking at her rival\u0019s father and brother. They had quietly amused looks on their faces. Alycia bit her lip as she stared at Krono Zhelti and opened her mouth to--\n\n\u001cDon\u0019t you dare start flirting with my brother again.\u001d\n\nAlycia\u0019s mouth snapped shut and she pouted.\n\n\u001cAnd I can\u0019t believe you copied my hairstyle, Alycia!\u001d\n\n\u001cWhat? You don\u0019t own the twin tail style!\u001d\n\n\u001cYou even have the same ribbons I use! Did you get those in Florentine, too?\u001d\n\n\u001cHmph! You\u0019re just jealous it looks better on me!\u001d Alycia said, turning to point at Fayto for emphasis.\n\n\u001cThey\u0019re like long lost sisters,\u001d Krono said to his father with a quiet laugh.\n\n\u001cKari, give me strength,\u001d Fayto said, pinching the bridge of her nose. \u001cAt least cover your legs! It\u0019s indecent!\u001d\n\n\u001cMy body is the very image of Heira, I will not!\u001d Alycia folded her arms and looked away. \u001cPrude.\u001d\n\n\u001cPrude?!\u001d\n\nKrono looked at his father and his father looked at him. \u001cI think they missed each other.\u001d",
+    "difficulty": "3",
+    "tier": "2",
+    "role1": "Striker",
+    "role2": "",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/8fe6f4b0-78b3-4aff-9e38-20ed33ca51a7-AlyciaClaes-SevenSorrow.sm.webp",
+    "imageAlignment": "top"
+  },
+  {
+    "id": "6a2e7a0d6be32fced4930ded",
     "indexId": "f058ff4c-60f3-4092-a2ad-6a90905be4d1",
     "classId": "shadow-thief",
     "name": "Shadow Thief",
@@ -2023,7 +2038,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493050a",
+    "id": "6a2e7a0d6be32fced4930e4d",
     "indexId": "a7a1b027-1697-46ce-9aea-47a830fc3c6e",
     "classId": "shadowbringer",
     "name": "Shadowbringer",
@@ -2036,7 +2051,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49304ac",
+    "id": "6a2e7a0d6be32fced4930def",
     "indexId": "06201eb1-24fa-47bb-9577-ea85b56a231a",
     "classId": "shield-paladin",
     "name": "Shield Paladin",
@@ -2049,7 +2064,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304e4",
+    "id": "6a2e7a0d6be32fced4930e27",
     "indexId": "c5f28555-6f67-470f-87cd-1ce6e1f35f6e",
     "classId": "shield-saint",
     "name": "Shield Saint",
@@ -2064,7 +2079,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49304cd",
+    "id": "6a2e7a0d6be32fced4930e10",
     "indexId": "47f7cf71-d29c-40f2-8492-aabe9423e81c",
     "classId": "shieldwarden",
     "name": "Shieldwarden",
@@ -2079,7 +2094,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49304b5",
+    "id": "6a2e7a0d6be32fced4930df8",
     "indexId": "fa7e981a-305c-47bf-bf74-263150ed3330",
     "classId": "shinigami-eyes",
     "name": "Shinigami Eyes",
@@ -2092,7 +2107,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304ea",
+    "id": "6a2e7a0d6be32fced4930e2d",
     "indexId": "badbcb03-8469-462f-bb92-3ce07c4bb5e5",
     "classId": "sky-knight",
     "name": "Sky Knight",
@@ -2107,7 +2122,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930505",
+    "id": "6a2e7a0d6be32fced4930e48",
     "indexId": "a5e6788c-85d8-49cb-a09d-b933bc15f18d",
     "classId": "sky-talon-style",
     "name": "Sky Talon Style",
@@ -2122,7 +2137,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304bd",
+    "id": "6a2e7a0d6be32fced4930e00",
     "indexId": "b19caf50-e200-4182-9d3a-02037b7e0901",
     "classId": "sniper",
     "name": "Sniper",
@@ -2135,7 +2150,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493052b",
+    "id": "6a2e7a0d6be32fced4930e6e",
     "indexId": "b10293ac-f0d2-4c7e-88fe-873671dd909a",
     "classId": "sorcerer",
     "name": "Sorcerer",
@@ -2150,7 +2165,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304de",
+    "id": "6a2e7a0d6be32fced4930e21",
     "indexId": "712b3ff8-0d93-4b5f-9278-7d4ff36bb425",
     "classId": "spearmaster",
     "name": "Spearmaster",
@@ -2165,7 +2180,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304d1",
+    "id": "6a2e7a0d6be32fced4930e14",
     "indexId": "9070fbc8-9635-4b3b-b4f1-76fa020aac75",
     "classId": "spell-blademaster",
     "name": "Spell Blademaster",
@@ -2180,7 +2195,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304ad",
+    "id": "6a2e7a0d6be32fced4930df0",
     "indexId": "1a26d167-8d42-4b69-b68d-f542ee66667e",
     "classId": "spellblade",
     "name": "Spellblade",
@@ -2193,7 +2208,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930524",
+    "id": "6a2e7a0d6be32fced4930e67",
     "indexId": "7f25322e-95b9-4f2d-9e26-262a0f9e5489",
     "classId": "starcaller",
     "name": "Starcaller",
@@ -2208,7 +2223,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493050d",
+    "id": "6a2e7a0d6be32fced4930e50",
     "indexId": "7d42ac44-6b90-4207-b25a-873ced88d1e4",
     "classId": "still-stone-style",
     "name": "Still Stone Style",
@@ -2223,7 +2238,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930501",
+    "id": "6a2e7a0d6be32fced4930e44",
     "indexId": "3371dbf5-dd4b-4e1e-b453-0a737256ce82",
     "classId": "strategist",
     "name": "Strategist",
@@ -2238,7 +2253,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304e2",
+    "id": "6a2e7a0d6be32fced4930e25",
     "indexId": "42a84d75-b4c7-4adb-8cf6-37f5d21eef9d",
     "classId": "summoner",
     "name": "Summoner",
@@ -2253,7 +2268,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493051e",
+    "id": "6a2e7a0d6be32fced4930e61",
     "indexId": "26963eda-6d31-4917-a93e-7e53c9be92d5",
     "classId": "swashbuckler",
     "name": "Swashbuckler",
@@ -2268,7 +2283,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304af",
+    "id": "6a2e7a0d6be32fced4930df2",
     "indexId": "87bff3bc-e3b5-417d-a392-70ea72fd25cc",
     "classId": "sword-paladin",
     "name": "Sword Paladin",
@@ -2281,7 +2296,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304c0",
+    "id": "6a2e7a0d6be32fced4930e03",
     "indexId": "c45191d1-9a63-47d5-be93-2ec11fb1d93c",
     "classId": "sword-saint",
     "name": "Sword Saint",
@@ -2294,7 +2309,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304ae",
+    "id": "6a2e7a0d6be32fced4930df1",
     "indexId": "3ddc8d8f-18a3-4dbb-8ce0-be9710dd3346",
     "classId": "tactician",
     "name": "Tactician",
@@ -2307,7 +2322,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304cc",
+    "id": "6a2e7a0d6be32fced4930e0f",
     "indexId": "f5eb0c4b-6cbc-4e9f-aa19-f932a7b5d0ec",
     "classId": "tavern-brawler",
     "name": "Tavern Brawler",
@@ -2322,7 +2337,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930512",
+    "id": "6a2e7a0d6be32fced4930e55",
     "indexId": "6510144a-a167-4c36-9155-8f8574edadc4",
     "classId": "temporal-trickster",
     "name": "Temporal Trickster",
@@ -2335,7 +2350,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49304b0",
+    "id": "6a2e7a0d6be32fced4930df3",
     "indexId": "74a46ea1-b715-4475-bdff-b5dbbf2d0834",
     "classId": "thief",
     "name": "Thief",
@@ -2350,7 +2365,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304f9",
+    "id": "6a2e7a0d6be32fced4930e3c",
     "indexId": "c5e9ad40-a090-4199-8533-1b15f3dfe9d2",
     "classId": "timberwright",
     "name": "Timberwright",
@@ -2365,7 +2380,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304c8",
+    "id": "6a2e7a0d6be32fced4930e0b",
     "indexId": "46237ab1-fd98-41ff-8fe2-cad7849eeba6",
     "classId": "time-thief",
     "name": "Time Thief",
@@ -2380,7 +2395,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930515",
+    "id": "6a2e7a0d6be32fced4930e58",
     "indexId": "21e49f61-58f7-44a4-8983-bcbc123ef03a",
     "classId": "transcendent-lightning-style",
     "name": "Transcendent Lightning Style",
@@ -2395,7 +2410,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304f0",
+    "id": "6a2e7a0d6be32fced4930e33",
     "indexId": "2f8f62ce-983b-4b81-8841-6670649b4d7e",
     "classId": "transmuter",
     "name": "Transmuter",
@@ -2410,7 +2425,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930500",
+    "id": "6a2e7a0d6be32fced4930e43",
     "indexId": "42ef279a-f1b4-47cc-9f73-ff60c937db47",
     "classId": "trapper",
     "name": "Trapper",
@@ -2425,7 +2440,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304d0",
+    "id": "6a2e7a0d6be32fced4930e13",
     "indexId": "ec19d3cc-fda3-419f-83a5-52dea16d4258",
     "classId": "trickster",
     "name": "Trickster",
@@ -2440,7 +2455,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304d2",
+    "id": "6a2e7a0d6be32fced4930e15",
     "indexId": "9657f84b-e8f0-4539-a25c-9e337891dc2e",
     "classId": "true-shinigami-eyes",
     "name": "True Shinigami Eyes",
@@ -2455,7 +2470,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304db",
+    "id": "6a2e7a0d6be32fced4930e1e",
     "indexId": "d2ef6f8d-e238-4c9b-a95a-067dcbfb9eb7",
     "classId": "vampire",
     "name": "Vampire",
@@ -2470,7 +2485,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304e6",
+    "id": "6a2e7a0d6be32fced4930e29",
     "indexId": "903abef6-57b8-42a5-9608-f9712e4e8b29",
     "classId": "vampire-lord",
     "name": "Vampire Lord",
@@ -2485,7 +2500,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930509",
+    "id": "6a2e7a0d6be32fced4930e4c",
     "indexId": "33265f90-20d8-478f-ba34-2093b80fa38b",
     "classId": "veilguard",
     "name": "Veilguard",
@@ -2498,7 +2513,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced4930530",
+    "id": "6a2e7a0d6be32fced4930e73",
     "indexId": "e288d1d8-0ebd-4ba2-88dc-639c8a9810e2",
     "classId": "venomancer",
     "name": "Venomancer",
@@ -2513,7 +2528,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493052f",
+    "id": "6a2e7a0d6be32fced4930e72",
     "indexId": "5463405d-3586-486d-9b90-71682d00722d",
     "classId": "venomblade",
     "name": "Venomblade",
@@ -2528,7 +2543,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a06299f6be32fced49304b1",
+    "id": "6a2e7a0d6be32fced4930df4",
     "indexId": "8c1654a0-a7b2-4a61-82a7-f29dabb44508",
     "classId": "warding-mage",
     "name": "Warding Mage",
@@ -2541,7 +2556,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304b2",
+    "id": "6a2e7a0d6be32fced4930df5",
     "indexId": "e3036666-25ee-4624-9d49-f4d04fb3faeb",
     "classId": "wave-palm-style",
     "name": "Wave Palm Style",
@@ -2554,7 +2569,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304e1",
+    "id": "6a2e7a0d6be32fced4930e24",
     "indexId": "2df334aa-f5c9-4560-9f6d-0b2cca882f2b",
     "classId": "wildheart",
     "name": "Wildheart",
@@ -2569,7 +2584,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced493049a",
+    "id": "6a2e7a0d6be32fced4930ddd",
     "indexId": "aa0f74c4-ef90-4ec9-a3f3-e874c41a5924",
     "classId": "windbringer",
     "name": "Windbringer",
@@ -2582,7 +2597,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a06299f6be32fced49304ca",
+    "id": "6a2e7a0d6be32fced4930e0d",
     "indexId": "1bc352f4-49f5-4a18-aa27-f6764feb4663",
     "classId": "zen-warrior",
     "name": "Zen Warrior",
@@ -2597,7 +2612,7 @@
     "imageAlignment": "bottom"
   },
   {
-    "id": "6a06299f6be32fced49304b3",
+    "id": "6a2e7a0d6be32fced4930df6",
     "indexId": "1b95f8fb-7b50-4d72-a893-7013597d6e66",
     "classId": "zephyr-warder",
     "name": "Zephyr Warder",

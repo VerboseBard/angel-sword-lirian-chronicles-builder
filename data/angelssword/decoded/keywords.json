@@ -1,6 +1,6 @@
 [
   {
-    "id": "6a06299f6be32fced4930644",
+    "id": "6a2e7a0d6be32fced4930f93",
     "indexId": "eac777b0-b114-4559-8ac2-0225e7bd2416",
     "keywordId": "active",
     "name": "Active",
@@ -9,7 +9,7 @@
     "descriptionText": "You cannot use the Prepare action on this ability."
   },
   {
-    "id": "6a06299f6be32fced493062f",
+    "id": "6a2e7a0d6be32fced4930f7e",
     "indexId": "4d9857ec-4df6-4ba4-9268-31c45092aa21",
     "keywordId": "aid",
     "name": "Aid",
@@ -18,16 +18,16 @@
     "descriptionText": "Abilities with the Aid keyword can only be used on allies, unless the ability specifically states you can use it on yourself."
   },
   {
-    "id": "6a06299f6be32fced49305ff",
+    "id": "6a2e7a0d6be32fced4930f4e",
     "indexId": "00a85b38-a930-4260-bde5-b1d2a0c5a1f2",
     "keywordId": "artillery",
     "name": "Artillery",
-    "description": "PHA+VGhlIGF0dGFjayBjYW4gdGFyZ2V0IG5vbi1oaWRkZW4gdW5pdHMgYmVoaW5kIGNvdmVyIChldmVuIGZ1bGwgY292ZXIpIGFuZCBpZ25vcmUgY292ZXIgYm9udXNlcy48L3A+",
-    "descriptionHtml": "<p>The attack can target non-hidden units behind cover (even full cover) and ignore cover bonuses.</p>",
-    "descriptionText": "The attack can target non-hidden units behind cover (even full cover) and ignore cover bonuses."
+    "description": "PHA+VGhlIGF0dGFjayBjYW4gdGFyZ2V0IG5vbi1oaWRkZW4gdW5pdHMgYmVoaW5kIGNvdmVyIChldmVuIGZ1bGwgY292ZXIpIGFuZCBhbnkgY292ZXIgaXMgY2FsY3VsYXRlZCBmcm9tIGFib3ZlIHRoZSB0YXJnZXQgcmF0aGVyIHRoYW4gZnJvbSB5b3VyIHBvc2l0aW9uIHRvIHRoZSB0YXJnZXQuPC9wPg==",
+    "descriptionHtml": "<p>The attack can target non-hidden units behind cover (even full cover) and any cover is calculated from above the target rather than from your position to the target.</p>",
+    "descriptionText": "The attack can target non-hidden units behind cover (even full cover) and any cover is calculated from above the target rather than from your position to the target."
   },
   {
-    "id": "6a06299f6be32fced493064e",
+    "id": "6a2e7a0d6be32fced4930f9d",
     "indexId": "07432b3c-1945-4698-be43-758981fd5a49",
     "keywordId": "augment",
     "name": "Augment",
@@ -36,7 +36,7 @@
     "descriptionText": "An attack that has been modified by an Augment effect cannot be modified again and given another Augment effect."
   },
   {
-    "id": "6a06299f6be32fced4930643",
+    "id": "6a2e7a0d6be32fced4930f92",
     "indexId": "17337955-a183-457b-bb2b-9194d3cd8231",
     "keywordId": "blanketing",
     "name": "Blanketing",
@@ -45,7 +45,7 @@
     "descriptionText": "When you make an attack against multiple targets with this ability, roll one accuracy and damage check that applies against all targets."
   },
   {
-    "id": "6a06299f6be32fced493063a",
+    "id": "6a2e7a0d6be32fced4930f89",
     "indexId": "5c7a0fd6-6356-4570-b8cb-5aa6799fb0ab",
     "keywordId": "bleeding",
     "name": "Bleeding",
@@ -54,7 +54,7 @@
     "descriptionText": "You take 1d6 true damage at the start of your turn."
   },
   {
-    "id": "6a06299f6be32fced4930600",
+    "id": "6a2e7a0d6be32fced4930f4f",
     "indexId": "1d9bb50b-1e8d-4fb4-890c-cb7a8041667e",
     "keywordId": "blinded",
     "name": "Blinded",
@@ -63,7 +63,7 @@
     "descriptionText": "Blinded characters suffer a -X penalty to their accuracy rolls where X is the blinded value. If they are Blinded for 3 or higher, they cannot make any ranged attacks without first locating a target through another means than sight. If they are blinded for 5 or higher, they also cannot gain Sure Hit on their attacks."
   },
   {
-    "id": "6a06299f6be32fced493060a",
+    "id": "6a2e7a0d6be32fced4930f59",
     "indexId": "d488b696-b5f6-4644-adb5-fc83766547cd",
     "keywordId": "block-crush",
     "name": "Block Crush",
@@ -72,7 +72,7 @@
     "descriptionText": "Block Crush attacks ignore any additional Guard gained from the Block action."
   },
   {
-    "id": "6a06299f6be32fced493062c",
+    "id": "6a2e7a0d6be32fced4930f7b",
     "indexId": "d023900c-ae49-4e0f-9d70-ef7402eaebcf",
     "keywordId": "broken",
     "name": "Broken",
@@ -81,7 +81,7 @@
     "descriptionText": "Only applies to equipment. Armor and shields that are broken provide no benefit or negatives. Weapons that are broken can only be used as an improvised weapon."
   },
   {
-    "id": "6a06299f6be32fced4930601",
+    "id": "6a2e7a0d6be32fced4930f50",
     "indexId": "a1145a79-b6f8-4e1c-8242-46bc19db0fb8",
     "keywordId": "burning",
     "name": "Burning",
@@ -90,16 +90,16 @@
     "descriptionText": "A Burning character takes X damage at the end of their turn. They may spend 1 AP to remove this effect."
   },
   {
-    "id": "6a06299f6be32fced4930602",
+    "id": "6a2e7a0d6be32fced4930f51",
     "indexId": "2fa2f790-dc31-454e-b773-053fcb5ae4e5",
     "keywordId": "challenge",
     "name": "Challenge",
-    "description": "PHA+SWYgYSBjaGFsbGVuZ2VkIGNoYXJhY3RlciBkb2VzIG5vdCBpbmNsdWRlIHRoZSBjaGFsbGVuZ2VyIGFzIGEgdGFyZ2V0LCB0aGV5IHByb3Zva2UgYSBtZWxlZSBhdHRhY2sgb2Ygb3Bwb3J0dW5pdHkgZnJvbSB0aGUgY2hhbGxlbmdlci48L3A+PHA+VGhpcyBkb2VzIG5vdCB0cmlnZ2VyIGlmIHRoZSBjaGFsbGVuZ2VkIHRhcmdldCBtYWtlcyBhbiBhdHRhY2sgb2Ygb3Bwb3J0dW5pdHkgb3IgaWYgdGhlIGNoYWxsZW5nZXIgaXMgbm90IGEgdGFyZ2V0IGR1ZSBlZmZlY3RzIHN1Y2ggYXMgY2hhcm0uPC9wPg==",
-    "descriptionHtml": "<p>If a challenged character does not include the challenger as a target, they provoke a melee attack of opportunity from the challenger.</p><p>This does not trigger if the challenged target makes an attack of opportunity or if the challenger is not a target due effects such as charm.</p>",
-    "descriptionText": "If a challenged character does not include the challenger as a target, they provoke a melee attack of opportunity from the challenger.\n\nThis does not trigger if the challenged target makes an attack of opportunity or if the challenger is not a target due effects such as charm."
+    "description": "PHA+SWYgYSBjaGFsbGVuZ2VkIGNoYXJhY3RlciBkb2VzIG5vdCBpbmNsdWRlIHRoZSBjaGFsbGVuZ2VyIGFzIGEgdGFyZ2V0IHdoZW4gbWFraW5nIGFuIGF0dGFjaywgdGhleSBwcm92b2tlIGEgbWVsZWUgYXR0YWNrIG9mIG9wcG9ydHVuaXR5IGZyb20gdGhlIGNoYWxsZW5nZXIuPC9wPjxwPlRoaXMgZG9lcyBub3QgdHJpZ2dlciBpZiB0aGUgY2hhbGxlbmdlZCB0YXJnZXQgbWFrZXMgYW4gYXR0YWNrIG9mIG9wcG9ydHVuaXR5IG9yIGlmIHRoZSBjaGFsbGVuZ2VyIGlzIG5vdCBhIHRhcmdldCBkdWUgZWZmZWN0cyBzdWNoIGFzIGNoYXJtLjwvcD4=",
+    "descriptionHtml": "<p>If a challenged character does not include the challenger as a target when making an attack, they provoke a melee attack of opportunity from the challenger.</p><p>This does not trigger if the challenged target makes an attack of opportunity or if the challenger is not a target due effects such as charm.</p>",
+    "descriptionText": "If a challenged character does not include the challenger as a target when making an attack, they provoke a melee attack of opportunity from the challenger.\n\nThis does not trigger if the challenged target makes an attack of opportunity or if the challenger is not a target due effects such as charm."
   },
   {
-    "id": "6a06299f6be32fced4930638",
+    "id": "6a2e7a0d6be32fced4930f87",
     "indexId": "ce1b49be-edb8-4bdc-ad57-9f840b1f708c",
     "keywordId": "charm",
     "name": "Charm",
@@ -108,7 +108,7 @@
     "descriptionText": "You may not willingly target the charmer with attacks unless you have no other valid targets (excluding allies) for the attack. Your AoE abilities that target allies also include the charmer, and your AoE attacks or abilities that exclude allies also exclude the charmer."
   },
   {
-    "id": "6a06299f6be32fced4930647",
+    "id": "6a2e7a0d6be32fced4930f96",
     "indexId": "4442e9d7-2f08-4318-9358-893f7f785227",
     "keywordId": "circuit",
     "name": "Circuit",
@@ -117,7 +117,7 @@
     "descriptionText": "The first time each combat you use an ability with this keyword, the mana cost is reduced by 1. Afterwards, this mana cost reduction is removed from all abilities with this keyword."
   },
   {
-    "id": "6a06299f6be32fced4930603",
+    "id": "6a2e7a0d6be32fced4930f52",
     "indexId": "6cffc4e1-6836-4399-b258-21b0add51ae0",
     "keywordId": "combo",
     "name": "Combo",
@@ -126,7 +126,7 @@
     "descriptionText": "Combo abilities gain a bonus when used directly after another ability. Combo abilities remain valid until you spend AP on a different ability or action."
   },
   {
-    "id": "6a06299f6be32fced4930604",
+    "id": "6a2e7a0d6be32fced4930f53",
     "indexId": "ec7daaed-57a5-4b75-aecd-9879c96fd131",
     "keywordId": "concentration",
     "name": "Concentration",
@@ -135,7 +135,7 @@
     "descriptionText": "A character can only have 1 Concentration effect active at the same time. They may drop a Concentration effect during their turn for 0 AP. When a character gets Downed, they lose Concentration."
   },
   {
-    "id": "6a06299f6be32fced4930649",
+    "id": "6a2e7a0d6be32fced4930f98",
     "indexId": "0e468cf9-5779-460c-b72a-0d52e53979dc",
     "keywordId": "crushing",
     "name": "Crushing",
@@ -144,7 +144,7 @@
     "descriptionText": "On an unblocked hit, this attack deals a minimum damage equal to your Power."
   },
   {
-    "id": "6a06299f6be32fced4930605",
+    "id": "6a2e7a0d6be32fced4930f54",
     "indexId": "f29356fb-274d-4365-ba2b-0aea6a18a2db",
     "keywordId": "daze",
     "name": "Daze",
@@ -153,7 +153,7 @@
     "descriptionText": "You immediately lose 1 AP. If you do not have any AP, you instead regen 1 less AP at the start of your next turn. A dazed target becomes immune to Daze until the end of their next turn."
   },
   {
-    "id": "6a06299f6be32fced4930606",
+    "id": "6a2e7a0d6be32fced4930f55",
     "indexId": "5de332e1-9e01-4ca7-b9ef-1e69cf4d0c79",
     "keywordId": "disarm",
     "name": "Disarm",
@@ -162,7 +162,16 @@
     "descriptionText": "When disarmed, you cannot make weapon attacks with the weapon you were wielding when you got disarmed. You must draw the weapon again to use it when the Disarm ends. Unarmed attacks are unaffected by Disarm."
   },
   {
-    "id": "6a06299f6be32fced493063c",
+    "id": "6a42d088b1ae8a568e9cc7f8",
+    "indexId": "4ae1988f-63e7-4abb-8d59-f994618207f4",
+    "keywordId": "divine",
+    "name": "Divine",
+    "description": "PHA+SWYgeW91IHRvb2sgdGhlIERpdmluZSdzIENob3NlbiBicmVha3Rocm91Z2gsIHRoaXMgYWJpbGl0eSdzIGRhbWFnZSB0eXBlIGJlY29tZXMgeW91ciBjaG9zZW4gZGl2aW5lJ3MgZGFtYWdlIHR5cGUgaW5zdGVhZCBvZiBIb2x5LjwvcD4=",
+    "descriptionHtml": "<p>If you took the Divine's Chosen breakthrough, this ability's damage type becomes your chosen divine's damage type instead of Holy.</p>",
+    "descriptionText": "If you took the Divine's Chosen breakthrough, this ability's damage type becomes your chosen divine's damage type instead of Holy."
+  },
+  {
+    "id": "6a2e7a0d6be32fced4930f8b",
     "indexId": "79e00490-6478-44bb-abc9-d9118eac6d96",
     "keywordId": "domain",
     "name": "Domain",
@@ -171,7 +180,7 @@
     "descriptionText": "A domain area spell. Only one domain area may be active at a location at a time."
   },
   {
-    "id": "6a06299f6be32fced4930632",
+    "id": "6a2e7a0d6be32fced4930f81",
     "indexId": "7bb8b8b9-fb07-467f-a68a-3bce52282ddd",
     "keywordId": "enchantment",
     "name": "Enchantment",
@@ -180,7 +189,7 @@
     "descriptionText": "An enchantment is placed on a weapon. A weapon can only have 1 enchantment at the same time. If an enchantment is placed on a channeling weapon, it transfer the enchantment properties to any spells cast while holding it."
   },
   {
-    "id": "6a06299f6be32fced4930635",
+    "id": "6a2e7a0d6be32fced4930f84",
     "indexId": "5da14c6e-8d2a-44b5-84fa-2b685167d302",
     "keywordId": "esoteric-art",
     "name": "Esoteric Art",
@@ -189,7 +198,7 @@
     "descriptionText": "You can only use 1 ability with this keyword or with the Secret Art keyword per encounter."
   },
   {
-    "id": "6a06299f6be32fced4930637",
+    "id": "6a2e7a0d6be32fced4930f86",
     "indexId": "8e376297-5f7b-4a60-83fe-e273135ac448",
     "keywordId": "expose",
     "name": "Expose",
@@ -198,7 +207,7 @@
     "descriptionText": "The target's crit threshold is reduced by the expose value (base 1, reducing normal crit threshold from 20→19). Stacks with katana's reduced crit threshold and other abilities which lower the crit threshold of the user.\n\nExpose is removed once the target is critically hit (regardless of if they defend or not)"
   },
   {
-    "id": "6a06299f6be32fced4930607",
+    "id": "6a2e7a0d6be32fced4930f56",
     "indexId": "20a8fe36-099e-4b67-820a-2d5110263145",
     "keywordId": "fire",
     "name": "Fire",
@@ -207,7 +216,7 @@
     "descriptionText": "Spells and attacks that deal Fire damage may ignite flammable, unattended objects."
   },
   {
-    "id": "6a06299f6be32fced4930608",
+    "id": "6a2e7a0d6be32fced4930f57",
     "indexId": "e6dc65e1-dfcd-4b88-ab9b-f52ed11089e5",
     "keywordId": "flashback",
     "name": "Flashback",
@@ -216,7 +225,7 @@
     "descriptionText": "Flashbacks are abilities that refer to an earlier time in the campaign. They reflect prior planning that the character has made to affect the current situation."
   },
   {
-    "id": "6a06299f6be32fced4930609",
+    "id": "6a2e7a0d6be32fced4930f58",
     "indexId": "c5ef3c1c-7cfc-4715-9843-7c9568f23baf",
     "keywordId": "full-pierce",
     "name": "Full Pierce",
@@ -225,7 +234,7 @@
     "descriptionText": "Full pierce attacks cannot be reduced by guard."
   },
   {
-    "id": "6a06299f6be32fced493060b",
+    "id": "6a2e7a0d6be32fced4930f5a",
     "indexId": "25efada6-1d4e-4206-aab9-ac350a353102",
     "keywordId": "half-pierce",
     "name": "Half Pierce",
@@ -234,7 +243,7 @@
     "descriptionText": "Half Pierce attacks ignore Guard, unless the target takes the Block action or Dodge action."
   },
   {
-    "id": "6a06299f6be32fced493064f",
+    "id": "6a2e7a0d6be32fced4930f9e",
     "indexId": "e1e7059e-8541-43b3-ac10-17ff84fecf32",
     "keywordId": "half-rapid",
     "name": "Half Rapid",
@@ -243,7 +252,7 @@
     "descriptionText": "This ability may be used once on each creature every round."
   },
   {
-    "id": "6a1b5f216be32fced4930c25",
+    "id": "6a2e7a0d6be32fced4930f9f",
     "indexId": "1e8bb4b3-d32f-4ea8-abe3-ed067dc52319",
     "keywordId": "hellfire",
     "name": "Hellfire",
@@ -252,7 +261,7 @@
     "descriptionText": "Hellfire functions like Burning (You take X damage at the end of your turn), but it can no longer be removed the normal way if not removed before the end of the target’s next turn. It can still be dispelled through the use of abilities.\n\nHellfire can be applied to enemies immune to Burning, but it can still be removed like normal even after a turn has passed. Hellfire is automatically removed at the end of the encounter."
   },
   {
-    "id": "6a06299f6be32fced493063f",
+    "id": "6a2e7a0d6be32fced4930f8e",
     "indexId": "6d176f9b-ace1-4689-acc4-344c411d31b9",
     "keywordId": "hiding",
     "name": "Hiding",
@@ -261,7 +270,7 @@
     "descriptionText": "While in Hiding, enemies cannot see or target you and even if they are aware of your presence, they cannot pinpoint your exact location. You lose Hiding if you move, attack or use any other ability that does not have the Stealth keyword unless that movement or attack says otherwise."
   },
   {
-    "id": "6a06299f6be32fced4930639",
+    "id": "6a2e7a0d6be32fced4930f88",
     "indexId": "2cb7e815-0e3a-4c9d-8b54-5fe40754529c",
     "keywordId": "illumination",
     "name": "Illumination",
@@ -270,7 +279,7 @@
     "descriptionText": "The next attack against you gets an X bonus to the accuracy roll (Consumed even on a miss)."
   },
   {
-    "id": "6a06299f6be32fced493060c",
+    "id": "6a2e7a0d6be32fced4930f5b",
     "indexId": "202dc4ee-51c2-4dff-a8d1-c8de3cd0ffbf",
     "keywordId": "immovable",
     "name": "Immovable",
@@ -279,7 +288,7 @@
     "descriptionText": "While not flying, effects from other creatures that knock you prone or force you to move such as knockbacks are ineffective."
   },
   {
-    "id": "6a06299f6be32fced493060d",
+    "id": "6a2e7a0d6be32fced4930f5c",
     "indexId": "fa291071-2630-4dfa-9626-5dc912591713",
     "keywordId": "instant",
     "name": "Instant",
@@ -288,7 +297,16 @@
     "descriptionText": "Can be used while another action is resolving to temporarily interrupt it. The Instant ability resolves immediately and before any interrupted ability can resolve. The current action is cancelled and refunded if the target becomes invalid."
   },
   {
-    "id": "6a06299f6be32fced493060e",
+    "id": "6a4369bab1ae8a568e9cc7fb",
+    "indexId": "9a5a43c0-f329-4f2a-8d8c-ad10d9e20fd9",
+    "keywordId": "isolated",
+    "name": "Isolated",
+    "description": "PHA+SWYgeW91IGhhdmUgbm8gYWxsaWVzIHdpdGhpbiAxMGZ0IG9mIHlvdSBhbmQgYXQgbGVhc3QgMiBlbmVtaWVzIHdpdGhpbiAxMGZ0IG9mIHlvdSwgeW91IGFyZSBjb25zaWRlcmVkIElzb2xhdGVkLjwvcD4=",
+    "descriptionHtml": "<p>If you have no allies within 10ft of you and at least 2 enemies within 10ft of you, you are considered Isolated.</p>",
+    "descriptionText": "If you have no allies within 10ft of you and at least 2 enemies within 10ft of you, you are considered Isolated."
+  },
+  {
+    "id": "6a2e7a0d6be32fced4930f5d",
     "indexId": "550c60b9-d89f-4de8-96f5-097ed6ad7bf8",
     "keywordId": "killing-blow",
     "name": "Killing Blow",
@@ -297,7 +315,7 @@
     "descriptionText": "Killing Blow effects trigger when reducing the HP of enemy to 0 or lower.\n\nYou cannot benefit from the same Killing Blow effect against the same target more than once."
   },
   {
-    "id": "6a06299f6be32fced493060f",
+    "id": "6a2e7a0d6be32fced4930f5e",
     "indexId": "67075aad-dec3-4c83-9802-92bbf7dd4331",
     "keywordId": "lock-on",
     "name": "Lock On",
@@ -306,7 +324,7 @@
     "descriptionText": "Lock On attacks ignore the bonus from dodge."
   },
   {
-    "id": "6a06299f6be32fced493064a",
+    "id": "6a2e7a0d6be32fced4930f99",
     "indexId": "68fa5644-5bdb-4e8b-bf2d-be96ef80c535",
     "keywordId": "lockstep",
     "name": "Lockstep",
@@ -315,7 +333,7 @@
     "descriptionText": "This attack always matches the target's base evasion (including bonuses etc, but they may still dodge it like normal)."
   },
   {
-    "id": "6a06299f6be32fced4930610",
+    "id": "6a2e7a0d6be32fced4930f5f",
     "indexId": "afa3db7b-1d98-4bff-b5e9-50bef9420cc1",
     "keywordId": "miracle",
     "name": "Miracle",
@@ -324,7 +342,7 @@
     "descriptionText": "A character may only cast 1 Miracle per encounter."
   },
   {
-    "id": "6a06299f6be32fced4930611",
+    "id": "6a2e7a0d6be32fced4930f60",
     "indexId": "e10bc7b8-fbbd-452b-be2f-8b38d533311d",
     "keywordId": "mystic-eye",
     "name": "Mystic Eye",
@@ -333,7 +351,7 @@
     "descriptionText": "This ability is made with a Mystic Eye."
   },
   {
-    "id": "6a06299f6be32fced4930612",
+    "id": "6a2e7a0d6be32fced4930f61",
     "indexId": "fe2396d3-ee76-4ed6-bb40-a7ad4d8efa41",
     "keywordId": "ninjutsu",
     "name": "Ninjutsu",
@@ -342,7 +360,7 @@
     "descriptionText": "This ability requires two free hands. You may wield Small weapon, Saboteur threaded dagger, One-handed thrown and Sets of Missiles weapons and still count as having your hand free."
   },
   {
-    "id": "6a06299f6be32fced4930641",
+    "id": "6a2e7a0d6be32fced4930f90",
     "indexId": "90f1f5a8-c03a-4f8d-a620-8af7b02b17a1",
     "keywordId": "offstep",
     "name": "Offstep",
@@ -351,7 +369,7 @@
     "descriptionText": "Attacks against you always meet your base evasion (Including bonuses etc, but you may still dodge them like normal)."
   },
   {
-    "id": "6a06299f6be32fced4930646",
+    "id": "6a2e7a0d6be32fced4930f95",
     "indexId": "0793f88a-b87f-45b0-b7e7-1642ecf82c2a",
     "keywordId": "opener",
     "name": "Opener",
@@ -360,7 +378,7 @@
     "descriptionText": "This ability can only be used as the first action in a turn. (Paying upkeep does not count as an action)"
   },
   {
-    "id": "6a21c57d6be32fced4930c4f",
+    "id": "6a2e7a0d6be32fced4930fa1",
     "indexId": "d3fcdaa5-032e-4e1e-af16-950271b14151",
     "keywordId": "opportunistic",
     "name": "Opportunistic",
@@ -369,7 +387,7 @@
     "descriptionText": "You may use this ability instead of making a regular of attack of opportunity. This ability is counted as making an attack of opportunity and you don't get your regular one if you use it."
   },
   {
-    "id": "6a06299f6be32fced4930613",
+    "id": "6a2e7a0d6be32fced4930f62",
     "indexId": "3ff4d097-9577-49b6-800d-9f1f6983da69",
     "keywordId": "overcharge",
     "name": "Overcharge",
@@ -378,7 +396,7 @@
     "descriptionText": "You may spend additional AP and/or Mana to increase the power of the ability."
   },
   {
-    "id": "6a06299f6be32fced4930633",
+    "id": "6a2e7a0d6be32fced4930f82",
     "indexId": "a541b2de-0829-4cc4-9dbd-c2059e08f7e7",
     "keywordId": "pass",
     "name": "Pass",
@@ -387,7 +405,7 @@
     "descriptionText": "You can move through enemy units for this movement."
   },
   {
-    "id": "6a06299f6be32fced493064b",
+    "id": "6a2e7a0d6be32fced4930f9a",
     "indexId": "28e456c9-3b37-4704-a48f-636d67ec7163",
     "keywordId": "persist",
     "name": "Persist",
@@ -396,7 +414,7 @@
     "descriptionText": "This effect costs +X mana to dispel. If the creature dispelling it does not use mana, it takes +X AP (or +X RP) instead.\n\nDoes not apply when they use the natural way of removing it, if possible (For example by spending 1 AP to remove a Burn)."
   },
   {
-    "id": "6a06299f6be32fced4930645",
+    "id": "6a2e7a0d6be32fced4930f94",
     "indexId": "2ba73803-2365-41e3-9e97-be1bdc1d65ff",
     "keywordId": "pinpoint",
     "name": "Pinpoint",
@@ -405,7 +423,7 @@
     "descriptionText": "You ignore points of the target's guard equal to your Focus. Cannot reduce guard below 0."
   },
   {
-    "id": "6a06299f6be32fced493062d",
+    "id": "6a2e7a0d6be32fced4930f7c",
     "indexId": "37f7a6ae-322a-49c6-a034-4b90eb85053d",
     "keywordId": "presence-concealment",
     "name": "Presence Concealment",
@@ -414,7 +432,7 @@
     "descriptionText": "You hide your mana output and aura, making it harder to detect you by magical means—Causing your spirit core to be considered 0 for the purposes of detection and aura abilities.  In addition you gain a +5 bonus to stealth."
   },
   {
-    "id": "6a06299f6be32fced4930614",
+    "id": "6a2e7a0d6be32fced4930f63",
     "indexId": "ff3590e1-4c9a-4b26-a4c7-3bcb2195b436",
     "keywordId": "prone",
     "name": "Prone",
@@ -423,7 +441,7 @@
     "descriptionText": "An ability with this keyword can be used while Prone with no penalty. All attacks without the Prone keyword cost +1 AP and RP while prone."
   },
   {
-    "id": "6a06299f6be32fced4930615",
+    "id": "6a2e7a0d6be32fced4930f64",
     "indexId": "ca168d73-441f-496b-b1a8-0af1762e27f7",
     "keywordId": "quick",
     "name": "Quick",
@@ -432,7 +450,7 @@
     "descriptionText": "The first time after using an ability with Quick, other abilities with Quick used in same turn cost +1 AP."
   },
   {
-    "id": "6a06299f6be32fced4930636",
+    "id": "6a2e7a0d6be32fced4930f85",
     "indexId": "dd923002-136f-4830-9344-42cbbb52cef1",
     "keywordId": "rage",
     "name": "Rage",
@@ -441,7 +459,7 @@
     "descriptionText": "This ability can be used while in Rage Stance."
   },
   {
-    "id": "6a06299f6be32fced4930616",
+    "id": "6a2e7a0d6be32fced4930f65",
     "indexId": "6e4c2928-ddae-48f7-9f79-c929e9abfbc4",
     "keywordId": "rapid",
     "name": "Rapid",
@@ -450,7 +468,7 @@
     "descriptionText": "This ability can be used more than once per turn."
   },
   {
-    "id": "6a1f63bf6be32fced4930c39",
+    "id": "6a2e7a0d6be32fced4930fa0",
     "indexId": "f90f0ce0-18d7-4af7-82b3-1fbf110cb26a",
     "keywordId": "regrowth",
     "name": "Regrowth",
@@ -459,7 +477,7 @@
     "descriptionText": "You heal for 3+Focus (of the one who applied it) at the start of your turn."
   },
   {
-    "id": "6a06299f6be32fced4930617",
+    "id": "6a2e7a0d6be32fced4930f66",
     "indexId": "1fd87cd9-f9db-4fae-8ddd-2c2f3a1284b4",
     "keywordId": "root",
     "name": "Root",
@@ -468,7 +486,7 @@
     "descriptionText": "You cannot move and your evasion when taking the Dodge reaction is changed to 13 + Agility (rounded down)"
   },
   {
-    "id": "6a06299f6be32fced4930648",
+    "id": "6a2e7a0d6be32fced4930f97",
     "indexId": "0e6c5ba2-7f7e-40b4-aaae-3cebf2e04b2d",
     "keywordId": "safe",
     "name": "Safe",
@@ -477,7 +495,7 @@
     "descriptionText": "This spell and/or attack does not provoke attacks of opportunity."
   },
   {
-    "id": "6a06299f6be32fced493064d",
+    "id": "6a2e7a0d6be32fced4930f9c",
     "indexId": "3a552029-2889-464b-b037-38ac98580b65",
     "keywordId": "sanctify",
     "name": "Sanctify",
@@ -486,7 +504,7 @@
     "descriptionText": "Attacks against you that hit heal an enemy attacker by 3+the applier's focus. After this triggers, the stacks of this debuff are reduced by 1.\n\nAn attacker at full HP may choose not to trigger the effect."
   },
   {
-    "id": "6a06299f6be32fced4930642",
+    "id": "6a2e7a0d6be32fced4930f91",
     "indexId": "52ecee25-6b45-4e64-9cf2-7c516b771f08",
     "keywordId": "scatter",
     "name": "Scatter",
@@ -495,7 +513,7 @@
     "descriptionText": "When you make an attack against multiple targets with this ability, roll a separate accuracy and damage check against each target."
   },
   {
-    "id": "6a06299f6be32fced4930618",
+    "id": "6a2e7a0d6be32fced4930f67",
     "indexId": "adfc9176-039b-4f2f-828e-cd14573451aa",
     "keywordId": "secret-art",
     "name": "Secret Art",
@@ -504,7 +522,7 @@
     "descriptionText": "You can only use 1 ability with this keyword or with the Esoteric Art keyword per encounter."
   },
   {
-    "id": "6a06299f6be32fced4930619",
+    "id": "6a2e7a0d6be32fced4930f68",
     "indexId": "0db22031-edae-49eb-8a2b-01680c7fe3dc",
     "keywordId": "setup",
     "name": "Setup",
@@ -513,7 +531,7 @@
     "descriptionText": "Setup attacks can be completed by spending AP in the following turn. While charging the attack, no other AP actions can be taken and attacks against you gain the Trick Attack keyword. You may cancel a setup attack instead of finishing it and don't need to spend the remaining AP. Setup attacks cannot activate before the start of your next turn and you cannot use the Prepare action on Setup abilities. You may cancel a setup attack at any time by spending 0 RP. You must spend at least 1 AP to begin charging a setup attack."
   },
   {
-    "id": "6a06299f6be32fced493061a",
+    "id": "6a2e7a0d6be32fced4930f69",
     "indexId": "0bcb8fe9-7215-4793-8199-db2672365d0b",
     "keywordId": "shaken",
     "name": "Shaken",
@@ -522,7 +540,7 @@
     "descriptionText": "The target's maximum AP is reduced by 1."
   },
   {
-    "id": "6a06299f6be32fced493061b",
+    "id": "6a2e7a0d6be32fced4930f6a",
     "indexId": "918abd51-5b78-4af7-8e72-474cdf443429",
     "keywordId": "shieldbreaker",
     "name": "Shieldbreaker",
@@ -531,7 +549,7 @@
     "descriptionText": "This attack deals double damage to the HP of Shields and Temporary HP. Any carryover damage is not doubled."
   },
   {
-    "id": "6a06299f6be32fced493062a",
+    "id": "6a2e7a0d6be32fced4930f79",
     "indexId": "a34dacc0-1b1c-4813-9bde-6af795344267",
     "keywordId": "sickened",
     "name": "Sickened",
@@ -540,7 +558,7 @@
     "descriptionText": "When making a roll that uses Focus, Power, Agility or Toughness, they are treated as 1 lower."
   },
   {
-    "id": "6a06299f6be32fced493061c",
+    "id": "6a2e7a0d6be32fced4930f6b",
     "indexId": "cbe95f38-cc4d-4a67-8c13-0cf7774ee434",
     "keywordId": "sidestep",
     "name": "Sidestep",
@@ -549,7 +567,7 @@
     "descriptionText": "Your movement does not provoke attacks of opportunities."
   },
   {
-    "id": "6a06299f6be32fced493061d",
+    "id": "6a2e7a0d6be32fced4930f6c",
     "indexId": "009c28db-9ead-4a10-8b0f-58552e3e327c",
     "keywordId": "slow",
     "name": "Slow",
@@ -558,7 +576,7 @@
     "descriptionText": "Your movement speed is halved."
   },
   {
-    "id": "6a06299f6be32fced4930630",
+    "id": "6a2e7a0d6be32fced4930f7f",
     "indexId": "60962ad3-ab10-41e4-95bd-f668ee6b4167",
     "keywordId": "soaked",
     "name": "Soaked",
@@ -567,7 +585,7 @@
     "descriptionText": "A soaked target takes X additional damage when taking Lighting damage."
   },
   {
-    "id": "6a06299f6be32fced493061e",
+    "id": "6a2e7a0d6be32fced4930f6d",
     "indexId": "d136875f-9ba2-4d44-9d53-d6d61dd1b291",
     "keywordId": "song",
     "name": "Song",
@@ -576,7 +594,7 @@
     "descriptionText": "A character can only have 1 Song active at the same time."
   },
   {
-    "id": "6a06299f6be32fced493061f",
+    "id": "6a2e7a0d6be32fced4930f6e",
     "indexId": "1d4c9d83-92f9-4c8f-97a0-03364af0d89d",
     "keywordId": "sound",
     "name": "Sound",
@@ -585,7 +603,7 @@
     "descriptionText": "This ability's effect is based around sound. Those who can't hear it are unaffected."
   },
   {
-    "id": "6a06299f6be32fced4930631",
+    "id": "6a2e7a0d6be32fced4930f80",
     "indexId": "4c06100e-0210-4287-a782-0fce51327591",
     "keywordId": "spell",
     "name": "Spell",
@@ -594,7 +612,7 @@
     "descriptionText": "This ability is considered a spell. Unless stated otherwise, it will provoke attacks of opportunity."
   },
   {
-    "id": "6a06299f6be32fced493063d",
+    "id": "6a2e7a0d6be32fced4930f8c",
     "indexId": "ddc35d94-ab34-4134-9f4c-9f756d314802",
     "keywordId": "stacking",
     "name": "Stacking",
@@ -603,7 +621,7 @@
     "descriptionText": "Abilities with this keyword give stacks of something. You can only gain stacks of 1 thing with this keyword a the same time. Upon gaining a stack of a different kind, your original stacks are lost."
   },
   {
-    "id": "6a06299f6be32fced4930640",
+    "id": "6a2e7a0d6be32fced4930f8f",
     "indexId": "c6c37243-7354-489c-bc7c-d8a254d38109",
     "keywordId": "stagger",
     "name": "Stagger",
@@ -612,7 +630,7 @@
     "descriptionText": "A character inflicted with Stagger has their evasion reduced by X, where X is the Stagger value."
   },
   {
-    "id": "6a06299f6be32fced4930620",
+    "id": "6a2e7a0d6be32fced4930f6f",
     "indexId": "4f1b555a-cf53-42a9-9b43-818c43115fe9",
     "keywordId": "stance",
     "name": "Stance",
@@ -621,7 +639,7 @@
     "descriptionText": "Only 1 Stance ability can be active at the same time."
   },
   {
-    "id": "6a06299f6be32fced4930621",
+    "id": "6a2e7a0d6be32fced4930f70",
     "indexId": "ee475527-8a40-43ba-87aa-d45f6655d785",
     "keywordId": "static",
     "name": "Static",
@@ -630,7 +648,7 @@
     "descriptionText": "At the end of your next turn, you deal X lightning damage to all allies within 5ft of you."
   },
   {
-    "id": "6a06299f6be32fced493063e",
+    "id": "6a2e7a0d6be32fced4930f8d",
     "indexId": "13a42b5c-ea37-4d56-bc5c-6c2909a3d0ca",
     "keywordId": "stealth",
     "name": "Stealth",
@@ -639,7 +657,7 @@
     "descriptionText": "This ability does not pull you out of Hiding. You must still be in low cover after using this ability to remain in Hiding."
   },
   {
-    "id": "6a2c8e2e6be32fced4930c88",
+    "id": "6a2e7a0d6be32fced4930fa2",
     "indexId": "43ec950b-b2a6-417c-bf4a-5457f855405f",
     "keywordId": "strafe",
     "name": "Strafe",
@@ -648,7 +666,7 @@
     "descriptionText": "You must have moved at least the Strafe distance towards the target before making an attack with this keyword."
   },
   {
-    "id": "6a06299f6be32fced4930622",
+    "id": "6a2e7a0d6be32fced4930f71",
     "indexId": "44993b6e-f93f-4121-9980-b607f4dc4d81",
     "keywordId": "stun",
     "name": "Stun",
@@ -657,7 +675,7 @@
     "descriptionText": "Your AP, AP recovery and RP is set to 0 when afflicted by this. When it ends, you regain any unused RP lost from this effect."
   },
   {
-    "id": "6a06299f6be32fced4930623",
+    "id": "6a2e7a0d6be32fced4930f72",
     "indexId": "490f3e8f-98b8-47ab-a41f-aefa26bc8fd8",
     "keywordId": "summon",
     "name": "Summon",
@@ -666,7 +684,7 @@
     "descriptionText": "This ability counts towards your maximum summon limit. You can only have 2 summons active at the same time.\n\nA summon does not count as a valid target for abilities that require a ‘willing’ ally."
   },
   {
-    "id": "6a06299f6be32fced4930634",
+    "id": "6a2e7a0d6be32fced4930f83",
     "indexId": "ad06fb6c-a6a8-4cdc-b62c-9162f8442cc0",
     "keywordId": "sunder",
     "name": "Sunder",
@@ -675,7 +693,7 @@
     "descriptionText": "A character inflicted with Sunder has their guard reduced by X, where X is the Sunder value."
   },
   {
-    "id": "6a06299f6be32fced4930624",
+    "id": "6a2e7a0d6be32fced4930f73",
     "indexId": "5232e3cf-4b87-48b7-a53f-d522d1a4036b",
     "keywordId": "sure-hit",
     "name": "Sure Hit",
@@ -684,7 +702,7 @@
     "descriptionText": "Sure hit attacks always hit and do not require an accuracy roll, but they automatically miss against targets with full cover."
   },
   {
-    "id": "6a06299f6be32fced493062b",
+    "id": "6a2e7a0d6be32fced4930f7a",
     "indexId": "a9056be5-02dd-471b-a01c-a23bf213d242",
     "keywordId": "teleport",
     "name": "Teleport",
@@ -693,7 +711,7 @@
     "descriptionText": "You teleport instead of moving normally. Teleportation does not provoke Attacks of Opportunity and ignores most forms of slows, roots and grapples. You need to see where you teleport to, but can otherwise ignore difficult terrain and solid objects in the way. Unless stated otherwise, you only move yourself and your belongings when teleporting, not other creatures you might be touching."
   },
   {
-    "id": "6a06299f6be32fced493064c",
+    "id": "6a2e7a0d6be32fced4930f9b",
     "indexId": "9b904e8f-b318-41d0-a151-61171ae874eb",
     "keywordId": "toxic",
     "name": "Toxic",
@@ -702,7 +720,7 @@
     "descriptionText": "A character suffering from Toxic takes 1d6 Full Pierce Poison damage at the start of their turn."
   },
   {
-    "id": "6a06299f6be32fced493062e",
+    "id": "6a2e7a0d6be32fced4930f7d",
     "indexId": "040f0d4c-cb8c-481c-94c9-7cdeb3032bdc",
     "keywordId": "transformation",
     "name": "Transformation",
@@ -711,7 +729,7 @@
     "descriptionText": "You can only have one transformation effect active at one time."
   },
   {
-    "id": "6a06299f6be32fced4930625",
+    "id": "6a2e7a0d6be32fced4930f74",
     "indexId": "f0712a24-568b-43f9-a3bb-832bb66af172",
     "keywordId": "trick-attack",
     "name": "Trick Attack",
@@ -720,7 +738,7 @@
     "descriptionText": "The target of the attack must spend double RP to react to a Trick Attack."
   },
   {
-    "id": "6a06299f6be32fced493063b",
+    "id": "6a2e7a0d6be32fced4930f8a",
     "indexId": "c8e4fdb6-7948-43a6-9ec3-a764096599f2",
     "keywordId": "type",
     "name": "Type",
@@ -729,7 +747,7 @@
     "descriptionText": "You can only be 1 ‘type’ at the same time."
   },
   {
-    "id": "6a06299f6be32fced4930626",
+    "id": "6a2e7a0d6be32fced4930f75",
     "indexId": "d0e8aacb-546b-4123-ba4c-9331ae27cf31",
     "keywordId": "unarmed-strike",
     "name": "Unarmed Strike",
@@ -738,16 +756,16 @@
     "descriptionText": "This ability must be made with an unarmed attack."
   },
   {
-    "id": "6a06299f6be32fced4930627",
+    "id": "6a2e7a0d6be32fced4930f76",
     "indexId": "fd712af4-2392-4bd9-b51c-25296f06f1b2",
     "keywordId": "unbalanced",
     "name": "Unbalanced",
-    "description": "PHA+WW91ciBuZXh0IGF0dGFjayBjb3N0cyAxIGV4dHJhIEFQLjwvcD4=",
-    "descriptionHtml": "<p>Your next attack costs 1 extra AP.</p>",
-    "descriptionText": "Your next attack costs 1 extra AP."
+    "description": "PHA+WW91ciBuZXh0IGF0dGFjayB0aGF0IGNvc3RzIEFQIChldmVuIDAgQVApIGNvc3RzIDEgZXh0cmEgQVAuPC9wPg==",
+    "descriptionHtml": "<p>Your next attack that costs AP (even 0 AP) costs 1 extra AP.</p>",
+    "descriptionText": "Your next attack that costs AP (even 0 AP) costs 1 extra AP."
   },
   {
-    "id": "6a06299f6be32fced4930628",
+    "id": "6a2e7a0d6be32fced4930f77",
     "indexId": "c17863ed-20ca-4cbc-8456-40c3dd824fd8",
     "keywordId": "upkeep",
     "name": "Upkeep",
@@ -756,7 +774,7 @@
     "descriptionText": "You may choose to pay the cost at the beginning of your turn. If you don't, the effect is terminated.\n\nWhile downed, you cannot pay upkeep."
   },
   {
-    "id": "6a06299f6be32fced4930629",
+    "id": "6a2e7a0d6be32fced4930f78",
     "indexId": "d70a6b0e-dce7-4a4d-8852-6e50d0cd8787",
     "keywordId": "weakened",
     "name": "Weakened",

@@ -1,6 +1,6 @@
 [
   {
-    "id": "6a06299f6be32fced4930880",
+    "id": "6a2e7a0d6be32fced49311d3",
     "indexId": "675a52b4-b8b7-43f8-8a97-fdb6125f0da3",
     "primaryRaceId": "chimera",
     "name": "Chimera",
@@ -12,7 +12,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/1bf33da4-b9ac-44cf-ae53-ce85f84ee58f-Slime_GIrl_New_raw_1.sm.webp"
   },
   {
-    "id": "6a06299f6be32fced4930882",
+    "id": "6a2e7a0d6be32fced49311d5",
     "indexId": "913ce48c-ee4b-4a4e-a71d-90ceb5eb1b8e",
     "primaryRaceId": "demon",
     "name": "Demon",
@@ -24,7 +24,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/7a2206e1-b5dc-433d-bc13-ee552982d128-Demon_Portrait_New_raw.sm.webp"
   },
   {
-    "id": "6a06299f6be32fced4930881",
+    "id": "6a2e7a0d6be32fced49311d4",
     "indexId": "cb5ea351-a25c-4934-896f-74b17000992d",
     "primaryRaceId": "fae",
     "name": "Fae",
@@ -36,7 +36,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/42158447-1039-4c70-992b-00b67e562492-Dryad_raw.sm.webp"
   },
   {
-    "id": "6a06299f6be32fced493087e",
+    "id": "6a2e7a0d6be32fced49311d1",
     "indexId": "f59714f1-f4cf-47f3-912d-39284c4a225d",
     "primaryRaceId": "human",
     "name": "Human",
@@ -48,7 +48,7 @@
     "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/aa638108-9b8e-48ad-9e58-c7451e054c42-Sword_Saint_New_raw.sm.webp"
   },
   {
-    "id": "6a06299f6be32fced493087f",
+    "id": "6a2e7a0d6be32fced49311d2",
     "indexId": "d4f38a14-5d79-4ddc-9fac-07c5e7800a1a",
     "primaryRaceId": "youkai",
     "name": "Youkai",

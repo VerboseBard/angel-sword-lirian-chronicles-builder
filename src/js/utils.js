@@ -352,6 +352,24 @@ const byName = new Map();
 export function cssEscape(value) {
       return String(value || "").replace(/"/g, '\\"');
     }
+export function splitSentences(text) {
+      // Equivalent to text.split(/(?<=[.!?])\s+/) without regex lookbehind,
+      // which Safari only parses from 16.4 onward.
+      const source = String(text ?? "");
+const parts = [];
+const whitespace = /\s+/g;
+let start = 0;
+let match;
+      while ((match = whitespace.exec(source))) {
+        const previous = source[match.index - 1];
+        if (previous === "." || previous === "!" || previous === "?") {
+          parts.push(source.slice(start, match.index));
+          start = match.index + match[0].length;
+        }
+      }
+      parts.push(source.slice(start));
+      return parts;
+    }
 export function asArray(value) {
       if (Array.isArray(value)) {
         return value;

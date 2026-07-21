@@ -1,6 +1,6 @@
 [
   {
-    "id": "6a06299f6be32fced4930469",
+    "id": "6a2e7a0d6be32fced4930dab",
     "indexId": "aafdafa8-abe6-478f-85a8-bda44172b78f",
     "breakthroughId": "8-eyes--spiderfolk-",
     "name": "8 Eyes (Spiderfolk)",
@@ -10,7 +10,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930466",
+    "id": "6a2e7a0d6be32fced4930da8",
     "indexId": "b3238ec2-b29b-42e2-83fd-fdfe572380a9",
     "breakthroughId": "angelblooded--human---restricted-",
     "name": "Angelblooded (Human) (Restricted)",
@@ -20,7 +20,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493047e",
+    "id": "6a2e7a0d6be32fced4930dc0",
     "indexId": "986e7955-0941-467d-9043-a9341bbda7a9",
     "breakthroughId": "arachne--spiderfolk-",
     "name": "Arachne (Spiderfolk)",
@@ -30,7 +30,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930460",
+    "id": "6a2e7a0d6be32fced4930da2",
     "indexId": "fd764314-601d-434a-aa7b-9a3eee8dd7ce",
     "breakthroughId": "become-fire--salamander-",
     "name": "Become Fire (Salamander)",
@@ -40,7 +40,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930461",
+    "id": "6a2e7a0d6be32fced4930da3",
     "indexId": "8d9791d3-2c3b-404f-af15-9fed79ef46a3",
     "breakthroughId": "become-ice--yuki-onna-",
     "name": "Become Ice (Yuki-Onna)",
@@ -50,7 +50,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930449",
+    "id": "6a2e7a0d6be32fced4930d8b",
     "indexId": "f319aea5-b094-4157-91a4-763e4e8e3b85",
     "breakthroughId": "become-lightning--raijin-",
     "name": "Become Lightning (Raijin)",
@@ -60,7 +60,7 @@
     "ability": ""
   },
   {
-    "id": "6a1f531e6be32fced4930c2e",
+    "id": "6a2e7a0d6be32fced4930dcb",
     "indexId": "04663818-6856-4c01-a7d2-a219b7f50475",
     "breakthroughId": "become-wind--sylph-",
     "name": "Become Wind (Sylph)",
@@ -70,7 +70,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930467",
+    "id": "6a2e7a0d6be32fced4930da9",
     "indexId": "0e5b0dc1-f105-4621-ace9-4f56029c8c5e",
     "breakthroughId": "blend-in--slimefolk-",
     "name": "Blend In (Slimefolk)",
@@ -80,7 +80,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493047f",
+    "id": "6a2e7a0d6be32fced4930dc1",
     "indexId": "33729faa-0de7-44d9-960a-2f3c944468a1",
     "breakthroughId": "blend-in-ii--slimefolk-",
     "name": "Blend In II (Slimefolk)",
@@ -90,7 +90,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930443",
+    "id": "6a2e7a0d6be32fced4930d85",
     "indexId": "1b0f7b2b-5414-4cb9-aab3-afc69390d50a",
     "breakthroughId": "blessed-by-kari--human-",
     "name": "Blessed by Kari (Human)",
@@ -100,7 +100,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930454",
+    "id": "6a2e7a0d6be32fced4930d96",
     "indexId": "f16beb54-87c1-49b9-9db0-fec7c01e2684",
     "breakthroughId": "bully",
     "name": "Bully",
@@ -110,7 +110,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493047d",
+    "id": "6a2e7a0d6be32fced4930dbf",
     "indexId": "60a9f33e-f68d-4483-8cb7-87c61f925613",
     "breakthroughId": "celestial-dragon--ryujin-",
     "name": "Celestial Dragon (Ryujin)",
@@ -120,7 +120,7 @@
     "ability": "5b304038-c45a-4521-b58f-2ad9545e1a9d"
   },
   {
-    "id": "6a06299f6be32fced4930485",
+    "id": "6a2e7a0d6be32fced4930dc7",
     "indexId": "b71866fc-efab-44fe-88d3-92b0c54fb418",
     "breakthroughId": "combat-doggy--cu-sith-",
     "name": "Combat Doggy (Cu Sith)",
@@ -130,7 +130,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493047a",
+    "id": "6a2e7a0d6be32fced4930dbc",
     "indexId": "ac1771fd-fad7-414a-bda2-491df277347d",
     "breakthroughId": "combat-kitty--cait-sith-",
     "name": "Combat Kitty (Cait Sith)",
@@ -140,7 +140,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930465",
+    "id": "6a2e7a0d6be32fced4930da7",
     "indexId": "cba3fb90-fefe-4899-8b3f-8a52c13b57cc",
     "breakthroughId": "curse-of-vampirism",
     "name": "Curse of Vampirism",
@@ -150,7 +150,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930484",
+    "id": "6a2e7a0d6be32fced4930dc6",
     "indexId": "c6b4d9b7-06e5-452c-9054-9f49a2a76a76",
     "breakthroughId": "deep-connection",
     "name": "Deep Connection",
@@ -160,7 +160,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930440",
+    "id": "6a2e7a0d6be32fced4930d82",
     "indexId": "7ad03e80-b3f9-4ffa-be35-6a460363ccf8",
     "breakthroughId": "deus-ex-machina",
     "name": "Deus Ex Machina",
@@ -170,7 +170,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493044c",
+    "id": "6a2e7a0d6be32fced4930d8e",
     "indexId": "b3ef521f-a8d6-481f-8c90-c05d959b1089",
     "breakthroughId": "divine-luck-i",
     "name": "Divine Luck I",
@@ -180,7 +180,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493044d",
+    "id": "6a2e7a0d6be32fced4930d8f",
     "indexId": "fc6a7e76-d7ac-41e3-a8d8-d5500ed8d308",
     "breakthroughId": "divine-luck-ii",
     "name": "Divine Luck II",
@@ -190,7 +190,17 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930468",
+    "id": "6a42cfeeb1ae8a568e9cc7f7",
+    "indexId": "6e3d4067-515c-43d3-b38f-c64802840152",
+    "breakthroughId": "divine-s-chosen",
+    "name": "Divine's Chosen",
+    "cost": "0",
+    "requirements": "-",
+    "description": "PHA+WW91IHNlbGVjdCBvbmUgb2YgdGhlIGRpdmluZXMgZnJvbSB0aGUgYmVsb3cgbGlzdCB0byB3b3JzaGlwLiBPbmNlIGNob3NlbiwgeW91IGNhbiBvbmx5IGNoYW5nZSB0aGlzIGRlY2lzaW9uIHdpdGggR00gYXBwcm92YWwgYWZ0ZXIgYSBzaWduaWZpY2FudCBlbm91Z2ggY2hhbmdlLjwvcD48cD5BbnkgYWJpbGl0aWVzIHdpdGggdGhlIERpdmluZSBrZXl3b3JkIGRlYWwgeW91ciBjaG9zZW4gZGl2aW5lJ3MgZGFtYWdlIGluc3RlYWQgb2YgdGhlaXIgbGlzdGVkIHR5cGUuJm5ic3A7PC9wPjxwPjxzdHJvbmc+S2FyaTwvc3Ryb25nPjogKFR5cGUgSG9seSkgZ29kZGVzcyBvZiBMaWdodCwgdGhlIG1vc3QgcHJvbWluZW50IGRlaXR5IGluIHRoZSBzZXR0aW5nLCBhbG1vc3QgYWxsIHJlbGlnaW91cyBwZW9wbGUgZm9sbG93IEthcmkgYW5kIGl0J3MgdGhlIG9ubHkgc2VyaW91cyByZWxpZ2lvbiB3aXRoIGFueSBzdXBwb3J0IG91dHNpZGUgb2YgS2lyYXJhLiZuYnNwOzwvcD48cD48c3Ryb25nPkhlaXJhPC9zdHJvbmc+OiAoVHlwZSBBc3RyYSkgZ29kZGVzcyBvZiBFdmlsLCBtb3N0bHkgZm9sbG93ZWQgYnkgY3VsdGlzdHMuJm5ic3A7PC9wPjxwPjxzdHJvbmc+UGFuZG9yYTwvc3Ryb25nPjogKFR5cGUgQXJjYW5lKSBnb2RkZXNzIG9mIE1hZ2ljIChBcmNhbmUpLiBUaGVyZSBhcmUgYSBmZXcgYnJva2VuLWRvd24gc2hyaW5lcyB0byBoZXIsIG5vdCB3aWRlbHkgZm9sbG93ZWQsIGJ1dCBhIGZldyBmb2xsb3dlcnMuJm5ic3A7PC9wPjxwPjxzdHJvbmc+TWFrYWk8L3N0cm9uZz46IChUeXBlIFdhdGVyKSBnb2RkZXNzIG9mIHRoZSBPY2Vhbi4gTW9zdGx5IGZvbGxvd2VkIGluIEhvdWthaW5hIGFuZCBLaXJhcmEsIG1vcmVzbyBpbiBIb3VrYWluYS4gTWFpbiB0ZW1wbGUgaXMgaW4gSG91a2FpbmEgKGluIE5vcnRoaSksIGZvbGxvd2VkIGJ5IE1lcmZvbGsuJm5ic3A7PC9wPjxwPjxzdHJvbmc+QXl1emkgS2lyYXJhPC9zdHJvbmc+OiAoVHlwZSBGaXJlKSBnb2RkZXNzIG9mIEFydGlzYW5zLiBUaGUgbW9zdCBwb3B1bGFyIERpdmluZSBpbiBLaXJhcmEuJm5ic3A7PC9wPjxwPjxzdHJvbmc+RWlzZW48L3N0cm9uZz46IChUeXBlIFNsYXNoaW5nKSBnb2Qgb2YgV2FyLiBNb3N0bHkgZm9sbG93ZWQgYnkgZ29ibGlucyBhbmQgb3JjcyBpbiBFaXNlbnN0YWR0LiBNb3N0bHkgc2VlbiBhcyBjZXJlbW9uaWFsIGFuZCAib2xkIHdheXMsIiBub3QgdGFrZW4gYXMgc2VyaW91c2x5IGluIEVpc2Vuc3RhZHQuJm5ic3A7PC9wPjxwPjxzdHJvbmc+QXRoZW5hPC9zdHJvbmc+OiAoVHlwZSBMaWdodG5pbmcpIGdvZGRlc3Mgb2YgV2luZC4gTW9zdGx5IGZvbGxvd2VkIGJ5IGNpdGl6ZW5zIG9mIHRoZSBhcmVhIGFyb3VuZCBNYXJsb25lIEJheS4gQSBnb2RkZXNzIHdpdGggYSBxdWlldCBkaXNwb3NpdGlvbi4gTW9zdGx5IHRoZSAib2xkIHdheXMsIiBhIHNhaWxvciBtaWdodCBtYWtlIGEgZ2VzdHVyZSB0byBBdGhlbmEgYmVmb3JlIHNldHRpbmcgb3V0IHdoaWxlIG5vdCBmdWxseSBiZWluZyBhIGZvbGxvd2VyLiZuYnNwOzwvcD48cD48c3Ryb25nPkNsaW88L3N0cm9uZz46IChUeXBlIEFyY2FuZSkgZ29kZGVzcyBvZiBTdG9yeXRlbGxpbmcuIE5vdCBvZmZpY2lhbGx5IGZvbGxvd2VkIGFueXdoZXJlLCBvciBldmVuIGtub3duIGFib3V0LiBDbGlvIGRyYXdzIHBvd2VyIGZyb20gYWxsIG9mIHRoZSBzdG9yaWVzIGZvcmdlZCB0aHJvdWdoIGxpZmUsIGJvdGggdHJ1ZSBhbmQgZmljdGlvbmFsLiZuYnNwOzwvcD48cD48c3Ryb25nPllnZ2RyYXNpbDo8L3N0cm9uZz4gKFR5cGUgRWFydGgpIHRoZSB3b3JsZCBpdHNlbGYuIE1vc3RseSBmb2xsb3dlZCBieSBGYWUgaW4gRWFzdGVyLiAiTmF0dXJlLCIgIlRlcnJhIGl0c2VsZiIgYXJlIFlnZ2RyYXNpbC4gIlRoZSB3aWxsIG9mIHRoZSB3b3JsZC9uYXR1cmUuIiBOb3QgYWN0dWFsbHkgYSAic2VudGllbnQiIGZvcmNlLCBidXQgYSBmb3JjZSB0aGF0IGNyZWF0ZXMgYmFsYW5jZSBhbmQgb3Bwb3NlcyBkZXN0cnVjdGlvbiBvZiBuYXR1cmFsIG9yZGVyLiBZZ2dkcmFzaWwncyBzdHJlbmd0aCBpcyB0aGF0IGl0IGhhcyBmb3VyICJzdXBlcnBhbGFkaW5zIiAodGhhdW1hdHVyZ2VzKSB0aGF0IGFyZSBib3VuZCB0byB0aGUgd29ybGQgYW5kIGNhbm5vdCBiZSBwZXJtYW5lbnRseSBraWxsZWQuIFRoZSB0aGF1bWF0dXJnZXMgZG8gbm90IHdvcmsgdG9nZXRoZXIsIGFuZCBtYXkgbm90IGV2ZW4gYmUgYXdhcmUgb2YgZWFjaCBvdGhlciwgYW5kIG1heSBub3QgZXZlbiBiZSBhd2FyZSBvZiB0aGVpciBtaXNzaW9uLjwvcD4=",
+    "ability": ""
+  },
+  {
+    "id": "6a2e7a0d6be32fced4930daa",
     "indexId": "d1c3d5ef-65bb-43f5-8a04-51771146f0b2",
     "breakthroughId": "drag-along--lamia-",
     "name": "Drag along (Lamia)",
@@ -200,7 +210,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493044b",
+    "id": "6a2e7a0d6be32fced4930d8d",
     "indexId": "40caec22-8ca7-4055-83d9-1790f56ef7a3",
     "breakthroughId": "dual-personality",
     "name": "Dual Personality",
@@ -210,7 +220,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930463",
+    "id": "6a2e7a0d6be32fced4930da5",
     "indexId": "9ffa91f3-be68-4877-b4fd-91c91ba3d0af",
     "breakthroughId": "early-ascension",
     "name": "Early Ascension",
@@ -220,7 +230,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930452",
+    "id": "6a2e7a0d6be32fced4930d94",
     "indexId": "05009dd0-73e9-4f90-98bc-e6fbe75a1c5f",
     "breakthroughId": "elemental-affinity",
     "name": "Elemental Affinity",
@@ -230,7 +240,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493047c",
+    "id": "6a2e7a0d6be32fced4930dbe",
     "indexId": "f9283358-e643-4552-bed5-42724a980de8",
     "breakthroughId": "elemental-breath--ryujin-",
     "name": "Elemental Breath (Ryujin)",
@@ -240,17 +250,17 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930457",
+    "id": "6a2e7a0d6be32fced4930d99",
     "indexId": "0917066a-bf81-46fd-8013-8f0738b734c8",
     "breakthroughId": "elixir-addict",
     "name": "Elixir Addict",
     "cost": "0",
-    "requirements": "Must have used at least 3 elixirs.",
+    "requirements": "Must have used at least 3 elixirs in the same encounter.",
     "description": "PHA+WW91IGhhdmUgYmVjb21lIHVzZWQgdG8gdGhlIGVmZmVjdHMgb2YgZHJpbmtpbmcgZWxpeGlycywgdG9vIHVzZWQgaW4gZmFjdC4gQXQgdGhlIGVuZCBvZiB5b3VyIHR1cm4gaW4gY29tYmF0LCBpZiB5b3UgZG8gbm90IGhhdmUgYW4gRWxpeGlyIGFjdGl2ZSB5b3UgdGFrZSA2IHRydWUgZGFtYWdlLiBUaGUgSFAgY29zdCBvZiBkcmlua2luZyBhbGwgZWxpeGlycyBpcyByZWR1Y2VkIGJ5IDExLjwvcD48cD5UaGlzIGJyZWFrdGhyb3VnaCBtYXkgYmUgcmVtb3ZlZCBkdXJpbmcgYW4gaW50ZXJsdWRlIHBoYXNlIGJ5IHNwZW5kaW5nIDEgSVAuPC9wPg==",
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930488",
+    "id": "6a2e7a0d6be32fced4930dca",
     "indexId": "7f83a2c6-5300-41f3-959d-ad0fe0a9603f",
     "breakthroughId": "expert-summoner",
     "name": "Expert Summoner",
@@ -260,7 +270,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930458",
+    "id": "6a2e7a0d6be32fced4930d9a",
     "indexId": "02e547b9-990c-48b3-8831-9d82f9c6ea24",
     "breakthroughId": "fae-flash-acrobat--fae-",
     "name": "Fae Flash Acrobat (Fae)",
@@ -270,7 +280,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930444",
+    "id": "6a2e7a0d6be32fced4930d86",
     "indexId": "75c704e5-20d8-4791-9ca7-6ebe362103ea",
     "breakthroughId": "faerie-flash-master--fae-",
     "name": "Faerie Flash Master (Fae)",
@@ -280,7 +290,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930433",
+    "id": "6a2e7a0d6be32fced4930d75",
     "indexId": "4179c9b9-1eee-4a1a-8460-7b2f40921204",
     "breakthroughId": "faerie-chimera-hybrid--race-",
     "name": "Faerie-Chimera Hybrid (Race)",
@@ -290,7 +300,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930470",
+    "id": "6a2e7a0d6be32fced4930db2",
     "indexId": "97ccaea7-ffb4-4fdd-ac25-4eb9d6a7b143",
     "breakthroughId": "fast-metabolism",
     "name": "Fast Metabolism",
@@ -300,7 +310,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493046b",
+    "id": "6a2e7a0d6be32fced4930dad",
     "indexId": "adf2da75-1740-4532-affe-bebf9bcc7c59",
     "breakthroughId": "fast-movement--centaur-",
     "name": "Fast Movement (Centaur)",
@@ -310,7 +320,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930453",
+    "id": "6a2e7a0d6be32fced4930d95",
     "indexId": "f15a735e-f8ca-432f-b075-202bd284f62f",
     "breakthroughId": "fearless",
     "name": "Fearless",
@@ -320,7 +330,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930447",
+    "id": "6a2e7a0d6be32fced4930d89",
     "indexId": "a9dd9a11-8408-40c7-98e1-f5a3b16c392c",
     "breakthroughId": "fight-and-flight--chimera-",
     "name": "Fight and Flight (Chimera)",
@@ -330,7 +340,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493045a",
+    "id": "6a2e7a0d6be32fced4930d9c",
     "indexId": "e6591f4f-eec0-4b4f-8ec3-32f2007cd00d",
     "breakthroughId": "flesheater--jiangshi-",
     "name": "Flesheater (Jiangshi)",
@@ -340,7 +350,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493045b",
+    "id": "6a2e7a0d6be32fced4930d9d",
     "indexId": "7e563b66-935f-4edc-8a8f-766c3e7794c8",
     "breakthroughId": "flying-counter--kitsune-",
     "name": "Flying Counter (Kitsune)",
@@ -350,7 +360,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493045d",
+    "id": "6a2e7a0d6be32fced4930d9f",
     "indexId": "1666248a-dd60-4cb9-83af-18d4c978f6de",
     "breakthroughId": "four-paw-sprint--catfolk-",
     "name": "Four Paw Sprint (Catfolk)",
@@ -360,7 +370,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493043d",
+    "id": "6a2e7a0d6be32fced4930d7f",
     "indexId": "d2dfb912-5ff7-40e4-9c96-44ab480673d9",
     "breakthroughId": "greatshield-training",
     "name": "Greatshield Training",
@@ -370,7 +380,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493043c",
+    "id": "6a2e7a0d6be32fced4930d7e",
     "indexId": "f729ba66-87cd-47cf-bb73-b3558d805c52",
     "breakthroughId": "heavy-armor-training",
     "name": "Heavy Armor Training",
@@ -380,7 +390,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493045f",
+    "id": "6a2e7a0d6be32fced4930da1",
     "indexId": "a199aec1-ae91-43b0-a1d1-ee2a3a0c8f8c",
     "breakthroughId": "hide-behind-ally--pixie-",
     "name": "Hide Behind Ally (Pixie)",
@@ -390,7 +400,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930432",
+    "id": "6a2e7a0d6be32fced4930d74",
     "indexId": "d676b6a8-0840-41c6-bcd9-6b99ef9d2831",
     "breakthroughId": "human-chimera-hybrid--race-",
     "name": "Human-Chimera Hybrid (Race)",
@@ -400,7 +410,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930442",
+    "id": "6a2e7a0d6be32fced4930d84",
     "indexId": "f21a4bb6-0543-4ee9-9942-712262b3a2fd",
     "breakthroughId": "improved-demonic-divine-release--demon-",
     "name": "Improved Demonic Divine Release (Demon)",
@@ -410,7 +420,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930448",
+    "id": "6a2e7a0d6be32fced4930d8a",
     "indexId": "dab7e9ee-ff71-41aa-b474-3389400e235f",
     "breakthroughId": "in-sync--youkai-",
     "name": "In Sync (Youkai)",
@@ -420,7 +430,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930474",
+    "id": "6a2e7a0d6be32fced4930db6",
     "indexId": "bb5d7dd1-af65-4fce-9675-a4fea97cded4",
     "breakthroughId": "kit-expert",
     "name": "Kit Expert",
@@ -430,7 +440,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930455",
+    "id": "6a2e7a0d6be32fced4930d97",
     "indexId": "49576f97-4ab5-45ca-ad3e-c98b9bdafdfe",
     "breakthroughId": "language-training",
     "name": "Language Training",
@@ -440,7 +450,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930478",
+    "id": "6a2e7a0d6be32fced4930dba",
     "indexId": "712791f4-6cbb-4681-80b4-4666b34b1c66",
     "breakthroughId": "large-specimen--nio--bullfolk-or-bearfolk-",
     "name": "Large Specimen (Nio, Bullfolk or Bearfolk)",
@@ -450,7 +460,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493043a",
+    "id": "6a2e7a0d6be32fced4930d7c",
     "indexId": "0327396a-1722-494b-93ac-bf8a79babb26",
     "breakthroughId": "light-armor-training",
     "name": "Light Armor Training",
@@ -460,7 +470,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493044a",
+    "id": "6a2e7a0d6be32fced4930d8c",
     "indexId": "7956f508-8c8c-4a6a-8aa7-266b75e8668c",
     "breakthroughId": "light-sleeper",
     "name": "Light Sleeper",
@@ -470,7 +480,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930481",
+    "id": "6a2e7a0d6be32fced4930dc3",
     "indexId": "4c457daa-aa10-4b8e-879a-99bc8ce97a87",
     "breakthroughId": "mark-of-conflict",
     "name": "Mark of Conflict",
@@ -480,7 +490,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493043b",
+    "id": "6a2e7a0d6be32fced4930d7d",
     "indexId": "ab136b22-8d6a-45dd-b2b8-4479b11caa54",
     "breakthroughId": "medium-armor-training",
     "name": "Medium Armor Training",
@@ -490,7 +500,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493047b",
+    "id": "6a2e7a0d6be32fced4930dbd",
     "indexId": "df29a1bf-6089-4108-b852-6d5557dbcaa6",
     "breakthroughId": "mental-torture--unseelie-",
     "name": "Mental Torture (Unseelie)",
@@ -500,7 +510,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930441",
+    "id": "6a2e7a0d6be32fced4930d83",
     "indexId": "5fad2fbd-117f-45de-a874-23ec8d9550fe",
     "breakthroughId": "mixed-house--demon-",
     "name": "Mixed House (Demon)",
@@ -510,7 +520,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930445",
+    "id": "6a2e7a0d6be32fced4930d87",
     "indexId": "7898e2c7-2a72-4fa8-bc06-13b93e171466",
     "breakthroughId": "mystic-eyes-of-faerie-light--fae-",
     "name": "Mystic Eyes of Faerie Light (Fae)",
@@ -520,7 +530,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493046e",
+    "id": "6a2e7a0d6be32fced4930db0",
     "indexId": "0fa5b003-e9eb-49c9-a5f9-5e50b58c34cf",
     "breakthroughId": "natural-immunity--ratfolk-",
     "name": "Natural Immunity (Ratfolk)",
@@ -530,7 +540,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930476",
+    "id": "6a2e7a0d6be32fced4930db8",
     "indexId": "34b8e8e7-d8b9-43ea-a0bd-50d873600df2",
     "breakthroughId": "on-the-draw",
     "name": "On the draw",
@@ -540,7 +550,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930434",
+    "id": "6a2e7a0d6be32fced4930d76",
     "indexId": "fe8267f3-b340-4f24-a59f-388750fe73e3",
     "breakthroughId": "organized-inventory",
     "name": "Organized Inventory",
@@ -550,7 +560,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493044e",
+    "id": "6a2e7a0d6be32fced4930d90",
     "indexId": "319b2e72-de29-441b-a0a8-f8f65a684b73",
     "breakthroughId": "organized-inventory-ii",
     "name": "Organized Inventory II",
@@ -560,7 +570,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493044f",
+    "id": "6a2e7a0d6be32fced4930d91",
     "indexId": "d4e1caca-8e77-4b4c-8156-9a1e425e0eaa",
     "breakthroughId": "organized-inventory-iii",
     "name": "Organized Inventory III",
@@ -570,7 +580,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930462",
+    "id": "6a2e7a0d6be32fced4930da4",
     "indexId": "99ff1560-2863-4f33-9301-ee7cf4d5a627",
     "breakthroughId": "overrun--centaur-",
     "name": "Overrun (Centaur)",
@@ -580,7 +590,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930471",
+    "id": "6a2e7a0d6be32fced4930db3",
     "indexId": "7f3433df-8797-49d0-a254-b8a6b3759aa4",
     "breakthroughId": "panda-martial-arts--red-panda-",
     "name": "Panda Martial Arts (Red Panda)",
@@ -590,7 +600,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493046f",
+    "id": "6a2e7a0d6be32fced4930db1",
     "indexId": "37a3c35d-e778-4741-b787-704bbae5b73b",
     "breakthroughId": "photosynthesis--dryad-",
     "name": "Photosynthesis (Dryad)",
@@ -600,7 +610,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930475",
+    "id": "6a2e7a0d6be32fced4930db7",
     "indexId": "aebebfc4-e6c3-4e70-ad36-4b0063732300",
     "breakthroughId": "power-saving-mode--ancient-marionette-",
     "name": "Power Saving Mode (Ancient Marionette)",
@@ -610,7 +620,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930459",
+    "id": "6a2e7a0d6be32fced4930d9b",
     "indexId": "b312c868-2837-42e2-9045-8fba8e3602ca",
     "breakthroughId": "powerful-ki--oni-",
     "name": "Powerful Ki (Oni)",
@@ -620,7 +630,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493043e",
+    "id": "6a2e7a0d6be32fced4930d80",
     "indexId": "45822ac3-a314-4d89-bcd6-2d8344dc2d9a",
     "breakthroughId": "primary-stat-training",
     "name": "Primary Stat Training",
@@ -630,17 +640,17 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493046d",
+    "id": "6a2e7a0d6be32fced4930daf",
     "indexId": "5ba5e6af-a6bb-4823-8bcf-9e2daf512be2",
     "breakthroughId": "racial-flight",
     "name": "Racial Flight",
     "cost": "300",
-    "requirements": "Must be Phoenix, Mothfolk, Lizardfolk or Willowisp race.",
+    "requirements": "Must be Phoenix, Mothfolk, Lizardfolk, Sylph or Willowisp race.",
     "description": "PHA+WW91IG1heSB1c2UgRmxpZ2h0LjwvcD4=",
     "ability": "5b304038-c45a-4521-b58f-2ad9545e1a9d"
   },
   {
-    "id": "6a06299f6be32fced4930456",
+    "id": "6a2e7a0d6be32fced4930d98",
     "indexId": "2a202a86-be68-4862-a6fa-668874701d8c",
     "breakthroughId": "rapid-flash--high-fae-",
     "name": "Rapid Flash (High Fae)",
@@ -650,7 +660,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930473",
+    "id": "6a2e7a0d6be32fced4930db5",
     "indexId": "b7b38bd5-0123-4000-b73d-046fe2898b41",
     "breakthroughId": "rich-parents",
     "name": "Rich Parents",
@@ -660,7 +670,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493043f",
+    "id": "6a2e7a0d6be32fced4930d81",
     "indexId": "bf5c2d85-7a07-4a2c-9e3f-6a51a915aed1",
     "breakthroughId": "secondary-stat-training",
     "name": "Secondary Stat Training",
@@ -670,7 +680,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930437",
+    "id": "6a2e7a0d6be32fced4930d79",
     "indexId": "29589820-d937-49d7-88dd-5f3ab90ee5ce",
     "breakthroughId": "skill-training",
     "name": "Skill Training",
@@ -680,7 +690,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493046c",
+    "id": "6a2e7a0d6be32fced4930dae",
     "indexId": "296b5632-0f01-444f-aae5-dffb22d5fd2b",
     "breakthroughId": "skilled-flier",
     "name": "Skilled Flier",
@@ -690,7 +700,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930483",
+    "id": "6a2e7a0d6be32fced4930dc5",
     "indexId": "94c72324-0872-435e-90b9-bd7b8e0d3d3f",
     "breakthroughId": "slime-summoner",
     "name": "Slime Summoner",
@@ -700,7 +710,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930464",
+    "id": "6a2e7a0d6be32fced4930da6",
     "indexId": "69ad5786-9e4b-4099-bf12-036fd89873f1",
     "breakthroughId": "slow-starter",
     "name": "Slow Starter",
@@ -710,7 +720,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930486",
+    "id": "6a2e7a0d6be32fced4930dc8",
     "indexId": "2a89d4f8-4911-487a-89e6-413cd15931e5",
     "breakthroughId": "small-doggy--cu-sith-",
     "name": "Small Doggy (Cu Sith)",
@@ -720,7 +730,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930482",
+    "id": "6a2e7a0d6be32fced4930dc4",
     "indexId": "d5492d93-94da-4c58-94ea-82a66d05d4f5",
     "breakthroughId": "small-specimen--cowfolk-",
     "name": "Small Specimen (Cowfolk)",
@@ -730,7 +740,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930439",
+    "id": "6a2e7a0d6be32fced4930d7b",
     "indexId": "0e92a4c2-fad0-4b5c-81a3-9310307dadc1",
     "breakthroughId": "speciality-weapon-training",
     "name": "Speciality Weapon Training",
@@ -740,7 +750,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930472",
+    "id": "6a2e7a0d6be32fced4930db4",
     "indexId": "23ade1b1-4956-4974-8601-52b61d8516e9",
     "breakthroughId": "summon-contract--fortuna--lady-luck",
     "name": "Summon Contract: Fortuna, Lady Luck",
@@ -750,7 +760,7 @@
     "ability": "7d26f4ec-eaef-4dc8-a244-a5cecc769b09"
   },
   {
-    "id": "6a06299f6be32fced4930477",
+    "id": "6a2e7a0d6be32fced4930db9",
     "indexId": "9d2ff949-92dd-45ba-a6d7-ba52c40f87b1",
     "breakthroughId": "summon-contract--ixilune--the-swarm",
     "name": "Summon Contract: Ixilune, The Swarm",
@@ -760,7 +770,7 @@
     "ability": "40915658-9ccb-49b5-bae4-04f51db828c8"
   },
   {
-    "id": "6a06299f6be32fced493046a",
+    "id": "6a2e7a0d6be32fced4930dac",
     "indexId": "cb8daf36-337c-4cde-b338-5a539b51dfcc",
     "breakthroughId": "summon-contract--pipoltr--the-gardener",
     "name": "Summon Contract: Pipoltr, The Gardener",
@@ -770,7 +780,7 @@
     "ability": "2fce3db9-f052-4ae5-825e-c9ddd82589ef"
   },
   {
-    "id": "6a06299f6be32fced493045e",
+    "id": "6a2e7a0d6be32fced4930da0",
     "indexId": "51d9c6b8-cb21-48a4-93cb-39e70b752e85",
     "breakthroughId": "superior-escapist--rabbitfolk-",
     "name": "Superior Escapist (Rabbitfolk)",
@@ -780,7 +790,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced493045c",
+    "id": "6a2e7a0d6be32fced4930d9e",
     "indexId": "81f1de89-e38d-42c7-9710-8166449e5c11",
     "breakthroughId": "tengu-defensive-aura--tengu-",
     "name": "Tengu Defensive Aura (Tengu)",
@@ -790,17 +800,17 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930435",
+    "id": "6a2e7a0d6be32fced4930d77",
     "indexId": "8521fc76-4efd-4951-b84f-8356867598d5",
     "breakthroughId": "the-unknown-paladin",
     "name": "The Unknown Paladin",
     "cost": "200",
-    "requirements": "Must be a believer in a god.",
+    "requirements": "Must have the Divine's Chosen breakthrough.",
     "description": "PHA+RGVzcGl0ZSBub3QgYmVpbmcgaHVtYW4sIHlvdSBmdWxmaWxsIHRoZSBodW1hbiByZXF1aXJlbWVudCB0byBiZWNvbWUgYSBQYWxhZGluLiZuYnNwO0luIGFkZGl0aW9uLCB5b3VyIFNtaXRlIHNraWxsJ3MgZGFtYWdlIHR5cGUgY2hhbmdlcyB0byBvbmUgdGhhdCByZXByZXNlbnRzIHlvdXIgY2hvc2VuIERpdmluZS4gVGhlIHBhbGFkaW4gaG9seSB3ZWFwb24ga2V5IGFiaWxpdHkgYWxzbyBjaGFuZ2VzIGl0cyBkYW1hZ2UgdHlwZSB0byB0aGUgb25lIHRoYXQgcmVwcmVzZW50cyB5b3VyIGNob3NlbiBEaXZpbmUuPC9wPjxwPjxzdHJvbmc+S2FyaTo8L3N0cm9uZz4gSG9seSZuYnNwOzxicj48c3Ryb25nPkhlaXJhOjwvc3Ryb25nPiBBc3RyYTxicj48c3Ryb25nPlBhbmRvcmE6PC9zdHJvbmc+IEFyY2FuZTxicj48c3Ryb25nPk1ha2FpOjwvc3Ryb25nPiBXYXRlcjxicj48c3Ryb25nPkF5dXppIEtpcmFyYTo8L3N0cm9uZz4gRmlyZSZuYnNwOzxicj48c3Ryb25nPkVpc2VuOjwvc3Ryb25nPiBQaHlzaWNhbCZuYnNwOzxicj48c3Ryb25nPkF0aGVuYTo8L3N0cm9uZz4gTGlnaHRuaW5nJm5ic3A7PGJyPjxzdHJvbmc+Q2xpbzo8L3N0cm9uZz4gQXJjYW5lJm5ic3A7PGJyPjxzdHJvbmc+WWdnZHJhc2lsOjwvc3Ryb25nPiBFYXJ0aDwvcD4=",
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930487",
+    "id": "6a2e7a0d6be32fced4930dc9",
     "indexId": "e68daed1-6d5b-4f61-99da-b253b007143d",
     "breakthroughId": "third-eye",
     "name": "Third Eye",
@@ -810,7 +820,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930446",
+    "id": "6a2e7a0d6be32fced4930d88",
     "indexId": "ed1c6436-8f72-4788-9a54-9356464133a4",
     "breakthroughId": "touched-by-death",
     "name": "Touched by Death",
@@ -820,7 +830,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930479",
+    "id": "6a2e7a0d6be32fced4930dbb",
     "indexId": "3366d50c-0f52-4ed7-a1ed-b51c21445936",
     "breakthroughId": "universal-training",
     "name": "Universal Training",
@@ -830,7 +840,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930438",
+    "id": "6a2e7a0d6be32fced4930d7a",
     "indexId": "2bd098f7-6554-42a0-afa7-7b6a15df122a",
     "breakthroughId": "weapon-training",
     "name": "Weapon Training",
@@ -840,7 +850,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930436",
+    "id": "6a2e7a0d6be32fced4930d78",
     "indexId": "fb1ecde9-ff6d-4d94-bde7-e8881be68963",
     "breakthroughId": "wide-circuits-i",
     "name": "Wide Circuits I",
@@ -850,7 +860,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930450",
+    "id": "6a2e7a0d6be32fced4930d92",
     "indexId": "e2a0e613-f37d-4d8a-bfae-dfb6db0edd39",
     "breakthroughId": "wide-circuits-ii",
     "name": "Wide Circuits II",
@@ -860,7 +870,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930451",
+    "id": "6a2e7a0d6be32fced4930d93",
     "indexId": "82825f86-6850-4b0a-8830-3fa4c268ee1b",
     "breakthroughId": "wide-circuits-iii",
     "name": "Wide Circuits III",
@@ -870,7 +880,7 @@
     "ability": ""
   },
   {
-    "id": "6a06299f6be32fced4930480",
+    "id": "6a2e7a0d6be32fced4930dc2",
     "indexId": "782d71a7-b467-4a2d-a7dd-80bd047d6cbd",
     "breakthroughId": "wide-circuits-iv",
     "name": "Wide Circuits IV",

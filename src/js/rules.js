@@ -1,8 +1,8 @@
 import { BASE_STARTING_CLIM, BREAKTHROUGH_CREATION_BUDGET, CHARACTER_START_MODES, CLASS_ROWS, DEFAULT_CHARACTER_START_MODE, MIRANE_START_MODE_ID, MIRANE_STARTING_CLIM_BONUS, SELECTED_GAME_VERSION_KEY, SELECTED_GAME_VERSION_LATEST_KEY, SKILL_DEFINITIONS, STARTING_CLASS_EXP, STARTING_INTERLUDE_POINTS } from "./constants.js";
-import { asArray, buildLookup, clamp, cleanText, formatModifier, normalizeKey, normalizePhrase, toNumber } from "./utils.js";
+import { asArray, buildLookup, clamp, cleanText, formatModifier, normalizeKey, normalizePhrase, splitSentences, toNumber } from "./utils.js";
 import { mergePlayState, persistWorkingState, state, trySetLocalStorage } from "./state.js";
 import { parseNumericCost } from "./io.js";
-import { appendPlayLog, applyStateToDom, buildComputedBonuses, buildDemonClanEntry, clearPlayFeedback, createDatalists, firstReadableText, formatCostLabelForDisplay, formatTrackedCostSpend, getAllSecondaryLineageOptions, getClassProgressCost, getClassProgressSlotCount, getClassPurchasedAbilityCount, getSelectedBreakthroughEffects, getSelectedEquipmentCost, getSkillRowData, hideVersionProgress, invalidateExportCache, loadScriptAsset, parseResourceCost, renderBuilder, renderPlayDashboard, renderPlayDashboardIfVisible, renderVersionManager, setStatus, setVersionProgress, showPlayFeedback } from "./ui.js";
+import { appendPlayLog, applyStateToDom, buildComputedBonuses, buildDemonClanEntry, clearPlayFeedback, createDatalists, firstReadableText, formatCostLabelForDisplay, formatTrackedCostSpend, getAllSecondaryLineageOptions, getClassInterludeCost, getClassProgressCost, getClassProgressSlotCount, getClassPurchasedAbilityCount, getSelectedBreakthroughEffects, getSelectedEquipmentCost, getSkillRowData, hideVersionProgress, invalidateExportCache, loadScriptAsset, parseResourceCost, renderBuilder, renderPlayDashboard, renderPlayDashboardIfVisible, renderVersionManager, setStatus, setVersionProgress, showPlayFeedback, syncBuilderSelectionsIntoSheet } from "./ui.js";
 
 
 let computedBonusesCacheKey = "";
@@ -39,10 +39,18 @@ export function refreshGameDataRuntime() {
       detailLookup = buildLookup(window.LYRIAN_DETAIL_DATA);
     }
 export const versionRuntime = {
-      serverAvailable: false,
-      latestCheck: null,
       isLoading: false
     };
+const loadedVersionDataCache = new Map();
+function cacheActiveVersionData() {
+      const activeVersion = cleanText(window.LYRIAN_DATA?.version);
+      if (activeVersion && !loadedVersionDataCache.has(activeVersion)) {
+        loadedVersionDataCache.set(activeVersion, {
+          data: window.LYRIAN_DATA,
+          detail: window.LYRIAN_DETAIL_DATA
+        });
+      }
+    }
     export const exportPrepCache = {
       key: "",
       payload: null,
@@ -131,13 +139,25 @@ export async function applyGameVersion(versionId, options = {}) {
 
       versionRuntime.isLoading = true;
       try {
-        if (version.dataPath && version.id !== window.LYRIAN_DATA?.version) {
-          setVersionProgress(25, `Loading ${version.id} rules data`);
-          await loadScriptAsset(version.dataPath);
-        }
-        if (version.detailPath && version.id !== window.LYRIAN_DETAIL_DATA?.version) {
-          setVersionProgress(55, `Loading ${version.id} detail data`);
-          await loadScriptAsset(version.detailPath);
+        cacheActiveVersionData();
+const cached = loadedVersionDataCache.get(version.id);
+        if (cached) {
+          if (cached.data) {
+            window.LYRIAN_DATA = cached.data;
+          }
+          if (cached.detail) {
+            window.LYRIAN_DETAIL_DATA = cached.detail;
+          }
+        } else {
+          if (version.dataPath && version.id !== window.LYRIAN_DATA?.version) {
+            setVersionProgress(25, `Loading ${version.id} rules data`);
+            await loadScriptAsset(version.dataPath);
+          }
+          if (version.detailPath && version.id !== window.LYRIAN_DETAIL_DATA?.version) {
+            setVersionProgress(55, `Loading ${version.id} detail data`);
+            await loadScriptAsset(version.detailPath);
+          }
+          cacheActiveVersionData();
         }
         refreshGameDataRuntime();
         state.ui.gameVersion = version.id;
@@ -331,7 +351,7 @@ export function getClassUnlockBudgetState() {
       const classProgress = getSelectedClassProgress();
 const selectedClasses = classProgress.map((entry) => entry.record);
 const spentExp = classProgress.reduce((total, entry) => total + entry.cost, 0);
-const spentInterlude = selectedClasses.length;
+const spentInterlude = selectedClasses.reduce((total, record) => total + getClassInterludeCost(record), 0);
 const expBankText = cleanText(state.fields.Exp);
 const gmExtraInterlude = Math.max(0, Math.floor(toNumber(state.fields["GM Extra IP"], 0)));
 const interludeBudget = STARTING_INTERLUDE_POINTS + gmExtraInterlude;
@@ -723,8 +743,7 @@ const base = stat === "toughness"
             : toNumber(state.fields.Power, 0) + (bonuses.mainStats.Power || 0);
         damageHp(base * Number(statDamage[2]));
       }
-      cleanText(text)
-        .split(/(?<=[.!?])\s+/)
+      splitSentences(cleanText(text))
         .forEach((sentence) => restoreDirectResourceSentence(sentence));
 
       if (!lines.length && options.logManualEffects !== false && /\btemporary (?:hit points|hp)\b/i.test(text)) {
@@ -770,7 +789,7 @@ const variableLine = Object.values(cost.variable || {}).some(Boolean) && spentLi
         ? `Variable cost: spent ${spentLine} for this use.`
         : "";
 const effectLines = applyTrackedPlayUseEffects(label, options.effectText || "", cost, options);
-      appendPlayLog(label, [`Cost: ${costLine}`, variableLine, ...effectLines, ...extraLines].filter(Boolean));
+      appendPlayLog(label, [`Cost: ${costLine}`, variableLine, ...effectLines, ...extraLines].filter(Boolean), { render: false });
       renderPlayDashboardIfVisible();
       setStatus(`Used ${label}.`);
       return true;
