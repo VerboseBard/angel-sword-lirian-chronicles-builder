@@ -176,10 +176,13 @@ Item images may be cached while building version assets. Missing remote artwork 
 - The newest rules entry is the manifest default and latest-known version.
 - Every older bundled rules entry and its files still exist.
 - Fresh storage selects the newest version.
+- Every normal page load starts in Advanced Build, even if restored working state previously had Quick Build active.
+- Quick Build opens only after explicit player confirmation and exposes Return to Advanced Build on every step.
+- Returning from an applied Quick Build preserves its choices for Advanced Build customization.
 - An explicitly selected older version survives reload.
 - Switching versions refreshes races, classes, details, Quick Builds, and the live sheet without stale data.
 - No update-check or download control appears in the interface.
-- Custom Build and Quick Build both work on wide, desktop, and mobile layouts.
+- Advanced Build and Quick Build both work on wide, desktop, and mobile layouts.
 - Save/import/export round trips pass.
 - The generated `assets/app.bundle.js` is current.
 - All tests and audits pass.
