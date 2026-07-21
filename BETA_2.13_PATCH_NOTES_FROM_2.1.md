@@ -10,6 +10,7 @@ Beta 2.13 is a compatible replacement for Beta 2.1. The public website address, 
 - Added Seven Sorrows Sword Style, Divine's Chosen, the Divine and Isolated keywords, and the associated official class, ability, race, breakthrough, item, rulebook, and settings changes.
 - Expanded Quick Build from 12 to 14 optimized packages and from 18 to 21 species choices.
 - Added Gnome, Raijin, and Selkie Quick Build support, including their free starting classes and correct level, EXP, and Interlude Point treatment.
+- Named the full 10-step creator Advanced Build, made it the default on every normal page load, and added a return path from every Quick Build step.
 - Added major mobile, Safari, startup, caching, rendering, and desktop-layout improvements.
 - Removed the obsolete in-browser rules update checker because published deployments now deliver updates automatically.
 - Expanded automated coverage for all four rules versions, every race/ancestry path, Quick Builds, class progressions, and desktop/mobile browser layouts.
@@ -48,6 +49,9 @@ New high-acceleration packages:
 
 Additional Quick Build fixes and safeguards:
 
+- Advanced Build is the startup default for both fresh and restored browser sessions. Quick Build opens only after the player deliberately selects and confirms it.
+- Every Quick Build step includes a **Return to Advanced Build** control. Returning early opens the first Advanced Build step; returning after a package is applied preserves the generated choices and opens Advanced Build review for customization.
+- Standard Play remains the campaign-rules choice and is not used as the name of the full character builder.
 - Nonhuman Acolyte packages include Divine's Chosen and an editable default Divine selection.
 - Cleric Support selects Magic Staff proficiency for its equipped staff.
 - Shields, staves, channeling weapons, armor, kits, tools, and storage are correctly auto-equipped when appropriate; consumables remain carried.
@@ -100,7 +104,7 @@ The final first-load performance measurement dropped from 9.6 MB to 4.3 MB decod
 
 - The Proficiencies panel now includes relevant race, ancestry, class, breakthrough, resolved-choice, and elemental-mastery sources.
 - Granted class levels cannot be refunded as if the player purchased them.
-- Quick Build choices carry the correct perks, breakthroughs, expertise, proficiencies, class levels, purchases, and equipped state into the character sheet.
+- Advanced Build and Quick Build use the same underlying rules calculations. Quick Build choices carry the correct perks, breakthroughs, expertise, proficiencies, class levels, purchases, and equipped state into Advanced Build and the character sheet.
 - Name and sheet edits invalidate derived caches while retaining the faster debounced rendering path.
 - Autosave behavior now covers both normal pauses in typing and immediate page-close/visibility transitions.
 

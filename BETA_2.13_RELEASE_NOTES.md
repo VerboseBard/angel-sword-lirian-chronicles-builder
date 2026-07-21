@@ -22,6 +22,9 @@ For the complete cumulative upgrade from Beta 2.1, including the 2.11 mobile hot
 
 ## Quick Build 0.13.1 follow-up
 
+- Renamed the full 10-step creator Advanced Build and made it the default on every normal page load, including when older browser state recorded Quick Build as active.
+- Added **Return to Advanced Build** to every Quick Build step. Applied package choices are preserved for advanced customization; an early return opens the first Advanced Build step.
+- Kept Standard Play as the campaign-rules option so it cannot be confused with the Advanced Build interface.
 - Expanded the Quick Build species list from 18 to 21 with Gnome, Raijin, and Selkie.
 - Their free Miner, Flash Star Blade Style, and level-2 Hydromancer classes are added without consuming the three paid class slots.
 - Added Seven Sorrows Rush and Bard Expertise Rush as clearly labeled high-acceleration packages.

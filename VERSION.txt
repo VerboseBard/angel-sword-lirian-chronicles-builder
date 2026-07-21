@@ -6,6 +6,7 @@ Public link: https://verbosebard.github.io/angel-sword-lirian-chronicles-builder
 
 Focus:
 - Complete 0.13.1 rules and Quick Build update.
+- Advanced Build is the default full creator, with a return control on every Quick Build step.
 - Cross-browser and mobile compatibility.
 - Performance, caching, autosave, and version-switching hardening.
 - Static public deployment with the existing URL and save-data contracts.
