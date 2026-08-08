@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Angel Sword Dice &amp; Actions</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: #171c29;
+      color: #e8ecf5;
+      font-size: 14px;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: #1d2333;
+      border-bottom: 1px solid rgba(255, 204, 64, 0.25);
+    }
+    header img { width: 22px; height: 22px; }
+    header strong { font-size: 0.95rem; }
+    #status {
+      margin-left: auto;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 204, 64, 0.3);
+      background: rgba(255, 204, 64, 0.1);
+      color: #ffe59a;
+      white-space: nowrap;
+    }
+    #status.is-live {
+      border-color: rgba(91, 220, 160, 0.6);
+      background: rgba(44, 158, 108, 0.28);
+      color: #c8ffe6;
+    }
+    #feed {
+      list-style: none;
+      margin: 0;
+      padding: 8px;
+      overflow-y: auto;
+      max-height: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    #feed li {
+      background: #202742;
+      border: 1px solid rgba(120, 140, 200, 0.25);
+      border-radius: 8px;
+      padding: 7px 9px;
+      line-height: 1.35;
+    }
+    #feed li.remote { border-color: rgba(91, 220, 160, 0.35); }
+    #feed .who { font-size: 0.72rem; color: #9fb0d8; }
+    #feed .total { font-weight: 800; color: #ffe59a; }
+    #empty { padding: 18px 12px; color: #9fb0d8; font-size: 0.82rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="icon.svg" alt="">
+    <strong>Angel Sword Rolls</strong>
+    <span id="status">Standalone</span>
+  </header>
+  <p id="empty">Waiting for rolls… Open your Angel Sword character sheet in another tab of this browser and roll. With this panel inside an Owlbear Rodeo room, your rolls are shared with every player who has the extension open.</p>
+  <ul id="feed" hidden></ul>
+  <script type="module" src="panel.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "id": "angel-sword-lyrian",
+  "title": "Angel Sword — Lyrian Chronicles Companion",
+  "description": "System-agnostic companion for the Angel Sword Lyrian Chronicles character builder: paste an exported character and roll its attacks, saves, and checks straight into chat. Touches no Actors and no game-system data.",
+  "authors": [{ "name": "Angel Sword Lyrian Chronicles builder project (fan work)" }],
+  "version": "0.1.0",
+  "compatibility": {
+    "minimum": "11",
+    "verified": "12"
+  },
+  "esmodules": ["scripts/angel-sword.mjs"],
+  "url": "https://verbosebard.github.io/angel-sword-lirian-chronicles-builder/",
+  "manifest": "https://verbosebard.github.io/angel-sword-lirian-chronicles-builder/foundry/module.json",
+  "download": "https://verbosebard.github.io/angel-sword-lirian-chronicles-builder/foundry/angel-sword-lyrian.zip"
+}

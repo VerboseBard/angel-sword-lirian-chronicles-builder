@@ -1,0 +1,16 @@
+{
+  "name": "Angel Sword Dice & Actions",
+  "version": "0.1.0",
+  "manifest_version": 1,
+  "description": "Live roll and action feed from the Angel Sword Lyrian Chronicles builder into your Owlbear Rodeo room.",
+  "icon": "icon.svg",
+  "author": "Angel Sword Lyrian Chronicles builder project (fan work)",
+  "homepage_url": "https://verbosebard.github.io/angel-sword-lirian-chronicles-builder/",
+  "action": {
+    "title": "Angel Sword",
+    "icon": "icon.svg",
+    "popover": "panel.html",
+    "width": 360,
+    "height": 520
+  }
+}
