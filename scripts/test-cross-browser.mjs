@@ -483,6 +483,136 @@ async function runMobileSheetAppAssertions(page, browserName) {
   await page.reload({ waitUntil: 'load' });
 }
 
+async function runVttIntegrationAssertions(page, browserName, targetUrl, isMobile = false) {
+  await page.goto(targetUrl, { waitUntil: 'load', timeout: 15000 });
+  await page.evaluate(() => localStorage.clear());
+  await page.reload({ waitUntil: 'load', timeout: 15000 });
+  await page.waitForSelector('[data-builder-action="pick-race"].builder-option-card', { timeout: 10000 });
+  await page.locator('[data-builder-action="pick-race"].builder-option-card').first().click();
+  if (isMobile && await page.locator('#builder-mobile-choice-overlay:not([hidden])').count()) {
+    await page.locator('#builder-mobile-choice-accept').click();
+  }
+  await page.locator('#builder-sheet-shortcut-top').click();
+  await page.waitForSelector('#sheet-view:not(.is-hidden)', { timeout: 10000 });
+  await page.evaluate(() => {
+    window.__integrationClipboard = '';
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: {
+        writeText: async (value) => {
+          window.__integrationClipboard = String(value || '');
+        }
+      }
+    });
+  });
+
+  if (isMobile) {
+    await page.locator('[data-mobile-sheet-tools]').click();
+    await page.locator('[data-mobile-sheet-tool="sheet-integrations"]').click();
+  } else {
+    await page.locator('#sheet-integrations').click();
+  }
+  await page.waitForSelector('#sheet-modal:not([hidden])', { timeout: 5000 });
+
+  const hub = await page.evaluate(() => ({
+    cards: [...document.querySelectorAll('.integration-card-head strong')].map((node) => node.textContent.trim()),
+    linksSafe: [...document.querySelectorAll('.integration-card a[target="_blank"]')]
+      .every((link) => link.rel.includes('noopener') && link.rel.includes('noreferrer')),
+    hasSecretInput: Boolean(document.querySelector('.integration-card input[type="password"], .integration-card input[name*="token" i], .integration-card input[name*="secret" i]')),
+    copyButtons: document.querySelectorAll('[data-integration-copy]').length,
+    adapterLabels: [...document.querySelectorAll('.integration-status')].map((node) => node.textContent.trim())
+  }));
+  const expectedCards = ['Roll20', 'Owlbear Rodeo', 'Foundry VTT', 'World Anvil'];
+  if (
+    expectedCards.some((name) => !hub.cards.includes(name))
+    || !hub.linksSafe
+    || hub.hasSecretInput
+    || hub.copyButtons < 2
+    || !hub.adapterLabels.includes('Extension needed')
+    || !hub.adapterLabels.includes('Module needed')
+  ) {
+    throw new Error(`VTT integration hub regression failed in ${browserName}: ${JSON.stringify(hub)}`);
+  }
+
+  await page.locator('[data-integration-copy="roll20-character"]').click();
+  await page.waitForFunction(() => window.__integrationClipboard.includes('&{template:default}') && window.__integrationClipboard.includes('Angel Sword'));
+  const characterMacro = await page.evaluate(() => window.__integrationClipboard);
+  if (/[{}][\r\n]/.test(characterMacro) || !characterMacro.includes('{{HP=')) {
+    throw new Error(`Roll20 character macro regression failed in ${browserName}: ${characterMacro}`);
+  }
+
+  await page.locator('#sheet-modal-close').click();
+  if (isMobile) {
+    await page.locator('[data-mobile-sheet-page="combat"]').click();
+  }
+  const actionCopy = page.locator('[data-copy-roll20-action]').first();
+  if (!await actionCopy.count()) {
+    throw new Error(`No Roll20 action-copy control rendered in ${browserName}.`);
+  }
+  await actionCopy.click();
+  await page.waitForFunction((previous) => window.__integrationClipboard !== previous && window.__integrationClipboard.includes('&{template:default}'), characterMacro);
+  const actionMacro = await page.evaluate(() => window.__integrationClipboard);
+  if (!actionMacro.includes('{{name=') || !actionMacro.includes('{{Details=')) {
+    throw new Error(`Roll20 action macro regression failed in ${browserName}: ${actionMacro}`);
+  }
+
+  // End-to-end bridge happy path with an in-page fake companion speaking the
+  // asb dialect: connect → ⚔ card send → ok ack (sent twice, second must be
+  // ignored) → exactly one ack-gated resource spend in the play log.
+  await page.evaluate(() => {
+    window.__asbSends = [];
+    window.addEventListener('message', (ev) => {
+      const data = ev.data;
+      if (!data || data.source !== 'asb-battle') {
+        return;
+      }
+      if (data.type === 'ping') {
+        window.postMessage({ source: 'asb-companion', type: 'status', roll20: true }, '*');
+      } else if (data.type === 'send' && data.id && !window.__asbSends.includes(data.id)) {
+        window.__asbSends.push(data.id);
+        window.postMessage({ source: 'asb-companion', type: 'ack', id: data.id, ok: true }, '*');
+        window.postMessage({ source: 'asb-companion', type: 'ack', id: data.id, ok: true }, '*');
+      } else if (data.type === 'getSelected' && data.id) {
+        window.postMessage({ source: 'asb-companion', type: 'selected', id: data.id, ok: true, tokenId: '-fakeTok1', name: 'Fake Token' }, '*');
+      }
+    });
+  });
+  await page.waitForFunction(() => document.body.classList.contains('asb-r20-connected'), null, { timeout: 15000 });
+  const actionSend = page.locator('[data-send-roll20-action]').first();
+  if (!await actionSend.count()) {
+    throw new Error(`No Roll20 action-send control rendered in ${browserName}.`);
+  }
+  await actionSend.click();
+  await page.waitForFunction(() => window.__asbSends.length === 1, null, { timeout: 5000 });
+  await page.waitForTimeout(600);
+  const bridgeOutcome = await page.evaluate(() => ({
+    sends: window.__asbSends.length,
+    spendLogs: (document.getElementById('play-log')?.textContent.match(/Sent to Roll20 via the bridge/g) || []).length
+  }));
+  if (bridgeOutcome.sends !== 1 || bridgeOutcome.spendLogs !== 1) {
+    throw new Error(`Roll20 bridge send/spend regression in ${browserName}: ${JSON.stringify(bridgeOutcome)}`);
+  }
+
+  // Token pinning through the hub against the fake companion's selected-token reply.
+  if (isMobile) {
+    await page.locator('[data-mobile-sheet-tools]').click();
+    await page.locator('[data-mobile-sheet-tool="sheet-integrations"]').click();
+  } else {
+    await page.locator('#sheet-integrations').click();
+  }
+  await page.waitForSelector('#sheet-modal:not([hidden])', { timeout: 5000 });
+  await page.locator('[data-roll20-pin-token]').click();
+  await page.waitForFunction(() => (document.getElementById('roll20-token-pin-label')?.textContent || '').includes('Fake Token'), null, { timeout: 5000 });
+  const pinState = await page.evaluate(() => ({
+    label: document.getElementById('roll20-token-pin-label')?.textContent || '',
+    unpinVisible: document.getElementById('roll20-token-unpin')?.style.display !== 'none'
+  }));
+  if (!pinState.label.includes('Pinned: Fake Token') || !pinState.unpinVisible) {
+    throw new Error(`Roll20 token pinning regression in ${browserName}: ${JSON.stringify(pinState)}`);
+  }
+  await page.locator('#sheet-modal-close').click();
+}
+
 function isLocalTestUrl(url) {
   return url.includes(`127.0.0.1:${PORT}`) || url.includes(`localhost:${PORT}`);
 }
@@ -1012,11 +1142,12 @@ const browsers = [
             )).map((entry) => entry.id)
           };
         });
+        const expectedCreationClassExp = identity.raceName.toLowerCase() === 'human' ? 1100 : 1000;
         if (
           result.count !== expectedClassCount
           || result.uniqueIds !== expectedClassCount
           || result.unresolved.length
-          || !result.budgetText.includes('Class EXP: 0 / 1000')
+          || !result.budgetText.includes(`Class EXP: 0 / ${expectedCreationClassExp}`)
           || !result.budgetText.includes('Interlude: 0 / 3')
         ) {
           throw new Error(`Race/class matrix audit failed for ${startMode} ${identity.raceName} / ${identity.ancestryName}: ${JSON.stringify(result)}`);
@@ -1132,7 +1263,7 @@ const browsers = [
     });
     await page.reload({ waitUntil: 'load' });
     await page.click('[data-step-index="6"]');
-    await page.selectOption('[data-builder-choice-select="class-acolyte-weapon-proficiency"]', 'Wand');
+    await page.selectOption('[data-builder-choice-select="class-acolyte-weapon-proficiency"]', 'Wands');
     const fighterSelections = ['Small Weapons', 'Polearms', 'Light Swords', 'Longsword', 'Dueling Weapons'];
     for (let index = 0; index < fighterSelections.length; index += 1) {
       const selector = `[data-builder-choice-select="class-fighter-common-weapon-proficiency-${index + 1}"]`;
@@ -1155,7 +1286,7 @@ const browsers = [
       };
     });
     if (
-      !resolvedProficiencyResult.panelText.includes('Acolyte: Wand proficiency.')
+      !resolvedProficiencyResult.panelText.includes('Acolyte: Wands proficiency.')
       || new Set(resolvedProficiencyResult.values).size !== 5
     ) {
       throw new Error(`Resolved class proficiency choices failed: ${JSON.stringify(resolvedProficiencyResult)}`);
@@ -1987,7 +2118,273 @@ const browsers = [
     await page.reload({ waitUntil: 'load' });
   }
 
+  async function runCommunityBugSweepAssertions(page) {
+    const saveKey = 'lyrian-chronicles-character-suite-v2';
+    const seed = async (builder = {}, fields = {}, ui = {}) => {
+      await page.evaluate(({ saveKey: key, builder: nextBuilder, fields: nextFields, ui: nextUi }) => {
+        localStorage.clear();
+        localStorage.setItem(key, JSON.stringify({
+          ui: { mode: 'builder', gameVersion: '0.13.1', ...nextUi },
+          fields: { Name: 'Community Bug Sweep', ...nextFields },
+          builder: nextBuilder
+        }));
+      }, { saveKey, builder, fields, ui });
+      await page.reload({ waitUntil: 'load' });
+    };
+    const classCardStates = async (names) => page.evaluate((wantedNames) => Object.fromEntries(wantedNames.map((name) => {
+      const card = [...document.querySelectorAll('.builder-option-card')]
+        .find((entry) => entry.querySelector('strong')?.textContent?.trim() === name);
+      return [name, {
+        found: Boolean(card),
+        locked: card?.classList.contains('locked') || false,
+        text: card?.textContent?.replace(/\s+/g, ' ').trim() || ''
+      }];
+    })), names);
+
+    await seed();
+    const ids = await page.evaluate(() => {
+      const byName = (records, name) => records.find((entry) => entry.name?.trim() === name)?.id || '';
+      const classes = window.LYRIAN_DETAIL_DATA?.classes || [];
+      const races = window.LYRIAN_DETAIL_DATA?.races || [];
+      const ancestries = window.LYRIAN_DETAIL_DATA?.ancestries || [];
+      const breakthroughs = window.LYRIAN_DATA?.breakthroughs || [];
+      const demonRace = races.find((entry) => entry.name?.trim() === 'Demon');
+      const firstDemonClan = Object.entries(demonRace?.lineageChoices || {})[0] || [];
+      const demonClanCode = String(firstDemonClan[1]?.code || firstDemonClan[0] || '').trim().toLowerCase();
+      return {
+        classes: Object.fromEntries([
+          'Fighter', 'Idol', 'Bard', 'Onmyoji', 'Acolyte', 'Mage', 'Martial Artist'
+        ].map((name) => [name, byName(classes, name)])),
+        races: Object.fromEntries(['Human', 'Chimera', 'Demon', 'Fae', 'Youkai'].map((name) => [name, byName(races, name)])),
+        ancestries: {
+          Chimera: byName(ancestries, 'Dogfolk'),
+          Fae: byName(ancestries, 'Pixie'),
+          Youkai: byName(ancestries, 'Tengu')
+        },
+        demonAncestry: ancestries.find((entry) => entry.primaryRace?.trim() === 'Demon')?.id
+          || (demonClanCode ? `demon-clan-${demonClanCode}` : ''),
+        faerieLightBreakthrough: byName(breakthroughs, 'Mystic Eyes of Faerie Light (Fae)')
+      };
+    });
+    if (Object.values(ids.classes).some((id) => !id)
+      || Object.values(ids.races).some((id) => !id)
+      || Object.values(ids.ancestries).some((id) => !id)
+      || !ids.demonAncestry
+      || !ids.faerieLightBreakthrough) {
+      throw new Error(`Community bug sweep could not resolve required records: ${JSON.stringify(ids)}`);
+    }
+
+    await seed({ selectedRaceId: ids.races.Human });
+    await page.click('[data-step-index="6"]');
+    await page.waitForSelector('.builder-option-card', { timeout: 5000 });
+    const blankRequirementState = await classCardStates([
+      'Bard', 'Mist Veil Elegy', 'Aurora Blade Style', 'Flash Star Blade Style', 'Daionmyoji'
+    ]);
+    if (Object.values(blankRequirementState).some((entry) => !entry.found || !entry.locked)) {
+      throw new Error(`Blank class requirement gates failed: ${JSON.stringify(blankRequirementState)}`);
+    }
+
+    await seed({
+      selectedRaceId: ids.races.Human,
+      selectedClassIds: [ids.classes.Fighter],
+      classAbilityProgress: { [ids.classes.Fighter]: 7 }
+    });
+    await page.click('[data-step-index="6"]');
+    await page.waitForSelector('.builder-option-card', { timeout: 5000 });
+    const masteredWithoutWeapon = await classCardStates(['Mist Veil Elegy', 'Aurora Blade Style', 'Flash Star Blade Style']);
+    if (Object.values(masteredWithoutWeapon).some((entry) => !entry.found || !entry.locked)) {
+      throw new Error(`Mastery-only class requirement gate failed: ${JSON.stringify(masteredWithoutWeapon)}`);
+    }
+
+    await seed({
+      selectedRaceId: ids.races.Human,
+      selectedClassIds: [ids.classes.Fighter],
+      classAbilityProgress: { [ids.classes.Fighter]: 7 },
+      choiceSelections: { 'race-human-weapon-group': 'Light Swords' }
+    });
+    await page.click('[data-step-index="6"]');
+    await page.waitForSelector('.builder-option-card', { timeout: 5000 });
+    const bladeStyleState = await classCardStates(['Aurora Blade Style', 'Flash Star Blade Style']);
+    if (Object.values(bladeStyleState).some((entry) => !entry.found || entry.locked)) {
+      throw new Error(`Blade-style weapon requirement gate failed: ${JSON.stringify(bladeStyleState)}`);
+    }
+
+    await seed({
+      selectedRaceId: ids.races.Human,
+      selectedClassIds: [ids.classes.Onmyoji],
+      classAbilityProgress: { [ids.classes.Onmyoji]: 7 }
+    });
+    await page.click('[data-step-index="6"]');
+    await page.waitForSelector('.builder-option-card', { timeout: 5000 });
+    const daionmyojiState = await classCardStates(['Daionmyoji']);
+    if (!daionmyojiState.Daionmyoji?.found || daionmyojiState.Daionmyoji.locked) {
+      throw new Error(`Daionmyoji trailing-space requirement regression failed: ${JSON.stringify(daionmyojiState)}`);
+    }
+
+    await seed({
+      selectedRaceId: ids.races.Fae,
+      selectedAncestryId: ids.ancestries.Fae,
+      selectedBreakthroughIds: [ids.faerieLightBreakthrough]
+    });
+    await page.click('[data-step-index="6"]');
+    await page.waitForSelector('.builder-option-card', { timeout: 5000 });
+    const faerieLightClassState = await classCardStates(['Faerie Light Eyes']);
+    if (!faerieLightClassState['Faerie Light Eyes']?.found || faerieLightClassState['Faerie Light Eyes'].locked) {
+      throw new Error(`Faerie Light Eyes requirement regression failed: ${JSON.stringify(faerieLightClassState)}`);
+    }
+    await page.click('#builder-sheet-shortcut-top');
+    await page.waitForSelector('#play-skills', { timeout: 5000 });
+    const faerieLightExpertise = await page.locator('#play-skills .play-skill-mini-row')
+      .filter({ has: page.locator('.play-skill-mini-copy strong', { hasText: /^Perception$/ }) })
+      .textContent();
+    if (!faerieLightExpertise.includes('Perception') || !faerieLightExpertise.includes('Illusion') || !faerieLightExpertise.includes('+10')) {
+      throw new Error(`Faerie Light Eyes expertise regression failed: ${faerieLightExpertise}`);
+    }
+
+    const raceGrantExpectations = {
+      Human: ['Athletics', 'Magic'],
+      Chimera: ['Magic', 'Animal Husbandry', 'Artifice'],
+      Demon: ['Common Knowledge', 'Flight', 'Artifice'],
+      Fae: ['Magic', 'Medicine', 'Negotiation'],
+      Youkai: ['Insight', 'Intimidation', 'Negotiation']
+    };
+    for (const [raceName, expectedSkills] of Object.entries(raceGrantExpectations)) {
+      await seed({
+        selectedRaceId: ids.races[raceName],
+        selectedAncestryId: raceName === 'Demon' ? ids.demonAncestry : (ids.ancestries[raceName] || '')
+      });
+      await page.click('[data-step-index="7"]');
+      await page.waitForSelector('.builder-skill-grid', { timeout: 5000 });
+      const grantState = await page.evaluate(() => {
+        const entries = [...document.querySelectorAll('[data-racial-skill-choice]')]
+          .filter((button) => !button.dataset.racialSkillChoice.includes('demon-clan'))
+          .map((button) => ({
+            choiceId: button.dataset.racialSkillChoice,
+            skill: button.closest('.builder-skill-row')?.querySelector('.builder-skill-copy strong')?.textContent?.trim() || ''
+          }));
+        return {
+          choiceIds: [...new Set(entries.map((entry) => entry.choiceId))],
+          skills: [...new Set(entries.map((entry) => entry.skill).filter(Boolean))]
+        };
+      });
+      if (grantState.choiceIds.length !== 1 || expectedSkills.some((skill) => !grantState.skills.includes(skill))) {
+        throw new Error(`${raceName} racial skill grant regression failed: ${JSON.stringify(grantState)}`);
+      }
+    }
+
+    await seed({
+      selectedRaceId: ids.races.Demon,
+      selectedAncestryId: ids.demonAncestry,
+      choiceSelections: { 'race-demon-bonus-mode': 'skill' }
+    });
+    await page.click('[data-step-index="7"]');
+    await page.waitForSelector('[data-racial-skill-choice="race-demon-clan-skill"]', { timeout: 5000 });
+    const demonClanSkills = await page.evaluate(() => [...new Set(
+      [...document.querySelectorAll('[data-racial-skill-choice="race-demon-clan-skill"]')]
+        .map((button) => button.closest('.builder-skill-row')?.querySelector('.builder-skill-copy strong')?.textContent?.trim() || '')
+        .filter(Boolean)
+    )]);
+    if (!demonClanSkills.includes('Alchemy') || !demonClanSkills.includes('Foraging') || demonClanSkills.length < 35) {
+      throw new Error(`Demon clan any-skill grant regression failed: ${JSON.stringify(demonClanSkills)}`);
+    }
+
+    await seed({
+      selectedRaceId: ids.races.Human,
+      selectedClassIds: [ids.classes.Fighter],
+      classAbilityProgress: { Fighter: 5 }
+    }, { 'RacialSkillPoint:race-human-skill:1': '5' });
+    await page.click('[data-step-index="0"]');
+    await page.locator(`[data-builder-action="pick-race"][data-id="${ids.races.Fae}"]`).click();
+    await page.click('[data-step-index="1"]');
+    await page.locator(`[data-builder-action="pick-ancestry"][data-id="${ids.ancestries.Fae}"]`).click();
+    await page.waitForTimeout(300);
+    await page.click('[data-step-index="6"]');
+    await page.waitForSelector('.class-progress-card', { timeout: 5000 });
+    const preservationState = await page.evaluate(({ key, fighterId }) => {
+      const saved = JSON.parse(localStorage.getItem(key) || '{}');
+      const fighterCard = [...document.querySelectorAll('.class-progress-card')]
+        .find((entry) => entry.querySelector('h4')?.textContent?.trim() === 'Fighter');
+      return {
+        progress: saved.builder?.classAbilityProgress?.[fighterId],
+        staleRaceSpend: saved.fields?.['RacialSkillPoint:race-human-skill:1'] || '',
+        cardText: fighterCard?.textContent?.replace(/\s+/g, ' ').trim() || ''
+      };
+    }, { key: saveKey, fighterId: ids.classes.Fighter });
+    if (preservationState.progress !== 5 || preservationState.staleRaceSpend || !preservationState.cardText.includes('Level 6')) {
+      throw new Error(`Race-change class-level preservation regression failed: ${JSON.stringify(preservationState)}`);
+    }
+
+    await seed({
+      selectedRaceId: ids.races.Human,
+      selectedClassIds: [ids.classes.Acolyte],
+      classAbilityProgress: { [ids.classes.Acolyte]: 0 }
+    });
+    await page.click('[data-step-index="6"]');
+    await page.waitForSelector('[data-builder-choice-select="class-acolyte-weapon-proficiency"]', { timeout: 5000 });
+    const acolyteOptions = await page.locator('[data-builder-choice-select="class-acolyte-weapon-proficiency"] option').allTextContents();
+    if (!acolyteOptions.includes('Wands') || !acolyteOptions.includes('Staves')
+      || acolyteOptions.includes('Wand') || acolyteOptions.includes('Magic Staff')
+      || acolyteOptions.includes('Channeling Weapons')) {
+      throw new Error(`Acolyte channeling-weapon choice regression failed: ${JSON.stringify(acolyteOptions)}`);
+    }
+
+    await seed({
+      selectedRaceId: ids.races.Human,
+      selectedClassIds: [ids.classes.Mage, ids.classes['Martial Artist']],
+      classAbilityProgress: { [ids.classes.Mage]: 0, [ids.classes['Martial Artist']]: 0 }
+    }, {}, { mode: 'sheet', sheetTab: 'proficiencies' });
+    await page.waitForSelector('#play-proficiencies', { timeout: 5000 });
+    await page.waitForFunction(() =>
+      document.querySelector('#play-proficiencies')?.textContent.includes('Channeling Weapons'));
+    const proficiencyText = await page.locator('#play-proficiencies').textContent();
+    if (!proficiencyText.includes('Channeling Weapons')
+      || !proficiencyText.includes('Unarmed (as One-Handed)')
+      || !proficiencyText.includes('Gauntlets')) {
+      throw new Error(`Channeling/Unarmed/Gauntlets proficiency regression failed: ${proficiencyText}`);
+    }
+
+    await seed({ selectedRaceId: ids.races.Human }, {}, { mode: 'sheet', sheetTab: 'abilities' });
+    await page.waitForSelector('#play-quick-abilities .play-action-card', { timeout: 5000 });
+    const humanBattleAbilities = await page.locator('#play-quick-abilities .play-action-card').allTextContents();
+    if (!humanBattleAbilities.some((text) => text.includes('Divine Providence'))
+      || !humanBattleAbilities.some((text) => text.includes('Human Adaptability'))) {
+      throw new Error(`Battle Mode racial ability regression failed: ${JSON.stringify(humanBattleAbilities)}`);
+    }
+
+    await page.setViewportSize({ width: 390, height: 568 });
+    await seed({ selectedRaceId: ids.races.Human });
+    await page.click('[data-step-index="8"]');
+    await page.waitForSelector('[data-builder-action="inspect-item"]', { timeout: 5000 });
+    await page.locator('[data-builder-action="inspect-item"]').first().click();
+    await page.waitForSelector('#builder-mobile-choice-overlay:not([hidden])', { timeout: 5000 });
+    await page.locator('.builder-mobile-choice-sheet').evaluate(async (sheet) => {
+      await Promise.all(sheet.getAnimations().map((animation) => animation.finished.catch(() => {})));
+    });
+    const shortScreenState = await page.evaluate(() => {
+      const sheet = document.querySelector('.builder-mobile-choice-sheet')?.getBoundingClientRect();
+      const actions = document.querySelector('.builder-mobile-choice-actions')?.getBoundingClientRect();
+      const content = document.querySelector('.builder-mobile-choice-content');
+      return {
+        viewportHeight: window.innerHeight,
+        sheetTop: sheet?.top || 0,
+        sheetBottom: sheet?.bottom || 0,
+        actionsBottom: actions?.bottom || 0,
+        contentScrollable: Boolean(content && content.scrollHeight >= content.clientHeight)
+      };
+    });
+    if (shortScreenState.sheetTop < 0
+      || shortScreenState.sheetBottom > shortScreenState.viewportHeight + 1
+      || shortScreenState.actionsBottom > shortScreenState.viewportHeight + 1
+      || !shortScreenState.contentScrollable) {
+      throw new Error(`Short-screen equipment panel regression failed: ${JSON.stringify(shortScreenState)}`);
+    }
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'load' });
+  }
+
   async function runRulesRegressionAssertions(page) {
+    await runCommunityBugSweepAssertions(page);
     await runQuickBuildStartModeAssertion(page);
     await runAllQuickBuildPackageAssertions(page);
     await runMiraneLegacyPlannerAssertion(page);
@@ -3218,7 +3615,7 @@ const browsers = [
           classAbilityProgress: { acolyte: 7 },
           choiceSelections: {
             'breakthrough-divine-s-chosen-divine': 'Heira',
-            'class-acolyte-weapon-proficiency': 'Magic Staff',
+            'class-acolyte-weapon-proficiency': 'Staves',
             'class-acolyte-soul-stat': 'Power'
           }
         }
@@ -3237,7 +3634,7 @@ const browsers = [
     await page.click('#builder-sheet-shortcut-top');
     await page.waitForSelector('#sheet-view:not([hidden])', { timeout: 5000 });
     const divineProficiencyResult = await page.locator('#play-proficiencies').textContent();
-    if (!divineProficiencyResult.includes('Magic Staff') || !divineProficiencyResult.includes('Astra Mastery')) {
+    if (!divineProficiencyResult.includes('Staves') || !divineProficiencyResult.includes('Astra Mastery')) {
       throw new Error(`Builder proficiency sheet handoff failed: ${JSON.stringify(divineProficiencyResult)}`);
     }
 
@@ -4570,6 +4967,7 @@ const browsers = [
 
           if (vp.name === 'Desktop') {
             await runDesktopBuilderLayoutAssertions(page);
+            await runVttIntegrationAssertions(page, browserInfo.name, targetUrl, false);
           }
 
           if (browserInfo.name.startsWith('Chromium') && vp.name === 'Desktop') {
@@ -4583,6 +4981,7 @@ const browsers = [
             await runMobileChoiceOverlayAssertions(page, browserInfo.name);
             await runMobileQuickBuildDetailAssertions(page, browserInfo.name);
             await runMobileSheetAppAssertions(page, browserInfo.name);
+            await runVttIntegrationAssertions(page, browserInfo.name, targetUrl, true);
           }
 
           // Take screenshot

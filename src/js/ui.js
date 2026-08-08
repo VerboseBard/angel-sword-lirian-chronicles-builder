@@ -1,10 +1,14 @@
-import { BUILDER_STEPS, CHARACTER_START_MODES, CLASS_GROUP_ROLE_ORDER, CLASS_PASSIVE_SLOTS, CLASS_PURCHASABLE_LEVELS, CLASS_ROWS, CLICKABLE_ROLL_FIELDS, COMMON_WEAPON_GROUP_OPTIONS, CREATION_SKILL_POINT_BUDGET, DEFAULT_DICE_SET_ID, DEMON_CLAN_SKILL_OPTIONS, DICE_PREVIEW_FALLBACK_URL, DICE_SETS, DICE_SET_ID_ALIASES, DICE_SOUND_ASSETS, DICE_TRAY_TYPES, EMBEDDED_STATE_CHUNK_SIZE, EMBEDDED_STATE_FORMAT, ENABLE_ACCURATE_DICE_ROLLS, ENABLE_WEBGL_DICE_ROLLS, INVENTORY_ROWS, MAIN_STATS, MAIN_STAT_CREATION_ARRAY, MAX_DICE_TRAY_DICE, MIRANE_CRAFTING_INTERLUDE_EXP, MIRANE_GATHER_BASE_UNITS, MIRANE_GATHER_MASTERY_BONUS_UNITS, MIRANE_IP_SHOP_PRICE_CAP, MIRANE_IP_SHOP_SALE_PERCENT_CAP, MIRANE_IP_SHOP_SLOT_LIMIT, MIRANE_JOB_ARTISAN_BONUS_CLIM, MIRANE_JOB_BASE_CLIM, MIRANE_RAW_MATERIAL_CLIM_LIMIT, MIRANE_SINGLE_MATERIAL_CLIM_LIMIT, MIRANE_START_MODE_ID, MULTILINE_FIELDS, NAME_FIELDS, OFFICIAL_LANGUAGE_OPTIONS, PAGE_BACKGROUNDS, PASSIVE_READ_ONLY_FIELDS, PDF_STATE_CHUNK_FIELD_PREFIX, PDF_STATE_MANIFEST_FIELD, PLAY_BASIC_ACTIONS, PLAY_ROLLS, PORTRAIT_JPEG_QUALITY, PORTRAIT_MAX_DIMENSION, PORTRAIT_NORMALIZE_THRESHOLD, SAVE_SNAPSHOT_PORTRAIT_LIMIT, SECONDARY_STATS, SECONDARY_STAT_CREATION_ARRAY, SKILL_ALIASES, SKILL_DEFINITIONS, SKILL_EXPERTISE_OPTIONS, SKILL_OPTIONS, SPECIALITY_WEAPON_GROUP_OPTIONS, STARTING_CLASS_EXP, STARTING_INTERLUDE_POINTS, SUBSTAT_OPTIONS } from "./constants.js";
+import { BUILDER_STEPS, CHARACTER_START_MODES, CLASS_GROUP_ROLE_ORDER, DEFAULT_CHARACTER_START_MODE, CLASS_PASSIVE_SLOTS, CLASS_PURCHASABLE_LEVELS, CLASS_ROWS, CLICKABLE_ROLL_FIELDS, COMMON_WEAPON_GROUP_OPTIONS, CREATION_SKILL_POINT_BUDGET, DEFAULT_DICE_SET_ID, DICE_PREVIEW_FALLBACK_URL, DICE_SETS, DICE_SET_ID_ALIASES, DICE_SOUND_ASSETS, DICE_TRAY_TYPES, EMBEDDED_STATE_CHUNK_SIZE, EMBEDDED_STATE_FORMAT, ENABLE_ACCURATE_DICE_ROLLS, ENABLE_WEBGL_DICE_ROLLS, INVENTORY_ROWS, MAIN_STATS, MAIN_STAT_CREATION_ARRAY, MAX_DICE_TRAY_DICE, MIRANE_CRAFTING_INTERLUDE_EXP, MIRANE_GATHER_BASE_UNITS, MIRANE_GATHER_MASTERY_BONUS_UNITS, MIRANE_IP_SHOP_PRICE_CAP, MIRANE_IP_SHOP_SALE_PERCENT_CAP, MIRANE_IP_SHOP_SLOT_LIMIT, MIRANE_JOB_ARTISAN_BONUS_CLIM, MIRANE_JOB_BASE_CLIM, MIRANE_RAW_MATERIAL_CLIM_LIMIT, MIRANE_SINGLE_MATERIAL_CLIM_LIMIT, MIRANE_START_MODE_ID, MULTILINE_FIELDS, NAME_FIELDS, OFFICIAL_LANGUAGE_OPTIONS, PAGE_BACKGROUNDS, PASSIVE_READ_ONLY_FIELDS, PDF_STATE_CHUNK_FIELD_PREFIX, PDF_STATE_MANIFEST_FIELD, PLAY_BASIC_ACTIONS, PLAY_ROLLS, PORTRAIT_JPEG_QUALITY, PORTRAIT_MAX_DIMENSION, PORTRAIT_NORMALIZE_THRESHOLD, SAVE_SNAPSHOT_PORTRAIT_LIMIT, SECONDARY_STATS, SECONDARY_STAT_CREATION_ARRAY, SKILL_ALIASES, SKILL_DEFINITIONS, SKILL_EXPERTISE_CAP, SKILL_EXPERTISE_OPTIONS, SKILL_OPTIONS, SKILL_POINT_CAP, SPECIALITY_WEAPON_GROUP_OPTIONS, STARTING_CLASS_EXP, STARTING_INTERLUDE_POINTS, SUBSTAT_OPTIONS, WEAPON_GROUP_REFERENCE_OPTIONS } from "./constants.js";
 import { asArray, clamp, cleanText, cssEscape, escapeHtml, formatModifier, normalizeKey, normalizePhrase, splitSentences, toNumber } from "./utils.js";
 import { clearSheet, createDefaultState, getSavedSlots, mergePlayState, persistWorkingState, scheduleWorkingStatePersist, state, updateFieldValue } from "./state.js";
 import { applyGameVersion, detailLookup, exportPrepCache, getAncestryDetail, getAncestryOptionsByPrimaryRace, getAncestryRequirementPhrases, getBreakthroughBudgetState, getBuilderChoiceDefinitionsCacheKey, getCampaignProgressState, getCharacterStartMode, getClassDetail, getClassUnlockBudgetState, getComputedBonuses, getCurrentSecondaryLineageMode, getDemonClanOptions, getDerivedCombatStats, getHumanRaceSkillChoiceOptions, getRaceDetail, getRaceRequirementPhrases, getSecondaryLineageLabels, getSelectedAncestryDetail, getSelectedBreakthroughRecords, getSelectedClassDetails, getSelectedClassProgress, getSelectedGameVersionId, getSelectedItemRecords, getSelectedRaceDetail, getSkillBreakdownParts, getSkillRowsData, getStartingFundsState, getVersionRecord, getVersionRecords, lookup, syncPlayResourcesFromFields, usePlayCost, versionRuntime } from "./rules.js";
 import { dicePackRuntime, preloadDiceSetFaceArt, renderDiceTray } from "./dice.js";
-import { closeSheetModal, deriveSaveSlotName, exportJsonState, exportPdfState, exportSpreadsheetState, exportState, extractAbilityHeading, getWorksheetNumberText, getWorksheetText, handleImportedCharacterFile, handleSaveSlotAction, loadFromBrowser, openSheetModal, parseClimCost, parseNumericCost, saveCurrentCharacterToActiveSlot, saveCurrentCharacterToNewSlot, saveToBrowser, setSpreadsheetExportCell } from "./io.js";
+import { closeSheetModal, deriveSaveSlotName, exportJsonState, exportPatchedTemplateWorkbook, exportPdfState, exportSpreadsheetState, exportState, extractAbilityHeading, getWorksheetNumberText, getWorksheetText, handleImportedCharacterFile, handleSaveSlotAction, loadFromBrowser, openSheetModal, parseClimCost, parseNumericCost, saveCurrentCharacterToActiveSlot, saveCurrentCharacterToNewSlot, saveToBrowser, setSpreadsheetExportCell } from "./io.js";
 import { ensureDiceRuntimeLoaded, isDiceRuntimeLoaded } from "./runtime-loader.js";
+import { buildCharacterProfileSummary, buildRoll20AbilityMacro, buildRoll20ActionMacro, buildRoll20CharacterMacro, buildWorldAnvilBBCodeProfile, copyIntegrationText, VTT_PLATFORM_URLS } from "./integrations.js";
+import { BRIDGE_STATES, buildTokenModCommand, createRoll20Bridge } from "./roll20-bridge.js";
+import { publishVttEvent } from "./vtt-relay.js";
+import { buildAscharCharacter, normalizeAscharCharacter, wrapAscharExport } from "./aschar.js";
 
 
 
@@ -517,13 +521,26 @@ function getComputedSkillExpertiseEntries(index, bonuses = getComputedBonuses())
         return [];
       }
 const computed = bonuses.skillExpertise?.[definition.name] || [];
-      return computed
+const entries = computed
         .map((entry) => ({
           name: normalizeExpertiseSpecialtyName(entry?.name),
           bonus: Math.max(0, Math.floor(toNumber(entry?.bonus, 0))),
           source: cleanText(entry?.source || "Feature")
         }))
         .filter((entry) => entry.name && entry.bonus > 0);
+      if (definition.name === "Perception"
+        && hasSelectedBreakthroughName("Mystic Eyes of Faerie Light")
+        && !entries.some((entry) => normalizePhrase(entry.name) === "illusion")) {
+        const source = getSelectedBreakthroughRecords().find((entry) =>
+          normalizePhrase(entry.name).includes("mystic eyes of faerie light")
+        );
+        entries.push({
+          name: "Illusion",
+          bonus: 10,
+          source: source?.name || "Mystic Eyes of Faerie Light"
+        });
+      }
+      return entries;
     }
 function getSkillExpertiseGroups(index, bonuses = getComputedBonuses()) {
       const groups = new Map();
@@ -561,6 +578,11 @@ const current = groups.get(key) || {
       });
 
       return Array.from(groups.values())
+        .map((entry) => ({
+          ...entry,
+          uncappedBonus: entry.bonus,
+          bonus: Math.min(SKILL_EXPERTISE_CAP, entry.bonus)
+        }))
         .filter((entry) => entry.bonus > 0)
         .sort((a, b) => b.bonus - a.bonus || a.name.localeCompare(b.name));
     }
@@ -575,7 +597,7 @@ function getBestCreationExpertiseBonusForSkill(index) {
           const key = normalizePhrase(entry.name);
           groups.set(key, (groups.get(key) || 0) + entry.points);
         });
-      return Array.from(groups.values()).reduce((best, points) => Math.max(best, points * 2), 0);
+      return Math.min(SKILL_EXPERTISE_CAP, Array.from(groups.values()).reduce((best, points) => Math.max(best, points * 2), 0));
     }
 function getTotalExpertiseSpendForSkill(index) {
       return getSkillExpertiseEntries(index).reduce((total, entry) => total + entry.points, 0);
@@ -595,6 +617,12 @@ const specialty = normalizeExpertiseSpecialtyName(name);
       }
       if (!canSkillUseExpertise(definition)) {
         setStatus(`${definition.name} does not have legal expertise specialties.`);
+        return false;
+      }
+      const currentGroup = getSkillExpertiseGroups(row)
+        .find((entry) => normalizePhrase(entry.name) === normalizePhrase(specialty));
+      if ((currentGroup?.uncappedBonus || 0) + 2 > SKILL_EXPERTISE_CAP) {
+        setStatus(`${definition.name} expertise cannot exceed +${SKILL_EXPERTISE_CAP}.`);
         return false;
       }
 
@@ -697,6 +725,20 @@ function getVisibleClassSkillPoolChoices() {
         choice.type === "class-skill-pool" && isBuilderChoiceVisible(choice)
       );
     }
+function pruneInactiveRacialSkillAllocations() {
+      const activeChoices = new Map(getVisibleRacialSkillPoolChoices().map((choice) => [choice.id, choice]));
+      Object.keys(state.fields).filter((fieldName) => fieldName.startsWith("RacialSkillPoint:")).forEach((fieldName) => {
+        const suffix = fieldName.slice("RacialSkillPoint:".length);
+const separator = suffix.lastIndexOf(":");
+const choiceId = separator >= 0 ? suffix.slice(0, separator) : "";
+const row = separator >= 0 ? Number(suffix.slice(separator + 1)) : 0;
+const choice = activeChoices.get(choiceId);
+const definition = SKILL_DEFINITIONS[row - 1];
+        if (!choice || !definition || !isSkillAllowedForRacialPool(choice, definition.name)) {
+          updateFieldValue(fieldName, "");
+        }
+      });
+    }
 function isSkillAllowedForRacialPool(choice, skillName) {
       return getChoiceOptionValueSet(choice).has(cleanText(skillName));
     }
@@ -773,7 +815,9 @@ function getRacialSkillAllocationOptions(choice, index) {
 const currentSpend = getRacialSkillSpend(choice, index);
 const pool = getRacialSkillPoolState(choice);
 const spentElsewhere = pool.spent - currentSpend;
-const maxSpend = Math.max(0, pool.budget - spentElsewhere);
+const skill = getSkillRowData(index);
+const pointCapRoom = Math.max(0, SKILL_POINT_CAP - Math.max(0, (skill?.uncappedSkillPoints || 0) - currentSpend));
+const maxSpend = Math.min(Math.max(0, pool.budget - spentElsewhere), pointCapRoom);
       return {
         currentSpend,
         currentValid: currentSpend <= maxSpend,
@@ -803,7 +847,11 @@ function getClassSkillAllocationOptions(choice, index, kind = "skill") {
 const currentSpend = getClassSkillPoolSpend(choice, index, kind);
 const pool = getClassSkillPoolState(choice);
 const spentElsewhere = pool.spent - currentSpend;
-const maxSpend = Math.max(0, pool.budget - spentElsewhere);
+const skill = getSkillRowData(index);
+const pointCapRoom = kind === "skill"
+        ? Math.max(0, SKILL_POINT_CAP - Math.max(0, (skill?.uncappedSkillPoints || 0) - currentSpend))
+        : Math.max(0, Math.floor((SKILL_EXPERTISE_CAP - Math.max(0, (skill?.expertiseValue || 0) - currentSpend * 2)) / 2));
+const maxSpend = Math.min(Math.max(0, pool.budget - spentElsewhere), pointCapRoom);
       return {
         currentSpend,
         currentValid: currentSpend <= maxSpend,
@@ -925,7 +973,10 @@ const currentSpend = type === "expertise"
         : Math.max(0, skill.creationSkillPoints);
 const budget = getSkillBudgetState();
 const spentElsewhere = budget.spent - currentSpend;
-const maxSpend = Math.max(0, CREATION_SKILL_POINT_BUDGET - spentElsewhere);
+const capRoom = type === "expertise"
+        ? Math.max(0, Math.floor((SKILL_EXPERTISE_CAP - Math.max(0, skill.expertiseValue - currentSpend * 2)) / 2))
+        : Math.max(0, SKILL_POINT_CAP - Math.max(0, skill.uncappedSkillPoints - currentSpend));
+const maxSpend = Math.min(Math.max(0, CREATION_SKILL_POINT_BUDGET - spentElsewhere), capRoom);
 const currentValid = currentSpend <= maxSpend;
 
       return {
@@ -1642,6 +1693,29 @@ const key = id || normalizePhrase(name);
         "trait7Ref",
         "trait8Ref"
       ].forEach((key) => push(record?.[key]));
+      [
+        "ability1",
+        "ability2",
+        "ability3",
+        "ability4",
+        "ability5",
+        "ability6",
+        "ability7",
+        "ultimateAbility",
+        "trait1",
+        "trait2",
+        "trait3",
+        "trait4",
+        "trait5",
+        "trait6",
+        "trait7",
+        "trait8"
+      ].forEach((key) => {
+        const reference = record?.[key];
+        if (typeof reference === "string" && cleanText(reference)) {
+          push(lookup.abilities.resolve(reference));
+        }
+      });
       return abilities;
     }
 function getClassAbilityRecords(record) {
@@ -2004,6 +2078,7 @@ function getTrackedProficiencyText() {
         return [
           entry.skills,
           entry.proficiencies,
+          ...getCanonicalClassProficiencyLines(entry),
           keyAbility.name,
           keyAbility.benefit1,
           keyAbility.benefit2,
@@ -2022,8 +2097,54 @@ function getTrackedProficiencyText() {
         ...getSelectedBreakthroughEffects().extraProficiencies
       ].filter(Boolean).map(stripClassRequirementExcludedProficiencyText).filter(Boolean).join(" | ");
     }
+function getCanonicalClassProficiencyLines(record) {
+      const keyAbility = getClassKeyAbilityRecord(record);
+const isAcolyte = normalizePhrase(record?.name) === "acolyte";
+const text = cleanText([
+        record?.proficiencies,
+        keyAbility?.benefit1,
+        keyAbility?.benefit2,
+        keyAbility?.benefit3,
+        keyAbility?.benefit4
+      ].filter(Boolean).join(" "));
+const lines = [];
+const push = (value) => {
+        const cleaned = cleanText(value);
+        if (cleaned && !lines.includes(cleaned)) {
+          lines.push(cleaned);
+        }
+      };
+
+      [
+        "Light Armor",
+        "Medium Armor",
+        "Heavy Armor",
+        "Shields",
+        "Greatshields",
+        ...COMMON_WEAPON_GROUP_OPTIONS,
+        ...SPECIALITY_WEAPON_GROUP_OPTIONS
+      ].forEach((label) => {
+        if (isAcolyte && normalizePhrase(label) === "channeling weapons") {
+          return;
+        }
+        if (includesPhrase(text, label)) {
+          push(label);
+        }
+      });
+
+      if (!isAcolyte && (/\bchanneling weapon(?: group)?(?:'s)? weapons\b/i.test(text)
+        || /\bproficien(?:t|cy)\s+in\s+(?:the\s+)?channeling weapons?\b/i.test(text))) {
+        push("Channeling Weapons");
+      }
+      if (/\bunarmed attack damage is treated as a one-handed weapon in which you are proficient\b/i.test(text)
+        || /\bproficien(?:t|cy)\s+(?:in|with)\s+unarmed\b/i.test(text)) {
+        push("Unarmed (as One-Handed)");
+        push("Gauntlets");
+      }
+      return lines;
+    }
 function getPlayProficiencyText() {
-      const classTexts = getSelectedClassDetails().map((entry) => entry.proficiencies).filter(Boolean);
+      const classTexts = getSelectedClassDetails().flatMap((entry) => getCanonicalClassProficiencyLines(entry));
       const sourceLines = [
         state.fields.Proficiencies,
         getSelectedRaceDetail()?.proficiencies,
@@ -2035,6 +2156,9 @@ function getPlayProficiencyText() {
         .flatMap((text) => stripClassRequirementExcludedProficiencyText(text).split(/\s*\|\s*|\n+/))
         .map((text) => cleanText(text))
         .filter(Boolean);
+      if (sourceLines.some((line) => /\bunarmed\b/i.test(line))) {
+        sourceLines.push("Unarmed (as One-Handed)", "Gauntlets");
+      }
       const masteryKeys = new Set(
         [...getTrackedElementalMasteries()].map((key) => getElementalMasteryCanonicalKey(key)).filter(Boolean)
       );
@@ -3178,6 +3302,47 @@ const results = clauses.map((clause) => evaluateClassRequirementClause(clause, c
         results
       };
     }
+function hasArtProgress(requiredPoints) {
+      const minimum = Math.max(0, toNumber(requiredPoints, 0));
+      return getSkillRowsData().some((entry) =>
+        normalizePhrase(entry.name) === "art"
+        && (
+          toNumber(entry.skillPoints, 0) >= minimum
+          || entry.expertiseGroups.some((group) => toNumber(group.bonus, 0) >= minimum)
+        )
+      );
+    }
+function getNamedClassRequirementOverride(record, requirementsText) {
+      const className = normalizePhrase(record?.name);
+      let met = null;
+
+      if (className === "bard") {
+        met = hasMasteredClassName(["Idol"]) || hasArtProgress(5);
+      } else if (className === "mist veil elegy") {
+        met = hasMasteredClassName(["Idol", "Bard"])
+          || (hasMasteredClassCount(1) && hasArtProgress(10));
+      } else if (className === "faerie light eyes") {
+        met = hasSelectedBreakthroughName("Mystic Eyes of Faerie Light") && hasOpenMysticEyeSlot();
+      } else if (className === "aurora blade style" || className === "flash star blade style") {
+        met = hasMasteredClassCount(1)
+          && hasTrackedSpecificProficiency(["Light Swords", "Longsword", "Katana", "Dueling Weapons"]);
+      } else if (className === "daionmyoji") {
+        // The 0.13.1 source record contains a trailing space in "Onmyoji ".
+        // Name normalization here keeps that data typo from making this class
+        // permanently unobtainable.
+        met = hasMasteredClassName(["Onmyoji"]);
+      }
+
+      if (met === null) {
+        return null;
+      }
+      return {
+        met,
+        requirementsText,
+        unmetLabels: met ? [] : [requirementsText],
+        unsupportedLabels: []
+      };
+    }
 function getClassRequirementStatus(record) {
       const requirementsText = getClassRequirementsText(record);
 const accessOverride = getClassAccessOverride(record);
@@ -3189,6 +3354,10 @@ const accessOverride = getClassAccessOverride(record);
           unsupportedLabels: [],
           accessOverride
         };
+      }
+const namedOverride = getNamedClassRequirementOverride(record, requirementsText);
+      if (namedOverride) {
+        return namedOverride;
       }
       if (!requirementsText || /^none\.?$/i.test(requirementsText)) {
         return {
@@ -3785,7 +3954,7 @@ function getLikelyWeaponProficiencyLabels(item = {}) {
         return [];
       }
       const text = [item.name, item.type, item.subType, getBaseItemRulesText(item)].filter(Boolean).join(" ");
-      const labels = [...COMMON_WEAPON_GROUP_OPTIONS, ...SPECIALITY_WEAPON_GROUP_OPTIONS];
+      const labels = [...COMMON_WEAPON_GROUP_OPTIONS, ...WEAPON_GROUP_REFERENCE_OPTIONS];
       return labels.filter((label) =>
         getWeaponProficiencySearchVariants(label).some((variant) => includesPhrase(text, variant))
       );
@@ -4113,6 +4282,17 @@ const sortedSkills = [...SKILL_DEFINITIONS]
       });
       return options;
     }
+const PRIMARY_RACE_SKILL_OPTIONS = {
+      chimera: ["Magic", "Survival", "Animal Husbandry", "Perception", "Insight", "Linguistics", "Artifice"],
+      demon: ["Common Knowledge", "Magic", "Religion", "History", "Flight", "Artifice"],
+      fae: ["Magic", "Medicine", "Negotiation", "Intimidation", "Insight"],
+      youkai: ["Insight", "Intimidation", "Magic", "Medicine", "Negotiation"]
+    };
+function getPrimaryRaceSkillOptions(race) {
+      const fixedOptions = PRIMARY_RACE_SKILL_OPTIONS[normalizePhrase(race?.name)] || [];
+      const available = fixedOptions.filter((name) => SKILL_DEFINITIONS.some((entry) => entry.name === name));
+      return available.length ? available : getSkillChoiceOptionsFromText(race?.skills || "");
+    }
 function getClassSkillPoolOptionsFromText(targetText) {
       const normalized = normalizePhrase(targetText);
       if (/\bany\s+non\s+crafting\b/.test(normalized)) {
@@ -4128,13 +4308,15 @@ const categoryStats = SECONDARY_STATS
       }
       return getSkillChoiceOptionsFromText(targetText);
     }
-function getClassSkillPoolChoiceDefinitions(record) {
-      const text = cleanText(record?.skills || "");
+function getClassSkillPoolChoiceDefinitions(record, config = {}) {
+      const text = cleanText(config.text ?? record?.skills ?? "");
       if (!record || !text) {
         return [];
       }
+const sourceLabel = cleanText(config.source || `${record.name} class`);
+const idPrefix = cleanText(config.idPrefix || "skill-pool");
 const allowExpertise = /exchange\s+any\s+skill\s+point\s+for\s+2\s+expertise/i.test(text);
-const matches = Array.from(text.matchAll(/\+?(\d+)\s+(?:skill points?\s+(?:to spend\s+)?(?:in|to|on)|to)\s+([^.\n]+)/gi));
+const matches = Array.from(text.matchAll(/\+?(\d+)\s+(?:skill points?\s+(?:to spend\s+)?(?:in|to|on)|to)\s+(.+?)(?=\s+(?:and\s+)?\+?\d+\s+skill points?|[.\n]|$)/gi));
       return matches.map((match, index) => {
         const amount = Math.max(0, toNumber(match[1], 0));
 const targetText = cleanText(match[2]).replace(/[.]+$/g, "");
@@ -4145,8 +4327,8 @@ const options = getClassSkillPoolOptionsFromText(targetText);
 const targetLabel = options.length === 1 ? options[0] : "the listed class skills";
 const autoAssign = !allowExpertise && options.length === 1 && !/\b(any|choice|either|or)\b/i.test(targetText);
         return {
-          id: getClassChoiceId(record, `skill-pool-${index + 1}`),
-          source: `${record.name} class`,
+          id: getClassChoiceId(record, `${idPrefix}-${index + 1}`),
+          source: sourceLabel,
           step: "skills",
           type: "class-skill-pool",
           label: `${record.name}: spend ${amount} class skill point${amount === 1 ? "" : "s"}`,
@@ -4214,9 +4396,13 @@ function getSelectedDemonClanCode() {
       return normalizeKey(ancestry.lineageCode || ancestry.id.replace(/^demon-clan-/, ""));
     }
 function getDemonClanSkillOptions() {
-      const code = getSelectedDemonClanCode();
-const options = DEMON_CLAN_SKILL_OPTIONS[code] || [];
-      return options.filter((name) => SKILL_DEFINITIONS.some((entry) => entry.name === name));
+      if (!getSelectedDemonClanCode()) {
+        return [];
+      }
+      // The clan connection is narrative rather than a fixed mechanical list:
+      // any skill is legal when the player can justify its connection to the
+      // selected house to the GM.
+      return SKILL_DEFINITIONS.map((entry) => entry.name);
     }
 function getElementChoiceOptions() {
       return ["Fire", "Water", "Ice", "Frost", "Wind", "Lightning", "Earth", "Holy", "Dark"];
@@ -4240,8 +4426,8 @@ const ALL_WEAPON_PROFICIENCY_OPTIONS = [...COMMON_WEAPON_GROUP_OPTIONS, ...SPECI
 const CLASS_PROFICIENCY_CHOICE_CONFIGS = {
       acolyte: [{
         suffix: "weapon-proficiency",
-        label: "Acolyte: choose the common or channeling weapon proficiency",
-        options: [...COMMON_WEAPON_GROUP_OPTIONS, "Wand", "Magic Staff"]
+        label: "Acolyte: choose a common weapon group or one channeling weapon",
+        options: [...COMMON_WEAPON_GROUP_OPTIONS, "Wands", "Staves"]
       }],
       adventurer: [
         {
@@ -4508,7 +4694,7 @@ const source = `${race.name} race`;
             }
           );
         } else {
-          const raceSkillOptions = getSkillChoiceOptionsFromText(race.skills || "");
+          const raceSkillOptions = getPrimaryRaceSkillOptions(race);
           if (raceSkillOptions.length) {
             definitions.push({
               id: `race-${race.id}-skill`,
@@ -4628,6 +4814,7 @@ const soulOptions = getStatOptionsFromText(record.soul, MAIN_STATS);
         }
 
 const keyAbility = getClassKeyAbilityRecord(record);
+const classSkillText = cleanText(record.skills);
 const keyAbilityText = [
           keyAbility.benefit1,
           keyAbility.benefit2,
@@ -4636,6 +4823,14 @@ const keyAbilityText = [
           keyAbility.descriptionText,
           keyAbility.description
         ].filter(Boolean).join(" ");
+const uniqueKeyAbilitySkillText = [keyAbility.benefit1, keyAbility.benefit2, keyAbility.benefit3, keyAbility.benefit4]
+          .filter((benefit) => cleanText(benefit) && normalizePhrase(benefit) !== normalizePhrase(classSkillText))
+          .join(" ");
+        getClassSkillPoolChoiceDefinitions(record, {
+          text: uniqueKeyAbilitySkillText,
+          source: `${record.name} key ability`,
+          idPrefix: "key-skill-pool"
+        }).forEach((choice) => definitions.push(choice));
         if (
           isTrackedClassMastered(progressEntry)
           && normalizePhrase(record.name) !== "acolyte"
@@ -5578,8 +5773,18 @@ const trackedClassSkillPools = isClassPassiveUnlocked(entry, "skills")
           collectComputedTextBonuses(bucket, `${entry.name} soul`, entry.soul);
         }
 const keyAbility = getClassKeyAbilityRecord(entry);
+const trackedKeyAbilitySkillPools = getClassSkillPoolChoiceDefinitions(entry, {
+          text: [keyAbility.benefit1, keyAbility.benefit2, keyAbility.benefit3, keyAbility.benefit4]
+            .filter((benefit) => cleanText(benefit) && normalizePhrase(benefit) !== normalizePhrase(classSkillText))
+            .join(" "),
+          source: `${entry.name} key ability`,
+          idPrefix: "key-skill-pool"
+        });
         [keyAbility.benefit1, keyAbility.benefit2, keyAbility.benefit3, keyAbility.benefit4].forEach((benefit) => {
           if (classSkillText && cleanText(benefit) === classSkillText) {
+            return;
+          }
+          if (trackedKeyAbilitySkillPools.length && /\bskill points?\b/i.test(cleanText(benefit))) {
             return;
           }
           collectComputedTextBonuses(bucket, `${entry.name} key ability`, benefit);
@@ -5596,7 +5801,6 @@ const keyAbility = getClassKeyAbilityRecord(entry);
         }
         collectComputedTextBonuses(bucket, entry.name, entry.descriptionText || entry.description || "");
       });
-
       getEquippedInventoryItems().forEach((entry) => {
         collectComputedTextBonuses(bucket, `${entry.name} equipped`, entry.custom ? entry.description : getBaseItemRulesText(entry));
       });
@@ -5624,6 +5828,11 @@ export function getSelectedBreakthroughEffects() {
 
       getSelectedBreakthroughRecords().forEach((entry) => {
         const normalizedName = normalizePhrase(entry.name);
+
+        if (normalizedName.includes("mystic eyes of faerie light")) {
+          effects.autoApplied.push(`${entry.name}: +10 Perception (Illusion) expertise.`);
+          return;
+        }
 
         if (normalizedName === "rich parents") {
           effects.bonusClim += 3000;
@@ -5877,6 +6086,37 @@ function getBreakthroughRequirementClauses(requirementText) {
           .map((entry) => normalizeRequirementClause(entry))
           .filter(Boolean));
     }
+function ancestryHasTraitNamed(ancestry, traitName) {
+      const expected = normalizePhrase(traitName);
+      if (!ancestry || !expected) {
+        return false;
+      }
+      return [
+        ...asArray(ancestry.traits),
+        ancestry.trait1Ref,
+        ancestry.trait2Ref,
+        ancestry.trait3Ref
+      ]
+        .filter(Boolean)
+        .some((trait) => normalizePhrase(trait?.name) === expected);
+    }
+function getSelectedAncestryFeatureRecords() {
+      const records = [getSelectedAncestryDetail()];
+      Object.values(state.builder.choiceSelections || {}).forEach((value) => {
+        const ancestry = getAncestryDetail(value);
+        if (ancestry) {
+          records.push(ancestry);
+        }
+      });
+      return Array.from(new Map(records.filter(Boolean).map((entry) => [entry.id, entry])).values());
+    }
+function hasSelectedBreakthroughNamed(name, selectedBreakthroughIds) {
+      const expected = normalizePhrase(name);
+      const selectedIds = selectedBreakthroughIds instanceof Set
+        ? selectedBreakthroughIds
+        : new Set(selectedBreakthroughIds || []);
+      return Array.from(selectedIds).some((id) => normalizePhrase(lookup.breakthroughs.resolve(id)?.name) === expected);
+    }
 export function getBreakthroughRequirementStatus(entry, selectedBreakthroughIds = state.builder.selectedBreakthroughIds) {
       const status = {
         met: true,
@@ -5898,6 +6138,16 @@ export function getBreakthroughRequirementStatus(entry, selectedBreakthroughIds 
 const selectedRace = getSelectedRaceDetail();
 const selectedAncestry = getSelectedAncestryDetail();
 const requirementText = cleanText(entry.requirements);
+
+      if (normalizePhrase(entry.name) === "skilled flier") {
+        const hasFlightTrait = getSelectedAncestryFeatureRecords().some((ancestry) => ancestryHasTraitNamed(ancestry, "Flight"));
+const hasRacialFlight = hasSelectedBreakthroughNamed("Racial Flight", selectedBreakthroughIds);
+        if (!hasFlightTrait && !hasRacialFlight) {
+          status.met = false;
+          status.reasons.push("Requires the Flight ancestry trait or the Racial Flight breakthrough. Temporary or activated Fly effects do not qualify.");
+        }
+        return status;
+      }
 
       if (requirementText && requirementText !== "-") {
         const requiredRaces = detailLookup.races.entries.filter((race) =>
@@ -8204,6 +8454,7 @@ const breakdown = DICE_TRAY_TYPES
         diceResults: rolls
       });
       setStatus(`Rolled dice tray total: ${total}.`);
+      publishVttEvent("dice", { label: "Dice Tray Roll", formula, breakdown, total, character: cleanText(state.fields.Name) });
     }
 function getPlayActionForRollType(type) {
       return PLAY_BASIC_ACTIONS.find((action) => action.rollType === type) || null;
@@ -8296,6 +8547,7 @@ const damageType = cleanText(action.damage.detail || "");
         diceResults: parts.rolls.map((value) => ({ sides: parts.diceSides, value, label: `d${parts.diceSides}` }))
       });
       setStatus(`Rolled ${action.label} damage: ${parts.total}.`);
+      publishVttEvent("action-damage", { label: `${action.label} Damage`, formula: parts.formula, breakdown, total: parts.total, weapon: cleanText(action.weaponName || ""), character: cleanText(state.fields.Name) });
     }
 function rollPlayCheck(type, options = {}) {
       const derived = getDerivedCombatStats();
@@ -8376,6 +8628,10 @@ const roll = rollDie(20);
         diceResults
       });
       setStatus(`Rolled ${label}: ${total}.`);
+      publishVttEvent("check", { label, formula: dieType, breakdown, total, weapon: cleanText(costedAction?.weaponName || ""), character: cleanText(state.fields.Name) });
+      if (type === "initiative") {
+        maybeSendRoll20Initiative(total, breakdown);
+      }
     }
 export function getSkillRowData(index, bonuses = getComputedBonuses()) {
       const definition = SKILL_DEFINITIONS[index - 1];
@@ -8387,7 +8643,8 @@ const creationSkillPoints = toNumber(state.fields[`SkillPoint${index}`], 0);
 const featureSkillPoints = bonuses.skillPoints[definition.name] || 0;
 const racialSkillInfo = getRacialSkillPointsForSkill(index);
 const racialSkillPoints = racialSkillInfo.total;
-const skillPoints = creationSkillPoints + racialSkillPoints + featureSkillPoints;
+const uncappedSkillPoints = creationSkillPoints + racialSkillPoints + featureSkillPoints;
+const skillPoints = Math.min(SKILL_POINT_CAP, uncappedSkillPoints);
 const expertiseGroups = getSkillExpertiseGroups(index, bonuses);
 const expertiseValue = expertiseGroups.reduce((best, entry) => Math.max(best, entry.bonus), 0);
 const creationExpertiseSpend = getCreationExpertiseSpendForSkill(index);
@@ -8405,6 +8662,8 @@ const bestExpertiseTotal = total + expertiseValue;
         racialSkillPoints,
         racialSkillBreakdown: racialSkillInfo.breakdown,
         featureSkillPoints,
+        uncappedSkillPoints,
+        overSkillPointCap: Math.max(0, uncappedSkillPoints - SKILL_POINT_CAP),
         skillPoints,
         expertiseValue,
         expertiseGroups,
@@ -8595,6 +8854,7 @@ const breakdown = `d20: ${roll} | ${breakdownParts.join(" | ")}`;
         diceResults: [{ sides: 20, value: roll, label: "d20" }]
       });
       setStatus(`Rolled ${expertiseGroup ? `${skill.name} (${expertiseGroup.name})` : skill.name}: ${total}.`);
+      publishVttEvent("skill", { label, formula: "d20", breakdown, total, character: cleanText(state.fields.Name) });
     }
 function restoreTurnResources() {
       syncPlayResourcesFromFields(true);
@@ -9737,6 +9997,9 @@ function openExpSpending() {
 export function renderPlayDashboard() {
       state.play = mergePlayState(state.play);
       syncPlayResourcesFromFields(true);
+      ensureRoll20Bridge(); // ⚔ card sends need live bridge state during play
+      syncRoll20SendVisibility();
+      scheduleRoll20TokenBarSync(); // opt-in TokenMod bar sync (debounced, no-op unless enabled+pinned+connected)
 const derived = getDerivedCombatStats();
 const computedBonuses = getComputedBonuses();
 const race = getSelectedRaceDetail();
@@ -10099,6 +10362,8 @@ const buttonMarkup = action.rollType
           ` : ""}
           <div class="play-action-buttons">
             ${buttonMarkup}
+            <button type="button" class="play-integration-copy" data-copy-roll20-action="${escapeHtml(action.id)}" title="Copy a Roll20 chat macro for this action">Copy VTT</button>
+            <button type="button" class="play-integration-copy play-roll20-send" data-send-roll20-action="${escapeHtml(action.id)}" title="Send this macro to Roll20 chat through the bridge">⚔ Send</button>
           </div>
         </div>
       `;
@@ -10145,6 +10410,8 @@ function renderPlayAbilityCard(ability, index) {
           </div>
           <div class="play-action-buttons">
             ${actionButtons}
+            <button type="button" class="play-integration-copy" data-copy-roll20-ability="${escapeHtml(index)}" title="Copy a Roll20 chat macro for this ability">Copy VTT</button>
+            <button type="button" class="play-integration-copy play-roll20-send" data-send-roll20-ability="${escapeHtml(index)}" title="Send this macro to Roll20 chat through the bridge${trackedCost ? "; its cost is spent only after Roll20 confirms the post" : ""}">⚔ Send</button>
           </div>
         </div>
       `;
@@ -16237,7 +16504,10 @@ const row = CLASS_ROWS[index];
       });
 const budget = getClassUnlockBudgetState();
 const breakthroughBudget = getBreakthroughBudgetState();
-const nextSpiritCore = String(budget.spentExp + breakthroughBudget.generalSpent);
+// Human's racial +100 is explicitly granted to Spirit Core as well as to the
+// spendable creation EXP bank. It is therefore present even before that EXP is
+// spent; the normal class/general EXP contributions still enter on spending.
+const nextSpiritCore = String(budget.spentExp + breakthroughBudget.generalSpent + budget.humanExpBonus);
 const currentSpiritCore = cleanText(state.fields["Spirit Core"]);
       if (!currentSpiritCore || currentSpiritCore === cleanText(state.builder.autoSpiritCore)) {
         updateFieldValue("Spirit Core", nextSpiritCore);
@@ -16404,10 +16674,28 @@ function syncDerivedBuilderFields() {
       updateFieldValue("Available Clim", String(funds.availableClim));
       updateFieldValue("Equipment Cost", String(funds.selectedEquipmentCost));
     }
+function normalizeSelectedClassProgressState() {
+      const progress = state.builder.classAbilityProgress && typeof state.builder.classAbilityProgress === "object"
+        ? state.builder.classAbilityProgress
+        : {};
+      getSelectedClassDetails().forEach((record) => {
+        if (Object.prototype.hasOwnProperty.call(progress, record.id)) {
+          return;
+        }
+        const wantedKeys = new Set([normalizeKey(record.id), normalizeKey(record.name)]);
+const legacyEntries = Object.entries(progress).filter(([key]) => wantedKeys.has(normalizeKey(key)));
+        if (legacyEntries.length) {
+          progress[record.id] = Math.max(...legacyEntries.map(([, value]) => Math.max(0, Math.floor(toNumber(value, 0)))));
+        }
+      });
+      state.builder.classAbilityProgress = progress;
+    }
 export function syncBuilderSelectionsIntoSheet() {
       enforceMiraneStartSelections();
       pruneIneligibleBreakthroughSelections();
       normalizeElementalAffinitySelections();
+      normalizeSelectedClassProgressState();
+      pruneInactiveRacialSkillAllocations();
       clearIrrelevantBuilderChoices();
 const race = getSelectedRaceDetail();
 const ancestry = getSelectedAncestryDetail();
@@ -17654,7 +17942,7 @@ function renderProfileStep() {
       return `
         <div class="builder-content-grid">
           <p class="builder-note">The profile fields below feed directly into the corresponding PDF-backed fields on page 1.</p>
-          <p class="builder-note"><strong>Spirit Core:</strong> Spirit Core tracks EXP spent. It starts at 0, but a fresh character normally spends 1000 EXP on starting classes during creation, so most finished starting characters will usually land at Spirit Core 1000. The separate 300 breakthrough-only EXP from character creation does not count toward Spirit Core. <strong>These are awarded at the correct points already; do not add additional Spirit Cores unless you have a special start condition (such as higher-level campaign starts).</strong></p>
+          <p class="builder-note"><strong>Spirit Core:</strong> Spirit Core normally tracks EXP spent. It starts at 0, but a fresh character normally spends 1000 EXP on starting classes during creation, so most finished starting characters land at Spirit Core 1000. Pure Humans are the exception: their racial +100 EXP is also added directly to Spirit Core, while Human-Chimera Hybrid removes that bonus. The separate 300 breakthrough-only EXP from character creation does not count toward Spirit Core. <strong>These values are awarded at the correct points already; do not add them again unless the GM uses a special start condition.</strong></p>
           ${state.ui.quickBuildActive ? renderQuickBuildStartModeControl() : ""}
           ${renderBuilderChoiceSection("profile", "Profile Choices")}
           <div class="stat-grid">
@@ -17900,7 +18188,7 @@ const groupedEntries = new Map();
 
       return `
         <div class="builder-content-grid">
-          <p class="builder-note">Class creation starts with <strong>${STARTING_CLASS_EXP} EXP</strong> and <strong>${STARTING_INTERLUDE_POINTS} Interlude Points</strong>. EXP added on the character sheet is also available here, and a GM can grant extra class-unlock IP below. Unlocking a class costs <strong>1 Interlude Point + 100 EXP per tier</strong>, and the class key ability comes online as soon as that class is unlocked.</p>
+          <p class="builder-note">Class creation currently has <strong>${budget.startingExpBudget} EXP</strong> and <strong>${STARTING_INTERLUDE_POINTS} Interlude Points</strong>. The normal base is ${STARTING_CLASS_EXP} EXP${budget.humanExpBonus ? `; Human adds ${budget.humanExpBonus}` : ""}${budget.humanExpBonusSuppressedByHybrid ? "; Human-Chimera Hybrid removes the Human +100" : ""}${budget.slowStarterExpPenalty ? `; Slow Starter removes ${budget.slowStarterExpPenalty}` : ""}. EXP added on the character sheet is also available here, and a GM can grant extra class-unlock IP below. Unlocking a class costs <strong>1 Interlude Point + 100 EXP per tier</strong>, and the class key ability comes online as soon as that class is unlocked.</p>
           ${isMiraneStart() ? `<div class="mirane-rule-override mirane-class-start-note"><strong>Mirane Favor training</strong><p>A Mirane character may receive class training for 1 Favor for a Tier 1 or Tier 2 class, or 2 Favor for a Tier 3 class. Requirements still apply, and the campaign document says this does not cost an Errand Point. Track the Favor exchange with the campaign staff; the normal builder budget remains visible for the rules-as-written start.</p></div>` : ""}
           <div class="builder-search-row">
             <input class="builder-search-input" type="text" autocomplete="off" data-builder-search="class" placeholder="Search classes" value="${escapeHtml(state.builder.searches.class)}">
@@ -18103,7 +18391,7 @@ const groups = entry.expertiseGroups || [];
 const expertiseOptions = getSkillExpertiseOptionList(entry.name);
 const defaultSpecialty = expertiseOptions.length ? "" : "__custom__";
       return `
-        <p>Exchange 1 eligible skill point for +2 in one narrow specialty. The exchanged point does not also increase the broad skill. Only the relevant owned specialty applies to a roll.</p>
+        <p>Exchange 1 eligible skill point for +2 in one narrow specialty. The exchanged point does not also increase the broad skill. Only the relevant owned specialty applies to a roll, and expertise cannot exceed +${SKILL_EXPERTISE_CAP}.</p>
         ${sourceOptions.length ? `
           <div class="builder-skill-expertise-form">
             <select class="builder-skill-input" data-skill-expertise-name>
@@ -18143,7 +18431,7 @@ const label = option?.sourceLabel || getSkillExpertiseSourceLabel(sourceSpec, en
                     return `
                       <span>${escapeHtml(`${label}: ${points}`)}</span>
                       <button type="button" data-adjust-skill-expertise="-1" data-skill-expertise-index="${entry.index}" data-skill-expertise-source="${escapeHtml(sourceSpec)}" data-skill-expertise-name="${escapeHtml(group.name)}">-</button>
-                      <button type="button" data-adjust-skill-expertise="1" data-skill-expertise-index="${entry.index}" data-skill-expertise-source="${escapeHtml(sourceSpec)}" data-skill-expertise-name="${escapeHtml(group.name)}" ${option?.canAdd ? "" : "disabled"}>+</button>
+                      <button type="button" data-adjust-skill-expertise="1" data-skill-expertise-index="${entry.index}" data-skill-expertise-source="${escapeHtml(sourceSpec)}" data-skill-expertise-name="${escapeHtml(group.name)}" ${option?.canAdd && (group.uncappedBonus || group.bonus) + 2 <= SKILL_EXPERTISE_CAP ? "" : "disabled"}>+</button>
                     `;
                   }).join("")}
                 </div>
@@ -18251,7 +18539,7 @@ let statusText = "Use + or - to assign broad skill points. Use Expertise to exch
 
       return `
         <div class="builder-content-grid">
-          <p class="builder-note">A normal skill roll is <strong>d20 + affiliated sub stat + main skill</strong>. Instead of assigning a point to the broad skill, you may exchange an eligible point for <strong>+2 expertise</strong> in one narrow specialty. That exchanged point does not also increase the broad skill, and only the relevant owned expertise applies to a roll.</p>
+          <p class="builder-note">A normal skill roll is <strong>d20 + affiliated sub stat + main skill</strong>. Artisan and gathering skills have no affiliated sub-stat. Instead of assigning a point to the broad skill, you may exchange an eligible point for <strong>+2 expertise</strong> in one narrow specialty. Skills and expertise are each capped at ${SKILL_POINT_CAP}; that exchanged point does not also increase the broad skill, and only the relevant owned expertise applies to a roll.</p>
           ${renderBuilderChoiceSection("skills", "Skill Choices")}
           <div class="selected-chip-list">
             <span class="selected-chip">Skill Points Spent: ${escapeHtml(String(budget.spent))} / ${budget.budget}</span>
@@ -18271,7 +18559,7 @@ let statusText = "Use + or - to assign broad skill points. Use Expertise to exch
               <div class="builder-skill-row">
                 <div class="builder-skill-copy">
                   <strong>${escapeHtml(entry.name)}</strong>
-                  <span>${escapeHtml(entry.stat)} linked skill</span>
+                  <span>${escapeHtml(entry.stat ? `${entry.stat} linked skill` : `${SKILL_DEFINITIONS[entry.index - 1]?.group === "gathering" ? "Gathering" : "Artisan"} skill · no linked sub-stat`)}</span>
                 </div>
                 ${(() => {
                   const skillOptions = getSkillAllocationOptions(entry.index, "skill");
@@ -18292,6 +18580,7 @@ let statusText = "Use + or - to assign broad skill points. Use Expertise to exch
                   <span>Base Roll</span>
                   <strong>${escapeHtml(formatModifier(entry.total))}</strong>
                 </div>
+                ${entry.overSkillPointCap ? `<small class="builder-skill-cap-warning">Saved sources exceed the ${SKILL_POINT_CAP}-point cap by ${escapeHtml(String(entry.overSkillPointCap))}; the roll uses ${SKILL_POINT_CAP}.</small>` : ""}
                 ${renderSkillExpertisePanel(entry)}
               </div>
             `).join("")}
@@ -19627,11 +19916,16 @@ function assignQuickBuildRacialAndClassChoices(build) {
         const record = progressEntry.record;
         const selectedProficiencies = new Set();
         getClassProficiencyChoiceDefinitions(record).forEach((choice) => {
+          const buildWeaponKey = normalizePhrase(build.weaponGroup);
+const channelingWeaponPreference = /\bstaff\b/.test(buildWeaponKey)
+            ? "Staves"
+            : (/\bwand\b/.test(buildWeaponKey) ? "Wands" : "");
           const preferredProficiencies = [
             build.weaponGroup,
             ...asArray(build.weaponGroups),
-            "Wand",
-            "Magic Staff",
+            channelingWeaponPreference,
+            "Wands",
+            "Staves",
             "Small Weapons",
             "Light Armor",
             "Shields",
@@ -21704,11 +21998,760 @@ function openMobileSheetTools() {
             <button type="button" class="sheet-modal-option" data-mobile-sheet-tool="load-browser"><strong>Load Saved</strong><span>Open a saved character.</span></button>
             <button type="button" class="sheet-modal-option" data-mobile-sheet-tool="export-json"><strong>Export Character</strong><span>Choose JSON, PDF, or spreadsheet export.</span></button>
             <button type="button" class="sheet-modal-option" data-mobile-sheet-tool="import-json"><strong>Import Character</strong><span>Load a character file from this device.</span></button>
+            <button type="button" class="sheet-modal-option" data-mobile-sheet-tool="sheet-integrations"><strong>VTT &amp; Sharing</strong><span>Copy Roll20 macros or prepare this character for another tabletop.</span></button>
             <button type="button" class="sheet-modal-option" data-mobile-sheet-tool="recalc-basics"><strong>Recalculate</strong><span>Refresh derived statistics and resources.</span></button>
             <button type="button" class="sheet-modal-option" data-mobile-sheet-tool="start-over"><strong>Reset Character</strong><span>Start over after confirmation.</span></button>
           </div>
         `
       });
+    }
+function getIntegrationCharacterContext() {
+      state.play = mergePlayState(state.play);
+      syncPlayResourcesFromFields(true);
+const derived = getDerivedCombatStats();
+const race = getSelectedRaceDetail();
+const ancestry = getSelectedAncestryDetail();
+      return {
+        name: cleanText(state.fields.Name) || "Lyrian Character",
+        race: race?.name || cleanText(state.fields.Race),
+        ancestry: ancestry?.name || cleanText(state.fields.Subrace),
+        classes: getSelectedClassDetails().map((entry) => entry.name),
+        resources: { ...state.play.resources },
+        guard: derived.guard,
+        evasion: derived.evasion,
+        speed: derived.speed,
+        initiative: derived.initiative,
+        potency: derived.potency,
+        saveBonus: derived.saveBonus,
+        personality: state.fields.Personality,
+        appearance: state.fields.Appearance
+      };
+    }
+function setIntegrationFeedback(message, isError = false) {
+      const node = document.getElementById("integration-feedback");
+      if (node) {
+        node.textContent = message;
+        node.classList.toggle("is-error", Boolean(isError));
+      }
+      setStatus(message);
+    }
+async function copyIntegrationValue(value, successMessage) {
+      try {
+        await copyIntegrationText(value);
+        setIntegrationFeedback(successMessage);
+        return true;
+      } catch (error) {
+        setIntegrationFeedback(error.message || "The browser could not copy that text.", true);
+        return false;
+      }
+    }
+async function copyRoll20ActionFromId(actionId) {
+      const action = getPlayActionCards().find((entry) => cleanText(entry.id) === cleanText(actionId));
+      if (!action) {
+        setIntegrationFeedback("That action is no longer available on the current sheet.", true);
+        return false;
+      }
+      const macro = buildRoll20ActionMacro(getIntegrationCharacterContext().name, action, getDerivedCombatStats());
+      return copyIntegrationValue(macro, `${action.label} Roll20 macro copied.`);
+    }
+async function copyRoll20AbilityFromIndex(index) {
+      const ability = getQuickPlayAbilities()[Number(index)];
+      if (!ability) {
+        setIntegrationFeedback("That ability is no longer available on the current sheet.", true);
+        return false;
+      }
+      const macro = buildRoll20AbilityMacro(getIntegrationCharacterContext().name, ability);
+      return copyIntegrationValue(macro, `${ability.name} Roll20 macro copied.`);
+    }
+/* ─── Per-card ⚔ sends (ack-gated spending) ─────────────────────────────
+   The macro is posted through the bridge FIRST; the ability/action cost is
+   spent only after Roll20 acknowledges the post (handoff step 6). Copy
+   buttons, failures, timeouts, and duplicate acks never spend anything —
+   the bridge promise settles exactly once. */
+async function sendRoll20MacroFromCard(button, macro, spendAfterAck) {
+      const bridge = ensureRoll20Bridge();
+      if (!button || button.dataset.sendBusy) {
+        return;
+      }
+      const idleLabel = button.dataset.idleLabel || button.textContent;
+      button.dataset.idleLabel = idleLabel;
+      button.dataset.sendBusy = "1";
+      button.disabled = true;
+      button.textContent = "…";
+      try {
+        await bridge.sendMacro(macro);
+        button.textContent = "✓";
+        if (typeof spendAfterAck === "function") {
+          spendAfterAck();
+        } else {
+          setStatus("Macro posted to Roll20 chat.");
+        }
+      } catch (error) {
+        button.textContent = "✕";
+        setStatus(error.message || "The Roll20 bridge could not send that macro.");
+      } finally {
+        setTimeout(() => {
+          delete button.dataset.sendBusy;
+          if (button.isConnected) {
+            button.disabled = false;
+            button.textContent = button.dataset.idleLabel;
+          }
+        }, 1400);
+      }
+    }
+async function sendRoll20ActionFromId(actionId, button) {
+      const action = getPlayActionCards().find((entry) => cleanText(entry.id) === cleanText(actionId));
+      if (!action) {
+        setStatus("That action is no longer available on the current sheet.");
+        return;
+      }
+      const macro = buildRoll20ActionMacro(getIntegrationCharacterContext().name, action, getDerivedCombatStats());
+      await sendRoll20MacroFromCard(button, macro, () => {
+        if (action.costLabel && hasTrackedResourceCost(action.costLabel)) {
+          usePlayCost(action.label, action.costLabel, [action.summary, "Sent to Roll20 via the bridge."], { feedbackId: "play-action-feedback" });
+        } else {
+          setStatus(`${action.label} macro posted to Roll20 chat.`);
+        }
+      });
+    }
+async function sendRoll20AbilityFromIndex(index, button) {
+      const ability = getQuickPlayAbilities()[Number(index)];
+      if (!ability) {
+        setStatus("That ability is no longer available on the current sheet.");
+        return;
+      }
+      const macro = buildRoll20AbilityMacro(getIntegrationCharacterContext().name, ability);
+      await sendRoll20MacroFromCard(button, macro, () => {
+        const costLabel = cleanText(ability.costLabel || "");
+        if (costLabel && hasTrackedResourceCost(costLabel) && !isPassiveAbilityRecord(ability)) {
+          usePlayCost(ability.name, costLabel, ["Sent to Roll20 via the bridge."]);
+        } else {
+          setStatus(`${ability.name} macro posted to Roll20 chat.`);
+        }
+      });
+    }
+/* ─── .aschar.json interop (official Clio builder trading format) ───────
+   Export maps our live state into the official character model; import is
+   auto-detected by the normal Import button (io.js routes matching JSON
+   here). Everything unmappable lands in the import summary — never dropped
+   silently. */
+function buildAscharContext() {
+      const race = getSelectedRaceDetail();
+      const ancestry = getSelectedAncestryDetail();
+      const classProgress = getSelectedClassProgress();
+      const breakthroughs = getSelectedBreakthroughRecords();
+      const funds = getStartingFundsState();
+      const classBudget = getClassUnlockBudgetState();
+      const breakthroughBudget = getBreakthroughBudgetState();
+      const progress = getCampaignProgressState();
+      const derived = getDerivedCombatStats();
+      const bonuses = getComputedBonuses();
+      const skills = [];
+      SKILL_DEFINITIONS.forEach((definition, index) => {
+        const row = getSkillRowData(index + 1, bonuses);
+        if (!row) {
+          return;
+        }
+        const points = toNumber(row.skillPoints, (toNumber(row.creationSkillPoints, 0) + toNumber(row.racialSkillPoints, 0) + toNumber(row.featureSkillPoints, 0)));
+        const expertise = getSkillExpertiseGroups(index + 1, bonuses)
+          .map((group) => ({ name: group.name, points: toNumber(group.bonus, 0) }))
+          .filter((group) => group.name && group.points > 0);
+        if (points > 0 || expertise.length) {
+          skills.push({ name: definition.name, points, expertise });
+        }
+      });
+      return {
+        name: cleanText(state.fields.Name),
+        gender: cleanText(state.fields.Gender),
+        startMode: getCharacterStartMode().id === MIRANE_START_MODE_ID ? "mirane" : "standard",
+        race: race ? { id: race.id, name: race.name } : null,
+        ancestry: ancestry ? { id: ancestry.id, name: ancestry.name } : null,
+        demonHouseName: race && normalizeKey(race.name) === "demon" && ancestry ? ancestry.name : "",
+        mainStats: {
+          power: toNumber(state.fields.Power, 0), focus: toNumber(state.fields.Focus, 0),
+          agility: toNumber(state.fields.Agility, 0), toughness: toNumber(state.fields.Toughness, 0)
+        },
+        subStats: {
+          fitness: toNumber(state.fields.Fitness, 0), cunning: toNumber(state.fields.Cunning, 0),
+          reason: toNumber(state.fields.Reason, 0), awareness: toNumber(state.fields.Awareness, 0),
+          presence: toNumber(state.fields.Presence, 0)
+        },
+        derived,
+        classes: classProgress.map((entry) => ({
+          classId: entry.record.classId || entry.record.id,
+          name: entry.record.name,
+          tier: toNumber(entry.record.tier, 1),
+          levels: entry.level
+        })),
+        breakthroughs: breakthroughs.map((record) => ({
+          breakthroughId: record.breakthroughId || record.id,
+          name: record.name,
+          cost: parseNumericCost(record.cost)
+        })),
+        skills,
+        equipment: getPlayInventoryEntries().map((record) => ({
+          itemId: record.itemId || record.id,
+          name: record.name,
+          baseName: record.name,
+          type: record.type,
+          subType: record.subType,
+          cost: parseNumericCost(record.cost),
+          burden: record.burden,
+          qty: Math.max(1, Math.floor(toNumber(record.quantity, 1))),
+          equipped: Boolean(record.equipped)
+        })),
+        resources: {
+          clim: funds.availableClim,
+          classExp: classBudget.remainingExp,
+          interludePoints: classBudget.remainingInterlude,
+          skillPoints: 0,
+          breakthroughExp: breakthroughBudget.creationRemaining
+        },
+        soulCore: progress.spiritCore,
+        totalExp: progress.expBank
+      };
+    }
+/* ─── CCS spreadsheet export (official community character sheet) ───────
+   Fills the bundled data/ccs-template.xlsx (see data/CCS_TEMPLATE_README.md)
+   using the cell map documented from the official implementation. Only input
+   cells are written; every formula in the template survives. */
+const CCS_SKILL_ROW_LABELS = [
+      // Fixed Core!E9:E29 label order, extracted from the bundled template.
+      "Athletics", "Riding", "Stealth", "Deception", "Roguecraft", "Medicine",
+      "Common Knowledge", "Linguistics", "Magic", "Religion", "Appraise", "History",
+      "Flight", "Artifice", "Perception", "Insight", "Survival", "Animal Husbandry",
+      "Art", "Negotiation", "Intimidation"
+    ];
+function getCcsProficiencyCells() {
+      const text = getPlayProficiencyText();
+const armorLabels = ["Light Armor", "Medium Armor", "Heavy Armor", "Shields", "Greatshields"];
+const weaponLabels = [
+        ...COMMON_WEAPON_GROUP_OPTIONS,
+        ...SPECIALITY_WEAPON_GROUP_OPTIONS,
+        "Wands",
+        "Staves",
+        "Unarmed (as One-Handed)",
+        "Gauntlets"
+      ];
+const uniqueMatches = (labels) => labels.filter((label, index) =>
+        labels.indexOf(label) === index && includesPhrase(text, label)
+      );
+const armor = uniqueMatches(armorLabels);
+const weapons = uniqueMatches(weaponLabels);
+const languages = OFFICIAL_LANGUAGE_OPTIONS.filter((language) => includesPhrase(text, language));
+const elemental = [...getTrackedElementalMasteries()]
+        .map((key) => `${key.charAt(0).toUpperCase()}${key.slice(1)}`)
+        .filter(Boolean);
+      return {
+        K9: armor.length ? `Armor: ${armor.join(", ")}` : "Armor",
+        K10: languages.length ? `Language: ${languages.join(", ")}` : "Language",
+        K11: weapons.length ? `Weapons: ${weapons.join(", ")}` : "Weapons",
+        K12: elemental.length ? `Elemental Mastery: ${elemental.join(", ")}` : "Elemental Mastery"
+      };
+    }
+function getCcsBreakthroughXpEntries() {
+      let creationRemaining = Math.max(0, toNumber(getBreakthroughBudgetState().budget, 300));
+      return getSelectedBreakthroughRecords().map((record) => {
+        const cost = Math.max(0, parseNumericCost(record.cost));
+const creationShare = Math.min(creationRemaining, cost);
+        creationRemaining -= creationShare;
+        return {
+          record,
+          xpSpent: Math.max(0, cost - creationShare)
+        };
+      });
+    }
+function buildCcsCellMap() {
+      const context = buildAscharContext();
+      const bonuses = getComputedBonuses();
+      const map = {};
+      const put = (sheet, address, value) => {
+        map[sheet] = map[sheet] || {};
+        map[sheet][address] = value;
+      };
+      put("Core", "B2", context.name || "Unnamed Character");
+      put("Core", "B3", context.gender || "");
+      put("Core", "D2", context.race?.name || "");
+      put("Core", "D3", context.ancestry?.name || "");
+      put("Core", "B45", context.mainStats.power);
+      put("Core", "B46", context.mainStats.focus);
+      put("Core", "B47", context.mainStats.agility);
+      put("Core", "B48", context.mainStats.toughness);
+      put("Core", "D45", context.subStats.fitness);
+      put("Core", "D46", context.subStats.cunning);
+      put("Core", "D47", context.subStats.reason);
+      put("Core", "D48", context.subStats.awareness);
+      put("Core", "D49", context.subStats.presence);
+      // Bonus columns follow the template's row labels: E45=Focus, E46=Power,
+      // E47=Agility, E48=Toughness · G45..G49 = Fitness..Presence.
+      put("Core", "F45", toNumber(bonuses.mainStats?.Focus, 0));
+      put("Core", "F46", toNumber(bonuses.mainStats?.Power, 0));
+      put("Core", "F47", toNumber(bonuses.mainStats?.Agility, 0));
+      put("Core", "F48", toNumber(bonuses.mainStats?.Toughness, 0));
+      put("Core", "H45", toNumber(bonuses.secondaryStats?.Fitness, 0));
+      put("Core", "H46", toNumber(bonuses.secondaryStats?.Cunning, 0));
+      put("Core", "H47", toNumber(bonuses.secondaryStats?.Reason, 0));
+      put("Core", "H48", toNumber(bonuses.secondaryStats?.Awareness, 0));
+      put("Core", "H49", toNumber(bonuses.secondaryStats?.Presence, 0));
+      const raceName = normalizePhrase(context.race?.name || "");
+      const hasHumanChimera = getSelectedBreakthroughRecords().some((record) => normalizePhrase(record.name).includes("human chimera hybrid"));
+      put("Core", "B49", raceName === "human" && !hasHumanChimera ? 100 : 0);
+      const hasSlowStarter = getSelectedBreakthroughRecords().some((record) => normalizePhrase(record.name).includes("slow starter"));
+      put("Core", "B50", hasSlowStarter ? -200 : 0);
+      put("Core", "A58", context.startMode === "mirane");
+      context.classes.slice(0, 21).forEach((cls, index) => {
+        const row = 15 + index;
+        put("Core", `A${row}`, cls.name);
+        put("Core", `C${row}`, cls.levels);
+      });
+      getSelectedClassProgress().slice(0, 21).forEach((entry, index) => {
+        put("Core", `D${15 + index}`, toNumber(entry.cost, 0));
+      });
+      CCS_SKILL_ROW_LABELS.forEach((label, index) => {
+        const skill = context.skills.find((entry) => normalizePhrase(entry.name) === normalizePhrase(label));
+        if (!skill) {
+          return;
+        }
+        const row = 9 + index;
+        put("Core", `H${row}`, skill.points);
+        if (skill.expertise.length) {
+          put("Core", `I${row}`, skill.expertise.map((entry) => `${entry.name} +${entry.points}`).join("; "));
+        }
+      });
+      Object.entries(getCcsProficiencyCells()).forEach(([address, value]) => put("Core", address, value));
+      let artisanRow = 9;
+      context.skills.filter((skill) =>
+        !CCS_SKILL_ROW_LABELS.some((label) => normalizePhrase(label) === normalizePhrase(skill.name))
+      ).slice(0, 22).forEach((skill) => {
+        put("Core", `M${artisanRow}`, skill.name);
+        put("Core", `O${artisanRow}`, skill.points);
+        artisanRow += 1;
+      });
+const finalPower = context.mainStats.power + toNumber(bonuses.mainStats?.Power, 0);
+const finalToughness = context.mainStats.toughness + toNumber(bonuses.mainStats?.Toughness, 0);
+const hpAdjustment = toNumber(context.derived?.hpMax, 0) - (20 + (finalToughness * 10));
+const manaAdjustment = toNumber(context.derived?.manaMax, 0) - (6 + finalPower);
+      if (hpAdjustment) {
+        put("Core", "H7", hpAdjustment);
+      }
+      if (manaAdjustment) {
+        put("Core", "K34", manaAdjustment);
+      }
+      if (toNumber(context.derived?.speed, 20) !== 20) {
+        put("Core", "H6", toNumber(context.derived.speed, 20));
+      }
+      const weapons = [];
+      const wearables = [];
+      getPlayInventoryEntries().filter((record) => record.equipped).forEach((record) => {
+        (isWeaponItem(record) ? weapons : wearables).push(record);
+      });
+      weapons.slice(0, 6).forEach((item, index) => put("Core", `A${37 + index}`, item.name));
+      wearables.slice(0, 6).forEach((item, index) => {
+        put("Core", `F${37 + index}`, item.name);
+        put("Core", `L${37 + index}`, true);
+      });
+      getCcsBreakthroughXpEntries().slice(0, 36).forEach(({ record, xpSpent }, index) => {
+        const row = 2 + index;
+        put("Breakthrough", `A${row}`, record.name);
+        put("Breakthrough", `B${row}`, xpSpent);
+      });
+      context.equipment.slice(0, 136).forEach((item, index) => {
+        const row = 2 + index;
+        put("Inventory", `A${row}`, item.name);
+        put("Inventory", `B${row}`, item.qty || 1);
+        if (cleanText(item.burden) !== "") {
+          put("Inventory", `C${row}`, item.burden);
+        }
+        put("Inventory", `D${row}`, toNumber(item.cost, 0));
+      });
+      const actives = [];
+      const passives = [];
+      getQuickPlayAbilities().forEach((ability) => {
+        (isPassiveAbilityRecord(ability) ? passives : actives).push(cleanText(ability.name || ""));
+      });
+      actives.filter(Boolean).slice(0, 57).forEach((name, index) => put("Abilities", `A${2 + index}`, name));
+      passives.filter(Boolean).slice(0, 21).forEach((name, index) => put("Abilities", `A${60 + index}`, name));
+      return map;
+    }
+async function exportCcsState() {
+      try {
+        const fileStem = (cleanText(state.fields.Name) || "lyrian-character").replace(/[^\w\- ]+/g, "").trim().replace(/\s+/g, "-") || "lyrian-character";
+        await exportPatchedTemplateWorkbook("data/ccs-template.xlsx", buildCcsCellMap(), `${fileStem}-ccs.xlsx`);
+        setIntegrationFeedback("CCS spreadsheet exported — upload it to Google Drive and open it with Google Sheets to revive the template's formulas.");
+      } catch (error) {
+        setIntegrationFeedback(error.message || "The CCS export failed.", true);
+      }
+    }
+function exportAscharState() {
+      const payload = wrapAscharExport(buildAscharCharacter(buildAscharContext()));
+      const fileName = `${(cleanText(state.fields.Name) || "lyrian-character").replace(/[^\w\- ]+/g, "").trim().replace(/\s+/g, "-") || "lyrian-character"}.aschar.json`;
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = fileName;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+      setIntegrationFeedback(`Exported ${fileName} — importable by the official Clio builder's vault.`);
+    }
+export async function applyAscharImport(character, sourceLabel = "official character file") {
+      const plan = normalizeAscharCharacter(character);
+      clearSheet();
+      state.builder.startMode = plan.gameMode === "mirane" ? MIRANE_START_MODE_ID : DEFAULT_CHARACTER_START_MODE;
+      if (plan.name) {
+        updateFieldValue("Name", plan.name);
+      }
+      const raceRecord = getRaceDetail(plan.race.primaryRaceId) || getRaceDetail(plan.race.primaryRaceName);
+      if (raceRecord) {
+        state.builder.selectedRaceId = raceRecord.id;
+      } else if (plan.race.primaryRaceName || plan.race.primaryRaceId) {
+        plan.notes.push(`Race "${plan.race.primaryRaceName || plan.race.primaryRaceId}" was not found in the loaded rules version.`);
+      }
+      const ancestryWanted = plan.ancestry.ancestryId || plan.ancestry.ancestryName || plan.demonHouseName;
+      const ancestryRecord = getAncestryDetail(plan.ancestry.ancestryId)
+        || getAncestryDetail(plan.ancestry.ancestryName)
+        || (plan.demonHouseName ? getAncestryDetail(plan.demonHouseName) : null);
+      if (ancestryRecord) {
+        state.builder.selectedAncestryId = ancestryRecord.id;
+      } else if (ancestryWanted) {
+        plan.notes.push(`Ancestry/clan "${ancestryWanted}" was not matched — pick it manually on the Ancestry step.`);
+      }
+      updateFieldValue("Power", String(plan.mainStats.power));
+      updateFieldValue("Focus", String(plan.mainStats.focus));
+      updateFieldValue("Agility", String(plan.mainStats.agility));
+      updateFieldValue("Toughness", String(plan.mainStats.toughness));
+      updateFieldValue("Fitness", String(plan.subStats.fitness));
+      updateFieldValue("Cunning", String(plan.subStats.cunning));
+      updateFieldValue("Reason", String(plan.subStats.reason));
+      updateFieldValue("Awareness", String(plan.subStats.awareness));
+      updateFieldValue("Presence", String(plan.subStats.presence));
+      const selectedClassIds = [];
+      const abilityProgress = {};
+      plan.classes.forEach((cls) => {
+        const record = getClassDetail(cls.classId) || getClassDetail(cls.name);
+        if (record) {
+          selectedClassIds.push(record.id);
+          abilityProgress[record.id] = Math.max(0, cls.levels - 1);
+        } else {
+          plan.notes.push(`Class "${cls.name || cls.classId}" (level ${cls.levels}) was not found in the loaded rules version.`);
+        }
+      });
+      state.builder.selectedClassIds = selectedClassIds;
+      state.builder.classAbilityProgress = abilityProgress;
+      const selectedBreakthroughIds = [];
+      plan.breakthroughs.forEach((bt) => {
+        const record = lookup.breakthroughs.resolve(bt.breakthroughId) || lookup.breakthroughs.resolve(bt.name);
+        if (record) {
+          selectedBreakthroughIds.push(record.id);
+        } else {
+          plan.notes.push(`Breakthrough "${bt.name || bt.breakthroughId}" was not found in the loaded rules version.`);
+        }
+      });
+      state.builder.selectedBreakthroughIds = selectedBreakthroughIds;
+      syncBuilderSelectionsIntoSheet();
+      /* Skills: the official model stores TOTAL allocated points per skill.
+         Our fixed grants recompute automatically, so the creation field gets
+         the remainder; guided class-pool allocations cannot be reconstructed
+         1:1 and surface as the app's normal unspent-pool guidance. */
+      const freshBonuses = buildComputedBonuses();
+      const expertiseEntries = [];
+      SKILL_DEFINITIONS.forEach((definition, index) => {
+        const planSkill = plan.skills.find((entry) => normalizePhrase(entry.name) === normalizePhrase(definition.name));
+        if (!planSkill) {
+          return;
+        }
+        const fixedGrant = toNumber(freshBonuses.skillPoints?.[definition.name], 0);
+        updateFieldValue(`SkillPoint${index + 1}`, String(Math.max(0, planSkill.points - fixedGrant)));
+        planSkill.expertise.forEach((expertise) => {
+          if (!expertise.racial) {
+            expertiseEntries.push({ skillIndex: index + 1, name: expertise.name, source: "creation", choiceId: "", points: expertise.points });
+          }
+        });
+      });
+      const unmatchedSkills = plan.skills.filter((entry) => !SKILL_DEFINITIONS.some((definition) => normalizePhrase(definition.name) === normalizePhrase(entry.name)));
+      if (unmatchedSkills.length) {
+        plan.notes.push(`Skills without a matching row here: ${unmatchedSkills.map((entry) => `${entry.name} (${entry.points})`).join(", ")}.`);
+      }
+      if (expertiseEntries.length) {
+        setStoredSkillExpertiseEntries([...getStoredSkillExpertiseEntries(), ...expertiseEntries]);
+      }
+      const selectedItemIds = [];
+      const unmatchedItems = [];
+      plan.equipment.forEach((item) => {
+        const record = lookup.items.resolve(item.itemId) || lookup.items.resolve(item.baseName) || lookup.items.resolve(item.name);
+        if (record) {
+          for (let copy = 0; copy < Math.max(1, item.qty); copy += 1) {
+            selectedItemIds.push(record.id);
+          }
+        } else {
+          unmatchedItems.push(item);
+        }
+      });
+      state.builder.selectedItemIds = selectedItemIds;
+      if (unmatchedItems.length) {
+        const itemText = unmatchedItems.map((item) => `${item.name}${item.qty > 1 ? ` x${item.qty}` : ""} (${item.cost} Clim)`).join("\n");
+        updateFieldValue("Items", [cleanText(state.fields.Items), "Imported (not in catalog):", itemText].filter(Boolean).join("\n"));
+        plan.notes.push(`${unmatchedItems.length} item(s) had no catalog match and were added to the Items notes instead.`);
+      }
+      if (Number.isFinite(plan.resources.clim)) {
+        plan.notes.push(`The official file reports ${plan.resources.clim} Clim remaining — our sheet recomputes funds from purchases, so compare if they differ.`);
+      }
+      syncBuilderSelectionsIntoSheet();
+      applyStateToDom();
+      renderBuilder();
+      renderPlayDashboard();
+      invalidateExportCache();
+      persistWorkingState(false);
+      setStatus(`Imported ${plan.name || "character"} from the ${sourceLabel}.`);
+      openSheetModal({
+        eyebrow: "Import Complete",
+        title: `Imported: ${escapeHtml(plan.name || "Unnamed character")}`,
+        lead: `Loaded from the ${escapeHtml(sourceLabel)}. Everything mappable was applied; review the notes below.`,
+        content: `
+          <ul class="save-slot-feedback" style="display:block; list-style: disc inside;">
+            <li>${plan.classes.length} class(es), ${plan.breakthroughs.length} breakthrough(s), ${plan.skills.length} skill row(s), ${plan.equipment.length} item(s) processed.</li>
+            ${plan.notes.map((note) => `<li>${escapeHtml(note)}</li>`).join("") || "<li>No caveats — clean import.</li>"}
+          </ul>`
+      });
+      return true;
+    }
+/* ─── Roll20 bridge (sheet-side connection manager) ─────────────────────
+   Started lazily the first time the VTT hub opens. Send never spends any
+   resource; ack-gated spending is a later milestone per the Roll20 handoff. */
+let roll20Bridge = null;
+const ROLL20_BRIDGE_STATE_PRESENTATION = {
+      [BRIDGE_STATES.NOT_INSTALLED]: { label: "Bridge not installed", className: "" },
+      [BRIDGE_STATES.NO_ROLL20]: { label: "Roll20 not open", className: "is-warn" },
+      [BRIDGE_STATES.CONNECTED]: { label: "Connected", className: "is-live" }
+    };
+function ensureRoll20Bridge() {
+      if (!roll20Bridge) {
+        roll20Bridge = createRoll20Bridge();
+        roll20Bridge.onStateChange(() => {
+          updateRoll20BridgeUi();
+          syncRoll20SendVisibility();
+        });
+        roll20Bridge.start();
+      }
+      return roll20Bridge;
+    }
+function updateRoll20BridgeUi() {
+      const chip = document.getElementById("roll20-bridge-status");
+      if (!chip) {
+        return;
+      }
+      const presentation = ROLL20_BRIDGE_STATE_PRESENTATION[roll20Bridge ? roll20Bridge.getState() : BRIDGE_STATES.NOT_INSTALLED]
+        || ROLL20_BRIDGE_STATE_PRESENTATION[BRIDGE_STATES.NOT_INSTALLED];
+      chip.textContent = presentation.label;
+      chip.classList.remove("is-live", "is-warn");
+      if (presentation.className) {
+        chip.classList.add(presentation.className);
+      }
+      const sendButton = document.getElementById("roll20-bridge-send");
+      if (sendButton && !sendButton.dataset.sendBusy) {
+        sendButton.disabled = !(roll20Bridge && roll20Bridge.isConnected());
+      }
+    }
+function syncRoll20SendVisibility() {
+      document.body.classList.toggle("asb-r20-connected", Boolean(roll20Bridge && roll20Bridge.isConnected()));
+    }
+/* ─── Token pinning + opt-in TokenMod bar sync + turn tracker ──────────
+   The pin (token id + display name) and both opt-in flags live in
+   state.play, so they persist and export with the character. Bar sync and
+   turn-tracker writes are ADVANCED features: bar sync needs the GM-installed
+   TokenMod mod, tracker writes need page access — both strictly opt-in. */
+function getRoll20TokenPin() {
+      return {
+        id: cleanText(state.play?.roll20TokenId || ""),
+        name: cleanText(state.play?.roll20TokenName || "")
+      };
+    }
+function refreshRoll20TokenToolsUi() {
+      const label = document.getElementById("roll20-token-pin-label");
+      if (!label) {
+        return;
+      }
+      const pin = getRoll20TokenPin();
+      label.textContent = pin.id ? `Pinned: ${pin.name || pin.id}` : "No token pinned";
+      const unpinButton = document.getElementById("roll20-token-unpin");
+      if (unpinButton) {
+        unpinButton.style.display = pin.id ? "" : "none";
+      }
+      const syncToggle = document.getElementById("roll20-token-sync-toggle");
+      if (syncToggle) {
+        syncToggle.checked = Boolean(state.play?.roll20TokenSync);
+      }
+      const trackerToggle = document.getElementById("roll20-turn-tracker-toggle");
+      if (trackerToggle) {
+        trackerToggle.checked = Boolean(state.play?.roll20TurnTracker);
+      }
+    }
+async function pinRoll20SelectedToken(button) {
+      const bridge = ensureRoll20Bridge();
+      const idleLabel = button?.dataset.idleLabel || button?.textContent || "Pin Selected Token";
+      if (button) {
+        button.dataset.idleLabel = idleLabel;
+        button.disabled = true;
+        button.textContent = "Reading…";
+      }
+      try {
+        const selected = await bridge.getSelectedToken();
+        state.play = mergePlayState(state.play);
+        state.play.roll20TokenId = selected.tokenId;
+        state.play.roll20TokenName = selected.name;
+        persistWorkingState(false);
+        setIntegrationFeedback(`Pinned Roll20 token: ${selected.name || selected.tokenId}.`);
+      } catch (error) {
+        setIntegrationFeedback(error.message || "Could not read the Roll20 selection.", true);
+      } finally {
+        if (button && button.isConnected) {
+          button.disabled = false;
+          button.textContent = button.dataset.idleLabel;
+        }
+        refreshRoll20TokenToolsUi();
+      }
+    }
+function unpinRoll20Token() {
+      state.play = mergePlayState(state.play);
+      state.play.roll20TokenId = "";
+      state.play.roll20TokenName = "";
+      persistWorkingState(false);
+      setIntegrationFeedback("Roll20 token unpinned.");
+      refreshRoll20TokenToolsUi();
+    }
+let roll20TokenBarSignature = "";
+let roll20TokenBarTimer = 0;
+function scheduleRoll20TokenBarSync() {
+      if (!state.play?.roll20TokenSync) {
+        return;
+      }
+      const pin = getRoll20TokenPin();
+      if (!pin.id || !roll20Bridge || !roll20Bridge.isConnected()) {
+        return;
+      }
+      const command = buildTokenModCommand(pin.id, state.play.resources || {});
+      if (!command || command === roll20TokenBarSignature) {
+        return;
+      }
+      window.clearTimeout(roll20TokenBarTimer);
+      roll20TokenBarTimer = window.setTimeout(() => {
+        roll20TokenBarSignature = command;
+        roll20Bridge.sendMacro(command).catch(() => {
+          roll20TokenBarSignature = ""; // failed — let the next change retry
+        });
+      }, 800);
+    }
+function maybeSendRoll20Initiative(total, breakdown) {
+      if (!state.play?.roll20TurnTracker || !roll20Bridge || !roll20Bridge.isConnected()) {
+        return;
+      }
+      const pin = getRoll20TokenPin();
+      const strip = (value) => cleanText(String(value ?? "")).replace(/[{}]/g, "(").replace(/\s+/g, " ");
+      const characterName = strip(state.fields.Name) || "Lyrian Character";
+      const macro = `&{template:default} {{name=${characterName} — Initiative}} {{Rolled=${strip(total)}}} {{Breakdown=${strip(breakdown)}}}`;
+      roll20Bridge.sendMacro(macro, { kind: "initiative", pr: Number(total) || 0, tokenId: pin.id || undefined })
+        .then(() => setStatus(`Initiative ${total} sent to Roll20${pin.id ? " and the turn tracker" : ""}.`))
+        .catch((error) => setStatus(error.message || "Could not send initiative to Roll20."));
+    }
+async function sendRoll20CharacterMacroFromHub(button) {
+      const bridge = ensureRoll20Bridge();
+      const macro = buildRoll20CharacterMacro(getIntegrationCharacterContext());
+      const idleLabel = button.dataset.idleLabel || button.textContent;
+      button.dataset.idleLabel = idleLabel;
+      button.dataset.sendBusy = "1";
+      button.disabled = true;
+      button.textContent = "Sending…";
+      setIntegrationFeedback("Sending the character macro to Roll20…");
+      try {
+        await bridge.sendMacro(macro);
+        button.textContent = "Sent ✓";
+        setIntegrationFeedback("Character macro posted to Roll20 chat.");
+      } catch (error) {
+        button.textContent = "Send failed";
+        setIntegrationFeedback(error.message || "The Roll20 bridge could not send that macro.", true);
+      } finally {
+        setTimeout(() => {
+          delete button.dataset.sendBusy;
+          if (button.isConnected) {
+            button.textContent = button.dataset.idleLabel;
+            updateRoll20BridgeUi();
+          }
+        }, 1400);
+      }
+    }
+function openVttSharingModal() {
+      openSheetModal({
+        eyebrow: "Character Connections",
+        title: "VTT & Sharing",
+        lead: "Use the connection method each platform officially supports. Copy and export work now; direct synchronization requires the named bridge, extension, or module.",
+        content: `
+          <div class="integration-card-grid">
+            <article class="integration-card">
+              <div class="integration-card-head"><strong>Roll20</strong><span class="integration-status is-ready">Copy ready</span><span class="integration-status" id="roll20-bridge-status">Bridge not installed</span></div>
+              <p>Every action and ability has a Copy VTT button. Paste the generated chat macro into Roll20; no subscription or installation is required. Installing the optional Angel Sword Roll20 Bridge userscript adds one-click sending into your open Roll20 game.</p>
+              <div class="sheet-modal-form-actions">
+                <button type="button" class="sheet-modal-action" data-integration-copy="roll20-character">Copy Character Macro</button>
+                <button type="button" class="sheet-modal-action" data-integration-send="roll20-character" id="roll20-bridge-send" disabled>Send to Roll20</button>
+                <a class="sheet-modal-action" href="roll20/angel-sword-roll20-bridge.user.js" title="Requires a userscript manager such as Tampermonkey. The bridge is optional, stores nothing, and can be removed at any time.">Install Bridge</a>
+                <a class="sheet-modal-action" href="${VTT_PLATFORM_URLS.roll20}" target="_blank" rel="noopener noreferrer">Open Roll20</a>
+              </div>
+              <div class="sheet-modal-form-actions">
+                <button type="button" class="sheet-modal-action" id="roll20-token-pin" data-roll20-pin-token>Pin Selected Token</button>
+                <button type="button" class="sheet-modal-action" id="roll20-token-unpin" data-roll20-unpin-token style="display:none;">Unpin</button>
+                <span class="integration-status" id="roll20-token-pin-label">No token pinned</span>
+              </div>
+              <label class="integration-toggle"><input type="checkbox" id="roll20-token-sync-toggle" data-roll20-token-sync> Sync HP/Mana/RP/Shield to the pinned token's bars (needs the GM-installed TokenMod mod)</label>
+              <label class="integration-toggle"><input type="checkbox" id="roll20-turn-tracker-toggle" data-roll20-turn-tracker> Send initiative rolls to Roll20 and its turn tracker</label>
+              <small>The bridge is an optional userscript (Tampermonkey or similar). It relays macros to your open Roll20 game tab entirely inside your browser, stores no character data, and never contacts a server. Sending a macro never spends AP, RP, Mana, or items; card ⚔ sends spend an ability's cost only after Roll20 confirms the post. Bar sync and turn-tracker writes are advanced, opt-in features.</small>
+            </article>
+            <article class="integration-card">
+              <div class="integration-card-head"><strong>Owlbear Rodeo</strong><span class="integration-status">Extension needed</span></div>
+              <p>An experimental Angel Sword extension ships with this builder: the room owner adds its manifest URL to Owlbear, and every roll made on this sheet appears live in the room's Angel Sword panel for all players with it open.</p>
+              <div class="sheet-modal-form-actions">
+                <button type="button" class="sheet-modal-action" data-integration-copy="owlbear-manifest">Copy Manifest URL</button>
+                <button type="button" class="sheet-modal-action" data-integration-export>Export Character</button>
+                <a class="sheet-modal-action" href="${VTT_PLATFORM_URLS.owlbear}" target="_blank" rel="noopener noreferrer">Open Owlbear</a>
+              </div>
+              <small>Experimental and not yet verified in a live room. The panel works in the same browser as this sheet; nothing is sent to any server outside your Owlbear room.</small>
+            </article>
+            <article class="integration-card">
+              <div class="integration-card-head"><strong>Foundry VTT</strong><span class="integration-status">Module needed</span></div>
+              <p>Foundry Actors are controlled by the active game system's schema. The bundled Angel Sword companion module (experimental) imports our exported character per-user and rolls its attacks, saves, and checks into chat — without touching Actors or system data.</p>
+              <div class="sheet-modal-form-actions">
+                <button type="button" class="sheet-modal-action" data-integration-export>Export Character</button>
+                <a class="sheet-modal-action" href="${VTT_PLATFORM_URLS.foundry}" target="_blank" rel="noopener noreferrer">Open Foundry</a>
+              </div>
+              <small>Module scaffold at <code>foundry/</code> in this build; a packaged release zip and a live-install verification are still required before announcing it.</small>
+            </article>
+            <article class="integration-card">
+              <div class="integration-card-head"><strong>World Anvil</strong><span class="integration-status is-ready">Profile copy ready</span></div>
+              <p>World Anvil is the “Anvil” service: a world/campaign manager with character profiles. Copy a clean profile now — plain text, or BBCode formatted for a World Anvil article.</p>
+              <div class="sheet-modal-form-actions">
+                <button type="button" class="sheet-modal-action" data-integration-copy="profile">Copy Profile Summary</button>
+                <button type="button" class="sheet-modal-action" data-integration-copy="worldanvil-bbcode">Copy BBCode Article</button>
+                <a class="sheet-modal-action" href="${VTT_PLATFORM_URLS.worldAnvil}" target="_blank" rel="noopener noreferrer">Open World Anvil</a>
+              </div>
+              <small>Automatic API publishing is deferred because World Anvil requires application and user secrets that must not be exposed by a public static site.</small>
+            </article>
+            <article class="integration-card">
+              <div class="integration-card-head"><strong>Official Clio Builder</strong><span class="integration-status is-ready">File exchange ready</span></div>
+              <p>Trade characters with Angel's Sword's official builder: export a .aschar.json file its vault can import, or import one of its exports here through the normal Import button — the format is detected automatically.</p>
+              <div class="sheet-modal-form-actions">
+                <button type="button" class="sheet-modal-action" data-integration-aschar-export>Export .aschar.json</button>
+                <button type="button" class="sheet-modal-action" data-integration-ccs-export>Export CCS Spreadsheet</button>
+                <a class="sheet-modal-action" href="https://clio.angelssword.com/characterbuilder/vault.html" target="_blank" rel="noopener noreferrer">Open Official Vault</a>
+              </div>
+              <small>The CCS export fills the bundled official community character sheet template; upload the result to Google Drive and its formulas come back to life. Round-trip caveats (choice-based picks, guided skill pools) are listed in the import summary so nothing is lost silently.</small>
+            </article>
+          </div>
+          <p id="integration-feedback" class="save-slot-feedback" aria-live="polite"></p>
+        `
+      });
+      ensureRoll20Bridge();
+      updateRoll20BridgeUi();
+      refreshRoll20TokenToolsUi();
     }
 function setPrimaryRaceFromBrowser() {
       const race = getRaceDetail(document.getElementById("race-browser").value);
@@ -21771,6 +22814,8 @@ export async function bindEvents() {
       ["import-json", "builder-import-character"].forEach((id) => {
         document.getElementById(id).addEventListener("click", () => document.getElementById("import-file").click());
       });
+
+      document.getElementById("sheet-integrations").addEventListener("click", openVttSharingModal);
 
       document.getElementById("recalc-basics").addEventListener("click", () => recalcBasics(true));
       document.getElementById("clear-sheet").addEventListener("click", clearSheet);
@@ -21842,6 +22887,66 @@ const addButton = event.target.closest("[data-dice-add]");
 
         if (event.target.closest("[data-reset-character-confirm]")) {
           confirmResetCharacter();
+          return;
+        }
+const integrationSendButton = event.target.closest("[data-integration-send]");
+        if (integrationSendButton) {
+          if (integrationSendButton.dataset.integrationSend === "roll20-character" && !integrationSendButton.disabled) {
+            await sendRoll20CharacterMacroFromHub(integrationSendButton);
+          }
+          return;
+        }
+        if (event.target.closest("[data-integration-aschar-export]")) {
+          exportAscharState();
+          return;
+        }
+        if (event.target.closest("[data-integration-ccs-export]")) {
+          await exportCcsState();
+          return;
+        }
+const pinTokenButton = event.target.closest("[data-roll20-pin-token]");
+        if (pinTokenButton) {
+          await pinRoll20SelectedToken(pinTokenButton);
+          return;
+        }
+        if (event.target.closest("[data-roll20-unpin-token]")) {
+          unpinRoll20Token();
+          return;
+        }
+const tokenSyncToggle = event.target.closest("[data-roll20-token-sync]");
+        if (tokenSyncToggle) {
+          state.play = mergePlayState(state.play);
+          state.play.roll20TokenSync = Boolean(tokenSyncToggle.checked);
+          persistWorkingState(false);
+          if (state.play.roll20TokenSync) {
+            scheduleRoll20TokenBarSync();
+          }
+          return;
+        }
+const turnTrackerToggle = event.target.closest("[data-roll20-turn-tracker]");
+        if (turnTrackerToggle) {
+          state.play = mergePlayState(state.play);
+          state.play.roll20TurnTracker = Boolean(turnTrackerToggle.checked);
+          persistWorkingState(false);
+          return;
+        }
+const integrationCopyButton = event.target.closest("[data-integration-copy]");
+        if (integrationCopyButton) {
+          const context = getIntegrationCharacterContext();
+          if (integrationCopyButton.dataset.integrationCopy === "roll20-character") {
+            await copyIntegrationValue(buildRoll20CharacterMacro(context), "Roll20 character macro copied.");
+          } else if (integrationCopyButton.dataset.integrationCopy === "profile") {
+            await copyIntegrationValue(buildCharacterProfileSummary(context), "Character profile summary copied.");
+          } else if (integrationCopyButton.dataset.integrationCopy === "worldanvil-bbcode") {
+            await copyIntegrationValue(buildWorldAnvilBBCodeProfile(context), "World Anvil BBCode article copied.");
+          } else if (integrationCopyButton.dataset.integrationCopy === "owlbear-manifest") {
+            await copyIntegrationValue(new URL("owlbear/manifest.json", window.location.href).href, "Owlbear extension manifest URL copied.");
+          }
+          return;
+        }
+        if (event.target.closest("[data-integration-export]")) {
+          closeSheetModal();
+          exportState();
           return;
         }
 const saveSlotSubmitButton = event.target.closest("[data-save-slot-submit]");
@@ -22529,6 +23634,16 @@ const button = event.target.closest("[data-play-transaction-field]");
       });
 
       document.getElementById("play-basic-actions").addEventListener("click", (event) => {
+        const copyMacroButton = event.target.closest("[data-copy-roll20-action]");
+        if (copyMacroButton) {
+          copyRoll20ActionFromId(copyMacroButton.dataset.copyRoll20Action);
+          return;
+        }
+        const sendMacroButton = event.target.closest("[data-send-roll20-action]");
+        if (sendMacroButton) {
+          sendRoll20ActionFromId(sendMacroButton.dataset.sendRoll20Action, sendMacroButton);
+          return;
+        }
         const recoverApButton = event.target.closest("[data-play-recover-ap]");
         if (recoverApButton) {
           openPlayReference("Recover AP", recoverApButton);
@@ -22567,6 +23682,16 @@ const button = event.target.closest("[data-play-transaction-field]");
       });
 
       document.getElementById("play-quick-abilities").addEventListener("click", (event) => {
+        const copyMacroButton = event.target.closest("[data-copy-roll20-ability]");
+        if (copyMacroButton) {
+          copyRoll20AbilityFromIndex(copyMacroButton.dataset.copyRoll20Ability);
+          return;
+        }
+        const sendMacroButton = event.target.closest("[data-send-roll20-ability]");
+        if (sendMacroButton) {
+          sendRoll20AbilityFromIndex(sendMacroButton.dataset.sendRoll20Ability, sendMacroButton);
+          return;
+        }
         const referenceButton = event.target.closest("[data-play-reference-name]");
         const explicitReferenceControl = event.target.closest(".play-reference-title, .play-reference-link");
         const actionControl = event.target.closest("[data-play-use-ability], [data-play-use-ability-attack]");

@@ -5103,6 +5103,19 @@
       background: linear-gradient(180deg, rgba(39, 133, 230, 1), rgba(0, 101, 202, 0.98) 58%, rgba(0, 77, 156, 1));
     }
 
+    .play-action-buttons .play-integration-copy {
+      border-color: rgba(0, 92, 187, 0.24);
+      background: rgba(255, 250, 233, 0.92);
+      color: #0b4f78;
+      box-shadow: none;
+    }
+
+    .play-action-buttons .play-integration-copy:hover {
+      border-color: rgba(0, 92, 187, 0.44);
+      background: #ffffff;
+      color: #003f72;
+    }
+
     .play-tab-panel {
       display: grid;
       gap: 14px;
@@ -7410,6 +7423,109 @@
       align-items: center;
     }
 
+    .sheet-modal-form-actions a.sheet-modal-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+
+    .integration-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 14px;
+    }
+
+    .integration-card {
+      display: grid;
+      gap: 12px;
+      align-content: start;
+      padding: 16px;
+      border: 1px solid rgba(255, 226, 155, 0.2);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(26, 32, 43, 0.96), rgba(15, 20, 29, 0.98));
+      color: var(--paper-2);
+    }
+
+    .integration-card-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .integration-card-head strong {
+      color: #fff3d6;
+      font-size: 1.05rem;
+    }
+
+    .integration-card p,
+    .integration-card small {
+      margin: 0;
+      color: rgba(247, 237, 207, 0.82);
+      line-height: 1.5;
+    }
+
+    .integration-card small {
+      font-size: 0.78rem;
+    }
+
+    .integration-status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 4px 8px;
+      border: 1px solid rgba(255, 204, 64, 0.3);
+      border-radius: 999px;
+      background: rgba(255, 204, 64, 0.1);
+      color: #ffe59a;
+      font-size: 0.74rem;
+      font-weight: 900;
+    }
+
+    .integration-status.is-ready {
+      border-color: rgba(91, 220, 160, 0.34);
+      background: rgba(44, 158, 108, 0.14);
+      color: #9ff3c9;
+    }
+
+    .integration-status.is-live {
+      border-color: rgba(91, 220, 160, 0.6);
+      background: rgba(44, 158, 108, 0.28);
+      color: #c8ffe6;
+    }
+
+    .integration-status.is-warn {
+      border-color: rgba(255, 138, 101, 0.4);
+      background: rgba(196, 84, 48, 0.16);
+      color: #ffc4ae;
+    }
+
+    .integration-toggle {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: #cfd8ec;
+      cursor: pointer;
+    }
+
+    .integration-toggle input {
+      margin-top: 2px;
+    }
+
+    /* ⚔ per-card Roll20 sends only appear while the bridge reports a live
+       Roll20 game tab (body class toggled by the connection manager). */
+    .play-roll20-send {
+      display: none;
+    }
+
+    body.asb-r20-connected .play-roll20-send {
+      display: inline-flex;
+    }
+
     .roll-overlay {
       position: fixed;
       right: 24px;
@@ -8155,6 +8271,30 @@
         position: static;
         max-height: none;
         overflow: visible;
+      }
+    }
+
+    @media (max-height: 760px) {
+      .builder-step-content {
+        min-height: 0;
+      }
+
+      .builder-equipment-sticky-funds {
+        top: 0;
+      }
+    }
+
+    @media (min-width: 1281px) and (max-height: 760px) {
+      .builder-sidebar-panel {
+        top: 8px;
+        max-height: calc(100dvh - 16px);
+      }
+    }
+
+    @media (min-width: 1441px) and (max-height: 760px) {
+      .builder-detail-panel {
+        top: 8px;
+        max-height: calc(100dvh - 16px);
       }
     }
 

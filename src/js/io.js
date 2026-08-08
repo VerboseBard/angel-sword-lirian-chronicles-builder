@@ -2,8 +2,9 @@ import { CLASS_PURCHASABLE_LEVELS, CLASS_ROWS, EMBEDDED_STATE_FORMAT, INVENTORY_
 import { cleanText } from "./utils.js";
 import { createDefaultState, getSavedSlots, mergeBuilderState, mergePlayState, persistWorkingState, setActiveSaveSlotId, state, trySetLocalStorage } from "./state.js";
 import { alignLoadedStateGameVersion, exportPrepCache, getAncestryDetail, getBreakthroughBudgetState, getClassDetail, getDefaultGameVersionId, getRaceDetail, getSelectedGameVersionId, getStartingFundsState, lookup, shouldPromoteSavedVersionToLatest } from "./rules.js";
-import { PDF_LONG_TEXT_FIELDS, appendFieldText, applyStateToDom, base64ToBytes, buildExportFileStem, buildPdfImportPayload, buildSlotId, buildSpreadsheetExportCellMap, buildSpreadsheetImportPayload, buildSpreadsheetMetadataSheet, compactSaveSlotEntry, createStateSnapshot, createStorableStateSnapshot, decodeEmbeddedStateText, fillAbilityField, firstEmptyField, getBreakthroughRequirementStatus, getStorageFailureMessage, hydrateBuilderSelectionsFromFields, normalizeCurrentPortraitDataUrl, openLoadSavedModal, openSaveSlotModal, prepareExportCache, promptForSlotName, refreshSaveSlotList, renderBuilder, setStatus, showExportFailureModal, showExportSuccessModal, syncNameFields, updateSheetModalProgress, withTimeout } from "./ui.js";
+import { PDF_LONG_TEXT_FIELDS, appendFieldText, applyAscharImport, applyStateToDom, base64ToBytes, buildExportFileStem, buildPdfImportPayload, buildSlotId, buildSpreadsheetExportCellMap, buildSpreadsheetImportPayload, buildSpreadsheetMetadataSheet, compactSaveSlotEntry, createStateSnapshot, createStorableStateSnapshot, decodeEmbeddedStateText, fillAbilityField, firstEmptyField, getBreakthroughRequirementStatus, getStorageFailureMessage, hydrateBuilderSelectionsFromFields, normalizeCurrentPortraitDataUrl, openLoadSavedModal, openSaveSlotModal, prepareExportCache, promptForSlotName, refreshSaveSlotList, renderBuilder, setStatus, showExportFailureModal, showExportSuccessModal, syncNameFields, updateSheetModalProgress, withTimeout } from "./ui.js";
 import { ensurePdfRuntimeLoaded, ensureSpreadsheetRuntimeLoaded } from "./runtime-loader.js";
+import { ASCHAR_FORMAT, parseAscharFile } from "./aschar.js";
 
 
 
@@ -636,6 +637,34 @@ const hasOverride = Array.from(contentTypesDoc.getElementsByTagNameNS(XLSX_CONTE
       zip.file("xl/workbook.xml", serializeXlsxXml(workbookDoc));
       zip.file("xl/_rels/workbook.xml.rels", serializeXlsxXml(relsDoc));
     }
+/** Generic template-workbook exporter: loads ANY bundled xlsx template,
+    patches only the given input cells (numbers/booleans/inline strings), and
+    downloads the result. Formulas, hidden sheets, and styling survive —
+    used by the CCS export against data/ccs-template.xlsx. */
+export async function exportPatchedTemplateWorkbook(templateAssetPath, cellMap, fileName) {
+  await ensureSpreadsheetRuntimeLoaded({ includeExportAssets: true });
+  if (!window.JSZip) {
+    throw new Error("Spreadsheet packaging is not available yet.");
+  }
+  const templateBytes = await readAssetArrayBuffer(templateAssetPath);
+  const zip = await window.JSZip.loadAsync(templateBytes);
+  const { sheetPathByName } = await getXlsxWorkbookParts(zip);
+  for (const [sheetName, cellsByAddress] of Object.entries(cellMap)) {
+    const sheetPath = sheetPathByName.get(sheetName);
+    if (!sheetPath) {
+      console.warn(`Template ${templateAssetPath} is missing sheet: ${sheetName}`);
+      continue;
+    }
+    await patchXlsxWorksheetCells(zip, sheetPath, cellsByAddress);
+  }
+  const bytes = await zip.generateAsync({
+    type: "arraybuffer",
+    compression: "DEFLATE",
+    compressionOptions: { level: 6 }
+  });
+  downloadBlob(new Blob([bytes], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), fileName);
+}
+
 async function generateTemplateSpreadsheetWorkbook(cellMap, embeddedStatePackage) {
       if (!window.JSZip) {
         throw new Error("Spreadsheet template packaging is not available yet.");
@@ -1176,11 +1205,34 @@ export async function handleImportedCharacterFile(file) {
       const lowerName = String(file?.name || "").toLowerCase();
       if (lowerName.endsWith(".json")) {
         const raw = await readFileAsText(file);
-        if (loadSavedState(raw, { activeSlotId: "", statusOnFailure: true })) {
+        // Official Clio builder exports (.aschar.json envelope) are detected
+        // by content, not extension, and routed to the interop importer.
+        let parsedJson = null;
+        try {
+          parsedJson = JSON.parse(raw);
+        } catch (error) {
+          parsedJson = null;
+        }
+        if (parsedJson) {
+          const aschar = parseAscharFile(parsedJson);
+          if (aschar.ok && parsedJson.format === ASCHAR_FORMAT) {
+            return applyAscharImport(aschar.character, `official export ${file.name}`);
+          }
+        }
+        if (loadSavedState(raw, { activeSlotId: "", statusOnFailure: false })) {
           await alignLoadedStateGameVersion({ statusLabel: `Imported ${file.name}` });
           setStatus(`Imported ${file.name}.`);
           return true;
         }
+        // Not our format — accept a BARE official character object (vault
+        // entries / localStorage payloads) as a last resort.
+        if (parsedJson) {
+          const bare = parseAscharFile(parsedJson);
+          if (bare.ok) {
+            return applyAscharImport(bare.character, `official character ${file.name}`);
+          }
+        }
+        setStatus(`Could not read ${file.name} as a character in any supported format.`);
         return false;
       }
       if (lowerName.endsWith(".pdf")) {

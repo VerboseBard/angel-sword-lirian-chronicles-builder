@@ -1,12 +1,11 @@
 const fs = require("fs/promises");
 const path = require("path");
 const os = require("os");
-const crypto = require("crypto");
 const Module = require("module");
 
 initNodePath();
 
-const API_BASE_URL = "https://api.angelssword.com";
+const API_BASE_URL = "https://clio-proxy.angelssword.com/api/ttrpg";
 const SITE_BASE_URL = "https://rpg.angelssword.com";
 const EDGE_PATH =
   process.env.EDGE_PATH ||
@@ -69,11 +68,17 @@ const HTMLISH_FIELDS = new Set([
 async function main() {
   await ensureDirs();
 
-  const versions = await apiGet("ttrpg/version/list");
+  const [versions, currentLatestVersion] = await Promise.all([
+    apiGet("version/list"),
+    apiGet("version/latest"),
+  ]);
   const requestedVersion = process.argv[2] || "";
   const latestVersion = requestedVersion
-    ? versions.find((entry) => entry.versionNumber === requestedVersion) || versions[0]
-    : versions[0];
+    ? versions.find((entry) => entry.versionNumber === requestedVersion)
+    : currentLatestVersion;
+  if (!latestVersion) {
+    throw new Error(`Rules version ${requestedVersion} was not found by the official Clio proxy.`);
+  }
   const versionNumber = latestVersion.versionNumber;
 
   const topLevel = await fetchTopLevel(versionNumber);
@@ -135,24 +140,24 @@ async function ensureDirs() {
 
 async function fetchTopLevel(versionNumber) {
   return {
-    classes: await apiGet(`ttrpg/${versionNumber}/classes`),
-    keyAbilities: await apiGet(`ttrpg/${versionNumber}/key-abilities`),
-    trueAbilities: await apiGet(`ttrpg/${versionNumber}/true-abilities`),
-    items: await apiGet(`ttrpg/${versionNumber}/items`),
-    monsters: await apiGet(`ttrpg/${versionNumber}/monsters`),
-    monsterAbilities: await apiGet(`ttrpg/${versionNumber}/monsters-abilities`),
-    monsterAbilityLists: await apiGet(`ttrpg/${versionNumber}/monsters-abilities-lists`),
-    monsterActiveActions: await apiGet(`ttrpg/${versionNumber}/monsters-active-actions`),
+    classes: await apiGet(`${versionNumber}/classes`),
+    keyAbilities: await apiGet(`${versionNumber}/key-abilities`),
+    trueAbilities: await apiGet(`${versionNumber}/true-abilities`),
+    items: await apiGet(`${versionNumber}/items`),
+    monsters: await apiGet(`${versionNumber}/monsters`),
+    monsterAbilities: await apiGet(`${versionNumber}/monsters-abilities`),
+    monsterAbilityLists: await apiGet(`${versionNumber}/monsters-abilities-lists`),
+    monsterActiveActions: await apiGet(`${versionNumber}/monsters-active-actions`),
     monsterActiveActionLists: await apiGet(
-      `ttrpg/${versionNumber}/monsters-active-actions-lists`
+      `${versionNumber}/monsters-active-actions-lists`
     ),
-    primaryRaces: await apiGet(`ttrpg/${versionNumber}/primary-races`),
-    ancestries: await apiGet(`ttrpg/${versionNumber}/ancestries`),
-    breakthroughs: await apiGet(`ttrpg/${versionNumber}/breakthroughs`),
-    keywords: await apiGet(`ttrpg/${versionNumber}/keywords`),
-    rulebook: await apiGet(`ttrpg/${versionNumber}/rulebook`),
-    settingsGuide: await apiGet(`ttrpg/${versionNumber}/settings-guide`),
-    patchNotes: await apiGet(`ttrpg/${versionNumber}/patch-notes`),
+    primaryRaces: await apiGet(`${versionNumber}/primary-races`),
+    ancestries: await apiGet(`${versionNumber}/ancestries`),
+    breakthroughs: await apiGet(`${versionNumber}/breakthroughs`),
+    keywords: await apiGet(`${versionNumber}/keywords`),
+    rulebook: await apiGet(`${versionNumber}/rulebook`),
+    settingsGuide: await apiGet(`${versionNumber}/settings-guide`),
+    patchNotes: await apiGet(`${versionNumber}/patch-notes`),
   };
 }
 
@@ -165,11 +170,11 @@ async function fetchDetailCollections(versionNumber, topLevel) {
 
   const [classDetails, itemDetails, monsterDetails, primaryRaceDetails, ancestryDetails] =
     await Promise.all([
-      mapLimit(classIds, 10, (id) => apiGet(`ttrpg/${versionNumber}/class/${id}`)),
-      mapLimit(itemIds, 12, (id) => apiGet(`ttrpg/${versionNumber}/item/${id}`)),
-      mapLimit(monsterIds, 8, (id) => apiGet(`ttrpg/${versionNumber}/monster/${id}`)),
-      mapLimit(primaryRaceIds, 5, (id) => apiGet(`ttrpg/${versionNumber}/primary-race/${id}`)),
-      mapLimit(ancestryIds, 8, (id) => apiGet(`ttrpg/${versionNumber}/ancestry/${id}`)),
+      mapLimit(classIds, 10, (id) => apiGet(`${versionNumber}/class/${id}`)),
+      mapLimit(itemIds, 12, (id) => apiGet(`${versionNumber}/item/${id}`)),
+      mapLimit(monsterIds, 8, (id) => apiGet(`${versionNumber}/monster/${id}`)),
+      mapLimit(primaryRaceIds, 5, (id) => apiGet(`${versionNumber}/primary-race/${id}`)),
+      mapLimit(ancestryIds, 8, (id) => apiGet(`${versionNumber}/ancestry/${id}`)),
     ]);
 
   return {
@@ -183,60 +188,13 @@ async function fetchDetailCollections(versionNumber, topLevel) {
 
 async function apiGet(endpoint) {
   const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
-    headers: await buildHeaders(),
+    headers: { accept: "application/json, text/plain, */*" },
   });
   if (!response.ok) {
     const body = await response.text();
     throw new Error(`GET ${endpoint} failed: ${response.status} ${body.slice(0, 200)}`);
   }
   return response.json();
-}
-
-async function buildHeaders() {
-  const sessionId = toBase64(crypto.randomUUID());
-  const requestId = toBase64(Date.now().toString());
-  return {
-    requestId,
-    sessionId,
-    requestkey: await buildRequestKey(sessionId, requestId),
-    accept: "application/json, text/plain, */*",
-    dnt: "1",
-    referer: `${SITE_BASE_URL}/`,
-    "user-agent":
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
-      "(KHTML, like Gecko) HeadlessChrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0",
-    "sec-ch-ua": '"Chromium";v="148", "Microsoft Edge";v="148", "Not/A)Brand";v="99"',
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": '"Windows"',
-  };
-}
-
-async function buildRequestKey(sessionId, requestId) {
-  const jwk = {
-    kty: "oct",
-    k: "CSRITDuXKJgTfpN20FthTQ",
-    alg: "A128CBC",
-    ext: true,
-  };
-  const key = await crypto.webcrypto.subtle.importKey(
-    "jwk",
-    jwk,
-    { name: "AES-CBC" },
-    false,
-    ["encrypt"]
-  );
-  const iv = new TextEncoder().encode(requestId.slice(0, 16));
-  const data = new TextEncoder().encode(sessionId);
-  const encrypted = await crypto.webcrypto.subtle.encrypt(
-    { name: "AES-CBC", iv },
-    key,
-    data
-  );
-  return Buffer.from(encrypted).toString("base64");
-}
-
-function toBase64(value) {
-  return Buffer.from(value, "utf8").toString("base64");
 }
 
 async function mapLimit(items, limit, mapper) {
@@ -265,7 +223,7 @@ function decodeBase64Html(value) {
     const decoded = {};
     for (const [key, item] of Object.entries(value)) {
       if (typeof item === "string") {
-        decoded[key] = item;
+        decoded[key] = key === "name" ? item.trim() : item;
         const htmlPayload = maybeDecodeHtmlPayload(item, key);
         if (htmlPayload) {
           decoded[`${key}Html`] = htmlPayload.html;

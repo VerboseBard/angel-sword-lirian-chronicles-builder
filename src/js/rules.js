@@ -1,4 +1,4 @@
-import { BASE_STARTING_CLIM, BREAKTHROUGH_CREATION_BUDGET, CHARACTER_START_MODES, CLASS_ROWS, DEFAULT_CHARACTER_START_MODE, MIRANE_START_MODE_ID, MIRANE_STARTING_CLIM_BONUS, SELECTED_GAME_VERSION_KEY, SELECTED_GAME_VERSION_LATEST_KEY, SKILL_DEFINITIONS, STARTING_CLASS_EXP, STARTING_INTERLUDE_POINTS } from "./constants.js";
+import { BASE_STARTING_CLIM, BREAKTHROUGH_CREATION_BUDGET, CHARACTER_START_MODES, CLASS_ROWS, DEFAULT_CHARACTER_START_MODE, HUMAN_CLASS_EXP_BONUS, MIRANE_START_MODE_ID, MIRANE_STARTING_CLIM_BONUS, SELECTED_GAME_VERSION_KEY, SELECTED_GAME_VERSION_LATEST_KEY, SKILL_DEFINITIONS, SLOW_STARTER_CLASS_EXP_PENALTY, STARTING_CLASS_EXP, STARTING_INTERLUDE_POINTS } from "./constants.js";
 import { asArray, buildLookup, clamp, cleanText, formatModifier, normalizeKey, normalizePhrase, splitSentences, toNumber } from "./utils.js";
 import { mergePlayState, persistWorkingState, state, trySetLocalStorage } from "./state.js";
 import { parseNumericCost } from "./io.js";
@@ -215,6 +215,29 @@ const phrases = [name];
       }
       return Array.from(new Set(phrases.filter(Boolean)));
     }
+function getCreationClassExpState(selectedBreakthroughs = getSelectedBreakthroughRecords()) {
+      const race = getSelectedRaceDetail();
+const selectedNames = new Set(selectedBreakthroughs.map((entry) => normalizePhrase(entry?.name)));
+const isHuman = normalizePhrase(race?.name) === "human";
+const isHumanChimeraHybrid = selectedNames.has("human chimera hybrid race");
+const hasHumanBonus = isHuman && !isHumanChimeraHybrid;
+const hasSlowStarter = selectedNames.has("slow starter");
+const humanBonus = hasHumanBonus ? HUMAN_CLASS_EXP_BONUS : 0;
+const slowStarterPenalty = hasSlowStarter ? SLOW_STARTER_CLASS_EXP_PENALTY : 0;
+      return {
+        base: STARTING_CLASS_EXP,
+        humanBonus,
+        slowStarterPenalty,
+        hasHumanBonus,
+        humanBonusSuppressedByHybrid: isHuman && isHumanChimeraHybrid,
+        hasSlowStarter,
+        total: Math.max(0, STARTING_CLASS_EXP + humanBonus - slowStarterPenalty)
+      };
+    }
+function isExpBankAutoManaged() {
+      const expBankText = cleanText(state.fields.Exp);
+      return !expBankText || expBankText === cleanText(state.builder.autoExpBank);
+    }
 export function getBreakthroughBudgetState(excludeId = "") {
       const selected = getSelectedBreakthroughRecords().filter((entry) => entry.id !== excludeId);
 const spent = selected.reduce((total, entry) => total + Math.max(0, parseNumericCost(entry.cost)), 0);
@@ -222,9 +245,11 @@ const creationSpent = Math.min(BREAKTHROUGH_CREATION_BUDGET, spent);
 const creationRemaining = Math.max(0, BREAKTHROUGH_CREATION_BUDGET - spent);
 const generalSpent = Math.max(0, spent - BREAKTHROUGH_CREATION_BUDGET);
 const expBankText = cleanText(state.fields.Exp);
-const generalRemaining = expBankText
-        ? Math.max(0, toNumber(expBankText, 0))
-        : Math.max(0, STARTING_CLASS_EXP - getSelectedClassProgress().reduce((total, entry) => total + entry.cost, 0));
+const creationClassExp = getCreationClassExpState(selected);
+const classSpent = getSelectedClassProgress().reduce((total, entry) => total + entry.cost, 0);
+const generalRemaining = isExpBankAutoManaged()
+        ? Math.max(0, creationClassExp.total - classSpent - generalSpent)
+        : Math.max(0, toNumber(expBankText, 0));
 const remaining = creationRemaining + generalRemaining;
       return {
         budget: BREAKTHROUGH_CREATION_BUDGET,
@@ -234,6 +259,7 @@ const remaining = creationRemaining + generalRemaining;
         generalSpent,
         generalRemaining,
         remaining,
+        creationClassExp,
         selected
       };
     }
@@ -351,17 +377,24 @@ export function getClassUnlockBudgetState() {
       const classProgress = getSelectedClassProgress();
 const selectedClasses = classProgress.map((entry) => entry.record);
 const spentExp = classProgress.reduce((total, entry) => total + entry.cost, 0);
+const breakthroughBudget = getBreakthroughBudgetState();
+const creationClassExp = breakthroughBudget.creationClassExp;
 const spentInterlude = selectedClasses.reduce((total, record) => total + getClassInterludeCost(record), 0);
 const expBankText = cleanText(state.fields.Exp);
 const gmExtraInterlude = Math.max(0, Math.floor(toNumber(state.fields["GM Extra IP"], 0)));
 const interludeBudget = STARTING_INTERLUDE_POINTS + gmExtraInterlude;
-const remainingExp = expBankText
-        ? Math.max(0, toNumber(expBankText, 0))
-        : Math.max(0, STARTING_CLASS_EXP - spentExp);
+const remainingExp = isExpBankAutoManaged()
+        ? Math.max(0, creationClassExp.total - spentExp - breakthroughBudget.generalSpent)
+        : Math.max(0, toNumber(expBankText, 0));
       return {
         selectedClasses,
         classProgress,
         expBudget: spentExp + remainingExp,
+        startingExpBudget: creationClassExp.total,
+        humanExpBonus: creationClassExp.humanBonus,
+        humanExpBonusSuppressedByHybrid: creationClassExp.humanBonusSuppressedByHybrid,
+        slowStarterExpPenalty: creationClassExp.slowStarterPenalty,
+        generalBreakthroughExpSpent: breakthroughBudget.generalSpent,
         baseInterludeBudget: STARTING_INTERLUDE_POINTS,
         gmExtraInterlude,
         interludeBudget,
@@ -803,7 +836,7 @@ export function getSkillBreakdownParts(skill, expertiseGroup = null) {
         return [];
       }
 const parts = [
-        `${skill.stat} ${formatModifier(skill.substatValue)}`,
+        skill.stat ? `${skill.stat} ${formatModifier(skill.substatValue)}` : "No governing sub-stat",
         `Skill ${formatModifier(skill.creationSkillPoints)}`
       ];
       if (skill.racialSkillPoints) {

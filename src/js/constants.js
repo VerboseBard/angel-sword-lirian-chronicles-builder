@@ -38,6 +38,8 @@ export const PAGE_BACKGROUNDS = {
       6: "assets/page-ability.png"
     };
     export const STARTING_CLASS_EXP = 1000;
+    export const HUMAN_CLASS_EXP_BONUS = 100;
+    export const SLOW_STARTER_CLASS_EXP_PENALTY = 200;
     export const STARTING_INTERLUDE_POINTS = 3;
     export const CLASS_PURCHASABLE_LEVELS = 7;
     export const CLASS_PASSIVE_SLOTS = {
@@ -121,6 +123,8 @@ export const PAGE_BACKGROUNDS = {
 export const NAME_FIELDS = ["Name", "Name2", "Name3", "Name4", "Name5", "Name6"];
 export const MULTILINE_FIELDS = new Set(["Injuries", "Personality", "Appearance", "Items", "Proficiencies", "BName", "BDescription"]);
 export const SUBSTAT_OPTIONS = ["Fitness", "Cunning", "Reason", "Awareness", "Presence"];
+export const SKILL_POINT_CAP = 15;
+export const SKILL_EXPERTISE_CAP = 15;
 export const SKILL_OPTIONS = [
       "Athletics", "Riding", "Deception", "Roguecraft", "Stealth", "Artifice", "Appraise",
       "Common Knowledge", "Flight", "History", "Linguistics", "Magic", "Medicine", "Religion",
@@ -148,17 +152,22 @@ export const SKILL_DEFINITIONS = [
       { name: "Art", stat: "Presence" },
       { name: "Intimidation", stat: "Presence" },
       { name: "Negotiation", stat: "Presence" },
-      { name: "Alchemy", stat: "Reason", group: "crafting" },
-      { name: "Armorsmithing", stat: "Fitness", group: "crafting" },
+      { name: "Alchemy", stat: "", group: "crafting" },
+      { name: "Armorsmithing", stat: "", group: "crafting" },
       { name: "Art Magic", stat: "Presence" },
-      { name: "Blacksmithing", stat: "Fitness", group: "crafting" },
-      { name: "Carpentry", stat: "Fitness", group: "crafting" },
-      { name: "Culinary", stat: "Presence", group: "crafting" },
+      { name: "Blacksmith", stat: "", group: "crafting" },
+      { name: "Carpentry", stat: "", group: "crafting" },
+      { name: "Culinary", stat: "", group: "crafting" },
       { name: "Expert Knowledge", stat: "Reason" },
-      { name: "Farming", stat: "Awareness", group: "gathering" },
-      { name: "Foraging", stat: "Awareness", group: "gathering" },
+      { name: "Farming", stat: "", group: "crafting" },
+      { name: "Foraging", stat: "", group: "gathering" },
       { name: "Magic Perception", stat: "Awareness" },
-      { name: "Mining", stat: "Fitness", group: "gathering" }
+      { name: "Mining", stat: "", group: "gathering" },
+      { name: "Artificer", stat: "", group: "crafting" },
+      { name: "Herbalism", stat: "", group: "gathering" },
+      { name: "Fishing", stat: "", group: "gathering" },
+      { name: "Hunting", stat: "", group: "gathering" },
+      { name: "Logging", stat: "", group: "gathering" }
     ];
 export let SKILL_EXPERTISE_OPTIONS = {
       Athletics: ["Swimming", "Jumping", "Climbing", "Basketball"],
@@ -195,7 +204,8 @@ export let SKILL_EXPERTISE_OPTIONS = {
       Culinary: ["Food", "Alchemy Units", "Herbs"]
     };
     export const SKILL_ALIASES = new Map([
-      ["artificing", "Artifice"]
+      ["artificing", "Artificer"],
+      ["blacksmithing", "Blacksmith"]
     ]);
     export const OFFICIAL_LANGUAGE_OPTIONS = [
       "Common",
@@ -229,6 +239,11 @@ export const SPECIALITY_WEAPON_GROUP_OPTIONS = [
       "Saboteur Thread Daggers",
       "Lance",
       "Whip",
+      "Chainsaw",
+      "Channeling Weapons"
+    ];
+export const WEAPON_GROUP_REFERENCE_OPTIONS = [
+      ...SPECIALITY_WEAPON_GROUP_OPTIONS,
       "Gauntlets",
       "Wand",
       "Magic Staff",

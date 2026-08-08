@@ -88,6 +88,273 @@ try {
   console.log(JSON.stringify({ sevenSorrows }, null, 2));
   if (!sevenSorrows.found || sevenSorrows.locked) process.exitCode = 1;
 
+  const creationBudgetCases = [
+    {
+      name: "Pure Human",
+      raceId: "human",
+      breakthroughIds: [],
+      expectedBudget: 1100,
+      expectedNote: ["Human adds 100"]
+    },
+    {
+      name: "Human-Chimera Hybrid",
+      raceId: "human",
+      breakthroughIds: ["human-chimera-hybrid--race-"],
+      expectedBudget: 1000,
+      expectedNote: ["Human-Chimera Hybrid removes the Human +100"]
+    },
+    {
+      name: "Human Slow Starter",
+      raceId: "human",
+      breakthroughIds: ["slow-starter"],
+      expectedBudget: 900,
+      expectedNote: ["Human adds 100", "Slow Starter removes 200"]
+    },
+    {
+      name: "Chimera Slow Starter",
+      raceId: "chimera",
+      ancestryId: "slimefolk",
+      breakthroughIds: ["slow-starter"],
+      expectedBudget: 800,
+      expectedNote: ["Slow Starter removes 200"]
+    }
+  ];
+  const creationBudgetResults = [];
+  for (const testCase of creationBudgetCases) {
+    await page.evaluate((entry) => {
+      localStorage.clear();
+      localStorage.setItem("lyrian-chronicles-character-suite-v2", JSON.stringify({
+        ui: { mode: "builder", gameVersion: "0.13.1" },
+        fields: { Name: `${entry.name} Budget Tester` },
+        builder: {
+          selectedRaceId: entry.raceId,
+          selectedAncestryId: entry.ancestryId || "",
+          selectedBreakthroughIds: entry.breakthroughIds
+        }
+      }));
+    }, testCase);
+    await page.reload({ waitUntil: "load" });
+    await page.click('[data-step-index="6"]');
+    const budgetResult = await page.evaluate(() => ({
+      chips: [...document.querySelectorAll(".selected-chip")]
+        .map((entry) => entry.textContent.replace(/\s+/g, " ").trim())
+        .join(" | "),
+      note: document.querySelector(".builder-note")?.textContent.replace(/\s+/g, " ").trim() || ""
+    }));
+    creationBudgetResults.push({ ...testCase, ...budgetResult });
+  }
+  console.log(JSON.stringify({ creationBudgetResults }, null, 2));
+  for (const result of creationBudgetResults) {
+    if (
+      !result.chips.includes(`Class EXP: 0 / ${result.expectedBudget}`)
+      || !result.chips.includes(`Remaining EXP: ${result.expectedBudget}`)
+      || !result.expectedNote.every((text) => result.note.includes(text))
+    ) process.exitCode = 1;
+  }
+
+  const skilledFlierCases = [
+    { name: "Harpy trait", raceId: "chimera", ancestryId: "harpy", selected: [], expectedLocked: false },
+    { name: "Pixie trait", raceId: "fae", ancestryId: "pixie", selected: [], expectedLocked: false },
+    { name: "Tengu trait", raceId: "youkai", ancestryId: "tengu", selected: [], expectedLocked: false },
+    { name: "Sylph activated Fly", raceId: "fae", ancestryId: "sylph", selected: [], expectedLocked: true },
+    { name: "Mothfolk Racial Flight", raceId: "chimera", ancestryId: "mothfolk", selected: ["racial-flight"], expectedLocked: false }
+  ];
+  const skilledFlierResults = [];
+  for (const testCase of skilledFlierCases) {
+    await page.evaluate((entry) => {
+      localStorage.clear();
+      localStorage.setItem("lyrian-chronicles-character-suite-v2", JSON.stringify({
+        ui: { mode: "builder", gameVersion: "0.13.1" },
+        fields: { Name: `${entry.name} Tester` },
+        builder: {
+          selectedRaceId: entry.raceId,
+          selectedAncestryId: entry.ancestryId,
+          selectedBreakthroughIds: entry.selected
+        }
+      }));
+    }, testCase);
+    await page.reload({ waitUntil: "load" });
+    await page.click('[data-step-index="5"]');
+    const status = await page.evaluate(() => {
+      const card = [...document.querySelectorAll(".builder-option-card")]
+        .find((entry) => entry.querySelector("strong")?.textContent.trim() === "Skilled Flier");
+      return {
+        found: Boolean(card),
+        locked: card?.classList.contains("locked") || false,
+        text: card?.textContent.replace(/\s+/g, " ").trim() || ""
+      };
+    });
+    skilledFlierResults.push({ ...testCase, ...status });
+  }
+  console.log(JSON.stringify({ skilledFlierResults }, null, 2));
+  for (const result of skilledFlierResults) {
+    if (!result.found || result.locked !== result.expectedLocked) process.exitCode = 1;
+  }
+
+  await page.evaluate(() => {
+    localStorage.clear();
+    localStorage.setItem("lyrian-chronicles-character-suite-v2", JSON.stringify({
+      ui: { mode: "builder", gameVersion: "0.13.1" },
+      fields: { Name: "Speciality Weapon List Tester" },
+      builder: {
+        selectedRaceId: "human",
+        selectedBreakthroughIds: ["speciality-weapon-training"],
+        inspected: { breakthrough: "speciality-weapon-training" }
+      }
+    }));
+  });
+  await page.reload({ waitUntil: "load" });
+  await page.click('[data-step-index="5"]');
+  const specialityWeaponCard = page.locator('.builder-repeatable-choice-card').filter({ hasText: 'Speciality Weapon Training' });
+  const specialityWeaponOptions = await specialityWeaponCard.locator('[data-repeatable-breakthrough-select] option').allTextContents();
+  const requiredSpecialityWeapons = ["Chainsaw", "Channeling Weapons"];
+  const retiredSpecialityWeapons = ["Gauntlets", "Wand", "Magic Staff", "Scythe", "Giant Scissors", "Pickaxe", "Hori", "Sickle", "Smith's Hammer"];
+  console.log(JSON.stringify({ specialityWeaponOptions }, null, 2));
+  if (
+    !requiredSpecialityWeapons.every((name) => specialityWeaponOptions.includes(name))
+    || retiredSpecialityWeapons.some((name) => specialityWeaponOptions.includes(name))
+  ) process.exitCode = 1;
+
+  await page.evaluate(() => {
+    localStorage.clear();
+    localStorage.setItem("lyrian-chronicles-character-suite-v2", JSON.stringify({
+      ui: { mode: "builder", gameVersion: "0.13.1" },
+      fields: { Name: "Skill Model Tester", Fitness: "2", SkillPoint1: "20" },
+      builder: {
+        selectedRaceId: "human",
+        skillExpertiseEntries: [{ skillIndex: 1, name: "Climbing", source: "creation", choiceId: "", points: 8 }]
+      }
+    }));
+  });
+  await page.reload({ waitUntil: "load" });
+  await page.click('[data-step-index="7"]');
+  const skillModel = await page.evaluate(() => {
+    const rows = [...document.querySelectorAll(".builder-skill-row")];
+    const byName = (name) => rows.find((row) => row.querySelector(".builder-skill-copy strong")?.textContent?.trim() === name);
+    const athletics = byName("Athletics");
+    const gatheringNames = ["Mining", "Herbalism", "Foraging", "Fishing", "Hunting", "Logging"];
+    return {
+      names: rows.map((row) => row.querySelector(".builder-skill-copy strong")?.textContent?.trim()).filter(Boolean),
+      gatheringLabels: gatheringNames.map((name) => byName(name)?.querySelector(".builder-skill-copy span")?.textContent?.trim() || ""),
+      athleticsText: athletics?.textContent.replace(/\s+/g, " ").trim() || ""
+    };
+  });
+  console.log(JSON.stringify({ skillModel }, null, 2));
+  if (
+    !["Artificer", "Herbalism", "Fishing", "Hunting", "Logging", "Blacksmith"].every((name) => skillModel.names.includes(name))
+    || skillModel.names.includes("Blacksmithing")
+    || !skillModel.gatheringLabels.every((label) => label.includes("no linked sub-stat"))
+    || !skillModel.athleticsText.includes("Base Roll +17")
+    || !skillModel.athleticsText.includes("exceed the 15-point cap by 5")
+    || !skillModel.athleticsText.includes("= +15")
+  ) process.exitCode = 1;
+
+  const acolyteGateCases = [
+    { name: "Human", raceId: "human", ancestryId: "", breakthroughs: [], expectedLocked: false },
+    { name: "Nonhuman without Divine's Chosen", raceId: "fae", ancestryId: "selkie", breakthroughs: [], expectedLocked: true },
+    { name: "Nonhuman with Divine's Chosen", raceId: "fae", ancestryId: "selkie", breakthroughs: ["divine-s-chosen"], expectedLocked: false }
+  ];
+  const acolyteGateResults = [];
+  for (const testCase of acolyteGateCases) {
+    await page.evaluate((entry) => {
+      localStorage.clear();
+      localStorage.setItem("lyrian-chronicles-character-suite-v2", JSON.stringify({
+        ui: { mode: "builder", gameVersion: "0.13.1" },
+        fields: { Name: `${entry.name} Acolyte Gate Tester` },
+        builder: {
+          selectedRaceId: entry.raceId,
+          selectedAncestryId: entry.ancestryId,
+          selectedBreakthroughIds: entry.breakthroughs
+        }
+      }));
+    }, testCase);
+    await page.reload({ waitUntil: "load" });
+    await page.click('[data-step-index="6"]');
+    acolyteGateResults.push(await page.evaluate(() => {
+      const card = [...document.querySelectorAll(".builder-option-card")]
+        .find((entry) => entry.querySelector("strong")?.textContent?.trim() === "Acolyte");
+      return { found: Boolean(card), locked: card?.classList.contains("locked") || false };
+    }));
+  }
+  console.log(JSON.stringify({ acolyteGateResults }, null, 2));
+  if (acolyteGateResults.some((result, index) => !result.found || result.locked !== acolyteGateCases[index].expectedLocked)) process.exitCode = 1;
+
+  await page.evaluate(() => {
+    localStorage.clear();
+    localStorage.setItem("lyrian-chronicles-character-suite-v2", JSON.stringify({
+      ui: { mode: "builder", gameVersion: "0.13.1" },
+      fields: { Name: "Rogue Key Skill Grant Tester" },
+      builder: {
+        selectedRaceId: "human",
+        selectedClassIds: ["rogue"],
+        classAbilityProgress: { rogue: 0 }
+      }
+    }));
+  });
+  await page.reload({ waitUntil: "load" });
+  await page.click('[data-step-index="7"]');
+  const rogueGrantButton = page.locator('[data-adjust-class-skill="1"][data-class-skill-choice="class-rogue-key-skill-pool-1"][data-class-skill-kind="skill"]');
+  for (let point = 0; point < 5; point += 1) await rogueGrantButton.click();
+  const rogueSkillGrant = await page.evaluate(() => {
+    const row = [...document.querySelectorAll(".builder-skill-row")]
+      .find((entry) => entry.querySelector(".builder-skill-copy strong")?.textContent?.trim() === "Roguecraft");
+    return row?.textContent.replace(/\s+/g, " ").trim() || "";
+  });
+  console.log(JSON.stringify({ rogueSkillGrant }, null, 2));
+  if (!rogueSkillGrant.includes("Class Benefit Skill 0 skill points left - 5") || !rogueSkillGrant.includes("Base Roll +5")) process.exitCode = 1;
+
+  const fixedRacialExpertiseCases = [
+    { raceId: "fae", ancestryId: "cu-sith", skill: "Perception", specialty: "Smell", bonus: "+5" },
+    { raceId: "chimera", ancestryId: "mothfolk", skill: "Perception", specialty: "Vibration Sense", bonus: "+10" }
+  ];
+  const fixedRacialExpertiseResults = [];
+  await page.waitForTimeout(300);
+  for (const testCase of fixedRacialExpertiseCases) {
+    await page.evaluate((entry) => {
+      localStorage.clear();
+      localStorage.setItem("lyrian-chronicles-character-suite-v2", JSON.stringify({
+        ui: { mode: "builder", gameVersion: "0.13.1" },
+        fields: { Name: `${entry.ancestryId} Expertise Tester` },
+        builder: { selectedRaceId: entry.raceId, selectedAncestryId: entry.ancestryId }
+      }));
+    }, testCase);
+    await page.reload({ waitUntil: "load" });
+    await page.click("#builder-sheet-shortcut-top");
+    await page.waitForSelector("#play-skills .play-skill-mini-row");
+    fixedRacialExpertiseResults.push(await page.evaluate((entry) => {
+      const row = [...document.querySelectorAll("#play-skills .play-skill-mini-row")]
+        .find((candidate) => candidate.textContent.includes(entry.skill));
+      return row?.querySelector(".play-skill-expertise-options")?.textContent.replace(/\s+/g, " ").trim() || "";
+    }, testCase));
+  }
+  console.log(JSON.stringify({ fixedRacialExpertiseResults }, null, 2));
+  if (fixedRacialExpertiseResults.some((text, index) => !text.includes(`${fixedRacialExpertiseCases[index].specialty} ${fixedRacialExpertiseCases[index].bonus}`))) process.exitCode = 1;
+
+  await page.evaluate(() => {
+    localStorage.clear();
+    localStorage.setItem("lyrian-chronicles-character-suite-v2", JSON.stringify({
+      ui: { mode: "builder", gameVersion: "0.13.1" },
+      fields: { Name: "All Paladins Override Tester" },
+      builder: {
+        selectedRaceId: "chimera",
+        selectedAncestryId: "dogfolk",
+        selectedBreakthroughIds: ["divine-s-chosen", "the-unknown-paladin", "light-armor-training", "medium-armor-training", "weapon-training"],
+        selectedClassIds: ["ranger"],
+        classAbilityProgress: { ranger: 7 },
+        choiceSelections: { "breakthrough-weapon-training-groups": "Bludgeoning Weapons" }
+      }
+    }));
+  });
+  await page.reload({ waitUntil: "load" });
+  await page.click('[data-step-index="6"]');
+  const paladinGateResults = await page.evaluate(() => ["Gun Paladin", "Shield Paladin", "Sword Paladin"].map((name) => {
+    const card = [...document.querySelectorAll(".builder-option-card")]
+      .find((entry) => entry.querySelector("strong")?.textContent?.trim() === name);
+    return { name, found: Boolean(card), locked: card?.classList.contains("locked") || false, note: card?.textContent.replace(/\s+/g, " ").trim() || "" };
+  }));
+  console.log(JSON.stringify({ paladinGateResults }, null, 2));
+  if (paladinGateResults.some((result) => !result.found || result.locked)) process.exitCode = 1;
+
   const quickBuildCases = [
     {
       speciesId: "gnome",
@@ -108,7 +375,7 @@ try {
       buildId: "cleric-support",
       expectedClasses: ["Acolyte", "Medic", "Hydromancer"],
       expectedGear: "Staff (One-Handed)",
-      expectedProficiency: "Magic Staff",
+      expectedProficiency: "Staves",
       expectsDivineChoice: true
     }
   ];
