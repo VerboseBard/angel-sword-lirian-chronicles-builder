@@ -73,7 +73,7 @@
       glow: 0x45d9ff
     }
   };
-  const ROLLER_VERSION = "alpha4-new-angelsword-sidecar-27-d4-triangle-pivot";
+  const ROLLER_VERSION = "alpha4-new-angelsword-sidecar-32-srgb-output";
   const SKIN_MODE_NAME = "Sprite-Skin Physics Dice";
   const SPRITE_SKIN_PHYSICS_SIDES = new Set([6, 8, 10, 12, 100]);
 
@@ -108,6 +108,15 @@
 
   function clamp(value, min, max) {
     return Math.min(max, Math.max(min, value));
+  }
+
+  function configureRendererColor(renderer) {
+    const THREE = window.THREE;
+    if ("outputColorSpace" in renderer && THREE.SRGBColorSpace) {
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+    } else if ("outputEncoding" in renderer && THREE.sRGBEncoding) {
+      renderer.outputEncoding = THREE.sRGBEncoding;
+    }
   }
 
   function easeOutCubic(value) {
@@ -197,15 +206,17 @@
       };
     }
 
-    // The provided D4 art is classic corner-number art. Remap each requested
-    // result to a source face that contains that number, then rotate it so the
-    // result sits on the top point instead of generating a second label.
+    // The provided D4 art is classic corner-number art. Art key "k" is the
+    // physical panel opposite result vertex k, matching D4_FACE_CORNERS in the
+    // shared geometry contract. Reuse the existing four Angel Sword panels and
+    // rotate only the complete panel so every numeral points toward its own
+    // vertex, exactly like the Asari and Leaflit D4s.
     const turn = (Math.PI * 2) / 3;
     const map = {
-      "1": { sourceLabel: "1", rotation: turn },
-      "2": { sourceLabel: "1", rotation: -turn },
-      "3": { sourceLabel: "2", rotation: 0 },
-      "4": { sourceLabel: "1", rotation: 0 }
+      "1": { sourceLabel: "2", rotation: -turn },
+      "2": { sourceLabel: "3", rotation: turn },
+      "3": { sourceLabel: "1", rotation: turn },
+      "4": { sourceLabel: "4", rotation: -turn }
     };
     return map[String(label || "")] || {
       sourceLabel: String(label || ""),
@@ -1764,6 +1775,39 @@
     const points = layout.points;
     const normal = face.normal.clone().normalize();
     const canonicalUvs = makePanelPolygon(face.indexes.length, dieSides, 1);
+    const isD4 = Number(dieSides) === 4;
+    let d4UvFor = null;
+    if (isD4) {
+      // Use the same analytic face frame as the shared Asari/Leaflit roller.
+      // The old D4 path depended on incidental face-index order and a mirrored
+      // UV shortcut, so a logically correct panel could still land on the
+      // wrong physical vertex.
+      const polygonCenter = getPolygonCenter(canonicalUvs);
+      const apexOffset = {
+        x: canonicalUvs[0].x - polygonCenter.x,
+        y: canonicalUvs[0].y - polygonCenter.y
+      };
+      const apexDistance = Math.hypot(apexOffset.x, apexOffset.y) || 1;
+      const up2 = {
+        x: apexOffset.x / apexDistance,
+        y: apexOffset.y / apexDistance
+      };
+      const right2 = { x: -up2.y, y: up2.x };
+      const faceCenter = averagePoints(face.indexes.map((index) => vertices[index]));
+      const apexIndex = Math.min(...face.indexes);
+      const faceUp = vertices[apexIndex].clone().sub(faceCenter).projectOnPlane(normal).normalize();
+      const faceRight = new THREE.Vector3().crossVectors(faceUp, normal).normalize();
+      const worldApexDistance = vertices[apexIndex].clone().sub(faceCenter).length() || 1;
+      const scale = apexDistance / worldApexDistance;
+      d4UvFor = (point) => {
+        const local = point.clone().sub(faceCenter);
+        const a = local.dot(faceRight);
+        const b = local.dot(faceUp);
+        const x = polygonCenter.x + (a * right2.x + b * up2.x) * scale;
+        const y = polygonCenter.y + (a * right2.y + b * up2.y) * scale;
+        return { u: x, v: 1 - y };
+      };
+    }
     const positions = [];
     const normals = [];
     const uvs = [];
@@ -1776,10 +1820,9 @@
         uvs.push(uv.x, 1 - uv.y);
         return;
       }
-      if (Number(dieSides) === 4) {
-        // The Angel Sword D4 uses imported numbered face art, so mirror it the
-        // same way as other face-read dice instead of adding vertex labels.
-        uvs.push(1 - uv.x, 1 - uv.y);
+      if (isD4 && d4UvFor) {
+        const mapped = d4UvFor(point);
+        uvs.push(mapped.u, mapped.v);
         return;
       }
       // Mirror both UV axes so canvas-rendered face labels read left-to-right
@@ -1823,7 +1866,12 @@
 
   function addFaceSkins(group, vertices, faces, sides, palette) {
     const THREE = window.THREE;
-    const labels = getFaceLabels(sides, faces.length);
+    const labels = Number(sides) === 4
+      ? faces.map((face, index) => {
+          const excluded = [0, 1, 2, 3].find((vertexIndex) => !face.indexes.includes(vertexIndex));
+          return String((typeof excluded === "number" ? excluded : index) + 1);
+        })
+      : getFaceLabels(sides, faces.length);
     faces.forEach((face, index) => {
       const label = labels[index] || String(index + 1);
       const faceArtSource = getPreparedFaceArtSource(palette.id, sides, label);
@@ -1875,8 +1923,10 @@
     );
     group.add(edges);
 
-    const vertexLabels = [];
-    const readMode = "face";
+    const vertexLabels = safeSides === 4
+      ? vertices.map((_, index) => String(index + 1))
+      : [];
+    const readMode = safeSides === 4 ? "vertex" : "face";
     const baseFaceLabels = getFaceLabels(safeSides, faces.length);
     const resultLabel = safeSides === 10
       ? (Number(value) === 10 ? "0" : String(Number(value) || 1))
@@ -2049,6 +2099,32 @@
 
   function finalQuaternionForDie(die) {
     const THREE = window.THREE;
+    if (die.userData.readMode === "vertex") {
+      // Match the approved shared-core D4 settle exactly: rest on the panel
+      // opposite the requested vertex, put that vertex straight up, then yaw
+      // one adjacent panel toward the camera. The earlier screen-projection
+      // search could make a tilted corner look highest while the physical top
+      // vertex and the artwork disagreed.
+      const up = new THREE.Vector3(0, 1, 0);
+      const lift = new THREE.Quaternion().setFromUnitVectors(
+        die.userData.resultNormal.clone().normalize(),
+        up
+      );
+      const visibleFaceIndex = Math.max(0, die.userData.faceIndexes.findIndex((indexes) => (
+        indexes.includes(die.userData.resultIndex)
+      )));
+      const faceDirection = die.userData.faceNormals[visibleFaceIndex].clone()
+        .applyQuaternion(lift)
+        .projectOnPlane(up)
+        .normalize();
+      const toCamera = new THREE.Vector3(0, 0, 1);
+      const angle = Math.atan2(
+        new THREE.Vector3().crossVectors(faceDirection, toCamera).dot(up),
+        clamp(faceDirection.dot(toCamera), -1, 1)
+      );
+      return new THREE.Quaternion().setFromAxisAngle(up, angle).multiply(lift);
+    }
+
     const readVector = readVectorForDie(die);
     const faceToUp = new THREE.Quaternion().setFromUnitVectors(
       die.userData.resultNormal.clone().normalize(),
@@ -2076,7 +2152,21 @@
 
   function topFaceLabelForDie(die, quaternion = die.quaternion) {
     if (die.userData.readMode === "vertex") {
-      return screenTopVertexLabelForDie(die, quaternion);
+      const up = new window.THREE.Vector3(0, 1, 0);
+      const labels = die.userData.vertexLabels || [];
+      let best = { label: "", dot: -Infinity, index: -1, readMode: "vertex" };
+      (die.userData.vertexNormals || []).forEach((normal, index) => {
+        const dot = normal.clone().applyQuaternion(quaternion).normalize().dot(up);
+        if (dot > best.dot) {
+          best = {
+            label: labels[index] || String(index + 1),
+            dot,
+            index,
+            readMode: "vertex"
+          };
+        }
+      });
+      return best;
     }
     const readVector = readVectorForDie(die);
     const isVertexRead = die.userData.readMode === "vertex";
@@ -2135,6 +2225,7 @@
       antialias: true,
       preserveDrawingBuffer: true
     });
+    configureRendererColor(renderer);
     renderer.setPixelRatio(1);
     renderer.setSize(size, size, false);
     renderer.shadowMap.enabled = false;
@@ -2231,6 +2322,7 @@
     layer.appendChild(canvas);
 
     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    configureRendererColor(renderer);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(width, height, false);
     renderer.shadowMap.enabled = false;

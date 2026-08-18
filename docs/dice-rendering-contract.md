@@ -1,15 +1,18 @@
 # Dice Rendering Contract
 
-Locked on 2026-05-31 after the Angel Sword dice fixes.
+Locked on 2026-05-31 after the Angel Sword dice fixes. Updated on 2026-08-16
+after the four-set Beta 2.20 integration audit.
 
-This file is the memory for what "correct" means. If Asari or Leaflit dice are added back later, do not start by copying old roller behavior. Start here, then update the JSON contract and diagnostics only after the new set visually passes.
+This file is the memory for what "correct" means. When a set is added or regenerated,
+do not start by copying old roller behavior. Start here, then update the registry and
+diagnostics only after the set visually passes.
 
-## Approved Active Set
+## Approved Public Sets
 
-- Active set id: `new-angelsword`
-- User-facing name: `Angel Sword Dice`
-- Old Angel Sword dice: removed from selection because that design did not work.
-- Asari and Leaflit: may appear as `Coming Soon`, but should not be selectable until they have their own approved face-art pass.
+- `new-angelsword` — Angel Sword Dice
+- `asari-full-set-draft` — Asari Full Set
+- `leaflit-full-set` — Leaflit Full Set
+- `rana-full-set` — Rana Full Set
 
 ## Non-Negotiable Rules
 
@@ -21,42 +24,51 @@ This file is the memory for what "correct" means. If Asari or Leaflit dice are a
 
 ## D4 Contract
 
-Angel Sword D4 art is classic corner-number D4 art. The result is the number at the top point of the front triangle, not a generated center label.
+All four public D4s are vertex-read. The result is the number at the highest
+visible pyramid point, not a generated center label. Art key `face-k` (or the
+legacy Angel Sword label `k`) is the physical panel opposite result vertex
+`k`, so it contains the other three numbers.
 
-The source art does not contain every number at the top point in an unrotated form. The approved implementation is:
+The approved Angel Sword implementation is:
 
-- Use `getD4FaceArtTransform`.
-- Reuse imported D4 face art.
-- Remap the source label when needed.
-- Rotate the art around the triangle center so the requested result sits on the top point.
-- Treat D4 as `readMode: "face"` for roll matching.
+- Route Angel Sword through the same shared geometry and settling engine used
+  by Asari, Leaflit, and Rana.
+- Keep the imported Angel Sword border, pearl field, sword crest, gems, and
+  color design upright and unchanged on every flat panel.
+- Replace only the old baked numeral layer. Those three old numerals were all
+  painted upright to the source image, so rotating the complete triangle could
+  never make all three point toward their own vertices at once.
+- Rebuild the three gold numerals from `D4_FACE_CORNERS`, with apex `0 degrees`,
+  right `+120 degrees`, and left `-120 degrees`.
+- Treat D4 as `readMode: "vertex"` for roll matching.
 
-Approved D4 top-point map:
+Approved Angel Sword physical-panel map:
 
-| Result | Source Label | Rotation |
-| --- | --- | --- |
-| `1` | `1` | `+120 degrees` |
-| `2` | `1` | `-120 degrees` |
-| `3` | `2` | `0 degrees` |
-| `4` | `1` | `0 degrees` |
+| Physical panel | Required corners (apex/right/left) |
+| --- | --- |
+| `1` | `2 / 4 / 3` |
+| `2` | `1 / 3 / 4` |
+| `3` | `1 / 4 / 2` |
+| `4` | `1 / 2 / 3` |
 
 Do not reintroduce:
 
 - `d4VertexLabelTextureCache`
 - `makeD4VertexLabelTexture`
 - `addD4VertexLabelPanels`
-- Generated D4 vertex labels
+- Separate 3D label meshes or result badges
 - Large circled fake result numbers
 
 ## Future Dice Sets
 
-When adding Asari or Leaflit back:
+When adding another public set:
 
 1. Add or regenerate set-specific face art.
-2. Do not mark the set selectable yet.
+2. Keep it out of `promoted-dice-skins.registry.js` until its full-set checks pass.
 3. Create the same kind of preview grid used for Angel Sword.
 4. Confirm D4 top-point behavior, D10/D100 kite orientation, and tray previews.
-5. Update `assets/dice-3d/dice-rendering-contract.json`.
-6. Run `node scripts/diagnose-draft2.mjs`.
+5. Promote it with `npm run dice:promote` and verify the generated registry/sidecar.
+6. Run `npm run dice:core:check`, `npm run test:dice-skins`,
+   `npm run test:dice-browsers`, and `npm test`.
 
 This is the seatbelt. It should make future dice work boring in the best possible way.

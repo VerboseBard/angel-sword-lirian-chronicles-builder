@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Asari Full Dice Set - Live Geometry Comparison</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Georgia, "Times New Roman", serif;
+      background: #061522;
+      color: #fff4ce;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(40, 126, 232, 0.2), transparent 34rem),
+        linear-gradient(180deg, #071a2a, #03101b);
+    }
+
+    main {
+      width: min(1540px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 30px 0 48px;
+    }
+
+    header {
+      border: 1px solid rgba(216, 171, 65, 0.55);
+      border-radius: 18px;
+      padding: 22px 28px;
+      background: rgba(7, 30, 49, 0.94);
+      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      color: #f8d878;
+      font-size: clamp(2rem, 4vw, 3.25rem);
+      letter-spacing: 0.035em;
+    }
+
+    p { margin: 5px 0; line-height: 1.45; }
+
+    #status {
+      color: #9ddcff;
+      font-family: system-ui, sans-serif;
+      font-weight: 800;
+    }
+
+    .die-section {
+      margin-top: 22px;
+      padding: 18px;
+      border: 1px solid rgba(216, 171, 65, 0.35);
+      border-radius: 18px;
+      background: rgba(7, 27, 45, 0.82);
+    }
+
+    .die-section h2 {
+      margin: 0 0 5px;
+      color: #f8d878;
+      font-size: 1.65rem;
+    }
+
+    .section-note {
+      margin: 0 0 14px;
+      color: #d6eefe;
+      font-family: system-ui, sans-serif;
+      font-size: 0.94rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 15px;
+    }
+
+    figure {
+      margin: 0;
+      overflow: hidden;
+      border: 1px solid rgba(216, 171, 65, 0.42);
+      border-radius: 14px;
+      background: linear-gradient(145deg, rgba(12, 41, 65, 0.98), rgba(4, 20, 34, 0.98));
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+    }
+
+    .visual {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 1.18;
+      background: radial-gradient(circle, rgba(29, 73, 116, 0.28), transparent 68%);
+    }
+
+    .roll-image {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transform: scale(1.35);
+    }
+
+    .face-inset {
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      width: 32%;
+      aspect-ratio: 1;
+      object-fit: contain;
+      border: 1px solid rgba(255, 229, 154, 0.72);
+      border-radius: 8px;
+      background: #071727;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.55);
+    }
+
+    figcaption {
+      min-height: 46px;
+      padding: 9px 12px 10px;
+      border-top: 1px solid rgba(216, 171, 65, 0.25);
+      color: #ffe59a;
+      text-align: center;
+      font: 800 0.96rem/1.2 system-ui, sans-serif;
+    }
+
+    @media (max-width: 1050px) {
+      .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 720px) {
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Asari Full Set - Live Dice Geometry</h1>
+      <p>Every large image is the actual character-sheet mesh, UV mapping, camera, lighting, and deterministic settled-result orientation. The inset is the baked face texture.</p>
+      <p>For D4, the rolled result is the upward vertex. Each physical panel carries three corner values rotated toward their own vertex; <code>face-k</code> is the panel on the floor when result k is upward.</p>
+      <p id="status">Loading all 70 installed Asari face textures...</p>
+    </header>
+    <div id="sections"></div>
+  </main>
+
+  <script src="assets/dice/promoted-dice-skins.registry.js"></script>
+  <script src="assets/dice-3d/promoted/asari-full-set-draft.js"></script>
+  <script src="assets/dice-3d/character-sheet-skin-studio.js"></script>
+  <script src="assets/vendor/three.min.js"></script>
+  <script src="assets/dice-3d/dice-geometry.js"></script>
+  <script src="assets/dice-3d/shared-dice-roller-core.js"></script>
+  <script>
+    (async function renderComparison() {
+      const setId = "asari-full-set-draft";
+      const status = document.getElementById("status");
+      const sections = document.getElementById("sections");
+      const comparisons = [
+        {
+          die: "d4",
+          sides: 4,
+          values: [1, 2, 3, 4],
+          note: "All four vertex results. The inset is the opposite/down panel and documents its three-corner sequence."
+        },
+        { die: "d6", sides: 6, values: [1, 4, 6], note: "Square faces use the same pearl, gold, sapphire, violet, and arcane-line language." },
+        { die: "d8", sides: 8, values: [1, 5, 8], note: "Triangular faces share the corrected D20 optical number height." },
+        { die: "d10", sides: 10, values: [1, 5, 10], note: "The 0 face is requested as result 10. Artwork is fitted to the roller's real kite, not a generic diamond." },
+        { die: "d100", sides: 100, values: [10, 50, 100], note: "The 00 face is requested as result 100 and uses the same exact kite geometry as D10." },
+        { die: "d12", sides: 12, values: [1, 6, 12], note: "Pentagonal artwork is fitted to the live regular dodecahedron face." },
+        { die: "d20", sides: 20, values: [1, 10, 20], note: "Corrected raised numerals on 1-19; Asari portrait replaces 20." }
+      ];
+
+      const faceKeyFor = (entry, value) => {
+        if (entry.die === "d4") return `face-${value}`;
+        if (entry.die === "d10" && value === 10) return "0";
+        if (entry.die === "d100" && value === 100) return "00";
+        return String(value).padStart(entry.die === "d100" ? 2 : 1, "0");
+      };
+
+      const allSources = [];
+      comparisons.forEach((entry) => {
+        entry.values.forEach((value) => {
+          const key = faceKeyFor(entry, value);
+          allSources.push(window.DiceSkinStudio.getFaceImage(setId, entry.die, key));
+        });
+      });
+      if (allSources.some((source) => !source)) {
+        status.textContent = "The installed Asari full-set draft is incomplete.";
+        return;
+      }
+
+      await Promise.all(allSources.map((source) => new Promise((resolve) => {
+        const image = new Image();
+        image.onload = resolve;
+        image.onerror = resolve;
+        image.src = source;
+      })));
+      window.LyrianAccurateDiceRoller.preloadFaceArt(setId);
+      await new Promise((resolve) => setTimeout(resolve, 900));
+
+      comparisons.forEach((entry) => {
+        const section = document.createElement("section");
+        section.className = "die-section";
+        const heading = document.createElement("h2");
+        heading.textContent = entry.die.toUpperCase();
+        const note = document.createElement("p");
+        note.className = "section-note";
+        note.textContent = entry.note;
+        const grid = document.createElement("div");
+        grid.className = "grid";
+
+        entry.values.forEach((value) => {
+          const faceKey = faceKeyFor(entry, value);
+          const figure = document.createElement("figure");
+          const visual = document.createElement("div");
+          visual.className = "visual";
+          const rollImage = document.createElement("img");
+          rollImage.className = "roll-image";
+          rollImage.alt = `${entry.die.toUpperCase()} settled at result ${value}`;
+          rollImage.src = window.LyrianAccurateDiceRoller.buildPreviewDataUrl({
+            setId,
+            sides: entry.sides,
+            value,
+            size: 480
+          });
+          const faceInset = document.createElement("img");
+          faceInset.className = "face-inset";
+          faceInset.alt = `${entry.die.toUpperCase()} texture ${faceKey}`;
+          faceInset.src = window.DiceSkinStudio.getFaceImage(setId, entry.die, faceKey);
+          visual.append(rollImage, faceInset);
+          const caption = document.createElement("figcaption");
+          const displayed = entry.die === "d10" && value === 10
+            ? "0 (result 10)"
+            : entry.die === "d100" && value === 100
+              ? "00 (result 100)"
+              : String(value);
+          caption.textContent = entry.die === "d4"
+            ? `Result ${displayed} - rests on ${faceKey}`
+            : `Result ${displayed}`;
+          figure.append(visual, caption);
+          grid.appendChild(figure);
+        });
+        section.append(heading, note, grid);
+        sections.appendChild(section);
+      });
+
+      const validation = window.LyrianAccurateDiceRoller.validateAllFaceSettles({ setId });
+      status.textContent = validation.failed === 0
+        ? `Ready - all ${validation.total} requested results settle on the correct result geometry.`
+        : `Geometry check found ${validation.failed} failed settles out of ${validation.total}.`;
+      document.documentElement.dataset.ready = validation.failed === 0 ? "true" : "failed";
+      window.AsariFullSetValidation = validation;
+    }());
+  </script>
+</body>
+</html>

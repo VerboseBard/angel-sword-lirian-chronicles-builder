@@ -77,5 +77,27 @@ const totalSelected = getDiceTrayTotalCount(diceTray);
           </div>
         ` : ""}
       `;
+
+      if (diceTray.showSetPicker) {
+        window.requestAnimationFrame(() => {
+          const panel = tray.querySelector(".dice-tray-panel");
+          if (!panel || !state.play?.diceTray?.showSetPicker) {
+            return;
+          }
+
+          // Anchor the expanded gallery on its own confirmation action instead
+          // of scrolling past it into the ordinary roll controls. This keeps
+          // Use Dice at the bottom edge at 100% browser zoom while the selected
+          // set summary remains available by scrolling upward.
+          const useButton = panel.querySelector("[data-dice-use]");
+          if (!useButton) {
+            return;
+          }
+          panel.scrollTop = Math.max(
+            0,
+            useButton.offsetTop + useButton.offsetHeight - panel.clientHeight
+          );
+        });
+      }
     }
-
+

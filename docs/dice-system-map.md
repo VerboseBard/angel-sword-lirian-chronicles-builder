@@ -22,7 +22,12 @@ src/js/constants.js
 assets/dice-3d/dice-3d-embedded.js
 assets/dice-3d/lyrian-accurate-dice.js
 assets/dice-3d/new-angelsword-dice-face-art.384-webp.js
+assets/dice-3d/shared-dice-roller-core.js
+assets/dice-3d/dice-roller-router.js
+assets/dice-3d/promoted/
 assets/dice/dice-pack-manifest.json
+assets/dice/promoted-dice-skins.json
+assets/dice/promoted-dice-skins.registry.js
 assets/dice/new-angelsword/
 assets/dice/dice-coming-soon.svg
 docs/dice-rendering-contract.md
@@ -47,7 +52,8 @@ ENABLE_WEBGL_DICE_ROLLS
 
 ### Runtime Dice Behavior
 
-`src/js/dice.js` handles dice selection, rendering, tray behavior, and preloading.
+`src/js/dice.js`, `src/js/ui.js`, and `src/js/runtime-loader.js` handle dice selection,
+tray rendering, persisted choice state, preview preparation, and lazy runtime loading.
 
 Search terms:
 
@@ -55,7 +61,8 @@ Search terms:
 renderDiceTray
 preloadDiceSetFaceArt
 dicePackRuntime
-getDiceTextureUrl
+prepareDiceSetPreviews
+selectDiceSet
 ```
 
 ### 3D/Animated Dice
@@ -67,6 +74,18 @@ assets/dice-3d/
 ```
 
 The current test suite guards against a past issue where the dice roll overlay visually darkened the sheet.
+
+### Installed Dice Sets
+
+The Beta 2.20 working tree has exactly four selectable sets:
+
+- Angel Sword Dice (`new-angelsword`)
+- Asari Full Set (`asari-full-set-draft`)
+- Leaflit Full Set (`leaflit-full-set`)
+- Rana Full Set (`rana-full-set`)
+
+Angel Sword is the built-in default. The other three are generated promoted packs. All
+four expose D4, D6, D8, D10, D100, D12, and D20 art and route through the shared renderer.
 
 ### Dice Packs
 
@@ -85,11 +104,12 @@ assets/dice/new-angelsword/
 ## How To Add A Future Dice Set
 
 1. Add dice preview and face/texture assets.
-2. Add a dice set entry in `src/js/constants.js` or a future bundled dice configuration.
-3. Add or update the pack manifest in `assets/dice/dice-pack-manifest.json`.
+2. Promote the pack so its sidecar, JSON registry, and browser registry are generated.
+3. Add or update the public pack manifest in `assets/dice/dice-pack-manifest.json`.
 4. Make sure fallback previews still exist for unavailable packs.
-5. Run `npm test`.
-6. Visually inspect the generated screenshots in `qa-test-results/`.
+5. Run `npm run dice:core:check`, `npm run test:dice-skins`, and
+   `npm run test:dice-browsers`.
+6. Run `npm test` and visually inspect the generated screenshots in `qa-test-results/`.
 
 ## What To Preserve
 
@@ -103,6 +123,9 @@ assets/dice/new-angelsword/
 Look in:
 
 ```text
+scripts/test-dice-skin-integration.mjs
+scripts/test-dice-browser-matrix.mjs
+scripts/test-ui-followups.mjs
 scripts/test-cross-browser.mjs
 ```
 

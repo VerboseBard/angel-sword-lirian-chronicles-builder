@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hybrid Dice Physics Check</title>
+  <style>
+    html, body { min-height: 100%; margin: 0; background: #06192a; color: #fff1bf; font: 16px Georgia, serif; }
+    main { position: relative; z-index: 2; padding: 24px; }
+    button { margin-right: 10px; padding: 10px 16px; border: 1px solid #d8a441; border-radius: 8px; background: #153754; color: #fff1bf; font: inherit; }
+    #status { margin-top: 12px; max-width: 760px; }
+    #dice-flight-layer { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Hybrid Dice Physics Check</h1>
+    <button type="button" id="hybrid">Roll hybrid physics</button>
+    <button type="button" id="scripted">Roll scripted fallback</button>
+    <p id="status">Ready.</p>
+  </main>
+  <div id="dice-flight-layer" aria-hidden="true"></div>
+
+  <script src="assets/dice/promoted-dice-skins.registry.js"></script>
+  <script src="assets/dice-3d/new-angelsword-dice-face-art.384-webp.js?v=angel-d4-canonical-corners-v3"></script>
+  <script src="assets/dice-3d/character-sheet-skin-studio.js?v=shared-contract-2"></script>
+  <script src="assets/vendor/three.min.js"></script>
+  <script src="assets/dice-3d/dice-geometry.js?v=shared-contract-2"></script>
+  <script src="assets/dice-3d/shared-dice-roller-core.js?v=hybrid-physics-center-burst-v3"></script>
+  <script>
+    (function () {
+      const results = [
+        { sides: 20, value: 20, label: "d20" },
+        { sides: 12, value: 12, label: "d12" },
+        { sides: 100, value: 70, label: "d100" },
+        { sides: 10, value: 7, label: "d10" },
+        { sides: 8, value: 8, label: "d8" },
+        { sides: 6, value: 6, label: "d6" },
+        { sides: 4, value: 4, label: "d4" }
+      ];
+      const status = document.getElementById("status");
+      const layer = document.getElementById("dice-flight-layer");
+
+      async function run(mode) {
+        await window.LyrianAccurateDiceRoller.preloadFaceArtReady("new-angelsword");
+        const duration = window.LyrianAccurateDiceRoller.rollDice({
+          layer,
+          results,
+          setId: "new-angelsword",
+          width: window.innerWidth,
+          height: window.innerHeight,
+          motionMode: mode,
+          reducedMotion: mode === "scripted",
+          onSettle(settled) {
+            const mismatches = settled.filter((entry) => !entry.matched);
+            status.textContent = `${mode}: ${settled.length} settled, ${mismatches.length} mismatch(es).`;
+          }
+        });
+        status.textContent = `${mode} started; duration ${Math.round(duration)} ms.`;
+      }
+
+      document.getElementById("hybrid").addEventListener("click", () => run("hybrid"));
+      document.getElementById("scripted").addEventListener("click", () => run("scripted"));
+    }());
+  </script>
+</body>
+</html>

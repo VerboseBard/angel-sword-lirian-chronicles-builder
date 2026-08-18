@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Angel Sword Dice Set Showcase</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --glow: #27cfff;
+      --glow-soft: rgba(39, 207, 255, 0.32);
+      --accent: #9fe9ff;
+      --gold: #efc45e;
+      font-family: Georgia, "Times New Roman", serif;
+      background: #020610;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-width: 1600px; min-height: 1000px; background: #020610; }
+    body.leaflit {
+      --glow: #e72955;
+      --glow-soft: rgba(231, 41, 85, 0.3);
+      --accent: #ffb5c5;
+    }
+    body.rana {
+      --glow: #12b39f;
+      --glow-soft: rgba(18, 179, 159, 0.34);
+      --accent: #a9fff1;
+    }
+    body.angel {
+      --glow: #73d9ff;
+      --glow-soft: rgba(115, 217, 255, 0.34);
+      --accent: #c9f4ff;
+    }
+    .stage {
+      position: relative;
+      width: 1600px;
+      height: 1000px;
+      overflow: hidden;
+      isolation: isolate;
+      background:
+        radial-gradient(circle at 50% 49%, var(--glow-soft), transparent 21%),
+        radial-gradient(circle at 15% 35%, rgba(56, 126, 218, 0.2), transparent 25%),
+        radial-gradient(circle at 86% 40%, rgba(88, 34, 165, 0.2), transparent 28%),
+        linear-gradient(145deg, #06172b 0%, #020711 55%, #071426 100%);
+    }
+    .stage::before,
+    .stage::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+    }
+    .stage::before {
+      opacity: 0.62;
+      background-image:
+        radial-gradient(circle at 7% 12%, #fff 0 1px, transparent 1.6px),
+        radial-gradient(circle at 19% 72%, #d8eeff 0 1px, transparent 1.7px),
+        radial-gradient(circle at 31% 27%, #fff 0 1px, transparent 1.5px),
+        radial-gradient(circle at 43% 83%, #ffe7a2 0 1px, transparent 1.8px),
+        radial-gradient(circle at 57% 16%, #d9eaff 0 1px, transparent 1.6px),
+        radial-gradient(circle at 68% 69%, #fff 0 1px, transparent 1.5px),
+        radial-gradient(circle at 79% 24%, #ffe4a0 0 1px, transparent 1.7px),
+        radial-gradient(circle at 92% 78%, #d8efff 0 1px, transparent 1.6px);
+      background-size: 190px 170px, 240px 210px, 270px 190px, 230px 260px, 280px 220px, 210px 240px, 250px 180px, 220px 200px;
+    }
+    .stage::after {
+      z-index: 8;
+      border: 2px solid rgba(239, 196, 94, 0.72);
+      box-shadow: inset 0 0 70px rgba(0, 0, 0, 0.8);
+    }
+    .sigil {
+      position: absolute;
+      left: 380px;
+      top: 185px;
+      width: 840px;
+      height: 840px;
+      opacity: 0.5;
+      border: 2px solid rgba(239, 196, 94, 0.36);
+      border-radius: 50%;
+      box-shadow:
+        0 0 60px var(--glow-soft),
+        inset 0 0 85px var(--glow-soft);
+    }
+    .sigil::before,
+    .sigil::after {
+      content: "";
+      position: absolute;
+      border: 1px solid rgba(239, 196, 94, 0.3);
+      border-radius: 50%;
+    }
+    .sigil::before { inset: 54px; }
+    .sigil::after { inset: 125px; }
+    .orbit {
+      position: absolute;
+      left: 297px;
+      top: 560px;
+      width: 1005px;
+      height: 245px;
+      transform: rotate(-4deg);
+      border: 2px solid rgba(239, 196, 94, 0.38);
+      border-radius: 50%;
+      box-shadow: 0 0 28px var(--glow-soft);
+    }
+    .floor {
+      position: absolute;
+      z-index: 1;
+      left: 105px;
+      top: 430px;
+      width: 1390px;
+      height: 520px;
+      border-radius: 50%;
+      background:
+        radial-gradient(ellipse at center, var(--glow-soft), rgba(2, 6, 14, 0.86) 48%, rgba(0, 0, 0, 0.96) 73%);
+      transform: perspective(700px) rotateX(64deg);
+      box-shadow: 0 42px 75px rgba(0, 0, 0, 0.88);
+      opacity: 0.8;
+    }
+    header {
+      position: absolute;
+      z-index: 9;
+      top: 34px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      text-shadow: 0 4px 18px #000;
+    }
+    h1 {
+      margin: 0;
+      color: #ffe39a;
+      font-size: 64px;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+    header p {
+      margin: 8px 0 0;
+      color: var(--accent);
+      font: 700 18px/1.2 system-ui, sans-serif;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+    }
+    .die {
+      position: absolute;
+      z-index: 4;
+      display: block;
+      object-fit: contain;
+      filter:
+        drop-shadow(0 24px 13px rgba(0, 0, 0, 0.82))
+        drop-shadow(0 0 15px var(--glow-soft));
+    }
+    .d20 { left: 550px; top: 180px; width: 500px; height: 500px; z-index: 7; }
+    .d12 { left: 285px; top: 220px; width: 385px; height: 385px; z-index: 5; }
+    .d6  { left: 930px; top: 220px; width: 375px; height: 375px; z-index: 5; }
+    .d100 { left: 170px; top: 520px; width: 360px; height: 360px; }
+    .d8 { left: 430px; top: 555px; width: 355px; height: 355px; z-index: 6; }
+    .d4 { left: 810px; top: 555px; width: 380px; height: 380px; z-index: 6; }
+    .d10 { left: 1080px; top: 520px; width: 360px; height: 360px; }
+    .caption {
+      position: absolute;
+      z-index: 9;
+      left: 0;
+      bottom: 24px;
+      width: 100%;
+      color: rgba(255, 238, 192, 0.9);
+      text-align: center;
+      font: 700 16px/1.25 system-ui, sans-serif;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    #status {
+      position: absolute;
+      z-index: 12;
+      left: 20px;
+      bottom: 18px;
+      color: #fff1b4;
+      font: 700 12px/1.2 system-ui, sans-serif;
+    }
+    html[data-ready="true"] #status { display: none; }
+  </style>
+</head>
+<body>
+  <main class="stage" aria-label="Accurate full dice set showcase">
+    <header>
+      <h1 id="title">Dice Set</h1>
+      <p id="subtitle">Live geometry • installed face art • true settled orientation</p>
+    </header>
+    <div class="sigil" aria-hidden="true"></div>
+    <div class="orbit" aria-hidden="true"></div>
+    <div class="floor" aria-hidden="true"></div>
+    <div id="dice"></div>
+    <p class="caption">D4 • D6 • D8 • D10 • D100 • D12 • D20</p>
+    <p id="status">Loading installed dice...</p>
+  </main>
+
+  <script src="assets/dice/promoted-dice-skins.registry.js"></script>
+  <script src="assets/dice-3d/new-angelsword-dice-face-art.384-webp.js?v=angel-d4-canonical-corners-v3"></script>
+  <script src="assets/dice-3d/promoted/asari-full-set-draft.js?v=d4-large-v3"></script>
+  <script src="assets/dice-3d/promoted/leaflit-full-set.js"></script>
+  <script src="assets/dice-3d/promoted/rana-full-set.js?v=final-readability-v3"></script>
+  <script src="assets/dice-3d/character-sheet-skin-studio.js"></script>
+  <script src="assets/vendor/three.min.js"></script>
+  <script src="assets/dice-3d/dice-geometry.js?v=shared-contract-3-angel-d4-v2"></script>
+  <script src="assets/dice-3d/shared-dice-roller-core.js?v=20260811-srgb-dice-v1"></script>
+  <script>
+    (async function renderShowcase() {
+      const params = new URLSearchParams(location.search);
+      const requested = params.get("set") || "asari";
+      const requestedD8 = Number(params.get("d8"));
+      const d8Value = Number.isInteger(requestedD8) && requestedD8 >= 1 && requestedD8 <= 8
+        ? requestedD8
+        : 4;
+      const requestedKey = requested.toLowerCase();
+      const isAngel = requestedKey.startsWith("angel") || requestedKey.startsWith("new-angel");
+      const isLeaflit = requestedKey.startsWith("leaf");
+      const isRana = requestedKey.startsWith("rana");
+      const setId = isAngel
+        ? "new-angelsword"
+        : isRana
+        ? "rana-full-set"
+        : isLeaflit
+          ? "leaflit-full-set"
+          : "asari-full-set-draft";
+      const setName = isAngel ? "Angel Sword Dice" : isRana ? "Rana Dice" : isLeaflit ? "Leaflit Dice" : "Asari Dice";
+      document.body.classList.toggle("angel", isAngel);
+      document.body.classList.toggle("leaflit", isLeaflit);
+      document.body.classList.toggle("rana", isRana);
+      document.getElementById("title").textContent = setName;
+      document.title = `${setName} - Accurate Full Set Showcase`;
+
+      const entries = [
+        // Result 19 keeps the die physically settled while placing the unique
+        // natural-20 portrait prominently on the camera-facing side.
+        { die: "d20", sides: 20, value: isAngel ? 20 : 19, face: isAngel ? "20" : "19" },
+        { die: "d12", sides: 12, value: 12, face: "12" },
+        { die: "d6", sides: 6, value: 6, face: "6" },
+        { die: "d100", sides: 100, value: 100, face: "00" },
+        { die: "d8", sides: 8, value: d8Value, face: String(d8Value) },
+        // Result 1 is the approved hero angle with the panel portrait upright.
+        { die: "d4", sides: 4, value: 1, face: "face-1" },
+        { die: "d10", sides: 10, value: 10, face: "0" }
+      ];
+
+      const sources = entries.map((entry) => window.DiceSkinStudio.getFaceImage(setId, entry.die, entry.face));
+      if (sources.some((source) => !source)) {
+        document.getElementById("status").textContent = `Missing installed face art for ${setName}.`;
+        document.documentElement.dataset.ready = "failed";
+        return;
+      }
+      window.LyrianAccurateDiceRoller.preloadFaceArt(setId);
+      await Promise.all(sources.map((source) => new Promise((resolve) => {
+        const image = new Image();
+        image.onload = resolve;
+        image.onerror = resolve;
+        image.src = source;
+      })));
+      await new Promise((resolve) => setTimeout(resolve, 1300));
+
+      const validation = window.LyrianAccurateDiceRoller.validateAllFaceSettles({ setId });
+      const topology = window.LyrianAccurateDiceRoller.validateNumberingTopology();
+      if (validation.failed || topology.failed) {
+        document.getElementById("status").textContent = `${validation.failed} settle failure(s); ${topology.failed} numbering-topology failure(s).`;
+        document.documentElement.dataset.ready = "failed";
+        return;
+      }
+
+      const container = document.getElementById("dice");
+      entries.forEach((entry) => {
+        const image = document.createElement("img");
+        image.className = `die ${entry.die}`;
+        image.alt = `${setName} ${entry.die.toUpperCase()} settled at ${entry.value}`;
+        image.src = window.LyrianAccurateDiceRoller.buildPreviewDataUrl({
+          setId,
+          sides: entry.sides,
+          value: entry.value,
+          size: 620
+        });
+        container.appendChild(image);
+      });
+      document.documentElement.dataset.ready = "true";
+      window.DiceSetShowcaseValidation = validation;
+      window.DiceSetShowcaseTopology = topology;
+    }());
+  </script>
+</body>
+</html>

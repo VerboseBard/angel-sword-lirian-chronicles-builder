@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Angel Sword Face Texture Check</title>
+  <style>
+    body { margin: 0; padding: 28px; color: #fff4d0; background: #071a2d; font-family: Georgia, serif; }
+    h1 { color: #f3c85d; }
+    #faces { display: grid; grid-template-columns: repeat(4, minmax(220px, 1fr)); gap: 18px; }
+    figure { margin: 0; padding: 12px; border: 1px solid #aa7e2b; border-radius: 14px; background: #0c2941; }
+    img { display: block; width: 100%; aspect-ratio: 1; object-fit: contain; background: #152235; }
+    figcaption { padding-top: 8px; text-align: center; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <h1>Angel Sword — Rendered Face Textures</h1>
+  <div id="faces"></div>
+  <script src="assets/dice/promoted-dice-skins.registry.js"></script>
+  <script src="assets/dice-3d/new-angelsword-dice-face-art.384-webp.js?v=angel-d4-unified-corners-v4"></script>
+  <script src="assets/dice-3d/character-sheet-skin-studio.js"></script>
+  <script src="assets/vendor/three.min.js"></script>
+  <script src="assets/dice-3d/dice-geometry.js?v=shared-contract-3-angel-d4-v2"></script>
+  <script src="assets/dice-3d/shared-dice-roller-core.js?v=angel-d4-clean-v6"></script>
+  <script>
+    const examples = [
+      ["d4", "face-1"], ["d6", "1"], ["d8", "1"], ["d10", "0"],
+      ["d100", "00"], ["d12", "1"], ["d20", "1"]
+    ];
+    window.LyrianAccurateDiceRoller.preloadFaceArt("new-angelsword");
+    window.setTimeout(() => {
+      const host = document.getElementById("faces");
+      const sourceFigure = document.createElement("figure");
+      const sourceImage = document.createElement("img");
+      sourceImage.alt = "d4 original source face";
+      sourceImage.src = window.DiceSkinStudio.getFaceImage("new-angelsword", "d4", "1");
+      const sourceCaption = document.createElement("figcaption");
+      sourceCaption.textContent = "d4 — original source";
+      sourceFigure.append(sourceImage, sourceCaption);
+      host.append(sourceFigure);
+      examples.forEach(([dieKey, artKey]) => {
+        const figure = document.createElement("figure");
+        const image = document.createElement("img");
+        image.alt = `${dieKey} face ${artKey}`;
+        image.src = window.LyrianAccurateDiceRoller.debugFaceTexture(dieKey, artKey, "new-angelsword");
+        const caption = document.createElement("figcaption");
+        caption.textContent = `${dieKey} — ${artKey}`;
+        figure.append(image, caption);
+        host.append(figure);
+      });
+    }, 900);
+  </script>
+</body>
+</html>
