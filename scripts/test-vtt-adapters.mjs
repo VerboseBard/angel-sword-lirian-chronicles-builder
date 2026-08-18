@@ -60,12 +60,61 @@ async function testOwlbearManifest() {
   check("popover width/height are numbers", typeof manifest.action?.width === "number" && typeof manifest.action?.height === "number");
   check("panel.html exists", await exists("owlbear/panel.html"));
   check("panel.js exists", await exists("owlbear/panel.js"));
+  check("background page is declared and exists", manifest.background_url === "background.html" && await exists("owlbear/background.html"));
+  check("background.js exists", await exists("owlbear/background.js"));
+  check("core.js exists", await exists("owlbear/core.js"));
+  check("bundled panel runtime exists", await exists("owlbear/dist/panel.js"));
+  check("bundled background runtime exists", await exists("owlbear/dist/background.js"));
   check("icon.svg exists", await exists("owlbear/icon.svg"));
   check("panel.js parses", nodeCheck("owlbear/panel.js"));
-  const panel = await readFile(path.join(root, "owlbear", "panel.js"), "utf8");
-  check("panel listens on the sheet relay channel", panel.includes("asb-vtt-events"));
-  check("panel uses a namespaced OBR broadcast channel", panel.includes("com.angelssword.builder/"));
-  check("panel contains no credential handling", !/token|secret|password|api[_-]?key/i.test(panel));
+  check("background.js parses", nodeCheck("owlbear/background.js"));
+  check("core.js parses", nodeCheck("owlbear/core.js"));
+  const panelHtml = await readFile(path.join(root, "owlbear", "panel.html"), "utf8");
+  const backgroundHtml = await readFile(path.join(root, "owlbear", "background.html"), "utf8");
+  const sdkSource = await readFile(path.join(root, "owlbear", "sdk.js"), "utf8");
+  check("extension pages load locally bundled runtimes", panelHtml.includes("dist/panel.js") && backgroundHtml.includes("dist/background.js"));
+  check("extension uses the installed official SDK without runtime CDN imports", sdkSource.includes("@owlbear-rodeo/sdk") && !/https?:\/\//i.test(sdkSource));
+  const combined = await Promise.all(["panel.js", "background.js", "core.js"].map((file) => readFile(path.join(root, "owlbear", file), "utf8"))).then((parts) => parts.join("\n"));
+  check("extension uses a namespaced OBR broadcast channel", combined.includes("com.angelssword.lyrian-chronicles") && combined.includes("/rolls"));
+  check("extension supports portable character import", combined.includes("normalizeCharacterExport") && combined.includes("character-file"));
+  check("extension stores namespaced player and token bindings", combined.includes("player-binding") && combined.includes("character-binding"));
+  check("extension contains no credential handling", !/secret|password|api[_-]?key|authorization|bearer\s/i.test(combined));
+}
+
+async function testOwlbearCore() {
+  console.log("— owlbear binding contract —");
+  const core = await import("../owlbear/core.js");
+  const builderCharacter = core.normalizeCharacterExport({
+    fields: { Name: "Jefferson Stone", "Primary Race": "Human", "Sub Race": "Mirane", Power: 4, Focus: 5, Speed: 20 },
+    builder: { selectedClassIds: ["gunslinger"] },
+    play: { resources: { hpCurrent: 42, hpMax: 50, manaCurrent: 6, manaMax: 8, apCurrent: 3, apMax: 4, rpCurrent: 2, rpMax: 5 } }
+  });
+  check("builder export normalizes actual lineage field names", builderCharacter.name === "Jefferson Stone" && builderCharacter.race === "Human" && builderCharacter.ancestry === "Mirane");
+  check("builder export preserves live combat resources", builderCharacter.resources.hpCurrent === 42 && builderCharacter.resources.apCurrent === 3);
+  check("builder export creates a stable character id", builderCharacter.characterId === core.normalizeCharacterExport({
+    fields: { Name: "Jefferson Stone", "Primary Race": "Human", "Sub Race": "Mirane", Power: 4, Focus: 5, Speed: 20 },
+    builder: { selectedClassIds: ["gunslinger"] },
+    play: { resources: { hpCurrent: 1, hpMax: 50 } }
+  }).characterId);
+  const officialCharacter = core.normalizeCharacterExport({
+    format: "angelssword-character",
+    character: { name: "The Heir", race: { primaryRaceName: "Fae", ancestryName: "Sylph" }, mainStats: { power: 3 }, subStats: {}, classes: [{ name: "Mage" }], derivedStats: { hp: 30, maxMana: 9, speed: 20 } }
+  });
+  check("official export normalizes classes and derived resources", officialCharacter.classes[0] === "Mage" && officialCharacter.resources.hpMax === 30 && officialCharacter.resources.manaMax === 9);
+  const binding = core.createBindingRecord(builderCharacter, { id: "player-1", name: "Jeff", role: "PLAYER" }, { id: "token-1", name: "Jefferson" });
+  check("binding records player, character, and token identity", binding.ownerPlayerId === "player-1" && binding.characterId === builderCharacter.characterId && binding.tokenId === "token-1");
+  const roll = core.normalizeRollEvent({ id: "roll-1", character: "Jefferson Stone", label: "Dodge", formula: "1d20+6", breakdown: "12 + 6", total: 18 });
+  check("roll contract preserves formula, breakdown, and total", roll.id === "roll-1" && roll.formula === "1d20+6" && roll.total === 18);
+  const merged = core.mergeRollLog([roll], roll);
+  check("room roll log deduplicates event ids", merged.length === 1);
+  check("malformed roll is rejected", core.normalizeRollEvent({ label: "No total" }) === null);
+  let rejected = false;
+  try {
+    core.normalizeCharacterExport({ hello: "world" });
+  } catch (error) {
+    rejected = true;
+  }
+  check("unknown character formats are rejected", rejected);
 }
 
 async function testFoundryModule() {
@@ -80,9 +129,12 @@ async function testFoundryModule() {
   check("manifest/download URLs present for remote install", typeof manifest.manifest === "string" && typeof manifest.download === "string");
   check("script exists", await exists("foundry/scripts/angel-sword.mjs"));
   check("script parses", nodeCheck("foundry/scripts/angel-sword.mjs"));
+  check("CSB mapper exists", await exists("foundry/scripts/lyrian-csb-mapper.mjs"));
+  check("CSB mapper parses", nodeCheck("foundry/scripts/lyrian-csb-mapper.mjs"));
   const script = await readFile(path.join(root, "foundry", "scripts", "angel-sword.mjs"), "utf8");
   check("script never creates or updates Actors", !/Actor\.create|actor\.update|createEmbeddedDocuments/.test(script));
   check("script offers the documented chat commands", ["/asimport", "/ascharacter", "/asroll"].every((command) => script.includes(command)));
+  check("script exposes the read-only Lyrian CSB mapping aid", script.includes("mapLyrianCsb") && script.includes("buildLyrianCsbImportPlan"));
 }
 
 async function testWorldAnvilBuilder() {
@@ -205,6 +257,7 @@ async function testAscharInterop() {
       { name: "Stealth", points: 2, expertise: [] }
     ],
     equipment: [{ itemId: "armor--light-", name: "Light Armor", baseName: "Light Armor", cost: 250 }],
+    interludeActions: ["job"],
     resources: { clim: 1750, classExp: 0, interludePoints: 1, skillPoints: 0, breakthroughExp: 200 },
     soulCore: 1100,
     totalExp: 0
@@ -222,6 +275,7 @@ async function testAscharInterop() {
   check("round-trip keeps class levels", plan.classes.length === 2 && plan.classes[0].levels === 8 && plan.classes[1].levels === 3);
   check("round-trip keeps skills and expertise", plan.skills.find((skill) => skill.name === "Magic")?.expertise[0]?.points === 4);
   check("round-trip keeps mirane mode", plan.gameMode === "mirane");
+  check("round-trip keeps official creation interlude actions", character.interludeActions[0] === "job" && plan.interludeActions[0] === "job");
 
   check("garbage is rejected", aschar.parseAscharFile({ hello: 1 }).ok === false);
   check("bare official model is accepted", aschar.parseAscharFile({ race: { primaryRaceId: "human" }, mainStats: { power: 5 } }).ok === true);
@@ -234,12 +288,17 @@ async function testAscharInterop() {
   check("repeatable breakthrough suffixes are stripped", suffixPlan.breakthroughs[0].breakthroughId === "skill-training");
   check("class levels clamp to the official 1..8 range", suffixPlan.classes[0].levels === 8);
   check("modded items produce a visibility note", suffixPlan.notes.some((note) => note.includes("official mods")));
+  const interludePlan = aschar.normalizeAscharCharacter({
+    race: {}, mainStats: {}, interludeActions: ["job", "train", "other", "unknown", "job"]
+  });
+  check("official interlude actions retain valid repeats and reject unknown values", JSON.stringify(interludePlan.interludeActions) === JSON.stringify(["job", "train", "other", "job"]));
   const relaySource = await readFile(path.join(root, "src", "js", "aschar.js"), "utf8");
   check("aschar module stays dependency-free for Node testing", !/^import /m.test(relaySource));
 }
 
 async function main() {
   await testOwlbearManifest();
+  await testOwlbearCore();
   await testFoundryModule();
   await testWorldAnvilBuilder();
   await testCcsTemplate();

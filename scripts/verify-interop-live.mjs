@@ -47,7 +47,9 @@ async function main() {
       nameField.dispatchEvent(new Event("change", { bubbles: true }));
     }
   });
-  await page.locator("#sheet-integrations").click();
+  await page.locator("#open-table-tools").click();
+  await page.waitForSelector('#play-table-tools:not([hidden])', { timeout: 5000 });
+  await page.locator('[data-table-tool-guide="official-builder"]').click();
   await page.waitForSelector("#sheet-modal:not([hidden])", { timeout: 5000 });
 
   console.log("— exporting .aschar.json through the real button —");

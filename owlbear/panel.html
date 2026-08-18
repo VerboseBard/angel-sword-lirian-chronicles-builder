@@ -3,74 +3,88 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Angel Sword Dice &amp; Actions</title>
+  <title>Angel Sword Companion</title>
   <style>
-    :root { color-scheme: dark; }
+    :root { color-scheme: dark; font-family: "Segoe UI", system-ui, sans-serif; }
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: "Segoe UI", system-ui, sans-serif;
-      background: #171c29;
-      color: #e8ecf5;
-      font-size: 14px;
-    }
-    header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 12px;
-      background: #1d2333;
-      border-bottom: 1px solid rgba(255, 204, 64, 0.25);
-    }
-    header img { width: 22px; height: 22px; }
+    body { margin: 0; background: #111827; color: #e8ecf5; font-size: 14px; }
+    button, input { font: inherit; }
+    header { display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: #182238; border-bottom: 1px solid #856c24; }
+    header img { width: 26px; height: 26px; }
     header strong { font-size: 0.95rem; }
-    #status {
-      margin-left: auto;
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 204, 64, 0.3);
-      background: rgba(255, 204, 64, 0.1);
-      color: #ffe59a;
-      white-space: nowrap;
-    }
-    #status.is-live {
-      border-color: rgba(91, 220, 160, 0.6);
-      background: rgba(44, 158, 108, 0.28);
-      color: #c8ffe6;
-    }
-    #feed {
-      list-style: none;
-      margin: 0;
-      padding: 8px;
-      overflow-y: auto;
-      max-height: 420px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    #feed li {
-      background: #202742;
-      border: 1px solid rgba(120, 140, 200, 0.25);
-      border-radius: 8px;
-      padding: 7px 9px;
-      line-height: 1.35;
-    }
-    #feed li.remote { border-color: rgba(91, 220, 160, 0.35); }
+    #status { margin-left: auto; font-size: 0.7rem; font-weight: 700; padding: 3px 8px; border: 1px solid #75652f; border-radius: 999px; color: #ffe59a; }
+    #status.is-live { border-color: #3ca777; background: #164e3a; color: #c8ffe6; }
+    nav { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 8px; background: #151e31; }
+    nav button, .primary, .secondary { min-height: 36px; border-radius: 7px; border: 1px solid #38578c; background: #1868b7; color: white; font-weight: 700; cursor: pointer; }
+    nav button[aria-selected="true"] { background: #f6c63d; border-color: #f6c63d; color: #172036; }
+    main { padding: 10px; }
+    [data-panel][hidden] { display: none; }
+    .card { background: #1c2740; border: 1px solid #35435f; border-radius: 10px; padding: 10px; margin-bottom: 9px; }
+    .card h2 { margin: 0 0 5px; color: #ffe59a; font-size: 0.95rem; }
+    .card p { margin: 4px 0 8px; color: #bcc7dc; line-height: 1.4; }
+    .character-name { font-size: 1.1rem; font-weight: 800; color: white; }
+    .tags { display: flex; flex-wrap: wrap; gap: 5px; margin: 7px 0; }
+    .tag { padding: 2px 7px; border-radius: 999px; background: #263858; color: #dce7fb; font-size: 0.72rem; }
+    .resources { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 8px; }
+    .resource { text-align: center; background: #111a2c; border-radius: 6px; padding: 5px 2px; }
+    .resource strong { display: block; color: #ffe59a; }
+    .stack { display: grid; gap: 7px; }
+    .secondary { background: #263858; border-color: #53698f; }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    input[type="file"] { width: 100%; padding: 7px; border: 1px dashed #53698f; border-radius: 7px; background: #111a2c; color: #dce7fb; }
+    #feedback { min-height: 1.4em; margin: 7px 0 0; color: #a9bad9; font-size: 0.78rem; }
+    #feedback.is-error { color: #ffadad; }
+    #feed { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; max-height: 405px; overflow-y: auto; }
+    #feed li { background: #1c2740; border: 1px solid #35435f; border-radius: 8px; padding: 8px 9px; line-height: 1.35; }
     #feed .who { font-size: 0.72rem; color: #9fb0d8; }
     #feed .total { font-weight: 800; color: #ffe59a; }
-    #empty { padding: 18px 12px; color: #9fb0d8; font-size: 0.82rem; }
+    #empty { padding: 18px 8px; color: #9fb0d8; font-size: 0.82rem; }
+    .note { font-size: 0.74rem; color: #9fb0d8; line-height: 1.4; }
   </style>
 </head>
 <body>
   <header>
     <img src="icon.svg" alt="">
-    <strong>Angel Sword Rolls</strong>
-    <span id="status">Standalone</span>
+    <strong>Angel Sword Companion</strong>
+    <span id="status">Standalone preview</span>
   </header>
-  <p id="empty">Waiting for rolls… Open your Angel Sword character sheet in another tab of this browser and roll. With this panel inside an Owlbear Rodeo room, your rolls are shared with every player who has the extension open.</p>
-  <ul id="feed" hidden></ul>
-  <script type="module" src="panel.js"></script>
+  <nav aria-label="Angel Sword companion sections">
+    <button type="button" data-tab="character" aria-selected="true">Character</button>
+    <button type="button" data-tab="rolls" aria-selected="false">Room Rolls</button>
+  </nav>
+  <main>
+    <section data-panel="character">
+      <div class="card">
+        <h2>1. Import your character</h2>
+        <p>Use a Character JSON export from this builder or an official <code>.aschar.json</code> file.</p>
+        <input id="character-file" type="file" accept=".json,.aschar.json,application/json">
+      </div>
+      <div id="character-card" class="card" hidden>
+        <h2>Imported character</h2>
+        <div id="character-summary"></div>
+      </div>
+      <div class="card">
+        <h2>2. Bind an Owlbear token</h2>
+        <p>Select exactly one token on Owlbear's <strong>Character</strong> layer, then bind it here.</p>
+        <div class="stack">
+          <button id="bind-token" class="primary" type="button" disabled>Bind Selected Token</button>
+          <button id="clear-binding" class="secondary" type="button" disabled>Clear My Binding</button>
+        </div>
+        <p id="binding-summary" class="note">No character-token binding yet.</p>
+      </div>
+      <div class="card">
+        <h2>Connection check</h2>
+        <p>Send one harmless test result to verify that everyone in the room receives the shared roll feed.</p>
+        <button id="test-roll" class="secondary" type="button" disabled>Send Test Roll</button>
+        <p class="note">This milestone does not apply damage, consume movement, or run initiative.</p>
+      </div>
+      <p id="feedback" role="status" aria-live="polite"></p>
+    </section>
+    <section data-panel="rolls" hidden>
+      <p id="empty">No shared rolls yet. Import and bind a character, then roll from the Angel Sword sheet or use the connection check.</p>
+      <ul id="feed" hidden></ul>
+    </section>
+  </main>
+  <script type="module" src="dist/panel.js"></script>
 </body>
 </html>

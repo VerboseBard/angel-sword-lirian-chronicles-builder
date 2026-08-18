@@ -1,16 +1,17 @@
 {
-  "name": "Angel Sword Dice & Actions",
-  "version": "0.1.0",
+  "name": "Angel Sword Companion",
+  "version": "0.2.0",
   "manifest_version": 1,
-  "description": "Live roll and action feed from the Angel Sword Lyrian Chronicles builder into your Owlbear Rodeo room.",
+  "description": "Import and bind Lyrian Chronicles characters to Owlbear tokens and share a room roll feed.",
   "icon": "icon.svg",
   "author": "Angel Sword Lyrian Chronicles builder project (fan work)",
   "homepage_url": "https://verbosebard.github.io/angel-sword-lirian-chronicles-builder/",
+  "background_url": "background.html",
   "action": {
-    "title": "Angel Sword",
+    "title": "Angel Sword Companion",
     "icon": "icon.svg",
     "popover": "panel.html",
     "width": 360,
-    "height": 520
+    "height": 620
   }
 }

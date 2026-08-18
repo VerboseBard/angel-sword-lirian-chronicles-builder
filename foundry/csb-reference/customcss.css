@@ -1,0 +1,506 @@
+/* ============================================================
+   LYRIAN CHRONICLES — sheet theme for Custom System Builder
+   ------------------------------------------------------------
+   Palette matched to the official Lyrian character sheet:
+   deep navy ground, gold as the single accent, warm cream text.
+
+   HOW THIS WORKS:
+   CSB renders every component with a data-key attribute matching
+   its key. A component keyed lyrian_power renders as
+   [data-key="lyrian_power"]. There is no CSS class field.
+
+   Two things that will bite you if you edit this:
+   1. CSB gives components a full-width class. Anything meant to
+      sit in a row needs width:auto !important on its children.
+   2. Prefix selectors ([data-key^="lyrian_row_"]) are how the
+      21 skill rows get styled without naming each one.
+
+   Verified against CSB 6.0.2 / Foundry 14.365.
+   ============================================================ */
+
+@font-face {
+  font-family: 'Cinzel';
+  src: url('fonts/Cinzel-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Cinzel';
+  src: url('fonts/Cinzel-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Barlow Condensed';
+  src: url('fonts/BarlowCondensed-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Barlow Condensed';
+  src: url('fonts/BarlowCondensed-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Barlow Condensed';
+  src: url('fonts/BarlowCondensed-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Spectral';
+  src: url('fonts/Spectral-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Spectral';
+  src: url('fonts/Spectral-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-display: swap;
+}
+
+:root {
+  --lyr-void:    #0A0F1C;
+  --lyr-panel:   #131A2B;
+  --lyr-raise:   #1A2236;
+  --lyr-rule:    #26304A;
+
+  --lyr-gold:    #C9A24D;
+  --lyr-gold-dk: #8A733A;
+
+  --lyr-cream:   #E9E4D8;
+  --lyr-muted:   #78829A;
+
+  --lyr-hp:      #4CB963;  /* green  */
+  --lyr-mana:    #4A9EE8;  /* blue   */
+  --lyr-ap:      #E8C23A;  /* yellow */
+  --lyr-rp:      #E2545C;  /* red    */
+  --lyr-save:    #4FC3D9;  /* cyan   */
+  --lyr-potency: #A97BD6;  /* violet */
+
+  --lyr-display: 'Cinzel', Georgia, serif;
+  --lyr-label:   'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --lyr-body:    'Spectral', Georgia, serif;
+
+  --lyr-radius: 6px;
+}
+
+/* ============================================================
+   1. SHEET SHELL
+   ============================================================ */
+
+.custom-system-actor-content {
+  background: var(--lyr-void);
+  color: var(--lyr-cream);
+  font-family: var(--lyr-body);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.custom-system-actor-content input[type="text"],
+.custom-system-actor-content select,
+.custom-system-actor-content textarea {
+  background: var(--lyr-raise);
+  border: 1px solid var(--lyr-rule);
+  border-radius: 4px;
+  color: var(--lyr-cream);
+  font-family: var(--lyr-label);
+  font-size: 14px;
+}
+
+.custom-system-actor-content input[type="text"]:focus,
+.custom-system-actor-content select:focus,
+.custom-system-actor-content textarea:focus {
+  border-color: var(--lyr-gold);
+  outline: none;
+}
+
+.custom-system-actor-content .charname input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--lyr-gold-dk);
+  color: var(--lyr-cream);
+  font-family: var(--lyr-display);
+  font-size: 27px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   2. HEADER
+   ============================================================ */
+
+[data-key="lyrian_hdr_top"] {
+  background: var(--lyr-panel);
+  border: 1px solid var(--lyr-rule);
+  border-radius: var(--lyr-radius);
+  border-top: 2px solid var(--lyr-gold);
+  padding: 12px 14px !important;
+}
+
+[data-key="lyrian_portrait"] img {
+  border: 2px solid var(--lyr-gold-dk);
+  border-radius: var(--lyr-radius);
+}
+
+[data-key="lyrian_race"] input,
+[data-key="lyrian_subrace"] input {
+  background: transparent !important;
+  border: none !important;
+  color: var(--lyr-muted) !important;
+  font-size: 12px !important;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   3. METERS
+   CSB sets the fill colour inline, so these need !important.
+   ============================================================ */
+
+[data-key="lyrian_hdr_meters"] > .flexrow { gap: 10px; }
+
+[data-key="lyrian_hp"],
+[data-key="lyrian_mana"],
+[data-key="lyrian_ap"],
+[data-key="lyrian_rp"] {
+  background: var(--lyr-raise);
+  border: 1px solid var(--lyr-rule);
+  border-radius: var(--lyr-radius);
+  min-width: 98px;
+  padding: 5px 9px 7px;
+}
+
+[data-key="lyrian_hp"] > label,
+[data-key="lyrian_mana"] > label,
+[data-key="lyrian_ap"] > label,
+[data-key="lyrian_rp"] > label {
+  color: var(--lyr-muted);
+  font-family: var(--lyr-label);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.custom-system-meter {
+  background: rgba(0, 0, 0, 0.45) !important;
+  border: 1px solid var(--lyr-rule);
+  border-radius: 3px;
+  height: 13px;
+  overflow: hidden;
+}
+
+.custom-system-meter-content {
+  font-family: var(--lyr-label);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+[data-key="lyrian_hp"]   .custom-system-meter-fill { background-color: var(--lyr-hp)   !important; }
+[data-key="lyrian_mana"] .custom-system-meter-fill { background-color: var(--lyr-mana) !important; }
+[data-key="lyrian_ap"]   .custom-system-meter-fill { background-color: var(--lyr-ap)   !important; }
+[data-key="lyrian_rp"]   .custom-system-meter-fill { background-color: var(--lyr-rp)   !important; }
+
+.custom-system-meter-fill { transition: width 0.25s ease; }
+
+@media (prefers-reduced-motion: reduce) {
+  .custom-system-meter-fill { transition: none; }
+}
+
+/* ============================================================
+   4. DEFENCE READOUTS
+   ============================================================ */
+
+[data-key="lyrian_hdr_defense"] > .flexrow { gap: 8px; }
+
+[data-key="lyrian_evasion"],
+[data-key="lyrian_guard"],
+[data-key="lyrian_potency"],
+[data-key="lyrian_save"],
+[data-key="lyrian_speed"] {
+  background: var(--lyr-raise);
+  border: 1px solid var(--lyr-rule);
+  border-radius: var(--lyr-radius);
+  min-width: 62px;
+  padding: 6px 10px;
+}
+
+[data-key="lyrian_evasion"] .custom-system-label,
+[data-key="lyrian_guard"]   .custom-system-label,
+[data-key="lyrian_potency"] .custom-system-label,
+[data-key="lyrian_save"]    .custom-system-label,
+[data-key="lyrian_speed"]   .custom-system-label {
+  color: var(--lyr-cream);
+  font-family: var(--lyr-label);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+[data-key="lyrian_evasion"] { border-left: 2px solid var(--lyr-mana); }
+[data-key="lyrian_guard"]   { border-left: 2px solid var(--lyr-gold); }
+[data-key="lyrian_save"]    { border-left: 2px solid var(--lyr-save); }
+[data-key="lyrian_potency"] { border-left: 2px solid var(--lyr-potency); }
+[data-key="lyrian_speed"]   { border-left: 2px solid var(--lyr-mana); }
+
+/* ============================================================
+   5. STAT BLOCKS
+   ============================================================ */
+
+[data-key="lyrian_power"],
+[data-key="lyrian_focus"],
+[data-key="lyrian_agility"],
+[data-key="lyrian_toughness"],
+[data-key="lyrian_fitness"],
+[data-key="lyrian_cunning"],
+[data-key="lyrian_reason"],
+[data-key="lyrian_awareness"],
+[data-key="lyrian_presence"] {
+  align-items: center;
+  background: var(--lyr-raise);
+  border: 1px solid var(--lyr-gold-dk);
+  border-radius: var(--lyr-radius);
+  display: flex;
+  flex-direction: column-reverse; /* value above label */
+  gap: 1px;
+  min-width: 66px;
+  padding: 8px 6px 6px;
+}
+
+[data-key="lyrian_power"],
+[data-key="lyrian_focus"],
+[data-key="lyrian_agility"],
+[data-key="lyrian_toughness"] { border-top: 2px solid var(--lyr-gold); }
+
+[data-key="lyrian_power"]     > label,
+[data-key="lyrian_focus"]     > label,
+[data-key="lyrian_agility"]   > label,
+[data-key="lyrian_toughness"] > label,
+[data-key="lyrian_fitness"]   > label,
+[data-key="lyrian_cunning"]   > label,
+[data-key="lyrian_reason"]    > label,
+[data-key="lyrian_awareness"] > label,
+[data-key="lyrian_presence"]  > label {
+  color: var(--lyr-muted);
+  font-family: var(--lyr-label);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+[data-key="lyrian_power"]     input[type="text"],
+[data-key="lyrian_focus"]     input[type="text"],
+[data-key="lyrian_agility"]   input[type="text"],
+[data-key="lyrian_toughness"] input[type="text"],
+[data-key="lyrian_fitness"]   input[type="text"],
+[data-key="lyrian_cunning"]   input[type="text"],
+[data-key="lyrian_reason"]    input[type="text"],
+[data-key="lyrian_awareness"] input[type="text"],
+[data-key="lyrian_presence"]  input[type="text"] {
+  background: transparent !important;
+  border: none !important;
+  color: var(--lyr-cream);
+  font-family: var(--lyr-display) !important;
+  font-size: 22px !important;
+  font-weight: 600;
+  text-align: center;
+  width: 100%;
+}
+
+[data-key="lyrian_mainstats"],
+[data-key="lyrian_substats"] {
+  background: var(--lyr-panel);
+  border: 1px solid var(--lyr-rule);
+  border-radius: var(--lyr-radius);
+  margin-bottom: 10px;
+  padding: 10px !important;
+}
+
+[data-key="lyrian_mainstats"] > .flexrow,
+[data-key="lyrian_substats"] > .flexrow { gap: 10px; }
+
+/* ============================================================
+   6. TABS
+   ============================================================ */
+
+nav.custom-tabs {
+  border-bottom: 1px solid var(--lyr-rule);
+  margin-bottom: 12px;
+}
+
+nav.custom-tabs a.item {
+  color: var(--lyr-muted);
+  font-family: var(--lyr-display);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  padding: 7px 14px;
+  text-transform: uppercase;
+  transition: color 0.15s ease;
+}
+
+nav.custom-tabs a.item:hover { color: var(--lyr-gold); }
+
+nav.custom-tabs a.item.active {
+  border-bottom: 2px solid var(--lyr-gold);
+  color: var(--lyr-gold);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  nav.custom-tabs a.item { transition: none; }
+}
+
+/* ============================================================
+   7. ROLLABLE LABELS
+   The text sits in a child element, so colour is set on * to
+   reach it whatever CSB calls that element.
+   ============================================================ */
+
+[data-key^="lyrian_roll_"] {
+  background: transparent !important;
+  border: 1px solid var(--lyr-gold-dk) !important;
+  border-radius: 4px !important;
+  cursor: pointer;
+  padding: 4px 11px !important;
+  transition: background 0.15s ease;
+}
+
+[data-key^="lyrian_roll_"] * {
+  color: var(--lyr-gold) !important;
+  font-family: var(--lyr-label) !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+[data-key^="lyrian_roll_"]:hover { background: var(--lyr-gold) !important; }
+[data-key^="lyrian_roll_"]:hover * { color: var(--lyr-void) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-key^="lyrian_roll_"] { transition: none; }
+}
+
+/* ============================================================
+   8. SKILL ROWS
+   width:auto on the children is essential — CSB's full-size
+   class forces 100%, which wraps every component to its own
+   line and makes a horizontal panel render as a column.
+   ============================================================ */
+
+[data-key^="lyrian_row_"] {
+  border-bottom: 1px solid var(--lyr-rule);
+  padding: 4px 0;
+  width: 100%;
+}
+
+[data-key^="lyrian_row_"]:hover { background: var(--lyr-raise); }
+
+[data-key^="lyrian_row_"] > .flexrow {
+  align-items: center !important;
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 10px !important;
+}
+
+[data-key^="lyrian_row_"] > .flexrow > div {
+  flex: 0 0 auto !important;
+  width: auto !important;
+}
+
+[data-key^="lyrian_lbl_"] { flex: 1 1 auto !important; }
+
+[data-key^="lyrian_lbl_"] .custom-system-label {
+  font-family: var(--lyr-body);
+  font-size: 13px;
+}
+
+[data-key^="lyrian_sk_"] {
+  flex: 0 0 52px !important;
+  width: 52px !important;
+}
+
+[data-key^="lyrian_sk_"] input[type="text"] { text-align: center; }
+
+/* ============================================================
+   9. SECTION HEADINGS
+   Named explicitly — a prefix match on lyrian_hdr_ would also
+   catch lyrian_hdr_top and lyrian_hdr_defense in the header.
+   ============================================================ */
+
+[data-key="lyrian_hdr_fitness"]   .custom-system-label,
+[data-key="lyrian_hdr_cunning"]   .custom-system-label,
+[data-key="lyrian_hdr_reason"]    .custom-system-label,
+[data-key="lyrian_hdr_awareness"] .custom-system-label,
+[data-key="lyrian_hdr_presence"]  .custom-system-label {
+  color: var(--lyr-gold);
+  font-family: var(--lyr-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+[data-key="lyrian_hdr_fitness"]   .custom-system-label::before,
+[data-key="lyrian_hdr_cunning"]   .custom-system-label::before,
+[data-key="lyrian_hdr_reason"]    .custom-system-label::before,
+[data-key="lyrian_hdr_awareness"] .custom-system-label::before,
+[data-key="lyrian_hdr_presence"]  .custom-system-label::before {
+  content: "✦ ";
+  color: var(--lyr-gold-dk);
+}
+
+[data-key="lyrian_skills_fit"],
+[data-key="lyrian_skills_cun"],
+[data-key="lyrian_skills_rea"],
+[data-key="lyrian_skills_awa"],
+[data-key="lyrian_skills_pre"] {
+  background: var(--lyr-panel);
+  border: 1px solid var(--lyr-rule);
+  border-radius: var(--lyr-radius);
+  border-top: 2px solid var(--lyr-gold-dk);
+  margin-bottom: 10px;
+  padding: 10px 12px !important;
+}
+
+/* ============================================================
+   10. TABLES AND ITEM LISTS
+   ============================================================ */
+
+.custom-system-dynamic-table,
+.custom-system-item-displayer table {
+  border: 1px solid var(--lyr-rule);
+  border-radius: var(--lyr-radius);
+  width: 100%;
+}
+
+.custom-system-dynamic-table th,
+.custom-system-item-displayer th {
+  background: var(--lyr-raise);
+  color: var(--lyr-gold);
+  font-family: var(--lyr-label);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.custom-system-dynamic-table tr:nth-child(even),
+.custom-system-item-displayer tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.custom-system-item-displayer tr:hover {
+  background: rgba(201, 162, 77, 0.1);
+}
+
+/* ============================================================
+   11. CHECKBOXES
+   ============================================================ */
+
+.custom-system-actor-content input[type="checkbox"] {
+  accent-color: var(--lyr-gold);
+}

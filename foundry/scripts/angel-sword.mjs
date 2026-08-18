@@ -18,6 +18,8 @@
      /asroll 4d6+6 Label  — any raw formula with an optional label
    ═══════════════════════════════════════════════════════════════════════════ */
 
+import { buildLyrianCsbImportPlan } from "./lyrian-csb-mapper.mjs";
+
 const MODULE_ID = "angel-sword-lyrian";
 const FLAG_KEY = "character";
 
@@ -143,7 +145,10 @@ Hooks.once("ready", () => {
   game.angelSword = {
     import: importDialog,
     summary: characterSummary,
-    getCharacter: getStoredCharacter
+    getCharacter: getStoredCharacter,
+    // Read-only mapping aid for the community Lyrian CSB template. Deliberately
+    // returns a plan and never writes Actor data until the live test gate passes.
+    mapLyrianCsb: (character = getStoredCharacter()) => buildLyrianCsbImportPlan(character || {})
   };
   console.info(`${MODULE_ID} | ready — /asimport, /ascharacter, /asroll`);
 });

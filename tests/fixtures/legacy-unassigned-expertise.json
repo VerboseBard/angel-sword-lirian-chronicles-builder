@@ -1,0 +1,14 @@
+{
+  "ui": {
+    "mode": "builder",
+    "builderStep": 7
+  },
+  "fields": {
+    "Name": "Legacy Expertise QA",
+    "Expertise1": "+2"
+  },
+  "builder": {
+    "selectedRaceId": "Demon",
+    "skillExpertiseEntries": []
+  }
+}

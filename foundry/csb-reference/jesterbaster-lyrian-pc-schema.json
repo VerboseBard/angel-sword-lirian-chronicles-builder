@@ -1,0 +1,1323 @@
+{
+  "format": "angel-sword-csb-component-schema-v1",
+  "sourceCommit": "bb2c7bea22b5b96e91a1f8488efa36f49d465205",
+  "templateName": "lyrian_pc",
+  "componentCount": 163,
+  "keyedComponentCount": 163,
+  "components": [
+    {
+      "section": "header",
+      "path": "system.header",
+      "key": "custom_header",
+      "type": "panel"
+    },
+    {
+      "section": "header",
+      "path": "system.header.contents[0]",
+      "key": "lyrian_hdr_top",
+      "type": "panel"
+    },
+    {
+      "section": "header",
+      "path": "system.header.contents[0].contents[0]",
+      "key": "lyrian_portrait",
+      "type": "picture",
+      "size": "full-size"
+    },
+    {
+      "section": "header",
+      "path": "system.header.contents[0].contents[1]",
+      "key": "lyrian_hdr_id",
+      "type": "panel"
+    },
+    {
+      "section": "header",
+      "path": "system.header.contents[0].contents[1].contents[0]",
+      "key": "lyrian_race",
+      "type": "textField",
+      "label": "Race: ",
+      "size": "full-size"
+    },
+    {
+      "section": "header",
+      "path": "system.header.contents[0].contents[1].contents[1]",
+      "key": "lyrian_subrace",
+      "type": "textField",
+      "label": "Subrace: ",
+      "size": "full-size"
+    },
+    {
+      "section": "header",
+      "path": "system.header.contents[0].contents[2]",
+      "key": "lyrian_hdr_meters",
+      "type": "panel"
+    },
+    {
+      "section": "header",
+      "path": "system.header.contents[0].contents[2].contents[0]",
+      "key": "lyrian_hp",
+      "type": "meter",
+      "label": "HP",
+      "value": "${lyrian_hp_value}$",
+      "max": "\t${20 + lyrian_toughness * 10}$",
+      "size": "full-size"
+    },
+    {
+      "section": "header",
+      "path": "system.header.contents[0].contents[2].contents[1]",
+      "key": "lyrian_mana",
+      "type": "meter",
+      "label": "Mana",
+      "value": "${lyrian_mana_value}$",
+      "max": "${6 + lyrian_power}$",
+      "size": "full-size"
+    },
+    {
+      "section": "header",
+      "path": "system.header.contents[0].contents[2].contents[2]",
+      "key": "lyrian_ap",
+      "type": "meter",
+      "label": "AP",
+      "value": "${lyrian_ap_value}$",
+      "max": "${lyrian_ap_max}$",
+      "size": "full-size"
+    },
+    {
+      "section": "header",
+      "path": "system.header.contents[0].contents[2].contents[3]",
+      "key": "lyrian_rp",
+      "type": "meter",
+      "label": "RP",
+      "value": "${lyrian_rp_value}$",
+      "max": "${2 + lyrian_agility}$",
+      "size": "full-size"
+    },
+    {
+      "section": "header",
+      "path": "system.header.contents[0].contents[3]",
+      "key": "lyrian_hdr_defense",
+      "type": "panel"
+    },
+    {
+      "section": "header",
+      "path": "system.header.contents[0].contents[3].contents[0]",
+      "key": "lyrian_evasion",
+      "type": "label",
+      "value": "EVA: ${7 + lyrian_agility - lyrian_armor_eva_pen}$",
+      "size": "full-size"
+    },
+    {
+      "section": "header",
+      "path": "system.header.contents[0].contents[3].contents[1]",
+      "key": "lyrian_guard",
+      "type": "label",
+      "value": "GRD: ${lyrian_armor_guard + lyrian_toughness}$",
+      "size": "full-size"
+    },
+    {
+      "section": "header",
+      "path": "system.header.contents[0].contents[3].contents[2]",
+      "key": "lyrian_potency",
+      "type": "label",
+      "value": "POT: ${11 + lyrian_focus}$",
+      "size": "full-size"
+    },
+    {
+      "section": "header",
+      "path": "system.header.contents[0].contents[3].contents[3]",
+      "key": "lyrian_save",
+      "type": "label",
+      "value": "SAV: ${lyrian_toughness}$",
+      "size": "full-size"
+    },
+    {
+      "section": "header",
+      "path": "system.header.contents[0].contents[3].contents[4]",
+      "key": "lyrian_speed",
+      "type": "label",
+      "value": "Speed: ${lyrian_speed_base + lyrian_speed_mod}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body",
+      "key": "custom_body",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0]",
+      "key": "lyrian_sheet",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0]",
+      "key": "lyrian_tabs",
+      "type": "tabbedPanel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0]",
+      "key": "lyrian_tab_main",
+      "type": "tab"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[0]",
+      "key": "lyrian_mainstats",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[0].contents[0]",
+      "key": "lyrian_power",
+      "type": "numberField",
+      "label": "Power",
+      "defaultValue": "3",
+      "minVal": "0",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[0].contents[1]",
+      "key": "lyrian_focus",
+      "type": "numberField",
+      "label": "Focus",
+      "defaultValue": "3",
+      "minVal": "0",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[0].contents[2]",
+      "key": "lyrian_agility",
+      "type": "numberField",
+      "label": "Agility",
+      "defaultValue": "3",
+      "minVal": "0",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[0].contents[3]",
+      "key": "lyrian_toughness",
+      "type": "numberField",
+      "label": "Toughness",
+      "defaultValue": "3",
+      "minVal": "0",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[1]",
+      "key": "lyrian_substats",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[1].contents[0]",
+      "key": "lyrian_fitness",
+      "type": "numberField",
+      "label": "Fitness",
+      "defaultValue": "1",
+      "minVal": "0",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[1].contents[1]",
+      "key": "lyrian_cunning",
+      "type": "numberField",
+      "label": "Cunning",
+      "defaultValue": "1",
+      "minVal": "0",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[1].contents[2]",
+      "key": "lyrian_reason",
+      "type": "numberField",
+      "label": "Reason",
+      "defaultValue": "1",
+      "minVal": "0",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[1].contents[3]",
+      "key": "lyrian_awareness",
+      "type": "numberField",
+      "label": "Awareness",
+      "defaultValue": "1",
+      "minVal": "0",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[1].contents[4]",
+      "key": "lyrian_presence",
+      "type": "numberField",
+      "label": "Presence",
+      "defaultValue": "1",
+      "minVal": "0",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[2]",
+      "key": "lyrian_scratch",
+      "type": "panel",
+      "visibilityFormula": "false"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[2].contents[0]",
+      "key": "lyrian_hp_value",
+      "type": "numberField",
+      "defaultValue": "0",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[2].contents[1]",
+      "key": "lyrian_mana_value",
+      "type": "numberField",
+      "defaultValue": "0",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[2].contents[2]",
+      "key": "lyrian_ap_value",
+      "type": "numberField",
+      "defaultValue": "0",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[2].contents[3]",
+      "key": "lyrian_rp_value",
+      "type": "numberField",
+      "defaultValue": "0",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[2].contents[4]",
+      "key": "lyrian_temp_hp",
+      "type": "numberField",
+      "defaultValue": "0",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[2].contents[5]",
+      "key": "lyrian_armor_guard",
+      "type": "numberField",
+      "defaultValue": "0",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[2].contents[6]",
+      "key": "lyrian_armor_block",
+      "type": "numberField",
+      "defaultValue": "0",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[2].contents[7]",
+      "key": "lyrian_shield_block",
+      "type": "numberField",
+      "defaultValue": "0",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[2].contents[8]",
+      "key": "lyrian_armor_eva_pen",
+      "type": "numberField",
+      "defaultValue": "0",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[2].contents[9]",
+      "key": "lyrian_armor_init_pen",
+      "type": "numberField",
+      "defaultValue": "0",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[2].contents[10]",
+      "key": "lyrian_speed_base",
+      "type": "numberField",
+      "defaultValue": "20",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[2].contents[11]",
+      "key": "lyrian_speed_mod",
+      "type": "numberField",
+      "defaultValue": "0",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[2].contents[12]",
+      "key": "lyrian_burden_use",
+      "type": "numberField",
+      "defaultValue": "0",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[0].contents[2].contents[13]",
+      "key": "lyrian_ap_max",
+      "type": "numberField",
+      "defaultValue": "4",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1]",
+      "key": "lyrian_tab_skills",
+      "type": "tab"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[0]",
+      "key": "lyrian_skills_fit",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[0].contents[0]",
+      "key": "lyrian_hdr_fitness",
+      "type": "label",
+      "value": "Fitness",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[0].contents[1]",
+      "key": "lyrian_row_athletics",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[0].contents[1].contents[0]",
+      "key": "lyrian_lbl_athletics",
+      "type": "label",
+      "value": "Athletics",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[0].contents[1].contents[1]",
+      "key": "lyrian_sk_athletics",
+      "type": "numberField",
+      "defaultValue": "0",
+      "minVal": "0",
+      "maxVal": "15",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[0].contents[1].contents[2]",
+      "key": "lyrian_roll_athletics",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "<b>Athletics Check</b><br>Roll: ${[1d20] + lyrian_fitness + lyrian_sk_athletics}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[0].contents[1].contents[3]",
+      "key": "lyrian_lbl_expertise_athletics",
+      "type": "label",
+      "value": "Expertise",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[0].contents[1].contents[4]",
+      "key": "lyrian_exp_roll_expertise_athletics",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "${#?{lyrian_expertise_bonus:'Expertise Bonus'[number]|0}}$\n<b>Athletics Check — Expertise</b><br>\nRoll: ${[1d20] + lyrian_fitness + lyrian_sk_athletics + lyrian_expertise_bonus}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[0].contents[2]",
+      "key": "lyrian_row_riding",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[0].contents[2].contents[0]",
+      "key": "lyrian_lbl_riding",
+      "type": "label",
+      "value": "Riding",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[0].contents[2].contents[1]",
+      "key": "lyrian_sk_riding",
+      "type": "numberField",
+      "defaultValue": "0",
+      "minVal": "0",
+      "maxVal": "15",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[0].contents[2].contents[2]",
+      "key": "lyrian_roll_riding",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "<b>Riding Check</b><br>Roll: ${[1d20] + lyrian_fitness + lyrian_sk_riding}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[0].contents[2].contents[3]",
+      "key": "lyrian_lbl_expertise_riding",
+      "type": "label",
+      "value": "Expertise",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[0].contents[2].contents[4]",
+      "key": "lyrian_exp_roll_expertise_riding",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "${#?{lyrian_expertise_bonus:'Expertise Bonus'[number]|0}}$\n<b>Riding Check — Expertise</b><br>\nRoll: ${[1d20] + lyrian_fitness + lyrian_sk_riding + lyrian_expertise_bonus}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[1]",
+      "key": "lyrian_skills_cun",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[1].contents[0]",
+      "key": "lyrian_hdr_cunning",
+      "type": "label",
+      "value": "Cunning",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[1].contents[1]",
+      "key": "lyrian_row_deception",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[1].contents[1].contents[0]",
+      "key": "lyrian_lbl_deception",
+      "type": "label",
+      "value": "Deception",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[1].contents[1].contents[1]",
+      "key": "lyrian_sk_deception",
+      "type": "numberField",
+      "defaultValue": "0",
+      "minVal": "0",
+      "maxVal": "15",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[1].contents[1].contents[2]",
+      "key": "lyrian_roll_deception",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "<b>Deception Check</b><br>Roll: ${[1d20] + lyrian_cunning + lyrian_sk_deception}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[1].contents[1].contents[3]",
+      "key": "lyrian_lbl_expertise_deception",
+      "type": "label",
+      "value": "Expertise",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[1].contents[1].contents[4]",
+      "key": "lyrian_exp_roll_expertise_deception",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "${#?{lyrian_expertise_bonus:'Expertise Bonus'[number]|0}}$\n<b>Deception Check — Expertise</b><br>\nRoll: ${[1d20] + lyrian_cunning + lyrian_sk_deception + lyrian_expertise_bonus}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[1].contents[2]",
+      "key": "lyrian_row_roguecraft",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[1].contents[2].contents[0]",
+      "key": "lyrian_lbl_roguecraft",
+      "type": "label",
+      "value": "Roguecraft",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[1].contents[2].contents[1]",
+      "key": "lyrian_sk_roguecraft",
+      "type": "numberField",
+      "defaultValue": "0",
+      "minVal": "0",
+      "maxVal": "15",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[1].contents[2].contents[2]",
+      "key": "lyrian_roll_",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "<b>Roguecraft Check</b><br>Roll: \n${[1d20] + lyrian_cunning + lyrian_sk_roguecraft}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[1].contents[2].contents[3]",
+      "key": "lyrian_lbl_expertise_roguecraft",
+      "type": "label",
+      "value": "Expertise",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[1].contents[2].contents[4]",
+      "key": "lyrian_exp_roll_expertise_roguecraft",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "${#?{lyrian_expertise_bonus:'Expertise Bonus'[number]|0}}$\n<b>Roguecraft Check — Expertise</b><br>\nRoll: ${[1d20] + lyrian_cunning + lyrian_sk_roguecraft + lyrian_expertise_bonus}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[1].contents[3]",
+      "key": "lyrian_row_stealth",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[1].contents[3].contents[0]",
+      "key": "lyrian_lbl_stealth",
+      "type": "label",
+      "value": "Stealth",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[1].contents[3].contents[1]",
+      "key": "lyrian_sk_stealth",
+      "type": "numberField",
+      "defaultValue": "0",
+      "minVal": "0",
+      "maxVal": "15",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[1].contents[3].contents[2]",
+      "key": "lyrian_roll_stealth",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "<b>Stealth Check</b><br>Roll:\n${[1d20] + lyrian_cunning + lyrian_sk_stealth}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[1].contents[3].contents[3]",
+      "key": "lyrian_lbl_expertise_stealth",
+      "type": "label",
+      "value": "Expertise",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[1].contents[3].contents[4]",
+      "key": "lyrian_exp_roll_expertise_stealth",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "${#?{lyrian_expertise_bonus:'Expertise Bonus'[number]|0}}$\n<b>Stealth Check — Expertise</b><br>\nRoll: ${[1d20] + lyrian_cunning + lyrian_sk_stealth + lyrian_expertise_bonus}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2]",
+      "key": "lyrian_skills_rea",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[0]",
+      "key": "lyrian_hdr_reason",
+      "type": "label",
+      "value": "Reason",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[1]",
+      "key": "lyrian_row_artifice",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[1].contents[0]",
+      "key": "lyrian_lbl_artifice",
+      "type": "label",
+      "value": "Artifice",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[1].contents[1]",
+      "key": "lyrian_sk_artifice",
+      "type": "numberField",
+      "defaultValue": "0",
+      "minVal": "0",
+      "maxVal": "15",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[1].contents[2]",
+      "key": "lyrian_roll_artifice",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "<b>Artifice Check</b><br>Roll:\n${[1d20] + lyrian_reason + lyrian_sk_artifice}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[1].contents[3]",
+      "key": "lyrian_lbl_expertise_artifice",
+      "type": "label",
+      "value": "Expertise",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[1].contents[4]",
+      "key": "lyrian_exp_roll_expertise_artifice",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "${#?{lyrian_expertise_bonus:'Expertise Bonus'[number]|0}}$\n<b>Artifice Check — Expertise</b><br>\nRoll: ${[1d20] + lyrian_reason + lyrian_sk_artifice + lyrian_expertise_bonus}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[2]",
+      "key": "lyrian_row_appraise",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[2].contents[0]",
+      "key": "lyrian_lbl_appraise",
+      "type": "label",
+      "value": "Appraise",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[2].contents[1]",
+      "key": "lyrian_sk_appraise",
+      "type": "numberField",
+      "defaultValue": "0",
+      "minVal": "0",
+      "maxVal": "15",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[2].contents[2]",
+      "key": "lyrian_roll_appraise",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "<b>Appraise Check</b><br>Roll:\n${[1d20] + lyrian_reason + lyrian_sk_appraise}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[3]",
+      "key": "lyrian_row_commonknow",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[3].contents[0]",
+      "key": "lyrian_lbl_commonknow",
+      "type": "label",
+      "value": "Common Knowledge",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[3].contents[1]",
+      "key": "lyrian_sk_commonknow",
+      "type": "numberField",
+      "defaultValue": "0",
+      "minVal": "0",
+      "maxVal": "15",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[3].contents[2]",
+      "key": "lyrian_roll_commonknow",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "<b>Common Knowledge Check</b><br>Roll:\n${[1d20] + lyrian_reason + lyrian_sk_commonknow}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[4]",
+      "key": "lyrian_row_flight",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[4].contents[0]",
+      "key": "lyrian_lbl_flight",
+      "type": "label",
+      "value": "Flight",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[4].contents[1]",
+      "key": "lyrian_sk_flight",
+      "type": "numberField",
+      "defaultValue": "0",
+      "minVal": "0",
+      "maxVal": "15",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[4].contents[2]",
+      "key": "lyrian_roll_flight",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "<b>Flight Check</b><br>Roll:\n${[1d20] + lyrian_reason + lyrian_sk_flight}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[5]",
+      "key": "lyrian_row_history",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[5].contents[0]",
+      "key": "lyrian_lbl_history",
+      "type": "label",
+      "value": "History",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[5].contents[1]",
+      "key": "lyrian_sk_history",
+      "type": "numberField",
+      "defaultValue": "0",
+      "minVal": "0",
+      "maxVal": "15",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[5].contents[2]",
+      "key": "lyrian_roll_history",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "<b>History Check</b><br>Roll:\n${[1d20] + lyrian_reason + lyrian_sk_history}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[6]",
+      "key": "lyrian_row_linguistics",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[6].contents[0]",
+      "key": "lyrian_lbl_linguistics",
+      "type": "label",
+      "value": "Linguistics",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[6].contents[1]",
+      "key": "lyrian_sk_linguistics",
+      "type": "numberField",
+      "defaultValue": "0",
+      "minVal": "0",
+      "maxVal": "15",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[6].contents[2]",
+      "key": "lyrian_roll_linguistics",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "<b>Linguistics Check</b><br>Roll:\n${[1d20] + lyrian_reason + lyrian_sk_linguistics}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[7]",
+      "key": "lyrian_row_magic",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[7].contents[0]",
+      "key": "lyrian_lbl_magic",
+      "type": "label",
+      "value": "Magic",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[7].contents[1]",
+      "key": "lyrian_sk_magic",
+      "type": "numberField",
+      "defaultValue": "0",
+      "minVal": "0",
+      "maxVal": "15",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[7].contents[2]",
+      "key": "lyrian_roll_magic",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "<b>Magic Check</b><br>Roll:\n${[1d20] + lyrian_reason + lyrian_sk_magic}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[8]",
+      "key": "lyrian_row_medicine",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[8].contents[0]",
+      "key": "lyrian_lbl_medicine",
+      "type": "label",
+      "value": "Medicine",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[8].contents[1]",
+      "key": "lyrian_sk_medicine",
+      "type": "numberField",
+      "defaultValue": "0",
+      "minVal": "0",
+      "maxVal": "15",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[8].contents[2]",
+      "key": "lyrian_roll_medicine",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "<b>Medicine Check</b><br>Roll:\n${[1d20] + lyrian_reason + lyrian_sk_medicine}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[9]",
+      "key": "lyrian_row_religion",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[9].contents[0]",
+      "key": "lyrian_lbl_religion",
+      "type": "label",
+      "value": "Religion",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[9].contents[1]",
+      "key": "lyrian_sk_religion",
+      "type": "numberField",
+      "defaultValue": "0",
+      "minVal": "0",
+      "maxVal": "15",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[2].contents[9].contents[2]",
+      "key": "lyrian_roll_religion",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "<b>Religion Check</b><br>Roll:\n${[1d20] + lyrian_reason + lyrian_sk_religion}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[3]",
+      "key": "lyrian_skills_awa",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[3].contents[0]",
+      "key": "lyrian_row_animalhusb",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[3].contents[0].contents[0]",
+      "key": "lyrian_lbl_animalhusb",
+      "type": "label",
+      "value": "Animal Husbandry",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[3].contents[0].contents[1]",
+      "key": "lyrian_sk_animalhusb",
+      "type": "numberField",
+      "defaultValue": "0",
+      "minVal": "0",
+      "maxVal": "15",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[3].contents[0].contents[2]",
+      "key": "lyrian_roll_animalhusb",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "<b>Animal Husbandry Check</b><br>Roll:\n${[1d20] + lyrian_awareness + lyrian_sk_animalhusb}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[3].contents[1]",
+      "key": "lyrian_row_insight",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[3].contents[1].contents[0]",
+      "key": "lyrian_lbl_insight",
+      "type": "label",
+      "value": "Insight",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[3].contents[1].contents[1]",
+      "key": "lyrian_sk_insight",
+      "type": "numberField",
+      "defaultValue": "0",
+      "minVal": "0",
+      "maxVal": "15",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[3].contents[1].contents[2]",
+      "key": "lyrian_roll_insight",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "<b>Insight Check</b><br>Roll:\n${[1d20] + lyrian_awareness + lyrian_sk_insight}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[3].contents[2]",
+      "key": "lyrian_row_perception",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[3].contents[2].contents[0]",
+      "key": "lyrian_lbl_perception",
+      "type": "label",
+      "value": "Perception",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[3].contents[2].contents[1]",
+      "key": "lyrian_sk_perception",
+      "type": "numberField",
+      "defaultValue": "0",
+      "minVal": "0",
+      "maxVal": "15",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[3].contents[2].contents[2]",
+      "key": "lyrian_roll_perception",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "<b>Perception Check</b><br>Roll:\n${[1d20] + lyrian_awareness + lyrian_sk_perception}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[3].contents[3]",
+      "key": "lyrian_row_survival",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[3].contents[3].contents[0]",
+      "key": "lyrian_lbl_survival",
+      "type": "label",
+      "value": "Survival",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[3].contents[3].contents[1]",
+      "key": "lyrian_sk_survival",
+      "type": "numberField",
+      "defaultValue": "0",
+      "minVal": "0",
+      "maxVal": "15",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[3].contents[3].contents[2]",
+      "key": "lyrian_roll_survival",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "<b>Survival Check</b><br>Roll:\n${[1d20] + lyrian_awareness + lyrian_sk_survival}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[4]",
+      "key": "lyrian_skills_pre",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[4].contents[0]",
+      "key": "lyrian_row_art",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[4].contents[0].contents[0]",
+      "key": "lyrian_lbl_art",
+      "type": "label",
+      "value": "Art",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[4].contents[0].contents[1]",
+      "key": "lyrian_sk_art",
+      "type": "numberField",
+      "defaultValue": "0",
+      "minVal": "0",
+      "maxVal": "15",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[4].contents[0].contents[2]",
+      "key": "lyrian_roll_art",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "<b>Art Check</b><br>Roll:\n${[1d20] + lyrian_presence + lyrian_sk_art}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[4].contents[0].contents[3]",
+      "key": "lyrian_lbl_expertise_art",
+      "type": "label",
+      "value": "Expertise",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[4].contents[0].contents[4]",
+      "key": "lyrian_exp_roll_expertise_art",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "${#?{lyrian_expertise_bonus:'Expertise Bonus'[number]|0}}$\n<b>Art Check — Expertise</b><br>\nRoll: ${[1d20] + lyrian_presence + lyrian_sk_art + lyrian_expertise_bonus}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[4].contents[1]",
+      "key": "lyrian_row_intimidation",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[4].contents[1].contents[0]",
+      "key": "lyrian_lbl_intimidation",
+      "type": "label",
+      "value": "Intimidation",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[4].contents[1].contents[1]",
+      "key": "lyrian_sk_intimidation",
+      "type": "numberField",
+      "defaultValue": "0",
+      "minVal": "0",
+      "maxVal": "15",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[4].contents[1].contents[2]",
+      "key": "lyrian_roll_intimidation",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "<b>Intimidation Check</b><br>Roll:\n${[1d20] + lyrian_presence + lyrian_sk_intimidation}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[4].contents[1].contents[3]",
+      "key": "lyrian_lbl_expertise_intimidation",
+      "type": "label",
+      "value": "Expertise",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[4].contents[1].contents[4]",
+      "key": "lyrian_exp_roll_expertise_intimidation",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "${#?{lyrian_expertise_bonus:'Expertise Bonus'[number]|0}}$\n<b>Negotiation Check — Expertise</b><br>\nRoll: ${[1d20] + lyrian_presence + lyrian_sk_negotiation + lyrian_expertise_bonus}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[4].contents[2]",
+      "key": "lyrian_row_negotiation",
+      "type": "panel"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[4].contents[2].contents[0]",
+      "key": "lyrian_lbl_negotiation",
+      "type": "label",
+      "value": "Negotiation",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[4].contents[2].contents[1]",
+      "key": "lyrian_sk_negotiation",
+      "type": "numberField",
+      "defaultValue": "0",
+      "minVal": "0",
+      "maxVal": "15",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[4].contents[2].contents[2]",
+      "key": "lyrian_roll_negotiation",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "<b>Negotiation Check</b><br>Roll:\n${[1d20] + lyrian_presence + lyrian_sk_negotiation}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[4].contents[2].contents[3]",
+      "key": "lyrian_lbl_expertise_negotiation",
+      "type": "label",
+      "value": "Expertise",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[1].contents[4].contents[2].contents[4]",
+      "key": "lyrian_exp_roll_expertise_negotiation",
+      "type": "label",
+      "value": "Roll",
+      "rollMessage": "${#?{lyrian_expertise_bonus:'Expertise Bonus'[number]|0}}$\n<b>Negotiation Check — Expertise</b><br>\nRoll: ${[1d20] + lyrian_presence + lyrian_sk_negotiation + lyrian_expertise_bonus}$",
+      "size": "full-size"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[2]",
+      "key": "lyrian_tab_classes",
+      "type": "tab"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[3]",
+      "key": "lyrian_tab_combat",
+      "type": "tab"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[4]",
+      "key": "lyrian_tab_inventory",
+      "type": "tab"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[5]",
+      "key": "lyrian_tab_crafting",
+      "type": "tab"
+    },
+    {
+      "section": "body",
+      "path": "system.body.contents[0].contents[0].contents[6]",
+      "key": "lyrian_tab_bio",
+      "type": "tab"
+    }
+  ]
+}
