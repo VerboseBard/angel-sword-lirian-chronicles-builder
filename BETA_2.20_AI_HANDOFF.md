@@ -1,6 +1,6 @@
 # Angel Sword Public Beta 2.20 — AI Handoff and Work Ledger
 
-Last updated: 2026-07-24
+Last updated: 2026-08-16
 
 ## Purpose
 
@@ -440,8 +440,8 @@ Status: COMMUNITY BUG SWEEP REQUIREMENT/RACE/PROFICIENCY/CCS/BATTLE-MODE PASS IM
   `npm.cmd run test:rules0131` passed; `npm.cmd run audit:minmax` passed; full `npm.cmd test`
   passed with `[TEST SUCCESS]` in Chromium, Firefox, and WebKit at wide, desktop, and mobile
   viewports with the new hub status chip/send button present; `node --check` and
-  `git diff --check` clean. Physical Tampermonkey + live Roll20 verification is still
-  outstanding and required before the bridge is called release-ready.
+  `git diff --check` clean. This describes the historical bridge build; the
+  2026-08-16 product decision below retires it from the player-facing release path.
 
 ## Roadmap disposition
 
@@ -473,9 +473,9 @@ that file and the matching handoff sections.
 live official-vault upload). Results — checklist item 5 (.aschar → official vault)
 **PASSED against the live site** (their import code accepted our export; character
 listed in their vault); item 4's machine half passed (real downloaded CCS file
-cell-validated: correct values, types, and styles); item 1 confirmed blocked ONLY on
-Tampermonkey being absent from the owner's Chrome (Chrome plain-downloads the userscript
-— documented as the failure mode); item 3 confirmed no Foundry install on this PC.
+  cell-validated: correct values, types, and styles); item 1 confirmed that the
+  browser-userscript route required unacceptable player setup and was therefore
+  retired rather than promoted; item 3 confirmed no Foundry install on this PC.
 The checklist doc was rewritten as verified tutorials with [VERIFIED]/[YOU] markers.
 
 ## Flagged for a later update (owner, 2026-07-22)
@@ -546,3 +546,243 @@ quantities; current mods/material effects; Transmuter/Alkahest; dice mute. Add a
 regression before each port. In parallel only after code is stable, physically validate
 Roll20, redesign Owlbear, and package Foundry v14. Do not modify Beta 3.0 or publish Beta 2.20
 without explicit owner approval.
+
+### 2026-08-09 Discord sheet/Roll20 implications review
+
+- Reviewed the supplied August 2-7 Discord discussion and Roll20 custom-weapon screenshot.
+  It does not establish a new numbered rules release or justify changing class EXP costs.
+  The reported Roll20 class-cost failure was an external Roll20 deployment problem.
+- Nio's corrected rule is already represented in the local `0.13.1` ancestry data and the
+  generic computed-bonus path applies it correctly once: +1 Guard, +4 Block, -2 Evasion,
+  and -2 Dodge. Do not add the briefly reported +2 Toughness/-2 Agility; that was corrected
+  in the conversation. Catfolk and Rabbitfolk Fast Runner also resolves to base Speed 25
+  (+5 from the normal 20). Add focused ancestry regressions before changing this parser.
+- Local Archer Multishot already has `Overcharge,Scatter`. The Discord omission was stale
+  text inside an existing Roll20 character ability; removing/re-adding refreshed it. Our
+  browser cards are rebuilt from current loaded data, but exported/copied Roll20 macros are
+  snapshots. Any future two-way Roll20 sync should refresh records by stable ability ID and
+  should expose the source rules version rather than treating copied wording as live data.
+- The current Clio `ccs-template.xlsx` download is byte-identical to our bundled copy:
+  588,454 bytes, SHA-256
+  `078BB27BAA394149A10453A0FA7B19B28BDB42F0DCD30E6C94A24E4AA64EE4A6`. Its Core B11/B12
+  formulas are still the older formulas. The Discord discussion says the separate community
+  Google sheet gained new auto-race formulas and that Clio export is currently incorrect.
+  Therefore CCS export success must not be treated as semantic correctness yet.
+- Do not paste the Discord B11/B12 formulas into the bundled workbook by themselves. The
+  Beta 2.20 exporter currently writes computed racial bonuses into F47/F48; the newer sheet
+  formulas also add Pixie/Fae/Chimera from D2/D3 and would double-count them. A template
+  refresh must update `buildCcsCellMap()` and add regression cases for Pixie, Fae, Chimera,
+  Mirane lockouts, Spirit Core, and class rows. Obtain or identify the current blank community
+  sheet/template first and compare every writable cell and protected formula region.
+- The Venom Drip pistol macro demonstrates a useful future Roll20 feature, not a rules-data
+  correction. Our bridge can already carry the resulting macro string, but our generator does
+  not yet model equipped/custom weapon mode queries, 1H/2H attack bonuses, Light/Precise/Heavy
+  damage profiles, crit/reach notes, or weapon modifications such as Venom Drip. Implement
+  this only after current item mods/material effects are modeled. Roll20 nested query syntax
+  requires context-aware escaping of `|` and `}` plus focused macro tests; do not copy the
+  community macro wholesale.
+- Spreadsheet conditional-formatting discussion (a maximum d4 appearing green) and the old
+  Pathfinder sheet have no Beta 2.20 program implication.
+
+Next action from this review: acquire the current community CCS blank-sheet source, perform a
+cell/formula diff against the bundled v10.3.1 workbook, then update the template, mapper, and
+export regressions as one atomic change. The richer equipped-weapon Roll20 macro builder belongs
+after the pending item-mod/material-effects work. No Beta 3.0 files were touched.
+
+### 2026-08-09 CCS provenance check
+
+- Beta 2.20 contains two different spreadsheet templates. The active CCS export uses
+  `data/ccs-template.xlsx`; the older legacy spreadsheet export uses
+  `assets/lyrian-google-template.xlsx`. Do not treat their provenance or mappings as
+  interchangeable.
+- `data/ccs-template.xlsx` was captured directly from the official Clio builder endpoint
+  `https://clio.angelssword.com/characterbuilder/data/ccs-template.xlsx` on 2026-07-22 and
+  was identified by the official builder integration as community-sheet template v10.3.1.
+  The current endpoint still serves the exact same bytes.
+- The XLSX contains no usable creator attribution: it has no Office core-properties file,
+  its workbook comments contain a blank author, and no Twilight/Morrocker/Kaelith credit is
+  embedded in the workbook XML. Git records only who bundled it locally: VerboseBard added
+  the CCS template in checkpoint `15defa6` (co-authored by Claude Fable 5). That is not
+  evidence of original spreadsheet authorship.
+- The supplied Discord conversation is the strongest available authorship evidence. Twilight
+  calls it "the spreadsheet I've made," discusses maintaining the main sheet, and describes
+  selectively adopting ideas from a Clio-derived/customized version. The careful attribution
+  is therefore: **Twilight appears to be the primary creator/maintainer of the underlying main
+  community character sheet; the bundled file is the Clio builder's XLSX export/adaptation of
+  that sheet.** The exact contributors to the Clio adaptation cannot be proven from the file.
+- The legacy `assets/lyrian-google-template.xlsx` was added to this repository by VerboseBard
+  in the initial Beta 1.3 web-builder commit `3cc103e`. Its Office metadata is also blank, so
+  the repository does not establish its original external author. Confirm which export button
+  is being discussed before answering future provenance questions.
+
+### 2026-08-12 Foundry CSB community-project review
+
+- Reviewed `JesterBaster/Lyrian-Chronicles-foundry-vtt-system` at commit
+  `bb2c7bea22b5b96e91a1f8488efa36f49d465205`. Full implications and recommended integration
+  sequence are recorded in `BETA_2.20_VTT_INTEGRATION_PLAN.md`.
+- This is a newly published, partial Foundry 14.365 / Custom System Builder 6.0.2 sheet/world,
+  not a standalone Lyrian game system and not yet a clean installable module. Useful completed
+  scope is header/stats/resources/defences and the 21 ordinary skills; most gameplay tabs,
+  item templates, compendiums, enemies, and expertise automation remain unfinished.
+- Its documented `lyrian_*` keys create a valuable optional target for Beta 2.20 exports.
+  Preserve our current system-agnostic Foundry companion as the fallback; pursue a separate
+  `.aschar` -> Lyrian CSB adapter only after the schema and ownership terms stabilize.
+- Do not copy code/assets yet: there is no repository license, `module.json` has blank
+  manifest/download/license fields and a placeholder author, and the claimed `exports/`
+  template backup is absent.
+- Security/repository-hygiene concern: the public repository includes the complete Foundry
+  world LevelDB state (`data/users`, `messages`, `settings`, `actors`, and more). Contents were
+  deliberately not inspected. Advise the maintainer to sanitize and rewrite history or start
+  a clean distribution repository, publishing CSB template JSON/compendiums rather than a live
+  world database.
+- No Beta 2.20 runtime code, Beta 3.0 files, or external repository state changed during this
+  evaluation.
+
+### 2026-08-12 JesterBaster collaboration permission update
+
+- Owner reports direct Discord permission from JesterBaster to collaborate and reuse the
+  Lyrian Foundry/CSB work for the overall community, with neither fan project seeking financial
+  benefit. Owner also reports existing game-owner approval for this community builder project.
+- Mark the direct collaboration/reuse permission blocker resolved. Credit JesterBaster and keep
+  the work labeled unofficial fan/community tooling.
+- Still obtain a durable `LICENSE`/`PERMISSION.md` or retained Discord permission record before
+  redistribution. Noncommercial status is context, not a substitute for permission; the reported
+  express permission is the operative authorization.
+- Do not copy the published live-world LevelDB files. Request a sanitized CSB template export,
+  stable `lyrian_*` schema, and clean distributable assets first. Continue honoring licenses for
+  Foundry, CSB, fonts, and any other third-party material.
+- Next implementation work is now authorized in principle: design and test an `.aschar` ->
+  Lyrian CSB mapper after the sanitized template/schema is received. No runtime code changed in
+  this permission-recording update.
+
+### 2026-08-12 independent Foundry CSB extraction and mapper update
+
+- Owner explicitly directed the project to retrieve and reconstruct the public community CSB
+  work ourselves rather than wait for the maintainer to package it.
+- Downloaded JesterBaster's repository at commit
+  `bb2c7bea22b5b96e91a1f8488efa36f49d465205`. The separate
+  `packs/actor-templates` LevelDB contains a stale/empty `lyrian_pc`; the complete current
+  `_template` Actor was located in the world `data/actors` database.
+- Extracted only that template and immediately sanitized it. Added
+  `foundry/csb-reference/jesterbaster-lyrian-pc-template.json`, its flattened schema,
+  upstream `customcss.css`, and only the seven referenced font files plus their OFL license.
+  The reference excludes actor/document IDs, ownership, prototype tokens, embedded records,
+  template histories, live-world metadata, and all user/message/settings/campaign data.
+- Added `foundry/scripts/lyrian-csb-mapper.mjs`, a pure mapping layer that never calls Foundry
+  APIs and never writes Actors. It maps `.aschar` identity, effective stats, 21 ordinary skills,
+  resources, and the current template's defence/speed scratch fields. Unsupported expertise,
+  classes, breakthroughs, equipment, and skills remain in `coverage.unmapped`; formula
+  mismatches remain in `coverage.formulaGaps`.
+- `game.angelSword.mapLyrianCsb()` exposes the read-only plan in a licensed test installation.
+  Do not turn this into an Actor write until the clean-world physical checklist passes.
+- Template audit found two upstream errors at the pinned commit: Roguecraft's roll component is
+  keyed `lyrian_roll_`; Intimidation's expertise control rolls/lists Negotiation. Also, the
+  Classes/Combat/Inventory/Crafting/Bio tabs and expertise storage remain incomplete.
+- Validation: `npm run test:foundry-csb` passes all 15 checks and `npm run test:vtt` passes all
+  58 checks. Update both tests whenever the upstream schema commit changes.
+- The temporary upstream zip, extracted live world, and LevelDB reader were deleted after the
+  sanitized artifacts were verified; do not commit or redistribute the live world.
+- Current next step: use a licensed clean Foundry 14.365 + CSB 6.0.2 install to verify template
+  import/binding and exact `system.props` behavior, fix the two CSB component defects in a clean
+  export, then add a guarded backup-first Actor update. Beta 3.0 remains out of scope.
+
+### 2026-08-16 — Beta 2.20 scope and four-set dice audit
+
+- Owner explicitly parked the Beta 3.0 redesign. No Beta 3.0 file was inspected as an
+  implementation source or changed. Beta 2.20 remains the only active implementation target.
+- Confirmed that the local Beta 2.20 working tree already integrates exactly four selectable
+  dice sets: Angel Sword, Asari, Leaflit, and Rana. Angel Sword is built in; the other three
+  load through the generated promoted-skin registry. All four route through the synchronized
+  shared geometry/renderer, expose D4/D6/D8/D10/D100/D12/D20, render distinct per-die picker
+  previews, and work in real character-sheet rolls.
+- No missing dice-set implementation was found, so no duplicate runtime feature code was added.
+  The integration is local and tested but remains uncommitted/unpublished with the rest of the
+  Beta 2.20 working tree.
+- Added `BETA_2.20_STATUS_AND_DICE_AUDIT_2026-08-16.md` as the current answer-first status
+  report. Updated the dice system map and rendering contract to include Rana and the current
+  promotion/test workflow.
+- Fresh verification passed: build/bundle compatibility; shared Workshop core sync; dice
+  promotion/registry/routing/topology; UI follow-ups; rules 0.13.1; community update; min/max;
+  Roll20 64/64; VTT 58/58; Foundry CSB 15/15; and the dedicated dice browser matrix on desktop
+  and mobile Chrome, Edge, Chromium, Firefox, and WebKit. Brave was not installed.
+- The first full `npm test` run reached Firefox mobile and timed out waiting for the Crafting
+  walkthrough button to become stable. The dedicated Firefox dice tests had passed, WebKit
+  continued to pass, and an immediate unchanged full-suite rerun passed every deployment,
+  layout, network, DOM, Quick Build, class progression, availability, proficiency, version,
+  cache, autosave, and mobile assertion. Record this as an intermittent Firefox Playwright
+  actionability flake and monitor it; do not claim a reproducible product regression.
+- Owner then reported that selecting Roll20 `Install Bridge` replaced the character-sheet tab
+  and showed `ERR_CONNECTION_REFUSED` after the local server on port 4210 had stopped. Restored
+  the local server and changed the installer link to open in a separate protected tab with
+  `target="_blank"` and `rel="noopener noreferrer"`, so a failed or intercepted userscript
+  navigation cannot strand the sheet. Corrected the nearby disclosure: the bridge does not
+  contact a server, but its userscript storage retains the latest relay/status messages until
+  they are overwritten or the bridge is removed. Added a deployment-browser assertion for the
+  link target, relationship protections, and installer path. The fresh full Chromium/Firefox/
+  WebKit deployment suite passed after the fix.
+- The separate-tab experiment proved that a browser userscript is not a suitable
+  player product: it depends on a manager extension, browser-specific permissions,
+  and technical installation steps. The installer, download, direct-send, token-pin,
+  and token-sync controls were removed from the player-facing interface.
+- **Table Tools → Roll20 (Alpha)** now presents **Copy Character Macro** as the
+  cross-browser fallback and explains the target solution: a native Lyrian
+  Chronicles Roll20 community sheet selected once by the GM, followed by a
+  paste-once character import and native one-click roll buttons. A later Roll20
+  Mod may provide GM automation in Pro-created games, but it will never be a
+  player requirement. See `docs/roll20-native-sheet-plan.md`.
+- A real official-builder round trip of `The Heir.aschar.json` mapped both classes, both
+  breakthroughs, four skill rows, and all seven equipment entries, but reported a Clim caveat.
+  The file showed 300 Clim remaining because it preserved `interludeActions: ["job"]`; the
+  official creation-time Job action adds 300 Clim, while our importer had ignored the action and
+  recomputed 0 from a 4,000 Mirane budget minus 4,000 of gear. Added official creation interlude
+  actions (repeatable Job +300 Clim, Train +25 class EXP, and Other/GM decides) to builder state,
+  class-IP accounting, funds, class-step controls, `.aschar` import, and `.aschar` export. Import
+  results now report an exact Clim match when totals agree and show both values only on a true
+  mismatch. A focused browser regression recreates the seven-item/Job case and proves 300 Clim
+  survives the import.
+- Owner reported that the desktop `Clear Sheet` toolbar button erased the working character on
+  a single click. The project already had a guarded reset modal for the builder sidebar and
+  mobile tools, but the desktop button bypassed it and called `clearSheet()` directly. Rewired
+  the desktop button to the same confirmation flow. The modal now asks, `Are you sure you wish
+  to erase this character?`, explains that current working data will be erased while saved
+  character slots remain, and offers explicit `Yes, Erase Character` / `No, Keep Character`
+  actions. The focused browser regression proves cancellation preserves the character and
+  confirmation clears it. Build/bundle compatibility and `test-ui-followups` pass.
+- Release status remains unchanged: the package/UI still identify as Beta 2.13 intentionally,
+  the worktree needs deliberate scope/commit cleanup, physical devices remain unverified, and
+  the rule/creation/equipment and live-adapter gaps in the status report remain open.
+
+### 2026-08-16 — Owlbear Companion v0.2 architecture milestone
+
+- Adopted one installed Owlbear extension with internal modules. The first module now imports
+  either builder Character JSON or official `.aschar.json`, normalizes it to a compact versioned
+  record, displays live resources, and binds it to exactly one selected Character-layer token.
+- Binding metadata is namespaced and records player, character, token, and update identity.
+  Non-GM players cannot silently replace another player's existing token binding; a GM can
+  repair or clear it.
+- Added a shared, versioned roll-event contract, an extension-native connection-test roll,
+  a short deduplicated room log, and a manifest background page. The background page permits
+  relay work while the visible popover is closed.
+- The external top-level builder-to-Owlbear relay remains best effort because modern browser
+  storage partitioning may isolate `BroadcastChannel` between the builder origin and Owlbear's
+  extension iframe. Extension-native import, binding, test rolls, and room log do not depend
+  on that channel. Do not call external-sheet relay certified until a physical two-browser
+  room test passes.
+- The sheet remains authoritative for future mirrored visual dice: Owlbear will eventually
+  visualize a completed sheet result, not roll a second independent outcome. Damage/healing,
+  conditions, movement, Lyrian fluid initiative, and mirrored 3D dice are intentionally later
+  modules in the same installed extension.
+- Added Owlbear-specific CORS for local serving and corrected GitHub Pages packaging so the
+  complete `owlbear/` extension is present in a future deployment artifact. Nothing was pushed,
+  published, or installed into the owner's Owlbear account in this milestone.
+- The official Owlbear SDK is bundled into the static extension at build time rather than
+  loaded from a runtime CDN. `uuid` is overridden to 11.1.1 because SDK 3.1.0 only calls its
+  compatible v4 API; `npm audit` reports no known vulnerabilities.
+- Added `docs/owlbear-extension-architecture.md`, expanded the GM recording walkthrough, and
+  updated the owner physical checklist. Focused verification currently passes 79 adapter/
+  contract checks plus a Chromium standalone-panel import and safety test. The next gate is
+  one GM plus one second player in a real Owlbear room.
+- `npm start` and `npm run serve` build the ignored/generated Owlbear runtime bundles before
+  opening the local server. The GitHub Pages workflow also builds before packaging. The full
+  copied-deployment suite passes Chromium, Firefox, and WebKit at wide, desktop, and mobile
+  sizes, including a complete manifest/page/runtime deployment assertion.

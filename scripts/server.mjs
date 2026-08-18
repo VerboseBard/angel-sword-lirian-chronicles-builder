@@ -87,12 +87,16 @@ async function serveStatic(response, pathname) {
   const type = MIME_TYPES.get(path.extname(absolute).toLowerCase()) || "application/octet-stream";
   const relativePath = path.relative(PROJECT_ROOT, absolute).replace(/\\/g, "/");
   const isMutableVersionManifest = /^assets\/versions\/manifest\.(?:js|json)$/i.test(relativePath);
-  response.writeHead(200, {
+  const headers = {
     "content-type": type,
     "cache-control": type.includes("text/html") || isMutableVersionManifest
       ? "no-store"
       : "public, max-age=60"
-  });
+  };
+  if (relativePath.startsWith("owlbear/")) {
+    headers["access-control-allow-origin"] = "https://www.owlbear.rodeo";
+  }
+  response.writeHead(200, headers);
   createReadStream(absolute).pipe(response);
 }
 

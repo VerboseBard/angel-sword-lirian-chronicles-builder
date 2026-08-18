@@ -86,12 +86,21 @@ export function ensureDiceRuntimeLoaded() {
   }
   if (!diceRuntimePromise) {
     window.LYRIAN_DISABLE_LEGACY_GLB_DICE = true;
+    const promotedSidecars = (window.LYRIAN_PROMOTED_DICE_SKINS || [])
+      .map((pack) => pack?.faceArtScript)
+      .filter(Boolean);
     diceRuntimePromise = loadScriptsInOrder([
       "assets/vendor/three.min.js",
       "assets/vendor/GLTFLoader.js",
-      "assets/dice-3d/dice-3d-embedded.js",
-      "assets/dice-3d/new-angelsword-dice-face-art.384-webp.js?v=new-angelsword-384-webp-test-1",
-      "assets/dice-3d/lyrian-accurate-dice.js?v=alpha4-new-angelsword-sidecar-27-d4-triangle-pivot"
+      "assets/dice-3d/dice-3d-embedded.js?v=20260811-srgb-dice-v1",
+      "assets/dice-3d/new-angelsword-dice-face-art.384-webp.js?v=20260811-srgb-dice-v1",
+      ...promotedSidecars,
+      "assets/dice-3d/lyrian-accurate-dice.js?v=20260811-srgb-dice-v1",
+      "assets/dice-3d/legacy-dice-roller-capture.js?v=20260811-srgb-dice-v1",
+      "assets/dice-3d/dice-geometry.js?v=20260811-srgb-dice-v1",
+      "assets/dice-3d/character-sheet-skin-studio.js?v=20260811-srgb-dice-v1",
+      "assets/dice-3d/shared-dice-roller-core.js?v=20260816-transparent-dice-v1",
+      "assets/dice-3d/dice-roller-router.js?v=20260811-srgb-dice-v1"
     ]).catch((error) => {
       diceRuntimePromise = null;
       throw error;

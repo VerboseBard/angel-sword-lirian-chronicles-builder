@@ -1,4 +1,4 @@
-import { ACTIVE_SAVE_SLOT_KEY, DEFAULT_CHARACTER_START_MODE, DEFAULT_DICE_SET_ID, MIRANE_START_MODE_ID, SAVE_SLOTS_KEY, STORAGE_KEY } from "./constants.js";
+import { ACTIVE_SAVE_SLOT_KEY, CREATION_INTERLUDE_ACTIONS, DEFAULT_CHARACTER_START_MODE, DEFAULT_DICE_SET_ID, MIRANE_START_MODE_ID, SAVE_SLOTS_KEY, STORAGE_KEY } from "./constants.js";
 import { cleanText, cssEscape, toNumber } from "./utils.js";
 import { hasManualHpHistory } from "./rules.js";
 import { deriveSaveSlotName, getSavedSlotStore, persistSavedSlotStoreQuietly } from "./io.js";
@@ -45,6 +45,7 @@ export function createDefaultState() {
           selectedAncestryId: "",
           selectedClassIds: [],
           classAbilityProgress: {},
+          creationInterludeActions: [],
           autoSpiritCore: "",
           autoExpBank: "",
           selectedItemIds: [],
@@ -201,6 +202,11 @@ export function mergeBuilderState(source = {}) {
         classAbilityProgress: source.classAbilityProgress && typeof source.classAbilityProgress === "object"
           ? { ...source.classAbilityProgress }
           : { ...defaults.classAbilityProgress },
+        creationInterludeActions: Array.isArray(source.creationInterludeActions)
+          ? source.creationInterludeActions
+            .map((id) => cleanText(id))
+            .filter((id) => CREATION_INTERLUDE_ACTIONS.some((action) => action.id === id))
+          : [...defaults.creationInterludeActions],
         autoSpiritCore: cleanText(source.autoSpiritCore || defaults.autoSpiritCore),
         autoExpBank: cleanText(source.autoExpBank || defaults.autoExpBank),
         selectedItemIds,

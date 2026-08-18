@@ -15,7 +15,7 @@
   <script defer src="assets/versions/0.13.1/lyrian-data.js"></script>
   <script defer src="assets/versions/0.13.1/lyrian-detail-data.js"></script>
   <script defer src="assets/versions/manifest.js"></script>
-  <link rel="stylesheet" href="./src/css/main.css?v=2.13.0-advanced-build-hotfix-20260721">
+  <link rel="stylesheet" href="./src/css/main.css?v=20260816-play-sheet-tools">
 </head>
 <body>
   <section id="builder-view" class="builder-view">
@@ -30,6 +30,16 @@
             </div>
             <label for="game-version-select">Select game version</label>
             <select id="game-version-select"></select>
+            <a
+              class="version-learn-link"
+              href="https://clio.angelssword.com/#"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Learn how to play Lyrian Chronicles on the official website (opens in a new tab)"
+            >
+              <strong>Learn How to Play <span aria-hidden="true">&#8599;</span></strong>
+              <span>Explore the lore, discover the world, and learn the rules of adventure.</span>
+            </a>
             <div id="version-update-list" class="version-update-list" aria-live="polite"></div>
             <div id="version-progress" class="version-progress" hidden>
               <div>
@@ -157,13 +167,7 @@
         <div class="sheet-toolbar-status">
           <div id="status-pill" class="status-pill">Ready</div>
           <div class="action-grid sheet-toolbar-actions">
-            <button class="tool-button" id="save-browser" type="button">Save to Browser</button>
-            <button class="tool-button" id="load-browser" type="button">Load Saved</button>
-            <button class="tool-button" id="export-json" type="button">Export Character</button>
-            <button class="tool-button" id="import-json" type="button">Import Character</button>
-            <button class="tool-button" id="sheet-integrations" type="button">VTT &amp; Sharing</button>
-            <button class="tool-button" id="recalc-basics" type="button">Recalc Basics</button>
-            <button class="tool-button" id="clear-sheet" type="button">Clear Sheet</button>
+            <button class="tool-button" id="open-table-tools" type="button">Table Tools</button>
           </div>
         </div>
       </div>
@@ -191,6 +195,7 @@
             <button type="button" data-play-mode="combat">Character Sheet</button>
             <button type="button" data-play-mode="gathering">Gathering</button>
             <button type="button" data-play-mode="crafting">Crafting</button>
+            <button type="button" data-play-mode="table">Table Tools</button>
           </nav>
         </div>
 
@@ -339,6 +344,7 @@
 
         <section id="play-crafting" class="play-crafting-gathering-dashboard" data-play-mode-panel="crafting" hidden></section>
         <section id="play-gathering" class="play-crafting-gathering-dashboard" data-play-mode-panel="gathering" hidden></section>
+        <section id="play-table-tools" class="play-table-tools-dashboard" data-play-mode-panel="table" hidden></section>
 
         <div class="play-layout-grid" data-play-mode-panel="combat" hidden>
           <section class="play-panel play-center-column">
@@ -451,6 +457,7 @@
   <input id="import-file" type="file" accept=".json,.pdf,.xlsx,.xls,application/json,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" hidden>
   <input id="portrait-file" type="file" accept="image/*" hidden>
 
-  <script defer src="assets/app.bundle.js?v=2.13.0-advanced-build-hotfix-20260721"></script>
+  <script defer src="assets/dice/promoted-dice-skins.registry.js?v=20260811-srgb-dice-v1"></script>
+  <script defer src="assets/app.bundle.js?v=20260816-aschar-interludes-v1"></script>
 </body>
 </html>

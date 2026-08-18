@@ -5,18 +5,29 @@
   "description": "Web-ready Angel Sword Lyrian Chronicles character builder, Beta 2.13 public release.",
   "type": "module",
   "scripts": {
-    "build": "esbuild src/js/main.js --bundle --format=iife --global-name=LyrianApp --target=es2020,safari15 --minify --sourcemap --outfile=assets/app.bundle.js && node scripts/check-bundle-compat.mjs",
-    "start": "node scripts/server.mjs",
-    "serve": "node scripts/server.mjs",
+    "build": "node scripts/build-app.mjs && node scripts/build-owlbear.mjs && node scripts/check-bundle-compat.mjs",
+    "start": "node scripts/build-owlbear.mjs && node scripts/server.mjs",
+    "serve": "node scripts/build-owlbear.mjs && node scripts/server.mjs",
     "audit:minmax": "node scripts/audit-minmax-cascades.mjs",
     "test:rules0131": "npm run build && node scripts/test-rules-0131.mjs",
     "test:community": "npm run build && node scripts/test-community-update.mjs",
     "test:roll20": "node scripts/test-roll20-bridge.mjs",
-    "test:vtt": "node scripts/test-vtt-adapters.mjs",
+    "test:vtt": "node scripts/build-owlbear.mjs && node scripts/test-vtt-adapters.mjs && node scripts/test-owlbear-panel.mjs",
+    "test:foundry-csb": "node scripts/test-foundry-csb-reference.mjs",
+    "dice:promote": "node scripts/promote-dice-skin.mjs",
+    "dice:publish-clean": "node scripts/prune-dice-catalog.mjs asari-full-set-draft leaflit-full-set rana-full-set",
+    "dice:core:check": "node scripts/sync-workshop-dice-core.mjs --check",
+    "test:dice-skins": "node scripts/test-dice-skin-integration.mjs",
+    "test:dice-browsers": "node scripts/test-dice-browser-matrix.mjs",
+    "test:followups": "node scripts/test-ui-followups.mjs",
     "test": "npm run build && node scripts/test-cross-browser.mjs"
   },
   "devDependencies": {
+    "@owlbear-rodeo/sdk": "3.1.0",
     "esbuild": "^0.25.5",
     "playwright": "^1.60.0"
+  },
+  "overrides": {
+    "uuid": "11.1.1"
   }
 }

@@ -1,4 +1,4 @@
-import { BUILDER_STEPS, CHARACTER_START_MODES, CLASS_GROUP_ROLE_ORDER, DEFAULT_CHARACTER_START_MODE, CLASS_PASSIVE_SLOTS, CLASS_PURCHASABLE_LEVELS, CLASS_ROWS, CLICKABLE_ROLL_FIELDS, COMMON_WEAPON_GROUP_OPTIONS, CREATION_SKILL_POINT_BUDGET, DEFAULT_DICE_SET_ID, DICE_PREVIEW_FALLBACK_URL, DICE_SETS, DICE_SET_ID_ALIASES, DICE_SOUND_ASSETS, DICE_TRAY_TYPES, EMBEDDED_STATE_CHUNK_SIZE, EMBEDDED_STATE_FORMAT, ENABLE_ACCURATE_DICE_ROLLS, ENABLE_WEBGL_DICE_ROLLS, INVENTORY_ROWS, MAIN_STATS, MAIN_STAT_CREATION_ARRAY, MAX_DICE_TRAY_DICE, MIRANE_CRAFTING_INTERLUDE_EXP, MIRANE_GATHER_BASE_UNITS, MIRANE_GATHER_MASTERY_BONUS_UNITS, MIRANE_IP_SHOP_PRICE_CAP, MIRANE_IP_SHOP_SALE_PERCENT_CAP, MIRANE_IP_SHOP_SLOT_LIMIT, MIRANE_JOB_ARTISAN_BONUS_CLIM, MIRANE_JOB_BASE_CLIM, MIRANE_RAW_MATERIAL_CLIM_LIMIT, MIRANE_SINGLE_MATERIAL_CLIM_LIMIT, MIRANE_START_MODE_ID, MULTILINE_FIELDS, NAME_FIELDS, OFFICIAL_LANGUAGE_OPTIONS, PAGE_BACKGROUNDS, PASSIVE_READ_ONLY_FIELDS, PDF_STATE_CHUNK_FIELD_PREFIX, PDF_STATE_MANIFEST_FIELD, PLAY_BASIC_ACTIONS, PLAY_ROLLS, PORTRAIT_JPEG_QUALITY, PORTRAIT_MAX_DIMENSION, PORTRAIT_NORMALIZE_THRESHOLD, SAVE_SNAPSHOT_PORTRAIT_LIMIT, SECONDARY_STATS, SECONDARY_STAT_CREATION_ARRAY, SKILL_ALIASES, SKILL_DEFINITIONS, SKILL_EXPERTISE_CAP, SKILL_EXPERTISE_OPTIONS, SKILL_OPTIONS, SKILL_POINT_CAP, SPECIALITY_WEAPON_GROUP_OPTIONS, STARTING_CLASS_EXP, STARTING_INTERLUDE_POINTS, SUBSTAT_OPTIONS, WEAPON_GROUP_REFERENCE_OPTIONS } from "./constants.js";
+import { BUILDER_STEPS, CHARACTER_START_MODES, CLASS_GROUP_ROLE_ORDER, DEFAULT_CHARACTER_START_MODE, CLASS_PASSIVE_SLOTS, CLASS_PURCHASABLE_LEVELS, CLASS_ROWS, CLICKABLE_ROLL_FIELDS, COMMON_WEAPON_GROUP_OPTIONS, CREATION_INTERLUDE_ACTIONS, CREATION_SKILL_POINT_BUDGET, DEFAULT_DICE_SET_ID, DICE_PREVIEW_FALLBACK_URL, DICE_SETS, DICE_SET_ID_ALIASES, DICE_SOUND_ASSETS, DICE_TRAY_TYPES, EMBEDDED_STATE_CHUNK_SIZE, EMBEDDED_STATE_FORMAT, ENABLE_ACCURATE_DICE_ROLLS, ENABLE_WEBGL_DICE_ROLLS, INVENTORY_ROWS, MAIN_STATS, MAIN_STAT_CREATION_ARRAY, MAX_DICE_TRAY_DICE, MIRANE_CRAFTING_INTERLUDE_EXP, MIRANE_GATHER_BASE_UNITS, MIRANE_GATHER_MASTERY_BONUS_UNITS, MIRANE_IP_SHOP_PRICE_CAP, MIRANE_IP_SHOP_SALE_PERCENT_CAP, MIRANE_IP_SHOP_SLOT_LIMIT, MIRANE_JOB_ARTISAN_BONUS_CLIM, MIRANE_JOB_BASE_CLIM, MIRANE_RAW_MATERIAL_CLIM_LIMIT, MIRANE_SINGLE_MATERIAL_CLIM_LIMIT, MIRANE_START_MODE_ID, MULTILINE_FIELDS, NAME_FIELDS, OFFICIAL_LANGUAGE_OPTIONS, PAGE_BACKGROUNDS, PASSIVE_READ_ONLY_FIELDS, PDF_STATE_CHUNK_FIELD_PREFIX, PDF_STATE_MANIFEST_FIELD, PLAY_BASIC_ACTIONS, PLAY_ROLLS, PORTRAIT_JPEG_QUALITY, PORTRAIT_MAX_DIMENSION, PORTRAIT_NORMALIZE_THRESHOLD, SAVE_SNAPSHOT_PORTRAIT_LIMIT, SECONDARY_STATS, SECONDARY_STAT_CREATION_ARRAY, SKILL_ALIASES, SKILL_DEFINITIONS, SKILL_EXPERTISE_CAP, SKILL_EXPERTISE_OPTIONS, SKILL_OPTIONS, SKILL_POINT_CAP, SPECIALITY_WEAPON_GROUP_OPTIONS, STARTING_CLASS_EXP, STARTING_INTERLUDE_POINTS, SUBSTAT_OPTIONS, WEAPON_GROUP_REFERENCE_OPTIONS } from "./constants.js";
 import { asArray, clamp, cleanText, cssEscape, escapeHtml, formatModifier, normalizeKey, normalizePhrase, splitSentences, toNumber } from "./utils.js";
 import { clearSheet, createDefaultState, getSavedSlots, mergePlayState, persistWorkingState, scheduleWorkingStatePersist, state, updateFieldValue } from "./state.js";
 import { applyGameVersion, detailLookup, exportPrepCache, getAncestryDetail, getAncestryOptionsByPrimaryRace, getAncestryRequirementPhrases, getBreakthroughBudgetState, getBuilderChoiceDefinitionsCacheKey, getCampaignProgressState, getCharacterStartMode, getClassDetail, getClassUnlockBudgetState, getComputedBonuses, getCurrentSecondaryLineageMode, getDemonClanOptions, getDerivedCombatStats, getHumanRaceSkillChoiceOptions, getRaceDetail, getRaceRequirementPhrases, getSecondaryLineageLabels, getSelectedAncestryDetail, getSelectedBreakthroughRecords, getSelectedClassDetails, getSelectedClassProgress, getSelectedGameVersionId, getSelectedItemRecords, getSelectedRaceDetail, getSkillBreakdownParts, getSkillRowsData, getStartingFundsState, getVersionRecord, getVersionRecords, lookup, syncPlayResourcesFromFields, usePlayCost, versionRuntime } from "./rules.js";
@@ -7,12 +7,11 @@ import { closeSheetModal, deriveSaveSlotName, exportJsonState, exportPatchedTemp
 import { ensureDiceRuntimeLoaded, isDiceRuntimeLoaded } from "./runtime-loader.js";
 import { buildCharacterProfileSummary, buildRoll20AbilityMacro, buildRoll20ActionMacro, buildRoll20CharacterMacro, buildWorldAnvilBBCodeProfile, copyIntegrationText, VTT_PLATFORM_URLS } from "./integrations.js";
 import { BRIDGE_STATES, buildTokenModCommand, createRoll20Bridge } from "./roll20-bridge.js";
-import { publishVttEvent } from "./vtt-relay.js";
+import { publishVttEvent, subscribeVttRoomEvents } from "./vtt-relay.js";
 import { buildAscharCharacter, normalizeAscharCharacter, wrapAscharExport } from "./aschar.js";
 
-
-
-const DICE_PACK_MANIFEST_URL = "assets/dice/dice-pack-manifest.json";
+const DICE_ASSET_REVISION = "20260811-srgb-dice-v1";
+const DICE_PACK_MANIFEST_URL = `assets/dice/dice-pack-manifest.json?v=${DICE_ASSET_REVISION}`;
     export const PDF_LONG_TEXT_FIELDS = new Set([
       "Injuries",
       "Personality",
@@ -675,6 +674,64 @@ const nextEntries = entries.map((entry) => {
       syncExpertiseDisplayField(row);
       syncSkillFields();
       setStatus(`Added +2 ${specialty} expertise to ${definition.name}.`);
+      return true;
+    }
+function assignUnassignedSkillExpertise(index, sourceSpec, oldName, name) {
+      const row = Number(index);
+const definition = SKILL_DEFINITIONS[row - 1];
+const source = parseExpertiseSourceSpec(sourceSpec);
+const specialty = normalizeExpertiseSpecialtyName(name);
+const unassignedName = normalizeExpertiseSpecialtyName(oldName);
+      if (!definition || !specialty) {
+        setStatus("Choose the expertise specialty that should receive this existing point.");
+        return false;
+      }
+      if (!canSkillUseExpertise(definition)) {
+        setStatus(`${definition.name} does not have legal expertise specialties.`);
+        return false;
+      }
+
+      const sourceKey = getExpertiseSourceKey(source.source, source.choiceId);
+const storedEntries = getStoredSkillExpertiseEntries();
+const storedUnassigned = storedEntries.filter((entry) =>
+        entry.skillIndex === row
+        && getExpertiseSourceKey(entry.source, entry.choiceId) === sourceKey
+        && normalizePhrase(entry.name) === normalizePhrase(unassignedName)
+      );
+let points = storedUnassigned.reduce((total, entry) => total + entry.points, 0);
+      if (!points && normalizePhrase(unassignedName).startsWith("unassigned ")) {
+        points = source.source === "class"
+          ? Math.max(0, toNumber(state.fields[getClassSkillPoolFieldName(source.choiceId, row, "expertise")], 0))
+          : getExpertiseSpendFromValue(state.fields[`Expertise${row}`]);
+      }
+      if (!points) {
+        setStatus("That unassigned expertise point is no longer available.");
+        return false;
+      }
+
+      const targetGroup = getSkillExpertiseGroups(row)
+        .find((entry) => normalizePhrase(entry.name) === normalizePhrase(specialty));
+      if ((targetGroup?.uncappedBonus || 0) + points * 2 > SKILL_EXPERTISE_CAP) {
+        setStatus(`${definition.name} expertise cannot exceed +${SKILL_EXPERTISE_CAP}.`);
+        return false;
+      }
+
+      const nextEntries = storedEntries.filter((entry) => !(
+        entry.skillIndex === row
+        && getExpertiseSourceKey(entry.source, entry.choiceId) === sourceKey
+        && normalizePhrase(entry.name) === normalizePhrase(unassignedName)
+      ));
+      nextEntries.push({
+        skillIndex: row,
+        name: specialty,
+        source: source.source,
+        choiceId: source.choiceId,
+        points
+      });
+      setStoredSkillExpertiseEntries(nextEntries);
+      syncExpertiseDisplayField(row);
+      syncSkillFields();
+      setStatus(`Assigned ${points} existing expertise point${points === 1 ? "" : "s"} to ${specialty}.`);
       return true;
     }
 function adjustSkillExpertisePoint(index, sourceSpec, name, delta) {
@@ -7165,6 +7222,7 @@ let rollOverlayTimer = 0;
 let rollOverlayHideTimer = 0;
 let rollPreviewRefreshToken = 0;
 let diceFlightTimers = [];
+let diceAudioTimers = [];
 let diceAnimationFrame = 0;
 let diceAudioContext = null;
 let diceNoiseBuffer = null;
@@ -7180,6 +7238,10 @@ function getDiceSetDefinition(setId = "") {
 function isDiceSetAvailable(set) {
       return Boolean(set?.available);
     }
+function isPromotedDiceSet(setId = "") {
+      const id = normalizeDiceSetId(setId);
+      return (globalThis.LYRIAN_PROMOTED_DICE_SKINS || []).some((pack) => normalizeDiceSetId(pack?.id) === id);
+    }
 export function getDiceSet(setId = "") {
       const set = getDiceSetDefinition(setId);
       return isDiceSetAvailable(set) ? set : DICE_SETS.find((entry) => entry.id === DEFAULT_DICE_SET_ID) || DICE_SETS.find(isDiceSetAvailable) || DICE_SETS[0];
@@ -7187,20 +7249,62 @@ export function getDiceSet(setId = "") {
 function getActiveDiceSet() {
       return getDiceSet(state.play?.diceTray?.selectedSetId);
     }
+let dicePreviewRuntimePromise = null;
+const dicePreviewReadySets = new Set();
+async function prepareDiceSetPreviews(setId = "") {
+      const id = normalizeDiceSetId(setId || state.play?.diceTray?.selectedSetId);
+      if (id !== "new-angelsword" && !isPromotedDiceSet(id)) {
+        return false;
+      }
+      if (!isDiceRuntimeLoaded()) {
+        dicePreviewRuntimePromise ||= ensureDiceRuntimeLoaded().finally(() => {
+          dicePreviewRuntimePromise = null;
+        });
+        await dicePreviewRuntimePromise;
+      }
+      preloadDiceSetFaceArt(id);
+      if (typeof window.LyrianAccurateDiceRoller?.preloadFaceArtReady === "function") {
+        await window.LyrianAccurateDiceRoller.preloadFaceArtReady(id);
+      } else {
+        // Compatibility path for a previously cached runtime. The normal
+        // runtime exposes preloadFaceArtReady and never uses this delay.
+        await new Promise((resolve) => window.setTimeout(resolve, 350));
+      }
+      for (const key of diceChoicePreviewCache.keys()) {
+        if (key.startsWith(`${id}:`)) {
+          diceChoicePreviewCache.delete(key);
+        }
+      }
+      dicePreviewReadySets.add(id);
+      return true;
+    }
 const diceChoicePreviewCache = new Map();
+function withDiceAssetRevision(url = "") {
+      const value = String(url || "");
+      if (!value || value.startsWith("data:") || value.startsWith("blob:")) {
+        return value;
+      }
+      return `${value}${value.includes("?") ? "&" : "?"}v=${encodeURIComponent(DICE_ASSET_REVISION)}`;
+    }
 function getDiceTextureUrl(sides, setId = "") {
       const set = getDiceSet(setId || state.play?.diceTray?.selectedSetId);
 const safeSides = Math.max(1, toNumber(sides, 20));
       if (set.id === "new-angelsword") {
-        return "assets/dice/new-angelsword/set-preview.png";
+        return withDiceAssetRevision("assets/dice/new-angelsword/set-preview.png");
       }
-      return DICE_PREVIEW_FALLBACK_URL;
+      if (set.glamourPreviewUrl) {
+        return withDiceAssetRevision(set.glamourPreviewUrl);
+      }
+      if (isPromotedDiceSet(set.id) && set.previewUrl) {
+        return set.previewUrl;
+      }
+      return withDiceAssetRevision(DICE_PREVIEW_FALLBACK_URL);
     }
 export function getDiceChoicePreviewUrl(sides, setId = "") {
       const set = getDiceSet(setId || state.play?.diceTray?.selectedSetId);
 const safeSides = Math.max(1, toNumber(sides, 20));
-const cacheKey = `${set.id}:${safeSides}`;
-      if (set.id === "new-angelsword") {
+const cacheKey = `${set.id}:${safeSides}:${set.previewRevision || set.faceArtScript || "base"}`;
+      if ((set.id === "new-angelsword" || isPromotedDiceSet(set.id)) && dicePreviewReadySets.has(set.id)) {
         const cached = diceChoicePreviewCache.get(cacheKey);
         if (cached) {
           return cached;
@@ -7209,7 +7313,9 @@ const cacheKey = `${set.id}:${safeSides}`;
           preloadDiceSetFaceArt(set.id);
 const dataUrl = window.LyrianAccurateDiceRoller?.buildPreviewDataUrl?.({
             sides: safeSides,
-            value: safeSides === 100 ? 100 : safeSides,
+            // The D4's result-1 hero pose keeps all three vertex numbers and
+            // its characteristic panel art legible in a 48px picker button.
+            value: safeSides === 4 ? 1 : safeSides === 100 ? 100 : safeSides,
             setId: set.id,
             size: 192
           });
@@ -7225,20 +7331,23 @@ const dataUrl = window.LyrianAccurateDiceRoller?.buildPreviewDataUrl?.({
     }
 export function getDiceSetPreviewUrl(setId = "") {
       const set = getDiceSetDefinition(setId) || getDiceSet(setId);
+      if (set.glamourPreviewUrl) {
+        return withDiceAssetRevision(set.glamourPreviewUrl);
+      }
       if (set.previewUrl) {
-        return set.previewUrl;
+        return withDiceAssetRevision(set.previewUrl);
       }
       if (!set.basePath) {
-        return DICE_PREVIEW_FALLBACK_URL;
+        return withDiceAssetRevision(DICE_PREVIEW_FALLBACK_URL);
       }
 const preview = set.preview || `preview.${set.imageExtension || "png"}`;
       if (new RegExp("^(?:https?:)?//", "i").test(preview) || preview.startsWith("data:") || preview.startsWith("assets/")) {
-        return preview;
+        return withDiceAssetRevision(preview);
       }
-      return `${set.basePath}/${set.preview || `preview.${set.imageExtension || "png"}`}`;
+      return withDiceAssetRevision(`${set.basePath}/${set.preview || `preview.${set.imageExtension || "png"}`}`);
     }
 export function getDiceImageFallbackHandler() {
-      return `this.onerror=null;this.src='${DICE_PREVIEW_FALLBACK_URL}';`;
+      return `this.onerror=null;this.src='${withDiceAssetRevision(DICE_PREVIEW_FALLBACK_URL)}';`;
     }
 function applyDicePackManifest(manifest = {}) {
       const packs = Array.isArray(manifest.packs) ? manifest.packs : [];
@@ -7400,6 +7509,11 @@ const minHeight = count <= 1
       return true;
     }
 function stopActiveDiceSounds() {
+      diceAudioTimers.forEach((timer) => {
+        window.clearTimeout(timer);
+        window.clearInterval(timer);
+      });
+      diceAudioTimers = [];
       activeDiceAudioElements.forEach((audio) => {
         try {
           audio.pause();
@@ -7424,7 +7538,6 @@ function clearDiceFlightLayer() {
         window.cancelAnimationFrame(timer);
       });
       diceFlightTimers = [];
-      stopActiveDiceSounds();
 const layer = document.getElementById("dice-flight-layer");
       if (layer) {
         layer.innerHTML = "";
@@ -7509,7 +7622,7 @@ const startAudio = () => {
 const delayMs = Math.max(0, toNumber(options.delayMs, 0));
       if (delayMs > 0) {
         const timer = window.setTimeout(startAudio, delayMs);
-        diceFlightTimers.push(timer);
+        diceAudioTimers.push(timer);
       } else {
         startAudio();
       }
@@ -7536,9 +7649,9 @@ const interval = window.setInterval(() => {
             activeDiceAudioElements = activeDiceAudioElements.filter((entry) => entry !== audio);
           }
         }, 45);
-        diceFlightTimers.push(interval);
+        diceAudioTimers.push(interval);
       }, Math.max(0, startAfterMs));
-      diceFlightTimers.push(fadeTimer);
+      diceAudioTimers.push(fadeTimer);
     }
 function playDiceAssetRollSounds(diceResults = []) {
       if (typeof Audio === "undefined" || !DICE_SOUND_ASSETS.rollBeds.length) {
@@ -7572,6 +7685,7 @@ const volume = clamp((0.27 / Math.sqrt(diceCount)) * (1 - hit * 0.1) * (0.78 + M
       return true;
     }
 function playDiceRollSounds(results = []) {
+      stopActiveDiceSounds();
       const diceResults = normalizeRollResults(results).slice(0, 24);
       if (!diceResults.length) {
         return;
@@ -8094,6 +8208,7 @@ let accurateRollDuration = 0;
             setId: state.play?.diceTray?.selectedSetId || DEFAULT_DICE_SET_ID,
             width,
             height,
+            motionMode: "scripted",
             capturePreviews: true,
             previewSize: 184,
             onSettle: (settledResults = []) => {
@@ -8277,26 +8392,22 @@ export function renderDiceSetPicker(activeSet) {
 const isDownloadable = !isAvailable && Boolean(set.downloadUrl);
 const isActive = isAvailable && set.id === activeSet.id;
 const statusMarkup = isActive
-              ? `<span class="dice-set-active-mark">Active</span>`
+              ? `<span class="dice-set-active-mark" aria-hidden="true">&#10003;</span>`
               : isAvailable
                 ? ""
                 : isDownloadable
-                  ? `<span class="dice-set-download-mark" style="color: #ffd700; border: 1px solid #ffd700; border-radius: 4px; padding: 2px 6px; font-size: 10px; cursor: pointer;">Download</span>`
-                  : `<span class="dice-set-coming-soon">${escapeHtml(set.availabilityLabel || "Coming soon")}</span>`;
+                  ? `<span class="dice-set-download-mark" aria-hidden="true">&#8595;</span>`
+                  : `<span class="dice-set-coming-soon" aria-hidden="true">&#8230;</span>`;
             return `
-            <button class="dice-set-card${isActive ? " is-active" : ""}${isAvailable ? "" : isDownloadable ? " is-downloadable" : " is-coming-soon"}" type="button"${isAvailable ? ` data-dice-set="${escapeHtml(set.id)}"` : isDownloadable ? ` data-dice-download="${escapeHtml(set.id)}"` : " disabled aria-disabled=\"true\""}>
-              <img src="${escapeHtml(getDiceSetPreviewUrl(set.id))}" alt="" onerror="${getDiceImageFallbackHandler()}">
-              <span>
-                <strong>${escapeHtml(set.name)}</strong>
-                <span>${escapeHtml(set.description)}</span>
-              </span>
+            <button class="dice-set-card${isActive ? " is-active" : ""}${isAvailable ? "" : isDownloadable ? " is-downloadable" : " is-coming-soon"}" type="button" aria-label="${escapeHtml(`${isActive ? "Selected: " : "Use "}${set.name}`)}" title="${escapeHtml(set.name)}"${isAvailable ? ` data-dice-set="${escapeHtml(set.id)}"` : isDownloadable ? ` data-dice-download="${escapeHtml(set.id)}"` : " disabled aria-disabled=\"true\""}>
+              <img class="dice-set-card-preview" src="${escapeHtml(getDiceSetPreviewUrl(set.id))}" alt="" onerror="${getDiceImageFallbackHandler()}">
               ${statusMarkup}
             </button>
           `;
           }).join("")}
           <div class="dice-set-picker-actions">
-            <button class="dice-update-button" type="button" data-dice-check-updates${dicePackRuntime.isChecking ? " disabled" : ""}>
-              ${dicePackRuntime.isChecking ? "Checking Dice..." : "Check Dice Updates"}
+            <button class="dice-use-button" type="button" data-dice-use>
+              Use Dice
             </button>
           </div>
         </div>
@@ -8320,6 +8431,15 @@ function setDiceTrayOpen(isOpen) {
       state.play.diceTray.isOpen = Boolean(isOpen);
       renderDiceTray();
       persistWorkingState();
+      if (state.play.diceTray.isOpen) {
+        prepareDiceSetPreviews(state.play.diceTray.selectedSetId)
+          .then((prepared) => {
+            if (prepared && state.play?.diceTray?.isOpen) {
+              renderDiceTray();
+            }
+          })
+          .catch((error) => console.warn("Could not prepare per-die skin previews.", error));
+      }
     }
 function toggleDiceSetPicker() {
       state.play = mergePlayState(state.play);
@@ -8373,7 +8493,7 @@ async function downloadDiceSet(setId) {
         setStatus(`Failed to download ${set.name} textures: ${error.message}`);
       }
     }
-function selectDiceSet(setId) {
+async function selectDiceSet(setId) {
       const requestedSet = getDiceSetDefinition(setId);
       if (!isDiceSetAvailable(requestedSet)) {
         setStatus(`${requestedSet?.name || "That dice set"} is coming soon.`);
@@ -8383,11 +8503,23 @@ function selectDiceSet(setId) {
 const set = requestedSet;
       state.play = mergePlayState(state.play);
       state.play.diceTray.selectedSetId = set.id;
-      state.play.diceTray.showSetPicker = false;
-      preloadDiceSetFaceArt(set.id);
+      state.play.diceTray.showSetPicker = true;
       renderDiceTray();
       persistWorkingState();
       setStatus(`Dice set changed to ${set.name}.`);
+      if (set.id === "new-angelsword" || isPromotedDiceSet(set.id)) {
+        try {
+          await prepareDiceSetPreviews(set.id);
+          // The first render can occur before the 3D runtime exists, in which
+          // case every die temporarily uses the pack-level portrait preview.
+          // Render again once the runtime can generate shape-specific images.
+          renderDiceTray();
+        } catch (error) {
+          console.warn("Could not prepare per-die skin previews.", error);
+        }
+      } else {
+        preloadDiceSetFaceArt(set.id);
+      }
     }
 function addDiceTrayDie(sides) {
       state.play = mergePlayState(state.play);
@@ -8629,9 +8761,6 @@ const roll = rollDie(20);
       });
       setStatus(`Rolled ${label}: ${total}.`);
       publishVttEvent("check", { label, formula: dieType, breakdown, total, weapon: cleanText(costedAction?.weaponName || ""), character: cleanText(state.fields.Name) });
-      if (type === "initiative") {
-        maybeSendRoll20Initiative(total, breakdown);
-      }
     }
 export function getSkillRowData(index, bonuses = getComputedBonuses()) {
       const definition = SKILL_DEFINITIONS[index - 1];
@@ -9598,7 +9727,8 @@ function renderTrainingDetails(title, content) {
 const PLAY_MODE_LABELS = {
       combat: "Combat",
       crafting: "Crafting",
-      gathering: "Gathering"
+      gathering: "Gathering",
+      table: "Table Tools"
     };
 const MOBILE_SHEET_PAGE_ORDER = ["overview", "combat", "skills", "abilities", "inventory", "character"];
 const MOBILE_CHARACTER_TABS = new Set(["proficiencies", "breakthroughs", "notes"]);
@@ -9613,7 +9743,7 @@ function normalizePlayMode(mode) {
       if (cleaned === "crafting-gathering" || cleaned === "downtime") {
         return state.play?.crafting?.activityMode === "gathering" ? "gathering" : "crafting";
       }
-      return DOWNTIME_PLAY_MODES.has(cleaned) ? cleaned : "combat";
+      return DOWNTIME_PLAY_MODES.has(cleaned) || cleaned === "table" ? cleaned : "combat";
     }
 function isDowntimePlayMode(mode) {
       return DOWNTIME_PLAY_MODES.has(mode);
@@ -9674,6 +9804,95 @@ function renderPlayModePanels(activeMode = getActivePlayMode()) {
         panel.hidden = isHidden;
         panel.setAttribute("aria-hidden", isHidden ? "true" : "false");
       });
+    }
+function renderPlayTableToolsPanel() {
+      const localPreviewAvailable = /^(?:127\.0\.0\.1|localhost)$/i.test(window.location.hostname);
+      return `
+        <div class="table-tools-hero play-panel">
+          <div>
+            <p class="eyebrow">Character &amp; Table Connections</p>
+            <h2>Table Tools</h2>
+            <p>Save or move this character, then choose one service to open its instructions. Each connection has its own status and walkthrough.</p>
+          </div>
+          <div class="table-tools-status-row" aria-label="Table tool status">
+            <span class="integration-status is-ready">Character files ready</span>
+            <span class="integration-status is-warn">Connections in Alpha</span>
+            <span class="integration-status is-ready">Official builder verified</span>
+          </div>
+        </div>
+
+        <div class="table-tools-utility-grid">
+          <article class="table-tool-card play-panel">
+            <div class="table-tool-card-head">
+              <div>
+                <p class="eyebrow">Character Library</p>
+                <h3>Save, Load, Export, or Import</h3>
+              </div>
+              <span class="integration-status is-ready">Available now</span>
+            </div>
+            <p>Keep a browser save, move the character between devices, or exchange files with the official Angel Sword builder.</p>
+            <div class="table-tool-actions">
+              <button type="button" data-table-tool-action="save">Save Character</button>
+              <button type="button" data-table-tool-action="load">Load Saved Character</button>
+              <button type="button" data-table-tool-action="export">Export Character</button>
+              <button type="button" data-table-tool-action="import">Import Character</button>
+            </div>
+            <button type="button" class="table-tool-guide-link" data-table-tool-guide="character-files">How character files work</button>
+          </article>
+
+          <article class="table-tool-card play-panel">
+            <div class="table-tool-card-head">
+              <div>
+                <p class="eyebrow">Sheet Care</p>
+                <h3>Repair and Recalculate</h3>
+              </div>
+              <span class="integration-status">Advanced</span>
+            </div>
+            <p>Refresh calculated statistics and resources if imported data or an older save appears out of sync. This does not erase the character.</p>
+            <div class="table-tool-actions">
+              <button type="button" data-table-tool-action="recalculate">Recalculate Basics</button>
+              <button type="button" data-table-tool-action="builder">Return to Builder</button>
+            </div>
+          </article>
+        </div>
+
+        <section class="table-tools-connections play-panel" aria-labelledby="table-tools-connections-title">
+          <div class="table-tools-connections-head">
+            <div>
+              <p class="eyebrow">Character &amp; Table Connections</p>
+              <h3 id="table-tools-connections-title">Choose a Service</h3>
+              <p>Select one service to see what works now, what is still in testing, and the exact setup steps.</p>
+            </div>
+          </div>
+          <div class="table-platform-grid">
+            <button type="button" class="table-platform-card" data-table-tool-guide="roll20">
+              <span class="table-platform-card-head"><strong>Roll20</strong><span class="integration-status is-warn">Alpha</span></span>
+              <span>Copy a browser-independent chat macro now. A native Roll20 sheet is the planned one-click solution.</span>
+              <span class="table-platform-card-link">Open Roll20 walkthrough <span aria-hidden="true">&rarr;</span></span>
+            </button>
+            <button type="button" class="table-platform-card" data-table-tool-guide="owlbear">
+              <span class="table-platform-card-head"><strong>Owlbear Rodeo</strong><span class="integration-status is-warn">Alpha</span></span>
+              <span>${localPreviewAvailable ? "Test character import, token binding, and the shared room roll log locally." : "Character binding is built; public extension publishing and live-room verification remain."}</span>
+              <span class="table-platform-card-link">Open Owlbear walkthrough <span aria-hidden="true">&rarr;</span></span>
+            </button>
+            <button type="button" class="table-platform-card" data-table-tool-guide="foundry">
+              <span class="table-platform-card-head"><strong>Foundry VTT</strong><span class="integration-status is-warn">Alpha</span></span>
+              <span>Review the companion-module preview and current packaging limits.</span>
+              <span class="table-platform-card-link">Open Foundry walkthrough <span aria-hidden="true">&rarr;</span></span>
+            </button>
+            <button type="button" class="table-platform-card" data-table-tool-guide="world-anvil">
+              <span class="table-platform-card-head"><strong>World Anvil</strong><span class="integration-status is-warn">Alpha</span></span>
+              <span>Copy a clean character profile or a formatted BBCode article.</span>
+              <span class="table-platform-card-link">Open World Anvil walkthrough <span aria-hidden="true">&rarr;</span></span>
+            </button>
+            <button type="button" class="table-platform-card table-platform-card-wide" data-table-tool-guide="official-builder">
+              <span class="table-platform-card-head"><strong>Official Clio Builder</strong><span class="integration-status is-ready">Verified</span></span>
+              <span>Move characters in either direction using the tested official character-file exchange.</span>
+              <span class="table-platform-card-link">Open official builder walkthrough <span aria-hidden="true">&rarr;</span></span>
+            </button>
+          </div>
+        </section>
+      `;
     }
 function renderPlayDowntimePanelError(activityMode, error) {
       const modeLabel = activityMode === "gathering" ? "Gathering" : "Crafting";
@@ -9997,9 +10216,6 @@ function openExpSpending() {
 export function renderPlayDashboard() {
       state.play = mergePlayState(state.play);
       syncPlayResourcesFromFields(true);
-      ensureRoll20Bridge(); // ⚔ card sends need live bridge state during play
-      syncRoll20SendVisibility();
-      scheduleRoll20TokenBarSync(); // opt-in TokenMod bar sync (debounced, no-op unless enabled+pinned+connected)
 const derived = getDerivedCombatStats();
 const computedBonuses = getComputedBonuses();
 const race = getSelectedRaceDetail();
@@ -10177,6 +10393,7 @@ const quickAbilities = getQuickPlayAbilities();
 
       document.getElementById("play-crafting").innerHTML = renderPlayCraftingPanelSafe("crafting");
       document.getElementById("play-gathering").innerHTML = renderPlayCraftingPanelSafe("gathering");
+      document.getElementById("play-table-tools").innerHTML = renderPlayTableToolsPanel();
 
       document.getElementById("play-proficiencies").innerHTML = proficienciesMarkup || `<p class="play-empty">No proficiencies have been entered yet.</p>`;
 
@@ -10237,6 +10454,15 @@ const playerNotesField = document.getElementById("play-player-notes");
       renderPlayModePanels(activePlayMode);
       renderSheetBuildSummary();
       renderDiceTray();
+      if (getDiceTrayState().isOpen) {
+        prepareDiceSetPreviews(getDiceTrayState().selectedSetId)
+          .then((prepared) => {
+            if (prepared && getDiceTrayState().isOpen) {
+              renderDiceTray();
+            }
+          })
+          .catch((error) => console.warn("Could not prepare persisted dice previews.", error));
+      }
       renderPlayTabs();
       applyMobileSheetPresentation();
     }
@@ -10363,7 +10589,6 @@ const buttonMarkup = action.rollType
           <div class="play-action-buttons">
             ${buttonMarkup}
             <button type="button" class="play-integration-copy" data-copy-roll20-action="${escapeHtml(action.id)}" title="Copy a Roll20 chat macro for this action">Copy VTT</button>
-            <button type="button" class="play-integration-copy play-roll20-send" data-send-roll20-action="${escapeHtml(action.id)}" title="Send this macro to Roll20 chat through the bridge">⚔ Send</button>
           </div>
         </div>
       `;
@@ -10411,7 +10636,6 @@ function renderPlayAbilityCard(ability, index) {
           <div class="play-action-buttons">
             ${actionButtons}
             <button type="button" class="play-integration-copy" data-copy-roll20-ability="${escapeHtml(index)}" title="Copy a Roll20 chat macro for this ability">Copy VTT</button>
-            <button type="button" class="play-integration-copy play-roll20-send" data-send-roll20-ability="${escapeHtml(index)}" title="Send this macro to Roll20 chat through the bridge${trackedCost ? "; its cost is spent only after Roll20 confirms the post" : ""}">⚔ Send</button>
           </div>
         </div>
       `;
@@ -18157,6 +18381,32 @@ const next = Math.max(0, current + change);
         ? `GM Additional IP set to +${next}. Class unlock pool increased to ${STARTING_INTERLUDE_POINTS + next} IP.`
         : `GM Additional IP cleared. Class unlock pool reset to ${STARTING_INTERLUDE_POINTS} IP.`);
     }
+function addCreationInterludeAction(actionId) {
+      const action = CREATION_INTERLUDE_ACTIONS.find((entry) => entry.id === actionId);
+      if (!action) {
+        return false;
+      }
+      const budget = getClassUnlockBudgetState();
+      if (budget.remainingInterlude < 1) {
+        setStatus(`No Interlude Points remain for ${action.label}. Remove a class or another creation interlude action first.`);
+        return false;
+      }
+      state.builder.creationInterludeActions = [...(state.builder.creationInterludeActions || []), action.id];
+      setStatus(`Added creation interlude action: ${action.label} (${action.description}).`);
+      return true;
+    }
+function removeCreationInterludeAction(index) {
+      const actionIndex = Math.floor(toNumber(index, -1));
+      const actions = [...(state.builder.creationInterludeActions || [])];
+      if (actionIndex < 0 || actionIndex >= actions.length) {
+        return false;
+      }
+      const [removedId] = actions.splice(actionIndex, 1);
+      const action = CREATION_INTERLUDE_ACTIONS.find((entry) => entry.id === removedId);
+      state.builder.creationInterludeActions = actions;
+      setStatus(`Removed creation interlude action: ${action?.label || removedId}.`);
+      return true;
+    }
 function renderClassesStep() {
       const search = normalizeKey(state.builder.searches.class);
 const roleFilter = cleanText(state.builder.searches.classRole);
@@ -18188,12 +18438,8 @@ const groupedEntries = new Map();
 
       return `
         <div class="builder-content-grid">
-          <p class="builder-note">Class creation currently has <strong>${budget.startingExpBudget} EXP</strong> and <strong>${STARTING_INTERLUDE_POINTS} Interlude Points</strong>. The normal base is ${STARTING_CLASS_EXP} EXP${budget.humanExpBonus ? `; Human adds ${budget.humanExpBonus}` : ""}${budget.humanExpBonusSuppressedByHybrid ? "; Human-Chimera Hybrid removes the Human +100" : ""}${budget.slowStarterExpPenalty ? `; Slow Starter removes ${budget.slowStarterExpPenalty}` : ""}. EXP added on the character sheet is also available here, and a GM can grant extra class-unlock IP below. Unlocking a class costs <strong>1 Interlude Point + 100 EXP per tier</strong>, and the class key ability comes online as soon as that class is unlocked.</p>
+          <p class="builder-note">Class creation currently has <strong>${budget.startingExpBudget} EXP</strong> and <strong>${STARTING_INTERLUDE_POINTS} Interlude Points</strong>. The normal base is ${STARTING_CLASS_EXP} EXP${budget.humanExpBonus ? `; Human adds ${budget.humanExpBonus}` : ""}${budget.humanExpBonusSuppressedByHybrid ? "; Human-Chimera Hybrid removes the Human +100" : ""}${budget.slowStarterExpPenalty ? `; Slow Starter removes ${budget.slowStarterExpPenalty}` : ""}${budget.creationInterludeExp ? `; Train actions add ${budget.creationInterludeExp}` : ""}. EXP added on the character sheet is also available here, and a GM can grant extra IP below. Unlocking a class costs <strong>1 Interlude Point + 100 EXP per tier</strong>. Remaining IP can instead be spent on the official creation interlude actions below.</p>
           ${isMiraneStart() ? `<div class="mirane-rule-override mirane-class-start-note"><strong>Mirane Favor training</strong><p>A Mirane character may receive class training for 1 Favor for a Tier 1 or Tier 2 class, or 2 Favor for a Tier 3 class. Requirements still apply, and the campaign document says this does not cost an Errand Point. Track the Favor exchange with the campaign staff; the normal builder budget remains visible for the rules-as-written start.</p></div>` : ""}
-          <div class="builder-search-row">
-            <input class="builder-search-input" type="text" autocomplete="off" data-builder-search="class" placeholder="Search classes" value="${escapeHtml(state.builder.searches.class)}">
-            <p>Classes are grouped by role by default. Locked cards stay grayed out until the tracked build meets their official prerequisites.</p>
-          </div>
           <div class="builder-filter-row">
             <div class="builder-filter-field builder-class-ip-control">
               <span>GM Additional IP</span>
@@ -18208,14 +18454,41 @@ const groupedEntries = new Map();
           <div class="selected-chip-list">
             <span class="selected-chip">Class EXP: ${budget.spentExp} / ${budget.expBudget}</span>
             <span class="selected-chip">Interlude: ${budget.spentInterlude} / ${budget.interludeBudget}</span>
+            ${budget.spentClassInterlude ? `<span class="selected-chip">Class IP: ${budget.spentClassInterlude}</span>` : ""}
+            ${budget.creationInterludeActionRecords.length ? `<span class="selected-chip">Action IP: ${budget.creationInterludeActionRecords.length}</span>` : ""}
             ${budget.gmExtraInterlude ? `<span class="selected-chip">GM Extra IP: +${escapeHtml(String(budget.gmExtraInterlude))}</span>` : ""}
             <span class="selected-chip">Remaining EXP: ${budget.remainingExp}</span>
             <span class="selected-chip">Remaining IP: ${budget.remainingInterlude}</span>
             ${budget.overInterlude ? `<span class="selected-chip">Over IP: ${escapeHtml(String(budget.overInterlude))}</span>` : ""}
           </div>
-          ${selectedIds.size ? `<div class="selected-chip-list">${getSelectedClassDetails().map((entry) => `<button type="button" class="selected-chip selected-chip-button" data-builder-action="toggle-class" data-id="${escapeHtml(entry.id)}" aria-label="Remove ${escapeHtml(entry.name)} from your character">${escapeHtml(entry.name)}</button>`).join("")}</div>` : ""}
+          <section class="review-panel builder-creation-interlude-panel" aria-labelledby="builder-creation-interlude-title">
+            <div>
+              <strong id="builder-creation-interlude-title">Creation Interlude Actions</strong>
+              <p>Spend an unused starting Interlude Point on Job (+300 Clim), Train (+25 class EXP), or Other (GM decides). Actions may be selected more than once.</p>
+            </div>
+            <div class="sheet-modal-form-actions">
+              ${CREATION_INTERLUDE_ACTIONS.map((action) => `
+                <button type="button" class="secondary" data-add-creation-interlude-action="${escapeHtml(action.id)}" ${budget.remainingInterlude < 1 ? "disabled" : ""}>
+                  ${escapeHtml(action.label)} — ${escapeHtml(action.description)}
+                </button>
+              `).join("")}
+            </div>
+            <div class="selected-chip-list">
+              ${budget.creationInterludeActionRecords.length
+                ? budget.creationInterludeActionRecords.map((action, index) => `
+                    <button type="button" class="selected-chip" data-remove-creation-interlude-action="${index}" title="Remove ${escapeHtml(action.label)}">
+                      ${escapeHtml(action.label)}: ${escapeHtml(action.description)} ×
+                    </button>
+                  `).join("")
+                : `<span class="builder-empty">No creation interlude actions selected.</span>`}
+            </div>
+          </section>
           ${renderSelectedClassProgressPanel(budget)}
           ${renderClassBenefitChoicePanel()}
+          <div class="builder-search-row builder-class-search-row">
+            <input class="builder-search-input" type="text" autocomplete="off" data-builder-search="class" placeholder="Search classes" aria-label="Search classes" value="${escapeHtml(state.builder.searches.class)}">
+            <p>Search first, then narrow the catalog by role or tier. Selected classes remain visible below even when they do not match these filters.</p>
+          </div>
           <div class="builder-filter-row">
             <label class="builder-filter-field">
               <span>Group / Sort</span>
@@ -18239,6 +18512,19 @@ const groupedEntries = new Map();
                 ${tierOptions.map((tier) => `<option value="${tier}" ${tierFilter === String(tier) ? "selected" : ""}>Tier ${tier}</option>`).join("")}
               </select>
             </label>
+          </div>
+          <section class="review-panel builder-selected-classes-panel" aria-labelledby="builder-selected-classes-title">
+            <div>
+              <strong id="builder-selected-classes-title">Selected Classes</strong>
+              <p>These classes are currently taken. Select a name to remove it, or use the class progress cards above to review its complete details.</p>
+            </div>
+            ${selectedIds.size
+              ? `<div class="selected-chip-list">${getSelectedClassDetails().map((entry) => `<button type="button" class="selected-chip selected-chip-button" data-builder-action="toggle-class" data-id="${escapeHtml(entry.id)}" aria-label="Remove ${escapeHtml(entry.name)} from your character">${escapeHtml(entry.name)}</button>`).join("")}</div>`
+              : `<p class="builder-empty">No classes selected yet.</p>`}
+          </section>
+          <div class="builder-class-results-heading">
+            <strong>Browse Classes</strong>
+            <span>${escapeHtml(`${entries.length} matching class${entries.length === 1 ? "" : "es"}`)}</span>
           </div>
           ${entries.length
             ? Array.from(groupedEntries.entries()).map(([groupTitle, groupEntries]) => renderClassGroup(groupTitle, groupEntries, selectedIds)).join("")
@@ -18390,6 +18676,16 @@ function renderSkillExpertisePanelBody(entry) {
 const groups = entry.expertiseGroups || [];
 const expertiseOptions = getSkillExpertiseOptionList(entry.name);
 const defaultSpecialty = expertiseOptions.length ? "" : "__custom__";
+const unassignedSources = groups.flatMap((group) => {
+        if (!normalizePhrase(group.name).startsWith("unassigned ")) {
+          return [];
+        }
+        return Object.entries(group.sources || {}).map(([sourceSpec, points]) => ({
+          groupName: group.name,
+          sourceSpec,
+          points
+        }));
+      });
       return `
         <p>Exchange 1 eligible skill point for +2 in one narrow specialty. The exchanged point does not also increase the broad skill. Only the relevant owned specialty applies to a roll, and expertise cannot exceed +${SKILL_EXPERTISE_CAP}.</p>
         ${sourceOptions.length ? `
@@ -18408,6 +18704,15 @@ const defaultSpecialty = expertiseOptions.length ? "" : "__custom__";
                   ${escapeHtml(`Use ${option.label} (${formatSkillPointLeftLabel(option.remaining)})`)}
                 </button>
               `).join("")}
+              ${unassignedSources.map((unassigned) => {
+                const option = sourceOptions.find((entryOption) => entryOption.value === unassigned.sourceSpec);
+const sourceLabel = option?.sourceLabel || getSkillExpertiseSourceLabel(unassigned.sourceSpec, entry);
+                return `
+                  <button type="button" class="builder-skill-expertise-button is-assignment" data-assign-skill-expertise="${entry.index}" data-skill-expertise-source="${escapeHtml(unassigned.sourceSpec)}" data-skill-expertise-old-name="${escapeHtml(unassigned.groupName)}">
+                    ${escapeHtml(`Assign existing ${sourceLabel.toLowerCase()} (${unassigned.points} point${unassigned.points === 1 ? "" : "s"})`)}
+                  </button>
+                `;
+              }).join("")}
             </div>
           </div>
         ` : ""}
@@ -18490,7 +18795,7 @@ const nextSlot = slots[entry.purchasedCount];
 const canLearnNext = Boolean(nextSlot) && budget.remainingExp >= 100;
 const mastered = isTrackedClassMastered(entry);
               return `
-                <div class="class-progress-card">
+                <div class="class-progress-card" role="button" tabindex="0" data-builder-action="inspect-class" data-id="${escapeHtml(entry.record.id)}" aria-label="View ${escapeHtml(entry.record.name)} class details">
                   <header>
                     <div>
                       <h4>${escapeHtml(entry.record.name)}</h4>
@@ -18508,6 +18813,7 @@ const mastered = isTrackedClassMastered(entry);
                     `).join("") : `<li><span>No purchasable class progression slots are available.</span></li>`}
                   </ul>
                   <div class="class-progress-actions">
+                    <button type="button" class="secondary" data-builder-action="inspect-class" data-id="${escapeHtml(entry.record.id)}">View Details</button>
                     <button type="button" data-builder-action="learn-class-ability" data-id="${escapeHtml(entry.record.id)}" ${canLearnNext ? "" : "disabled"}>${nextSlot ? `Learn ${escapeHtml(nextSlot.name || nextSlot.label)}` : "Class Mastered"}</button>
                     <button type="button" class="secondary" data-builder-action="refund-class-ability" data-id="${escapeHtml(entry.record.id)}" ${entry.purchasedCount > getClassGrantedAbilityCount(entry.record) ? "" : "disabled"}>Refund Last Class Level</button>
                     <button type="button" class="secondary" data-builder-action="toggle-class" data-id="${escapeHtml(entry.record.id)}">Remove Class</button>
@@ -20559,6 +20865,15 @@ function inspectBuilderBreakthrough(id) {
       setStatus(`Viewing ${record.name}.`);
       renderBuilder();
     }
+function inspectBuilderClass(id) {
+      const record = getClassDetail(id);
+      if (!record) {
+        return;
+      }
+      state.builder.inspected.class = record.id;
+      setStatus(`Viewing ${record.name}.`);
+      renderBuilderDetail();
+    }
 function addElementalAffinitySelection(elementValue) {
       const record = getElementalAffinityRecord();
       const element = normalizeElementChoiceLabel(elementValue);
@@ -21973,34 +22288,51 @@ function confirmResetCharacter() {
 function startOverCharacter() {
       openSheetModal({
         eyebrow: "Reset Character",
-        title: "Reset Character?",
-        lead: "Are you sure you wish to Reset the character?",
+        title: "Reset This Character?",
+        lead: "Are you sure you wish to erase this character and start over?",
         content: `
           <div class="sheet-modal-success">
-            <strong>This will clear the current builder and sheet data.</strong>
-            <p>If you clicked by accident, choose No and nothing will be erased.</p>
+            <strong>This will erase the current working builder and sheet data.</strong>
+            <p>Saved character slots are not deleted. If you clicked by accident, keep the character and nothing will be erased.</p>
             <div class="sheet-modal-form-actions">
-              <button type="button" class="sheet-modal-action" data-reset-character-confirm>Yes, Reset</button>
-              <button type="button" class="sheet-modal-action" data-sheet-modal-close>No</button>
+              <button type="button" class="sheet-modal-action" data-reset-character-confirm>Yes, Erase Character</button>
+              <button type="button" class="sheet-modal-action" data-sheet-modal-close>No, Keep Character</button>
             </div>
           </div>
         `
       });
     }
 function openMobileSheetTools() {
+      setPlayMode("table");
+      requestAnimationFrame(() => {
+        document.getElementById("play-table-tools")?.scrollIntoView({ behavior: "auto", block: "start" });
+      });
+    }
+function openCharacterFileGuide() {
       openSheetModal({
-        eyebrow: "Character Tools",
-        title: "Save, Load, and Manage",
-        lead: "These are the same character tools available on the desktop sheet.",
+        eyebrow: "Table Tools Walkthrough",
+        title: "Save, Export, and Move a Character",
+        lead: "Browser saves stay on this device. Exported files are the portable copy you can back up, move, or import elsewhere.",
         content: `
-          <div class="sheet-modal-option-grid">
-            <button type="button" class="sheet-modal-option" data-mobile-sheet-tool="save-browser"><strong>Save to Browser</strong><span>Save or update a character slot.</span></button>
-            <button type="button" class="sheet-modal-option" data-mobile-sheet-tool="load-browser"><strong>Load Saved</strong><span>Open a saved character.</span></button>
-            <button type="button" class="sheet-modal-option" data-mobile-sheet-tool="export-json"><strong>Export Character</strong><span>Choose JSON, PDF, or spreadsheet export.</span></button>
-            <button type="button" class="sheet-modal-option" data-mobile-sheet-tool="import-json"><strong>Import Character</strong><span>Load a character file from this device.</span></button>
-            <button type="button" class="sheet-modal-option" data-mobile-sheet-tool="sheet-integrations"><strong>VTT &amp; Sharing</strong><span>Copy Roll20 macros or prepare this character for another tabletop.</span></button>
-            <button type="button" class="sheet-modal-option" data-mobile-sheet-tool="recalc-basics"><strong>Recalculate</strong><span>Refresh derived statistics and resources.</span></button>
-            <button type="button" class="sheet-modal-option" data-mobile-sheet-tool="start-over"><strong>Reset Character</strong><span>Start over after confirmation.</span></button>
+          <div class="sheet-modal-success table-tools-guide">
+            <section>
+              <strong>Save on this browser</strong>
+              <p>Choose <em>Save Character</em>, then create a named slot or update the active slot. This is the quickest option for returning on the same browser and device.</p>
+            </section>
+            <section>
+              <strong>Move or back up the character</strong>
+              <p>Choose <em>Export Character</em> and download the JSON character file. Keep that file somewhere you control.</p>
+            </section>
+            <section>
+              <strong>Bring a character back</strong>
+              <p>Choose <em>Import Character</em> and select a supported JSON, PDF, or spreadsheet file. Official <code>.aschar.json</code> exports are detected automatically.</p>
+            </section>
+            <div class="sheet-modal-form-actions">
+              <button type="button" class="sheet-modal-action" data-table-modal-action="save">Save Character</button>
+              <button type="button" class="sheet-modal-action" data-table-modal-action="export">Export Character</button>
+              <button type="button" class="sheet-modal-action" data-table-modal-action="import">Import Character</button>
+              <button type="button" class="sheet-modal-action" data-table-tools-back>Back to Table Tools</button>
+            </div>
           </div>
         `
       });
@@ -22013,8 +22345,8 @@ const race = getSelectedRaceDetail();
 const ancestry = getSelectedAncestryDetail();
       return {
         name: cleanText(state.fields.Name) || "Lyrian Character",
-        race: race?.name || cleanText(state.fields.Race),
-        ancestry: ancestry?.name || cleanText(state.fields.Subrace),
+        race: race?.name || cleanText(state.fields["Primary Race"]) || cleanText(state.fields.Race),
+        ancestry: ancestry?.name || cleanText(state.fields["Sub Race"]) || cleanText(state.fields.Subrace),
         classes: getSelectedClassDetails().map((entry) => entry.name),
         resources: { ...state.play.resources },
         guard: derived.guard,
@@ -22200,6 +22532,7 @@ function buildAscharContext() {
           qty: Math.max(1, Math.floor(toNumber(record.quantity, 1))),
           equipped: Boolean(record.equipped)
         })),
+        interludeActions: [...(state.builder.creationInterludeActions || [])],
         resources: {
           clim: funds.availableClim,
           classExp: classBudget.remainingExp,
@@ -22400,6 +22733,7 @@ export async function applyAscharImport(character, sourceLabel = "official chara
       const plan = normalizeAscharCharacter(character);
       clearSheet();
       state.builder.startMode = plan.gameMode === "mirane" ? MIRANE_START_MODE_ID : DEFAULT_CHARACTER_START_MODE;
+      state.builder.creationInterludeActions = [...plan.interludeActions];
       if (plan.name) {
         updateFieldValue("Name", plan.name);
       }
@@ -22495,10 +22829,16 @@ export async function applyAscharImport(character, sourceLabel = "official chara
         updateFieldValue("Items", [cleanText(state.fields.Items), "Imported (not in catalog):", itemText].filter(Boolean).join("\n"));
         plan.notes.push(`${unmatchedItems.length} item(s) had no catalog match and were added to the Items notes instead.`);
       }
-      if (Number.isFinite(plan.resources.clim)) {
-        plan.notes.push(`The official file reports ${plan.resources.clim} Clim remaining — our sheet recomputes funds from purchases, so compare if they differ.`);
-      }
       syncBuilderSelectionsIntoSheet();
+      if (Number.isFinite(plan.resources.clim)) {
+        const computedClim = getStartingFundsState().availableClim;
+        if (computedClim === plan.resources.clim) {
+          const jobCount = plan.interludeActions.filter((id) => id === "job").length;
+          plan.notes.push(`Clim matched: ${computedClim} remaining${jobCount ? `, including ${jobCount} Job interlude action${jobCount === 1 ? "" : "s"}` : ""}.`);
+        } else {
+          plan.notes.push(`Clim differs: the official file reports ${plan.resources.clim} remaining; this sheet computes ${computedClim} from starting funds, interlude actions, and matched purchases.`);
+        }
+      }
       applyStateToDom();
       renderBuilder();
       renderPlayDashboard();
@@ -22511,7 +22851,7 @@ export async function applyAscharImport(character, sourceLabel = "official chara
         lead: `Loaded from the ${escapeHtml(sourceLabel)}. Everything mappable was applied; review the notes below.`,
         content: `
           <ul class="save-slot-feedback" style="display:block; list-style: disc inside;">
-            <li>${plan.classes.length} class(es), ${plan.breakthroughs.length} breakthrough(s), ${plan.skills.length} skill row(s), ${plan.equipment.length} item(s) processed.</li>
+            <li>${plan.classes.length} class(es), ${plan.breakthroughs.length} breakthrough(s), ${plan.interludeActions.length} creation interlude action(s), ${plan.skills.length} skill row(s), ${plan.equipment.length} item(s) processed.</li>
             ${plan.notes.map((note) => `<li>${escapeHtml(note)}</li>`).join("") || "<li>No caveats — clean import.</li>"}
           </ul>`
       });
@@ -22681,77 +23021,233 @@ async function sendRoll20CharacterMacroFromHub(button) {
         }, 1400);
       }
     }
-function openVttSharingModal() {
+const OWLBEAR_EXTENSION_PATH = "owlbear/manifest.json";
+const OWLBEAR_PUBLIC_MANIFEST_URL = "https://verbosebard.github.io/angel-sword-lirian-chronicles-builder/owlbear/manifest.json";
+
+function openRoll20BridgeSetupModal() {
       openSheetModal({
-        eyebrow: "Character Connections",
-        title: "VTT & Sharing",
-        lead: "Use the connection method each platform officially supports. Copy and export work now; direct synchronization requires the named bridge, extension, or module.",
+        eyebrow: "Roll20 Connection",
+        title: "Roll20 — Alpha",
+        lead: "The browser-independent chat macro works today. A native Roll20 character sheet is the planned one-click player experience.",
         content: `
-          <div class="integration-card-grid">
-            <article class="integration-card">
-              <div class="integration-card-head"><strong>Roll20</strong><span class="integration-status is-ready">Copy ready</span><span class="integration-status" id="roll20-bridge-status">Bridge not installed</span></div>
-              <p>Every action and ability has a Copy VTT button. Paste the generated chat macro into Roll20; no subscription or installation is required. Installing the optional Angel Sword Roll20 Bridge userscript adds one-click sending into your open Roll20 game.</p>
+          <div class="sheet-modal-success table-tools-guide roll20-setup-guide connection-walkthrough">
+            <div class="table-tools-status-row">
+              <span class="integration-status is-warn">Alpha connection</span>
+              <span class="integration-status is-ready">Cross-browser macro ready</span>
+              <span class="integration-status is-warn">Native sheet planned</span>
+            </div>
+            <section>
+              <strong>What works in every modern browser today</strong>
+              <p>Select <em>Copy Character Macro</em>, open your Roll20 game, click in chat, paste, and send. Individual actions and abilities also have a <em>Copy VTT</em> button on the character sheet.</p>
               <div class="sheet-modal-form-actions">
                 <button type="button" class="sheet-modal-action" data-integration-copy="roll20-character">Copy Character Macro</button>
-                <button type="button" class="sheet-modal-action" data-integration-send="roll20-character" id="roll20-bridge-send" disabled>Send to Roll20</button>
-                <a class="sheet-modal-action" href="roll20/angel-sword-roll20-bridge.user.js" title="Requires a userscript manager such as Tampermonkey. The bridge is optional, stores nothing, and can be removed at any time.">Install Bridge</a>
                 <a class="sheet-modal-action" href="${VTT_PLATFORM_URLS.roll20}" target="_blank" rel="noopener noreferrer">Open Roll20</a>
               </div>
+            </section>
+            <section>
+              <strong>Why direct browser sending is not offered</strong>
+              <p>An outside website cannot control a Roll20 game in every browser without a browser add-on. The experimental userscript required different installation and security steps in Chrome, Edge, Firefox, and Safari, so it has been removed from the player workflow.</p>
+            </section>
+            <section>
+              <strong>The planned cross-browser solution</strong>
+              <p>Build a Lyrian Chronicles community character sheet that runs inside Roll20. The GM selects that sheet for the game once. Players then open their assigned character in Roll20, import a character code from this builder, and use native one-click roll buttons without installing anything.</p>
+              <ol class="connection-step-list">
+                <li>The GM selects the Lyrian Chronicles sheet for the Roll20 game.</li>
+                <li>The player copies a compact Roll20 import code from this builder.</li>
+                <li>The player pastes it into the sheet's importer and selects <strong>Import</strong>.</li>
+                <li>After import, attacks, saves, checks, and initiative roll natively inside Roll20 with one click.</li>
+              </ol>
+            </section>
+            <section>
+              <strong>Optional GM enhancement later</strong>
+              <p>A Roll20 Mod could add token synchronization and turn-tracker automation after the native sheet works. That would be installed once by a Pro game creator; players would not install browser extensions.</p>
+            </section>
+            <p id="integration-feedback" class="save-slot-feedback" aria-live="polite"></p>
+            <div class="sheet-modal-form-actions">
+              <button type="button" class="sheet-modal-action" data-roll20-setup-back>Back to Table Tools</button>
+              <button type="button" class="sheet-modal-action" data-sheet-modal-close>Close</button>
+            </div>
+          </div>
+        `
+      });
+    }
+function getLocalOwlbearManifestUrl() {
+      return new URL(OWLBEAR_EXTENSION_PATH, window.location.href).href;
+    }
+function isLocalOwlbearPreviewAvailable() {
+      return /^(?:127\.0\.0\.1|localhost)$/i.test(window.location.hostname);
+    }
+function openOwlbearSetupGuide() {
+      const localPreviewAvailable = isLocalOwlbearPreviewAvailable();
+      const localInstallUrl = getLocalOwlbearManifestUrl();
+      openSheetModal({
+        eyebrow: "GM Table Setup",
+        title: "Owlbear Rodeo — Alpha",
+        lead: "Owlbear installs extensions from a hosted web address. Nothing needs to be downloaded as a ZIP file.",
+        content: `
+          <div class="sheet-modal-success table-tools-guide owlbear-setup-guide">
+            <div class="table-tools-status-row">
+              <span class="integration-status is-warn">Alpha connection</span>
+              <span class="integration-status ${localPreviewAvailable ? "is-ready" : "is-warn"}">${localPreviewAvailable ? "Local preview available" : "Local preview unavailable"}</span>
+              <span class="integration-status is-warn">Public release not published</span>
+            </div>
+            <section>
+              <strong>1. Install the extension as the GM</strong>
+              <p>Open your Owlbear profile, choose <em>Add Extension</em>, and paste the Angel Sword install link. The current public link is intentionally disabled because it has not been deployed yet.</p>
               <div class="sheet-modal-form-actions">
-                <button type="button" class="sheet-modal-action" id="roll20-token-pin" data-roll20-pin-token>Pin Selected Token</button>
-                <button type="button" class="sheet-modal-action" id="roll20-token-unpin" data-roll20-unpin-token style="display:none;">Unpin</button>
-                <span class="integration-status" id="roll20-token-pin-label">No token pinned</span>
+                <a class="sheet-modal-action" href="https://www.owlbear.rodeo/profile" target="_blank" rel="noopener noreferrer">Open Owlbear Profile</a>
+                <button type="button" class="sheet-modal-action" disabled title="The public extension currently returns 404 and must be deployed before release.">Public Install Coming Soon</button>
               </div>
-              <label class="integration-toggle"><input type="checkbox" id="roll20-token-sync-toggle" data-roll20-token-sync> Sync HP/Mana/RP/Shield to the pinned token's bars (needs the GM-installed TokenMod mod)</label>
-              <label class="integration-toggle"><input type="checkbox" id="roll20-turn-tracker-toggle" data-roll20-turn-tracker> Send initiative rolls to Roll20 and its turn tracker</label>
-              <small>The bridge is an optional userscript (Tampermonkey or similar). It relays macros to your open Roll20 game tab entirely inside your browser, stores no character data, and never contacts a server. Sending a macro never spends AP, RP, Mana, or items; card ⚔ sends spend an ability's cost only after Roll20 confirms the post. Bar sync and turn-tracker writes are advanced, opt-in features.</small>
-            </article>
-            <article class="integration-card">
-              <div class="integration-card-head"><strong>Owlbear Rodeo</strong><span class="integration-status">Extension needed</span></div>
-              <p>An experimental Angel Sword extension ships with this builder: the room owner adds its manifest URL to Owlbear, and every roll made on this sheet appears live in the room's Angel Sword panel for all players with it open.</p>
-              <div class="sheet-modal-form-actions">
-                <button type="button" class="sheet-modal-action" data-integration-copy="owlbear-manifest">Copy Manifest URL</button>
-                <button type="button" class="sheet-modal-action" data-integration-export>Export Character</button>
-                <a class="sheet-modal-action" href="${VTT_PLATFORM_URLS.owlbear}" target="_blank" rel="noopener noreferrer">Open Owlbear</a>
-              </div>
-              <small>Experimental and not yet verified in a live room. The panel works in the same browser as this sheet; nothing is sent to any server outside your Owlbear room.</small>
-            </article>
-            <article class="integration-card">
-              <div class="integration-card-head"><strong>Foundry VTT</strong><span class="integration-status">Module needed</span></div>
-              <p>Foundry Actors are controlled by the active game system's schema. The bundled Angel Sword companion module (experimental) imports our exported character per-user and rolls its attacks, saves, and checks into chat — without touching Actors or system data.</p>
+              <p><small>Planned public address: <code>${escapeHtml(OWLBEAR_PUBLIC_MANIFEST_URL)}</code></small></p>
+            </section>
+            <section>
+              <strong>2. Enable Angel Sword for the room</strong>
+              <p>Open the room's Extensions Manager and switch on <em>Angel Sword Companion</em>. The Angel Sword action then appears in the room.</p>
+            </section>
+            <section>
+              <strong>3. Invite players through Owlbear</strong>
+              <p>Use Owlbear's <em>Invite Players</em> button. Players open that room link and request to join; they do not paste the invitation into this character sheet.</p>
+            </section>
+            <section>
+              <strong>4. Import and bind each character</strong>
+              <p>Each player opens the Angel Sword panel, imports their Character JSON or official <code>.aschar.json</code> file, selects exactly one Owlbear token on the Character layer, and chooses <em>Bind Selected Token</em>. The panel stores the player/character/token relationship and enables the shared room roll log.</p>
+              <p><small>External-sheet roll mirroring remains an Alpha transport and still needs a real two-browser room test. Damage, movement accounting, conditions, and Lyrian initiative are intentionally not part of this milestone.</small></p>
+            </section>
+            ${localPreviewAvailable ? `
+              <section class="table-tools-development-note">
+                <strong>Developer-only local test</strong>
+                <p>You may test the extension shell on this computer while the local builder server remains running. This address will not work for remote players.</p>
+                <div class="sheet-modal-form-actions">
+                  <button type="button" class="sheet-modal-action" data-owlbear-copy-local-install>Copy Local Test Install Link</button>
+                </div>
+                <p><small><code>${escapeHtml(localInstallUrl)}</code></small></p>
+              </section>
+            ` : ""}
+            <p id="owlbear-setup-feedback" class="save-slot-feedback" aria-live="polite"></p>
+            <div class="sheet-modal-form-actions">
+              <button type="button" class="sheet-modal-action" data-table-tools-back>Back to Table Tools</button>
+              <button type="button" class="sheet-modal-action" data-sheet-modal-close>Close</button>
+            </div>
+          </div>
+        `
+      });
+    }
+function openFoundrySetupGuide() {
+      openSheetModal({
+        eyebrow: "Virtual Tabletop Connection",
+        title: "Foundry VTT — Alpha",
+        lead: "A companion-module preview exists, but it is not yet packaged or approved as a public Foundry release.",
+        content: `
+          <div class="sheet-modal-success table-tools-guide connection-walkthrough">
+            <div class="table-tools-status-row">
+              <span class="integration-status is-warn">Alpha connection</span>
+              <span class="integration-status is-ready">Character export ready</span>
+              <span class="integration-status is-warn">Module packaging required</span>
+            </div>
+            <section>
+              <strong>What works now</strong>
+              <p>Export the character from this builder. The experimental companion module can import that character into its own panel and roll attacks, saves, and checks into Foundry chat without changing the active game system's Actor data.</p>
               <div class="sheet-modal-form-actions">
                 <button type="button" class="sheet-modal-action" data-integration-export>Export Character</button>
                 <a class="sheet-modal-action" href="${VTT_PLATFORM_URLS.foundry}" target="_blank" rel="noopener noreferrer">Open Foundry</a>
               </div>
-              <small>Module scaffold at <code>foundry/</code> in this build; a packaged release zip and a live-install verification are still required before announcing it.</small>
-            </article>
-            <article class="integration-card">
-              <div class="integration-card-head"><strong>World Anvil</strong><span class="integration-status is-ready">Profile copy ready</span></div>
-              <p>World Anvil is the “Anvil” service: a world/campaign manager with character profiles. Copy a clean profile now — plain text, or BBCode formatted for a World Anvil article.</p>
+            </section>
+            <section>
+              <strong>What remains before release</strong>
+              <p>The module still needs a packaged installation file, current-version compatibility verification, and a physical installation test in a real Foundry world.</p>
+            </section>
+            <div class="sheet-modal-form-actions">
+              <button type="button" class="sheet-modal-action" data-table-tools-back>Back to Table Tools</button>
+              <button type="button" class="sheet-modal-action" data-sheet-modal-close>Close</button>
+            </div>
+          </div>
+        `
+      });
+    }
+function openWorldAnvilSetupGuide() {
+      openSheetModal({
+        eyebrow: "Character Profile Connection",
+        title: "World Anvil — Alpha",
+        lead: "Profile copying works now. Automatic account publishing is intentionally not included in this public static builder.",
+        content: `
+          <div class="sheet-modal-success table-tools-guide connection-walkthrough">
+            <div class="table-tools-status-row">
+              <span class="integration-status is-warn">Alpha connection</span>
+              <span class="integration-status is-ready">Profile copy ready</span>
+            </div>
+            <section>
+              <strong>Copy a plain character profile</strong>
+              <p>Select <em>Copy Profile Summary</em>, open the character article or profile in World Anvil, and paste the text into the appropriate description field.</p>
+              <button type="button" class="sheet-modal-action" data-integration-copy="profile">Copy Profile Summary</button>
+            </section>
+            <section>
+              <strong>Copy a formatted World Anvil article</strong>
+              <p>Select <em>Copy BBCode Article</em>, create or edit a World Anvil article that supports BBCode, and paste the formatted character entry.</p>
               <div class="sheet-modal-form-actions">
-                <button type="button" class="sheet-modal-action" data-integration-copy="profile">Copy Profile Summary</button>
                 <button type="button" class="sheet-modal-action" data-integration-copy="worldanvil-bbcode">Copy BBCode Article</button>
                 <a class="sheet-modal-action" href="${VTT_PLATFORM_URLS.worldAnvil}" target="_blank" rel="noopener noreferrer">Open World Anvil</a>
               </div>
-              <small>Automatic API publishing is deferred because World Anvil requires application and user secrets that must not be exposed by a public static site.</small>
-            </article>
-            <article class="integration-card">
-              <div class="integration-card-head"><strong>Official Clio Builder</strong><span class="integration-status is-ready">File exchange ready</span></div>
-              <p>Trade characters with Angel's Sword's official builder: export a .aschar.json file its vault can import, or import one of its exports here through the normal Import button — the format is detected automatically.</p>
-              <div class="sheet-modal-form-actions">
-                <button type="button" class="sheet-modal-action" data-integration-aschar-export>Export .aschar.json</button>
-                <button type="button" class="sheet-modal-action" data-integration-ccs-export>Export CCS Spreadsheet</button>
-                <a class="sheet-modal-action" href="https://clio.angelssword.com/characterbuilder/vault.html" target="_blank" rel="noopener noreferrer">Open Official Vault</a>
-              </div>
-              <small>The CCS export fills the bundled official community character sheet template; upload the result to Google Drive and its formulas come back to life. Round-trip caveats (choice-based picks, guided skill pools) are listed in the import summary so nothing is lost silently.</small>
-            </article>
+            </section>
+            <section>
+              <strong>Why this is marked Alpha</strong>
+              <p>The copy workflow is usable, but automatic API publishing would require application and user secrets that must not be stored in a public browser application.</p>
+            </section>
+            <p id="integration-feedback" class="save-slot-feedback" aria-live="polite"></p>
+            <div class="sheet-modal-form-actions">
+              <button type="button" class="sheet-modal-action" data-table-tools-back>Back to Table Tools</button>
+              <button type="button" class="sheet-modal-action" data-sheet-modal-close>Close</button>
+            </div>
           </div>
-          <p id="integration-feedback" class="save-slot-feedback" aria-live="polite"></p>
         `
       });
-      ensureRoll20Bridge();
-      updateRoll20BridgeUi();
-      refreshRoll20TokenToolsUi();
+    }
+function openOfficialBuilderGuide() {
+      openSheetModal({
+        eyebrow: "Verified Character Exchange",
+        title: "Official Clio Builder — Verified",
+        lead: "Characters have been successfully moved in both directions between this builder and the official Angel Sword character vault.",
+        content: `
+          <div class="sheet-modal-success table-tools-guide connection-walkthrough">
+            <div class="table-tools-status-row">
+              <span class="integration-status is-ready">Verified</span>
+              <span class="integration-status is-ready">Import ready</span>
+              <span class="integration-status is-ready">Export ready</span>
+            </div>
+            <section>
+              <strong>Move this character to the official builder</strong>
+              <ol class="connection-step-list">
+                <li>Select <strong>Export Official Character File</strong>.</li>
+                <li>Open the official Clio character vault.</li>
+                <li>Use the vault's import option and select the downloaded <code>.aschar.json</code> file.</li>
+                <li>Review the imported character before saving it in the official vault.</li>
+              </ol>
+              <div class="sheet-modal-form-actions">
+                <button type="button" class="sheet-modal-action" data-integration-aschar-export>Export Official Character File</button>
+                <a class="sheet-modal-action" href="https://clio.angelssword.com/characterbuilder/vault.html" target="_blank" rel="noopener noreferrer">Open Official Vault</a>
+              </div>
+            </section>
+            <section>
+              <strong>Bring an official character into this builder</strong>
+              <ol class="connection-step-list">
+                <li>Export the character from the official Clio vault.</li>
+                <li>Return here and select <strong>Import Official Character File</strong>.</li>
+                <li>Select the downloaded official character file.</li>
+                <li>Read the import summary. It lists everything mapped and any choices that need review.</li>
+              </ol>
+              <button type="button" class="sheet-modal-action" data-integration-import>Import Official Character File</button>
+            </section>
+            <section>
+              <strong>Optional community character sheet</strong>
+              <p>The CCS spreadsheet export fills the bundled official community sheet template. Upload it to Google Drive if you want its spreadsheet formulas to calculate there.</p>
+              <button type="button" class="sheet-modal-action" data-integration-ccs-export>Export CCS Spreadsheet</button>
+            </section>
+            <div class="sheet-modal-form-actions">
+              <button type="button" class="sheet-modal-action" data-table-tools-back>Back to Table Tools</button>
+              <button type="button" class="sheet-modal-action" data-sheet-modal-close>Close</button>
+            </div>
+          </div>
+        `
+      });
     }
 function setPrimaryRaceFromBrowser() {
       const race = getRaceDetail(document.getElementById("race-browser").value);
@@ -22784,6 +23280,18 @@ function setSubRaceFromBrowser() {
       setStatus(`${getSecondaryLineageLabels(getSelectedRaceDetail()).browseLabel} set to ${ancestry.name}.`);
     }
 export async function bindEvents() {
+      subscribeVttRoomEvents((event) => {
+        const character = cleanText(event.character) || "Another character";
+        const label = cleanText(event.label) || "Roll";
+        const lines = [
+          cleanText(event.formula),
+          cleanText(event.breakdown),
+          Number.isFinite(Number(event.total)) ? `Total ${Number(event.total)}` : "",
+          cleanText(event.playerName) ? `Shared by ${cleanText(event.playerName)} through Owlbear.` : "Shared through Owlbear."
+        ].filter(Boolean);
+        appendPlayLog(`${character} — ${label}`, lines);
+        scheduleWorkingStatePersist();
+      });
       document.addEventListener("input", () => {
         invalidateExportCache();
       });
@@ -22800,25 +23308,80 @@ export async function bindEvents() {
       });
 
       ["save-browser", "builder-save-browser"].forEach((id) => {
-        document.getElementById(id).addEventListener("click", saveToBrowser);
+        document.getElementById(id)?.addEventListener("click", saveToBrowser);
       });
 
       ["load-browser", "builder-load-browser"].forEach((id) => {
-        document.getElementById(id).addEventListener("click", loadFromBrowser);
+        document.getElementById(id)?.addEventListener("click", loadFromBrowser);
       });
 
       ["export-json", "builder-export-character"].forEach((id) => {
-        document.getElementById(id).addEventListener("click", exportState);
+        document.getElementById(id)?.addEventListener("click", exportState);
       });
 
       ["import-json", "builder-import-character"].forEach((id) => {
-        document.getElementById(id).addEventListener("click", () => document.getElementById("import-file").click());
+        document.getElementById(id)?.addEventListener("click", () => document.getElementById("import-file").click());
       });
 
-      document.getElementById("sheet-integrations").addEventListener("click", openVttSharingModal);
+      document.getElementById("open-table-tools")?.addEventListener("click", () => setPlayMode("table"));
 
-      document.getElementById("recalc-basics").addEventListener("click", () => recalcBasics(true));
-      document.getElementById("clear-sheet").addEventListener("click", clearSheet);
+      document.getElementById("recalc-basics")?.addEventListener("click", () => {
+        recalcBasics(true);
+        document.getElementById("sheet-advanced-tools")?.removeAttribute("open");
+      });
+
+      document.getElementById("play-table-tools")?.addEventListener("click", (event) => {
+        const guideButton = event.target.closest("[data-table-tool-guide]");
+        if (guideButton) {
+          if (guideButton.dataset.tableToolGuide === "character-files") {
+            openCharacterFileGuide();
+          } else if (guideButton.dataset.tableToolGuide === "roll20") {
+            openRoll20BridgeSetupModal();
+          } else if (guideButton.dataset.tableToolGuide === "owlbear") {
+            openOwlbearSetupGuide();
+          } else if (guideButton.dataset.tableToolGuide === "foundry") {
+            openFoundrySetupGuide();
+          } else if (guideButton.dataset.tableToolGuide === "world-anvil") {
+            openWorldAnvilSetupGuide();
+          } else if (guideButton.dataset.tableToolGuide === "official-builder") {
+            openOfficialBuilderGuide();
+          }
+          return;
+        }
+
+        const actionButton = event.target.closest("[data-table-tool-action]");
+        if (!actionButton) {
+          return;
+        }
+        const action = actionButton.dataset.tableToolAction;
+        if (action === "save") {
+          saveToBrowser();
+        } else if (action === "load") {
+          loadFromBrowser();
+        } else if (action === "export") {
+          exportState();
+        } else if (action === "import") {
+          document.getElementById("import-file")?.click();
+        } else if (action === "recalculate") {
+          recalcBasics(true);
+        } else if (action === "builder") {
+          setMode("builder");
+          setStatus("Returned to the builder.");
+        }
+      });
+
+      document.addEventListener("click", (event) => {
+        const advancedTools = document.getElementById("sheet-advanced-tools");
+        if (advancedTools?.open && !event.target.closest("#sheet-advanced-tools")) {
+          advancedTools.removeAttribute("open");
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          document.getElementById("sheet-advanced-tools")?.removeAttribute("open");
+        }
+      });
 
       document.getElementById("sheet-dice-tray").addEventListener("click", (event) => {
         if (event.target.closest("[data-dice-toggle]")) {
@@ -22837,8 +23400,12 @@ export async function bindEvents() {
           return;
         }
 
-        if (event.target.closest("[data-dice-check-updates]")) {
-          checkForDicePackUpdates();
+        if (event.target.closest("[data-dice-use]")) {
+          state.play = mergePlayState(state.play);
+          state.play.diceTray.showSetPicker = false;
+          renderDiceTray();
+          persistWorkingState();
+          setStatus(`Using ${getDiceSet(state.play.diceTray.selectedSetId).name}.`);
           return;
         }
 const downloadButton = event.target.closest("[data-dice-download]");
@@ -22877,11 +23444,7 @@ const addButton = event.target.closest("[data-dice-add]");
         if (mobileSheetTool) {
           const toolId = mobileSheetTool.dataset.mobileSheetTool;
           closeSheetModal();
-          if (toolId === "start-over") {
-            startOverCharacter();
-          } else {
-            document.getElementById(toolId)?.click();
-          }
+          document.getElementById(toolId)?.click();
           return;
         }
 
@@ -22889,10 +23452,39 @@ const addButton = event.target.closest("[data-dice-add]");
           confirmResetCharacter();
           return;
         }
-const integrationSendButton = event.target.closest("[data-integration-send]");
-        if (integrationSendButton) {
-          if (integrationSendButton.dataset.integrationSend === "roll20-character" && !integrationSendButton.disabled) {
-            await sendRoll20CharacterMacroFromHub(integrationSendButton);
+        if (event.target.closest("[data-table-tools-back]")) {
+          closeSheetModal();
+          setPlayMode("table");
+          return;
+        }
+        const tableModalAction = event.target.closest("[data-table-modal-action]");
+        if (tableModalAction) {
+          const action = tableModalAction.dataset.tableModalAction;
+          closeSheetModal();
+          if (action === "save") {
+            saveToBrowser();
+          } else if (action === "export") {
+            exportState();
+          } else if (action === "import") {
+            document.getElementById("import-file")?.click();
+          }
+          return;
+        }
+        if (event.target.closest("[data-roll20-setup-back]")) {
+          closeSheetModal();
+          setPlayMode("table");
+          return;
+        }
+        if (event.target.closest("[data-owlbear-setup-guide]")) {
+          openOwlbearSetupGuide();
+          return;
+        }
+        if (event.target.closest("[data-owlbear-copy-local-install]")) {
+          await copyIntegrationValue(getLocalOwlbearManifestUrl(), "Local Owlbear test install link copied.");
+          const feedback = document.getElementById("owlbear-setup-feedback");
+          if (feedback) {
+            feedback.textContent = "Local test install link copied. Keep this builder server running while Owlbear loads it.";
+            feedback.classList.remove("is-error");
           }
           return;
         }
@@ -22904,30 +23496,9 @@ const integrationSendButton = event.target.closest("[data-integration-send]");
           await exportCcsState();
           return;
         }
-const pinTokenButton = event.target.closest("[data-roll20-pin-token]");
-        if (pinTokenButton) {
-          await pinRoll20SelectedToken(pinTokenButton);
-          return;
-        }
-        if (event.target.closest("[data-roll20-unpin-token]")) {
-          unpinRoll20Token();
-          return;
-        }
-const tokenSyncToggle = event.target.closest("[data-roll20-token-sync]");
-        if (tokenSyncToggle) {
-          state.play = mergePlayState(state.play);
-          state.play.roll20TokenSync = Boolean(tokenSyncToggle.checked);
-          persistWorkingState(false);
-          if (state.play.roll20TokenSync) {
-            scheduleRoll20TokenBarSync();
-          }
-          return;
-        }
-const turnTrackerToggle = event.target.closest("[data-roll20-turn-tracker]");
-        if (turnTrackerToggle) {
-          state.play = mergePlayState(state.play);
-          state.play.roll20TurnTracker = Boolean(turnTrackerToggle.checked);
-          persistWorkingState(false);
+        if (event.target.closest("[data-integration-import]")) {
+          closeSheetModal();
+          document.getElementById("import-file")?.click();
           return;
         }
 const integrationCopyButton = event.target.closest("[data-integration-copy]");
@@ -23222,6 +23793,32 @@ const didAdd = addSkillExpertisePoint(addExpertise.dataset.addSkillExpertise, so
           scheduleWorkingStatePersist();
           return;
         }
+const assignExpertise = event.target.closest("[data-assign-skill-expertise]");
+        if (assignExpertise) {
+          const panel = assignExpertise.closest(".builder-skill-expertise-panel");
+const nameInput = panel?.querySelector("[data-skill-expertise-name]");
+const customInput = panel?.querySelector("[data-skill-expertise-custom]");
+const didAssign = assignUnassignedSkillExpertise(
+            assignExpertise.dataset.assignSkillExpertise,
+            assignExpertise.dataset.skillExpertiseSource || "creation",
+            assignExpertise.dataset.skillExpertiseOldName,
+            getSkillExpertiseInputValue(panel)
+          );
+          if (didAssign) {
+            if (nameInput) {
+              nameInput.value = "";
+            }
+            if (customInput) {
+              customInput.value = "";
+            }
+          }
+          renderBuilderStepContent();
+          renderBuilderDetail();
+          renderBuilderSummary();
+          renderPlayDashboardIfVisible();
+          scheduleWorkingStatePersist();
+          return;
+        }
 const adjustExpertise = event.target.closest("[data-adjust-skill-expertise]");
         if (adjustExpertise) {
           adjustSkillExpertisePoint(
@@ -23291,6 +23888,30 @@ const adjustClassIp = event.target.closest("[data-adjust-class-ip]");
           scheduleWorkingStatePersist();
           return;
         }
+const addCreationInterlude = event.target.closest("[data-add-creation-interlude-action]");
+        if (addCreationInterlude) {
+          if (addCreationInterludeAction(addCreationInterlude.dataset.addCreationInterludeAction)) {
+            syncBuilderSelectionsIntoSheet();
+            renderBuilderStepContent();
+            renderBuilderDetail();
+            renderBuilderSummary();
+            renderPlayDashboardIfVisible();
+            scheduleWorkingStatePersist();
+          }
+          return;
+        }
+const removeCreationInterlude = event.target.closest("[data-remove-creation-interlude-action]");
+        if (removeCreationInterlude) {
+          if (removeCreationInterludeAction(removeCreationInterlude.dataset.removeCreationInterludeAction)) {
+            syncBuilderSelectionsIntoSheet();
+            renderBuilderStepContent();
+            renderBuilderDetail();
+            renderBuilderSummary();
+            renderPlayDashboardIfVisible();
+            scheduleWorkingStatePersist();
+          }
+          return;
+        }
 const trigger = event.target.closest("[data-builder-action]");
         if (!trigger) {
           return;
@@ -23335,6 +23956,8 @@ const id = trigger.dataset.id;
           removeStackableBreakthroughPurchase(id);
         } else if (action === "toggle-class") {
           toggleBuilderClass(id);
+        } else if (action === "inspect-class") {
+          inspectBuilderClass(id);
         } else if (action === "learn-class-ability") {
           learnNextClassAbility(id);
         } else if (action === "refund-class-ability") {
@@ -23639,11 +24262,6 @@ const button = event.target.closest("[data-play-transaction-field]");
           copyRoll20ActionFromId(copyMacroButton.dataset.copyRoll20Action);
           return;
         }
-        const sendMacroButton = event.target.closest("[data-send-roll20-action]");
-        if (sendMacroButton) {
-          sendRoll20ActionFromId(sendMacroButton.dataset.sendRoll20Action, sendMacroButton);
-          return;
-        }
         const recoverApButton = event.target.closest("[data-play-recover-ap]");
         if (recoverApButton) {
           openPlayReference("Recover AP", recoverApButton);
@@ -23685,11 +24303,6 @@ const button = event.target.closest("[data-play-transaction-field]");
         const copyMacroButton = event.target.closest("[data-copy-roll20-ability]");
         if (copyMacroButton) {
           copyRoll20AbilityFromIndex(copyMacroButton.dataset.copyRoll20Ability);
-          return;
-        }
-        const sendMacroButton = event.target.closest("[data-send-roll20-ability]");
-        if (sendMacroButton) {
-          sendRoll20AbilityFromIndex(sendMacroButton.dataset.sendRoll20Ability, sendMacroButton);
           return;
         }
         const referenceButton = event.target.closest("[data-play-reference-name]");

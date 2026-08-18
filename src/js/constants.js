@@ -271,6 +271,11 @@ export const BASE_STARTING_CLIM = 3000;
 export const DEFAULT_CHARACTER_START_MODE = "standard";
 export const MIRANE_START_MODE_ID = "mirane";
 export const MIRANE_STARTING_CLIM_BONUS = 1000;
+export const CREATION_INTERLUDE_ACTIONS = [
+      { id: "job", label: "Job", description: "+300 Clim", clim: 300, exp: 0 },
+      { id: "train", label: "Train", description: "+25 class EXP", clim: 0, exp: 25 },
+      { id: "other", label: "Other", description: "GM decides", clim: 0, exp: 0 }
+    ];
 export const MIRANE_RAW_MATERIAL_CLIM_LIMIT = 2500;
 export const MIRANE_SINGLE_MATERIAL_CLIM_LIMIT = 1000;
 export const MIRANE_CRAFTING_INTERLUDE_EXP = 20;
@@ -338,6 +343,27 @@ export const DICE_SOUND_ASSETS = {
       impacts: ["assets/sounds/dice-impact-95077.mp3"]
     };
     export const DICE_PREVIEW_FALLBACK_URL = "assets/dice/dice-coming-soon.svg";
+    const DICE_GLAMOUR_PREVIEWS = {
+      "asari-full-set-draft": "assets/dice/glamour/asari-full-set-draft.png",
+      "leaflit-full-set": "assets/dice/glamour/leaflit-full-set.png",
+      "rana-full-set": "assets/dice/glamour/rana-full-set.png"
+    };
+    const PROMOTED_DICE_SETS = (globalThis.LYRIAN_PROMOTED_DICE_SKINS || []).map((pack) => ({
+      id: pack.id,
+      name: pack.name || pack.id,
+      description: pack.description || "Created in the private Dice Builder Workshop.",
+      basePath: pack.basePath || "assets/dice",
+      imageExtension: pack.imageExtension || "webp",
+      preview: pack.preview || "dice-coming-soon.svg",
+      previewUrl: pack.previewUrl || "",
+      glamourPreviewUrl: DICE_GLAMOUR_PREVIEWS[pack.id] || "",
+      faceArtScript: pack.faceArtScript || "",
+      previewRevision: pack.generatedAt || pack.faceArtScript || "promoted",
+      available: true,
+      promoted: true,
+      geometryContract: pack.geometryContract || "2.0.0"
+    }));
+    const PROMOTED_DICE_SET_IDS = new Set(PROMOTED_DICE_SETS.map((set) => set.id));
     export const DICE_SETS = [
       {
         id: "new-angelsword",
@@ -346,9 +372,11 @@ export const DICE_SOUND_ASSETS = {
         basePath: "assets/dice/new-angelsword",
         imageExtension: "png",
         preview: "selection-preview.png",
+        glamourPreviewUrl: "assets/dice/new-angelsword/selection-preview.png",
+        previewRevision: "20260811-srgb-dice-v1",
         available: true
       },
-      {
+      ...(!PROMOTED_DICE_SET_IDS.has("leaflit-full-set") ? [{
         id: "leaflit",
         name: "Leaflit Dice",
         description: "Downloadable dice pack planned for a future update.",
@@ -357,8 +385,8 @@ export const DICE_SOUND_ASSETS = {
         preview: "dice-coming-soon.svg",
         available: false,
         availabilityLabel: "Coming soon"
-      },
-      {
+      }] : []),
+      ...(!PROMOTED_DICE_SET_IDS.has("asari-full-set-draft") ? [{
         id: "asari",
         name: "Asari Dice",
         description: "Downloadable dice pack planned for a future update.",
@@ -367,7 +395,8 @@ export const DICE_SOUND_ASSETS = {
         preview: "dice-coming-soon.svg",
         available: false,
         availabilityLabel: "Coming soon"
-      }
+      }] : []),
+      ...PROMOTED_DICE_SETS
     ];
     export const DEFAULT_DICE_SET_ID = "new-angelsword";
     export const DICE_SET_ID_ALIASES = {

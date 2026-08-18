@@ -32,6 +32,7 @@ async function copyDeploymentArtifact() {
   await fs.copyFile(path.join(PROJECT_ROOT, 'index.html'), path.join(DEPLOY_TEMP_DIR, 'index.html'));
   await fs.copyFile(path.join(PROJECT_ROOT, 'manifest.webmanifest'), path.join(DEPLOY_TEMP_DIR, 'manifest.webmanifest'));
   await copyDirectory(path.join(PROJECT_ROOT, 'assets'), path.join(DEPLOY_TEMP_DIR, 'assets'));
+  await copyDirectory(path.join(PROJECT_ROOT, 'owlbear'), path.join(DEPLOY_TEMP_DIR, 'owlbear'));
   await fs.copyFile(
     path.join(PROJECT_ROOT, 'src', 'css', 'main.css'),
     path.join(DEPLOY_TEMP_DIR, 'src', 'css', 'main.css')
@@ -39,12 +40,39 @@ async function copyDeploymentArtifact() {
 }
 
 async function assertDiceRollerHasNoPageDimmingPlane() {
-  const sourcePath = path.join(PROJECT_ROOT, 'assets', 'dice-3d', 'lyrian-accurate-dice.js');
-  const source = await fs.readFile(sourcePath, 'utf8');
-  const hasDarkFloorPlane = /new\s+THREE\.PlaneGeometry\s*\(\s*15\s*,\s*9\s*\)/.test(source)
-    || /scene\.add\s*\(\s*floor\s*\)/.test(source);
-  if (hasDarkFloorPlane) {
-    throw new Error('Accurate dice roller still draws a full-screen dark floor plane that visibly dims the play sheet during rolls.');
+  const rollerFiles = ['lyrian-accurate-dice.js', 'shared-dice-roller-core.js'];
+  for (const fileName of rollerFiles) {
+    const sourcePath = path.join(PROJECT_ROOT, 'assets', 'dice-3d', fileName);
+    const source = await fs.readFile(sourcePath, 'utf8');
+    const hasDarkFloorPlane = /new\s+THREE\.PlaneGeometry\s*\(\s*15\s*,\s*9\s*\)/.test(source)
+      || /scene\.add\s*\(\s*floor\s*\)/.test(source);
+    if (hasDarkFloorPlane) {
+      throw new Error(`${fileName} still draws a full-screen dark floor plane that visibly dims the play sheet during rolls.`);
+    }
+  }
+}
+
+async function assertOwlbearDeploymentArtifact() {
+  const manifestPath = path.join(DEPLOY_TEMP_DIR, 'owlbear', 'manifest.json');
+  const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
+  const requiredFiles = [
+    manifest.icon,
+    manifest.background_url,
+    manifest.action?.popover,
+    'background.js',
+    'core.js',
+    'panel.js',
+    'sdk.js',
+    'dist/background.js',
+    'dist/panel.js'
+  ].filter(Boolean);
+
+  for (const relativePath of requiredFiles) {
+    await fs.access(path.join(DEPLOY_TEMP_DIR, 'owlbear', relativePath));
+  }
+
+  if (manifest.name !== 'Angel Sword Companion' || manifest.version !== '0.2.0') {
+    throw new Error('The deployment artifact contains an unexpected Owlbear Companion manifest.');
   }
 }
 
@@ -89,6 +117,15 @@ async function runDirectFileStartupAssertion() {
         navCount: stepNav?.querySelectorAll('button').length || 0,
         summaryText: summary?.textContent?.replace(/\s+/g, ' ').trim() || '',
         buildLabel: document.querySelector('.builder-build-version')?.textContent || '',
+        learnLink: (() => {
+          const link = document.querySelector('.version-learn-link');
+          return {
+            text: link?.textContent?.replace(/\s+/g, ' ').trim() || '',
+            href: link?.getAttribute('href') || '',
+            target: link?.getAttribute('target') || '',
+            rel: link?.getAttribute('rel') || ''
+          };
+        })(),
         startModes: [...document.querySelectorAll('[data-character-start-mode]')].map((button) => button.dataset.characterStartMode),
         activeStartMode: document.querySelector('[data-character-start-mode][aria-pressed="true"]')?.dataset.characterStartMode || '',
         hasSevenSorrows: (window.LYRIAN_DETAIL_DATA?.classes || []).some((entry) => entry.name === 'Seven Sorrows Sword Style'),
@@ -112,6 +149,11 @@ async function runDirectFileStartupAssertion() {
       && result.navCount > 0
       && result.summaryText.includes('Identity')
       && result.buildLabel.includes('Beta 2.13')
+      && result.learnLink.text.includes('Learn How to Play')
+      && result.learnLink.href === 'https://clio.angelssword.com/#'
+      && result.learnLink.target === '_blank'
+      && result.learnLink.rel.includes('noopener')
+      && result.learnLink.rel.includes('noreferrer')
       && result.startModes.join('|') === 'standard|mirane'
       && result.activeStartMode === 'standard'
       && result.hasSevenSorrows
@@ -385,8 +427,10 @@ async function runMobileSheetAppAssertions(page, browserName) {
     };
   });
 
-  const labelsValid = initial.visibleModeLabels.join('|') === 'Character Sheet|Crafting|Gathering';
-  const visualOrderValid = initial.positions.combat < initial.positions.gathering && initial.positions.gathering < initial.positions.crafting;
+  const labelsValid = initial.visibleModeLabels.join('|') === 'Character Sheet|Crafting|Gathering|Table Tools';
+  const visualOrderValid = initial.positions.combat < initial.positions.gathering
+    && initial.positions.gathering < initial.positions.crafting
+    && initial.positions.crafting < initial.positions.table;
   if (
     !labelsValid ||
     !visualOrderValid ||
@@ -445,7 +489,7 @@ async function runMobileSheetAppAssertions(page, browserName) {
       return rect.left >= 0 && rect.right <= document.documentElement.clientWidth;
     })
   }));
-  await page.click('#play-mobile-walkthrough-nav [data-play-mode="crafting"]');
+  await page.click('#play-mobile-walkthrough-nav [data-play-mode="crafting"]', { force: true });
   await page.waitForSelector('#play-crafting:not([hidden])', { state: 'visible', timeout: 5000 });
   const craftingVisible = await page.locator('#play-crafting').isVisible();
   const craftingLayout = await page.evaluate(() => ({
@@ -470,7 +514,7 @@ async function runMobileSheetAppAssertions(page, browserName) {
     throw new Error(`Mobile walkthrough routing regression failed: ${JSON.stringify({ gatheringVisible, walkthroughNavVisible, craftingVisible, gatheringLayout, craftingLayout })}`);
   }
 
-  await page.click('#play-mobile-walkthrough-nav [data-play-mode="combat"]');
+  await page.click('#play-mobile-walkthrough-nav [data-play-mode="combat"]', { force: true });
   await page.click('[data-mobile-sheet-page="overview"]');
   await page.waitForFunction(() => document.querySelector('#play-header-card')?.textContent?.includes('Mobile Test Hero'));
   if (browserName.startsWith('Chromium')) {
@@ -508,31 +552,38 @@ async function runVttIntegrationAssertions(page, browserName, targetUrl, isMobil
 
   if (isMobile) {
     await page.locator('[data-mobile-sheet-tools]').click();
-    await page.locator('[data-mobile-sheet-tool="sheet-integrations"]').click();
+    await page.waitForSelector('#play-table-tools:not([hidden])', { timeout: 5000 });
   } else {
-    await page.locator('#sheet-integrations').click();
+    await page.locator('#open-table-tools').click();
+    await page.waitForSelector('#play-table-tools:not([hidden])', { timeout: 5000 });
   }
-  await page.waitForSelector('#sheet-modal:not([hidden])', { timeout: 5000 });
-
-  const hub = await page.evaluate(() => ({
-    cards: [...document.querySelectorAll('.integration-card-head strong')].map((node) => node.textContent.trim()),
-    linksSafe: [...document.querySelectorAll('.integration-card a[target="_blank"]')]
-      .every((link) => link.rel.includes('noopener') && link.rel.includes('noreferrer')),
-    hasSecretInput: Boolean(document.querySelector('.integration-card input[type="password"], .integration-card input[name*="token" i], .integration-card input[name*="secret" i]')),
-    copyButtons: document.querySelectorAll('[data-integration-copy]').length,
-    adapterLabels: [...document.querySelectorAll('.integration-status')].map((node) => node.textContent.trim())
-  }));
-  const expectedCards = ['Roll20', 'Owlbear Rodeo', 'Foundry VTT', 'World Anvil'];
+  const tableToolActions = await page.locator('#play-table-tools [data-table-tool-action]').evaluateAll((buttons) =>
+    buttons.map((button) => button.dataset.tableToolAction)
+  );
+  const tableToolGuides = await page.locator('#play-table-tools [data-table-tool-guide]').evaluateAll((buttons) =>
+    buttons.map((button) => button.dataset.tableToolGuide)
+  );
+  const platformCards = await page.locator('#play-table-tools .table-platform-card').evaluateAll((cards) =>
+    cards.map((card) => ({
+      name: card.querySelector('strong')?.textContent?.trim() || '',
+      status: card.querySelector('.integration-status')?.textContent?.trim() || ''
+    }))
+  );
+  const expectedGuides = ['character-files', 'roll20', 'owlbear', 'foundry', 'world-anvil', 'official-builder'];
+  const expectedPlatforms = ['Roll20', 'Owlbear Rodeo', 'Foundry VTT', 'World Anvil', 'Official Clio Builder'];
   if (
-    expectedCards.some((name) => !hub.cards.includes(name))
-    || !hub.linksSafe
-    || hub.hasSecretInput
-    || hub.copyButtons < 2
-    || !hub.adapterLabels.includes('Extension needed')
-    || !hub.adapterLabels.includes('Module needed')
+    !['save', 'load', 'export', 'import', 'recalculate', 'builder'].every((action) => tableToolActions.includes(action))
+    || tableToolActions.includes('connections')
+    || !expectedGuides.every((guide) => tableToolGuides.includes(guide))
+    || expectedPlatforms.some((name) => !platformCards.some((card) => card.name === name))
+    || platformCards.filter((card) => card.name !== 'Official Clio Builder').some((card) => card.status !== 'Alpha')
+    || platformCards.find((card) => card.name === 'Official Clio Builder')?.status !== 'Verified'
+    || (await page.locator('#play-table-tools').textContent()).includes('All Connections')
   ) {
-    throw new Error(`VTT integration hub regression failed in ${browserName}: ${JSON.stringify(hub)}`);
+    throw new Error(`Table Tools connections are incomplete in ${browserName}: ${JSON.stringify({ tableToolActions, tableToolGuides, platformCards })}`);
   }
+  await page.locator('[data-table-tool-guide="roll20"]').click();
+  await page.waitForSelector('#sheet-modal:not([hidden])', { timeout: 5000 });
 
   await page.locator('[data-integration-copy="roll20-character"]').click();
   await page.waitForFunction(() => window.__integrationClipboard.includes('&{template:default}') && window.__integrationClipboard.includes('Angel Sword'));
@@ -541,7 +592,44 @@ async function runVttIntegrationAssertions(page, browserName, targetUrl, isMobil
     throw new Error(`Roll20 character macro regression failed in ${browserName}: ${characterMacro}`);
   }
 
-  await page.locator('#sheet-modal-close').click();
+  const setup = await page.evaluate(() => {
+    const roll20Link = [...document.querySelectorAll('.roll20-setup-guide a[target="_blank"]')]
+      .find((link) => link.href.includes('roll20.net'));
+    const contentText = document.getElementById('sheet-modal-content')?.textContent || '';
+    return {
+      title: document.getElementById('sheet-modal-title')?.textContent?.trim() || '',
+      userscriptSetupRemoved: !document.querySelector('[data-roll20-install-direct]')
+        && !document.querySelector('[data-roll20-download-bridge]')
+        && !document.querySelector('[data-integration-send="roll20-character"]')
+        && !document.querySelector('[data-roll20-pin-token]')
+        && !document.querySelector('[data-roll20-token-sync]')
+        && !contentText.includes('Tampermonkey')
+        && !contentText.includes('Download Bridge File'),
+      roll20LinkSafe: Boolean(roll20Link)
+        && roll20Link.rel.includes('noopener')
+        && roll20Link.rel.includes('noreferrer'),
+      hasCrossBrowserFallback: contentText.includes('Copy Character Macro')
+        && contentText.includes('every modern browser'),
+      hasNativeSheetPlan: contentText.includes('community character sheet')
+        && contentText.includes('native one-click roll buttons')
+        && contentText.includes('Players then open their assigned character in Roll20'),
+      limitsProModToGm: contentText.includes('Pro game creator')
+        && contentText.includes('players would not install browser extensions')
+    };
+  });
+  if (
+    setup.title !== 'Roll20 — Alpha'
+    || !setup.userscriptSetupRemoved
+    || !setup.roll20LinkSafe
+    || !setup.hasCrossBrowserFallback
+    || !setup.hasNativeSheetPlan
+    || !setup.limitsProModToGm
+  ) {
+    throw new Error(`Roll20 guided setup regression failed in ${browserName}: ${JSON.stringify(setup)}`);
+  }
+  await page.locator('[data-roll20-setup-back]').click();
+  await page.waitForSelector('#play-table-tools:not([hidden])', { timeout: 5000 });
+  await page.locator('#play-header-card [data-play-mode="combat"]').click();
   if (isMobile) {
     await page.locator('[data-mobile-sheet-page="combat"]').click();
   }
@@ -555,62 +643,17 @@ async function runVttIntegrationAssertions(page, browserName, targetUrl, isMobil
   if (!actionMacro.includes('{{name=') || !actionMacro.includes('{{Details=')) {
     throw new Error(`Roll20 action macro regression failed in ${browserName}: ${actionMacro}`);
   }
-
-  // End-to-end bridge happy path with an in-page fake companion speaking the
-  // asb dialect: connect → ⚔ card send → ok ack (sent twice, second must be
-  // ignored) → exactly one ack-gated resource spend in the play log.
-  await page.evaluate(() => {
-    window.__asbSends = [];
-    window.addEventListener('message', (ev) => {
-      const data = ev.data;
-      if (!data || data.source !== 'asb-battle') {
-        return;
-      }
-      if (data.type === 'ping') {
-        window.postMessage({ source: 'asb-companion', type: 'status', roll20: true }, '*');
-      } else if (data.type === 'send' && data.id && !window.__asbSends.includes(data.id)) {
-        window.__asbSends.push(data.id);
-        window.postMessage({ source: 'asb-companion', type: 'ack', id: data.id, ok: true }, '*');
-        window.postMessage({ source: 'asb-companion', type: 'ack', id: data.id, ok: true }, '*');
-      } else if (data.type === 'getSelected' && data.id) {
-        window.postMessage({ source: 'asb-companion', type: 'selected', id: data.id, ok: true, tokenId: '-fakeTok1', name: 'Fake Token' }, '*');
-      }
-    });
-  });
-  await page.waitForFunction(() => document.body.classList.contains('asb-r20-connected'), null, { timeout: 15000 });
-  const actionSend = page.locator('[data-send-roll20-action]').first();
-  if (!await actionSend.count()) {
-    throw new Error(`No Roll20 action-send control rendered in ${browserName}.`);
-  }
-  await actionSend.click();
-  await page.waitForFunction(() => window.__asbSends.length === 1, null, { timeout: 5000 });
-  await page.waitForTimeout(600);
-  const bridgeOutcome = await page.evaluate(() => ({
-    sends: window.__asbSends.length,
-    spendLogs: (document.getElementById('play-log')?.textContent.match(/Sent to Roll20 via the bridge/g) || []).length
-  }));
-  if (bridgeOutcome.sends !== 1 || bridgeOutcome.spendLogs !== 1) {
-    throw new Error(`Roll20 bridge send/spend regression in ${browserName}: ${JSON.stringify(bridgeOutcome)}`);
+  const retiredBridgeControls = await page.locator([
+    '[data-send-roll20-action]',
+    '[data-send-roll20-ability]',
+    '[data-integration-send="roll20-character"]',
+    '[data-roll20-pin-token]',
+    '[data-roll20-token-sync]'
+  ].join(',')).count();
+  if (retiredBridgeControls !== 0) {
+    throw new Error(`Retired Roll20 userscript controls are still player-visible in ${browserName}.`);
   }
 
-  // Token pinning through the hub against the fake companion's selected-token reply.
-  if (isMobile) {
-    await page.locator('[data-mobile-sheet-tools]').click();
-    await page.locator('[data-mobile-sheet-tool="sheet-integrations"]').click();
-  } else {
-    await page.locator('#sheet-integrations').click();
-  }
-  await page.waitForSelector('#sheet-modal:not([hidden])', { timeout: 5000 });
-  await page.locator('[data-roll20-pin-token]').click();
-  await page.waitForFunction(() => (document.getElementById('roll20-token-pin-label')?.textContent || '').includes('Fake Token'), null, { timeout: 5000 });
-  const pinState = await page.evaluate(() => ({
-    label: document.getElementById('roll20-token-pin-label')?.textContent || '',
-    unpinVisible: document.getElementById('roll20-token-unpin')?.style.display !== 'none'
-  }));
-  if (!pinState.label.includes('Pinned: Fake Token') || !pinState.unpinVisible) {
-    throw new Error(`Roll20 token pinning regression in ${browserName}: ${JSON.stringify(pinState)}`);
-  }
-  await page.locator('#sheet-modal-close').click();
 }
 
 function isLocalTestUrl(url) {
@@ -634,6 +677,7 @@ async function main() {
   console.log(`Replicating deployment artifact in ${DEPLOY_TEMP_DIR}...`);
   await copyDeploymentArtifact();
   await fs.writeFile(path.join(DEPLOY_TEMP_DIR, '.nojekyll'), '', 'utf8');
+  await assertOwlbearDeploymentArtifact();
 
   let testFailedGlobal = false;
 
@@ -2396,6 +2440,39 @@ const browsers = [
     await runSpreadsheetVisibleGridImportAssertion(page);
     await runCraftingOutcomeResolutionAssertion(page);
     await runGatheringNoYieldResolutionAssertion(page);
+
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
+        ui: { mode: 'builder', builderStep: 7, gameVersion: '0.13.1' },
+        fields: { Name: 'Legacy Expertise Assignment', Expertise1: '+2' },
+        builder: { selectedRaceId: '', skillExpertiseEntries: [] }
+      }));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await page.click('[data-step-index="7"]');
+    await page.waitForSelector('[data-assign-skill-expertise]', { timeout: 5000 });
+    const legacyExpertisePanel = page.locator('.builder-skill-expertise-panel').first();
+    const legacyBudgetBefore = await page.locator('#builder-step-content').textContent();
+    await legacyExpertisePanel.locator('select[data-skill-expertise-name]').selectOption('Jumping');
+    await legacyExpertisePanel.locator('[data-assign-skill-expertise]').click();
+    await page.waitForFunction(() => {
+      const text = document.querySelector('.builder-skill-expertise-panel')?.textContent || '';
+      return text.includes('Jumping') && !text.includes('Unassigned creation expertise');
+    });
+    const legacyAssignmentResult = await page.evaluate(() => ({
+      panelText: document.querySelector('.builder-skill-expertise-panel')?.textContent || '',
+      budgetText: document.querySelector('#builder-step-content')?.textContent || ''
+    }));
+    if (!legacyBudgetBefore.includes('Skill Points Spent: 1 / 10')
+      || !legacyAssignmentResult.budgetText.includes('Skill Points Spent: 1 / 10')
+      || !legacyAssignmentResult.panelText.includes('Jumping')
+      || legacyAssignmentResult.panelText.includes('Unassigned creation expertise')) {
+      throw new Error(`Legacy unassigned expertise assignment failed: ${JSON.stringify(legacyAssignmentResult)}`);
+    }
+
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'load' });
 
     await page.locator('[data-builder-action="pick-race"]').filter({ hasText: 'Human' }).first().click();
     await page.click('[data-step-index="7"]');
@@ -4625,7 +4702,8 @@ const browsers = [
       throw new Error(`Masaru spreadsheet import regression failed: ${JSON.stringify(masaruResult)}`);
     }
 
-    await page.click('#export-json');
+    await page.click('[data-play-mode="table"]');
+    await page.click('[data-table-tool-action="export"]');
     const downloadPromise = page.waitForEvent('download', { timeout: 30000 });
     await page.click('[data-export-mode="spreadsheet"]');
     const download = await downloadPromise;
@@ -4910,11 +4988,39 @@ const browsers = [
             const stepNav = document.getElementById('builder-step-nav');
             const versionSelect = document.getElementById('game-version-select');
             const builderBuildVersion = document.querySelector('.builder-build-version');
+            const learnLink = document.querySelector('.version-learn-link');
+            const sheetToolbarSimplified = Boolean(
+              document.getElementById('open-table-tools')
+              && !document.getElementById('save-browser')
+              && !document.getElementById('export-json')
+              && !document.getElementById('sheet-integrations')
+              && !document.getElementById('recalc-basics')
+              && !document.getElementById('sheet-advanced-tools')
+              && !document.getElementById('load-browser')
+              && !document.getElementById('import-json')
+              && !document.getElementById('clear-sheet')
+              && document.getElementById('play-table-tools')
+              && document.getElementById('builder-load-browser')
+              && document.getElementById('builder-import-character')
+              && document.getElementById('builder-start-over-sidebar')
+            );
 
             const contentValid = stepContent && stepContent.children.length > 0 && stepContent.textContent.trim().length > 0;
             const navValid = stepNav && stepNav.querySelectorAll('button').length > 0;
             const versionsValid = versionSelect && versionSelect.querySelectorAll('option').length > 0;
             const builderBuildValid = builderBuildVersion && builderBuildVersion.textContent.includes('Beta 2.13');
+            const learnLinkValid = learnLink
+              && learnLink.textContent.includes('Learn How to Play')
+              && learnLink.getAttribute('href') === 'https://clio.angelssword.com/#'
+              && learnLink.getAttribute('target') === '_blank'
+              && learnLink.getAttribute('rel')?.includes('noopener')
+              && learnLink.getAttribute('rel')?.includes('noreferrer');
+            const versionRect = versionSelect?.getBoundingClientRect();
+            const learnRect = learnLink?.getBoundingClientRect();
+            const learnLinkDirectlyBelow = Boolean(versionRect && learnRect
+              && learnRect.top >= versionRect.bottom
+              && Math.abs(learnRect.left - versionRect.left) < 1
+              && Math.abs(learnRect.right - versionRect.right) < 1);
             const updateControlsRemoved = !document.getElementById('version-check-button')
               && !document.getElementById('version-download-button')
               && !document.getElementById('version-connection');
@@ -4924,6 +5030,9 @@ const browsers = [
               navValid,
               versionsValid,
               builderBuildValid,
+              learnLinkValid,
+              learnLinkDirectlyBelow,
+              sheetToolbarSimplified,
               updateControlsRemoved,
               contentHtml: stepContent ? stepContent.innerHTML : 'null',
               navCount: stepNav ? stepNav.querySelectorAll('button').length : 0,
@@ -4951,6 +5060,18 @@ const browsers = [
 
           if (!checkResults.builderBuildValid) {
             const errText = 'App state check failed: builder build version label is missing or incorrect.';
+            console.error(`   [STATE ERROR] [${browserInfo.name} - ${vp.name}]:`, errText);
+            testErrors.push(errText);
+          }
+
+          if (!checkResults.learnLinkValid || !checkResults.learnLinkDirectlyBelow) {
+            const errText = 'App state check failed: Learn How to Play must be a safe official-site link directly below the game-version selector.';
+            console.error(`   [STATE ERROR] [${browserInfo.name} - ${vp.name}]:`, errText);
+            testErrors.push(errText);
+          }
+
+          if (!checkResults.sheetToolbarSimplified) {
+            const errText = 'App state check failed: play-sheet management tools were not separated from builder-only tools.';
             console.error(`   [STATE ERROR] [${browserInfo.name} - ${vp.name}]:`, errText);
             testErrors.push(errText);
           }

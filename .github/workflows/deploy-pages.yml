@@ -24,12 +24,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Build static runtimes
+        run: |
+          npm ci
+          npm run build
+
       - name: Prepare static site
         shell: bash
         run: |
           mkdir -p dist/src/css
           rsync -a index.html manifest.webmanifest dist/
           rsync -a assets/ dist/assets/
+          rsync -a owlbear/ dist/owlbear/
           rsync -a src/css/main.css dist/src/css/main.css
           touch dist/.nojekyll
 

@@ -1,4 +1,4 @@
-import { BASE_STARTING_CLIM, BREAKTHROUGH_CREATION_BUDGET, CHARACTER_START_MODES, CLASS_ROWS, DEFAULT_CHARACTER_START_MODE, HUMAN_CLASS_EXP_BONUS, MIRANE_START_MODE_ID, MIRANE_STARTING_CLIM_BONUS, SELECTED_GAME_VERSION_KEY, SELECTED_GAME_VERSION_LATEST_KEY, SKILL_DEFINITIONS, SLOW_STARTER_CLASS_EXP_PENALTY, STARTING_CLASS_EXP, STARTING_INTERLUDE_POINTS } from "./constants.js";
+import { BASE_STARTING_CLIM, BREAKTHROUGH_CREATION_BUDGET, CHARACTER_START_MODES, CLASS_ROWS, CREATION_INTERLUDE_ACTIONS, DEFAULT_CHARACTER_START_MODE, HUMAN_CLASS_EXP_BONUS, MIRANE_START_MODE_ID, MIRANE_STARTING_CLIM_BONUS, SELECTED_GAME_VERSION_KEY, SELECTED_GAME_VERSION_LATEST_KEY, SKILL_DEFINITIONS, SLOW_STARTER_CLASS_EXP_PENALTY, STARTING_CLASS_EXP, STARTING_INTERLUDE_POINTS } from "./constants.js";
 import { asArray, buildLookup, clamp, cleanText, formatModifier, normalizeKey, normalizePhrase, splitSentences, toNumber } from "./utils.js";
 import { mergePlayState, persistWorkingState, state, trySetLocalStorage } from "./state.js";
 import { parseNumericCost } from "./io.js";
@@ -379,18 +379,26 @@ const selectedClasses = classProgress.map((entry) => entry.record);
 const spentExp = classProgress.reduce((total, entry) => total + entry.cost, 0);
 const breakthroughBudget = getBreakthroughBudgetState();
 const creationClassExp = breakthroughBudget.creationClassExp;
-const spentInterlude = selectedClasses.reduce((total, record) => total + getClassInterludeCost(record), 0);
+const creationInterludeActions = Array.isArray(state.builder.creationInterludeActions)
+        ? state.builder.creationInterludeActions
+        : [];
+const creationInterludeActionRecords = creationInterludeActions
+        .map((id) => CREATION_INTERLUDE_ACTIONS.find((action) => action.id === id))
+        .filter(Boolean);
+const creationInterludeExp = creationInterludeActionRecords.reduce((total, action) => total + action.exp, 0);
+const spentClassInterlude = selectedClasses.reduce((total, record) => total + getClassInterludeCost(record), 0);
+const spentInterlude = spentClassInterlude + creationInterludeActionRecords.length;
 const expBankText = cleanText(state.fields.Exp);
 const gmExtraInterlude = Math.max(0, Math.floor(toNumber(state.fields["GM Extra IP"], 0)));
 const interludeBudget = STARTING_INTERLUDE_POINTS + gmExtraInterlude;
 const remainingExp = isExpBankAutoManaged()
-        ? Math.max(0, creationClassExp.total - spentExp - breakthroughBudget.generalSpent)
+        ? Math.max(0, creationClassExp.total + creationInterludeExp - spentExp - breakthroughBudget.generalSpent)
         : Math.max(0, toNumber(expBankText, 0));
       return {
         selectedClasses,
         classProgress,
         expBudget: spentExp + remainingExp,
-        startingExpBudget: creationClassExp.total,
+        startingExpBudget: creationClassExp.total + creationInterludeExp,
         humanExpBonus: creationClassExp.humanBonus,
         humanExpBonusSuppressedByHybrid: creationClassExp.humanBonusSuppressedByHybrid,
         slowStarterExpPenalty: creationClassExp.slowStarterPenalty,
@@ -399,7 +407,11 @@ const remainingExp = isExpBankAutoManaged()
         gmExtraInterlude,
         interludeBudget,
         spentExp,
+        spentClassInterlude,
         spentInterlude,
+        creationInterludeActions,
+        creationInterludeActionRecords,
+        creationInterludeExp,
         remainingExp,
         remainingInterlude: Math.max(0, interludeBudget - spentInterlude),
         overInterlude: Math.max(0, spentInterlude - interludeBudget)
@@ -457,9 +469,15 @@ export function getStartingFundsState() {
       const effects = getSelectedBreakthroughEffects();
 const startMode = getCharacterStartMode();
 const campaignBonusClim = startMode.id === MIRANE_START_MODE_ID ? MIRANE_STARTING_CLIM_BONUS : 0;
+const creationInterludeClim = (Array.isArray(state.builder.creationInterludeActions)
+        ? state.builder.creationInterludeActions
+        : [])
+        .map((id) => CREATION_INTERLUDE_ACTIONS.find((action) => action.id === id))
+        .filter(Boolean)
+        .reduce((total, action) => total + action.clim, 0);
 const overrideRaw = cleanText(state.fields["Clim Override"]);
 const earnedClim = toNumber(cleanText(state.fields["Earned Clim"]), 0);
-const suggestedTotal = BASE_STARTING_CLIM + campaignBonusClim + effects.bonusClim;
+const suggestedTotal = BASE_STARTING_CLIM + campaignBonusClim + effects.bonusClim + creationInterludeClim;
 const hasOverride = overrideRaw !== "";
 const overrideValue = hasOverride ? Math.max(0, toNumber(overrideRaw, suggestedTotal)) : null;
 const startingClim = hasOverride ? overrideValue : suggestedTotal;
@@ -471,6 +489,7 @@ const availableClim = totalClim - selectedEquipmentCost;
         baseClim: BASE_STARTING_CLIM,
         startMode,
         campaignBonusClim,
+        creationInterludeClim,
         bonusClim: effects.bonusClim,
         suggestedTotal,
         hasOverride,

@@ -1,14 +1,14 @@
 # Owner Checklist & Connection Tutorials — verified edition
 
-Last updated: 2026-07-23. On this date a Claude session ran every step it could reach
-itself, in a real browser, against the live official site. Steps marked **[VERIFIED]**
+Last updated: 2026-08-16. Automated checks have run every local step they can reach,
+and earlier live checks used the official sites. Steps marked **[VERIFIED]**
 were actually executed and worked exactly as written. Steps marked **[YOU]** need your
 hands, accounts, or installs. Item statuses:
 
 | # | Connection | Status |
 |---|---|---|
-| 1 | Roll20 bridge | Blocked on ONE install only: Tampermonkey is not in your Chrome (confirmed — Chrome plain-downloaded the userscript instead of installing it). Everything after that install is ready. |
-| 2 | Owlbear Rodeo | Needs your Owlbear login. Untested beyond that. |
+| 1 | Roll20 | Manual macro copy works across browsers. The userscript bridge is retired from the player interface. A native Roll20 community sheet/importer is the required one-click solution. |
+| 2 | Owlbear Rodeo | **Local v0.2 milestone verified.** Character import, ownership-aware token binding, a shared room roll contract/log, the background page, deployment packaging, and standalone safeguards are automated. A real GM + second-player room test still needs your Owlbear account. |
 | 3 | Foundry VTT | Foundry is NOT installed on this PC (searched Program Files, AppData, E:). Waits until you install it. |
 | 4 | CCS spreadsheet | **File generation fully verified** — real browser download, correct values in correct cells, styles intact. Only the Google-Drive "formulas revive" check remains. |
 | 5 | .aschar ↔ official vault | **PASSED — fully verified live.** Our export was imported by the official vault's own code at clio.angelssword.com and the character appears in their vault list. Nothing left to do. |
@@ -17,8 +17,8 @@ hands, accounts, or installs. Item statuses:
 
 ## Starting the server (used by tutorials 1, 2, 4 — one method for all) [VERIFIED]
 
-The app is a static site with a small dev server. One server serves everything: the app,
-the bridge userscript, the Owlbear extension files.
+The app is a static site with a small dev server. One server serves the app and
+the Owlbear extension preview files.
 
 1. Open a terminal (PowerShell is fine).
 2. Run:
@@ -37,60 +37,61 @@ complete character in seconds instead of building one by hand.
 
 ---
 
-## Tutorial 1 — Roll20 bridge (~15 min after the one install)
+## Tutorial 1 — Roll20 current fallback and native-sheet target
 
-**The one thing verified missing: Tampermonkey.** When Chrome has no userscript manager,
-clicking Install Bridge just downloads the file to your Downloads folder (this exact
-behavior was observed) — that's the "nothing happened" failure mode.
+The browser-userscript bridge is no longer a player feature. Players should not
+install Tampermonkey, enable browser developer settings, or import `.user.js` files.
 
-1. **[YOU]** Install Tampermonkey once: Chrome Web Store → search "Tampermonkey" →
-   Add to Chrome. Then click the puzzle-piece icon (top right) → pin Tampermonkey.
-   One extra step on modern Chrome: right-click the Tampermonkey icon → Manage
-   extension → turn ON **"Allow User Scripts"** (or Developer Mode at the top of
-   chrome://extensions on older versions) — without it, userscripts silently don't run.
-2. With the server running, open http://localhost:4176 → load/build a character → open the
-   sheet → **VTT & Sharing** → Roll20 card → **Install Bridge**. Tampermonkey now opens
-   its install tab — click **Install**.
-3. Refresh the app tab. Roll20 card's second chip: "Bridge not installed" → **"Roll20 not
-   open"**. That chip changing is proof the userscript is alive.
-4. Log into Roll20 in another tab and open any game (make a free solo game if needed —
-   Create Game, any name, no module).
-5. Back on the sheet within ~5 seconds: chip flips to **"Connected"**, and **⚔ Send**
-   buttons appear on every action/ability card.
-6. Test ladder, in order:
-   a. Hub **Send to Roll20** → your character summary appears in Roll20's chat.
-   b. **⚔ Send** on Light Attack → macro posts AND 1 AP disappears from your sheet —
-      the deduction happens only after Roll20 confirms (that ordering is the whole
-      safety design; it was proven with a simulated Roll20 in three browsers).
-   c. Click your token on the Roll20 map → hub **Pin Selected Token** → label shows its
-      name.
-   d. (Needs TokenMod — a Pro-account game mod) tick **Sync token bars**, change your HP
-      → token bar 1 updates.
-   e. Tick **Send initiative rolls**, roll Initiative → posts to chat + your pinned token
-      lands in the turn tracker with the same number.
-7. Final pass someday: repeat 2–6b with Violentmonkey instead of Tampermonkey.
+### Cross-browser fallback available now
 
-**If it fails:** F12 console on BOTH tabs, look for lines starting `[AS Roll20 Bridge` —
-copy them to the next session with the step letter that failed.
+1. Open a character and select **Table Tools → Roll20 — Alpha**.
+2. Select **Copy Character Macro**.
+3. Open the Roll20 game, paste into chat, and send.
 
-## Tutorial 2 — Owlbear Rodeo (~10 min, needs your Owlbear account)
+This is functional in modern browsers without an extension, but it is manual and
+must not be described as direct synchronization.
 
-1. Server running; open the app and the VTT hub → Owlbear card → **Copy Manifest URL**
-   (it copies `http://localhost:4176/owlbear/manifest.json`).
-2. **[YOU]** Log into https://owlbear.rodeo and open or create a room.
-3. Click your profile icon (bottom-left in a room) → **Extensions** → **Add Custom
-   Extension** → paste the URL → Add.
-4. An "Angel Sword" action button should appear in the room's toolbar — open it; the
-   panel says "Waiting for rolls…".
-5. In your app tab, roll anything (dice tray, attack, skill) → the roll should appear in
-   the Owlbear panel. That's the one-browser test.
-6. The full test: second device or incognito window, join the same room as a second
-   player, open the panel there too → your rolls appear on their panel ("Room connected"
-   chip) and theirs on yours.
+### Required release direction
 
-**Honest expectation:** this is the least pre-validated adapter (a live room was never
-available to any session). If Owlbear rejects the manifest or the panel stays
-"Standalone", screenshot the exact message — that's the fix input.
+Build and publish a Lyrian Chronicles community character sheet inside Roll20.
+The GM selects it for the game once. A player copies a Roll20 import code from this
+builder, pastes it into the assigned Roll20 character, and confirms Import. After
+that, the player rolls attacks, saves, checks, and initiative from native one-click
+buttons inside Roll20. See `docs/roll20-native-sheet-plan.md`.
+
+A Pro-only Roll20 Mod may later add token-bar and turn-tracker automation, but it
+must be GM-installed and optional. The community sheet must work without it.
+
+## Tutorial 2 — Owlbear Rodeo (~15 min, needs your Owlbear account)
+
+1. Start the local server and use the exact port it prints. The local install link is
+   `http://127.0.0.1:<port>/owlbear/manifest.json` (for example, port 4176).
+2. **[YOU]** Log into [Owlbear Rodeo](https://www.owlbear.rodeo/profile), then select
+   **Extensions → Manage → Add Custom Extension**. Paste the local install link and add
+   **Angel Sword Companion**. Keep the local server running for the entire test.
+3. Open or create a room, enable **Angel Sword Companion** in that room, and open its
+   action panel.
+4. In the builder, open **Table Tools → Character Files → Export Character** and save a
+   Character JSON file. An official `.aschar.json` file is also accepted.
+5. In the Owlbear panel's **Character** tab, import that file. Confirm the name, classes,
+   and current HP/Mana/AP/RP values.
+6. Put one token on Owlbear's **Character** layer, select only that token, and choose
+   **Bind Selected Token**. Confirm that the panel names both the character and token.
+7. Choose **Send Test Roll**, then open **Room Rolls** and confirm the result appears.
+8. Join the room from an incognito window or second browser as another player. Open the
+   companion there and confirm the shared result appears. Import and bind a second
+   character/token, send a test roll, and confirm both participants receive it.
+9. With both room participants connected, roll from the external Angel Sword sheet and
+   check whether the result reaches **Room Rolls**. Repeat once with the companion panel
+   closed to exercise its background page.
+
+**Honest expectation:** import, token binding, the event contract, local room-log behavior,
+standalone safeguards, and required deployment files are automated. The real two-account
+Owlbear behavior is not yet certified. Cross-site browser storage partitioning may block the
+external-sheet relay even though extension-native import, binding, test rolls, and room logs
+work. This milestone does not apply HP changes, movement, conditions, Lyrian initiative, or
+mirrored visual dice. The permanent public manifest is packaged for a future deployment but
+has not been published. See `docs/owlbear-gm-setup-tutorial.md` for the recording walkthrough.
 
 ## Tutorial 3 — Foundry VTT (~10 min once Foundry exists on this PC)
 
@@ -146,13 +147,12 @@ node scripts/verify-interop-live.mjs
 automated import tests; if you ever hit a real official file that misbehaves, save it for
 the next session.)
 
-## Optional: let Claude drive tutorials 1, 2, and 4 to the finish
+## Optional: browser-assisted verification
 
-A Claude session can operate your real Chrome (logins and extensions included) once two
-things are true: Tampermonkey is installed (tutorial 1 step 1), and you approve the sites
-in the Claude Chrome extension when it asks (app.roll20.net, owlbear.rodeo,
-drive.google.com, clio.angelssword.com — it currently only has localhost). After that,
-"walk the Roll20 checklist in my Chrome" is a valid request; you watch, Claude clicks.
+A browser-control session can verify the current macro-copy flow, the Owlbear setup,
+the CCS upload, and the Clio file exchange after the relevant sites are approved. The
+native Roll20 sheet cannot be physically tested until its package exists and a Pro-owned
+development game or Roll20 Sheet Sandbox is available.
 
 ## Decisions still parked (say the word, no desktop needed)
 

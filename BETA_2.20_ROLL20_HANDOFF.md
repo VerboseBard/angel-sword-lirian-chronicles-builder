@@ -2,6 +2,14 @@
 
 Last updated: 2026-07-21
 
+> **Product disposition — 2026-08-16:** The userscript bridge documented below
+> is retained only as historical/developer protocol work. It is no longer a
+> player-facing feature or a release candidate because it requires a separate
+> userscript manager and browser-specific security settings. Do not continue the
+> Tampermonkey/Violentmonkey rollout. The active direction is the native Roll20
+> community sheet and paste-once importer described in
+> `docs/roll20-native-sheet-plan.md`.
+
 ## Read this first
 
 This is the authoritative feature handoff for the Beta 2.20 Roll20 integration. Also read
@@ -266,18 +274,9 @@ passed; `npm.cmd run audit:minmax` passed; full cross-browser `npm.cmd test` fin
 
 ## Immediate next action
 
-All ten implementation-order steps are DONE at the automated level. What remains is the
-physical checklist only: Tampermonkey install → live Roll20 game → one macro send, pin a
-real token, TokenMod bar sync in a Pro game, turn-tracker write, then repeat once under
-Violentmonkey and on the physical-device browser matrix. After that verdict, the remaining
-Roll20 work is polish (per-card send coverage for more surfaces) and the deferred
-inbound direction (chat results back to the sheet), which needs its own design pass. Physical verification
-with a real Tampermonkey install and a live Roll20 game is REQUIRED before calling the
-bridge release-ready — the vm/unit tests cannot prove real chat injection.
-
-**Physical-verification status (owner ruling 2026-07-22):** the owner cannot live-test at
-the moment and directed that verification be marked to the best of automated ability. Done:
-47 protocol/transport checks, full cross-browser hub coverage in three engines, and clean
-syntax gates. The bridge is therefore **automated-verified, physically unverified** — treat
-"install Tampermonkey + open a real Roll20 game + send one macro" as an open release
-blocker, not as done.
+Do not spend additional player-product time on the userscript. Build the native
+Roll20 community-sheet package and a versioned **Copy Roll20 Import Code** export
+from the builder. Test that package in a Pro development game, then prepare the
+community-repository submission. The sheet must remain fully useful to free
+players after the GM selects it; any later Roll20 Mod is optional, Pro-only, and
+installed by the game creator rather than individual players.

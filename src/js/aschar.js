@@ -45,7 +45,7 @@ function statBlock(source, keys) {
  *   derived, classes [{classId,name,tier,levels}], breakthroughs
  *   [{breakthroughId,name,cost,description,choice}], skills
  *   [{name,points,expertise:[{name,points,racial}]}], equipment
- *   [{itemId,name,baseName,mods,cost,qty}], resources
+ *   [{itemId,name,baseName,mods,cost,qty}], interludeActions, resources
  *   {clim,classExp,interludePoints,skillPoints,breakthroughExp}, soulCore, totalExp
  */
 export function buildAscharCharacter(context = {}) {
@@ -111,6 +111,9 @@ export function buildAscharCharacter(context = {}) {
       cost: num(item?.cost, 0),
       qty: item?.qty !== undefined ? Math.max(1, num(item.qty, 1)) : undefined
     })).filter((item) => item.name),
+    interludeActions: (Array.isArray(context.interludeActions) ? context.interludeActions : [])
+      .map(text)
+      .filter((id) => ["job", "train", "other"].includes(id)),
     resources: {
       breakthroughExp: num(context.resources?.breakthroughExp, 0),
       classExp: num(context.resources?.classExp, 0),
@@ -210,6 +213,9 @@ export function normalizeAscharCharacter(character = {}) {
       cost: num(item?.cost, 0),
       qty: Math.max(1, num(item?.qty, 1))
     })).filter((item) => item.name),
+    interludeActions: (Array.isArray(character.interludeActions) ? character.interludeActions : [])
+      .map(text)
+      .filter((id) => ["job", "train", "other"].includes(id)),
     resources: {
       clim: num(character.resources?.clim, NaN),
       classExp: num(character.resources?.classExp, NaN),
