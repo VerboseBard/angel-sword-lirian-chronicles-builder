@@ -66,31 +66,84 @@ function getChannel() {
   return channelInstance;
 }
 
+/* Local dev transport: browsers partition BroadcastChannel across the
+   Owlbear iframe boundary (and 127.0.0.1 vs localhost are different
+   origins), so on local hosts the relay also routes through the dev
+   server at /api/vtt-relay/events. Best-effort, dev-only, same-origin. */
+const DEV_RELAY_HOST_PATTERN = /^(?:localhost|127\.0\.0\.1|\[::1\])$/i;
+let devRelayCursor = null;
+let devRelayTimer = null;
+
+function isDevRelayHost() {
+  return DEV_RELAY_HOST_PATTERN.test(globalThis.location?.hostname || "");
+}
+
+function postDevRelayEvent(event) {
+  if (!isDevRelayHost() || typeof fetch !== "function") {
+    return;
+  }
+  try {
+    fetch("/api/vtt-relay/events", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(event),
+      keepalive: true
+    }).catch(() => {});
+  } catch (error) {
+    /* dev relay is best-effort */
+  }
+}
+
+async function pollDevRelayOnce() {
+  try {
+    const query = devRelayCursor
+      ? `?boot=${encodeURIComponent(devRelayCursor.boot)}&since=${devRelayCursor.seq}`
+      : "";
+    const response = await fetch(`/api/vtt-relay/events${query}`);
+    const data = await response.json();
+    if (!data?.ok) {
+      return;
+    }
+    const baseline = !devRelayCursor;
+    devRelayCursor = { boot: data.boot, seq: data.seq };
+    if (baseline) {
+      return;
+    }
+    (data.events || []).forEach((event) => handleChannelMessage({ data: event }));
+  } catch (error) {
+    /* server may be offline; keep trying quietly */
+  }
+}
+
+function ensureDevRelayPolling() {
+  if (devRelayTimer || !isDevRelayHost() || typeof fetch !== "function" || typeof setInterval !== "function") {
+    return;
+  }
+  devRelayTimer = setInterval(pollDevRelayOnce, 2000);
+}
+
 /**
  * Publish a sheet event to any listening companion surface.
  * @param {string} kind — "dice" | "action-damage" | "check" | "skill"
  * @param {Object} detail — JSON-safe payload (label, formula, total, parts…)
  */
 export function publishVttEvent(kind, detail = {}) {
-  const channel = getChannel();
-  if (!channel) {
-    return;
-  }
+  const event = {
+    v: VTT_RELAY_VERSION,
+    id: createEventId(),
+    ts: Date.now(),
+    kind: String(kind || "event"),
+    relaySource: "angel-sword-sheet",
+    ...detail
+  };
+  rememberPublishedId(event.id);
   try {
-    const event = {
-      v: VTT_RELAY_VERSION,
-      id: createEventId(),
-      ts: Date.now(),
-      kind: String(kind || "event"),
-      relaySource: "angel-sword-sheet",
-      ...detail
-    };
-    rememberPublishedId(event.id);
-    channel.postMessage(event);
-    return event;
+    getChannel()?.postMessage(event);
   } catch (error) {
     /* never let telemetry break a roll */
   }
+  postDevRelayEvent(event);
+  return event;
 }
 
 /**
@@ -103,6 +156,7 @@ export function subscribeVttRoomEvents(subscriber) {
     return () => {};
   }
   getChannel();
+  ensureDevRelayPolling();
   roomEventSubscribers.add(subscriber);
   return () => roomEventSubscribers.delete(subscriber);
 }

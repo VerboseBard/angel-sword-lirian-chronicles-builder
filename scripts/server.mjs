@@ -45,12 +45,34 @@ function sendJson(response, status, data, extraHeaders = {}) {
 function corsHeaders(request) {
   return {
     "access-control-allow-origin": request.headers.origin || "*",
-    "access-control-allow-methods": "GET, HEAD, OPTIONS",
+    "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
     "access-control-allow-headers": "*",
     "access-control-allow-private-network": "true",
     "vary": "origin"
   };
 }
+
+function readRequestBody(request, limit = 65536) {
+  return new Promise((resolve, reject) => {
+    let size = 0;
+    const chunks = [];
+    request.on("data", (chunk) => {
+      size += chunk.length;
+      if (size > limit) {
+        reject(new Error("Body too large."));
+        request.destroy();
+        return;
+      }
+      chunks.push(chunk);
+    });
+    request.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
+    request.on("error", reject);
+  });
+}
+
+const RELAY_BOOT = `${Date.now().toString(36)}-${process.pid}`;
+const relayEvents = [];
+let relaySeq = 0;
 
 function safeStaticPath(urlPath) {
   const decoded = decodeURIComponent(urlPath.split("?")[0]);
@@ -65,6 +87,31 @@ function safeStaticPath(urlPath) {
 }
 
 async function handleApi(request, response, pathname) {
+  if (pathname === "/api/vtt-relay/events" && request.method === "POST") {
+    let event;
+    try {
+      event = JSON.parse(await readRequestBody(request));
+    } catch {
+      return sendJson(response, 400, { ok: false, message: "Relay events must be JSON." }, corsHeaders(request));
+    }
+    if (!event || typeof event !== "object" || !event.id) {
+      return sendJson(response, 400, { ok: false, message: "Relay events need an id." }, corsHeaders(request));
+    }
+    relaySeq += 1;
+    relayEvents.push({ seq: relaySeq, event });
+    if (relayEvents.length > 200) {
+      relayEvents.shift();
+    }
+    return sendJson(response, 200, { ok: true, boot: RELAY_BOOT, seq: relaySeq }, corsHeaders(request));
+  }
+
+  if (pathname === "/api/vtt-relay/events") {
+    const query = new URL(request.url, `http://${request.headers.host || `${HOST}:${START_PORT}`}`).searchParams;
+    const since = query.get("boot") === RELAY_BOOT ? Number(query.get("since")) || 0 : 0;
+    const events = relayEvents.filter((entry) => entry.seq > since).map((entry) => entry.event);
+    return sendJson(response, 200, { ok: true, boot: RELAY_BOOT, seq: relaySeq, events }, corsHeaders(request));
+  }
+
   if (pathname === "/api/status") {
     return sendJson(response, 200, {
       ok: true,
@@ -195,7 +242,8 @@ async function start() {
           ipv6Loopback.close();
         }
       }
-      const url = `http://${HOST}:${port}/`;
+      const displayHost = HOST === "127.0.0.1" ? "localhost" : HOST;
+      const url = `http://${displayHost}:${port}/`;
       console.log(`Lyrian Beta 2.13 public build running at ${url}`);
       console.log(`Owlbear local install link: http://localhost:${port}/owlbear/manifest.json`);
       console.log("Close this terminal window to stop the local development server.");

@@ -233,7 +233,17 @@ async function testVttRelay() {
   check("publish function exported", typeof relay.publishVttEvent === "function");
   const source = await readFile(path.join(root, "src", "js", "vtt-relay.js"), "utf8");
   check("relay imports nothing (stays dependency-light)", !/^import /m.test(source));
-  check("relay sends no network traffic", !/fetch\(|XMLHttpRequest|WebSocket/.test(source));
+  const fetchCalls = source.match(/fetch\(/g) || [];
+  const devEndpointCalls = source.match(/fetch\(\s*(?:"\/api\/vtt-relay\/events"|`\/api\/vtt-relay\/events)/g) || [];
+  check(
+    "relay network use is confined to the same-origin dev relay endpoint",
+    fetchCalls.length > 0 && fetchCalls.length === devEndpointCalls.length
+  );
+  check("relay uses no sockets or XHR", !/XMLHttpRequest|WebSocket/.test(source));
+  check(
+    "dev relay transport is gated to local hostnames",
+    source.includes("DEV_RELAY_HOST_PATTERN") && source.includes("isDevRelayHost()")
+  );
 }
 
 async function testAscharInterop() {

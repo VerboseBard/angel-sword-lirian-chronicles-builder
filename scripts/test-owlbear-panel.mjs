@@ -19,7 +19,7 @@ async function main() {
     await new Promise((resolve, reject) => {
       const timeout = setTimeout(() => reject(new Error("Local Owlbear test server did not start.")), 10000);
       server.stdout.on("data", (chunk) => {
-        if (String(chunk).includes(`127.0.0.1:${port}`)) {
+        if (String(chunk).includes(`:${port}/`)) {
           clearTimeout(timeout);
           resolve();
         }
