@@ -7,7 +7,7 @@
   <style>
     :root { color-scheme: dark; font-family: "Segoe UI", system-ui, sans-serif; }
     * { box-sizing: border-box; }
-    body { margin: 0; background: #111827; color: #e8ecf5; font-size: 14px; }
+    body { margin: 0; background: #111827; color: #e8ecf5; font-size: 14px; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
     button, input { font: inherit; }
     header { display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: #182238; border-bottom: 1px solid #856c24; }
     header img { width: 26px; height: 26px; }
@@ -17,7 +17,7 @@
     nav { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 8px; background: #151e31; }
     nav button, .primary, .secondary { min-height: 36px; border-radius: 7px; border: 1px solid #38578c; background: #1868b7; color: white; font-weight: 700; cursor: pointer; }
     nav button[aria-selected="true"] { background: #f6c63d; border-color: #f6c63d; color: #172036; }
-    main { padding: 10px; }
+    main { padding: 10px; flex: 1; overflow-y: auto; }
     [data-panel][hidden] { display: none; }
     .card { background: #1c2740; border: 1px solid #35435f; border-radius: 10px; padding: 10px; margin-bottom: 9px; }
     .card h2 { margin: 0 0 5px; color: #ffe59a; font-size: 0.95rem; }
@@ -34,7 +34,7 @@
     input[type="file"] { width: 100%; padding: 7px; border: 1px dashed #53698f; border-radius: 7px; background: #111a2c; color: #dce7fb; }
     #feedback { min-height: 1.4em; margin: 7px 0 0; color: #a9bad9; font-size: 0.78rem; }
     #feedback.is-error { color: #ffadad; }
-    #feed { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; max-height: 405px; overflow-y: auto; }
+    #feed { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
     #feed li { background: #1c2740; border: 1px solid #35435f; border-radius: 8px; padding: 8px 9px; line-height: 1.35; }
     #feed .who { font-size: 0.72rem; color: #9fb0d8; }
     #feed .total { font-weight: 800; color: #ffe59a; }
