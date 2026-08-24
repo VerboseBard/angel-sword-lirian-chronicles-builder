@@ -98,10 +98,10 @@ async function serveStatic(request, response, pathname) {
 
   const type = MIME_TYPES.get(path.extname(absolute).toLowerCase()) || "application/octet-stream";
   const relativePath = path.relative(PROJECT_ROOT, absolute).replace(/\\/g, "/");
-  const isMutableVersionManifest = /^assets\/versions\/manifest\.(?:js|json)$/i.test(relativePath);
+  const isMutableManifest = /^(?:assets\/versions\/manifest\.(?:js|json)|owlbear\/manifest\.json)$/i.test(relativePath);
   const headers = {
     "content-type": type,
-    "cache-control": type.includes("text/html") || isMutableVersionManifest
+    "cache-control": type.includes("text/html") || isMutableManifest
       ? "no-store"
       : "public, max-age=60",
     ...cors
