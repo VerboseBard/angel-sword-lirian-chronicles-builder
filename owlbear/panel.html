@@ -67,12 +67,18 @@
         </div>
       </div>
       <div class="card">
-        <h2>2. Bind an Owlbear token</h2>
-        <p>Select exactly one token on Owlbear's <strong>Character</strong> layer, then bind it here.</p>
+        <h2>2. Your token</h2>
+        <p><strong>One-time setup:</strong> download your token, then drag the file onto the Owlbear board. When Owlbear asks what kind of asset it is, choose the sword option — <strong>Character</strong>. Click the placed token and resize it with the arrows to the proper size. It now lives in your Characters library forever.</p>
+        <div class="stack">
+          <button id="download-token" class="primary" type="button" hidden>Download Token Image</button>
+        </div>
+        <p><strong>Every session after:</strong> enter the game through your link, press the button below, and pick your character.</p>
         <div class="stack">
           <button id="place-token" class="primary" type="button" hidden>Place My Token</button>
-          <button id="download-token" class="secondary" type="button" hidden>Download Token Image</button>
-          <button id="bind-token" class="primary" type="button" disabled>Bind Selected Token</button>
+        </div>
+        <p class="note">Manual controls, mostly for GM repairs: select exactly one token on the Character layer, then bind or clear.</p>
+        <div class="stack">
+          <button id="bind-token" class="secondary" type="button" disabled>Bind Selected Token</button>
           <button id="clear-binding" class="secondary" type="button" disabled>Clear My Binding</button>
         </div>
         <p id="binding-summary" class="note">No character-token binding yet.</p>
