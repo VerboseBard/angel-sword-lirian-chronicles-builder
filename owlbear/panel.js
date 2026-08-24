@@ -176,6 +176,29 @@ async function clearBinding() {
   }
 }
 
+async function restoreBindingFromScene() {
+  if (activeBinding || !obrApi || !playerRecord) {
+    return;
+  }
+  try {
+    const items = await obrApi.scene.items.getItems();
+    const bound = items
+      .map((item) => ({ item, record: item.metadata?.[TOKEN_BINDING_KEY] }))
+      .filter((entry) => entry.record);
+    const mine = bound.find((entry) => entry.record.ownerPlayerId === playerRecord.id)
+      || bound.find((entry) => activeCharacter && entry.record.characterId === activeCharacter.characterId);
+    if (!mine) {
+      return;
+    }
+    activeBinding = mine.record;
+    await obrApi.player.setMetadata({ [PLAYER_BINDING_KEY]: activeBinding });
+    renderBinding();
+    setFeedback(`Restored binding: ${activeBinding.characterName} is bound to ${activeBinding.tokenName}.`);
+  } catch (error) {
+    // The scene may not be open yet; onReadyChange retries.
+  }
+}
+
 async function persistRoomRoll(event) {
   const metadata = await obrApi.room.getMetadata();
   const next = mergeRollLog(metadata?.[ROOM_LOG_KEY], event);
@@ -242,6 +265,14 @@ async function connectOwlbear() {
     renderRoomLog(roomMetadata?.[ROOM_LOG_KEY]);
     OBR.broadcast.onMessage(ROLL_CHANNEL, (broadcastEvent) => appendRoll(broadcastEvent.data));
     OBR.room.onMetadataChange((room) => renderRoomLog(room?.[ROOM_LOG_KEY]));
+    if (await OBR.scene.isReady()) {
+      await restoreBindingFromScene();
+    }
+    OBR.scene.onReadyChange((ready) => {
+      if (ready) {
+        restoreBindingFromScene();
+      }
+    });
   });
 }
 
