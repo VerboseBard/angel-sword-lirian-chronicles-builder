@@ -341,7 +341,13 @@ async function placeMyToken() {
     const picks = await obrApi.assets.downloadImages(false, tokenName, "CHARACTER");
     const pick = Array.isArray(picks) ? picks[0] : null;
     if (!pick?.image?.url) {
-      setFeedback(`${tokenName} was not picked. If it is not listed yet, Owlbear may still be processing it — wait a few seconds and press Place My Token again (it will not upload a duplicate).`);
+      delete uploaded[activeCharacter.characterId];
+      try {
+        localStorage.setItem(UPLOADED_TOKENS_KEY, JSON.stringify(uploaded));
+      } catch (storageError) {
+        /* forgetting the upload just means the next attempt re-uploads */
+      }
+      setFeedback(`${tokenName} was not picked. If it was missing from the list, press Place My Token again — it will re-upload fresh. Download Token Image remains the manual path.`);
       return;
     }
     if (!(await obrApi.scene.isReady())) {
