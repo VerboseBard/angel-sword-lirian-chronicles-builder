@@ -313,14 +313,16 @@ async function placeMyToken() {
   const alreadyUploaded = uploadRecord && uploadRecord.name === tokenName && uploadRecord.sig === tokenImageSignature();
   if (!alreadyUploaded) {
     try {
-      const blob = dataUrlToBlob(tokenImageFullDataUrl);
-      const sizePixels = 720;
+      const sourceDataUrl = tokenImageDataUrl || tokenImageFullDataUrl;
+      const blob = dataUrlToBlob(sourceDataUrl);
+      const sizePixels = sourceDataUrl === tokenImageDataUrl ? 150 : 720;
       const upload = buildImageUpload(blob)
         .name(tokenName)
         .dpi(sizePixels)
         .offset({ x: sizePixels / 2, y: sizePixels / 2 })
         .build();
-      setFeedback("Saving your token to Owlbear's asset library…");
+      setFeedback(`Saving your token to Owlbear's asset library (${sizePixels}px, ${Math.max(1, Math.round(blob.size / 1024))} KB)…`);
+      console.info(`Angel Sword token upload: ${sizePixels}px, ${blob.size} bytes, type ${blob.type}`);
       await obrApi.assets.uploadImages([upload], "CHARACTER");
       uploaded[activeCharacter.characterId] = { name: tokenName, sig: tokenImageSignature() };
       try {
