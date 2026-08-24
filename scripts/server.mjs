@@ -98,6 +98,22 @@ async function serveStatic(request, response, pathname) {
 
   const type = MIME_TYPES.get(path.extname(absolute).toLowerCase()) || "application/octet-stream";
   const relativePath = path.relative(PROJECT_ROOT, absolute).replace(/\\/g, "/");
+  if (relativePath === "owlbear/manifest.json") {
+    try {
+      const manifest = JSON.parse(await fs.readFile(absolute, "utf8"));
+      const base = `http://${request.headers.host || `${HOST}:${START_PORT}`}/owlbear/`;
+      const absolutize = (value) => (typeof value === "string" && value ? new URL(value, base).href : value);
+      manifest.icon = absolutize(manifest.icon);
+      manifest.background_url = absolutize(manifest.background_url);
+      if (manifest.action) {
+        manifest.action.icon = absolutize(manifest.action.icon);
+        manifest.action.popover = absolutize(manifest.action.popover);
+      }
+      return sendJson(response, 200, manifest, cors);
+    } catch {
+      // Serve the raw file if the manifest is temporarily unparseable.
+    }
+  }
   const isMutableManifest = /^(?:assets\/versions\/manifest\.(?:js|json)|owlbear\/manifest\.json)$/i.test(relativePath);
   const headers = {
     "content-type": type,
@@ -114,6 +130,7 @@ function createServer() {
   return http.createServer(async (request, response) => {
     try {
       const url = new URL(request.url, `http://${request.headers.host || `${HOST}:${START_PORT}`}`);
+      console.log(`[req] ${request.method} ${url.pathname}${request.headers.referer ? ` (from ${request.headers.referer})` : ""}${request.headers["sec-fetch-dest"] ? ` dest=${request.headers["sec-fetch-dest"]}` : ""}`);
       if (request.method === "OPTIONS") {
         response.writeHead(204, corsHeaders(request));
         response.end();
