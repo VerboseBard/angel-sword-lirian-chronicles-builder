@@ -1,8 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Angel Sword dice">
-  <rect x="4" y="4" width="56" height="56" rx="12" fill="#1d2333"/>
-  <polygon points="32 8 54 20 54 44 32 56 10 44 10 20" fill="none" stroke="#ffcc40" stroke-width="3" stroke-linejoin="round"/>
-  <polygon points="32 8 54 20 32 32 10 20" fill="rgba(255,204,64,0.18)"/>
-  <line x1="32" y1="32" x2="32" y2="56" stroke="#ffcc40" stroke-width="2"/>
-  <text x="32" y="27" font-family="Georgia, serif" font-size="14" font-weight="bold" fill="#ffe59a" text-anchor="middle">20</text>
-  <path d="M32 34 L36 44 L32 52 L28 44 Z" fill="#9ff3c9" stroke="#5bdca0" stroke-width="1"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Angel Sword Companion">
+  <rect x="4" y="4" width="56" height="56" rx="12" fill="#f6c63d" stroke="#172036" stroke-width="2"/>
+  <path d="M47 10 L51 14 L30 41 L24 35 Z" fill="#172036"/>
+  <path d="M20 39 L26 45" stroke="#172036" stroke-width="5" stroke-linecap="round"/>
+  <path d="M19 46 L13 52" stroke="#172036" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M20 18 q9 3 13 11" fill="none" stroke="#172036" stroke-width="2.8" stroke-linecap="round"/>
+  <path d="M15 26 q8 2 11 9" fill="none" stroke="#172036" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M11 34 q6 1 8 6" fill="none" stroke="#172036" stroke-width="2.4" stroke-linecap="round"/>
 </svg>
