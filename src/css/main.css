@@ -7241,6 +7241,12 @@
       line-height: 1.55;
     }
 
+    .sheet-modal:has(.owlbear-setup-guide) .sheet-modal-card {
+      width: min(1040px, calc(100vw - 32px));
+      height: calc(100vh - 24px);
+      max-height: calc(100vh - 24px);
+    }
+
     .sheet-modal-head {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;

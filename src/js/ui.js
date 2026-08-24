@@ -23085,7 +23085,7 @@ function openOwlbearSetupGuide() {
       const localPreviewAvailable = isLocalOwlbearPreviewAvailable();
       const localInstallUrl = getLocalOwlbearManifestUrl();
       openSheetModal({
-        eyebrow: "GM Table Setup",
+        eyebrow: "Owlbear Table Setup — GM and Players",
         title: "Owlbear Rodeo — Alpha",
         lead: "Owlbear installs extensions from a hosted web address. Nothing needs to be downloaded as a ZIP file.",
         content: `
@@ -23096,8 +23096,8 @@ function openOwlbearSetupGuide() {
               <span class="integration-status is-warn">Public release not published</span>
             </div>
             <section>
-              <strong>1. Install the extension as the GM</strong>
-              <p>Open your Owlbear profile, choose <em>Add Extension</em>, and paste the Angel Sword install link. The current public link is intentionally disabled because it has not been deployed yet.</p>
+              <strong>1. Install the extension (GM, one time)</strong>
+              <p>Open your Owlbear profile, choose <em>Add Extension</em>, and paste the Angel Sword install link. Already installed? Skip straight to <em>Your token</em> below.</p>
               ${localPreviewAvailable ? `
                 <p><strong>Testing on this computer today:</strong> paste this local install link into Owlbear's <em>Add a custom extension</em> box, then press <em>Add</em>. Keep this builder's local server running while Owlbear uses it.</p>
                 <p><small><code>${escapeHtml(localInstallUrl)}</code></small></p>
@@ -23107,12 +23107,12 @@ function openOwlbearSetupGuide() {
               ` : ""}
               <div class="sheet-modal-form-actions">
                 <a class="sheet-modal-action" href="https://www.owlbear.rodeo/profile" target="_blank" rel="noopener noreferrer">Open Owlbear Profile</a>
-                <button type="button" class="sheet-modal-action" disabled title="The public extension currently returns 404 and must be deployed before release.">Public Install Coming Soon</button>
+                ${localPreviewAvailable ? "" : `<button type="button" class="sheet-modal-action" disabled title="The public extension currently returns 404 and must be deployed before release.">Public Install Coming Soon</button>`}
               </div>
-              <p><small>Planned public address: <code>${escapeHtml(OWLBEAR_PUBLIC_MANIFEST_URL)}</code></small></p>
+              ${localPreviewAvailable ? "" : `<p><small>Planned public address: <code>${escapeHtml(OWLBEAR_PUBLIC_MANIFEST_URL)}</code></small></p>`}
             </section>
             <section>
-              <strong>Your token</strong>
+              <strong>Your token (each player)</strong>
               <p>Drag inside the circle to center your character. Scroll on it to zoom. By default this uses your character's portrait.</p>
               <canvas id="owlbear-token-canvas" width="200" height="200" style="display:block;margin:0 auto;border-radius:50%;border:2px solid #53698f;background:#111a2c;touch-action:none;cursor:grab;"></canvas>
               <div class="sheet-modal-form-actions">
@@ -23123,7 +23123,7 @@ function openOwlbearSetupGuide() {
             </section>
             ${localPreviewAvailable ? `
               <section>
-                <strong>Send to your game room</strong>
+                <strong>Send to your game room (each player)</strong>
                 <p>Paste the Owlbear room link from your GM, then send this character and its token straight to the Angel Sword Companion in that room.</p>
                 <input id="owlbear-room-link" type="text" placeholder="https://www.owlbear.rodeo/room/..." value="${escapeHtml(getStoredOwlbearRoomLink())}" style="width:100%;padding:8px;border-radius:7px;border:1px solid #53698f;background:#111a2c;color:#dce7fb;">
                 <div class="sheet-modal-form-actions">
@@ -23133,15 +23133,15 @@ function openOwlbearSetupGuide() {
               </section>
             ` : ""}
             <section>
-              <strong>2. Enable Angel Sword for the room</strong>
+              <strong>2. Enable Angel Sword for the room (GM)</strong>
               <p>Open the room's Extensions Manager and switch on <em>Angel Sword Companion</em>. The Angel Sword action then appears in the room.</p>
             </section>
             <section>
-              <strong>3. Invite players through Owlbear</strong>
+              <strong>3. Invite players through Owlbear (GM)</strong>
               <p>Use Owlbear's <em>Invite Players</em> button. Players open that room link and request to join; they do not paste the invitation into this character sheet.</p>
             </section>
             <section>
-              <strong>4. Import and bind each character</strong>
+              <strong>4. Import and bind each character (each player)</strong>
               <p>Each player opens the Angel Sword panel, imports their Character JSON or official <code>.aschar.json</code> file, selects exactly one Owlbear token on the Character layer, and chooses <em>Bind Selected Token</em>. The panel stores the player/character/token relationship and enables the shared room roll log.</p>
               <p><small>External-sheet roll mirroring remains an Alpha transport and still needs a real two-browser room test. Damage, movement accounting, conditions, and Lyrian initiative are intentionally not part of this milestone.</small></p>
             </section>

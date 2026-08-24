@@ -22,6 +22,7 @@ const fileInput = document.getElementById("character-file");
 const characterCard = document.getElementById("character-card");
 const characterSummary = document.getElementById("character-summary");
 const placeButton = document.getElementById("place-token");
+const clearCharacterButton = document.getElementById("clear-character");
 const bindButton = document.getElementById("bind-token");
 const clearBindingButton = document.getElementById("clear-binding");
 const bindingSummary = document.getElementById("binding-summary");
@@ -218,6 +219,19 @@ function applyHandoff(event, consumed) {
   }
 }
 
+function clearImportedCharacter() {
+  activeCharacter = null;
+  tokenImageDataUrl = null;
+  try {
+    localStorage.removeItem(CHARACTER_STORAGE_KEY);
+    localStorage.removeItem(TOKEN_IMAGE_KEY);
+  } catch (error) {
+    /* storage may be unavailable; the in-memory clear still applies */
+  }
+  renderCharacter();
+  setFeedback("Cleared the imported character. Any token binding stays until you use Clear My Binding.");
+}
+
 async function pollHandoffsOnce() {
   try {
     const query = handoffCursor
@@ -394,6 +408,7 @@ fileInput.addEventListener("change", async () => {
 });
 
 placeButton.addEventListener("click", placeMyToken);
+clearCharacterButton.addEventListener("click", clearImportedCharacter);
 bindButton.addEventListener("click", bindSelectedToken);
 clearBindingButton.addEventListener("click", clearBinding);
 testRollButton.addEventListener("click", sendTestRoll);
