@@ -10,14 +10,18 @@ import {
   normalizeRollEvent
 } from "./core.js";
 import { loadOwlbearSdk } from "./sdk.js";
+import { buildImage } from "@owlbear-rodeo/sdk";
 
 const CHARACTER_STORAGE_KEY = "asb.owlbear.character.v1";
+const TOKEN_IMAGE_KEY = "asb.owlbear.tokenImage.v1";
+const HANDOFF_CONSUMED_KEY = "asb.owlbear.handoff.consumed.v1";
 const MAX_RENDERED_ROLLS = 60;
 
 const statusChip = document.getElementById("status");
 const fileInput = document.getElementById("character-file");
 const characterCard = document.getElementById("character-card");
 const characterSummary = document.getElementById("character-summary");
+const placeButton = document.getElementById("place-token");
 const bindButton = document.getElementById("bind-token");
 const clearBindingButton = document.getElementById("clear-binding");
 const bindingSummary = document.getElementById("binding-summary");
@@ -30,7 +34,13 @@ let obrApi = null;
 let activeCharacter = null;
 let activeBinding = null;
 let playerRecord = null;
+let tokenImageDataUrl = null;
+let handoffCursor = null;
 const renderedRollIds = new Set();
+
+function isDevRelayHost() {
+  return /^(?:localhost|127\.0\.0\.1|\[::1\])$/i.test(window.location.hostname);
+}
 
 function esc(value) {
   return String(value ?? "")
@@ -53,6 +63,7 @@ function renderCharacter() {
     characterSummary.replaceChildren();
     return;
   }
+  renderPlaceButton();
   const resources = activeCharacter.resources || {};
   const tags = [activeCharacter.race, activeCharacter.ancestry, ...(activeCharacter.classes || [])]
     .filter(Boolean)
@@ -67,6 +78,10 @@ function renderCharacter() {
       <div class="resource"><strong>${esc(resources.apCurrent)}/${esc(resources.apMax)}</strong>AP</div>
       <div class="resource"><strong>${esc(resources.rpCurrent)}/${esc(resources.rpMax)}</strong>RP</div>
     </div>`;
+}
+
+function renderPlaceButton() {
+  placeButton.hidden = !(activeCharacter && obrApi && tokenImageDataUrl);
 }
 
 function renderBinding() {
@@ -173,6 +188,85 @@ async function clearBinding() {
     setFeedback("Cleared your Angel Sword token binding.");
   } catch (error) {
     setFeedback(error.message || "The binding could not be cleared.", true);
+  }
+}
+
+function readConsumedHandoffs() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(HANDOFF_CONSUMED_KEY) || "[]");
+    return Array.isArray(stored) ? stored : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function applyHandoff(event, consumed) {
+  try {
+    const normalized = normalizeCharacterExport(event.character);
+    activeCharacter = normalized;
+    localStorage.setItem(CHARACTER_STORAGE_KEY, JSON.stringify(normalized));
+    tokenImageDataUrl = event.tokenImages?.sync || null;
+    if (tokenImageDataUrl) {
+      localStorage.setItem(TOKEN_IMAGE_KEY, JSON.stringify({ characterId: normalized.characterId, dataUrl: tokenImageDataUrl }));
+    }
+    consumed.push(event.id);
+    localStorage.setItem(HANDOFF_CONSUMED_KEY, JSON.stringify(consumed.slice(-50)));
+    renderCharacter();
+    setFeedback(`${normalized.name} arrived from the builder.${tokenImageDataUrl && obrApi ? " Place My Token is ready." : ""}`);
+  } catch (error) {
+    setFeedback(error.message || "A character arrived from the builder but could not be read.", true);
+  }
+}
+
+async function pollHandoffsOnce() {
+  try {
+    const query = handoffCursor
+      ? `?boot=${encodeURIComponent(handoffCursor.boot)}&since=${handoffCursor.seq}`
+      : "";
+    const response = await fetch(`/api/vtt-relay/events${query}`);
+    const data = await response.json();
+    if (!data?.ok) {
+      return;
+    }
+    handoffCursor = { boot: data.boot, seq: data.seq };
+    const consumed = readConsumedHandoffs();
+    const handoffs = (data.events || []).filter((entry) => entry?.kind === "character-handoff" && entry.id && !consumed.includes(entry.id));
+    if (handoffs.length) {
+      applyHandoff(handoffs[handoffs.length - 1], consumed);
+    }
+  } catch (error) {
+    // The local builder server may be offline; keep trying quietly.
+  }
+}
+
+async function placeMyToken() {
+  if (!obrApi || !activeCharacter || !tokenImageDataUrl || !playerRecord) {
+    return;
+  }
+  try {
+    if (!(await obrApi.scene.isReady())) {
+      throw new Error("Open an Owlbear scene first, then place the token.");
+    }
+    const [width, height] = await Promise.all([obrApi.viewport.getWidth(), obrApi.viewport.getHeight()]);
+    const center = await obrApi.viewport.inverseTransformPoint({ x: width / 2, y: height / 2 });
+    const mime = tokenImageDataUrl.startsWith("data:image/webp") ? "image/webp" : "image/png";
+    const item = buildImage(
+      { url: tokenImageDataUrl, width: 300, height: 300, mime },
+      { dpi: 300, offset: { x: 150, y: 150 } }
+    )
+      .layer("CHARACTER")
+      .name(activeCharacter.name)
+      .position(center)
+      .build();
+    const record = createBindingRecord(activeCharacter, playerRecord, item);
+    item.metadata[TOKEN_BINDING_KEY] = record;
+    await obrApi.scene.items.addItems([item]);
+    await obrApi.player.setMetadata({ [PLAYER_BINDING_KEY]: record });
+    activeBinding = record;
+    renderBinding();
+    setFeedback(`Placed and bound ${record.characterName}.`);
+  } catch (error) {
+    setFeedback(error.message || "The token could not be placed. You can still drag an image in and use Bind Selected Token.", true);
   }
 }
 
@@ -299,6 +393,7 @@ fileInput.addEventListener("change", async () => {
   }
 });
 
+placeButton.addEventListener("click", placeMyToken);
 bindButton.addEventListener("click", bindSelectedToken);
 clearBindingButton.addEventListener("click", clearBinding);
 testRollButton.addEventListener("click", sendTestRoll);
@@ -311,8 +406,20 @@ try {
 } catch (error) {
   localStorage.removeItem(CHARACTER_STORAGE_KEY);
 }
+try {
+  const storedToken = JSON.parse(localStorage.getItem(TOKEN_IMAGE_KEY) || "null");
+  if (storedToken?.dataUrl && storedToken.characterId === activeCharacter?.characterId) {
+    tokenImageDataUrl = storedToken.dataUrl;
+  }
+} catch (error) {
+  localStorage.removeItem(TOKEN_IMAGE_KEY);
+}
 
 renderCharacter();
 renderBinding();
 connectStandaloneRelay();
 connectOwlbear();
+if (isDevRelayHost()) {
+  pollHandoffsOnce();
+  setInterval(pollHandoffsOnce, 2500);
+}

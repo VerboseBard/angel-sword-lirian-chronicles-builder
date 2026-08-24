@@ -90,7 +90,7 @@ async function handleApi(request, response, pathname) {
   if (pathname === "/api/vtt-relay/events" && request.method === "POST") {
     let event;
     try {
-      event = JSON.parse(await readRequestBody(request));
+      event = JSON.parse(await readRequestBody(request, 3000000));
     } catch {
       return sendJson(response, 400, { ok: false, message: "Relay events must be JSON." }, corsHeaders(request));
     }

@@ -7,7 +7,7 @@ import { closeSheetModal, deriveSaveSlotName, exportJsonState, exportPatchedTemp
 import { ensureDiceRuntimeLoaded, isDiceRuntimeLoaded } from "./runtime-loader.js";
 import { buildCharacterProfileSummary, buildRoll20AbilityMacro, buildRoll20ActionMacro, buildRoll20CharacterMacro, buildWorldAnvilBBCodeProfile, copyIntegrationText, VTT_PLATFORM_URLS } from "./integrations.js";
 import { BRIDGE_STATES, buildTokenModCommand, createRoll20Bridge } from "./roll20-bridge.js";
-import { publishVttEvent, subscribeVttRoomEvents } from "./vtt-relay.js";
+import { publishVttEvent, publishVttHandoff, subscribeVttRoomEvents } from "./vtt-relay.js";
 import { buildAscharCharacter, normalizeAscharCharacter, wrapAscharExport } from "./aschar.js";
 
 const DICE_ASSET_REVISION = "20260811-srgb-dice-v1";
@@ -23112,6 +23112,27 @@ function openOwlbearSetupGuide() {
               <p><small>Planned public address: <code>${escapeHtml(OWLBEAR_PUBLIC_MANIFEST_URL)}</code></small></p>
             </section>
             <section>
+              <strong>Your token</strong>
+              <p>Drag inside the circle to center your character. Scroll on it to zoom. By default this uses your character's portrait.</p>
+              <canvas id="owlbear-token-canvas" width="200" height="200" style="display:block;margin:0 auto;border-radius:50%;border:2px solid #53698f;background:#111a2c;touch-action:none;cursor:grab;"></canvas>
+              <div class="sheet-modal-form-actions">
+                <button type="button" class="sheet-modal-action" data-owlbear-token-change>Change Image</button>
+                <button type="button" class="sheet-modal-action" data-owlbear-token-lock>Lock Token</button>
+              </div>
+              <input id="owlbear-token-file" type="file" accept="image/*" style="display:none">
+            </section>
+            ${localPreviewAvailable ? `
+              <section>
+                <strong>Send to your game room</strong>
+                <p>Paste the Owlbear room link from your GM, then send this character and its token straight to the Angel Sword Companion in that room.</p>
+                <input id="owlbear-room-link" type="text" placeholder="https://www.owlbear.rodeo/room/..." value="${escapeHtml(getStoredOwlbearRoomLink())}" style="width:100%;padding:8px;border-radius:7px;border:1px solid #53698f;background:#111a2c;color:#dce7fb;">
+                <div class="sheet-modal-form-actions">
+                  <button type="button" class="sheet-modal-action" data-owlbear-send>Link to Owlbear</button>
+                </div>
+                <p><small>Local test builds only: the builder and the extension must both run from this computer's local server.</small></p>
+              </section>
+            ` : ""}
+            <section>
               <strong>2. Enable Angel Sword for the room</strong>
               <p>Open the room's Extensions Manager and switch on <em>Angel Sword Companion</em>. The Angel Sword action then appears in the room.</p>
             </section>
@@ -23142,6 +23163,256 @@ function openOwlbearSetupGuide() {
           </div>
         `
       });
+      wireOwlbearTokenEditor();
+    }
+const OWLBEAR_TOKEN_CROP_KEY = "asb.owlbear.tokenCrop.v1";
+const OWLBEAR_ROOM_LINK_KEY = "asb.owlbear.roomLink.v1";
+const OWLBEAR_TOKEN_PREVIEW_SIZE = 200;
+let owlbearTokenCropCache = null;
+
+function getStoredOwlbearRoomLink() {
+      try {
+        return localStorage.getItem(OWLBEAR_ROOM_LINK_KEY) || "";
+      } catch (error) {
+        return "";
+      }
+    }
+function loadOwlbearTokenCrop() {
+      if (owlbearTokenCropCache) {
+        return owlbearTokenCropCache;
+      }
+      let stored = {};
+      try {
+        stored = JSON.parse(localStorage.getItem(OWLBEAR_TOKEN_CROP_KEY) || "{}") || {};
+      } catch (error) {
+        stored = {};
+      }
+      owlbearTokenCropCache = { imageDataUrl: "", offsetX: 0, offsetY: 0, scale: 1, locked: false, ...stored };
+      return owlbearTokenCropCache;
+    }
+function saveOwlbearTokenCrop(crop) {
+      owlbearTokenCropCache = crop;
+      try {
+        localStorage.setItem(OWLBEAR_TOKEN_CROP_KEY, JSON.stringify(crop));
+      } catch (error) {
+        /* storage may be full; the in-memory crop still works this session */
+      }
+    }
+function getOwlbearTokenSource(crop) {
+      return crop.imageDataUrl || state.builder.portraitDataUrl || "";
+    }
+function drawOwlbearTokenPreview(canvas, image, crop) {
+      const ctx = canvas.getContext("2d");
+      const size = canvas.width;
+      ctx.clearRect(0, 0, size, size);
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+      ctx.clip();
+      ctx.fillStyle = "#111a2c";
+      ctx.fillRect(0, 0, size, size);
+      if (image) {
+        const cover = Math.max(size / image.naturalWidth, size / image.naturalHeight) * (crop.scale || 1);
+        const width = image.naturalWidth * cover;
+        const height = image.naturalHeight * cover;
+        ctx.drawImage(image, size / 2 - width / 2 + crop.offsetX, size / 2 - height / 2 + crop.offsetY, width, height);
+      } else {
+        ctx.fillStyle = "#9fb0d8";
+        ctx.font = "12px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("Add a portrait or", size / 2, size / 2 - 6);
+        ctx.fillText("upload an image", size / 2, size / 2 + 10);
+      }
+      ctx.restore();
+    }
+function downscaleOwlbearTokenSource(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error("That image could not be read."));
+        reader.onload = () => {
+          const loader = new Image();
+          loader.onerror = () => reject(new Error("That image could not be read."));
+          loader.onload = () => {
+            const cap = Math.max(loader.naturalWidth, loader.naturalHeight);
+            const factor = cap > 960 ? 960 / cap : 1;
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.round(loader.naturalWidth * factor);
+            canvas.height = Math.round(loader.naturalHeight * factor);
+            canvas.getContext("2d").drawImage(loader, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL("image/jpeg", 0.85));
+          };
+          loader.src = String(reader.result);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+async function bakeOwlbearTokenImages(crop) {
+      const source = getOwlbearTokenSource(crop);
+      if (!source) {
+        return null;
+      }
+      const image = await new Promise((resolve, reject) => {
+        const loader = new Image();
+        loader.onload = () => resolve(loader);
+        loader.onerror = () => reject(new Error("The token image could not be loaded."));
+        loader.src = source;
+      });
+      const bake = (size) => {
+        const canvas = document.createElement("canvas");
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext("2d");
+        const factor = size / OWLBEAR_TOKEN_PREVIEW_SIZE;
+        ctx.beginPath();
+        ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+        ctx.clip();
+        const cover = Math.max(OWLBEAR_TOKEN_PREVIEW_SIZE / image.naturalWidth, OWLBEAR_TOKEN_PREVIEW_SIZE / image.naturalHeight) * (crop.scale || 1) * factor;
+        const width = image.naturalWidth * cover;
+        const height = image.naturalHeight * cover;
+        ctx.drawImage(image, size / 2 - width / 2 + crop.offsetX * factor, size / 2 - height / 2 + crop.offsetY * factor, width, height);
+        const webp = canvas.toDataURL("image/webp", 0.85);
+        return webp.startsWith("data:image/webp") ? webp : canvas.toDataURL("image/png");
+      };
+      return { full: bake(720), sync: bake(300) };
+    }
+function wireOwlbearTokenEditor() {
+      const canvas = document.getElementById("owlbear-token-canvas");
+      if (!canvas) {
+        return;
+      }
+      const crop = loadOwlbearTokenCrop();
+      let image = null;
+      const redraw = () => drawOwlbearTokenPreview(canvas, image, crop);
+      const loadSource = () => {
+        const source = getOwlbearTokenSource(crop);
+        if (!source) {
+          image = null;
+          redraw();
+          return;
+        }
+        const loader = new Image();
+        loader.onload = () => {
+          image = loader;
+          redraw();
+        };
+        loader.src = source;
+      };
+      const lockButton = document.querySelector("[data-owlbear-token-lock]");
+      if (lockButton) {
+        lockButton.textContent = crop.locked ? "Unlock Token" : "Lock Token";
+      }
+      canvas.style.cursor = crop.locked ? "default" : "grab";
+      let dragging = false;
+      canvas.addEventListener("pointerdown", (event) => {
+        if (crop.locked) {
+          return;
+        }
+        dragging = true;
+        canvas.setPointerCapture(event.pointerId);
+        canvas.style.cursor = "grabbing";
+      });
+      canvas.addEventListener("pointermove", (event) => {
+        if (!dragging || crop.locked) {
+          return;
+        }
+        crop.offsetX += event.movementX;
+        crop.offsetY += event.movementY;
+        redraw();
+      });
+      const endDrag = () => {
+        if (!dragging) {
+          return;
+        }
+        dragging = false;
+        canvas.style.cursor = crop.locked ? "default" : "grab";
+        saveOwlbearTokenCrop(crop);
+      };
+      canvas.addEventListener("pointerup", endDrag);
+      canvas.addEventListener("pointercancel", endDrag);
+      canvas.addEventListener("wheel", (event) => {
+        if (crop.locked) {
+          return;
+        }
+        event.preventDefault();
+        crop.scale = Math.min(4, Math.max(1, (crop.scale || 1) * (event.deltaY < 0 ? 1.08 : 0.925)));
+        redraw();
+        saveOwlbearTokenCrop(crop);
+      }, { passive: false });
+      const fileInput = document.getElementById("owlbear-token-file");
+      fileInput?.addEventListener("change", async () => {
+        const [file] = fileInput.files || [];
+        if (!file) {
+          return;
+        }
+        try {
+          crop.imageDataUrl = await downscaleOwlbearTokenSource(file);
+          crop.offsetX = 0;
+          crop.offsetY = 0;
+          crop.scale = 1;
+          saveOwlbearTokenCrop(crop);
+          loadSource();
+        } catch (error) {
+          const feedbackEl = document.getElementById("owlbear-setup-feedback");
+          if (feedbackEl) {
+            feedbackEl.textContent = error.message || "That image could not be read.";
+          }
+        } finally {
+          fileInput.value = "";
+        }
+      });
+      loadSource();
+    }
+function toggleOwlbearTokenLock(button) {
+      const crop = loadOwlbearTokenCrop();
+      crop.locked = !crop.locked;
+      saveOwlbearTokenCrop(crop);
+      button.textContent = crop.locked ? "Unlock Token" : "Lock Token";
+      const canvas = document.getElementById("owlbear-token-canvas");
+      if (canvas) {
+        canvas.style.cursor = crop.locked ? "default" : "grab";
+      }
+    }
+async function sendCharacterToOwlbear() {
+      const feedbackEl = document.getElementById("owlbear-setup-feedback");
+      const say = (message, isError = false) => {
+        if (feedbackEl) {
+          feedbackEl.textContent = message;
+          feedbackEl.classList.toggle("is-error", isError);
+        }
+      };
+      const link = cleanText(document.getElementById("owlbear-room-link")?.value || "");
+      if (link && !/owlbear\.rodeo\/room\//i.test(link)) {
+        say("That does not look like an Owlbear room link (it should contain owlbear.rodeo/room/).", true);
+        return;
+      }
+      if (link) {
+        try {
+          localStorage.setItem(OWLBEAR_ROOM_LINK_KEY, link);
+        } catch (error) {
+          /* remembering the link is a convenience only */
+        }
+      }
+      say("Preparing the character and token…");
+      let tokenImages = null;
+      try {
+        tokenImages = await bakeOwlbearTokenImages(loadOwlbearTokenCrop());
+      } catch (error) {
+        tokenImages = null;
+      }
+      const characterName = cleanText(state.fields.Name) || "Unnamed character";
+      const sent = await publishVttHandoff({
+        character: createStateSnapshot(),
+        tokenImages,
+        characterName
+      });
+      if (!sent) {
+        say("The local builder server did not answer, so nothing was sent. Start it with npm start and try again.", true);
+        return;
+      }
+      say(`Sent ${characterName}${tokenImages ? " with its token" : ""} to the Angel Sword Companion.${link ? " Opening your room…" : ""}`);
+      if (link) {
+        window.open(link, "_blank", "noopener");
+      }
     }
 function openFoundrySetupGuide() {
       openSheetModal({
@@ -23488,6 +23759,19 @@ const addButton = event.target.closest("[data-dice-add]");
         }
         if (event.target.closest("[data-owlbear-setup-guide]")) {
           openOwlbearSetupGuide();
+          return;
+        }
+        if (event.target.closest("[data-owlbear-token-change]")) {
+          document.getElementById("owlbear-token-file")?.click();
+          return;
+        }
+        const owlbearLockButton = event.target.closest("[data-owlbear-token-lock]");
+        if (owlbearLockButton) {
+          toggleOwlbearTokenLock(owlbearLockButton);
+          return;
+        }
+        if (event.target.closest("[data-owlbear-send]")) {
+          await sendCharacterToOwlbear();
           return;
         }
         if (event.target.closest("[data-owlbear-copy-local-install]")) {

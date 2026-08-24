@@ -147,6 +147,37 @@ export function publishVttEvent(kind, detail = {}) {
 }
 
 /**
+ * Hand a full character (and optional baked token images) to a companion
+ * surface through the local dev relay. Unlike rolls this awaits delivery so
+ * the caller can tell the user whether the send actually landed.
+ * Dev-host only; resolves false when the local builder server is absent.
+ */
+export async function publishVttHandoff(detail = {}) {
+  if (!isDevRelayHost() || typeof fetch !== "function") {
+    return false;
+  }
+  const event = {
+    v: VTT_RELAY_VERSION,
+    id: createEventId(),
+    ts: Date.now(),
+    kind: "character-handoff",
+    relaySource: "angel-sword-sheet",
+    ...detail
+  };
+  try {
+    const response = await fetch("/api/vtt-relay/events", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(event)
+    });
+    const data = await response.json();
+    return Boolean(data?.ok);
+  } catch (error) {
+    return false;
+  }
+}
+
+/**
  * Listen for other players' room rolls relayed back by the Owlbear extension.
  * This is best-effort in browsers that partition iframe storage; callers must
  * not depend on it for character-state synchronization.
