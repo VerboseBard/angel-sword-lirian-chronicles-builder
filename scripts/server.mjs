@@ -161,10 +161,10 @@ async function serveStatic(request, response, pathname) {
       // Serve the raw file if the manifest is temporarily unparseable.
     }
   }
-  const isMutableManifest = /^(?:assets\/versions\/manifest\.(?:js|json)|owlbear\/manifest\.json)$/i.test(relativePath);
+  const isNoStore = /^(?:assets\/versions\/manifest\.(?:js|json)|owlbear\/manifest\.json|assets\/app\.bundle\.js(?:\.map)?|owlbear\/dist\/[^/]+\.js|owlbear\/[^/]+\.js)$/i.test(relativePath);
   const headers = {
     "content-type": type,
-    "cache-control": type.includes("text/html") || isMutableManifest
+    "cache-control": type.includes("text/html") || isNoStore
       ? "no-store"
       : "public, max-age=60",
     ...cors
