@@ -86,7 +86,37 @@ function safeStaticPath(urlPath) {
   return absolute;
 }
 
+const relayTokenImages = new Map();
+
 async function handleApi(request, response, pathname) {
+  if (pathname === "/api/vtt-relay/token-image" && request.method === "POST") {
+    let payload;
+    try {
+      payload = JSON.parse(await readRequestBody(request, 3000000));
+    } catch {
+      return sendJson(response, 400, { ok: false, message: "Token images must be JSON." }, corsHeaders(request));
+    }
+    const match = /^data:(image\/[a-z0-9.+-]+);base64,(.+)$/i.exec(payload?.dataUrl || "");
+    if (!payload?.id || !match) {
+      return sendJson(response, 400, { ok: false, message: "Token images need an id and a base64 image dataUrl." }, corsHeaders(request));
+    }
+    relayTokenImages.set(String(payload.id), { mime: match[1], buffer: Buffer.from(match[2], "base64") });
+    if (relayTokenImages.size > 40) {
+      relayTokenImages.delete(relayTokenImages.keys().next().value);
+    }
+    return sendJson(response, 200, { ok: true, url: `/api/vtt-relay/token-image/${encodeURIComponent(payload.id)}` }, corsHeaders(request));
+  }
+
+  if (pathname.startsWith("/api/vtt-relay/token-image/")) {
+    const entry = relayTokenImages.get(decodeURIComponent(pathname.split("/").pop()));
+    if (!entry) {
+      return sendJson(response, 404, { ok: false, message: "Unknown token image." }, corsHeaders(request));
+    }
+    response.writeHead(200, { "content-type": entry.mime, "cache-control": "no-store", ...corsHeaders(request) });
+    response.end(entry.buffer);
+    return;
+  }
+
   if (pathname === "/api/vtt-relay/events" && request.method === "POST") {
     let event;
     try {

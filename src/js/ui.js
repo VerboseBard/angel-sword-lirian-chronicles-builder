@@ -23261,7 +23261,7 @@ async function bakeOwlbearTokenImages(crop) {
         loader.onerror = () => reject(new Error("The token image could not be loaded."));
         loader.src = source;
       });
-      const bake = (size) => {
+      const bake = (size, forcePng = false) => {
         const canvas = document.createElement("canvas");
         canvas.width = size;
         canvas.height = size;
@@ -23274,10 +23274,13 @@ async function bakeOwlbearTokenImages(crop) {
         const width = image.naturalWidth * cover;
         const height = image.naturalHeight * cover;
         ctx.drawImage(image, size / 2 - width / 2 + crop.offsetX * factor, size / 2 - height / 2 + crop.offsetY * factor, width, height);
+        if (forcePng) {
+          return canvas.toDataURL("image/png");
+        }
         const webp = canvas.toDataURL("image/webp", 0.85);
         return webp.startsWith("data:image/webp") ? webp : canvas.toDataURL("image/png");
       };
-      return { full: bake(720), sync: bake(150) };
+      return { full: bake(720), sync: bake(150, true) };
     }
 function wireOwlbearTokenEditor() {
       const canvas = document.getElementById("owlbear-token-canvas");
@@ -23404,9 +23407,26 @@ async function sendCharacterToOwlbear() {
         tokenImages = null;
       }
       const characterName = cleanText(state.fields.Name) || "Unnamed character";
+      let tokenImageUrl = "";
+      if (tokenImages) {
+        try {
+          const imageResponse = await fetch("/api/vtt-relay/token-image", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ id: `token-${Date.now().toString(36)}`, dataUrl: tokenImages.sync })
+          });
+          const imageData = await imageResponse.json();
+          if (imageData?.ok && imageData.url) {
+            tokenImageUrl = new URL(imageData.url, window.location.href).href;
+          }
+        } catch (error) {
+          /* the data-URL fallback still travels in the handoff */
+        }
+      }
       const sent = await publishVttHandoff({
         character: createStateSnapshot(),
         tokenImages,
+        tokenImageUrl,
         characterName
       });
       if (!sent) {

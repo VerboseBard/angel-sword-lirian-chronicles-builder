@@ -39,6 +39,7 @@ let activeBinding = null;
 let playerRecord = null;
 let tokenImageDataUrl = null;
 let tokenImageFullDataUrl = null;
+let tokenImagePlaceUrl = null;
 let handoffCursor = null;
 const renderedRollIds = new Set();
 
@@ -212,11 +213,13 @@ function applyHandoff(event, consumed) {
     localStorage.setItem(CHARACTER_STORAGE_KEY, JSON.stringify(normalized));
     tokenImageDataUrl = event.tokenImages?.sync || null;
     tokenImageFullDataUrl = event.tokenImages?.full || tokenImageDataUrl;
+    tokenImagePlaceUrl = event.tokenImageUrl || null;
     if (tokenImageDataUrl) {
       localStorage.setItem(TOKEN_IMAGE_KEY, JSON.stringify({
         characterId: normalized.characterId,
         dataUrl: tokenImageDataUrl,
-        fullDataUrl: tokenImageFullDataUrl
+        fullDataUrl: tokenImageFullDataUrl,
+        placeUrl: tokenImagePlaceUrl
       }));
     }
     consumed.push(event.id);
@@ -232,6 +235,7 @@ function clearImportedCharacter() {
   activeCharacter = null;
   tokenImageDataUrl = null;
   tokenImageFullDataUrl = null;
+  tokenImagePlaceUrl = null;
   try {
     localStorage.removeItem(CHARACTER_STORAGE_KEY);
     localStorage.removeItem(TOKEN_IMAGE_KEY);
@@ -283,9 +287,10 @@ async function placeMyToken() {
     }
     const [width, height] = await Promise.all([obrApi.viewport.getWidth(), obrApi.viewport.getHeight()]);
     const center = await obrApi.viewport.inverseTransformPoint({ x: width / 2, y: height / 2 });
-    const mime = tokenImageDataUrl.startsWith("data:image/webp") ? "image/webp" : "image/png";
+    const sourceUrl = tokenImagePlaceUrl || tokenImageDataUrl;
+    const mime = (tokenImageDataUrl.match(/^data:([^;]+)/) || [])[1] || "image/png";
     const item = buildImage(
-      { url: tokenImageDataUrl, width: 150, height: 150, mime },
+      { url: sourceUrl, width: 150, height: 150, mime },
       { dpi: 150, offset: { x: 75, y: 75 } }
     )
       .layer("CHARACTER")
@@ -469,6 +474,7 @@ try {
   if (storedToken?.dataUrl && storedToken.characterId === activeCharacter?.characterId) {
     tokenImageDataUrl = storedToken.dataUrl;
     tokenImageFullDataUrl = storedToken.fullDataUrl || storedToken.dataUrl;
+    tokenImagePlaceUrl = storedToken.placeUrl || null;
   }
 } catch (error) {
   localStorage.removeItem(TOKEN_IMAGE_KEY);
