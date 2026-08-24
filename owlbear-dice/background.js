@@ -65,7 +65,14 @@ OBR.onReady(() => {
       } catch (error) {
         /* viewer preference is optional */
       }
-      const payload = encodeURIComponent(JSON.stringify({ results, setId }));
+      const payload = encodeURIComponent(JSON.stringify({
+        results,
+        setId,
+        label: String(event.label || "Roll"),
+        who: [event.character, event.playerName].filter(Boolean).join(" · "),
+        total: event.total,
+        breakdown: String(event.breakdown || "")
+      }));
       await OBR.popover.open({
         id: OVERLAY_ID,
         url: new URL(`overlay.html#${payload}`, window.location.href).href,

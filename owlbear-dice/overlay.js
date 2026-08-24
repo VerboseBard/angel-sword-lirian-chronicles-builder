@@ -26,6 +26,32 @@ function finish() {
   }
 }
 
+const DICE_VISIBLE_MS = 5500;
+const BANNER_LINGER_MS = 3500;
+
+function showBanner(payload) {
+  const banner = document.getElementById("roll-banner");
+  if (!banner) {
+    return;
+  }
+  document.getElementById("banner-who").textContent = payload.who || "";
+  document.getElementById("banner-label").textContent = payload.label || "Roll";
+  document.getElementById("banner-total").textContent = Number.isFinite(Number(payload.total)) ? `Total ${payload.total}` : "";
+  document.getElementById("banner-breakdown").textContent = payload.breakdown || "";
+  banner.classList.add("is-visible");
+}
+
+async function shrinkToBannerStrip() {
+  document.querySelectorAll(".accurate-dice-canvas").forEach((canvas) => canvas.remove());
+  if (obrReady) {
+    try {
+      await OBR.popover.setHeight(OVERLAY_ID, 150);
+    } catch (error) {
+      /* the popover may already be closing */
+    }
+  }
+}
+
 function startAnimation() {
   const payload = readPayload();
   if (!payload?.results?.length || !window.LyrianAccurateDiceRoller) {
@@ -44,7 +70,12 @@ function startAnimation() {
     finish();
     return;
   }
-  setTimeout(finish, 6000);
+  showBanner(payload);
+  setTimeout(shrinkToBannerStrip, DICE_VISIBLE_MS);
+  setTimeout(() => {
+    document.getElementById("roll-banner")?.classList.remove("is-visible");
+  }, DICE_VISIBLE_MS + BANNER_LINGER_MS);
+  setTimeout(finish, DICE_VISIBLE_MS + BANNER_LINGER_MS + 600);
 }
 
 window.addEventListener("asd-dice-runtime-ready", startAnimation);
@@ -53,6 +84,6 @@ window.addEventListener("asd-dice-runtime-error", finish);
 if (OBR?.onReady) {
   OBR.onReady(() => {
     obrReady = true;
-    setTimeout(finish, 10000);
+    setTimeout(finish, 12000);
   });
 }
