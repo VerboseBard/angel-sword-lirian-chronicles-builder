@@ -323,7 +323,7 @@ async function placeMyToken() {
         .build();
       setFeedback(`Saving your token to Owlbear's asset library (${sizePixels}px, ${Math.max(1, Math.round(blob.size / 1024))} KB)…`);
       console.info(`Angel Sword token upload: ${sizePixels}px, ${blob.size} bytes, type ${blob.type}`);
-      await obrApi.assets.uploadImages([upload], "CHARACTER");
+      await obrApi.assets.uploadImages([upload]);
       uploaded[activeCharacter.characterId] = { name: tokenName, sig: tokenImageSignature() };
       try {
         localStorage.setItem(UPLOADED_TOKENS_KEY, JSON.stringify(uploaded));
@@ -340,7 +340,7 @@ async function placeMyToken() {
   }
   try {
     setFeedback(`Pick ${tokenName} in Owlbear's dialog to place it.`);
-    const picks = await obrApi.assets.downloadImages(false, tokenName, "CHARACTER");
+    const picks = await obrApi.assets.downloadImages(false, tokenName);
     const pick = Array.isArray(picks) ? picks[0] : null;
     if (!pick?.image?.url) {
       delete uploaded[activeCharacter.characterId];
