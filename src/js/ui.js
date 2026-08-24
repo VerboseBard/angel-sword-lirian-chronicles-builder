@@ -9831,13 +9831,17 @@ function renderPlayTableToolsPanel() {
               <span class="integration-status is-ready">Available now</span>
             </div>
             <p>Keep a browser save, move the character between devices, or exchange files with the official Angel Sword builder.</p>
-            <div class="table-tool-actions">
-              <button type="button" data-table-tool-action="save">Save Character</button>
-              <button type="button" data-table-tool-action="load">Load Saved Character</button>
-              <button type="button" data-table-tool-action="export">Export Character</button>
-              <button type="button" data-table-tool-action="import">Import Character</button>
+            <div class="table-tool-actions table-tool-actions-paired">
+              <div class="table-tool-action-stack">
+                <button type="button" data-table-tool-action="save">Save Character</button>
+                <button type="button" data-table-tool-action="load">Load Saved Character</button>
+              </div>
+              <div class="table-tool-action-stack">
+                <button type="button" data-table-tool-action="export">Export Character</button>
+                <button type="button" data-table-tool-action="import">Import Character</button>
+              </div>
             </div>
-            <button type="button" class="table-tool-guide-link" data-table-tool-guide="character-files">How character files work</button>
+            <button type="button" class="table-tool-guide-link table-tool-guide-link-large" data-table-tool-guide="character-files">How character files work</button>
           </article>
 
           <article class="table-tool-card play-panel">
@@ -9865,30 +9869,30 @@ function renderPlayTableToolsPanel() {
             </div>
           </div>
           <div class="table-platform-grid">
-            <button type="button" class="table-platform-card" data-table-tool-guide="roll20">
-              <span class="table-platform-card-head"><strong>Roll20</strong><span class="integration-status is-warn">Alpha</span></span>
-              <span>Copy a browser-independent chat macro now. A native Roll20 sheet is the planned one-click solution.</span>
-              <span class="table-platform-card-link">Open Roll20 walkthrough <span aria-hidden="true">&rarr;</span></span>
-            </button>
-            <button type="button" class="table-platform-card" data-table-tool-guide="owlbear">
+            <button type="button" class="table-platform-card table-platform-card-wide" data-table-tool-guide="owlbear">
               <span class="table-platform-card-head"><strong>Owlbear Rodeo</strong><span class="integration-status is-warn">Alpha</span></span>
-              <span>${localPreviewAvailable ? "Test character import, token binding, and the shared room roll log locally." : "Character binding is built; public extension publishing and live-room verification remain."}</span>
+              <span>${localPreviewAvailable ? "Send this character and its circular token straight into your Owlbear room, place it with one click, and share rolls in the live room feed." : "Character binding is built; public extension publishing and live-room verification remain."}</span>
               <span class="table-platform-card-link">Open Owlbear walkthrough <span aria-hidden="true">&rarr;</span></span>
-            </button>
-            <button type="button" class="table-platform-card" data-table-tool-guide="foundry">
-              <span class="table-platform-card-head"><strong>Foundry VTT</strong><span class="integration-status is-warn">Alpha</span></span>
-              <span>Review the companion-module preview and current packaging limits.</span>
-              <span class="table-platform-card-link">Open Foundry walkthrough <span aria-hidden="true">&rarr;</span></span>
-            </button>
-            <button type="button" class="table-platform-card" data-table-tool-guide="world-anvil">
-              <span class="table-platform-card-head"><strong>World Anvil</strong><span class="integration-status is-warn">Alpha</span></span>
-              <span>Copy a clean character profile or a formatted BBCode article.</span>
-              <span class="table-platform-card-link">Open World Anvil walkthrough <span aria-hidden="true">&rarr;</span></span>
             </button>
             <button type="button" class="table-platform-card table-platform-card-wide" data-table-tool-guide="official-builder">
               <span class="table-platform-card-head"><strong>Official Clio Builder</strong><span class="integration-status is-ready">Verified</span></span>
               <span>Move characters in either direction using the tested official character-file exchange.</span>
               <span class="table-platform-card-link">Open official builder walkthrough <span aria-hidden="true">&rarr;</span></span>
+            </button>
+            <button type="button" class="table-platform-card" data-table-tool-guide="roll20">
+              <span class="table-platform-card-head"><strong>Roll20</strong><span class="integration-status">Coming Soon</span></span>
+              <span>Copy a browser-independent chat macro now. A native Roll20 sheet is the planned one-click solution.</span>
+              <span class="table-platform-card-link">Open Roll20 walkthrough <span aria-hidden="true">&rarr;</span></span>
+            </button>
+            <button type="button" class="table-platform-card" data-table-tool-guide="foundry">
+              <span class="table-platform-card-head"><strong>Foundry VTT</strong><span class="integration-status">Coming Soon</span></span>
+              <span>Review the companion-module preview and current packaging limits.</span>
+              <span class="table-platform-card-link">Open Foundry walkthrough <span aria-hidden="true">&rarr;</span></span>
+            </button>
+            <button type="button" class="table-platform-card" data-table-tool-guide="world-anvil">
+              <span class="table-platform-card-head"><strong>World Anvil</strong><span class="integration-status">Coming Soon</span></span>
+              <span>Copy a clean character profile or a formatted BBCode article.</span>
+              <span class="table-platform-card-link">Open World Anvil walkthrough <span aria-hidden="true">&rarr;</span></span>
             </button>
           </div>
         </section>
@@ -23273,7 +23277,7 @@ async function bakeOwlbearTokenImages(crop) {
         const webp = canvas.toDataURL("image/webp", 0.85);
         return webp.startsWith("data:image/webp") ? webp : canvas.toDataURL("image/png");
       };
-      return { full: bake(720), sync: bake(300) };
+      return { full: bake(720), sync: bake(150) };
     }
 function wireOwlbearTokenEditor() {
       const canvas = document.getElementById("owlbear-token-canvas");
@@ -23605,7 +23609,10 @@ export async function bindEvents() {
         document.getElementById(id)?.addEventListener("click", () => document.getElementById("import-file").click());
       });
 
-      document.getElementById("open-table-tools")?.addEventListener("click", () => setPlayMode("table"));
+      document.getElementById("status-pill")?.addEventListener("click", () => {
+        setMode("builder");
+        setStatus("Returned to the builder.");
+      });
 
       document.getElementById("recalc-basics")?.addEventListener("click", () => {
         recalcBasics(true);

@@ -22,6 +22,7 @@ const fileInput = document.getElementById("character-file");
 const characterCard = document.getElementById("character-card");
 const characterSummary = document.getElementById("character-summary");
 const placeButton = document.getElementById("place-token");
+const downloadTokenButton = document.getElementById("download-token");
 const clearCharacterButton = document.getElementById("clear-character");
 const bindButton = document.getElementById("bind-token");
 const clearBindingButton = document.getElementById("clear-binding");
@@ -36,6 +37,7 @@ let activeCharacter = null;
 let activeBinding = null;
 let playerRecord = null;
 let tokenImageDataUrl = null;
+let tokenImageFullDataUrl = null;
 let handoffCursor = null;
 const renderedRollIds = new Set();
 
@@ -83,6 +85,7 @@ function renderCharacter() {
 
 function renderPlaceButton() {
   placeButton.hidden = !(activeCharacter && obrApi && tokenImageDataUrl);
+  downloadTokenButton.hidden = !(activeCharacter && tokenImageFullDataUrl);
 }
 
 function renderBinding() {
@@ -207,8 +210,13 @@ function applyHandoff(event, consumed) {
     activeCharacter = normalized;
     localStorage.setItem(CHARACTER_STORAGE_KEY, JSON.stringify(normalized));
     tokenImageDataUrl = event.tokenImages?.sync || null;
+    tokenImageFullDataUrl = event.tokenImages?.full || tokenImageDataUrl;
     if (tokenImageDataUrl) {
-      localStorage.setItem(TOKEN_IMAGE_KEY, JSON.stringify({ characterId: normalized.characterId, dataUrl: tokenImageDataUrl }));
+      localStorage.setItem(TOKEN_IMAGE_KEY, JSON.stringify({
+        characterId: normalized.characterId,
+        dataUrl: tokenImageDataUrl,
+        fullDataUrl: tokenImageFullDataUrl
+      }));
     }
     consumed.push(event.id);
     localStorage.setItem(HANDOFF_CONSUMED_KEY, JSON.stringify(consumed.slice(-50)));
@@ -222,6 +230,7 @@ function applyHandoff(event, consumed) {
 function clearImportedCharacter() {
   activeCharacter = null;
   tokenImageDataUrl = null;
+  tokenImageFullDataUrl = null;
   try {
     localStorage.removeItem(CHARACTER_STORAGE_KEY);
     localStorage.removeItem(TOKEN_IMAGE_KEY);
@@ -265,8 +274,8 @@ async function placeMyToken() {
     const center = await obrApi.viewport.inverseTransformPoint({ x: width / 2, y: height / 2 });
     const mime = tokenImageDataUrl.startsWith("data:image/webp") ? "image/webp" : "image/png";
     const item = buildImage(
-      { url: tokenImageDataUrl, width: 300, height: 300, mime },
-      { dpi: 300, offset: { x: 150, y: 150 } }
+      { url: tokenImageDataUrl, width: 150, height: 150, mime },
+      { dpi: 150, offset: { x: 75, y: 75 } }
     )
       .layer("CHARACTER")
       .name(activeCharacter.name)
@@ -280,8 +289,23 @@ async function placeMyToken() {
     renderBinding();
     setFeedback(`Placed and bound ${record.characterName}.`);
   } catch (error) {
-    setFeedback(error.message || "The token could not be placed. You can still drag an image in and use Bind Selected Token.", true);
+    console.error("Angel Sword token placement failed:", error);
+    const reason = error?.message || String(error);
+    setFeedback(`The token could not be placed (${reason}). Use Download Token Image, drag that file onto the scene, select it, and press Bind Selected Token.`, true);
   }
+}
+
+function downloadTokenImage() {
+  if (!tokenImageFullDataUrl || !activeCharacter) {
+    return;
+  }
+  const link = document.createElement("a");
+  link.href = tokenImageFullDataUrl;
+  const extension = tokenImageFullDataUrl.startsWith("data:image/webp") ? "webp" : "png";
+  link.download = `${String(activeCharacter.name || "token").replace(/[^\w-]+/g, "-")}-token.${extension}`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
 }
 
 async function restoreBindingFromScene() {
@@ -408,6 +432,7 @@ fileInput.addEventListener("change", async () => {
 });
 
 placeButton.addEventListener("click", placeMyToken);
+downloadTokenButton.addEventListener("click", downloadTokenImage);
 clearCharacterButton.addEventListener("click", clearImportedCharacter);
 bindButton.addEventListener("click", bindSelectedToken);
 clearBindingButton.addEventListener("click", clearBinding);
@@ -425,6 +450,7 @@ try {
   const storedToken = JSON.parse(localStorage.getItem(TOKEN_IMAGE_KEY) || "null");
   if (storedToken?.dataUrl && storedToken.characterId === activeCharacter?.characterId) {
     tokenImageDataUrl = storedToken.dataUrl;
+    tokenImageFullDataUrl = storedToken.fullDataUrl || storedToken.dataUrl;
   }
 } catch (error) {
   localStorage.removeItem(TOKEN_IMAGE_KEY);

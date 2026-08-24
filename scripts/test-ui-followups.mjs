@@ -97,12 +97,12 @@ try {
       && document.getElementById("builder-import-character")
       && document.getElementById("builder-start-over-sidebar"))
   }));
-  if (sheetTools.labels.join("|") !== "Table Tools"
+  if (sheetTools.labels.length !== 0
     || !sheetTools.removedToolsAbsent
     || !sheetTools.builderToolsPresent) {
     throw new Error(`Play-sheet tool separation is incorrect: ${JSON.stringify(sheetTools)}`);
   }
-  await page.click("#open-table-tools");
+  await page.click('[data-play-mode="table"]:visible');
   await page.waitForSelector('#play-table-tools:not([hidden])');
   const tableTools = await page.evaluate(() => ({
     modeLabels: [...document.querySelectorAll('#play-header-card [data-play-mode]')].map((button) => button.innerText.trim()),
@@ -118,8 +118,9 @@ try {
     || !["save", "load", "export", "import", "recalculate", "builder"].every((action) => tableTools.actions.includes(action))
     || tableTools.actions.includes("connections")
     || !["character-files", "roll20", "owlbear", "foundry", "world-anvil", "official-builder"].every((guide) => tableTools.guides.includes(guide))
-    || tableTools.platformStatuses.filter((entry) => entry.name !== "Official Clio Builder").some((entry) => entry.status !== "Alpha")
+    || tableTools.platformStatuses.find((entry) => entry.name === "Owlbear Rodeo")?.status !== "Alpha"
     || tableTools.platformStatuses.find((entry) => entry.name === "Official Clio Builder")?.status !== "Verified"
+    || tableTools.platformStatuses.filter((entry) => !["Owlbear Rodeo", "Official Clio Builder"].includes(entry.name)).some((entry) => entry.status !== "Coming Soon")
     || tableTools.hasRedundantAllConnections) {
     throw new Error(`Table Tools workspace is incomplete: ${JSON.stringify(tableTools)}`);
   }

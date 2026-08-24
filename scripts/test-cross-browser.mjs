@@ -554,7 +554,7 @@ async function runVttIntegrationAssertions(page, browserName, targetUrl, isMobil
     await page.locator('[data-mobile-sheet-tools]').click();
     await page.waitForSelector('#play-table-tools:not([hidden])', { timeout: 5000 });
   } else {
-    await page.locator('#open-table-tools').click();
+    await page.locator('[data-play-mode="table"]:visible').first().click();
     await page.waitForSelector('#play-table-tools:not([hidden])', { timeout: 5000 });
   }
   const tableToolActions = await page.locator('#play-table-tools [data-table-tool-action]').evaluateAll((buttons) =>
@@ -4990,7 +4990,7 @@ const browsers = [
             const builderBuildVersion = document.querySelector('.builder-build-version');
             const learnLink = document.querySelector('.version-learn-link');
             const sheetToolbarSimplified = Boolean(
-              document.getElementById('open-table-tools')
+              !document.getElementById('open-table-tools')
               && !document.getElementById('save-browser')
               && !document.getElementById('export-json')
               && !document.getElementById('sheet-integrations')
