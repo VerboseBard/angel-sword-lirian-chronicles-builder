@@ -6,6 +6,7 @@
   "icon": "icon.svg",
   "author": "Angel Sword builder project (fan work)",
   "homepage_url": "https://verbosebard.github.io/angel-sword-lirian-chronicles-builder/",
+  "background_url": "background.html",
   "action": {
     "title": "Angel Sword Dice",
     "icon": "icon.svg",

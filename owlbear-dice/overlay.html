@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Angel Sword Dice Overlay</title>
+  <style>
+    html, body { margin: 0; background: transparent; overflow: hidden; }
+    #dice-flight-layer { position: fixed; inset: 0; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <div id="dice-flight-layer"></div>
+  <script>
+    window.LYRIAN_DISABLE_LEGACY_GLB_DICE = true;
+    (function () {
+      function load(src) {
+        return new Promise(function (resolve, reject) {
+          var script = document.createElement("script");
+          script.src = src;
+          script.onload = resolve;
+          script.onerror = function () { reject(new Error("Failed to load " + src)); };
+          document.head.appendChild(script);
+        });
+      }
+      var V = "?v=20260811-srgb-dice-v1";
+      load("../assets/dice/promoted-dice-skins.registry.js" + V)
+        .catch(function () { /* promoted sets are optional */ })
+        .then(function () {
+          var sidecars = (window.LYRIAN_PROMOTED_DICE_SKINS || [])
+            .map(function (pack) { return pack && pack.faceArtScript; })
+            .filter(Boolean)
+            .map(function (src) { return "../" + src; });
+          var list = [
+            "../assets/vendor/three.min.js",
+            "../assets/vendor/GLTFLoader.js",
+            "../assets/dice-3d/dice-3d-embedded.js" + V,
+            "../assets/dice-3d/new-angelsword-dice-face-art.384-webp.js" + V
+          ].concat(sidecars, [
+            "../assets/dice-3d/lyrian-accurate-dice.js" + V,
+            "../assets/dice-3d/legacy-dice-roller-capture.js" + V,
+            "../assets/dice-3d/dice-geometry.js" + V,
+            "../assets/dice-3d/character-sheet-skin-studio.js" + V,
+            "../assets/dice-3d/shared-dice-roller-core.js" + V,
+            "../assets/dice-3d/dice-roller-router.js" + V
+          ]);
+          return list.reduce(function (chain, src) {
+            return chain.then(function () { return load(src); });
+          }, Promise.resolve());
+        })
+        .then(function () {
+          window.dispatchEvent(new CustomEvent("asd-dice-runtime-ready"));
+        })
+        .catch(function () {
+          window.dispatchEvent(new CustomEvent("asd-dice-runtime-error"));
+        });
+    })();
+  </script>
+  <script type="module" src="dist/overlay.js"></script>
+</body>
+</html>

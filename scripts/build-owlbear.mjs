@@ -24,7 +24,9 @@ await build({
 await build({
   absWorkingDir: projectRoot,
   entryPoints: {
-    panel: "owlbear-dice/panel.js"
+    panel: "owlbear-dice/panel.js",
+    background: "owlbear-dice/background.js",
+    overlay: "owlbear-dice/overlay.js"
   },
   outdir: "owlbear-dice/dist",
   bundle: true,

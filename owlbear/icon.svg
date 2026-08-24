@@ -1,9 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Angel Sword Companion">
-  <rect x="4" y="4" width="56" height="56" rx="12" fill="#f6c63d" stroke="#172036" stroke-width="2"/>
-  <path d="M47 10 L51 14 L30 41 L24 35 Z" fill="#172036"/>
-  <path d="M20 39 L26 45" stroke="#172036" stroke-width="5" stroke-linecap="round"/>
-  <path d="M19 46 L13 52" stroke="#172036" stroke-width="4.5" stroke-linecap="round"/>
-  <path d="M20 18 q9 3 13 11" fill="none" stroke="#172036" stroke-width="2.8" stroke-linecap="round"/>
-  <path d="M15 26 q8 2 11 9" fill="none" stroke="#172036" stroke-width="2.6" stroke-linecap="round"/>
-  <path d="M11 34 q6 1 8 6" fill="none" stroke="#172036" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M49 4 L60 15 L32 46 L26 52 L12 38 L18 32 Z" fill="#172036"/>
+  <path d="M12 40 L24 52" stroke="#172036" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <path d="M14 50 L6 58" stroke="#172036" stroke-width="6" stroke-linecap="round" fill="none"/>
+  <path d="M22 8 q13 4 18 15" fill="none" stroke="#172036" stroke-width="5" stroke-linecap="round"/>
+  <path d="M14 17 q11 3 15 12" fill="none" stroke="#172036" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M8 27 q8 2 11 8" fill="none" stroke="#172036" stroke-width="3.8" stroke-linecap="round"/>
 </svg>

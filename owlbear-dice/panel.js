@@ -2,6 +2,7 @@ import OBR from "@owlbear-rodeo/sdk";
 import { ROLL_CHANNEL, ROOM_LOG_KEY, mergeRollLog, normalizeRollEvent } from "../owlbear/core.js";
 
 const SET_STORAGE_KEY = "asb.dice.selectedSet.v1";
+const REPLAY_STORAGE_KEY = "asb.dice.replayEnabled.v1";
 const DEFAULT_SET = { id: "new-angelsword", name: "Angel Sword" };
 const DICE_TYPES = [20, 12, 100, 10, 8, 6, 4];
 const MAX_QUEUED = 12;
@@ -146,14 +147,9 @@ function parseBreakdown(event) {
 
 function replayRoomRoll(rawEvent) {
   const event = normalizeRollEvent(rawEvent);
-  if (!event || !rememberRoll(event.id) || !replayToggle.checked) {
+  if (!event || !rememberRoll(event.id)) {
     return;
   }
-  const results = parseBreakdown(event);
-  if (!results.length) {
-    return;
-  }
-  animateResults(results);
   const who = [event.character, event.playerName].filter(Boolean).join(" · ");
   setFeedback(`${who || "The room"} rolled ${event.label || "dice"}: total ${event.total}.`);
 }
@@ -203,7 +199,9 @@ function rollQueued() {
   });
   const total = results.reduce((sum, entry) => sum + entry.value, 0);
   const breakdown = results.map((entry) => `d${entry.sides}: ${entry.value}`).join(" | ");
-  animateResults(results);
+  if (!obrApi) {
+    animateResults(results);
+  }
   setFeedback(`Rolled ${formulaParts.join(" + ")}: total ${total}.`);
   shareLocalRoll(results, total, formulaParts.join(" + "), breakdown);
   queue.clear();
@@ -228,6 +226,19 @@ resetButton.addEventListener("click", () => {
   renderQueue();
 });
 rollButton.addEventListener("click", rollQueued);
+
+try {
+  replayToggle.checked = localStorage.getItem(REPLAY_STORAGE_KEY) !== "0";
+} catch (error) {
+  replayToggle.checked = true;
+}
+replayToggle.addEventListener("change", () => {
+  try {
+    localStorage.setItem(REPLAY_STORAGE_KEY, replayToggle.checked ? "1" : "0");
+  } catch (error) {
+    /* the preference falls back to on */
+  }
+});
 
 window.addEventListener("asd-dice-runtime-ready", () => {
   runtimeReady = true;
