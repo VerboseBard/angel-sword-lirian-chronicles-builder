@@ -7263,9 +7263,13 @@
     }
 
     .sheet-modal:has(.owlbear-setup-guide) .sheet-modal-card {
-      width: min(1040px, calc(100vw - 32px));
-      height: calc(100vh - 24px);
+      width: min(980px, calc(100vw - 32px));
       max-height: calc(100vh - 24px);
+      font-size: 15px;
+    }
+
+    .sheet-modal:has(.owlbear-setup-guide) .sheet-modal-card section {
+      margin-bottom: 2px;
     }
 
     .sheet-modal-head {

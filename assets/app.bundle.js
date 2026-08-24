@@ -3209,6 +3209,7 @@ The app cannot verify this requirement. Has the GM approved it for this characte
                 ${e?"":'<button type="button" class="sheet-modal-action" disabled title="The public extension currently returns 404 and must be deployed before release.">Public Install Coming Soon</button>'}
               </div>
               ${e?"":`<p><small>Planned public address: <code>${d(mx)}</code></small></p>`}
+              <p><small>Tip: after adding it, click the heart on the extension's card to favorite it \u2014 every new room you create will offer it automatically.</small></p>
             </section>
             <section>
               <strong>Your token (each player)</strong>
@@ -3240,20 +3241,10 @@ The app cannot verify this requirement. Has the GM approved it for this characte
               <p>Use Owlbear's <em>Invite Players</em> button. Players open that room link and request to join; they do not paste the invitation into this character sheet.</p>
             </section>
             <section>
-              <strong>4. Import and bind each character (each player)</strong>
-              <p>Each player opens the Angel Sword panel, imports their Character JSON or official <code>.aschar.json</code> file, selects exactly one Owlbear token on the Character layer, and chooses <em>Bind Selected Token</em>. The panel stores the player/character/token relationship and enables the shared room roll log.</p>
-              <p><small>External-sheet roll mirroring remains an Alpha transport and still needs a real two-browser room test. Damage, movement accounting, conditions, and Lyrian initiative are intentionally not part of this milestone.</small></p>
+              <strong>4. In the room (each player)</strong>
+              <p>Open the Angel Sword panel and press <em>Place My Token</em> \u2014 your token appears on the map already bound to your character, and rolls from this sheet show up in the room's shared feed automatically.</p>
+              <p><small>Fallbacks: import a Character JSON or official <code>.aschar.json</code> with <em>Choose File</em>, or use <em>Download Token Image</em>, add the file to Owlbear's asset library as a Character, drag it in, and press <em>Bind Selected Token</em>. Damage, movement, conditions, and initiative are intentionally not part of this milestone.</small></p>
             </section>
-            ${e?`
-              <section class="table-tools-development-note">
-                <strong>Developer-only local test</strong>
-                <p>You may test the extension shell on this computer while the local builder server remains running. This address will not work for remote players.</p>
-                <div class="sheet-modal-form-actions">
-                  <button type="button" class="sheet-modal-action" data-owlbear-copy-local-install>Copy Local Test Install Link</button>
-                </div>
-                <p><small><code>${d(t)}</code></small></p>
-              </section>
-            `:""}
             <p id="owlbear-setup-feedback" class="save-slot-feedback" aria-live="polite"></p>
             <div class="sheet-modal-form-actions">
               <button type="button" class="sheet-modal-action" data-table-tools-back>Back to Table Tools</button>
