@@ -1,0 +1,16 @@
+{
+  "name": "Angel Sword Dice",
+  "version": "0.1.0",
+  "manifest_version": 1,
+  "description": "3D Angel Sword dice in your room: watch every shared roll land, and roll your own.",
+  "icon": "icon.svg",
+  "author": "Angel Sword builder project (fan work)",
+  "homepage_url": "https://verbosebard.github.io/angel-sword-lirian-chronicles-builder/",
+  "action": {
+    "title": "Angel Sword Dice",
+    "icon": "icon.svg",
+    "popover": "panel.html",
+    "width": 520,
+    "height": 640
+  }
+}

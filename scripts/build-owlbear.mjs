@@ -20,3 +20,18 @@ await build({
   legalComments: "inline",
   logLevel: "info"
 });
+
+await build({
+  absWorkingDir: projectRoot,
+  entryPoints: {
+    panel: "owlbear-dice/panel.js"
+  },
+  outdir: "owlbear-dice/dist",
+  bundle: true,
+  format: "esm",
+  platform: "browser",
+  target: ["es2020", "safari15"],
+  minify: true,
+  legalComments: "inline",
+  logLevel: "info"
+});

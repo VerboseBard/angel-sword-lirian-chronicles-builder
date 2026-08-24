@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Angel Sword Dice</title>
+  <style>
+    :root { color-scheme: dark; font-family: "Segoe UI", system-ui, sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #111827; color: #e8ecf5; font-size: 13.5px; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    button, select { font: inherit; }
+    header { display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: #182238; border-bottom: 1px solid #856c24; }
+    header img { width: 24px; height: 24px; }
+    header strong { font-size: 0.92rem; }
+    #status { margin-left: auto; font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border: 1px solid #75652f; border-radius: 999px; color: #ffe59a; }
+    #status.is-live { border-color: #3ca777; background: #164e3a; color: #c8ffe6; }
+    main { padding: 8px; flex: 1; overflow-y: auto; position: relative; }
+    .card { background: #1c2740; border: 1px solid #35435f; border-radius: 9px; padding: 8px; margin-bottom: 7px; }
+    .card h2 { margin: 0 0 4px; color: #ffe59a; font-size: 0.92rem; }
+    .card p { margin: 3px 0 6px; color: #bcc7dc; line-height: 1.35; }
+    select { width: 100%; padding: 6px; border-radius: 7px; border: 1px solid #53698f; background: #111a2c; color: #dce7fb; }
+    .dice-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 6px; }
+    .dice-grid button { position: relative; min-height: 40px; border-radius: 7px; border: 1px solid #38578c; background: #263858; color: #dce7fb; font-weight: 700; cursor: pointer; }
+    .dice-grid button .count { position: absolute; top: -6px; right: -4px; background: #f6c63d; color: #172036; border-radius: 999px; min-width: 18px; padding: 1px 4px; font-size: 0.7rem; }
+    .actions { display: grid; grid-template-columns: 1fr 2fr; gap: 6px; margin-top: 8px; }
+    .actions .reset { min-height: 34px; border-radius: 7px; border: 1px solid #53698f; background: #263858; color: #dce7fb; font-weight: 700; cursor: pointer; }
+    .actions .roll { min-height: 34px; border-radius: 7px; border: 1px solid #f6c63d; background: #f6c63d; color: #172036; font-weight: 800; cursor: pointer; }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    label.toggle { display: flex; align-items: center; gap: 8px; color: #bcc7dc; font-size: 0.8rem; }
+    #feedback { min-height: 1.3em; margin: 5px 0 0; color: #a9bad9; font-size: 0.76rem; }
+    #feedback.is-error { color: #ffadad; }
+    #dice-flight-layer { position: fixed; inset: 0; pointer-events: none; z-index: 30; }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="icon.svg" alt="">
+    <strong>Angel Sword Dice</strong>
+    <span id="status">Loading dice engine…</span>
+  </header>
+  <main>
+    <div class="card">
+      <h2>Dice set</h2>
+      <select id="dice-set" aria-label="Choose a dice set"></select>
+    </div>
+    <div class="card">
+      <h2>Roll dice</h2>
+      <p>Tap dice to queue them, then roll. Rolls are shared with the room's Angel Sword feed.</p>
+      <div class="dice-grid" id="dice-buttons"></div>
+      <div class="actions">
+        <button type="button" class="reset" id="dice-reset" disabled>Reset</button>
+        <button type="button" class="roll" id="dice-roll" disabled>Roll</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Room replay</h2>
+      <label class="toggle"><input type="checkbox" id="replay-toggle" checked> Play 3D dice when anyone in the room rolls</label>
+    </div>
+    <p id="feedback" role="status" aria-live="polite"></p>
+  </main>
+  <div id="dice-flight-layer"></div>
+  <script>
+    window.LYRIAN_DISABLE_LEGACY_GLB_DICE = true;
+    (function () {
+      function load(src) {
+        return new Promise(function (resolve, reject) {
+          var script = document.createElement("script");
+          script.src = src;
+          script.onload = resolve;
+          script.onerror = function () { reject(new Error("Failed to load " + src)); };
+          document.head.appendChild(script);
+        });
+      }
+      var V = "?v=20260811-srgb-dice-v1";
+      load("../assets/dice/promoted-dice-skins.registry.js" + V)
+        .catch(function () { /* promoted sets are optional */ })
+        .then(function () {
+          var sidecars = (window.LYRIAN_PROMOTED_DICE_SKINS || [])
+            .map(function (pack) { return pack && pack.faceArtScript; })
+            .filter(Boolean)
+            .map(function (src) { return "../" + src; });
+          var list = [
+            "../assets/vendor/three.min.js",
+            "../assets/vendor/GLTFLoader.js",
+            "../assets/dice-3d/dice-3d-embedded.js" + V,
+            "../assets/dice-3d/new-angelsword-dice-face-art.384-webp.js" + V
+          ].concat(sidecars, [
+            "../assets/dice-3d/lyrian-accurate-dice.js" + V,
+            "../assets/dice-3d/legacy-dice-roller-capture.js" + V,
+            "../assets/dice-3d/dice-geometry.js" + V,
+            "../assets/dice-3d/character-sheet-skin-studio.js" + V,
+            "../assets/dice-3d/shared-dice-roller-core.js" + V,
+            "../assets/dice-3d/dice-roller-router.js" + V
+          ]);
+          return list.reduce(function (chain, src) {
+            return chain.then(function () { return load(src); });
+          }, Promise.resolve());
+        })
+        .then(function () {
+          window.dispatchEvent(new CustomEvent("asd-dice-runtime-ready"));
+        })
+        .catch(function (error) {
+          window.ASD_DICE_RUNTIME_ERROR = String((error && error.message) || error);
+          window.dispatchEvent(new CustomEvent("asd-dice-runtime-error"));
+        });
+    })();
+  </script>
+  <script type="module" src="dist/panel.js"></script>
+</body>
+</html>

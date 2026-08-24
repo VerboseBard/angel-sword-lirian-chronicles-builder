@@ -156,7 +156,7 @@ async function handleApi(request, response, pathname) {
 }
 
 async function serveStatic(request, response, pathname) {
-  const cors = /^\/owlbear(\/|$)/i.test(pathname) ? corsHeaders(request) : {};
+  const cors = /^\/owlbear(-dice)?(\/|$)/i.test(pathname) ? corsHeaders(request) : {};
   const absolute = safeStaticPath(pathname);
   if (!absolute) {
     return sendJson(response, 403, { ok: false, message: "Forbidden path." }, cors);
@@ -175,10 +175,10 @@ async function serveStatic(request, response, pathname) {
 
   const type = MIME_TYPES.get(path.extname(absolute).toLowerCase()) || "application/octet-stream";
   const relativePath = path.relative(PROJECT_ROOT, absolute).replace(/\\/g, "/");
-  if (relativePath === "owlbear/manifest.json") {
+  if (/^owlbear(-dice)?\/manifest\.json$/i.test(relativePath)) {
     try {
       const manifest = JSON.parse(await fs.readFile(absolute, "utf8"));
-      const base = `http://${request.headers.host || `${HOST}:${START_PORT}`}/owlbear/`;
+      const base = `http://${request.headers.host || `${HOST}:${START_PORT}`}/${relativePath.replace(/manifest\.json$/i, "")}`;
       const absolutize = (value) => (typeof value === "string" && value ? new URL(value, base).href : value);
       manifest.icon = absolutize(manifest.icon);
       manifest.background_url = absolutize(manifest.background_url);
@@ -191,7 +191,7 @@ async function serveStatic(request, response, pathname) {
       // Serve the raw file if the manifest is temporarily unparseable.
     }
   }
-  const isNoStore = /^(?:assets\/versions\/manifest\.(?:js|json)|owlbear\/manifest\.json|assets\/app\.bundle\.js(?:\.map)?|owlbear\/dist\/[^/]+\.js|owlbear\/[^/]+\.js)$/i.test(relativePath);
+  const isNoStore = /^(?:assets\/versions\/manifest\.(?:js|json)|owlbear(-dice)?\/manifest\.json|assets\/app\.bundle\.js(?:\.map)?|owlbear(-dice)?\/dist\/[^/]+\.js|owlbear(-dice)?\/[^/]+\.js)$/i.test(relativePath);
   const headers = {
     "content-type": type,
     "cache-control": type.includes("text/html") || isNoStore
