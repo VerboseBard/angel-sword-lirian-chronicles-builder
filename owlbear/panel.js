@@ -23,7 +23,6 @@ const fileInput = document.getElementById("character-file");
 const characterCard = document.getElementById("character-card");
 const characterSummary = document.getElementById("character-summary");
 const placeButton = document.getElementById("place-token");
-const saveTokenButton = document.getElementById("save-token");
 const downloadTokenButton = document.getElementById("download-token");
 const clearCharacterButton = document.getElementById("clear-character");
 const bindButton = document.getElementById("bind-token");
@@ -87,8 +86,7 @@ function renderCharacter() {
 }
 
 function renderPlaceButton() {
-  placeButton.hidden = !(activeCharacter && obrApi && tokenImageDataUrl);
-  saveTokenButton.hidden = !(activeCharacter && obrApi && tokenImageFullDataUrl);
+  placeButton.hidden = !(activeCharacter && obrApi && tokenImageFullDataUrl);
   downloadTokenButton.hidden = !(activeCharacter && tokenImageFullDataUrl);
 }
 
@@ -279,62 +277,20 @@ async function pollHandoffsOnce() {
   }
 }
 
+function describePlacementError(error) {
+  let reason = error?.message || error?.error?.message;
+  if (!reason) {
+    try {
+      reason = JSON.stringify(error).slice(0, 200);
+    } catch (stringifyError) {
+      reason = String(error);
+    }
+  }
+  return reason;
+}
+
 async function placeMyToken() {
-  if (!obrApi || !activeCharacter || !tokenImageDataUrl || !playerRecord) {
-    return;
-  }
-  try {
-    if (!(await obrApi.scene.isReady())) {
-      throw new Error("Open an Owlbear scene first, then place the token.");
-    }
-    const [width, height] = await Promise.all([obrApi.viewport.getWidth(), obrApi.viewport.getHeight()]);
-    const center = await obrApi.viewport.inverseTransformPoint({ x: width / 2, y: height / 2 });
-    const sourceUrl = tokenImagePlaceUrl || tokenImageDataUrl;
-    const mime = (tokenImageDataUrl.match(/^data:([^;]+)/) || [])[1] || "image/png";
-    const item = buildImage(
-      { url: sourceUrl, width: 150, height: 150, mime },
-      { dpi: 150, offset: { x: 75, y: 75 } }
-    )
-      .layer("CHARACTER")
-      .name(activeCharacter.name)
-      .position(center)
-      .build();
-    const record = createBindingRecord(activeCharacter, playerRecord, item);
-    item.metadata[TOKEN_BINDING_KEY] = record;
-    await obrApi.scene.items.addItems([item]);
-    await obrApi.player.setMetadata({ [PLAYER_BINDING_KEY]: record });
-    activeBinding = record;
-    renderBinding();
-    setFeedback(`Placed and bound ${record.characterName}.`);
-  } catch (error) {
-    console.error("Angel Sword token placement failed:", error);
-    let reason = error?.message || error?.error?.message;
-    if (!reason) {
-      try {
-        reason = JSON.stringify(error).slice(0, 200);
-      } catch (stringifyError) {
-        reason = String(error);
-      }
-    }
-    setFeedback(`The token could not be placed (${reason}). Fallback: Download Token Image, add the file to Owlbear's asset library as a Character, drag it in from that tab, select it, and press Bind Selected Token.`, true);
-  }
-}
-
-function dataUrlToBlob(dataUrl) {
-  const match = /^data:([^;]+);base64,(.+)$/.exec(dataUrl);
-  if (!match) {
-    throw new Error("The token image data could not be read.");
-  }
-  const binary = atob(match[2]);
-  const bytes = new Uint8Array(binary.length);
-  for (let index = 0; index < binary.length; index += 1) {
-    bytes[index] = binary.charCodeAt(index);
-  }
-  return new Blob([bytes], { type: match[1] });
-}
-
-async function saveTokenToOwlbear() {
-  if (!obrApi || !activeCharacter || !tokenImageFullDataUrl) {
+  if (!obrApi || !activeCharacter || !tokenImageFullDataUrl || !playerRecord) {
     return;
   }
   const tokenName = `${activeCharacter.name} Token`;
@@ -346,19 +302,19 @@ async function saveTokenToOwlbear() {
       .dpi(sizePixels)
       .offset({ x: sizePixels / 2, y: sizePixels / 2 })
       .build();
-    setFeedback("Saving the token to your Owlbear asset library…");
+    setFeedback("Saving your token to Owlbear's asset library…");
     await obrApi.assets.uploadImages([upload], "CHARACTER");
-    setFeedback(`Saved ${tokenName} to your Owlbear Characters library. Pick it in the dialog to place it now.`);
   } catch (error) {
     console.error("Angel Sword token upload failed:", error);
-    setFeedback(`The token could not be saved to Owlbear (${error?.message || String(error)}).`, true);
+    setFeedback(`The token could not be saved to Owlbear (${describePlacementError(error)}). Fallback: Download Token Image, add the file to Owlbear's asset library as a Character, drag it in, and press Bind Selected Token.`, true);
     return;
   }
   try {
+    setFeedback(`Pick ${tokenName} in Owlbear's dialog to place it.`);
     const picks = await obrApi.assets.downloadImages(false, tokenName, "CHARACTER");
     const pick = Array.isArray(picks) ? picks[0] : null;
     if (!pick?.image?.url) {
-      setFeedback(`${tokenName} is in your Owlbear Characters library — drag it onto the scene and press Bind Selected Token.`);
+      setFeedback(`${tokenName} is saved in your Owlbear Characters library — drag it onto the scene and press Bind Selected Token.`);
       return;
     }
     if (!(await obrApi.scene.isReady())) {
@@ -383,6 +339,19 @@ async function saveTokenToOwlbear() {
     console.error("Angel Sword library placement failed:", error);
     setFeedback(`${tokenName} is saved in your Owlbear library — drag it onto the scene and press Bind Selected Token.`);
   }
+}
+
+function dataUrlToBlob(dataUrl) {
+  const match = /^data:([^;]+);base64,(.+)$/.exec(dataUrl);
+  if (!match) {
+    throw new Error("The token image data could not be read.");
+  }
+  const binary = atob(match[2]);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+  return new Blob([bytes], { type: match[1] });
 }
 
 function downloadTokenImage() {
@@ -522,7 +491,6 @@ fileInput.addEventListener("change", async () => {
 });
 
 placeButton.addEventListener("click", placeMyToken);
-saveTokenButton.addEventListener("click", saveTokenToOwlbear);
 downloadTokenButton.addEventListener("click", downloadTokenImage);
 clearCharacterButton.addEventListener("click", clearImportedCharacter);
 bindButton.addEventListener("click", bindSelectedToken);

@@ -1,8 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Angel Sword dice">
-  <rect x="4" y="4" width="56" height="56" rx="12" fill="#1d2333"/>
-  <polygon points="32 8 54 20 54 44 32 56 10 44 10 20" fill="none" stroke="#ffcc40" stroke-width="3" stroke-linejoin="round"/>
-  <polygon points="32 8 54 20 32 32 10 20" fill="rgba(255,204,64,0.18)"/>
-  <line x1="32" y1="32" x2="32" y2="56" stroke="#ffcc40" stroke-width="2"/>
-  <text x="32" y="27" font-family="Georgia, serif" font-size="14" font-weight="bold" fill="#ffe59a" text-anchor="middle">20</text>
-  <path d="M32 34 L36 44 L32 52 L28 44 Z" fill="#9ff3c9" stroke="#5bdca0" stroke-width="1"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <path d="M12 1.5 21.5 7v10L12 22.5 2.5 17V7Z" fill="#f6c63d" stroke="#172036" stroke-width="1.2" stroke-linejoin="round"/>
+  <path d="M12 6.2 16.9 14H7.1Z" fill="none" stroke="#172036" stroke-width="1.1" stroke-linejoin="round"/>
+  <path d="M12 1.5v4.7M2.5 7l4.6 7M21.5 7l-4.6 7M12 22.5 7.1 14M12 22.5l4.9-8.5" fill="none" stroke="#172036" stroke-width="0.9" opacity="0.6"/>
 </svg>
