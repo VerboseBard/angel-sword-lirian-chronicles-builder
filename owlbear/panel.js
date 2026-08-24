@@ -16,6 +16,7 @@ const CHARACTER_STORAGE_KEY = "asb.owlbear.character.v1";
 const TOKEN_IMAGE_KEY = "asb.owlbear.tokenImage.v1";
 const HANDOFF_CONSUMED_KEY = "asb.owlbear.handoff.consumed.v1";
 const HANDOFF_CLEARED_AT_KEY = "asb.owlbear.clearedAt.v1";
+const UPLOADED_TOKENS_KEY = "asb.owlbear.uploadedTokens.v1";
 const MAX_RENDERED_ROLLS = 60;
 
 const statusChip = document.getElementById("status");
@@ -289,32 +290,58 @@ function describePlacementError(error) {
   return reason;
 }
 
+function readUploadedTokens() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(UPLOADED_TOKENS_KEY) || "{}");
+    return stored && typeof stored === "object" ? stored : {};
+  } catch (error) {
+    return {};
+  }
+}
+
+function tokenImageSignature() {
+  return `${tokenImageFullDataUrl.length}:${tokenImageFullDataUrl.slice(-24)}`;
+}
+
 async function placeMyToken() {
   if (!obrApi || !activeCharacter || !tokenImageFullDataUrl || !playerRecord) {
     return;
   }
   const tokenName = `${activeCharacter.name} Token`;
-  try {
-    const blob = dataUrlToBlob(tokenImageFullDataUrl);
-    const sizePixels = 720;
-    const upload = buildImageUpload(blob)
-      .name(tokenName)
-      .dpi(sizePixels)
-      .offset({ x: sizePixels / 2, y: sizePixels / 2 })
-      .build();
-    setFeedback("Saving your token to Owlbear's asset library…");
-    await obrApi.assets.uploadImages([upload], "CHARACTER");
-  } catch (error) {
-    console.error("Angel Sword token upload failed:", error);
-    setFeedback(`The token could not be saved to Owlbear (${describePlacementError(error)}). Fallback: Download Token Image, add the file to Owlbear's asset library as a Character, drag it in, and press Bind Selected Token.`, true);
-    return;
+  const uploaded = readUploadedTokens();
+  const uploadRecord = uploaded[activeCharacter.characterId];
+  const alreadyUploaded = uploadRecord && uploadRecord.name === tokenName && uploadRecord.sig === tokenImageSignature();
+  if (!alreadyUploaded) {
+    try {
+      const blob = dataUrlToBlob(tokenImageFullDataUrl);
+      const sizePixels = 720;
+      const upload = buildImageUpload(blob)
+        .name(tokenName)
+        .dpi(sizePixels)
+        .offset({ x: sizePixels / 2, y: sizePixels / 2 })
+        .build();
+      setFeedback("Saving your token to Owlbear's asset library…");
+      await obrApi.assets.uploadImages([upload], "CHARACTER");
+      uploaded[activeCharacter.characterId] = { name: tokenName, sig: tokenImageSignature() };
+      try {
+        localStorage.setItem(UPLOADED_TOKENS_KEY, JSON.stringify(uploaded));
+      } catch (storageError) {
+        /* dedup memory is a convenience only */
+      }
+      setFeedback(`Saved ${tokenName}. Giving Owlbear a moment to register it…`);
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+    } catch (error) {
+      console.error("Angel Sword token upload failed:", error);
+      setFeedback(`The token could not be saved to Owlbear (${describePlacementError(error)}). Fallback: Download Token Image, add the file to Owlbear's asset library as a Character, drag it in, and press Bind Selected Token.`, true);
+      return;
+    }
   }
   try {
     setFeedback(`Pick ${tokenName} in Owlbear's dialog to place it.`);
     const picks = await obrApi.assets.downloadImages(false, tokenName, "CHARACTER");
     const pick = Array.isArray(picks) ? picks[0] : null;
     if (!pick?.image?.url) {
-      setFeedback(`${tokenName} is saved in your Owlbear Characters library — drag it onto the scene and press Bind Selected Token.`);
+      setFeedback(`${tokenName} was not picked. If it is not listed yet, Owlbear may still be processing it — wait a few seconds and press Place My Token again (it will not upload a duplicate).`);
       return;
     }
     if (!(await obrApi.scene.isReady())) {
