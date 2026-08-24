@@ -7,39 +7,39 @@
   <style>
     :root { color-scheme: dark; font-family: "Segoe UI", system-ui, sans-serif; }
     * { box-sizing: border-box; }
-    body { margin: 0; background: #111827; color: #e8ecf5; font-size: 14px; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    body { margin: 0; background: #111827; color: #e8ecf5; font-size: 13.5px; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
     button, input { font: inherit; }
-    header { display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: #182238; border-bottom: 1px solid #856c24; }
-    header img { width: 26px; height: 26px; }
-    header strong { font-size: 0.95rem; }
-    #status { margin-left: auto; font-size: 0.7rem; font-weight: 700; padding: 3px 8px; border: 1px solid #75652f; border-radius: 999px; color: #ffe59a; }
+    header { display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: #182238; border-bottom: 1px solid #856c24; }
+    header img { width: 24px; height: 24px; }
+    header strong { font-size: 0.92rem; }
+    #status { margin-left: auto; font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border: 1px solid #75652f; border-radius: 999px; color: #ffe59a; }
     #status.is-live { border-color: #3ca777; background: #164e3a; color: #c8ffe6; }
-    nav { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 8px; background: #151e31; }
-    nav button, .primary, .secondary { min-height: 36px; border-radius: 7px; border: 1px solid #38578c; background: #1868b7; color: white; font-weight: 700; cursor: pointer; }
+    nav { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 6px 8px; background: #151e31; }
+    nav button, .primary, .secondary { min-height: 31px; border-radius: 7px; border: 1px solid #38578c; background: #1868b7; color: white; font-weight: 700; cursor: pointer; }
     nav button[aria-selected="true"] { background: #f6c63d; border-color: #f6c63d; color: #172036; }
-    main { padding: 10px; flex: 1; overflow-y: auto; }
+    main { padding: 8px; flex: 1; overflow-y: auto; }
     [data-panel][hidden] { display: none; }
-    .card { background: #1c2740; border: 1px solid #35435f; border-radius: 10px; padding: 10px; margin-bottom: 9px; }
-    .card h2 { margin: 0 0 5px; color: #ffe59a; font-size: 0.95rem; }
-    .card p { margin: 4px 0 8px; color: #bcc7dc; line-height: 1.4; }
-    .character-name { font-size: 1.1rem; font-weight: 800; color: white; }
-    .tags { display: flex; flex-wrap: wrap; gap: 5px; margin: 7px 0; }
-    .tag { padding: 2px 7px; border-radius: 999px; background: #263858; color: #dce7fb; font-size: 0.72rem; }
-    .resources { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 8px; }
-    .resource { text-align: center; background: #111a2c; border-radius: 6px; padding: 5px 2px; }
+    .card { background: #1c2740; border: 1px solid #35435f; border-radius: 9px; padding: 8px; margin-bottom: 7px; }
+    .card h2 { margin: 0 0 4px; color: #ffe59a; font-size: 0.92rem; }
+    .card p { margin: 3px 0 6px; color: #bcc7dc; line-height: 1.35; }
+    .character-name { font-size: 1.05rem; font-weight: 800; color: white; }
+    .tags { display: flex; flex-wrap: wrap; gap: 4px; margin: 5px 0; }
+    .tag { padding: 2px 7px; border-radius: 999px; background: #263858; color: #dce7fb; font-size: 0.7rem; }
+    .resources { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 6px; }
+    .resource { text-align: center; background: #111a2c; border-radius: 6px; padding: 4px 2px; }
     .resource strong { display: block; color: #ffe59a; }
-    .stack { display: grid; gap: 7px; }
+    .stack { display: grid; gap: 6px; }
     .secondary { background: #263858; border-color: #53698f; }
     button:disabled { opacity: 0.45; cursor: not-allowed; }
-    input[type="file"] { width: 100%; padding: 7px; border: 1px dashed #53698f; border-radius: 7px; background: #111a2c; color: #dce7fb; }
-    #feedback { min-height: 1.4em; margin: 7px 0 0; color: #a9bad9; font-size: 0.78rem; }
+    input[type="file"] { width: 100%; padding: 6px; border: 1px dashed #53698f; border-radius: 7px; background: #111a2c; color: #dce7fb; }
+    #feedback { min-height: 1.3em; margin: 5px 0 0; color: #a9bad9; font-size: 0.76rem; }
     #feedback.is-error { color: #ffadad; }
-    #feed { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
-    #feed li { background: #1c2740; border: 1px solid #35435f; border-radius: 8px; padding: 8px 9px; line-height: 1.35; }
-    #feed .who { font-size: 0.72rem; color: #9fb0d8; }
+    #feed { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+    #feed li { background: #1c2740; border: 1px solid #35435f; border-radius: 8px; padding: 7px 8px; line-height: 1.3; }
+    #feed .who { font-size: 0.7rem; color: #9fb0d8; }
     #feed .total { font-weight: 800; color: #ffe59a; }
-    #empty { padding: 18px 8px; color: #9fb0d8; font-size: 0.82rem; }
-    .note { font-size: 0.74rem; color: #9fb0d8; line-height: 1.4; }
+    #empty { padding: 14px 8px; color: #9fb0d8; font-size: 0.8rem; }
+    .note { font-size: 0.72rem; color: #9fb0d8; line-height: 1.35; }
   </style>
 </head>
 <body>

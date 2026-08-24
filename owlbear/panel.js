@@ -15,6 +15,7 @@ import { buildImage } from "@owlbear-rodeo/sdk";
 const CHARACTER_STORAGE_KEY = "asb.owlbear.character.v1";
 const TOKEN_IMAGE_KEY = "asb.owlbear.tokenImage.v1";
 const HANDOFF_CONSUMED_KEY = "asb.owlbear.handoff.consumed.v1";
+const HANDOFF_CLEARED_AT_KEY = "asb.owlbear.clearedAt.v1";
 const MAX_RENDERED_ROLLS = 60;
 
 const statusChip = document.getElementById("status");
@@ -221,7 +222,7 @@ function applyHandoff(event, consumed) {
     consumed.push(event.id);
     localStorage.setItem(HANDOFF_CONSUMED_KEY, JSON.stringify(consumed.slice(-50)));
     renderCharacter();
-    setFeedback(`${normalized.name} arrived from the builder.${tokenImageDataUrl && obrApi ? " Place My Token is ready." : ""}`);
+    setFeedback(`${normalized.name} arrived from the builder at ${new Date(Number(event.ts) || Date.now()).toLocaleTimeString()}.${tokenImageDataUrl && obrApi ? " Place My Token is ready." : ""}`);
   } catch (error) {
     setFeedback(error.message || "A character arrived from the builder but could not be read.", true);
   }
@@ -234,11 +235,12 @@ function clearImportedCharacter() {
   try {
     localStorage.removeItem(CHARACTER_STORAGE_KEY);
     localStorage.removeItem(TOKEN_IMAGE_KEY);
+    localStorage.setItem(HANDOFF_CLEARED_AT_KEY, String(Date.now()));
   } catch (error) {
     /* storage may be unavailable; the in-memory clear still applies */
   }
   renderCharacter();
-  setFeedback("Cleared the imported character. Any token binding stays until you use Clear My Binding.");
+  setFeedback("Cleared the imported character. Only sends newer than this moment will import. Token bindings stay until you use Clear My Binding.");
 }
 
 async function pollHandoffsOnce() {
@@ -253,7 +255,16 @@ async function pollHandoffsOnce() {
     }
     handoffCursor = { boot: data.boot, seq: data.seq };
     const consumed = readConsumedHandoffs();
-    const handoffs = (data.events || []).filter((entry) => entry?.kind === "character-handoff" && entry.id && !consumed.includes(entry.id));
+    let clearedAt = 0;
+    try {
+      clearedAt = Number(localStorage.getItem(HANDOFF_CLEARED_AT_KEY) || 0);
+    } catch (error) {
+      clearedAt = 0;
+    }
+    const handoffs = (data.events || []).filter((entry) => entry?.kind === "character-handoff"
+      && entry.id
+      && !consumed.includes(entry.id)
+      && (!clearedAt || Number(entry.ts) > clearedAt));
     if (handoffs.length) {
       applyHandoff(handoffs[handoffs.length - 1], consumed);
     }
@@ -290,7 +301,14 @@ async function placeMyToken() {
     setFeedback(`Placed and bound ${record.characterName}.`);
   } catch (error) {
     console.error("Angel Sword token placement failed:", error);
-    const reason = error?.message || String(error);
+    let reason = error?.message || error?.error?.message;
+    if (!reason) {
+      try {
+        reason = JSON.stringify(error).slice(0, 200);
+      } catch (stringifyError) {
+        reason = String(error);
+      }
+    }
     setFeedback(`The token could not be placed (${reason}). Use Download Token Image, drag that file onto the scene, select it, and press Bind Selected Token.`, true);
   }
 }
