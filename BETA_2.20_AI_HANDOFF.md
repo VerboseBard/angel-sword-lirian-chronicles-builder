@@ -1,6 +1,6 @@
 # Angel Sword Public Beta 2.20 — AI Handoff and Work Ledger
 
-Last updated: 2026-08-16
+Last updated: 2026-08-23
 
 ## Purpose
 
@@ -8,8 +8,26 @@ This is the authoritative continuation file for Beta 2.20 development. Any AI or
 working in this repository must read this file before changing code and update it whenever
 work is started, completed, tested, deferred, or found to need an owner ruling.
 
-For Roll20-specific work, also read `BETA_2.20_ROLL20_HANDOFF.md`; it is the authoritative
-feature handoff for the selected first live VTT adapter.
+The current release authority is `BETA_3_OWLBEAR_RELEASE_ROADMAP_2026-08-23.md`.
+Owlbear Rodeo is the first and release-defining VTT adapter. Roll20 and Foundry documents are
+retained as historical/parked adapter records and must not redirect active work away from
+Owlbear.
+
+## 2026-08-23 owner priority and naming decision
+
+- Finish and physically prove the Owlbear Companion before Roll20 or Foundry work.
+- After Owlbear is reliable, harden the four dice sets, roll sound, release-blocking rules,
+  and the current interface.
+- Then create official Clio characters, import their `.aschar.json` exports here, compare every
+  meaningful field, fix the differences, and preserve them as regression fixtures. Repeat the
+  proof in the opposite direction.
+- When those gates pass, this builder advances directly to **Angel Sword Character Builder
+  Beta 3**. Do not use Beta 2.5 as an intermediate public identity.
+- The project formerly called Public Beta 3.0 is now the separate, parked **Game Interface —
+  Angel Sword Character Sheet Alpha 1** experiment. Its redesign scope does not belong in this
+  builder release.
+- Keep the visible/package version at its inherited value until the release gates pass and the
+  owner explicitly approves publication.
 
 ## Write boundary
 
@@ -103,7 +121,7 @@ Status: COMMUNITY BUG SWEEP REQUIREMENT/RACE/PROFICIENCY/CCS/BATTLE-MODE PASS IM
   `node --check src/js/integrations.js`, and `git diff --check` all pass. Git printed only the
   repository's existing LF-to-CRLF notices.
 
-### 2026-07-21 — Roll20 selected as the first live adapter
+### 2026-07-21 — Roll20 selected as the first live adapter (historical; superseded 2026-08-23)
 
 - Owner confirmed Roll20 is the tabletop used by most users of this builder, so the public
   Roll20 bridge takes priority over Owlbear Rodeo and Foundry adapters.

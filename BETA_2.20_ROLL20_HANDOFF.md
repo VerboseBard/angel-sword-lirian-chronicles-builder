@@ -1,5 +1,11 @@
 # Beta 2.20 Roll20 Integration Handoff
 
+> **Priority notice — 2026-08-23:** Roll20 is parked and is no longer the first live-adapter
+> priority or a blocker for the next builder release. Owlbear Rodeo is the release-defining
+> integration. Preserve this document as historical protocol/fallback information; do not
+> resume bridge or native-sheet implementation without a new owner directive. See
+> `BETA_3_OWLBEAR_RELEASE_ROADMAP_2026-08-23.md`.
+
 Last updated: 2026-07-21
 
 > **Product disposition — 2026-08-16:** The userscript bridge documented below

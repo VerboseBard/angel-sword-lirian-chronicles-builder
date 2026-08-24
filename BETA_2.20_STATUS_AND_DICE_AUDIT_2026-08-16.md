@@ -2,10 +2,16 @@
 
 Audited: 2026-08-16
 
+Priority corrected: 2026-08-23. For the authoritative current execution order and release
+identity, read `BETA_3_OWLBEAR_RELEASE_ROADMAP_2026-08-23.md`. Historical test evidence below
+remains valid, but the former Roll20-first and “Owlbear later” recommendations are superseded.
+
 ## Executive decision
 
-Beta 3.0 is parked. The near-term product should continue from the Beta 2.20 working tree;
-no redesign work is required for the current plan.
+The former Beta 3.0 redesign is now the separate, parked **Game Interface — Angel Sword
+Character Sheet Alpha 1** project. The near-term product continues from this Beta 2.20 working
+tree and will become **Angel Sword Character Builder Beta 3** after the Owlbear, builder-
+hardening, and official Clio comparison release gates pass. No complete redesign is required.
 
 The four visual dice sets are already integrated into the local Beta 2.20 character sheet:
 
@@ -17,8 +23,8 @@ The four visual dice sets are already integrated into the local Beta 2.20 charac
 They are not merely loose art files. They are registered, selectable, loaded by the live
 character sheet, routed through the shared renderer, and exercised by current browser tests.
 No missing fifth step or missing set was found, so this audit did not add duplicate runtime
-code. The important qualification is release state: the four-set work exists in the dirty
-local working tree and has not been committed or published.
+code. The important qualification is release state: the four-set work is committed on the
+development branch but has not been merged or published.
 
 ## What is working successfully
 
@@ -42,8 +48,10 @@ local working tree and has not been committed or published.
   semantically release-certified against the newer community Google Sheet formulas.
 - Roll20 macro copy and the optional bridge protocol pass 64 focused checks, including mocked
   connection, acknowledgement, token, initiative, and spend ordering paths.
-- VTT adapter structure passes 58 checks. World Anvil copy is usable. Owlbear and Foundry are
-  still prototypes pending the architecture/package and physical tests listed below.
+- The current VTT/Owlbear suite passes 79 focused checks. Owlbear Companion v0.2 has
+  extension-native character import, ownership-aware token binding, test rolls, a deduplicated
+  room log, a background page, and deployment packaging. It remains Alpha until a real GM plus
+  second-player room and HTTPS staging test pass. Foundry is parked.
 - The sanitized JesterBaster Foundry CSB reference and read-only mapper pass 15 focused checks.
 
 ## Four-set dice integration trace
@@ -98,7 +106,6 @@ as a monitored test-harness flake unless it becomes reproducible.
 - Current item mod/material tiers and combat effects, including Agile Weave, Protective
   Coating, and Nio Stoneskin.
 - Separate maximum-two Transmuter/Alkahest discipline values.
-- Creation Job/Train/Other spending after deciding how Train EXP changes displayed Spirit Core.
 - The confirmed Mirane mod-timing rule when the owner is ready to bring that later item forward.
 
 ### Product hardening
@@ -107,8 +114,8 @@ as a monitored test-harness flake unless it becomes reproducible.
   it is not a missing visual set.
 - Reconcile CCS export with the current community sheet/template as one template-and-mapper
   update, with Pixie/Fae/Chimera, Mirane, Spirit Core, class-row, and formula regressions.
-- Decide the final Beta 2.20 release scope, clean the dirty worktree deliberately, then change
-  package/UI/version identity from Beta 2.13 to Beta 2.20 as one release operation.
+- Complete the Beta 3 release gates, then change package/UI/version identity from the inherited
+  Beta 2.13 value to Builder Beta 3 as one owner-approved release operation.
 - Replace the soft 512px PWA icon when a true high-resolution source becomes available.
 
 ## What still needs physical or account-backed testing
@@ -116,24 +123,21 @@ as a monitored test-harness flake unless it becomes reproducible.
 - Real iPhone/iPad Safari and macOS Safari; Playwright WebKit is useful but not certification.
 - Representative low- and mid-range Android phones, Firefox Android, and touch/GPU/memory load.
 - Brave with Shields on and off. Brave is not installed on this machine; Chromium proxy passed.
-- Native Roll20 community-sheet development in a Pro test game: validate the
-  paste-once importer, mapped totals, native roll buttons, persisted resources,
-  overwrite confirmation, and player use in Chrome, Edge, Firefox, and Safari.
-  The old browser-userscript bridge is no longer a player-facing release path.
-- Owlbear in a real two-account room, followed by the expected storage-partition-safe redesign.
-- A packaged Foundry 14 + CSB 6.0.2 clean-world install, template binding, schema rejection,
-  multi-user isolation, and uninstall/reinstall behavior.
+- Owlbear in a real two-account room, followed by an unlisted HTTPS staging test from separate
+  devices and networks. This is the first physical priority and a Builder Beta 3 blocker.
 - CCS upload to Google Drive/Sheets with current formulas revived and all supported regions
   compared against a complex character.
-- Repeat official Clio vault interoperability after the remaining major rules/equipment ports.
+- Repeat official Clio interoperability as a field-by-field comparison after the selected
+  rules/equipment ports. Save official exports as automated regression fixtures.
+- Roll20 and Foundry physical/package work is parked and is not a Builder Beta 3 blocker.
 
 ## Recommended next sequence
 
-1. Freeze Beta 3.0 and keep all implementation in Beta 2.20.
-2. Complete the rules/creation correctness list before adding new integration scope.
-3. Correct item quantities, mods/material effects, and Transmuter/Alkahest disciplines.
-4. Reconcile the current CCS template and add dice mute.
-5. Run the full automated gate again, then perform physical phone/Brave/Safari and Roll20 tests.
-6. Treat Owlbear redesign and Foundry packaging as later adapter tracks, not blockers for the
-   core builder unless they are explicitly included in the Beta 2.20 release promise.
-7. Only after scope approval: clean/commit, update the visible version identity, and publish.
+1. Keep implementation in this working tree; treat the old redesign as Game Interface Alpha 1.
+2. Install and physically test Owlbear with one GM and a second player in a disposable room.
+3. Fix Owlbear defects, publish to an unlisted HTTPS staging address, and repeat remotely.
+4. Physically harden the four dice sets and sound, then complete the selected rules/interface
+   corrections that affect creation, play, or exported character meaning.
+5. Run official Clio-to-local and local-to-official field comparisons and preserve fixtures.
+6. Run the full automated and physical browser/device gate.
+7. Only after owner approval: rename the current builder to Beta 3, merge, and publish.

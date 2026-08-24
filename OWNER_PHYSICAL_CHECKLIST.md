@@ -1,17 +1,17 @@
 # Owner Checklist & Connection Tutorials — verified edition
 
-Last updated: 2026-08-16. Automated checks have run every local step they can reach,
+Last updated: 2026-08-23. Automated checks have run every local step they can reach,
 and earlier live checks used the official sites. Steps marked **[VERIFIED]**
 were actually executed and worked exactly as written. Steps marked **[YOU]** need your
 hands, accounts, or installs. Item statuses:
 
 | # | Connection | Status |
 |---|---|---|
-| 1 | Roll20 | Manual macro copy works across browsers. The userscript bridge is retired from the player interface. A native Roll20 community sheet/importer is the required one-click solution. |
-| 2 | Owlbear Rodeo | **Local v0.2 milestone verified.** Character import, ownership-aware token binding, a shared room roll contract/log, the background page, deployment packaging, and standalone safeguards are automated. A real GM + second-player room test still needs your Owlbear account. |
-| 3 | Foundry VTT | Foundry is NOT installed on this PC (searched Program Files, AppData, E:). Waits until you install it. |
-| 4 | CCS spreadsheet | **File generation fully verified** — real browser download, correct values in correct cells, styles intact. Only the Google-Drive "formulas revive" check remains. |
-| 5 | .aschar ↔ official vault | **PASSED — fully verified live.** Our export was imported by the official vault's own code at clio.angelssword.com and the character appears in their vault list. Nothing left to do. |
+| 1 | Owlbear Rodeo | **ACTIVE PRIORITY.** Local v0.2 automation is verified. A real GM + second-player room test and an unlisted HTTPS staging test are the next release gates. |
+| 2 | Dice/rules/interface | **ACTIVE AFTER OWLBEAR.** Physically verify all four sets and sound, then fix release-blocking character and interface differences. |
+| 3 | Official Clio parity | **FILE DOORWAY PASSED; FIELD COMPARISON STILL REQUIRED.** Repeat with deliberate official characters and compare every meaningful value in both directions. |
+| 4 | CCS spreadsheet | File generation is verified. The Google Drive formula-revival check remains but is not ahead of Owlbear. |
+| 5 | Roll20 and Foundry | **PARKED.** Existing fallback/prototype work is preserved, but neither is a blocker for Builder Beta 3. |
 
 ---
 
@@ -37,7 +37,7 @@ complete character in seconds instead of building one by hand.
 
 ---
 
-## Tutorial 1 — Roll20 current fallback and native-sheet target
+## Reference A — Roll20 current fallback (parked)
 
 The browser-userscript bridge is no longer a player feature. Players should not
 install Tampermonkey, enable browser developer settings, or import `.user.js` files.
@@ -62,7 +62,7 @@ buttons inside Roll20. See `docs/roll20-native-sheet-plan.md`.
 A Pro-only Roll20 Mod may later add token-bar and turn-tracker automation, but it
 must be GM-installed and optional. The community sheet must work without it.
 
-## Tutorial 2 — Owlbear Rodeo (~15 min, needs your Owlbear account)
+## Priority 1 — Owlbear Rodeo (~15 min, needs your Owlbear account)
 
 1. Start the local server and use the exact port it prints. The local install link is
    `http://127.0.0.1:<port>/owlbear/manifest.json` (for example, port 4176).
@@ -93,7 +93,7 @@ work. This milestone does not apply HP changes, movement, conditions, Lyrian ini
 mirrored visual dice. The permanent public manifest is packaged for a future deployment but
 has not been published. See `docs/owlbear-gm-setup-tutorial.md` for the recording walkthrough.
 
-## Tutorial 3 — Foundry VTT (~10 min once Foundry exists on this PC)
+## Reference B — Foundry VTT (parked)
 
 Confirmed: no Foundry installation on this machine, so step 1 is the gate.
 
@@ -114,7 +114,7 @@ Confirmed: no Foundry installation on this machine, so step 1 is the gate.
    `/asroll save` → 2d10 + save.
 7. Confirm the Actors tab is untouched — the module never creates Actors by design.
 
-## Tutorial 4 — CCS spreadsheet → Google Drive (~5 min, needs your Google account)
+## Later check — CCS spreadsheet → Google Drive (~5 min, needs your Google account)
 
 Machine half already **[VERIFIED]**: the exported file was downloaded through a real
 browser, and its cells were inspected — name/race strings, stat numbers, checkbox
@@ -132,20 +132,29 @@ intact. What no machine here can check is Google's IMPORTRANGE revival:
    hand-filled CCS you can find and describe how people write in it — that's the one
    region our exporter deliberately leaves blank.
 
-## Tutorial 5 — .aschar ↔ official vault — **DONE, nothing to do**
+## Priority 3 — Official Clio interoperability and parity
 
-Fully verified live on 2026-07-23 by `scripts/verify-interop-live.mjs`: real button
+The basic file doorway was verified live on 2026-07-23 by `scripts/verify-interop-live.mjs`: real button
 download → real upload into https://clio.angelssword.com/characterbuilder/vault.html →
-their import code accepted it → character listed in their vault. Re-run the proof any
-time with the server running:
+their import code accepted it → character listed in their vault. That proves acceptance, not
+complete character parity. After Owlbear and the selected dice/rules/interface work:
+
+1. Build a deliberate character in official Clio and export its `.aschar.json`.
+2. Import it here and compare identity, ancestry, classes/levels, stats, skills/expertise,
+   breakthroughs, interlude actions, EXP, Spirit Core, Clim, equipment, quantities,
+   mods/materials, resources, and derived values.
+3. Classify and fix every mismatch; save the official export as a regression fixture.
+4. Export the matching local character, import it into official Clio, and compare again.
+5. Repeat with edge-case characters until the comparison suite is representative.
+
+The original acceptance proof can be rerun with the server running:
 
 ```
 node scripts/verify-interop-live.mjs
 ```
 
-(The reverse direction — an official export into our Import button — is covered by the
-automated import tests; if you ever hit a real official file that misbehaves, save it for
-the next session.)
+(The reverse-direction parser is covered by automated tests, but the new requirement is a
+human-readable, field-by-field parity audit backed by saved official fixtures.)
 
 ## Optional: browser-assisted verification
 

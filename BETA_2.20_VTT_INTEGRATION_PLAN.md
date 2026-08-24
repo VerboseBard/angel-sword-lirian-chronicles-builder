@@ -1,5 +1,9 @@
 # Beta 2.20 VTT and Character-Service Integration Plan
 
+> **Priority notice — 2026-08-23:** This plan's older cross-platform ordering is superseded.
+> Owlbear Rodeo is the only active VTT release priority. Roll20 and Foundry are parked because
+> other contributors own those directions. See `BETA_3_OWLBEAR_RELEASE_ROADMAP_2026-08-23.md`.
+
 Last verified: 2026-08-16
 
 ## Naming clarification
