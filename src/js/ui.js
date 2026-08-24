@@ -23072,7 +23072,11 @@ function openRoll20BridgeSetupModal() {
       });
     }
 function getLocalOwlbearManifestUrl() {
-      return new URL(OWLBEAR_EXTENSION_PATH, window.location.href).href;
+      const manifestUrl = new URL(OWLBEAR_EXTENSION_PATH, window.location.href);
+      if (manifestUrl.hostname === "127.0.0.1") {
+        manifestUrl.hostname = "localhost";
+      }
+      return manifestUrl.href;
     }
 function isLocalOwlbearPreviewAvailable() {
       return /^(?:127\.0\.0\.1|localhost)$/i.test(window.location.hostname);
@@ -23094,6 +23098,13 @@ function openOwlbearSetupGuide() {
             <section>
               <strong>1. Install the extension as the GM</strong>
               <p>Open your Owlbear profile, choose <em>Add Extension</em>, and paste the Angel Sword install link. The current public link is intentionally disabled because it has not been deployed yet.</p>
+              ${localPreviewAvailable ? `
+                <p><strong>Testing on this computer today:</strong> paste this local install link into Owlbear's <em>Add a custom extension</em> box, then press <em>Add</em>. Keep this builder's local server running while Owlbear uses it.</p>
+                <p><small><code>${escapeHtml(localInstallUrl)}</code></small></p>
+                <div class="sheet-modal-form-actions">
+                  <button type="button" class="sheet-modal-action" data-owlbear-copy-local-install>Copy Local Test Install Link</button>
+                </div>
+              ` : ""}
               <div class="sheet-modal-form-actions">
                 <a class="sheet-modal-action" href="https://www.owlbear.rodeo/profile" target="_blank" rel="noopener noreferrer">Open Owlbear Profile</a>
                 <button type="button" class="sheet-modal-action" disabled title="The public extension currently returns 404 and must be deployed before release.">Public Install Coming Soon</button>

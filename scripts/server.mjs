@@ -32,13 +32,24 @@ const MIME_TYPES = new Map([
   [".woff2", "font/woff2"]
 ]);
 
-function sendJson(response, status, data) {
+function sendJson(response, status, data, extraHeaders = {}) {
   const body = JSON.stringify(data, null, 2);
   response.writeHead(status, {
     "content-type": "application/json; charset=utf-8",
-    "cache-control": "no-store"
+    "cache-control": "no-store",
+    ...extraHeaders
   });
   response.end(body);
+}
+
+function corsHeaders(request) {
+  return {
+    "access-control-allow-origin": request.headers.origin || "*",
+    "access-control-allow-methods": "GET, HEAD, OPTIONS",
+    "access-control-allow-headers": "*",
+    "access-control-allow-private-network": "true",
+    "vary": "origin"
+  };
 }
 
 function safeStaticPath(urlPath) {
@@ -67,21 +78,22 @@ async function handleApi(request, response, pathname) {
   return sendJson(response, 404, { ok: false, message: "Unknown local API endpoint." });
 }
 
-async function serveStatic(response, pathname) {
+async function serveStatic(request, response, pathname) {
+  const cors = /^\/owlbear(\/|$)/i.test(pathname) ? corsHeaders(request) : {};
   const absolute = safeStaticPath(pathname);
   if (!absolute) {
-    return sendJson(response, 403, { ok: false, message: "Forbidden path." });
+    return sendJson(response, 403, { ok: false, message: "Forbidden path." }, cors);
   }
 
   let stat;
   try {
     stat = await fs.stat(absolute);
   } catch {
-    return sendJson(response, 404, { ok: false, message: "File not found." });
+    return sendJson(response, 404, { ok: false, message: "File not found." }, cors);
   }
 
   if (stat.isDirectory()) {
-    return serveStatic(response, `${pathname.replace(/\/$/, "")}/index.html`);
+    return serveStatic(request, response, `${pathname.replace(/\/$/, "")}/index.html`);
   }
 
   const type = MIME_TYPES.get(path.extname(absolute).toLowerCase()) || "application/octet-stream";
@@ -91,11 +103,9 @@ async function serveStatic(response, pathname) {
     "content-type": type,
     "cache-control": type.includes("text/html") || isMutableVersionManifest
       ? "no-store"
-      : "public, max-age=60"
+      : "public, max-age=60",
+    ...cors
   };
-  if (relativePath.startsWith("owlbear/")) {
-    headers["access-control-allow-origin"] = "https://www.owlbear.rodeo";
-  }
   response.writeHead(200, headers);
   createReadStream(absolute).pipe(response);
 }
@@ -104,11 +114,16 @@ function createServer() {
   return http.createServer(async (request, response) => {
     try {
       const url = new URL(request.url, `http://${request.headers.host || `${HOST}:${START_PORT}`}`);
+      if (request.method === "OPTIONS") {
+        response.writeHead(204, corsHeaders(request));
+        response.end();
+        return;
+      }
       if (url.pathname.startsWith("/api/")) {
         await handleApi(request, response, url.pathname);
         return;
       }
-      await serveStatic(response, url.pathname);
+      await serveStatic(request, response, url.pathname);
     } catch (error) {
       sendJson(response, 500, {
         ok: false,
@@ -133,7 +148,7 @@ function openBrowser(url) {
   execFile("xdg-open", [url]);
 }
 
-function listenOnPort(server, port) {
+function listenOnPort(server, port, host = HOST) {
   return new Promise((resolve, reject) => {
     const onError = (error) => {
       server.off("listening", onListening);
@@ -145,7 +160,7 @@ function listenOnPort(server, port) {
     };
     server.once("error", onError);
     server.once("listening", onListening);
-    server.listen(port, HOST);
+    server.listen(port, host);
   });
 }
 
@@ -155,8 +170,17 @@ async function start() {
     const server = createServer();
     try {
       await listenOnPort(server, port);
+      if (HOST === "127.0.0.1") {
+        const ipv6Loopback = createServer();
+        try {
+          await listenOnPort(ipv6Loopback, port, "::1");
+        } catch {
+          ipv6Loopback.close();
+        }
+      }
       const url = `http://${HOST}:${port}/`;
       console.log(`Lyrian Beta 2.13 public build running at ${url}`);
+      console.log(`Owlbear local install link: http://localhost:${port}/owlbear/manifest.json`);
       console.log("Close this terminal window to stop the local development server.");
       openBrowser(url);
       return;
