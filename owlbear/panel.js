@@ -309,7 +309,7 @@ async function placeMyToken() {
         reason = String(error);
       }
     }
-    setFeedback(`The token could not be placed (${reason}). Use Download Token Image, drag that file onto the scene, select it, and press Bind Selected Token.`, true);
+    setFeedback(`The token could not be placed (${reason}). Fallback: Download Token Image, add the file to Owlbear's asset library as a Character, drag it in from that tab, select it, and press Bind Selected Token.`, true);
   }
 }
 
