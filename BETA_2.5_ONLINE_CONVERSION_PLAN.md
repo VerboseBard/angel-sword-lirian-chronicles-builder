@@ -149,6 +149,13 @@ Collect requirements later; do not scope-creep 2.5.
   new dot.
 
 ### Backlog — dice art QC (from the 2026-08-25 placement review)
+- **Rana d4 re-bake (TOP of the art pass, owner-flagged):** all twelve corner
+  numbers overhang or miss their painted medallion circles (apex numbers
+  spill below, bottom corners drift toward the face interior — see
+  qa-test-results/dice-face-audit/d4.png). Asari and Leaflit d4 corners
+  verified acceptable; Angel d4 is engine-drawn onto a blank plate and
+  immune. Alternative if no art session: retrofit Angel-style engine corner
+  redraw for rana (erase medallion interior, draw fitted number).
 - **Workshop re-bake pass** for the 58 baseline-flagged faces
   (`qa-test-results/dice-face-audit/numeral-placement.json`; sheets
   `placement--<set>.png`). The rule the re-bake must satisfy, owner-derived:
