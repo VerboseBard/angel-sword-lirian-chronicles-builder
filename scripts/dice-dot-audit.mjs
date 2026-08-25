@@ -41,7 +41,7 @@ async function main() {
     await page.waitForFunction(() => document.documentElement.dataset.ready === "true", undefined, { timeout: 60000 });
     const sheet = await page.evaluate(async () => {
       const roller = window.LyrianAccurateDiceRoller;
-      const KEYS = { d6: ["6"], d8: ["6"], d10: ["6", "9"], d12: ["6", "9"], d20: ["6", "9"] };
+      const KEYS = { d10: ["6", "9"], d12: ["6", "9"], d20: ["6", "9"] };
       const SETS = ["new-angelsword", "asari-full-set-draft", "leaflit-full-set", "rana-full-set"];
       const cells = [];
       for (const setId of SETS) {

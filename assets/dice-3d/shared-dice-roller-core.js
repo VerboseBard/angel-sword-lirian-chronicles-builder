@@ -28,7 +28,7 @@
     100: "d00"
   };
 
-  const ROLLER_VERSION = "dice-lab-scripted-side-entry-19-ambiguity-dots";
+  const ROLLER_VERSION = "dice-lab-scripted-side-entry-20-numeral-tracked-dots";
 
   /* Dice whose result face is aimed at the camera at rest (owner contract:
      "what is on the dice is what's shown"). d4 reads at a corner and d6's
@@ -703,12 +703,11 @@
      settled die show at arbitrary rotations, so every numeral that reads as
      a different number upside down gets the dot, on every die of every set
      — current and future. */
-  /* Only lone 6s and 9s are ambiguous — owner ruling: multi-digit faces
-     (16, 19, the percentile tens) self-identify, the extra digit tells you
-     the orientation. */
+  /* Owner rulings: only lone 6s and 9s are ambiguous, and only on dice
+     that carry BOTH (no 9 on a d6/d8 means a rotated 6 has nothing to be
+     confused with). Multi-digit faces (16, 19, percentile tens)
+     self-identify — the extra digit tells you the orientation. */
   const AMBIGUOUS_FACE_KEYS = {
-    d6: ["6"],
-    d8: ["6"],
     d10: ["6", "9"],
     d12: ["6", "9"],
     d20: ["6", "9"]
@@ -727,10 +726,70 @@
 
   const SIX_NINE_DOT_OFFSET = { d10: 0.14, d12: 0.15, d20: 0.17 };
 
+  function pointInPolygon(x, y, polygon) {
+    let inside = false;
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i, i += 1) {
+      const a = polygon[i];
+      const b = polygon[j];
+      if ((a.y > y) !== (b.y > y) && x < ((b.x - a.x) * (y - a.y)) / (b.y - a.y) + a.x) {
+        inside = !inside;
+      }
+    }
+    return inside;
+  }
+
+  /* The numeral position is baked into each face painting and drifts a few
+     percent face to face (Workshop generation variance). Measure where the
+     numeral actually is — high-contrast pixels in a narrow central column —
+     so the dot hugs ITS numeral instead of assuming a fixed spot. */
+  function measureNumeralBottom(context, dieKey, size) {
+    const polygon = geo().facePolygon(dieKey, size);
+    const centroid = geo().polygonCentroid(polygon);
+    const zone = scalePolygon(polygon, 0.58);
+    const halfColumn = size * 0.17;
+    const data = context.getImageData(0, 0, size, size).data;
+    const samples = [];
+    const step = 3;
+    for (let y = 0; y < size; y += step) {
+      for (let x = 0; x < size; x += step) {
+        if (Math.abs(x - centroid.x) > halfColumn || !pointInPolygon(x, y, zone)) {
+          continue;
+        }
+        const offset = (y * size + x) * 4;
+        samples.push({ x, y, r: data[offset], g: data[offset + 1], b: data[offset + 2] });
+      }
+    }
+    if (samples.length < 60) {
+      return null;
+    }
+    const channelMedian = (key) => {
+      const sorted = samples.map((sample) => sample[key]).sort((left, right) => left - right);
+      return sorted[Math.floor(sorted.length / 2)];
+    };
+    const median = { r: channelMedian("r"), g: channelMedian("g"), b: channelMedian("b") };
+    const outliers = samples.filter((sample) => {
+      const dr = sample.r - median.r;
+      const dg = sample.g - median.g;
+      const db = sample.b - median.b;
+      return Math.sqrt(dr * dr + dg * dg + db * db) > 88;
+    });
+    if (outliers.length < 30 || outliers.length > samples.length * 0.6) {
+      return null;
+    }
+    const ys = outliers.map((sample) => sample.y).sort((left, right) => left - right);
+    return ys[Math.floor(ys.length * 0.95)];
+  }
+
   function drawSixNineDot(context, dieKey, size) {
-    const centroid = geo().polygonCentroid(geo().facePolygon(dieKey, size));
+    const polygon = geo().facePolygon(dieKey, size);
+    const centroid = geo().polygonCentroid(polygon);
     const x = centroid.x;
-    const y = centroid.y + size * (SIX_NINE_DOT_OFFSET[dieKey] || 0.16);
+    const measuredBottom = measureNumeralBottom(context, dieKey, size);
+    const fallbackY = centroid.y + size * (SIX_NINE_DOT_OFFSET[dieKey] || 0.16);
+    let y = measuredBottom === null ? fallbackY : measuredBottom + size * 0.042;
+    const floor = scalePolygon(polygon, 0.66);
+    const lowest = Math.max(...floor.map((point) => point.y));
+    y = Math.min(y, lowest - size * 0.02);
     const radius = size * 0.021;
     context.save();
     context.beginPath();
