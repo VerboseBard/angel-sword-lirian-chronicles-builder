@@ -167,9 +167,17 @@ async function main() {
           }
           const meanY = group.reduce((sum, entry) => sum + entry.m.cy, 0) / group.length;
           const meanX = group.reduce((sum, entry) => sum + entry.m.cx, 0) / group.length;
+          /* The eye aligns numerals by their BOTTOM edge (baseline), not
+             their center: two-digit glyphs are drawn smaller, so centered
+             numerals leave their bottoms riding high — the owner's read.
+             Baseline deviation is therefore the flagging metric. */
+          const meanBottom = group.reduce((sum, entry) => sum + entry.m.bottom, 0) / group.length;
           group.forEach((entry) => {
             entry.devY = ((entry.m.cy - meanY) / SIZE) * 100;
             entry.devX = ((entry.m.cx - meanX) / SIZE) * 100;
+            entry.devBase = ((entry.m.bottom - meanBottom) / SIZE) * 100;
+            entry.meanBottom = meanBottom;
+            entry.heightPct = ((entry.m.bottom - entry.m.top) / SIZE) * 100;
           });
         }
         measured.forEach((entry, index) => {
@@ -180,37 +188,45 @@ async function main() {
           if (entry.image) {
             sheetContext.drawImage(entry.image, x + 4, y + 30, cellW - 8, cellW - 8);
           }
-          const flagged = entry.devY !== undefined && (Math.abs(entry.devY) > flagPct || Math.abs(entry.devX) > flagPct);
+          const flagged = entry.devBase !== undefined && (Math.abs(entry.devBase) > flagPct || Math.abs(entry.devX) > flagPct);
           sheetContext.fillStyle = flagged ? "#ff8a8a" : "#ffe59a";
           sheetContext.font = "700 12px Segoe UI";
           sheetContext.fillText(`${entry.dieKey} ${entry.key}`, x + 5, y + 13);
           sheetContext.font = "400 11px Segoe UI";
           sheetContext.fillStyle = flagged ? "#ff8a8a" : "#9fb0d8";
           sheetContext.fillText(
-            entry.m?.art ? "art face" : entry.devY === undefined ? "no read" : `y${entry.devY >= 0 ? "+" : ""}${entry.devY.toFixed(1)}% x${entry.devX >= 0 ? "+" : ""}${entry.devX.toFixed(1)}%`,
+            entry.m?.art ? "art face" : entry.devBase === undefined ? "no read" : `base${entry.devBase >= 0 ? "+" : ""}${entry.devBase.toFixed(1)}% x${entry.devX >= 0 ? "+" : ""}${entry.devX.toFixed(1)}%`,
             x + 5,
             y + 26
           );
-          if (entry.m && !entry.m.art) {
+          if (entry.m && !entry.m.art && entry.devBase !== undefined) {
             const scale = (cellW - 8) / SIZE;
-            const px = x + 4 + entry.m.cx * scale;
-            const py = y + 30 + entry.m.cy * scale;
-            sheetContext.strokeStyle = flagged ? "#ff5050" : "#7fd8a8";
-            sheetContext.lineWidth = 1.4;
+            const cellLeft = x + 4;
+            const bottomY = y + 30 + entry.m.bottom * scale;
+            const meanYpx = y + 30 + entry.meanBottom * scale;
+            sheetContext.strokeStyle = "#9fb0d8";
+            sheetContext.setLineDash([3, 3]);
             sheetContext.beginPath();
-            sheetContext.moveTo(px - 7, py);
-            sheetContext.lineTo(px + 7, py);
-            sheetContext.moveTo(px, py - 7);
-            sheetContext.lineTo(px, py + 7);
+            sheetContext.moveTo(cellLeft + 10, meanYpx);
+            sheetContext.lineTo(cellLeft + cellW - 18, meanYpx);
+            sheetContext.stroke();
+            sheetContext.setLineDash([]);
+            sheetContext.strokeStyle = flagged ? "#ff5050" : "#7fd8a8";
+            sheetContext.lineWidth = 1.6;
+            sheetContext.beginPath();
+            sheetContext.moveTo(cellLeft + 22, bottomY);
+            sheetContext.lineTo(cellLeft + cellW - 30, bottomY);
             sheetContext.stroke();
           }
-          if (entry.devY !== undefined) {
+          if (entry.devBase !== undefined) {
             results.push({
               setId,
               dieKey: entry.dieKey,
               key: entry.key,
-              devYpct: Number(entry.devY.toFixed(2)),
+              baselineDevPct: Number(entry.devBase.toFixed(2)),
+              centerDevYpct: Number(entry.devY.toFixed(2)),
               devXpct: Number(entry.devX.toFixed(2)),
+              glyphHeightPct: Number(entry.heightPct.toFixed(2)),
               flagged
             });
           } else {
@@ -228,10 +244,10 @@ async function main() {
     await writeFile(path.join(outDir, "numeral-placement.json"), JSON.stringify(report.results, null, 2));
     const flagged = report.results.filter((entry) => entry.flagged);
     const unmeasured = report.results.filter((entry) => entry.unmeasured === "no-read");
-    console.log(`Measured ${report.results.length} faces. Flagged beyond ${FLAG_PCT}%: ${flagged.length}. Unreadable: ${unmeasured.length}.`);
+    console.log(`Measured ${report.results.length} faces (baseline metric). Flagged beyond ${FLAG_PCT}%: ${flagged.length}. Unreadable: ${unmeasured.length}.`);
     flagged
-      .sort((left, right) => Math.max(Math.abs(right.devYpct), Math.abs(right.devXpct)) - Math.max(Math.abs(left.devYpct), Math.abs(left.devXpct)))
-      .forEach((entry) => console.log(`  ${entry.setId} ${entry.dieKey} "${entry.key}": y ${entry.devYpct >= 0 ? "+" : ""}${entry.devYpct}% x ${entry.devXpct >= 0 ? "+" : ""}${entry.devXpct}%`));
+      .sort((left, right) => Math.max(Math.abs(right.baselineDevPct), Math.abs(right.devXpct)) - Math.max(Math.abs(left.baselineDevPct), Math.abs(left.devXpct)))
+      .forEach((entry) => console.log(`  ${entry.setId} ${entry.dieKey} "${entry.key}": baseline ${entry.baselineDevPct >= 0 ? "+" : ""}${entry.baselineDevPct}% x ${entry.devXpct >= 0 ? "+" : ""}${entry.devXpct}% (glyph ${entry.glyphHeightPct}%)`));
   } finally {
     await browser?.close();
     server.kill();
