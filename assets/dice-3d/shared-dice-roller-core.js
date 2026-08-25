@@ -1822,6 +1822,9 @@
     },
     validateAllFaceSettles,
     validateNumberingTopology,
+    /* QA-only internals for the face-orientation diagnostic
+       (scripts/dice-orientation-diagnostic.mjs). Not a public API. */
+    __testInternals: { createDie, finalQuaternionForDie, topFaceLabelForDie, getTheme },
     clearTextureCache() {
       skinTextureCache.forEach((texture) => texture?.dispose?.());
       skinTextureCache.clear();

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dice Face Audit Grid</title>
+  <style>
+    body { margin: 0; background: #10141f; color: #e8ecf5; font-family: "Segoe UI", system-ui, sans-serif; }
+    h1 { font-size: 18px; margin: 12px 16px 4px; }
+    #meta { margin: 0 16px 12px; color: #9fb0d8; font-size: 13px; }
+    #grid { display: grid; grid-template-columns: repeat(3, 480px); gap: 14px; padding: 0 16px 24px; width: max-content; }
+    .cell { background: #1c2740; border: 1px solid #35435f; border-radius: 10px; padding: 8px; }
+    .cell h2 { margin: 0 0 6px; font-size: 20px; color: #ffe59a; }
+    .cell .imgs { display: flex; gap: 8px; align-items: flex-start; }
+    .cell .imgs figure { margin: 0; text-align: center; }
+    .cell .imgs figcaption { font-size: 11px; color: #9fb0d8; margin-top: 2px; }
+    .cell img.render { width: 300px; height: 300px; background: #0b0e16; border-radius: 8px; }
+    .cell img.art { width: 150px; height: 150px; background: #0b0e16; border-radius: 8px; }
+    .error { color: #ffadad; }
+  </style>
+</head>
+<body>
+  <h1 id="title">Dice face audit</h1>
+  <p id="meta">Loading…</p>
+  <div id="grid"></div>
+
+  <script src="assets/dice/promoted-dice-skins.registry.js"></script>
+  <script src="assets/dice-3d/new-angelsword-dice-face-art.384-webp.js?v=angel-d4-canonical-corners-v3"></script>
+  <script src="assets/dice-3d/promoted/asari-full-set-draft.js?v=d4-large-v3"></script>
+  <script src="assets/dice-3d/promoted/leaflit-full-set.js"></script>
+  <script src="assets/dice-3d/promoted/rana-full-set.js?v=final-readability-v3"></script>
+  <script src="assets/dice-3d/character-sheet-skin-studio.js"></script>
+  <script src="assets/vendor/three.min.js"></script>
+  <script src="assets/dice-3d/dice-geometry.js?v=shared-contract-3-angel-d4-v2"></script>
+  <script src="assets/dice-3d/shared-dice-roller-core.js?v=20260811-srgb-dice-v1"></script>
+  <script>
+    (async function runAudit() {
+      const params = new URLSearchParams(location.search);
+      const setId = params.get("set") || "new-angelsword";
+      const dieKey = params.get("die") || "d20";
+      const roller = window.LyrianAccurateDiceRoller;
+      const meta = document.getElementById("meta");
+      const grid = document.getElementById("grid");
+      document.getElementById("title").textContent = `${setId} — ${dieKey}`;
+
+      const DIE_PLAN = {
+        d4: { sides: 4, values: [1, 2, 3, 4] },
+        d6: { sides: 6, values: [1, 2, 3, 4, 5, 6] },
+        d8: { sides: 8, values: [1, 2, 3, 4, 5, 6, 7, 8] },
+        d10: { sides: 10, values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] },
+        d12: { sides: 12, values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] },
+        d20: { sides: 20, values: Array.from({ length: 20 }, (_, i) => i + 1) },
+        d100: { sides: 100, values: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100] }
+      };
+
+      function faceLabelFor(sides, value) {
+        if (sides === 10) return value === 10 ? "0" : String(value);
+        if (sides === 100) return value >= 100 ? "00" : String(Math.floor(value / 10) * 10).padStart(2, "0");
+        return String(value);
+      }
+
+      const plan = DIE_PLAN[dieKey];
+      const result = { setId, dieKey, cells: [], validation: null, topology: null, errors: [] };
+      try {
+        if (typeof roller.preloadFaceArtReady === "function") {
+          await roller.preloadFaceArtReady(setId);
+        } else {
+          roller.preloadFaceArt?.(setId);
+          await new Promise((resolve) => setTimeout(resolve, 1500));
+        }
+      } catch (error) {
+        result.errors.push(`preload: ${error.message}`);
+      }
+      try {
+        result.validation = roller.validateAllFaceSettles ? roller.validateAllFaceSettles({ setId }) : null;
+      } catch (error) {
+        result.errors.push(`validateAllFaceSettles: ${error.message}`);
+      }
+      try {
+        result.topology = roller.validateNumberingTopology ? roller.validateNumberingTopology() : null;
+      } catch (error) {
+        result.errors.push(`topology: ${error.message}`);
+      }
+
+      for (const value of plan.values) {
+        const label = faceLabelFor(plan.sides, value);
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        let renderUrl = "";
+        let artUrl = "";
+        try {
+          renderUrl = roller.buildPreviewDataUrl({ setId, sides: plan.sides, value, size: 300 }) || "";
+        } catch (error) {
+          result.errors.push(`render ${dieKey} ${value}: ${error.message}`);
+        }
+        try {
+          artUrl = roller.debugFaceTexture ? (roller.debugFaceTexture(dieKey, label, setId) || "") : "";
+        } catch (error) {
+          result.errors.push(`art ${dieKey} ${label}: ${error.message}`);
+        }
+        cell.innerHTML = `
+          <h2>expected: ${value}${label !== String(value) ? ` (face key "${label}")` : ""}</h2>
+          <div class="imgs">
+            <figure><img class="render" src="${renderUrl}" alt=""><figcaption>3D settled render (top face is the result)</figcaption></figure>
+            <figure><img class="art" src="${artUrl}" alt=""><figcaption>flat face art for key "${label}"</figcaption></figure>
+          </div>`;
+        grid.appendChild(cell);
+        result.cells.push({ value, label, hasRender: Boolean(renderUrl), hasArt: Boolean(artUrl) });
+        await new Promise((resolve) => setTimeout(resolve, 30));
+      }
+
+      const failed = result.validation && result.validation.ok === false;
+      meta.textContent = `set ${setId} · ${dieKey} · ${result.cells.length} faces · engine self-check: ${result.validation ? (failed ? "FAIL" : "ok") : "n/a"} · errors: ${result.errors.length}`;
+      if (result.errors.length) {
+        meta.classList.add("error");
+        meta.textContent += ` — ${result.errors.join(" | ")}`;
+      }
+      window.DiceFaceAudit = result;
+      document.documentElement.dataset.ready = "true";
+    })();
+  </script>
+</body>
+</html>
