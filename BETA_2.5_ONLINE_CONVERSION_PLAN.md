@@ -149,7 +149,13 @@ Collect requirements later; do not scope-creep 2.5.
   new dot.
 
 ### Backlog — dice art QC (from the 2026-08-25 placement review)
-- **Rana d4 re-bake (TOP of the art pass, owner-flagged):** all twelve corner
+- **Rana d4 — RESOLVED ENGINE-SIDE 2026-08-25 (`3439e26`):** the engine now
+  redraws all twelve corner medallions at composite time (opaque disc +
+  procedural gold ring + centered number), covering the misplaced baked
+  numerals entirely. A Workshop re-bake of these four faces remains
+  optional polish; the patch becomes harmlessly redundant if done.
+  Original finding kept below for the record.
+- **Rana d4 re-bake (was top of the art pass, owner-flagged):** all twelve corner
   numbers overhang or miss their painted medallion circles (apex numbers
   spill below, bottom corners drift toward the face interior — see
   qa-test-results/dice-face-audit/d4.png). Asari and Leaflit d4 corners
