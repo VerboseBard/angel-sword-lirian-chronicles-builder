@@ -264,10 +264,14 @@ async function testRollDice() {
   check("overlay boot-buffer handshake exists on both ends",
     diceBackground.includes("overlay-ready") && diceOverlay.includes("overlay-ready"));
   const rollerCore = await readFile(path.join(root, "assets", "dice-3d", "shared-dice-roller-core.js"), "utf8");
-  check("settle camera lift is wired in the shared core",
-    rollerCore.includes("CAMERA_SETTLED") && rollerCore.includes("CAMERA_LIFT_MS"));
+  check("settled dice aim their result face at the viewer (owner contract)",
+    rollerCore.includes("FACE_TOWARD_VIEWER_SIDES") && rollerCore.includes("presentDirection"));
+  check("the settle camera itself never moves (no bait-and-switch lift)",
+    !rollerCore.includes("CAMERA_LIFT_MS"));
   check("6/9 disambiguation dot is stamped engine-side",
     rollerCore.includes("shouldStampSixNineDot") && rollerCore.includes("drawSixNineDot"));
+  check("overlay expands and waits for real height before rolling (no stretch)",
+    diceOverlay.includes("expandOverlay().then") && diceOverlay.includes("window.innerHeight - targetHeight"));
   const uiSource = await readFile(path.join(root, "src", "js", "ui.js"), "utf8");
   for (const kind of ["dice", "action-damage", "check", "skill"]) {
     const site = new RegExp(`publishVttEvent\\("${kind}",\\s*\\{[\\s\\S]{0,220}?\\bdice:`);

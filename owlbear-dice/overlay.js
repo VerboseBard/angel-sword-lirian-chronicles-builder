@@ -34,6 +34,7 @@ let animatingUntil = 0;
 let shrinkTimer = 0;
 let idleTimer = 0;
 let chipSequence = 0;
+let rollGeneration = 0;
 const seenRollIds = new Set();
 const pendingEvents = [];
 const chips = new Map();
@@ -100,15 +101,24 @@ async function setOverlayHeight(pixels) {
   }
 }
 
+/* Expand the popover and wait for THIS window to actually reach the new
+   size before returning. Rolling while the iframe is still at chip-strip
+   height sizes the 3D canvas to ~190px and the later expansion stretches
+   the render vertically — the "compression distortion" the owner saw. */
 async function expandOverlay() {
   if (!obrReady) {
     return;
   }
+  let targetHeight = 0;
   try {
-    const height = await OBR.viewport.getHeight();
-    await OBR.popover.setHeight(OVERLAY_ID, Math.max(420, Math.round(height)));
+    targetHeight = Math.max(420, Math.round(await OBR.viewport.getHeight()));
+    await OBR.popover.setHeight(OVERLAY_ID, targetHeight);
   } catch (error) {
-    /* keep whatever size we have */
+    return;
+  }
+  const deadline = Date.now() + 700;
+  while (Date.now() < deadline && Math.abs(window.innerHeight - targetHeight) > 24) {
+    await new Promise((resolve) => requestAnimationFrame(resolve));
   }
 }
 
@@ -153,10 +163,12 @@ function addChip(event) {
     ? `${event.character} · ${event.playerName}`
     : (event.character || event.playerName || "Someone");
   const gmBadge = event.playerRole === "GM" ? '<span class="gm-badge">GM</span>' : "";
+  // When the roller's display name IS "GM", the badge alone says it all.
+  const whoText = gmBadge && who === "GM" ? "" : who;
   const esc = (value) => String(value ?? "")
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   element.innerHTML = `
-    <div class="chip-who">${gmBadge}${esc(who)}</div>
+    <div class="chip-who">${gmBadge}${esc(whoText)}</div>
     <div class="chip-label">${esc(event.label || "Roll")}</div>
     <div class="chip-total">${Number.isFinite(Number(event.total)) ? `Total ${esc(event.total)}` : ""}</div>
     <div class="chip-breakdown">${esc(event.breakdown || "")}</div>`;
@@ -197,31 +209,36 @@ function playRoll(rawEvent) {
   if (!results.length) {
     return;
   }
+  const generation = rollGeneration += 1;
   clearTimeout(shrinkTimer);
   clearDiceCanvases();
-  expandOverlay();
   addChip(event);
-  let animationMs = DICE_VISIBLE_MS;
-  try {
-    const reported = window.LyrianAccurateDiceRoller.rollDice({
-      layer: document.getElementById("dice-flight-layer"),
-      results,
-      setId: selectedSetId(),
-      width: window.innerWidth,
-      height: window.innerHeight
-    });
-    if (Number.isFinite(Number(reported)) && Number(reported) > 0) {
-      animationMs = Math.min(Number(reported), 12000);
+  expandOverlay().then(() => {
+    if (generation !== rollGeneration) {
+      return;
     }
-  } catch (error) {
-    /* chips still record the result even if the 3D flight fails */
-  }
-  animatingUntil = Date.now() + animationMs;
-  shrinkTimer = setTimeout(() => {
-    clearDiceCanvases();
-    setOverlayHeight(STRIP_HEIGHT);
-    scheduleIdleCheck();
-  }, Math.min(animationMs, DICE_VISIBLE_MS));
+    let animationMs = DICE_VISIBLE_MS;
+    try {
+      const reported = window.LyrianAccurateDiceRoller.rollDice({
+        layer: document.getElementById("dice-flight-layer"),
+        results,
+        setId: selectedSetId(),
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+      if (Number.isFinite(Number(reported)) && Number(reported) > 0) {
+        animationMs = Math.min(Number(reported), 12000);
+      }
+    } catch (error) {
+      /* chips still record the result even if the 3D flight fails */
+    }
+    animatingUntil = Date.now() + animationMs;
+    shrinkTimer = setTimeout(() => {
+      clearDiceCanvases();
+      setOverlayHeight(STRIP_HEIGHT);
+      scheduleIdleCheck();
+    }, Math.min(animationMs, DICE_VISIBLE_MS));
+  });
 }
 
 function drainPending() {

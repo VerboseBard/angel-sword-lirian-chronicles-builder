@@ -28,7 +28,13 @@
     100: "d00"
   };
 
-  const ROLLER_VERSION = "dice-lab-scripted-side-entry-17-sixnine-dots";
+  const ROLLER_VERSION = "dice-lab-scripted-side-entry-18-face-the-viewer";
+
+  /* Dice whose result face is aimed at the camera at rest (owner contract:
+     "what is on the dice is what's shown"). d4 reads at a corner and d6's
+     top face is already fully legible from the table camera, so both keep
+     the classic pose. */
+  const FACE_TOWARD_VIEWER_SIDES = new Set([8, 10, 12, 20, 100]);
 
   const DEFAULT_PALETTE = {
     id: "angels-sword",
@@ -1066,7 +1072,7 @@
     return Math.atan2(cross.dot(axis), clamp(from.dot(to), -1, 1));
   }
 
-  function finalQuaternionForDie(die) {
+  function finalQuaternionForDie(die, presentDirection) {
     const THREE = window.THREE;
     const up = new THREE.Vector3(0, 1, 0);
     const userData = die.userData;
@@ -1085,16 +1091,30 @@
       return new THREE.Quaternion().setFromAxisAngle(up, angle).multiply(lift);
     }
 
-    // Result face flat on top, then yaw so its artwork reads upright from
-    // the camera (screen-up on the floor plane is away from the viewer).
-    const lift = new THREE.Quaternion().setFromUnitVectors(userData.resultNormal.clone().normalize(), up);
+    /* Owner contract (2026-08-25): the face the VIEWER is looking at is the
+       result. By default the result face lies flat on top (the measuring
+       pose used by the validators and the top-down audit). When the caller
+       passes a presentation direction — the direction from the die toward
+       the camera — the result face is aimed straight at the viewer instead,
+       with the numeral upright on screen, so there is never a second face
+       that reads more prominently than the rolled one. */
+    const target = presentDirection && presentDirection.lengthSq?.() > 0
+      ? presentDirection.clone().normalize()
+      : up.clone();
+    const lift = new THREE.Quaternion().setFromUnitVectors(userData.resultNormal.clone().normalize(), target);
     const artUp = userData.faceArtUps[userData.resultIndex].clone()
       .applyQuaternion(lift)
-      .projectOnPlane(up)
+      .projectOnPlane(target)
       .normalize();
-    const screenUpOnFloor = new THREE.Vector3(0, 0, -1);
-    const angle = signedAngleAround(up, artUp, screenUpOnFloor);
-    return new THREE.Quaternion().setFromAxisAngle(up, angle).multiply(lift);
+    let desiredUp = up.clone().projectOnPlane(target);
+    if (desiredUp.lengthSq() < 0.0025) {
+      // Face lies flat (target is world-up): "upright" means numeral top
+      // pointing away from the viewer, as on a physical table.
+      desiredUp = new THREE.Vector3(0, 0, -1).projectOnPlane(target);
+    }
+    desiredUp.normalize();
+    const angle = signedAngleAround(target, artUp, desiredUp);
+    return new THREE.Quaternion().setFromAxisAngle(target, angle).multiply(lift);
   }
 
   function topFaceLabelForDie(die, quaternion = die.quaternion) {
@@ -1426,22 +1446,12 @@
     // A slightly higher table camera exposes more of the winning top face,
     // closer to a physical tabletop view, without flattening the dice into
     // icons or hiding their neighboring faces.
-    /* Settle lift (owner decision 2026-08-25, "option A"): the tumble keeps
-       its drama at the table camera, then once every die has settled the
-       camera eases toward overhead so the RESULT faces dominate the final
-       frame — the 280-face audit proved the landings are always correct;
-       what misled players was reading foreshortened top faces at the low
-       angle. Under reduced motion the camera simply starts overhead. */
-    const CAMERA_BASE = { position: new THREE.Vector3(0, 6.9, 8.5), lookY: -0.55 };
-    const CAMERA_SETTLED = { position: new THREE.Vector3(0, 11.4, 4.4), lookY: -1.05 };
-    const CAMERA_LIFT_MS = 900;
-    if (reducedMotion) {
-      camera.position.copy(CAMERA_SETTLED.position);
-      camera.lookAt(0, CAMERA_SETTLED.lookY, 0);
-    } else {
-      camera.position.copy(CAMERA_BASE.position);
-      camera.lookAt(0, CAMERA_BASE.lookY, 0);
-    }
+    /* The camera never moves (owner decision 2026-08-25 v2: a settle-time
+       camera lift read as a bait-and-switch — the number you watched became
+       a different face). Instead each settled die is ORIENTED so its result
+       face points at the viewer; see FACE_TOWARD_VIEWER_SIDES below. */
+    camera.position.set(0, 6.9, 8.5);
+    camera.lookAt(0, -0.55, 0);
 
     scene.add(new THREE.HemisphereLight(0xffffff, 0x1b1f28, 1.7));
     const keyLight = new THREE.DirectionalLight(0xffffff, 2.6);
@@ -1501,19 +1511,10 @@
       const sides = Number(entry.sides) || 20;
       const die = createDie(sides, entry.value, palette);
       die.scale.setScalar(diceSize);
-      const uprightQuat = finalQuaternionForDie(die);
-      const naturalYaw = sides === 4 ? 0 : (Math.random() - 0.5) * (Math.PI / 9);
-      // Yaw only around world-up: the requested result remains physically on
-      // top, while a restrained +/-10 degree variation prevents every die
-      // from landing in the same artificial catalogue pose.
-      const finalQuat = naturalYaw
-        ? new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), naturalYaw).multiply(uprightQuat)
-        : uprightQuat;
       const row = Math.floor(index / columns);
       const column = index % columns;
       const countInRow = Math.min(columns, results.length - row * columns);
       const direction = index % 2 === 0 ? 1 : -1;
-      const restY = floorY + restHeightForDie(die, finalQuat) * diceSize + 0.01;
       const rowStagger = row % 2 ? diceSize * 0.24 : -diceSize * 0.08;
       const endX = centerOffsetX
         + (column - (countInRow - 1) / 2) * laneGap
@@ -1525,6 +1526,22 @@
       const endZ = -viewDepth * 0.18
         + row * rowGap
         + naturalDepthScatter;
+      /* Owner contract: the face you are looking at is the result. Dice
+         whose numbers live on faces are aimed at the camera at rest; the
+         d4 (corner-read) and d6 (top face already fully legible) keep the
+         classic flat-on-top pose. */
+      const presentDirection = FACE_TOWARD_VIEWER_SIDES.has(sides)
+        ? new THREE.Vector3(0, 6.9, 8.5).sub(new THREE.Vector3(endX, floorY + diceSize, endZ)).normalize()
+        : null;
+      const uprightQuat = finalQuaternionForDie(die, presentDirection);
+      const naturalYaw = sides === 4 ? 0 : (Math.random() - 0.5) * (Math.PI / 14);
+      // A restrained in-plane wiggle keeps dice from landing in one
+      // artificial catalogue pose without moving the result off the viewer.
+      const yawAxis = presentDirection || new THREE.Vector3(0, 1, 0);
+      const finalQuat = naturalYaw
+        ? new THREE.Quaternion().setFromAxisAngle(yawAxis, naturalYaw).multiply(uprightQuat)
+        : uprightQuat;
+      const restY = floorY + restHeightForDie(die, finalQuat) * diceSize + 0.01;
       const start = new THREE.Vector3(
         direction > 0 ? -viewWidth * 0.72 : viewWidth * 0.72,
         restY + 1.35 + Math.random() * 0.45,
@@ -1739,12 +1756,6 @@
         publishSettle();
       }
 
-      if (!reducedMotion && elapsed > settleCompleteMs) {
-        const lift = easeOutCubic(clamp((elapsed - settleCompleteMs) / CAMERA_LIFT_MS, 0, 1));
-        camera.position.lerpVectors(CAMERA_BASE.position, CAMERA_SETTLED.position, lift);
-        camera.lookAt(0, CAMERA_BASE.lookY + (CAMERA_SETTLED.lookY - CAMERA_BASE.lookY) * lift, 0);
-      }
-
       renderer.render(scene, camera);
       if (elapsed < totalMs) {
         activeRoll.animationFrame = requestAnimationFrame(renderFrame);
@@ -1864,7 +1875,13 @@
       }
       const palette = getTheme(options.setId);
       const die = createDie(options.sides, options.value, palette);
-      const finalQuat = finalQuaternionForDie(die);
+      /* orientation: "viewer" (default) matches the live table — result face
+         aimed at the preview camera; "top" is the measuring pose used by the
+         face audit instrumentation. */
+      const presentDirection = options.orientation !== "top" && FACE_TOWARD_VIEWER_SIDES.has(Number(options.sides))
+        ? new window.THREE.Vector3(0, 5.15, 8.5).normalize()
+        : null;
+      const finalQuat = finalQuaternionForDie(die, presentDirection);
       return buildDiePreviewDataUrl(die, finalQuat, {
         size: options.size,
         scale: Number(options.sides) === 4 ? 1.72 : 1.6
