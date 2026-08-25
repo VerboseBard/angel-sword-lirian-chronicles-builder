@@ -28,7 +28,7 @@
     100: "d00"
   };
 
-  const ROLLER_VERSION = "dice-lab-scripted-side-entry-16-srgb-output";
+  const ROLLER_VERSION = "dice-lab-scripted-side-entry-17-sixnine-dots";
 
   const DEFAULT_PALETTE = {
     id: "angels-sword",
@@ -691,6 +691,43 @@
     context.restore();
   }
 
+  /* 6/9 disambiguation dot (owner directive 2026-08-25): the hand-painted
+     Angel Sword d10 batch marks its 6 and 9 with a dot below the numeral, but
+     the d20 batch and every promoted set lack it, so a foreshortened 6 and 9
+     read as each other at the table. Stamp the dot at composite time for
+     every set — current and future — on dice where both digits exist. */
+  function shouldStampSixNineDot(dieKey, artKey, palette) {
+    if (artKey !== "6" && artKey !== "9") {
+      return false;
+    }
+    if (dieKey !== "d10" && dieKey !== "d12" && dieKey !== "d20") {
+      return false;
+    }
+    // The Angel Sword d10 paintings already include their own dot.
+    if (palette.id === "new-angelsword" && dieKey === "d10") {
+      return false;
+    }
+    return true;
+  }
+
+  const SIX_NINE_DOT_OFFSET = { d10: 0.14, d12: 0.15, d20: 0.17 };
+
+  function drawSixNineDot(context, dieKey, size) {
+    const centroid = geo().polygonCentroid(geo().facePolygon(dieKey, size));
+    const x = centroid.x;
+    const y = centroid.y + size * (SIX_NINE_DOT_OFFSET[dieKey] || 0.16);
+    const radius = size * 0.021;
+    context.save();
+    context.beginPath();
+    context.arc(x, y, radius, 0, Math.PI * 2);
+    context.fillStyle = "#c9a04a";
+    context.strokeStyle = "rgba(32, 22, 7, 0.85)";
+    context.lineWidth = size * 0.006;
+    context.fill();
+    context.stroke();
+    context.restore();
+  }
+
   function makeFaceTexture(dieKey, artKey, palette) {
     const THREE = window.THREE;
     const studioVersion = window.DiceSkinStudio?.getVersion?.() || "builtin";
@@ -746,6 +783,9 @@
         } else {
           drawFallbackLabel(context, artKey, palette, size, geo().polygonCentroid(polygon));
         }
+      }
+      if (shouldStampSixNineDot(dieKey, artKey, palette)) {
+        drawSixNineDot(context, dieKey, size);
       }
       if (texture) {
         texture.needsUpdate = true;
