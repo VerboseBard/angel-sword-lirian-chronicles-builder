@@ -70,6 +70,34 @@ Collect requirements later; do not scope-creep 2.5.
 
 ## Status log
 
+### 2026-08-25 — Workstream 1 LIVE-VERIFIED by the owner; first live bug fixed
+- Owner ran the full flow in a fresh room (new scene, re-added extensions):
+  panel button opened the sheet with the character auto-loaded; handshake
+  connected; two-tab guard fired on the old tab (and its Close button really
+  closed it); sheet rolls reached Room Rolls + the 3D overlay; **rolls kept
+  arriving with the panel closed**; Owlbear-side dice rolls landed back in the
+  sheet's Combat Log. Workstream 1 acceptance = met live, both directions.
+- Owner-confirmed after `60b5855`: F5 on the room tab → the sheet link
+  auto-reconnected with no clicks and rolls kept flowing (silent
+  `tryReconnectSheet` re-acquisition, live-verified).
+- **Fixed same session (`60b5855`):** 2d10 animated only one die in the room
+  overlay — rolls traveled as text and the overlay regex read one value per
+  die group. Now all four sheet roll sites publish structured
+  `dice:[{sides,value}]`, `normalizeRollEvent` carries it, and the overlay
+  consumes it (robust text fallback kept for older events). 97+48 checks.
+- **Logged, deliberately not in this pass:**
+  (a) overlay plays one roll at a time (~9s busy window, engine cold-start
+  per roll) — owner wants faster back-to-back rolls AND concurrent rolls
+  stacking a second result banner; both fold into workstream 3's
+  keep-the-overlay-warm rework (persistent overlay page receiving events).
+  (b) dice FACE shown sometimes mismatches the registered number (e.g. a 17
+  showing a different face) — dice-ENGINE face-orientation mapping bug in the
+  shared dice core, affects sheet and Owlbear equally, predates the
+  conversion; needs its own hunt with per-set/per-die repro (owner saw it on
+  Rana set d10s/d20s); candidate approach: automated forced-result
+  face-verification screenshots across all sets via the existing browser
+  matrix harness.
+
 ### 2026-08-24 — Workstream 1 BUILT and machine-verified
 - **Step 0 feasibility spike run live** (owner's Chrome, real room "The Tonal
   Quest"): Owlbear applies NO sandbox to extension iframes (`window.open` is
@@ -98,6 +126,27 @@ Collect requirements later; do not scope-creep 2.5.
 - **Remaining for workstream 1:** owner-run live room pass (real gesture
   popup from the panel, real sheet rolls + dice overlay, panel-closed
   behavior by feel), then the carried gaps below at staging.
+
+### 2026-08-25 later — Dice presentation wave (owner decisions executed)
+- **Audit verdict recorded:** 280/280 face assignments correct
+  (DICE_FACE_AUDIT_2026-08-25.md); misreads = settle-camera angle + legibility.
+- **Owner picked option A** (settle camera lift) and designed the overlay's
+  concurrent-roll behavior: new roll cuts the old animation, results persist
+  as up-to-three stacked chips (who + GM badge + what + total + breakdown),
+  oldest fades by overflow and by ~30s age.
+- **Shipped (`32bd2ba`, `cffc80e`):** engine-level 6/9 dot on every set
+  (Angel d10 keeps its painted one); warm persistent overlay with
+  interrupt-and-stack chips; GM/player role attribution end to end
+  (Owlbear's own role system — the "who is the GM" question is answered
+  structurally, not guessed); settle camera lift in the shared core (room
+  overlay + sheet tray, reduced-motion starts overhead); Workshop core
+  reconciled twice (dice:core:check green; Workshop commits f7e0420,
+  cb837e8 — only the core file, other Workshop WIP untouched).
+- **Owner live-test asks:** reload the room tab and hard-reload the sheet;
+  roll twice fast (second roll should cut in, both chips stay), roll from
+  the Dice panel as GM (chip should carry the GM badge), watch the camera
+  ease overhead at settle, and check a 6 or 9 on any promoted set for its
+  new dot.
 
 ## Carried test gaps (staging will cover)
 Second-player ownership + GM repair (remote friend), real `.aschar` imports, phones and
