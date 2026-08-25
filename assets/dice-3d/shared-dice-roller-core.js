@@ -28,7 +28,7 @@
     100: "d00"
   };
 
-  const ROLLER_VERSION = "dice-lab-scripted-side-entry-20-numeral-tracked-dots";
+  const ROLLER_VERSION = "dice-lab-scripted-side-entry-24-rana-d4-fit";
 
   /* Dice whose result face is aimed at the camera at rest (owner contract:
      "what is on the dice is what's shown"). d4 reads at a corner and d6's
@@ -697,6 +697,102 @@
     context.restore();
   }
 
+  /* Rana d4 corner repair (owner directive 2026-08-25): the baked corner
+     numbers on the Rana d4 hang outside or sit off-center in their painted
+     medallion circles on every face. The medallions themselves are fine, so
+     at composite time the engine finds each gold medallion ring, clears its
+     interior with the disc's own sampled color, and redraws the number
+     dead-center and sized to the ring — the same idea that keeps the Angel
+     d4 immune, retrofitted. If a ring cannot be confidently detected the
+     face is left untouched. */
+  /* Fixed landmarks, measured from the art: all four Rana d4 faces share one
+     generation template, and ring auto-detection loses to the gold frame and
+     sparkle dust nearby. The replacement medallion is opaque and slightly
+     larger than the painted one, so it fully covers the old ring, the old
+     numeral, and its overhang. A future Workshop re-bake of these four
+     faces makes this patch harmlessly redundant. */
+  const RANA_D4_CORNER_LANDMARKS = [
+    { key: "apex", x: 0.5, y: 0.197, rotation: 0 },
+    { key: "right", x: 0.803, y: 0.849, rotation: (Math.PI * 2) / 3 },
+    { key: "left", x: 0.197, y: 0.849, rotation: -(Math.PI * 2) / 3 }
+  ];
+  const RANA_D4_MEDALLION_RADIUS = 0.075;
+
+  function drawRanaD4CornerNumbers(context, artKey, size) {
+    const corners = geo().D4_FACE_CORNERS?.[artKey];
+    if (!corners) {
+      return;
+    }
+    let data;
+    try {
+      data = context.getImageData(0, 0, size, size).data;
+    } catch (error) {
+      return;
+    }
+    const radius = RANA_D4_MEDALLION_RADIUS * size;
+    const found = RANA_D4_CORNER_LANDMARKS.map((landmark) => ({
+      landmark,
+      ring: { cx: landmark.x * size, cy: landmark.y * size, radius }
+    }));
+    found.forEach(({ landmark, ring }) => {
+      // Disc color: median of the annulus just inside the old ring, skipping
+      // bright numeral/ring pixels, so the new disc matches the painted one.
+      const darks = [];
+      for (let y = Math.round(ring.cy - ring.radius); y <= ring.cy + ring.radius; y += 2) {
+        for (let x = Math.round(ring.cx - ring.radius); x <= ring.cx + ring.radius; x += 2) {
+          const distance = Math.hypot(x - ring.cx, y - ring.cy);
+          if (distance < ring.radius * 0.55 || distance > ring.radius * 0.74) {
+            continue;
+          }
+          const offset = (y * size + x) * 4;
+          const r = data[offset];
+          const g = data[offset + 1];
+          const b = data[offset + 2];
+          if (r + g + b > 330) {
+            continue;
+          }
+          darks.push([r, g, b]);
+        }
+      }
+      const channel = (index) => {
+        const sorted = darks.map((entry) => entry[index]).sort((left, right) => left - right);
+        return sorted.length ? sorted[Math.floor(sorted.length / 2)] : null;
+      };
+      const disc = darks.length > 8
+        ? `rgb(${channel(0)}, ${channel(1)}, ${channel(2)})`
+        : "#0d2b23";
+      const label = landmark.key === "apex" ? corners.apex : landmark.key === "right" ? corners.right : corners.left;
+      context.save();
+      context.beginPath();
+      context.arc(ring.cx, ring.cy, radius, 0, Math.PI * 2);
+      context.fillStyle = disc;
+      context.fill();
+      // Procedural gold ring in the set's polished-rail palette.
+      const ringStroke = (width, color, ringRadius) => {
+        context.beginPath();
+        context.arc(ring.cx, ring.cy, ringRadius, 0, Math.PI * 2);
+        context.lineWidth = width;
+        context.strokeStyle = color;
+        context.stroke();
+      };
+      ringStroke(radius * 0.17, "rgba(82, 43, 5, 0.98)", radius * 0.94);
+      ringStroke(radius * 0.11, "rgba(211, 143, 35, 1)", radius * 0.94);
+      ringStroke(radius * 0.045, "rgba(255, 223, 122, 0.98)", radius * 0.94);
+      context.translate(ring.cx, ring.cy);
+      context.rotate(landmark.rotation);
+      context.textAlign = "center";
+      context.textBaseline = "middle";
+      context.font = `700 ${Math.round(radius * 1.06)}px Georgia, "Times New Roman", serif`;
+      context.lineJoin = "round";
+      context.lineWidth = radius * 0.13;
+      context.strokeStyle = "rgba(26, 18, 6, 0.92)";
+      context.strokeText(label, 0, radius * 0.03);
+      context.fillStyle = "#efe0b8";
+      context.fillText(label, 0, radius * 0.03);
+      context.restore();
+    });
+  }
+
   /* Rotation-ambiguity dot (owner directive 2026-08-25, broadened same day):
      the hand-painted Angel Sword d10 batch marks its 6 and 9 with a dot
      below the numeral; no other die or set got one. Neighbor faces on a
@@ -846,6 +942,9 @@
         context.restore();
         if (artSpec.rebuildCornerNumbers) {
           drawAngelSwordD4CornerNumbers(context, artKey, size);
+        }
+        if (palette.id === "rana-full-set" && dieKey === "d4") {
+          drawRanaD4CornerNumbers(context, artKey, size);
         }
         if (palette.id === "new-angelsword") {
           drawAngelSwordUnifiedFaceFinish(context, dieKey, size);
