@@ -148,6 +148,22 @@ Collect requirements later; do not scope-creep 2.5.
   ease overhead at settle, and check a 6 or 9 on any promoted set for its
   new dot.
 
+### Backlog — dice art QC (from the 2026-08-25 placement review)
+- **Workshop re-bake pass** for the 58 baseline-flagged faces
+  (`qa-test-results/dice-face-audit/numeral-placement.json`; sheets
+  `placement--<set>.png`). The rule the re-bake must satisfy, owner-derived:
+  ONE shared baseline per die, consistent cap-height budget for one- and
+  two-digit numerals (today doubles are ~2/3 the glyph height and ride
+  ~2.5% high while singles sit ~2.5% low — systematic across Asari, Leaflit,
+  Rana; Angel has scattered per-face drift instead).
+- **Promote-time placement gate**: run the baseline measurement inside
+  `dice:promote` validation so the owner's three planned sets arrive
+  uniform instead of being repaired later.
+- Engine-side nudging of baked art was considered and rejected (moving the
+  numeral means moving the whole painting; frames would detach from face
+  edges). Numeral-tracked ambiguity dots already compensate where it
+  matters most.
+
 ## Carried test gaps (staging will cover)
 Second-player ownership + GM repair (remote friend), real `.aschar` imports, phones and
 tablets, Chrome/Edge/Firefox/Brave/Safari, private browsing. Housekeeping on the owner's
