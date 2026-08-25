@@ -156,7 +156,19 @@ Collect requirements later; do not scope-creep 2.5.
   verified acceptable; Angel d4 is engine-drawn onto a blank plate and
   immune. Alternative if no art session: retrofit Angel-style engine corner
   redraw for rana (erase medallion interior, draw fitted number).
-- **Workshop re-bake pass** for the 58 baseline-flagged faces
+- **Design tokens derived (owner idea — geometric anchor per face, 2026-08-25):**
+  numeral center target = face centroid + per-shape design offset, measured
+  from the art family itself: d6 +0.5%, d8 -2.9%, d10 -2.8%, d100 -2.5%,
+  d12 +0.5%, d20 -5.0% (negative = above centroid; triangles ride high
+  because frames own the bottom corners). Awaiting owner blessing as the
+  standing standard for re-bakes + the promote gate.
+- **Headline finds vs the standard:** the ENTIRE Rana d20 sits ~7% low (a
+  family-level offset invisible to mean-based checks); two-digit d12
+  numerals are 28-31% undersized on all three promoted sets (fix scale
+  ~1.4x); Angel d12 is the messiest Angel die (half its faces drift 5-8%).
+  Per-face corrections {dx, dy, scale} at px@768 live in
+  numeral-placement.json — the literal re-bake work order.
+- **Workshop re-bake pass** for the flagged faces
   (`qa-test-results/dice-face-audit/numeral-placement.json`; sheets
   `placement--<set>.png`). The rule the re-bake must satisfy, owner-derived:
   ONE shared baseline per die, consistent cap-height budget for one- and

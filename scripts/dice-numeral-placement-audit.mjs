@@ -116,38 +116,46 @@ async function main() {
         const xs = outliers.map((sample) => sample.x).sort((left, right) => left - right);
         const ys = outliers.map((sample) => sample.y).sort((left, right) => left - right);
         const pct = (sorted, fraction) => sorted[Math.floor((sorted.length - 1) * fraction)];
+        const left = pct(xs, 0.05);
+        const right = pct(xs, 0.95);
+        const top = pct(ys, 0.05);
+        const bottom = pct(ys, 0.95);
         return {
-          cx: (pct(xs, 0.05) + pct(xs, 0.95)) / 2,
-          cy: (pct(ys, 0.05) + pct(ys, 0.95)) / 2,
-          top: pct(ys, 0.05),
-          bottom: pct(ys, 0.95)
+          cx: (left + right) / 2,
+          cy: (top + bottom) / 2,
+          top,
+          bottom,
+          left,
+          right,
+          height: bottom - top
         };
       };
 
+      /* Faces that are deliberate ART, not numerals — measured clusters are
+         meaningless there, so they are excluded from stats and flags. */
+      const ART_FACES = new Set([
+        "new-angelsword:d20:20",
+        "asari-full-set-draft:d20:20",
+        "leaflit-full-set:d20:20",
+        "rana-full-set:d20:20",
+        "rana-full-set:d20:1"
+      ]);
+
       const results = [];
       const sheets = {};
+      const roller = window.LyrianAccurateDiceRoller;
+      const allFaces = Object.entries(DIE_KEYS).flatMap(([dieKey]) => (geo.DIE_FACE_KEYS[dieKey] || []).map((key) => ({ dieKey, key })));
+      const work = document.createElement("canvas");
+      work.width = SIZE;
+      work.height = SIZE;
+      const workContext = work.getContext("2d", { willReadFrequently: true });
+
+      /* Phase A — measure every face of every set. */
+      const measuredBySet = {};
       for (const setId of SETS) {
-        const roller = window.LyrianAccurateDiceRoller;
         if (typeof roller.preloadFaceArtReady === "function") {
           await roller.preloadFaceArtReady(setId);
         }
-        const cellW = 128;
-        const cellH = 164;
-        const cols = 10;
-        const allFaces = Object.entries(DIE_KEYS).flatMap(([dieKey]) => (geo.DIE_FACE_KEYS[dieKey] || []).map((key) => ({ dieKey, key })));
-        const rows = Math.ceil(allFaces.length / cols);
-        const sheet = document.createElement("canvas");
-        sheet.width = cols * cellW;
-        sheet.height = rows * cellH;
-        const sheetContext = sheet.getContext("2d");
-        sheetContext.fillStyle = "#10141f";
-        sheetContext.fillRect(0, 0, sheet.width, sheet.height);
-
-        const work = document.createElement("canvas");
-        work.width = SIZE;
-        work.height = SIZE;
-        const workContext = work.getContext("2d", { willReadFrequently: true });
-
         const measured = [];
         for (const face of allFaces) {
           const src = window.DiceSkinStudio?.getFaceImage?.(setId, face.dieKey, face.key) || "";
@@ -158,28 +166,73 @@ async function main() {
             workContext.drawImage(image, 0, 0, SIZE, SIZE);
             m = measure(workContext, face.dieKey);
           }
-          measured.push({ ...face, m, image });
+          const isArtFace = ART_FACES.has(`${setId}:${face.dieKey}:${face.key}`);
+          measured.push({ ...face, m: isArtFace ? { art: true } : m, image });
         }
+        measuredBySet[setId] = measured;
+      }
+
+      /* Phase B — the standard. Owner's geometric anchor (the centroid: the
+         point equidistant from the corners) plus the DESIGN OFFSET the art
+         family actually uses, derived as the cross-set median offset per die
+         shape (triangles run ~6% above centroid by design — the frame owns
+         the bottom corners). The derived offsets are reported so the owner
+         can bless them as the standing tokens for the promote gate. */
+      const median = (values) => {
+        const sorted = [...values].sort((left, right) => left - right);
+        return sorted.length ? sorted[Math.floor(sorted.length / 2)] : 0;
+      };
+      const shapeOffsets = {};
+      for (const [dieKey] of Object.entries(DIE_KEYS)) {
+        const polygon = geo.facePolygon(dieKey, SIZE);
+        const centroid = {
+          x: polygon.reduce((sum, point) => sum + point.x, 0) / polygon.length,
+          y: polygon.reduce((sum, point) => sum + point.y, 0) / polygon.length
+        };
+        const pool = SETS.flatMap((setId) => measuredBySet[setId]
+          .filter((entry) => entry.dieKey === dieKey && entry.m && !entry.m.art)
+          .map((entry) => entry.m));
+        shapeOffsets[dieKey] = {
+          centroid,
+          offsetY: median(pool.map((m) => ((m.cy - centroid.y) / SIZE) * 100)),
+          offsetX: median(pool.map((m) => ((m.cx - centroid.x) / SIZE) * 100))
+        };
+      }
+      for (const setId of SETS) {
         for (const [dieKey] of Object.entries(DIE_KEYS)) {
-          const group = measured.filter((entry) => entry.dieKey === dieKey && entry.m && !entry.m.art);
+          const group = measuredBySet[setId].filter((entry) => entry.dieKey === dieKey && entry.m && !entry.m.art);
           if (!group.length) {
             continue;
           }
-          const meanY = group.reduce((sum, entry) => sum + entry.m.cy, 0) / group.length;
-          const meanX = group.reduce((sum, entry) => sum + entry.m.cx, 0) / group.length;
-          /* The eye aligns numerals by their BOTTOM edge (baseline), not
-             their center: two-digit glyphs are drawn smaller, so centered
-             numerals leave their bottoms riding high — the owner's read.
-             Baseline deviation is therefore the flagging metric. */
-          const meanBottom = group.reduce((sum, entry) => sum + entry.m.bottom, 0) / group.length;
+          const standard = shapeOffsets[dieKey];
+          const target = {
+            x: standard.centroid.x + (standard.offsetX / 100) * SIZE,
+            y: standard.centroid.y + (standard.offsetY / 100) * SIZE
+          };
+          const medianHeight = median(group.map((entry) => entry.m.height)) || 1;
           group.forEach((entry) => {
-            entry.devY = ((entry.m.cy - meanY) / SIZE) * 100;
-            entry.devX = ((entry.m.cx - meanX) / SIZE) * 100;
-            entry.devBase = ((entry.m.bottom - meanBottom) / SIZE) * 100;
-            entry.meanBottom = meanBottom;
-            entry.heightPct = ((entry.m.bottom - entry.m.top) / SIZE) * 100;
+            entry.devY = ((entry.m.cy - target.y) / SIZE) * 100;
+            entry.devX = ((entry.m.cx - target.x) / SIZE) * 100;
+            entry.sizeDev = ((entry.m.height - medianHeight) / medianHeight) * 100;
+            entry.anchor = target;
+            entry.heightPct = (entry.m.height / SIZE) * 100;
           });
         }
+      }
+
+      /* Phase C — draw the per-set sheets against the standard. */
+      for (const setId of SETS) {
+        const measured = measuredBySet[setId];
+        const cellW = 128;
+        const cellH = 164;
+        const cols = 10;
+        const rows = Math.ceil(allFaces.length / cols);
+        const sheet = document.createElement("canvas");
+        sheet.width = cols * cellW;
+        sheet.height = rows * cellH;
+        const sheetContext = sheet.getContext("2d");
+        sheetContext.fillStyle = "#10141f";
+        sheetContext.fillRect(0, 0, sheet.width, sheet.height);
         measured.forEach((entry, index) => {
           const col = index % cols;
           const row = Math.floor(index / cols);
@@ -188,45 +241,64 @@ async function main() {
           if (entry.image) {
             sheetContext.drawImage(entry.image, x + 4, y + 30, cellW - 8, cellW - 8);
           }
-          const flagged = entry.devBase !== undefined && (Math.abs(entry.devBase) > flagPct || Math.abs(entry.devX) > flagPct);
+          /* Position is judged everywhere except the kite dice (owner:
+             d10/d100 placement is aesthetic and currently approved); glyph
+             size consistency is judged on every die. */
+          const kite = entry.dieKey === "d10" || entry.dieKey === "d100";
+          const positionOff = entry.devY !== undefined && !kite
+            && (Math.abs(entry.devY) > flagPct || Math.abs(entry.devX) > flagPct);
+          const sizeOff = entry.sizeDev !== undefined && Math.abs(entry.sizeDev) > 12;
+          const flagged = positionOff || sizeOff;
           sheetContext.fillStyle = flagged ? "#ff8a8a" : "#ffe59a";
           sheetContext.font = "700 12px Segoe UI";
           sheetContext.fillText(`${entry.dieKey} ${entry.key}`, x + 5, y + 13);
           sheetContext.font = "400 11px Segoe UI";
           sheetContext.fillStyle = flagged ? "#ff8a8a" : "#9fb0d8";
           sheetContext.fillText(
-            entry.m?.art ? "art face" : entry.devBase === undefined ? "no read" : `base${entry.devBase >= 0 ? "+" : ""}${entry.devBase.toFixed(1)}% x${entry.devX >= 0 ? "+" : ""}${entry.devX.toFixed(1)}%`,
+            entry.m?.art ? "art face" : entry.devY === undefined ? "no read"
+              : `dy${entry.devY >= 0 ? "+" : ""}${entry.devY.toFixed(1)} dx${entry.devX >= 0 ? "+" : ""}${entry.devX.toFixed(1)} s${entry.sizeDev >= 0 ? "+" : ""}${entry.sizeDev.toFixed(0)}%`,
             x + 5,
             y + 26
           );
-          if (entry.m && !entry.m.art && entry.devBase !== undefined) {
+          if (entry.m && !entry.m.art && entry.devY !== undefined) {
             const scale = (cellW - 8) / SIZE;
             const cellLeft = x + 4;
-            const bottomY = y + 30 + entry.m.bottom * scale;
-            const meanYpx = y + 30 + entry.meanBottom * scale;
-            sheetContext.strokeStyle = "#9fb0d8";
-            sheetContext.setLineDash([3, 3]);
+            const cellTop = y + 30;
+            const ax = cellLeft + entry.anchor.x * scale;
+            const ay = cellTop + entry.anchor.y * scale;
+            sheetContext.strokeStyle = "#ffd558";
+            sheetContext.lineWidth = 1.3;
             sheetContext.beginPath();
-            sheetContext.moveTo(cellLeft + 10, meanYpx);
-            sheetContext.lineTo(cellLeft + cellW - 18, meanYpx);
+            sheetContext.moveTo(ax - 8, ay);
+            sheetContext.lineTo(ax + 8, ay);
+            sheetContext.moveTo(ax, ay - 8);
+            sheetContext.lineTo(ax, ay + 8);
             sheetContext.stroke();
-            sheetContext.setLineDash([]);
             sheetContext.strokeStyle = flagged ? "#ff5050" : "#7fd8a8";
-            sheetContext.lineWidth = 1.6;
-            sheetContext.beginPath();
-            sheetContext.moveTo(cellLeft + 22, bottomY);
-            sheetContext.lineTo(cellLeft + cellW - 30, bottomY);
-            sheetContext.stroke();
+            sheetContext.lineWidth = 1.2;
+            sheetContext.strokeRect(
+              cellLeft + entry.m.left * scale,
+              cellTop + entry.m.top * scale,
+              (entry.m.right - entry.m.left) * scale,
+              (entry.m.bottom - entry.m.top) * scale
+            );
           }
-          if (entry.devBase !== undefined) {
+          if (entry.devY !== undefined) {
             results.push({
               setId,
               dieKey: entry.dieKey,
               key: entry.key,
-              baselineDevPct: Number(entry.devBase.toFixed(2)),
-              centerDevYpct: Number(entry.devY.toFixed(2)),
+              devYpct: Number(entry.devY.toFixed(2)),
               devXpct: Number(entry.devX.toFixed(2)),
+              sizeDevPct: Number(entry.sizeDev.toFixed(1)),
               glyphHeightPct: Number(entry.heightPct.toFixed(2)),
+              correctionPx768: {
+                dx: Math.round((-entry.devX / 100) * 768),
+                dy: Math.round((-entry.devY / 100) * 768),
+                scale: Number((1 / (1 + entry.sizeDev / 100)).toFixed(3))
+              },
+              positionOff,
+              sizeOff,
               flagged
             });
           } else {
@@ -235,19 +307,27 @@ async function main() {
         });
         sheets[setId] = sheet.toDataURL("image/png");
       }
-      return { results, sheets };
+      const offsets = Object.fromEntries(Object.entries(shapeOffsets).map(([dieKey, entry]) => [dieKey, {
+        offsetYpct: Number(entry.offsetY.toFixed(2)),
+        offsetXpct: Number(entry.offsetX.toFixed(2))
+      }]));
+      return { results, sheets, offsets };
     }, { flagPct: FLAG_PCT });
 
     for (const [setId, dataUrl] of Object.entries(report.sheets)) {
       await writeFile(path.join(outDir, `placement--${setId}.png`), Buffer.from(dataUrl.split(",")[1], "base64"));
     }
-    await writeFile(path.join(outDir, "numeral-placement.json"), JSON.stringify(report.results, null, 2));
+    await writeFile(path.join(outDir, "numeral-placement.json"), JSON.stringify({ designOffsets: report.offsets, faces: report.results }, null, 2));
+    console.log("Derived design offsets (centroid-relative, for owner blessing as standard tokens):");
+    Object.entries(report.offsets).forEach(([dieKey, entry]) => console.log(`  ${dieKey}: y ${entry.offsetYpct >= 0 ? "+" : ""}${entry.offsetYpct}% x ${entry.offsetXpct >= 0 ? "+" : ""}${entry.offsetXpct}%`));
     const flagged = report.results.filter((entry) => entry.flagged);
+    const positionOff = report.results.filter((entry) => entry.positionOff);
+    const sizeOff = report.results.filter((entry) => entry.sizeOff);
     const unmeasured = report.results.filter((entry) => entry.unmeasured === "no-read");
-    console.log(`Measured ${report.results.length} faces (baseline metric). Flagged beyond ${FLAG_PCT}%: ${flagged.length}. Unreadable: ${unmeasured.length}.`);
+    console.log(`Measured ${report.results.length} faces vs geometric anchors. Position off: ${positionOff.length}. Size off: ${sizeOff.length}. Total flagged: ${flagged.length}. Unreadable: ${unmeasured.length}.`);
     flagged
-      .sort((left, right) => Math.max(Math.abs(right.baselineDevPct), Math.abs(right.devXpct)) - Math.max(Math.abs(left.baselineDevPct), Math.abs(left.devXpct)))
-      .forEach((entry) => console.log(`  ${entry.setId} ${entry.dieKey} "${entry.key}": baseline ${entry.baselineDevPct >= 0 ? "+" : ""}${entry.baselineDevPct}% x ${entry.devXpct >= 0 ? "+" : ""}${entry.devXpct}% (glyph ${entry.glyphHeightPct}%)`));
+      .sort((left, right) => (Math.abs(right.devYpct) + Math.abs(right.sizeDevPct) / 8) - (Math.abs(left.devYpct) + Math.abs(left.sizeDevPct) / 8))
+      .forEach((entry) => console.log(`  ${entry.setId} ${entry.dieKey} "${entry.key}": dy ${entry.devYpct >= 0 ? "+" : ""}${entry.devYpct}% dx ${entry.devXpct >= 0 ? "+" : ""}${entry.devXpct}% size ${entry.sizeDevPct >= 0 ? "+" : ""}${entry.sizeDevPct}% -> fix ${JSON.stringify(entry.correctionPx768)}`));
   } finally {
     await browser?.close();
     server.kill();
