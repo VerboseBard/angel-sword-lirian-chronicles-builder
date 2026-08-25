@@ -28,7 +28,7 @@
     100: "d00"
   };
 
-  const ROLLER_VERSION = "dice-lab-scripted-side-entry-18-face-the-viewer";
+  const ROLLER_VERSION = "dice-lab-scripted-side-entry-19-ambiguity-dots";
 
   /* Dice whose result face is aimed at the camera at rest (owner contract:
      "what is on the dice is what's shown"). d4 reads at a corner and d6's
@@ -697,16 +697,25 @@
     context.restore();
   }
 
-  /* 6/9 disambiguation dot (owner directive 2026-08-25): the hand-painted
-     Angel Sword d10 batch marks its 6 and 9 with a dot below the numeral, but
-     the d20 batch and every promoted set lack it, so a foreshortened 6 and 9
-     read as each other at the table. Stamp the dot at composite time for
-     every set — current and future — on dice where both digits exist. */
+  /* Rotation-ambiguity dot (owner directive 2026-08-25, broadened same day):
+     the hand-painted Angel Sword d10 batch marks its 6 and 9 with a dot
+     below the numeral; no other die or set got one. Neighbor faces on a
+     settled die show at arbitrary rotations, so every numeral that reads as
+     a different number upside down gets the dot, on every die of every set
+     — current and future. */
+  /* Only lone 6s and 9s are ambiguous — owner ruling: multi-digit faces
+     (16, 19, the percentile tens) self-identify, the extra digit tells you
+     the orientation. */
+  const AMBIGUOUS_FACE_KEYS = {
+    d6: ["6"],
+    d8: ["6"],
+    d10: ["6", "9"],
+    d12: ["6", "9"],
+    d20: ["6", "9"]
+  };
+
   function shouldStampSixNineDot(dieKey, artKey, palette) {
-    if (artKey !== "6" && artKey !== "9") {
-      return false;
-    }
-    if (dieKey !== "d10" && dieKey !== "d12" && dieKey !== "d20") {
+    if (!(AMBIGUOUS_FACE_KEYS[dieKey] || []).includes(String(artKey))) {
       return false;
     }
     // The Angel Sword d10 paintings already include their own dot.
