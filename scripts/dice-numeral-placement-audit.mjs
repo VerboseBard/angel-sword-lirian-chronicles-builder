@@ -182,13 +182,27 @@ async function main() {
         const sorted = [...values].sort((left, right) => left - right);
         return sorted.length ? sorted[Math.floor(sorted.length / 2)] : 0;
       };
-      const shapeOffsets = {};
-      for (const [dieKey] of Object.entries(DIE_KEYS)) {
+      /* The anchor is the owner's corner-vector construction: the point
+         where lines drawn corner-across-corner meet. For the square that
+         is the diagonal crossing, for the triangle the median crossing,
+         for the pentagon the spoke crossing — all equal to the vertex
+         average. For the KITE (d10/d100) the construction is the two
+         diagonals — pole-to-tail crossed with wing-to-wing — which meets
+         on the axis at wing height (NOT the vertex average). */
+      const anchorFor = (dieKey) => {
         const polygon = geo.facePolygon(dieKey, SIZE);
-        const centroid = {
+        if (dieKey === "d10" || dieKey === "d100") {
+          const [pole, rightWing, tail, leftWing] = polygon;
+          return { x: (pole.x + tail.x) / 2, y: (rightWing.y + leftWing.y) / 2 };
+        }
+        return {
           x: polygon.reduce((sum, point) => sum + point.x, 0) / polygon.length,
           y: polygon.reduce((sum, point) => sum + point.y, 0) / polygon.length
         };
+      };
+      const shapeOffsets = {};
+      for (const [dieKey] of Object.entries(DIE_KEYS)) {
+        const centroid = anchorFor(dieKey);
         const pool = SETS.flatMap((setId) => measuredBySet[setId]
           .filter((entry) => entry.dieKey === dieKey && entry.m && !entry.m.art)
           .map((entry) => entry.m));
