@@ -248,6 +248,26 @@ async function testRollDice() {
     skill.length === 1 && skill[0].sides === 20 && skill[0].value === 14);
   const normalized = core.normalizeRollEvent({ total: 17, breakdown: "2d10: 3 + 9", dice: [{ sides: 10, value: 3 }, { sides: 10, value: 9 }] });
   check("normalizeRollEvent carries the dice array through", Array.isArray(normalized.dice) && normalized.dice.length === 2);
+  const attributed = core.normalizeRollEvent({ total: 11, playerRole: "GM" });
+  check("normalizeRollEvent carries the roller's role", attributed.playerRole === "GM");
+  check("invalid roles are stripped", core.normalizeRollEvent({ total: 4, playerRole: "OWL" }).playerRole === "");
+  const companionBackground = await readFile(path.join(root, "owlbear", "background.js"), "utf8");
+  check("companion background stamps the relaying player's role",
+    companionBackground.includes("getRole()") && companionBackground.includes("playerRole"));
+  const diceBackground = await readFile(path.join(root, "owlbear-dice", "background.js"), "utf8");
+  const diceOverlay = await readFile(path.join(root, "owlbear-dice", "overlay.js"), "utf8");
+  const diceOverlayHtml = await readFile(path.join(root, "owlbear-dice", "overlay.html"), "utf8");
+  check("dice background no longer serializes rolls one-at-a-time", !diceBackground.includes("overlayBusy"));
+  check("dice overlay subscribes to room rolls itself", diceOverlay.includes("broadcast.onMessage(ROLL_CHANNEL"));
+  check("dice overlay interrupts by clearing the previous flight", diceOverlay.includes(".clear"));
+  check("dice overlay stacks result chips with a GM badge", diceOverlay.includes("gm-badge") && diceOverlayHtml.includes("roll-chips"));
+  check("overlay boot-buffer handshake exists on both ends",
+    diceBackground.includes("overlay-ready") && diceOverlay.includes("overlay-ready"));
+  const rollerCore = await readFile(path.join(root, "assets", "dice-3d", "shared-dice-roller-core.js"), "utf8");
+  check("settle camera lift is wired in the shared core",
+    rollerCore.includes("CAMERA_SETTLED") && rollerCore.includes("CAMERA_LIFT_MS"));
+  check("6/9 disambiguation dot is stamped engine-side",
+    rollerCore.includes("shouldStampSixNineDot") && rollerCore.includes("drawSixNineDot"));
   const uiSource = await readFile(path.join(root, "src", "js", "ui.js"), "utf8");
   for (const kind of ["dice", "action-damage", "check", "skill"]) {
     const site = new RegExp(`publishVttEvent\\("${kind}",\\s*\\{[\\s\\S]{0,220}?\\bdice:`);

@@ -6,30 +6,35 @@
   <style>
     html, body { margin: 0; background: transparent; overflow: hidden; font-family: "Segoe UI", system-ui, sans-serif; }
     #dice-flight-layer { position: fixed; inset: 0; pointer-events: none; }
-    #roll-banner {
+    #roll-chips {
       position: fixed; top: 14px; left: 50%; transform: translateX(-50%);
-      max-width: min(560px, calc(100vw - 40px));
+      display: flex; gap: 10px; align-items: flex-start; justify-content: center;
+      max-width: calc(100vw - 32px); pointer-events: none;
+    }
+    .chip {
       background: rgba(17, 24, 39, 0.94); color: #e8ecf5;
       border: 1px solid #856c24; border-radius: 12px;
-      padding: 10px 18px; text-align: center; pointer-events: none;
+      padding: 9px 16px; text-align: center; pointer-events: none;
       box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
-      opacity: 0; transition: opacity 0.5s ease;
+      min-width: 150px; max-width: 230px;
+      opacity: 0; transform: translateY(-8px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
     }
-    #roll-banner.is-visible { opacity: 1; }
-    #banner-who { font-size: 0.74rem; color: #9fb0d8; }
-    #banner-label { font-size: 1rem; font-weight: 700; margin-top: 2px; }
-    #banner-total { font-size: 1.35rem; font-weight: 800; color: #ffe59a; margin-top: 2px; }
-    #banner-breakdown { font-size: 0.74rem; color: #bcc7dc; margin-top: 3px; }
+    .chip.is-visible { opacity: 1; transform: translateY(0); }
+    .chip.is-fading { opacity: 0; transform: translateY(-8px); }
+    .chip-who { font-size: 0.72rem; color: #9fb0d8; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .gm-badge {
+      font-size: 0.62rem; font-weight: 800; letter-spacing: 0.06em;
+      background: #856c24; color: #ffe59a; border-radius: 5px; padding: 1px 5px;
+    }
+    .chip-label { font-size: 0.95rem; font-weight: 700; margin-top: 2px; }
+    .chip-total { font-size: 1.3rem; font-weight: 800; color: #ffe59a; margin-top: 2px; }
+    .chip-breakdown { font-size: 0.7rem; color: #bcc7dc; margin-top: 3px; overflow-wrap: anywhere; }
   </style>
 </head>
 <body>
   <div id="dice-flight-layer"></div>
-  <div id="roll-banner">
-    <div id="banner-who"></div>
-    <div id="banner-label"></div>
-    <div id="banner-total"></div>
-    <div id="banner-breakdown"></div>
-  </div>
+  <div id="roll-chips"></div>
   <script>
     window.LYRIAN_DISABLE_LEGACY_GLB_DICE = true;
     (function () {
@@ -42,7 +47,7 @@
           document.head.appendChild(script);
         });
       }
-      var V = "?v=20260811-srgb-dice-v1";
+      var V = "?v=20260825-warm-overlay-v1";
       load("../assets/dice/promoted-dice-skins.registry.js" + V)
         .catch(function () { /* promoted sets are optional */ })
         .then(function () {

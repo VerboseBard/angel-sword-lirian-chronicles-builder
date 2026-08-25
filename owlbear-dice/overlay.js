@@ -1,22 +1,85 @@
+/* Angel Sword Dice — persistent roll overlay (2026-08-25 rework, owner design).
+   Stays open across rolls with the 3D engine warm:
+   - a new roll may cut the previous animation short — dice clear and the new
+     roll flies immediately (no more one-roll-at-a-time lock);
+   - every roll leaves a result CHIP in the top strip: who rolled (with a GM
+     badge), what it was (Light Attack, skill check, ...), the total, and the
+     per-die breakdown. Up to three chips; the oldest fades as new ones
+     arrive, and every chip fades on its own after a while;
+   - while dice fly the popover covers the viewport; once they land it
+     shrinks to the chip strip so the map stays clickable, expanding again on
+     the next roll; when the last chip fades the popover closes itself.
+   Rolls arrive directly over OBR.broadcast; rolls fired while this page was
+   still booting are replayed by background.js over a same-partition
+   BroadcastChannel handshake. */
+
 import OBR from "@owlbear-rodeo/sdk";
+import { ROLL_CHANNEL, extractRollDice, normalizeRollEvent } from "../owlbear/core.js";
 
 const OVERLAY_ID = "com.angelssword.lyrian-chronicles/dice-overlay";
-let finished = false;
-let obrReady = false;
+const OVERLAY_CHANNEL = "asb-dice-overlay.v1";
+const SET_STORAGE_KEY = "asb.dice.selectedSet.v1";
+const REPLAY_STORAGE_KEY = "asb.dice.replayEnabled.v1";
+const DICE_VISIBLE_MS = 5200;
+const CHIP_TTL_MS = 30000;
+const MAX_CHIPS = 3;
+const STRIP_HEIGHT = 190;
+const IDLE_CLOSE_DELAY_MS = 1200;
+const HEARTBEAT_MS = 2000;
 
-function readPayload() {
+let obrReady = false;
+let runtimeReady = false;
+let closing = false;
+let animatingUntil = 0;
+let shrinkTimer = 0;
+let idleTimer = 0;
+let chipSequence = 0;
+const seenRollIds = new Set();
+const pendingEvents = [];
+const chips = new Map();
+
+const overlayChannel = typeof BroadcastChannel === "function"
+  ? new BroadcastChannel(OVERLAY_CHANNEL)
+  : null;
+
+setInterval(() => {
+  if (!closing) {
+    overlayChannel?.postMessage("overlay-alive");
+  }
+}, HEARTBEAT_MS);
+
+function remember(id) {
+  if (!id || seenRollIds.has(id)) {
+    return false;
+  }
+  seenRollIds.add(id);
+  if (seenRollIds.size > 300) {
+    seenRollIds.delete(seenRollIds.values().next().value);
+  }
+  return true;
+}
+
+function replayEnabled() {
   try {
-    return JSON.parse(decodeURIComponent(window.location.hash.slice(1)));
+    return localStorage.getItem(REPLAY_STORAGE_KEY) !== "0";
   } catch (error) {
-    return null;
+    return true;
   }
 }
 
-function finish() {
-  if (finished) {
+function selectedSetId() {
+  try {
+    return localStorage.getItem(SET_STORAGE_KEY) || "new-angelsword";
+  } catch (error) {
+    return "new-angelsword";
+  }
+}
+
+function closeOverlay() {
+  if (closing) {
     return;
   }
-  finished = true;
+  closing = true;
   if (obrReady) {
     try {
       OBR.popover.close(OVERLAY_ID);
@@ -26,64 +89,179 @@ function finish() {
   }
 }
 
-const DICE_VISIBLE_MS = 5500;
-const BANNER_LINGER_MS = 3500;
-
-function showBanner(payload) {
-  const banner = document.getElementById("roll-banner");
-  if (!banner) {
-    return;
-  }
-  document.getElementById("banner-who").textContent = payload.who || "";
-  document.getElementById("banner-label").textContent = payload.label || "Roll";
-  document.getElementById("banner-total").textContent = Number.isFinite(Number(payload.total)) ? `Total ${payload.total}` : "";
-  document.getElementById("banner-breakdown").textContent = payload.breakdown || "";
-  banner.classList.add("is-visible");
-}
-
-async function shrinkToBannerStrip() {
-  document.querySelectorAll(".accurate-dice-canvas").forEach((canvas) => canvas.remove());
-  if (obrReady) {
-    try {
-      await OBR.popover.setHeight(OVERLAY_ID, 150);
-    } catch (error) {
-      /* the popover may already be closing */
-    }
-  }
-}
-
-function startAnimation() {
-  const payload = readPayload();
-  if (!payload?.results?.length || !window.LyrianAccurateDiceRoller) {
-    finish();
+async function setOverlayHeight(pixels) {
+  if (!obrReady) {
     return;
   }
   try {
-    window.LyrianAccurateDiceRoller.rollDice({
+    await OBR.popover.setHeight(OVERLAY_ID, pixels);
+  } catch (error) {
+    /* resizing is cosmetic */
+  }
+}
+
+async function expandOverlay() {
+  if (!obrReady) {
+    return;
+  }
+  try {
+    const height = await OBR.viewport.getHeight();
+    await OBR.popover.setHeight(OVERLAY_ID, Math.max(420, Math.round(height)));
+  } catch (error) {
+    /* keep whatever size we have */
+  }
+}
+
+function scheduleIdleCheck() {
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => {
+    const stillAnimating = Date.now() < animatingUntil;
+    if (!stillAnimating && chips.size === 0) {
+      closeOverlay();
+    }
+  }, IDLE_CLOSE_DELAY_MS);
+}
+
+function removeChip(id, immediate = false) {
+  const chip = chips.get(id);
+  if (!chip) {
+    return;
+  }
+  chips.delete(id);
+  clearTimeout(chip.ttlTimer);
+  if (immediate) {
+    chip.element.remove();
+    scheduleIdleCheck();
+    return;
+  }
+  chip.element.classList.add("is-fading");
+  setTimeout(() => {
+    chip.element.remove();
+    scheduleIdleCheck();
+  }, 650);
+}
+
+function addChip(event) {
+  const strip = document.getElementById("roll-chips");
+  if (!strip) {
+    return;
+  }
+  const id = `chip-${chipSequence += 1}`;
+  const element = document.createElement("div");
+  element.className = "chip";
+  const who = event.character && event.playerName && event.character !== event.playerName
+    ? `${event.character} · ${event.playerName}`
+    : (event.character || event.playerName || "Someone");
+  const gmBadge = event.playerRole === "GM" ? '<span class="gm-badge">GM</span>' : "";
+  const esc = (value) => String(value ?? "")
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  element.innerHTML = `
+    <div class="chip-who">${gmBadge}${esc(who)}</div>
+    <div class="chip-label">${esc(event.label || "Roll")}</div>
+    <div class="chip-total">${Number.isFinite(Number(event.total)) ? `Total ${esc(event.total)}` : ""}</div>
+    <div class="chip-breakdown">${esc(event.breakdown || "")}</div>`;
+  strip.appendChild(element);
+  requestAnimationFrame(() => element.classList.add("is-visible"));
+  const ttlTimer = setTimeout(() => removeChip(id), CHIP_TTL_MS);
+  chips.set(id, { element, ttlTimer });
+  while (chips.size > MAX_CHIPS) {
+    const oldestId = chips.keys().next().value;
+    removeChip(oldestId);
+  }
+}
+
+function clearDiceCanvases() {
+  try {
+    window.LyrianAccurateDiceRoller?.clear?.();
+  } catch (error) {
+    /* a mid-flight clear must never break the next roll */
+  }
+  document.querySelectorAll(".accurate-dice-canvas").forEach((canvas) => canvas.remove());
+}
+
+function playRoll(rawEvent) {
+  const event = normalizeRollEvent(rawEvent);
+  if (!event || !replayEnabled()) {
+    return;
+  }
+  if (!runtimeReady) {
+    if (!seenRollIds.has(event.id) && !pendingEvents.some((entry) => entry?.id === rawEvent?.id)) {
+      pendingEvents.push(rawEvent);
+    }
+    return;
+  }
+  if (!remember(event.id)) {
+    return;
+  }
+  const results = extractRollDice(rawEvent).slice(0, 24);
+  if (!results.length) {
+    return;
+  }
+  clearTimeout(shrinkTimer);
+  clearDiceCanvases();
+  expandOverlay();
+  addChip(event);
+  let animationMs = DICE_VISIBLE_MS;
+  try {
+    const reported = window.LyrianAccurateDiceRoller.rollDice({
       layer: document.getElementById("dice-flight-layer"),
-      results: payload.results,
-      setId: payload.setId,
+      results,
+      setId: selectedSetId(),
       width: window.innerWidth,
       height: window.innerHeight
     });
+    if (Number.isFinite(Number(reported)) && Number(reported) > 0) {
+      animationMs = Math.min(Number(reported), 12000);
+    }
   } catch (error) {
-    finish();
-    return;
+    /* chips still record the result even if the 3D flight fails */
   }
-  showBanner(payload);
-  setTimeout(shrinkToBannerStrip, DICE_VISIBLE_MS);
-  setTimeout(() => {
-    document.getElementById("roll-banner")?.classList.remove("is-visible");
-  }, DICE_VISIBLE_MS + BANNER_LINGER_MS);
-  setTimeout(finish, DICE_VISIBLE_MS + BANNER_LINGER_MS + 600);
+  animatingUntil = Date.now() + animationMs;
+  shrinkTimer = setTimeout(() => {
+    clearDiceCanvases();
+    setOverlayHeight(STRIP_HEIGHT);
+    scheduleIdleCheck();
+  }, Math.min(animationMs, DICE_VISIBLE_MS));
 }
 
-window.addEventListener("asd-dice-runtime-ready", startAnimation);
-window.addEventListener("asd-dice-runtime-error", finish);
+function drainPending() {
+  const queued = pendingEvents.splice(0);
+  const [latest, ...older] = queued.reverse();
+  older.reverse().forEach((event) => {
+    const normalized = normalizeRollEvent(event);
+    if (normalized && remember(normalized.id) && extractRollDice(event).length) {
+      addChip(normalized);
+    }
+  });
+  if (latest) {
+    playRoll(latest);
+  }
+}
+
+window.addEventListener("asd-dice-runtime-ready", () => {
+  runtimeReady = true;
+  try {
+    window.LyrianAccurateDiceRoller?.preloadFaceArt?.(selectedSetId());
+  } catch (error) {
+    /* warm-up is best-effort */
+  }
+  drainPending();
+  scheduleIdleCheck();
+});
+window.addEventListener("asd-dice-runtime-error", closeOverlay);
+
+overlayChannel?.addEventListener("message", (messageEvent) => {
+  const data = messageEvent?.data;
+  if (data && typeof data === "object" && data.kind === "roll-replay" && Array.isArray(data.events)) {
+    data.events.forEach((event) => playRoll(event));
+  }
+});
 
 if (OBR?.onReady) {
   OBR.onReady(() => {
     obrReady = true;
-    setTimeout(finish, 12000);
+    OBR.broadcast.onMessage(ROLL_CHANNEL, (broadcastEvent) => playRoll(broadcastEvent.data));
+    overlayChannel?.postMessage("overlay-ready");
+    scheduleIdleCheck();
   });
 }

@@ -269,6 +269,9 @@ export function normalizeRollEvent(event, defaults = {}) {
     character: text(event.character || defaults.character || "Unknown character", 100),
     playerId: text(event.playerId || defaults.playerId, 120),
     playerName: text(event.playerName || defaults.playerName, 100),
+    playerRole: ["GM", "PLAYER"].includes(event.playerRole || defaults.playerRole)
+      ? (event.playerRole || defaults.playerRole)
+      : "",
     label: text(event.label || "Roll", 120),
     formula: text(event.formula, 120),
     breakdown: text(event.breakdown, 300),

@@ -1426,8 +1426,22 @@
     // A slightly higher table camera exposes more of the winning top face,
     // closer to a physical tabletop view, without flattening the dice into
     // icons or hiding their neighboring faces.
-    camera.position.set(0, 6.9, 8.5);
-    camera.lookAt(0, -0.55, 0);
+    /* Settle lift (owner decision 2026-08-25, "option A"): the tumble keeps
+       its drama at the table camera, then once every die has settled the
+       camera eases toward overhead so the RESULT faces dominate the final
+       frame — the 280-face audit proved the landings are always correct;
+       what misled players was reading foreshortened top faces at the low
+       angle. Under reduced motion the camera simply starts overhead. */
+    const CAMERA_BASE = { position: new THREE.Vector3(0, 6.9, 8.5), lookY: -0.55 };
+    const CAMERA_SETTLED = { position: new THREE.Vector3(0, 11.4, 4.4), lookY: -1.05 };
+    const CAMERA_LIFT_MS = 900;
+    if (reducedMotion) {
+      camera.position.copy(CAMERA_SETTLED.position);
+      camera.lookAt(0, CAMERA_SETTLED.lookY, 0);
+    } else {
+      camera.position.copy(CAMERA_BASE.position);
+      camera.lookAt(0, CAMERA_BASE.lookY, 0);
+    }
 
     scene.add(new THREE.HemisphereLight(0xffffff, 0x1b1f28, 1.7));
     const keyLight = new THREE.DirectionalLight(0xffffff, 2.6);
@@ -1723,6 +1737,12 @@
 
       if (elapsed >= settleCompleteMs) {
         publishSettle();
+      }
+
+      if (!reducedMotion && elapsed > settleCompleteMs) {
+        const lift = easeOutCubic(clamp((elapsed - settleCompleteMs) / CAMERA_LIFT_MS, 0, 1));
+        camera.position.lerpVectors(CAMERA_BASE.position, CAMERA_SETTLED.position, lift);
+        camera.lookAt(0, CAMERA_BASE.lookY + (CAMERA_SETTLED.lookY - CAMERA_BASE.lookY) * lift, 0);
       }
 
       renderer.render(scene, camera);

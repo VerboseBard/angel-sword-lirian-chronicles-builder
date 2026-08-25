@@ -145,9 +145,11 @@ async function shareLocalRoll(results, total, formula, breakdown) {
     formula,
     breakdown,
     total,
+    dice: results.map((entry) => ({ sides: entry.sides, value: entry.value })),
     character: playerRecord?.name,
     playerId: playerRecord?.id,
-    playerName: playerRecord?.name
+    playerName: playerRecord?.name,
+    playerRole: playerRecord?.role
   });
   if (!event) {
     return;

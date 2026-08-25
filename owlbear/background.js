@@ -39,14 +39,17 @@ async function start() {
     const localChannel = typeof BroadcastChannel === "function"
       ? new BroadcastChannel(RELAY_CHANNEL)
       : null;
-    const [playerName, playerMetadata] = await Promise.all([
+    const [playerName, playerRole, playerMetadata] = await Promise.all([
       OBR.player.getName(),
+      OBR.player.getRole(),
       OBR.player.getMetadata()
     ]);
     const playerId = OBR.player.id || await OBR.player.getId();
     let playerBinding = playerMetadata?.[PLAYER_BINDING_KEY] || null;
+    let currentRole = playerRole;
     OBR.player.onChange((player) => {
       playerBinding = player.metadata?.[PLAYER_BINDING_KEY] || null;
+      currentRole = player.role || currentRole;
     });
 
     const DEV_RELAY = /^(?:localhost|127\.0\.0\.1|\[::1\])$/i.test(window.location.hostname);
@@ -60,7 +63,8 @@ async function start() {
         characterId: playerBinding?.characterId,
         character: playerBinding?.characterName,
         playerId,
-        playerName
+        playerName,
+        playerRole: currentRole
       });
       if (!event || !remember(event.id)) {
         return;
