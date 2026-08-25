@@ -8586,7 +8586,7 @@ const breakdown = DICE_TRAY_TYPES
         diceResults: rolls
       });
       setStatus(`Rolled dice tray total: ${total}.`);
-      publishVttEvent("dice", { label: "Dice Tray Roll", formula, breakdown, total, character: cleanText(state.fields.Name) });
+      publishVttEvent("dice", { label: "Dice Tray Roll", formula, breakdown, total, dice: rolls.map((entry) => ({ sides: entry.sides, value: entry.value })), character: cleanText(state.fields.Name) });
     }
 function getPlayActionForRollType(type) {
       return PLAY_BASIC_ACTIONS.find((action) => action.rollType === type) || null;
@@ -8679,7 +8679,7 @@ const damageType = cleanText(action.damage.detail || "");
         diceResults: parts.rolls.map((value) => ({ sides: parts.diceSides, value, label: `d${parts.diceSides}` }))
       });
       setStatus(`Rolled ${action.label} damage: ${parts.total}.`);
-      publishVttEvent("action-damage", { label: `${action.label} Damage`, formula: parts.formula, breakdown, total: parts.total, weapon: cleanText(action.weaponName || ""), character: cleanText(state.fields.Name) });
+      publishVttEvent("action-damage", { label: `${action.label} Damage`, formula: parts.formula, breakdown, total: parts.total, dice: parts.rolls.map((value) => ({ sides: parts.diceSides, value })), weapon: cleanText(action.weaponName || ""), character: cleanText(state.fields.Name) });
     }
 function rollPlayCheck(type, options = {}) {
       const derived = getDerivedCombatStats();
@@ -8760,7 +8760,7 @@ const roll = rollDie(20);
         diceResults
       });
       setStatus(`Rolled ${label}: ${total}.`);
-      publishVttEvent("check", { label, formula: dieType, breakdown, total, weapon: cleanText(costedAction?.weaponName || ""), character: cleanText(state.fields.Name) });
+      publishVttEvent("check", { label, formula: dieType, breakdown, total, dice: (diceResults || []).map((entry) => ({ sides: entry.sides, value: entry.value })), weapon: cleanText(costedAction?.weaponName || ""), character: cleanText(state.fields.Name) });
     }
 export function getSkillRowData(index, bonuses = getComputedBonuses()) {
       const definition = SKILL_DEFINITIONS[index - 1];
@@ -8983,7 +8983,7 @@ const breakdown = `d20: ${roll} | ${breakdownParts.join(" | ")}`;
         diceResults: [{ sides: 20, value: roll, label: "d20" }]
       });
       setStatus(`Rolled ${expertiseGroup ? `${skill.name} (${expertiseGroup.name})` : skill.name}: ${total}.`);
-      publishVttEvent("skill", { label, formula: "d20", breakdown, total, character: cleanText(state.fields.Name) });
+      publishVttEvent("skill", { label, formula: "d20", breakdown, total, dice: [{ sides: 20, value: roll }], character: cleanText(state.fields.Name) });
     }
 function restoreTurnResources() {
       syncPlayResourcesFromFields(true);

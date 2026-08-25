@@ -129,22 +129,6 @@ function animateResults(results) {
   }
 }
 
-function parseBreakdown(event) {
-  const results = [];
-  const source = String(event?.breakdown || "");
-  const pattern = /d(\d+):\s*(\d+)/gi;
-  let match = pattern.exec(source);
-  while (match) {
-    const sides = Number(match[1]);
-    const value = Number(match[2]);
-    if (DICE_TYPES.includes(sides) && Number.isFinite(value)) {
-      results.push({ sides, value });
-    }
-    match = pattern.exec(source);
-  }
-  return results.slice(0, MAX_QUEUED * 2);
-}
-
 function replayRoomRoll(rawEvent) {
   const event = normalizeRollEvent(rawEvent);
   if (!event || !rememberRoll(event.id)) {

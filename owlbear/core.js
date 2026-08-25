@@ -201,6 +201,55 @@ export function createBindingRecord(character, player = {}, item = {}) {
   };
 }
 
+const ROLL_DICE_SIDES = [20, 12, 100, 10, 8, 6, 4];
+const MAX_ROLL_DICE = 40;
+
+function sanitizeRollDice(dice) {
+  if (!Array.isArray(dice)) {
+    return [];
+  }
+  const results = [];
+  for (const entry of dice) {
+    const sides = Number(entry?.sides);
+    const value = Number(entry?.value);
+    if (ROLL_DICE_SIDES.includes(sides) && Number.isFinite(value)) {
+      results.push({ sides, value });
+    }
+    if (results.length >= MAX_ROLL_DICE) {
+      break;
+    }
+  }
+  return results;
+}
+
+/* Per-die results for visual replay (the 3D overlay). Prefers the
+   structured `dice` array on the wire; falls back to parsing the text
+   breakdown for events from older builds — including count-prefixed
+   multi-die groups ("2d10: 3 + 9"), which the old regex read as one die. */
+export function extractRollDice(event) {
+  const structured = sanitizeRollDice(event?.dice);
+  if (structured.length) {
+    return structured;
+  }
+  const results = [];
+  const source = String(event?.breakdown || "");
+  const pattern = /\d*d(\d+):\s*([\d\s+]+)/gi;
+  let match = pattern.exec(source);
+  while (match && results.length < MAX_ROLL_DICE) {
+    const sides = Number(match[1]);
+    if (ROLL_DICE_SIDES.includes(sides)) {
+      for (const raw of match[2].split("+")) {
+        const value = Number(raw.trim());
+        if (raw.trim() && Number.isFinite(value) && results.length < MAX_ROLL_DICE) {
+          results.push({ sides, value });
+        }
+      }
+    }
+    match = pattern.exec(source);
+  }
+  return results;
+}
+
 export function normalizeRollEvent(event, defaults = {}) {
   if (!event || typeof event !== "object") {
     return null;
@@ -225,6 +274,7 @@ export function normalizeRollEvent(event, defaults = {}) {
     breakdown: text(event.breakdown, 300),
     weapon: text(event.weapon, 100),
     visibility: ["PUBLIC", "GM"].includes(event.visibility) ? event.visibility : "PUBLIC",
+    dice: sanitizeRollDice(event.dice),
     total
   };
 }

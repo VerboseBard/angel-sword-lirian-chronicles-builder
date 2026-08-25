@@ -229,6 +229,32 @@ async function testCcsTemplate() {
   check("update-procedure README ships beside the template", readme.includes("Update procedure"));
 }
 
+async function testRollDice() {
+  console.log("— per-die roll data (overlay contract) —");
+  const core = await import("../owlbear/core.js");
+  const structured = core.extractRollDice({
+    dice: [{ sides: 10, value: 3 }, { sides: 10, value: 9 }, { sides: 7, value: 2 }, { sides: 20, value: "bad" }],
+    breakdown: "ignored when structured dice exist"
+  });
+  check("structured dice win and invalid entries drop",
+    structured.length === 2 && structured[0].value === 3 && structured[1].value === 9);
+  const multi = core.extractRollDice({ breakdown: "2d10: 3 + 9 | Toughness: +5" });
+  check("fallback parses count-prefixed multi-die groups (the 2d10 bug)",
+    multi.length === 2 && multi[0].sides === 10 && multi[0].value === 3 && multi[1].value === 9);
+  const tray = core.extractRollDice({ breakdown: "d20: 18 | d12: 12 | d100: 19 | d10: 4 | d8: 4 | d6: 4 | d4: 1" });
+  check("fallback parses the full dice-tray breakdown", tray.length === 7 && tray[2].sides === 100 && tray[2].value === 19);
+  const skill = core.extractRollDice({ breakdown: "d20: 14 | Reason +5 | Skill +0" });
+  check("fallback reads exactly one die from a skill breakdown (no bonus bleed)",
+    skill.length === 1 && skill[0].sides === 20 && skill[0].value === 14);
+  const normalized = core.normalizeRollEvent({ total: 17, breakdown: "2d10: 3 + 9", dice: [{ sides: 10, value: 3 }, { sides: 10, value: 9 }] });
+  check("normalizeRollEvent carries the dice array through", Array.isArray(normalized.dice) && normalized.dice.length === 2);
+  const uiSource = await readFile(path.join(root, "src", "js", "ui.js"), "utf8");
+  for (const kind of ["dice", "action-damage", "check", "skill"]) {
+    const site = new RegExp(`publishVttEvent\\("${kind}",\\s*\\{[\\s\\S]{0,220}?\\bdice:`);
+    check(`the "${kind}" roll site publishes structured dice`, site.test(uiSource));
+  }
+}
+
 async function testVttRelay() {
   console.log("— vtt relay —");
   const relay = await import("../src/js/vtt-relay.js");
@@ -317,6 +343,7 @@ async function testAscharInterop() {
 async function main() {
   await testOwlbearManifest();
   await testOwlbearCore();
+  await testRollDice();
   await testFoundryModule();
   await testWorldAnvilBuilder();
   await testCcsTemplate();
