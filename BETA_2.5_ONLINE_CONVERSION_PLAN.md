@@ -149,12 +149,16 @@ Collect requirements later; do not scope-creep 2.5.
   new dot.
 
 ### Backlog — dice art QC (from the 2026-08-25 placement review)
-- **Rana d4 — RESOLVED ENGINE-SIDE 2026-08-25 (`3439e26`):** the engine now
-  redraws all twelve corner medallions at composite time (opaque disc +
-  procedural gold ring + centered number), covering the misplaced baked
-  numerals entirely. A Workshop re-bake of these four faces remains
-  optional polish; the patch becomes harmlessly redundant if done.
-  Original finding kept below for the record.
+- **Rana d4 — engine repair ATTEMPTED THREE WAYS AND REVERTED 2026-08-25
+  (final state: original art untouched).** Fixed-landmark medallions missed
+  the painted circles; measured-circle replacement + surgical stroke erase
+  centered the numbers but broke the integrated design (the medallions
+  weave into filigree and the frame line; owner: "you actually broke the
+  actual design image"). Standing lesson: NO procedural pixel surgery on
+  integrated painted artwork — regenerate at the source instead. The
+  Workshop re-bake of these four faces is therefore BACK AT THE TOP of the
+  art pass as the only clean fix; the measured corrections and the
+  circumference-scoring circle measurements remain available to guide it.
 - **Rana d4 re-bake (was top of the art pass, owner-flagged):** all twelve corner
   numbers overhang or miss their painted medallion circles (apex numbers
   spill below, bottom corners drift toward the face interior — see
