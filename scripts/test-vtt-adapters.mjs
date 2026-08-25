@@ -69,16 +69,19 @@ async function testOwlbearManifest() {
   check("panel.js parses", nodeCheck("owlbear/panel.js"));
   check("background.js parses", nodeCheck("owlbear/background.js"));
   check("core.js parses", nodeCheck("owlbear/core.js"));
+  check("opener-bridge.js exists", await exists("owlbear/opener-bridge.js"));
+  check("opener-bridge.js parses", nodeCheck("owlbear/opener-bridge.js"));
   const panelHtml = await readFile(path.join(root, "owlbear", "panel.html"), "utf8");
   const backgroundHtml = await readFile(path.join(root, "owlbear", "background.html"), "utf8");
   const sdkSource = await readFile(path.join(root, "owlbear", "sdk.js"), "utf8");
   check("extension pages load locally bundled runtimes", panelHtml.includes("dist/panel.js") && backgroundHtml.includes("dist/background.js"));
   check("extension uses the installed official SDK without runtime CDN imports", sdkSource.includes("@owlbear-rodeo/sdk") && !/https?:\/\//i.test(sdkSource));
-  const combined = await Promise.all(["panel.js", "background.js", "core.js"].map((file) => readFile(path.join(root, "owlbear", file), "utf8"))).then((parts) => parts.join("\n"));
+  const combined = await Promise.all(["panel.js", "background.js", "core.js", "opener-bridge.js"].map((file) => readFile(path.join(root, "owlbear", file), "utf8"))).then((parts) => parts.join("\n"));
   check("extension uses a namespaced OBR broadcast channel", combined.includes("com.angelssword.lyrian-chronicles") && combined.includes("/rolls"));
   check("extension supports portable character import", combined.includes("normalizeCharacterExport") && combined.includes("character-file"));
   check("extension stores namespaced player and token bindings", combined.includes("player-binding") && combined.includes("character-binding"));
   check("extension contains no credential handling", !/secret|password|api[_-]?key|authorization|bearer\s/i.test(combined));
+  check("dead token-image relay is fully gone from the extension", !combined.includes("token-image") && !combined.includes("tokenImagePlaceUrl"));
 }
 
 async function testOwlbearCore() {
@@ -244,6 +247,11 @@ async function testVttRelay() {
     "dev relay transport is gated to local hostnames",
     source.includes("DEV_RELAY_HOST_PATTERN") && source.includes("isDevRelayHost()")
   );
+  check("opener state getter exported", typeof relay.getOwlbearOpenerState === "function");
+  check("opener state is closed under Node (no window.opener)", relay.getOwlbearOpenerState() === "closed");
+  check("dead token-image relay is fully gone from the sheet", !source.includes("token-image"));
+  const serverSource = await readFile(path.join(root, "scripts", "server.mjs"), "utf8");
+  check("dead token-image endpoint is fully gone from the dev server", !serverSource.includes("token-image"));
 }
 
 async function testAscharInterop() {

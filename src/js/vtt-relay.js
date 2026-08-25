@@ -20,6 +20,7 @@ export const VTT_RELAY_VERSION = 1;
 let channelInstance = null;
 let channelBroken = false;
 const publishedEventIds = new Set();
+const seenRoomEventIds = new Set();
 const roomEventSubscribers = new Set();
 
 function createEventId() {
@@ -40,6 +41,17 @@ function handleChannelMessage(messageEvent) {
   const event = messageEvent?.data;
   if (!event || event.relaySource !== "owlbear-room" || publishedEventIds.has(event.id)) {
     return;
+  }
+  /* The same room roll can arrive on several live transports at once
+     (opener bridge, BroadcastChannel, dev relay) — deliver it once. */
+  if (event.id) {
+    if (seenRoomEventIds.has(event.id)) {
+      return;
+    }
+    seenRoomEventIds.add(event.id);
+    if (seenRoomEventIds.size > 200) {
+      seenRoomEventIds.delete(seenRoomEventIds.values().next().value);
+    }
   }
   roomEventSubscribers.forEach((subscriber) => {
     try {
@@ -122,6 +134,171 @@ function ensureDevRelayPolling() {
   devRelayTimer = setInterval(pollDevRelayOnce, 2000);
 }
 
+/* ── Owlbear opener bridge (sheet side) ─────────────────────────────────
+   When the Companion panel opened THIS window (window.opener is set), the
+   two exchange events directly over postMessage — the one transport that
+   works on a public static host, since window-to-window messaging is not
+   storage-partitioned. The panel owns the heartbeat; this side answers.
+
+   This file cannot import owlbear/core.js (enforced by test-vtt-adapters),
+   so the kind strings and timings below repeat OPENER_BRIDGE_KIND /
+   OPENER_BRIDGE_TIMING; scripts/test-owlbear-opener-bridge.mjs pins the
+   two copies against each other. */
+const OPENER_KIND_HELLO = "bridge-hello";
+const OPENER_KIND_PING = "bridge-ping";
+const OPENER_KIND_PONG = "bridge-pong";
+const OPENER_KIND_ACK = "bridge-ack";
+const OPENER_ACK_TIMEOUT_MS = 5000;
+/* Generous: a hidden Companion iframe's ping timer can be throttled to
+   about one a minute; postMessage delivery itself is never throttled. */
+const OPENER_STALE_MS = 75000;
+const OPENER_CONNECT_WAIT_MS = 2000;
+
+let openerInitialized = false;
+let openerHandshaken = false;
+let openerLastHeardAt = 0;
+const openerPendingAcks = new Map();
+
+function getOwlbearOpener() {
+  try {
+    return globalThis.window?.opener || null;
+  } catch (error) {
+    return null;
+  }
+}
+
+function postToOwlbearOpener(event) {
+  const opener = getOwlbearOpener();
+  if (!opener) {
+    return false;
+  }
+  try {
+    opener.postMessage(event, globalThis.location?.origin || "/");
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+function makeOpenerEnvelope(kind) {
+  return {
+    v: VTT_RELAY_VERSION,
+    id: createEventId(),
+    ts: Date.now(),
+    kind,
+    relaySource: "angel-sword-sheet"
+  };
+}
+
+function handleOpenerMessage(messageEvent) {
+  const opener = getOwlbearOpener();
+  if (!opener || messageEvent?.source !== opener) {
+    return;
+  }
+  if (messageEvent.origin !== (globalThis.location?.origin || "")) {
+    return;
+  }
+  const event = messageEvent.data;
+  if (!event || typeof event !== "object" || !event.kind) {
+    return;
+  }
+  if (event.kind === OPENER_KIND_PING) {
+    openerHandshaken = true;
+    openerLastHeardAt = Date.now();
+    postToOwlbearOpener(makeOpenerEnvelope(OPENER_KIND_PONG));
+    return;
+  }
+  if (event.kind === OPENER_KIND_ACK) {
+    openerLastHeardAt = Date.now();
+    const pending = openerPendingAcks.get(event.inReplyTo);
+    if (pending) {
+      openerPendingAcks.delete(event.inReplyTo);
+      pending(event);
+    }
+    return;
+  }
+  if (event.relaySource === "owlbear-room") {
+    openerLastHeardAt = Date.now();
+    handleChannelMessage({ data: event });
+  }
+}
+
+function ensureOwlbearOpenerBridge() {
+  if (openerInitialized) {
+    return;
+  }
+  const win = globalThis.window;
+  if (!win || typeof win.addEventListener !== "function" || !getOwlbearOpener()) {
+    return;
+  }
+  openerInitialized = true;
+  win.addEventListener("message", handleOpenerMessage);
+  postToOwlbearOpener(makeOpenerEnvelope(OPENER_KIND_HELLO));
+}
+
+/**
+ * Sync connection state of the opener bridge for UI copy decisions:
+ * "closed" (no opener / room tab gone), "connecting", or "connected".
+ */
+export function getOwlbearOpenerState() {
+  const opener = getOwlbearOpener();
+  if (!opener) {
+    return "closed";
+  }
+  try {
+    if (opener.closed === true) {
+      return "closed";
+    }
+  } catch (error) {
+    /* a cross-origin opener still supports the checks below */
+  }
+  if (openerHandshaken && Date.now() - openerLastHeardAt <= OPENER_STALE_MS) {
+    return "connected";
+  }
+  return "connecting";
+}
+
+function waitForOpenerConnected(timeoutMs = OPENER_CONNECT_WAIT_MS) {
+  return new Promise((resolve) => {
+    const started = Date.now();
+    const tick = () => {
+      const state = getOwlbearOpenerState();
+      if (state === "connected") {
+        resolve(true);
+        return;
+      }
+      if (state === "closed" || Date.now() - started >= timeoutMs) {
+        resolve(false);
+        return;
+      }
+      setTimeout(tick, 100);
+    };
+    tick();
+  });
+}
+
+async function sendHandoffViaOpener(event) {
+  ensureOwlbearOpenerBridge();
+  if (!(await waitForOpenerConnected())) {
+    return false;
+  }
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => {
+      openerPendingAcks.delete(event.id);
+      resolve(false);
+    }, OPENER_ACK_TIMEOUT_MS);
+    openerPendingAcks.set(event.id, (ack) => {
+      clearTimeout(timer);
+      resolve(Boolean(ack?.ok));
+    });
+    if (!postToOwlbearOpener(event)) {
+      clearTimeout(timer);
+      openerPendingAcks.delete(event.id);
+      resolve(false);
+    }
+  });
+}
+
 /**
  * Publish a sheet event to any listening companion surface.
  * @param {string} kind — "dice" | "action-damage" | "check" | "skill"
@@ -142,20 +319,19 @@ export function publishVttEvent(kind, detail = {}) {
   } catch (error) {
     /* never let telemetry break a roll */
   }
+  postToOwlbearOpener(event);
   postDevRelayEvent(event);
   return event;
 }
 
 /**
  * Hand a full character (and optional baked token images) to a companion
- * surface through the local dev relay. Unlike rolls this awaits delivery so
- * the caller can tell the user whether the send actually landed.
- * Dev-host only; resolves false when the local builder server is absent.
+ * surface. Preferred transport: the opener bridge, when the Companion panel
+ * opened this window — an acked postMessage that works on any static host.
+ * Fallback: the local dev relay (dev hosts only). Unlike rolls this awaits
+ * delivery so the caller can tell the user whether the send landed.
  */
 export async function publishVttHandoff(detail = {}) {
-  if (!isDevRelayHost() || typeof fetch !== "function") {
-    return false;
-  }
   const event = {
     v: VTT_RELAY_VERSION,
     id: createEventId(),
@@ -164,6 +340,14 @@ export async function publishVttHandoff(detail = {}) {
     relaySource: "angel-sword-sheet",
     ...detail
   };
+  if (getOwlbearOpenerState() !== "closed") {
+    if (await sendHandoffViaOpener(event)) {
+      return true;
+    }
+  }
+  if (!isDevRelayHost() || typeof fetch !== "function") {
+    return false;
+  }
   try {
     const response = await fetch("/api/vtt-relay/events", {
       method: "POST",
@@ -188,6 +372,7 @@ export function subscribeVttRoomEvents(subscriber) {
   }
   getChannel();
   ensureDevRelayPolling();
+  ensureOwlbearOpenerBridge();
   roomEventSubscribers.add(subscriber);
   return () => roomEventSubscribers.delete(subscriber);
 }

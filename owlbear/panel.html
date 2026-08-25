@@ -40,6 +40,8 @@
     #feed .total { font-weight: 800; color: #ffe59a; }
     #empty { padding: 14px 8px; color: #9fb0d8; font-size: 0.8rem; }
     .note { font-size: 0.72rem; color: #9fb0d8; line-height: 1.35; }
+    .sheet-link { color: #ffe59a; }
+    .sheet-link.is-live { color: #c8ffe6; }
   </style>
 </head>
 <body>
@@ -55,8 +57,13 @@
   <main>
     <section data-panel="character">
       <div class="card">
-        <h2>1. Import your character</h2>
-        <p>Use a Character JSON export from this builder or an official <code>.aschar.json</code> file.</p>
+        <h2>1. Open your character sheet</h2>
+        <p>Opens the Angel Sword builder in a new tab, already linked to this room — your character and its dice rolls arrive here automatically.</p>
+        <div class="stack">
+          <button id="open-sheet" class="primary" type="button">Open My Character Sheet</button>
+        </div>
+        <p id="sheet-link-status" class="note sheet-link">Sheet link: not connected. Press Open My Character Sheet.</p>
+        <p class="note">Or import from a file instead: a Character JSON export from the builder, or an official <code>.aschar.json</code>.</p>
         <input id="character-file" type="file" accept=".json,.aschar.json,application/json">
       </div>
       <div id="character-card" class="card" hidden>
@@ -92,6 +99,7 @@
       <p id="feedback" role="status" aria-live="polite"></p>
     </section>
     <section data-panel="rolls" hidden>
+      <p id="sheet-link-status-rolls" class="note sheet-link">Sheet link: not connected. Press Open My Character Sheet.</p>
       <p id="empty">No shared rolls yet. Import and bind a character, then roll from the Angel Sword sheet or use the connection check.</p>
       <ul id="feed" hidden></ul>
     </section>

@@ -68,6 +68,37 @@ Owner idea (separate issue, separate time): a GM-focused Angel Sword extension
 (initiative, monster/NPC helpers — in the spirit of other creators' GM suites).
 Collect requirements later; do not scope-creep 2.5.
 
+## Status log
+
+### 2026-08-24 — Workstream 1 BUILT and machine-verified
+- **Step 0 feasibility spike run live** (owner's Chrome, real room "The Tonal
+  Quest"): Owlbear applies NO sandbox to extension iframes (`window.open` is
+  possible); action-popover iframes are pre-mounted at room load and only
+  visibility-toggled — never destroyed — so the bridge survives popover
+  close/switching (only timer throttling to tolerate, handled via generous
+  staleness + event-driven receive); BroadcastChannel confirmed NOT crossing
+  the storage partition (synthetic probe never arrived), so the bridge is
+  genuinely required.
+- **Built:** `owlbear/opener-bridge.js` (panel owns the popup; hello/ping/pong/
+  ack protocol, source+origin validation both ways, silent reconnect with
+  ghost-window cleanup); sheet side inline in `src/js/vtt-relay.js`
+  (`getOwlbearOpenerState` export; handoff prefers the bridge with ack, falls
+  back to dev relay); room-roll id dedup on the sheet AND shared
+  `shouldApplyHandoff` gate in the panel (fixes double-apply/resurrection);
+  dead `/api/vtt-relay/token-image` endpoint deleted end to end; GM setup
+  modal now lists BOTH extension install links and same-tab-navigates to the
+  room (autosave flushed first, no orphan sheet tab); two-tab guard overlay
+  (old tab pauses saving when a room-linked sheet appears).
+- **Verified:** `npm run test:vtt` = 88 adapter checks + 48 opener-bridge
+  fake-clock checks + Playwright panel phase + NEW bridge phase that blocks
+  the dev relay and removes BroadcastChannel in both pages — the popup
+  handshake, a character handoff, and an exactly-once roll all carried by
+  window.opener postMessage alone (the workstream's literal acceptance
+  condition, minus real-Owlbear embedding).
+- **Remaining for workstream 1:** owner-run live room pass (real gesture
+  popup from the panel, real sheet rolls + dice overlay, panel-closed
+  behavior by feel), then the carried gaps below at staging.
+
 ## Carried test gaps (staging will cover)
 Second-player ownership + GM repair (remote friend), real `.aschar` imports, phones and
 tablets, Chrome/Edge/Firefox/Brave/Safari, private browsing. Housekeeping on the owner's

@@ -11,14 +11,21 @@ import {
 } from "./core.js";
 import { loadOwlbearSdk } from "./sdk.js";
 import { buildImage, buildImageUpload } from "@owlbear-rodeo/sdk";
+import { createOwlbearOpenerBridge } from "./opener-bridge.js";
+import { OPENER_STATES } from "./core.js";
 
 const CHARACTER_STORAGE_KEY = "asb.owlbear.character.v1";
 const TOKEN_IMAGE_KEY = "asb.owlbear.tokenImage.v1";
 const HANDOFF_CONSUMED_KEY = "asb.owlbear.handoff.consumed.v1";
 const HANDOFF_CLEARED_AT_KEY = "asb.owlbear.clearedAt.v1";
+const SHEET_BRIDGE_SEEN_KEY = "asb.owlbear.sheetBridge.seenAt.v1";
+const SHEET_BRIDGE_RECONNECT_WINDOW_MS = 6 * 60 * 60 * 1000;
 const MAX_RENDERED_ROLLS = 60;
 
 const statusChip = document.getElementById("status");
+const openSheetButton = document.getElementById("open-sheet");
+const sheetLinkStatus = document.getElementById("sheet-link-status");
+const sheetLinkStatusRolls = document.getElementById("sheet-link-status-rolls");
 const fileInput = document.getElementById("character-file");
 const characterCard = document.getElementById("character-card");
 const characterSummary = document.getElementById("character-summary");
@@ -39,9 +46,24 @@ let activeBinding = null;
 let playerRecord = null;
 let tokenImageDataUrl = null;
 let tokenImageFullDataUrl = null;
-let tokenImagePlaceUrl = null;
 let handoffCursor = null;
+let relayChannel = null;
 const renderedRollIds = new Set();
+
+function ensureRelayChannel() {
+  if (!relayChannel && typeof BroadcastChannel === "function") {
+    try {
+      relayChannel = new BroadcastChannel(RELAY_CHANNEL);
+    } catch (error) {
+      relayChannel = null;
+    }
+  }
+  return relayChannel;
+}
+
+function resolveBuilderUrl() {
+  return new URL("..", window.location.href).href;
+}
 
 function isDevRelayHost() {
   return /^(?:localhost|127\.0\.0\.1|\[::1\])$/i.test(window.location.hostname);
@@ -206,6 +228,21 @@ function readConsumedHandoffs() {
   }
 }
 
+/* One shared gate for every handoff transport (dev relay poll, opener
+   bridge): unconsumed, and newer than the player's last Clear Character. */
+function shouldApplyHandoff(event, consumed) {
+  if (!event || event.kind !== "character-handoff" || !event.id || consumed.includes(event.id)) {
+    return false;
+  }
+  let clearedAt = 0;
+  try {
+    clearedAt = Number(localStorage.getItem(HANDOFF_CLEARED_AT_KEY) || 0);
+  } catch (error) {
+    clearedAt = 0;
+  }
+  return !clearedAt || Number(event.ts) > clearedAt;
+}
+
 function applyHandoff(event, consumed) {
   try {
     const normalized = normalizeCharacterExport(event.character);
@@ -213,21 +250,21 @@ function applyHandoff(event, consumed) {
     localStorage.setItem(CHARACTER_STORAGE_KEY, JSON.stringify(normalized));
     tokenImageDataUrl = event.tokenImages?.sync || null;
     tokenImageFullDataUrl = event.tokenImages?.full || tokenImageDataUrl;
-    tokenImagePlaceUrl = event.tokenImageUrl || null;
     if (tokenImageDataUrl) {
       localStorage.setItem(TOKEN_IMAGE_KEY, JSON.stringify({
         characterId: normalized.characterId,
         dataUrl: tokenImageDataUrl,
-        fullDataUrl: tokenImageFullDataUrl,
-        placeUrl: tokenImagePlaceUrl
+        fullDataUrl: tokenImageFullDataUrl
       }));
     }
     consumed.push(event.id);
     localStorage.setItem(HANDOFF_CONSUMED_KEY, JSON.stringify(consumed.slice(-50)));
     renderCharacter();
     setFeedback(`${normalized.name} arrived from the builder at ${new Date(Number(event.ts) || Date.now()).toLocaleTimeString()}.${tokenImageDataUrl && obrApi ? " Place My Token is ready." : ""}`);
+    return true;
   } catch (error) {
     setFeedback(error.message || "A character arrived from the builder but could not be read.", true);
+    return false;
   }
 }
 
@@ -235,7 +272,6 @@ function clearImportedCharacter() {
   activeCharacter = null;
   tokenImageDataUrl = null;
   tokenImageFullDataUrl = null;
-  tokenImagePlaceUrl = null;
   try {
     localStorage.removeItem(CHARACTER_STORAGE_KEY);
     localStorage.removeItem(TOKEN_IMAGE_KEY);
@@ -259,16 +295,7 @@ async function pollHandoffsOnce() {
     }
     handoffCursor = { boot: data.boot, seq: data.seq };
     const consumed = readConsumedHandoffs();
-    let clearedAt = 0;
-    try {
-      clearedAt = Number(localStorage.getItem(HANDOFF_CLEARED_AT_KEY) || 0);
-    } catch (error) {
-      clearedAt = 0;
-    }
-    const handoffs = (data.events || []).filter((entry) => entry?.kind === "character-handoff"
-      && entry.id
-      && !consumed.includes(entry.id)
-      && (!clearedAt || Number(entry.ts) > clearedAt));
+    const handoffs = (data.events || []).filter((entry) => shouldApplyHandoff(entry, consumed));
     if (handoffs.length) {
       applyHandoff(handoffs[handoffs.length - 1], consumed);
     }
@@ -426,15 +453,84 @@ async function sendTestRoll() {
 }
 
 function connectStandaloneRelay() {
-  if (typeof BroadcastChannel !== "function") {
-    return;
-  }
-  const channel = new BroadcastChannel(RELAY_CHANNEL);
-  channel.addEventListener("message", (messageEvent) => {
+  const channel = ensureRelayChannel();
+  channel?.addEventListener("message", (messageEvent) => {
     if (!obrApi) {
       appendRoll(messageEvent.data);
     }
   });
+}
+
+/* ── Sheet bridge (window.opener transport) ──────────────────────────────
+   The one transport that works on a public static host: this panel opens
+   the character sheet with window.open() and the two windows message each
+   other directly. Received sheet rolls are republished on the same-origin
+   RELAY_CHANNEL BroadcastChannel, which background.js already consumes —
+   background.js needs no changes to fan them out room-wide. */
+const sheetBridge = createOwlbearOpenerBridge({
+  onHandoff: (event) => {
+    const consumed = readConsumedHandoffs();
+    if (!shouldApplyHandoff(event, consumed)) {
+      return false;
+    }
+    return applyHandoff(event, consumed);
+  },
+  onSheetRoll: (event) => {
+    ensureRelayChannel()?.postMessage(event);
+    if (!obrApi) {
+      appendRoll(event);
+    }
+  }
+});
+
+function renderSheetLink(state) {
+  const labels = {
+    [OPENER_STATES.CLOSED]: "Sheet link: not connected. Press Open My Character Sheet.",
+    [OPENER_STATES.CONNECTING]: "Sheet link: connecting…",
+    [OPENER_STATES.CONNECTED]: "Sheet link: connected — sheet rolls reach this room."
+  };
+  const text = labels[state] || labels[OPENER_STATES.CLOSED];
+  if (sheetLinkStatus) {
+    sheetLinkStatus.textContent = text;
+    sheetLinkStatus.classList.toggle("is-live", state === OPENER_STATES.CONNECTED);
+  }
+  if (sheetLinkStatusRolls) {
+    sheetLinkStatusRolls.textContent = text;
+    sheetLinkStatusRolls.classList.toggle("is-live", state === OPENER_STATES.CONNECTED);
+  }
+  if (state === OPENER_STATES.CONNECTED) {
+    try {
+      localStorage.setItem(SHEET_BRIDGE_SEEN_KEY, String(Date.now()));
+    } catch (error) {
+      /* the reconnect hint is best-effort */
+    }
+  }
+}
+
+function openCharacterSheet() {
+  if (sheetBridge.getState() !== OPENER_STATES.CLOSED) {
+    sheetBridge.focusSheet();
+    return;
+  }
+  if (!sheetBridge.connect(resolveBuilderUrl())) {
+    setFeedback("Your browser blocked the sheet window. Allow pop-ups for owlbear.rodeo, then press Open My Character Sheet again.", true);
+    return;
+  }
+  setFeedback("Opened your character sheet in a new tab. Your character and its rolls connect to this room automatically.");
+}
+
+/* After a room-tab reload the sheet tab may still be open under its fixed
+   window name; silently re-acquire it instead of asking for another click. */
+function tryReconnectSheet() {
+  let seenAt = 0;
+  try {
+    seenAt = Number(localStorage.getItem(SHEET_BRIDGE_SEEN_KEY) || 0);
+  } catch (error) {
+    seenAt = 0;
+  }
+  if (seenAt && Date.now() - seenAt <= SHEET_BRIDGE_RECONNECT_WINDOW_MS) {
+    sheetBridge.reconnect(resolveBuilderUrl());
+  }
 }
 
 async function connectOwlbear() {
@@ -458,7 +554,10 @@ async function connectOwlbear() {
     renderBinding();
     const roomMetadata = await OBR.room.getMetadata();
     renderRoomLog(roomMetadata?.[ROOM_LOG_KEY]);
-    OBR.broadcast.onMessage(ROLL_CHANNEL, (broadcastEvent) => appendRoll(broadcastEvent.data));
+    OBR.broadcast.onMessage(ROLL_CHANNEL, (broadcastEvent) => {
+      appendRoll(broadcastEvent.data);
+      sheetBridge.sendRoomRollToSheet(broadcastEvent.data);
+    });
     OBR.room.onMetadataChange((room) => renderRoomLog(room?.[ROOM_LOG_KEY]));
     if (await OBR.scene.isReady()) {
       await restoreBindingFromScene();
@@ -494,6 +593,7 @@ fileInput.addEventListener("change", async () => {
   }
 });
 
+openSheetButton?.addEventListener("click", openCharacterSheet);
 placeButton.addEventListener("click", placeMyToken);
 downloadTokenButton.addEventListener("click", downloadTokenImage);
 clearCharacterButton.addEventListener("click", clearImportedCharacter);
@@ -514,7 +614,6 @@ try {
   if (storedToken?.dataUrl && storedToken.characterId === activeCharacter?.characterId) {
     tokenImageDataUrl = storedToken.dataUrl;
     tokenImageFullDataUrl = storedToken.fullDataUrl || storedToken.dataUrl;
-    tokenImagePlaceUrl = storedToken.placeUrl || null;
   }
 } catch (error) {
   localStorage.removeItem(TOKEN_IMAGE_KEY);
@@ -524,6 +623,9 @@ renderCharacter();
 renderBinding();
 connectStandaloneRelay();
 connectOwlbear();
+sheetBridge.onStateChange(renderSheetLink);
+renderSheetLink(sheetBridge.getState());
+tryReconnectSheet();
 if (isDevRelayHost()) {
   pollHandoffsOnce();
   setInterval(pollHandoffsOnce, 2500);

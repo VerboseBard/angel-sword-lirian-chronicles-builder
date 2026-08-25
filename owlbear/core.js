@@ -8,6 +8,31 @@ export const CHARACTER_SCHEMA_VERSION = 1;
 export const ROLL_SCHEMA_VERSION = 1;
 export const MAX_ROOM_LOG_ITEMS = 24;
 
+/* Opener bridge (sheet popup <-> Companion panel postMessage transport).
+   Named OPENER_BRIDGE_* because roll20-bridge.js already exports a
+   differently-valued BRIDGE_TIMING. The sheet side (src/js/vtt-relay.js)
+   cannot import this file, so it repeats these literals; the opener-bridge
+   unit test pins both copies against each other. */
+export const OPENER_BRIDGE_KIND = Object.freeze({
+  HELLO: "bridge-hello",
+  PING: "bridge-ping",
+  PONG: "bridge-pong",
+  ACK: "bridge-ack"
+});
+export const OPENER_BRIDGE_TIMING = Object.freeze({
+  PING_INTERVAL_MS: 4000,
+  /* Generous on purpose: Chrome throttles timers in hidden cross-origin
+     iframes to about one a minute, so a hidden-but-alive panel may only
+     ping that often. postMessage delivery itself is never throttled. */
+  PONG_TIMEOUT_MS: 75000,
+  ACK_TIMEOUT_MS: 5000
+});
+export const OPENER_STATES = Object.freeze({
+  CLOSED: "closed",
+  CONNECTING: "connecting",
+  CONNECTED: "connected"
+});
+
 function text(value, limit = 180) {
   return String(value ?? "").replace(/\s+/g, " ").trim().slice(0, limit);
 }

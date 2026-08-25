@@ -1,13 +1,13 @@
 import { BUILDER_STEPS, CHARACTER_START_MODES, CLASS_GROUP_ROLE_ORDER, DEFAULT_CHARACTER_START_MODE, CLASS_PASSIVE_SLOTS, CLASS_PURCHASABLE_LEVELS, CLASS_ROWS, CLICKABLE_ROLL_FIELDS, COMMON_WEAPON_GROUP_OPTIONS, CREATION_INTERLUDE_ACTIONS, CREATION_SKILL_POINT_BUDGET, DEFAULT_DICE_SET_ID, DICE_PREVIEW_FALLBACK_URL, DICE_SETS, DICE_SET_ID_ALIASES, DICE_SOUND_ASSETS, DICE_TRAY_TYPES, EMBEDDED_STATE_CHUNK_SIZE, EMBEDDED_STATE_FORMAT, ENABLE_ACCURATE_DICE_ROLLS, ENABLE_WEBGL_DICE_ROLLS, INVENTORY_ROWS, MAIN_STATS, MAIN_STAT_CREATION_ARRAY, MAX_DICE_TRAY_DICE, MIRANE_CRAFTING_INTERLUDE_EXP, MIRANE_GATHER_BASE_UNITS, MIRANE_GATHER_MASTERY_BONUS_UNITS, MIRANE_IP_SHOP_PRICE_CAP, MIRANE_IP_SHOP_SALE_PERCENT_CAP, MIRANE_IP_SHOP_SLOT_LIMIT, MIRANE_JOB_ARTISAN_BONUS_CLIM, MIRANE_JOB_BASE_CLIM, MIRANE_RAW_MATERIAL_CLIM_LIMIT, MIRANE_SINGLE_MATERIAL_CLIM_LIMIT, MIRANE_START_MODE_ID, MULTILINE_FIELDS, NAME_FIELDS, OFFICIAL_LANGUAGE_OPTIONS, PAGE_BACKGROUNDS, PASSIVE_READ_ONLY_FIELDS, PDF_STATE_CHUNK_FIELD_PREFIX, PDF_STATE_MANIFEST_FIELD, PLAY_BASIC_ACTIONS, PLAY_ROLLS, PORTRAIT_JPEG_QUALITY, PORTRAIT_MAX_DIMENSION, PORTRAIT_NORMALIZE_THRESHOLD, SAVE_SNAPSHOT_PORTRAIT_LIMIT, SECONDARY_STATS, SECONDARY_STAT_CREATION_ARRAY, SKILL_ALIASES, SKILL_DEFINITIONS, SKILL_EXPERTISE_CAP, SKILL_EXPERTISE_OPTIONS, SKILL_OPTIONS, SKILL_POINT_CAP, SPECIALITY_WEAPON_GROUP_OPTIONS, STARTING_CLASS_EXP, STARTING_INTERLUDE_POINTS, SUBSTAT_OPTIONS, WEAPON_GROUP_REFERENCE_OPTIONS } from "./constants.js";
 import { asArray, clamp, cleanText, cssEscape, escapeHtml, formatModifier, normalizeKey, normalizePhrase, splitSentences, toNumber } from "./utils.js";
-import { clearSheet, createDefaultState, getSavedSlots, mergePlayState, persistWorkingState, scheduleWorkingStatePersist, state, updateFieldValue } from "./state.js";
+import { clearSheet, createDefaultState, flushScheduledWorkingStatePersist, getSavedSlots, mergePlayState, persistWorkingState, scheduleWorkingStatePersist, setWorkingStatePersistenceReady, state, updateFieldValue } from "./state.js";
 import { applyGameVersion, detailLookup, exportPrepCache, getAncestryDetail, getAncestryOptionsByPrimaryRace, getAncestryRequirementPhrases, getBreakthroughBudgetState, getBuilderChoiceDefinitionsCacheKey, getCampaignProgressState, getCharacterStartMode, getClassDetail, getClassUnlockBudgetState, getComputedBonuses, getCurrentSecondaryLineageMode, getDemonClanOptions, getDerivedCombatStats, getHumanRaceSkillChoiceOptions, getRaceDetail, getRaceRequirementPhrases, getSecondaryLineageLabels, getSelectedAncestryDetail, getSelectedBreakthroughRecords, getSelectedClassDetails, getSelectedClassProgress, getSelectedGameVersionId, getSelectedItemRecords, getSelectedRaceDetail, getSkillBreakdownParts, getSkillRowsData, getStartingFundsState, getVersionRecord, getVersionRecords, lookup, syncPlayResourcesFromFields, usePlayCost, versionRuntime } from "./rules.js";
 import { dicePackRuntime, preloadDiceSetFaceArt, renderDiceTray } from "./dice.js";
 import { closeSheetModal, deriveSaveSlotName, exportJsonState, exportPatchedTemplateWorkbook, exportPdfState, exportSpreadsheetState, exportState, extractAbilityHeading, getWorksheetNumberText, getWorksheetText, handleImportedCharacterFile, handleSaveSlotAction, loadFromBrowser, openSheetModal, parseClimCost, parseNumericCost, saveCurrentCharacterToActiveSlot, saveCurrentCharacterToNewSlot, saveToBrowser, setSpreadsheetExportCell } from "./io.js";
 import { ensureDiceRuntimeLoaded, isDiceRuntimeLoaded } from "./runtime-loader.js";
 import { buildCharacterProfileSummary, buildRoll20AbilityMacro, buildRoll20ActionMacro, buildRoll20CharacterMacro, buildWorldAnvilBBCodeProfile, copyIntegrationText, VTT_PLATFORM_URLS } from "./integrations.js";
 import { BRIDGE_STATES, buildTokenModCommand, createRoll20Bridge } from "./roll20-bridge.js";
-import { publishVttEvent, publishVttHandoff, subscribeVttRoomEvents } from "./vtt-relay.js";
+import { getOwlbearOpenerState, publishVttEvent, publishVttHandoff, subscribeVttRoomEvents } from "./vtt-relay.js";
 import { buildAscharCharacter, normalizeAscharCharacter, wrapAscharExport } from "./aschar.js";
 
 const DICE_ASSET_REVISION = "20260811-srgb-dice-v1";
@@ -23026,6 +23026,8 @@ async function sendRoll20CharacterMacroFromHub(button) {
       }
     }
 const OWLBEAR_EXTENSION_PATH = "owlbear/manifest.json";
+const OWLBEAR_DICE_EXTENSION_PATH = "owlbear-dice/manifest.json";
+const OWLBEAR_DICE_PUBLIC_MANIFEST_URL = "https://verbosebard.github.io/angel-sword-lirian-chronicles-builder/owlbear-dice/manifest.json";
 const OWLBEAR_PUBLIC_MANIFEST_URL = "https://verbosebard.github.io/angel-sword-lirian-chronicles-builder/owlbear/manifest.json";
 
 function openRoll20BridgeSetupModal() {
@@ -23075,8 +23077,8 @@ function openRoll20BridgeSetupModal() {
         `
       });
     }
-function getLocalOwlbearManifestUrl() {
-      const manifestUrl = new URL(OWLBEAR_EXTENSION_PATH, window.location.href);
+function getLocalOwlbearManifestUrl(extensionPath = OWLBEAR_EXTENSION_PATH) {
+      const manifestUrl = new URL(extensionPath, window.location.href);
       if (manifestUrl.hostname === "127.0.0.1") {
         manifestUrl.hostname = "localhost";
       }
@@ -23088,33 +23090,40 @@ function isLocalOwlbearPreviewAvailable() {
 function openOwlbearSetupGuide() {
       const localPreviewAvailable = isLocalOwlbearPreviewAvailable();
       const localInstallUrl = getLocalOwlbearManifestUrl();
+      const localDiceInstallUrl = getLocalOwlbearManifestUrl(OWLBEAR_DICE_EXTENSION_PATH);
+      const openerConnected = getOwlbearOpenerState() === "connected";
       openSheetModal({
         eyebrow: "Owlbear Table Setup — GM and Players",
         title: "Owlbear Rodeo — Alpha",
-        lead: "Owlbear installs extensions from a hosted web address. Nothing needs to be downloaded as a ZIP file.",
+        lead: "Owlbear installs extensions from a hosted web address. Nothing needs to be downloaded as a ZIP file. This character sheet always works on its own from its normal link — Owlbear only adds the shared table on top.",
         content: `
           <div class="sheet-modal-success table-tools-guide owlbear-setup-guide">
             <div class="table-tools-status-row">
               <span class="integration-status is-warn">Alpha connection</span>
-              <span class="integration-status ${localPreviewAvailable ? "is-ready" : "is-warn"}">${localPreviewAvailable ? "Local preview available" : "Local preview unavailable"}</span>
+              <span class="integration-status ${openerConnected ? "is-ready" : "is-warn"}">${openerConnected ? "Linked to your game room" : "Not linked to a room yet"}</span>
               <span class="integration-status is-warn">Public release not published</span>
             </div>
             <section>
-              <strong>1. Install the extension (GM, one time)</strong>
-              <p>Open your Owlbear profile, choose <em>Add Extension</em>, and paste the Angel Sword install link. Already installed? Skip straight to <em>Your token</em> below.</p>
+              <strong>For Game Masters — install both extensions (one time)</strong>
+              <p>Open your Owlbear profile, choose <em>Add Extension</em>, and paste each install link: <em>Angel Sword Companion</em> (characters, tokens, the shared roll feed) and <em>Angel Sword Dice</em> (3D dice everyone watches fly over the map). Players never install anything — they just join your room.</p>
               ${localPreviewAvailable ? `
-                <p><strong>Testing on this computer today:</strong> paste this local install link into Owlbear's <em>Add a custom extension</em> box, then press <em>Add</em>. Keep this builder's local server running while Owlbear uses it.</p>
-                <p><small><code>${escapeHtml(localInstallUrl)}</code></small></p>
+                <p><strong>Testing on this computer today</strong> — keep this builder's local server running while Owlbear uses these:</p>
+                <p><small>Companion: <code>${escapeHtml(localInstallUrl)}</code></small></p>
+                <p><small>Dice: <code>${escapeHtml(localDiceInstallUrl)}</code></small></p>
                 <div class="sheet-modal-form-actions">
-                  <button type="button" class="sheet-modal-action" data-owlbear-copy-local-install>Copy Local Test Install Link</button>
+                  <button type="button" class="sheet-modal-action" data-owlbear-copy-local-install>Copy Companion Install Link</button>
+                  <button type="button" class="sheet-modal-action" data-owlbear-copy-local-dice-install>Copy Dice Install Link</button>
                 </div>
-              ` : ""}
+              ` : `
+                <p><small>Planned public addresses (not deployed yet):</small></p>
+                <p><small>Companion: <code>${escapeHtml(OWLBEAR_PUBLIC_MANIFEST_URL)}</code></small></p>
+                <p><small>Dice: <code>${escapeHtml(OWLBEAR_DICE_PUBLIC_MANIFEST_URL)}</code></small></p>
+              `}
               <div class="sheet-modal-form-actions">
                 <a class="sheet-modal-action" href="https://www.owlbear.rodeo/profile" target="_blank" rel="noopener noreferrer">Open Owlbear Profile</a>
-                ${localPreviewAvailable ? "" : `<button type="button" class="sheet-modal-action" disabled title="The public extension currently returns 404 and must be deployed before release.">Public Install Coming Soon</button>`}
+                ${localPreviewAvailable ? "" : `<button type="button" class="sheet-modal-action" disabled title="The public extensions are not deployed yet.">Public Install Coming Soon</button>`}
               </div>
-              ${localPreviewAvailable ? "" : `<p><small>Planned public address: <code>${escapeHtml(OWLBEAR_PUBLIC_MANIFEST_URL)}</code></small></p>`}
-              <p><small>Tip: after adding it, click the heart on the extension's card to favorite it — every new room you create will offer it automatically.</small></p>
+              <p><small>After adding each one, click the heart on its card to favorite it — every new room you create will offer it automatically. Then switch both on in the room's Extensions Manager and invite players with Owlbear's <em>Invite Players</em> button.</small></p>
             </section>
             <section>
               <strong>Your token (each player)</strong>
@@ -23126,27 +23135,20 @@ function openOwlbearSetupGuide() {
               </div>
               <input id="owlbear-token-file" type="file" accept="image/*" style="display:none">
             </section>
-            ${localPreviewAvailable ? `
-              <section>
-                <strong>Send to your game room (each player)</strong>
-                <p>Paste the Owlbear room link from your GM, then send this character and its token straight to the Angel Sword Companion in that room.</p>
-                <input id="owlbear-room-link" type="text" placeholder="https://www.owlbear.rodeo/room/..." value="${escapeHtml(getStoredOwlbearRoomLink())}" style="width:100%;padding:8px;border-radius:7px;border:1px solid #53698f;background:#111a2c;color:#dce7fb;">
-                <div class="sheet-modal-form-actions">
-                  <button type="button" class="sheet-modal-action" data-owlbear-send>Link to Owlbear</button>
-                </div>
-                <p><small>Local test builds only: the builder and the extension must both run from this computer's local server.</small></p>
-              </section>
-            ` : ""}
             <section>
-              <strong>2. Enable Angel Sword for the room (GM)</strong>
-              <p>Open the room's Extensions Manager and switch on <em>Angel Sword Companion</em>. The Angel Sword action then appears in the room.</p>
+              <strong>Go to your game room (each player)</strong>
+              ${openerConnected ? `
+                <p>This sheet is already linked to your game room. Press the button to send this character and its token to the Angel Sword Companion there.</p>
+              ` : `
+                <p>Paste the Owlbear room invitation from your GM. The builder saves your character and takes you to the room in this same tab — nothing left behind. In the room, open the Angel Sword panel and press <em>Open My Character Sheet</em>: your sheet comes back already linked, and your character and dice rolls flow to the table.</p>
+              `}
+              <input id="owlbear-room-link" type="text" placeholder="https://www.owlbear.rodeo/room/..." value="${escapeHtml(getStoredOwlbearRoomLink())}" style="width:100%;padding:8px;border-radius:7px;border:1px solid #53698f;background:#111a2c;color:#dce7fb;${openerConnected ? "display:none;" : ""}">
+              <div class="sheet-modal-form-actions">
+                <button type="button" class="sheet-modal-action" data-owlbear-send>${openerConnected ? "Send Character to Room" : "Go to My Game Room"}</button>
+              </div>
             </section>
             <section>
-              <strong>3. Invite players through Owlbear (GM)</strong>
-              <p>Use Owlbear's <em>Invite Players</em> button. Players open that room link and request to join; they do not paste the invitation into this character sheet.</p>
-            </section>
-            <section>
-              <strong>4. In the room (each player)</strong>
+              <strong>In the room (each player)</strong>
               <p>Open the Angel Sword panel and press <em>Place My Token</em> — your token appears on the map already bound to your character, and rolls from this sheet show up in the room's shared feed automatically.</p>
               <p><small>Fallbacks: import a Character JSON or official <code>.aschar.json</code> with <em>Choose File</em>, or use <em>Download Token Image</em>, add the file to Owlbear's asset library as a Character, drag it in, and press <em>Bind Selected Token</em>. Damage, movement, conditions, and initiative are intentionally not part of this milestone.</small></p>
             </section>
@@ -23398,36 +23400,110 @@ async function sendCharacterToOwlbear() {
         tokenImages = null;
       }
       const characterName = cleanText(state.fields.Name) || "Unnamed character";
-      let tokenImageUrl = "";
-      if (tokenImages) {
-        try {
-          const imageResponse = await fetch("/api/vtt-relay/token-image", {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({ id: `token-${Date.now().toString(36)}`, dataUrl: tokenImages.sync })
-          });
-          const imageData = await imageResponse.json();
-          if (imageData?.ok && imageData.url) {
-            tokenImageUrl = new URL(imageData.url, window.location.href).href;
-          }
-        } catch (error) {
-          /* the data-URL fallback still travels in the handoff */
-        }
-      }
       const sent = await publishVttHandoff({
         character: createStateSnapshot(),
         tokenImages,
-        tokenImageUrl,
         characterName
       });
-      if (!sent) {
-        say("The local builder server did not answer, so nothing was sent. Start it with npm start and try again.", true);
+      const linkedToRoom = getOwlbearOpenerState() === "connected";
+      if (sent && linkedToRoom) {
+        say(`Sent ${characterName}${tokenImages ? " with its token" : ""} to the Angel Sword Companion in your room.`);
         return;
       }
-      say(`Sent ${characterName}${tokenImages ? " with its token" : ""} to the Angel Sword Companion.${link ? " Opening your room…" : ""}`);
-      if (link) {
-        window.open(link, "_blank", "noopener");
+      if (sent) {
+        say(`Sent ${characterName}${tokenImages ? " with its token" : ""} to the Angel Sword Companion.${link ? " Taking you to your room…" : ""}`);
+      } else if (link) {
+        say("Saving your character and taking you to your room — open the Angel Sword panel there and press Open My Character Sheet to link up.");
+      } else {
+        say("This sheet is not linked to a game room yet. Paste your GM's room invitation above, or open the Angel Sword Companion panel in your Owlbear room and press Open My Character Sheet.", true);
+        return;
       }
+      if (link) {
+        /* Same-tab jump (owner directive): the sheet tab becomes the room
+           tab — no orphan sheet tab left behind. Autosave is flushed first
+           so the character survives the navigation. */
+        flushScheduledWorkingStatePersist();
+        window.location.href = link;
+      }
+    }
+/* ── Two-tab guard ────────────────────────────────────────────────────────
+   The room-linked sheet (opened by the Companion panel) and any older
+   plain sheet tab share one autosave key, last write wins. A browser will
+   not let a page close a tab the user opened, so the OLD tab neutralizes
+   itself instead: when a linked sheet announces itself, the unlinked tab
+   pauses saving and shows a clear takeover notice. */
+const OWLBEAR_CONNECTED_SHEET_KEY = "asb.owlbear.connectedSheet.v1";
+const OWLBEAR_SHEET_TAB_ID = `sheet-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+let owlbearAnnounceTimer = 0;
+let owlbearTwoTabOverlay = null;
+
+function announceConnectedSheet() {
+      const connected = getOwlbearOpenerState() === "connected";
+      if (connected) {
+        try {
+          localStorage.setItem(OWLBEAR_CONNECTED_SHEET_KEY, JSON.stringify({ tabId: OWLBEAR_SHEET_TAB_ID, ts: Date.now() }));
+        } catch (error) {
+          /* the guard is best-effort */
+        }
+      }
+    }
+function dismissOwlbearTwoTabOverlay(resumeSaving) {
+      owlbearTwoTabOverlay?.remove();
+      owlbearTwoTabOverlay = null;
+      if (resumeSaving) {
+        setWorkingStatePersistenceReady(true);
+        setStatus("This tab is saving again. Your game-table sheet saves to the same character — last edit wins.");
+      }
+    }
+function showOwlbearTwoTabOverlay() {
+      if (owlbearTwoTabOverlay) {
+        return;
+      }
+      setWorkingStatePersistenceReady(false);
+      const overlay = document.createElement("div");
+      overlay.style.cssText = "position:fixed;inset:0;z-index:99999;background:rgba(9,13,24,0.94);display:flex;align-items:center;justify-content:center;padding:24px;";
+      overlay.innerHTML = `
+        <div style="max-width:430px;background:#1c2740;border:1px solid #53698f;border-radius:12px;padding:22px;text-align:center;color:#e8ecf5;font-family:inherit;">
+          <h2 style="margin:0 0 10px;color:#ffe59a;font-size:1.1rem;">Your sheet is open at your game table</h2>
+          <p style="line-height:1.45;color:#bcc7dc;">The Angel Sword Companion just opened your character sheet in your Owlbear room. To avoid two tabs quietly overwriting the same character, <strong>this tab has stopped saving</strong>.</p>
+          <div style="display:grid;gap:8px;margin-top:14px;">
+            <button type="button" data-two-tab-close style="min-height:36px;border-radius:8px;border:1px solid #38578c;background:#1868b7;color:white;font-weight:700;cursor:pointer;">Close this tab</button>
+            <button type="button" data-two-tab-keep style="min-height:36px;border-radius:8px;border:1px solid #53698f;background:#263858;color:white;cursor:pointer;">Keep using this tab instead</button>
+          </div>
+          <p data-two-tab-note style="min-height:1.2em;margin:10px 0 0;font-size:0.78rem;color:#9fb0d8;"></p>
+        </div>`;
+      overlay.querySelector("[data-two-tab-close]").addEventListener("click", () => {
+        window.close();
+        const note = overlay.querySelector("[data-two-tab-note]");
+        if (note) {
+          note.textContent = "Your browser wants you to close this tab yourself — it is safe to close now.";
+        }
+      });
+      overlay.querySelector("[data-two-tab-keep]").addEventListener("click", () => dismissOwlbearTwoTabOverlay(true));
+      document.body.appendChild(overlay);
+      owlbearTwoTabOverlay = overlay;
+    }
+function initOwlbearTwoTabGuard() {
+      if (typeof window === "undefined" || owlbearAnnounceTimer) {
+        return;
+      }
+      owlbearAnnounceTimer = window.setInterval(announceConnectedSheet, 10000);
+      announceConnectedSheet();
+      window.addEventListener("storage", (event) => {
+        if (event.key !== OWLBEAR_CONNECTED_SHEET_KEY || !event.newValue) {
+          return;
+        }
+        let announcement = null;
+        try {
+          announcement = JSON.parse(event.newValue);
+        } catch (error) {
+          return;
+        }
+        if (announcement?.tabId && announcement.tabId !== OWLBEAR_SHEET_TAB_ID
+          && getOwlbearOpenerState() !== "connected") {
+          showOwlbearTwoTabOverlay();
+        }
+      });
     }
 function openFoundrySetupGuide() {
       openSheetModal({
@@ -23589,6 +23665,7 @@ export async function bindEvents() {
         appendPlayLog(`${character} — ${label}`, lines);
         scheduleWorkingStatePersist();
       });
+      initOwlbearTwoTabGuard();
       document.addEventListener("input", () => {
         invalidateExportCache();
       });
@@ -23792,11 +23869,20 @@ const addButton = event.target.closest("[data-dice-add]");
           await sendCharacterToOwlbear();
           return;
         }
+        if (event.target.closest("[data-owlbear-copy-local-dice-install]")) {
+          await copyIntegrationValue(getLocalOwlbearManifestUrl(OWLBEAR_DICE_EXTENSION_PATH), "Local Angel Sword Dice install link copied.");
+          const feedback = document.getElementById("owlbear-setup-feedback");
+          if (feedback) {
+            feedback.textContent = "Dice install link copied. Keep this builder server running while Owlbear loads it.";
+            feedback.classList.remove("is-error");
+          }
+          return;
+        }
         if (event.target.closest("[data-owlbear-copy-local-install]")) {
           await copyIntegrationValue(getLocalOwlbearManifestUrl(), "Local Owlbear test install link copied.");
           const feedback = document.getElementById("owlbear-setup-feedback");
           if (feedback) {
-            feedback.textContent = "Local test install link copied. Keep this builder server running while Owlbear loads it.";
+            feedback.textContent = "Companion install link copied. Keep this builder server running while Owlbear loads it.";
             feedback.classList.remove("is-error");
           }
           return;
