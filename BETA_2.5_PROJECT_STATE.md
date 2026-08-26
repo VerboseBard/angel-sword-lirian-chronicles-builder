@@ -218,6 +218,51 @@ Format per entry:
 - Questions parked for owner: ... (or "none")
 ```
 
+### 2026-08-26 (afternoon) — Claude Sonnet 5 (coordinator session; entry updated as results land)
+- Did: session opened per operating model (state file + plan + git log
+  read; worktree clean at ca3b94f at session start — the ChatGPT
+  handoff-verification entry below landed mid-session, discovered via a
+  stale-file guard when this entry was first written; reconciled cleanly,
+  see that entry, no conflict). Owner asked for a full punch-list +
+  who-does-what + audit plan before any dispatch; compiled one from the
+  hub, the plan, and reports 004/005 (grepped for the deferred M-items'
+  exact text rather than trusting the summary). Owner approved dispatching
+  the three items that need no owner decision. Authored and dispatched
+  three briefs in parallel: 008 WS4 overlay roll sounds (writer, Sonnet 5),
+  009 dice engine face-mismatch scout (read-only, Opus 5 — diagnosis only,
+  distinct from the already-proven-correct static face-assignment audits),
+  010 registry cache-buster options memo (read-only, Sonnet 5 — lays out
+  fix shapes for parked question 7, implements nothing). One writer + two
+  read-only roles per the concurrency rule. Coordinator running as
+  Sonnet 5 this session (protocol v3's documented fallback); owner
+  notified, no change requested.
+- Update ~16:45: Task 010 LANDED — report saved verbatim to
+  BETA_2.5_TASKS/reports/010-registry-cache-buster-options-memo-report.md,
+  commit e4f2a52 verified (329 insertions, report file only). Confirmed
+  the hub's own claim exactly: promote-dice-skin.mjs bumps ONLY
+  index.html's registry `?v=`; panel.html/overlay.html's shared version
+  token is never touched. NEW finding: prune-dice-catalog.mjs
+  (`dice:publish-clean`) independently duplicates the identical gap — two
+  scripts carry the bug, not one. Also found index.html's own load chain
+  already has a live version-skew instance: runtime-loader.js requests
+  shared-dice-roller-core.js at a newer token than its 8 sibling files.
+  Three fix options laid out (same token everywhere / dedicated
+  registry-only token / never-cache the registry); only the
+  broadly-scoped first option also fixes the related M9 double-download
+  finding, at the cost of busting the full ~42-45MB engine cache on every
+  promotion. Executor's own lean: dedicated registry-only token + a
+  one-time manual sync for M9.
+- Commits: e4f2a52 (task 010, by its executor); 317fdaa (session records:
+  briefs 008-010, coordinator).
+- Reports: 010 on disk (executor wrote its own per Digest rule). 008/009
+  still in flight.
+- Questions parked for owner: (from task 010, refining existing question
+  7) (9) fix the cache-buster gap in one script (promote-dice-skin.mjs)
+  or both (it + prune-dice-catalog.mjs)?; (10) is the M9 double-download
+  worth fixing now, given WS3 dice-slimming may reshape this whole area
+  anyway? Tasks 008 (overlay sounds) and 009 (dice face-mismatch scout)
+  still IN FLIGHT — results to follow in this same entry.
+
 ### 2026-08-26 13:39 — ChatGPT/Codex (handoff verification)
 - Did: accepted the Beta 2.5 Online handoff and read `AGENTS.md`, this state
   hub, `BETA_2.5_ONLINE_CONVERSION_PLAN.md`, and the task template in full.
