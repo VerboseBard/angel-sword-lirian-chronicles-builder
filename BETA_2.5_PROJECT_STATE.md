@@ -44,14 +44,29 @@ contexts.
   before use.
 - Every brief has an explicit **Out of scope** list and a **Verification**
   section naming the exact commands that must be green.
-- Every executor's final report is saved VERBATIM to
-  `BETA_2.5_TASKS/reports/NNN-short-name-report.md` (the coordinator saves it
-  if the executor cannot). Reports must include a **work narrative**: what
-  was examined, what was tried, dead ends included — written so the owner
-  can review the agent's actual work, not just its conclusions. (Raw
-  harness transcripts are not reliably retrievable — verified empty on
-  disk — so the verbatim report + narrative IS the reviewable record, and
-  the owner can interrogate a still-running agent through the coordinator.)
+- Every executor WRITES ITS OWN final report to
+  `BETA_2.5_TASKS/reports/NNN-short-name-report.md` — even read-only tasks,
+  for which the report file is their ONE permitted write. Reports must
+  include a **work narrative**: what was examined, what was tried, dead
+  ends included — written so the owner can review the agent's actual work,
+  not just its conclusions. (Raw harness transcripts are not reliably
+  retrievable — verified empty on disk — so the report + narrative IS the
+  reviewable record, and the owner can interrogate a still-running agent
+  through the coordinator.)
+- **Digest rule (owner budget directive 2026-08-25):** the executor's final
+  chat message back to the coordinator is a DIGEST of at most ~15 lines
+  (verdict, key numbers, worst finding, commits, parked questions, report
+  path) — NEVER the full report. Big text lives on disk; main-thread tokens
+  are the scarce resource no matter which model drives. Coordinator saves a
+  report verbatim only in the rare case an executor truly cannot write files.
+- **Model protocol (owner directive 2026-08-25, v3):** main thread /
+  coordinator = Opus 5 (Sonnet 5 fallback if all-models tightens); workers
+  = Sonnet 5 (mechanical) or Opus 5 (judgment) by fit, cross-audited by the
+  other; **Fable = final-audit-only subagent** — a short pass on substantial
+  jobs (repo-mutating / decision-shaping) that reads worker + audit reports
+  from disk and returns a ≤15-line digest; skipped on small errands or when
+  the Fable weekly bucket is capped (note the skip, never block). On any
+  model's cap: switch models, never buy top-ups.
 - Concurrency: one writer per file set at a time. Never two agents editing
   the same files or driving the same live resource (dev server instance,
   Owlbear room, Workshop tree) simultaneously. Parallel agents get disjoint
@@ -136,11 +151,16 @@ Workshop repo `f92d7b8` (master). Both local-only.
 
 ## Task queue (coordinator seeds briefs from here)
 
-1. **WS2 — staging publish pipeline**: emit an uploadable folder with
-   absolute manifest URLs baked for a configurable base URL, both
-   extensions, deploy-simulation check. Host choice (GitHub Pages test repo
-   vs Cloudflare Pages) = owner's. Note: static hosts must not send COOP
-   headers (severs window.opener; GitHub Pages sends none).
+1. **WS2 — staging publish pipeline**: ✅ BUILT 2026-08-25 (task 001,
+   commit 5384bce, all suites + new deploy-sim green; Opus cross-audit =
+   task 004, pending). `npm run publish:staging -- --base-url=<url>` emits
+   `dist-staging/` (both extensions + crawled 45MB asset closure, absolute
+   manifest URLs); `npm run test:staging` = deploy-sim proof on a dumb
+   static server. Remaining for WS2: host choice (owner's) + actual upload
+   + the builder-co-hosting question (panel's Open-Sheet button resolves
+   the builder at `../` of wherever the panel is hosted — see owner Q8).
+   Note: static hosts must not send COOP headers (severs window.opener;
+   GitHub Pages sends none).
 2. **WS4 — overlay roll sounds**: wire the builder's existing roll sounds
    into the warm overlay; replay toggle also mutes; persistent mute.
 3. **WS5 — version-compat contract test**: extensions accept same-or-older
@@ -186,6 +206,110 @@ Format per entry:
 - Reports: BETA_2.5_TASKS/reports/... (if sub-agents ran)
 - Questions parked for owner: ... (or "none")
 ```
+
+### 2026-08-25 19:25 — Claude Fable 5 (coordinator session; entry updated as results land)
+- Did: session open per operating model (state file + plan read; worktree
+  clean at c324b5b; no ChatGPT activity since hub creation). Authored and
+  dispatched two briefs: 001 WS2 staging publish pipeline (writer, Sonnet 5
+  sub-agent — host-agnostic per plan §2, host choice stays parked) and
+  002 WS5/WS6 read-only contract scout (Opus 5 sub-agent, grounds the next
+  briefs). One writer + one reader per the concurrency rule. IN FLIGHT —
+  results, audit, and commits will be appended to this entry.
+- Update 19:45: Task 002 scout LANDED — report saved verbatim to
+  BETA_2.5_TASKS/reports/002-ws5-ws6-contract-scout-report.md. Headlines:
+  schemaVersion is stamped in 4 places and READ IN ZERO (normalizeRollEvent
+  even overwrites incoming versions); a second undocumented wire version
+  (VTT_RELAY_VERSION, two unpinned copies) exists; 17 message types cross
+  the builder↔extension boundary, none version-checked; sheet Combat Log
+  consumes room rolls un-normalized (ui.js:23656). WS6 side: dice:promote
+  bumps the registry cache-buster ONLY in index.html — both extension pages
+  keep a stale registry after a promotion (new sets won't appear in the
+  picker); ~4.8MB of orphan sidecars ship unreferenced; the OLD public
+  deploy workflow never deploys owlbear-dice/ at all. Cross-audit of the
+  scout's claims dispatched as Task 003 (brief on disk; find-misses-not-redo).
+  WS5/WS6 briefs NOT written yet — scout's parked question 1 (drop vs
+  passthrough) gates the WS5 DECIDED contract.
+- Update 19:55: Task 001 LANDED — WS2 staging pipeline built and committed
+  `5384bce` (3 new scripts + package.json + .gitignore; nothing else).
+  `publish:staging` emits dist-staging/ with both extensions, a crawled
+  45MB asset closure (caught that 3 of 6 promoted/ sidecars are orphans —
+  independently corroborating the 002 scout), and server.mjs-parity
+  absolute manifest URLs; `test:staging` re-crawls the STAGED tree and
+  proved 46 conditions green against a dummy https://staging.invalid/as
+  base. All required suites green (109+48 vtt checks, dice-skins).
+  Executor wrote its own verbatim report; coordinator verified the commit
+  contents match it. Opus cross-audit dispatched as task 004 (deletion
+  safety, closure completeness incl. dice-3d-embedded.js, verifier
+  fails-when-it-should, hostile base URLs). Coordinator committed session
+  records (briefs 001-003 + reports 001-002) as `4448c44`.
+- Commits: 5384bce (task 001, by its executor), 4448c44 (session records,
+  coordinator). Local only, as always.
+- Update ~20:05: owner flagged weekly usage at 79% (resets Sat 21:00) —
+  coordinator KILLED both in-flight audits (003 Sonnet mid-run, 004 Opus
+  just-started) to conserve budget. Briefs 003/004 remain on disk;
+  re-dispatch post-reset or on owner ask. Audits are safety-net only:
+  001's code is green+committed, 002's findings feed briefs that are
+  owner-gated anyway. No agents running. Session in lean mode.
+- Update ~20:15: owner clarified — all-models weekly is at 43% (fine); it's
+  the SEPARATE Fable-only bucket at 79%. So sub-agents (Sonnet/Opus)
+  continue; the coordinator thread is what must stay lean. Adopted the
+  **Digest rule** (now in the operating model + TASK_TEMPLATE): executors
+  write their own report files (read-only tasks get that ONE write) and
+  return ≤15-line digests — full reports never flow through the
+  coordinator again. Audits 003 (Sonnet) + 004 (Opus) RELAUNCHED fresh
+  under the new rule.
+- Update ~20:45: BOTH audits landed (digest-only — rule works). 003: the
+  002 scout report is SAFE — 11/12 claims CONFIRMED, 0 refuted, ~60-70
+  citations all exact; one nuance (table row 12: relayed room-rolls do NOT
+  carry `v` — normalizeRollEvent strips it; changes no recommendation).
+  004 on the WS2 pipeline: artifact itself correct and complete (closure
+  independently re-derived, 001's report factually clean), BUT two HIGH
+  guard-rail holes: (a) `--out=` is an unvalidated recursive delete —
+  `--out=.` would eat the worktree, `..\...Public Beta 2.20` reachable
+  (proven on a scratchpad canary); (b) `test:staging` re-emits before
+  verifying, so it can't validate an existing artifact and its closure
+  check is near-tautological (deleted 2.8MB engine file + corrupted
+  manifests → still 46/46 PASS; manifest-field checks do fire). Plus
+  normalizeBaseUrl silently drops subpath bases, and the crawler
+  allow-list has no audio/font types (would silently strand WS4's sounds).
+  Coordinator rulings (fix shapes, not product calls): refuse out-of-
+  worktree delete targets (no override flag); verify-in-place mode with
+  staged-tree-derived closure + pinned sentinels; reject query/fragment
+  base URLs, preserve subpaths; add audio/font extensions now. Unminified
+  source in artifact = accepted; `?v=` token doubling the 45MB download =
+  folded into owner Q7. Task 005 (staging hardening, Sonnet) DISPATCHED
+  with those rulings; must prove fixes by rerunning 004's own attacks.
+- Update ~21:00: owner adopted model-protocol v3 (decided in a parallel
+  chat, already in cross-session memory): coordinator seat moves Fable →
+  OPUS 5; Fable becomes a final-audit-only subagent on substantial jobs.
+  Hub's operating model updated to match (see Model protocol above). This
+  Fable session hands over after this entry; task 005 (in flight) is
+  unaffected — its notification lands in the same conversation for the
+  Opus coordinator to process (verify 005's commit + report, run the Fable
+  final-audit pass on the 001→004→005 chain if budget allows, then the
+  batched records commit for 005's brief/report). Session records through
+  004 committed now so the handoff is durable.
+- Reports: 001-004 on disk (003/004 written by executors per Digest rule);
+  005 pending.
+- Queue: item 1 (WS2 pipeline) marked BUILT in the queue above; added
+  follow-up candidate — test-cross-browser.mjs's deployment-artifact phase
+  predates owlbear-dice/ and still routes through the rewriting dev server
+  (001's report §5.3); small task, not urgent, not seeded yet.
+- Questions parked for owner: (1) bless the placement design offsets;
+  (2) WS2 staging host choice. NEW from the 002 scout (details + evidence in
+  its report, Part 4): (3) compat semantics — old extension DROPS unknown
+  fields (today) vs PASSES THEM THROUGH (bigger change) — gates WS5;
+  (4) orphan sidecars: gate fails/warns/ignores + delete the three now?;
+  (5) WS6 scope: filesystem-only gate vs + Playwright picker proof;
+  (6) owlbear-dice/ absent from the old public deploy workflow — deliberate
+  or oversight? (input to WS2); (7) registry cache-buster fix shape —
+  separate registry-only token so promotions don't invalidate ~42MB of
+  cached art. NEW from task 001: (8) builder co-hosting — the panel's
+  Open-My-Character-Sheet button resolves the builder at `../` of wherever
+  the panel is hosted (no config point), so the staging host must serve the
+  FULL builder app at the same base URL as the extensions, or
+  resolveBuilderUrl() needs a config point (small follow-up task) — which
+  shape does the owner want? None of these block in-flight work.
 
 ### 2026-08-25 evening — Claude (Sonnet 5 session, coordinator setup)
 - Did: created this operations hub, BETA_2.5_TASKS/ structure, TASK_TEMPLATE,

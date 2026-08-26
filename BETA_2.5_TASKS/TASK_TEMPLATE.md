@@ -39,8 +39,9 @@ What this task deliberately does NOT do.
 - [ ] <task-specific checks / audit instruments>
 
 ## Report requirements (DECIDED)
-The final report is saved verbatim to
-`BETA_2.5_TASKS/reports/NNN-short-name-report.md` and must contain:
+YOU write the final report to
+`BETA_2.5_TASKS/reports/NNN-short-name-report.md` yourself (for read-only
+tasks this file is your ONE permitted write). It must contain:
 1. Outcome vs the verification checklist (each item: green/red/skipped+why).
 2. **Work narrative**: what was examined, what was tried, dead ends
    included — written so the owner can review the actual work, not just
@@ -48,8 +49,10 @@ The final report is saved verbatim to
 3. Files touched + commit hash(es).
 4. Deviations from the sketch and why.
 5. Questions parked for the owner (or "none").
-The executor (or coordinator) also appends a work-log entry to
-`BETA_2.5_PROJECT_STATE.md`.
+Your final chat message is a DIGEST only (≤15 lines: verdict, key numbers,
+worst finding, commits, parked questions, report path) — never the full
+report. The coordinator holds the `BETA_2.5_PROJECT_STATE.md` work log; do
+not edit that file.
 
 ## Owner live-check (keep under 5 minutes)
 The human feel-test steps, if any:
