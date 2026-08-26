@@ -23,11 +23,41 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { execFileSync } from "node:child_process";
-import { EXTENSION_DIRS, crawlExtensionAssets, absolutizeManifest } from "./lib/owlbear-staging-assets.mjs";
+import {
+  EXTENSION_DIRS,
+  crawlExtensionAssets,
+  absolutizeManifest,
+  buildFileManifest,
+  buildStagingHostNotes,
+  STAGING_INTEGRITY_FILENAME,
+  STAGING_HOST_NOTES_FILENAME
+} from "./lib/owlbear-staging-assets.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(__dirname, "..");
 const DEFAULT_OUT_DIR = "dist-staging";
+// Task 007 (closes 006-audit item 2, the ".GIT" bypass): NTFS resolves paths
+// case-insensitively, but every guard below originally compared path STRINGS
+// case-sensitively, so "--out=.GIT" was a different string from ".git" and
+// slipped the segment check. Folding case here (win32 only -- POSIX
+// filesystems really are case-sensitive, so a literal ".GIT" segment there
+// is a genuinely different, unrelated name) makes every containment/segment
+// comparison below agree with what the OS actually treats as the same path.
+const IS_CASE_INSENSITIVE_FS = process.platform === "win32";
+function comparablePath(p) {
+  return IS_CASE_INSENSITIVE_FS ? p.toLowerCase() : p;
+}
+
+/** ENOENT -> false; any other error propagates (caller decides how to fail safe). */
+async function pathExists(p) {
+  try {
+    await fs.stat(p);
+    return true;
+  } catch (error) {
+    if (error?.code === "ENOENT") return false;
+    throw error;
+  }
+}
 
 function parseArgs(argv) {
   const args = { baseUrl: null, outDir: null, skipBuild: false };
@@ -135,28 +165,40 @@ async function assertSafeOutDir(absOutDir, projectRoot) {
   const resolvedRoot = path.resolve(projectRoot);
   const resolvedOut = path.resolve(absOutDir);
   const boundary = resolvedRoot.endsWith(path.sep) ? resolvedRoot : `${resolvedRoot}${path.sep}`;
+  // Task 007: fold case for every comparison below (win32 only) so a
+  // case-variant argument can neither slip past a check that should refuse
+  // it (dangerous) nor get falsely refused for a case-variant spelling of a
+  // path that is, on this filesystem, genuinely the same location (merely
+  // annoying, but still worth fixing since it was the flip side of the same
+  // bug). Display strings still use the real, un-folded resolved paths.
+  const comparableOut = comparablePath(resolvedOut);
+  const comparableRoot = comparablePath(resolvedRoot);
+  const comparableBoundary = comparablePath(boundary);
 
-  if (resolvedOut === resolvedRoot) {
+  if (comparableOut === comparableRoot) {
     throw new Error(
       `Refusing to use "${absOutDir}" as the staging output directory: it resolves to the worktree ` +
-        `root itself (${resolvedRoot}), which is about to be recursively deleted. --out must name a ` +
+        `root itself (${resolvedOut}), which is about to be recursively deleted. --out must name a ` +
         "subdirectory."
     );
   }
-  if (!resolvedOut.startsWith(boundary)) {
+  if (!comparableOut.startsWith(comparableBoundary)) {
     throw new Error(
       `Refusing to use "${absOutDir}" as the staging output directory: it resolves to ${resolvedOut}, ` +
         `which is outside the worktree root (${resolvedRoot}). This directory is recursively deleted ` +
         "before every emit, so it must stay strictly inside the worktree."
     );
   }
-  // Being "inside the worktree root" alone still permits --out=.git, which
-  // is strictly inside and not the root itself yet would wipe the actual
-  // git repository metadata. Refuse any path that passes through a ".git"
-  // entry, not just an exact match, so ".git", ".git/objects", and
-  // "sub/.git" are all caught.
+  // Being "inside the worktree root" alone still permits --out=.git (or
+  // ".GIT", ".Git", ...), which is strictly inside and not the root itself
+  // yet would wipe the actual git repository metadata. Refuse any path that
+  // passes through a ".git" entry in ANY case, not just an exact-case
+  // match, so ".git", ".GIT", ".git/objects", and "sub/.Git" are all caught
+  // — this is the specific case-sensitivity bypass the 006 audit found:
+  // "--out=.GIT" used to reach the filesystem-dependent check below instead
+  // of being refused here.
   const relFromRoot = path.relative(resolvedRoot, resolvedOut);
-  if (relFromRoot.split(path.sep).includes(".git")) {
+  if (relFromRoot.split(path.sep).some((segment) => comparablePath(segment) === ".git")) {
     throw new Error(
       `Refusing to use "${absOutDir}" as the staging output directory: its path passes through a ` +
         `".git" entry (resolved: ${resolvedOut}). Recursive delete refused.`
@@ -165,13 +207,31 @@ async function assertSafeOutDir(absOutDir, projectRoot) {
   // Defense in depth: if the resolved target already exists and itself
   // contains a ".git" entry — i.e. it looks like a git repository or
   // worktree checked out inside this project, not a disposable build
-  // output — refuse rather than delete someone else's history.
-  let containsNestedGit = false;
+  // output — refuse rather than delete someone else's history. (On win32
+  // this stat already resolves case-insensitively at the OS level, so no
+  // extra folding is needed here — the case bug lived only in the STRING
+  // comparison above, not in this filesystem call.)
+  //
+  // Task 007: any error other than "it doesn't exist" here is now an
+  // EXPLICIT refusal, not an incidental one. Before this task, a non-ENOENT
+  // error (e.g. the ENOTDIR a stat through a worktree's ".git" POINTER FILE
+  // can produce) simply propagated as a raw, uninterpreted exception; it
+  // happened to still block the delete (an uncaught throw here aborts
+  // publishStaging() before the fs.rm), but only as a side effect of normal
+  // JS control flow, not because this function was designed to fail safe on
+  // an error it could not interpret. Making the catch explicit means the
+  // contract is guaranteed by this function itself, not by an accident of
+  // whatever the caller happens to do with an uncaught rejection.
+  let containsNestedGit;
   try {
-    await fs.stat(path.join(resolvedOut, ".git"));
-    containsNestedGit = true;
+    containsNestedGit = await pathExists(path.join(resolvedOut, ".git"));
   } catch (error) {
-    if (error?.code !== "ENOENT") throw error;
+    throw new Error(
+      `Refusing to use "${absOutDir}" as the staging output directory: could not determine whether it ` +
+        `is safe to delete (unexpected error checking for a nested ".git": ` +
+        `${error?.code ? `${error.code} ` : ""}${error?.message || error}). Failing safe: recursive ` +
+        "delete refused."
+    );
   }
   if (containsNestedGit) {
     throw new Error(
@@ -194,7 +254,13 @@ function assertWithinRoot(resolvedPath, root, relPosixPath, label) {
   const resolvedRoot = path.resolve(root);
   const boundary = resolvedRoot.endsWith(path.sep) ? resolvedRoot : `${resolvedRoot}${path.sep}`;
   const resolved = path.resolve(resolvedPath);
-  if (resolved !== resolvedRoot && !resolved.startsWith(boundary)) {
+  // Task 007: same case-folding treatment as assertSafeOutDir, and for the
+  // same reason — this boundary check must agree with what NTFS actually
+  // considers "the same path" on win32.
+  const comparableResolved = comparablePath(resolved);
+  const comparableRoot = comparablePath(resolvedRoot);
+  const comparableBoundary = comparablePath(boundary);
+  if (comparableResolved !== comparableRoot && !comparableResolved.startsWith(comparableBoundary)) {
     throw new Error(
       `Refusing to copy shared asset "${relPosixPath}": its ${label} path resolves to ${resolved}, ` +
         `which escapes ${resolvedRoot}.`
@@ -267,11 +333,33 @@ export async function publishStaging({
     manifests.push({ extDir, manifest: absolutized });
   }
 
+  // Task 007 item 5: plain-language host requirements for whoever uploads.
+  // Written before the integrity manifest below so it is itself covered by
+  // the size/hash recording.
+  await fs.writeFile(path.join(absOutDir, STAGING_HOST_NOTES_FILENAME), buildStagingHostNotes(), "utf8");
+
+  // Task 007 item 2: record byte size + sha256 for every real file now that
+  // every copy and every manifest rewrite is done — this is the LAST write
+  // to absOutDir before this function returns, so the recorded bytes are
+  // exactly what a static host will serve. Must run after the two writes
+  // above, and its own file is excluded from itself by buildFileManifest.
+  const integrityManifest = await buildFileManifest(absOutDir);
+  await fs.writeFile(
+    path.join(absOutDir, STAGING_INTEGRITY_FILENAME),
+    `${JSON.stringify(integrityManifest, null, 2)}\n`,
+    "utf8"
+  );
+  log(
+    `Wrote ${STAGING_HOST_NOTES_FILENAME} and ${STAGING_INTEGRITY_FILENAME} ` +
+      `(${integrityManifest.fileCount} file(s) recorded with byte size + sha256).`
+  );
+
   return {
     outDir: absOutDir,
     baseUrl: normalizedBaseUrl,
     sharedAssets,
-    manifests
+    manifests,
+    integrityFileCount: integrityManifest.fileCount
   };
 }
 
@@ -297,7 +385,12 @@ async function main() {
   }
   console.log(
     `\nNothing was uploaded. Upload the contents of "${path.relative(PROJECT_ROOT, result.outDir) || result.outDir}" ` +
-      "to your chosen static host, unchanged."
+      "to your chosen static host, unchanged (including the " +
+      `"${STAGING_HOST_NOTES_FILENAME}" / "${STAGING_INTEGRITY_FILENAME}" files at its root).`
+  );
+  console.log(
+    `\nAfter uploading, verify the live host (read-only, GET only, nothing written) with:\n` +
+      `  node scripts/test-staging-deploy.mjs --target=${result.baseUrl}`
   );
 }
 

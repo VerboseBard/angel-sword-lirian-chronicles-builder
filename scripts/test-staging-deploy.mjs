@@ -30,15 +30,37 @@
   incomplete tree now actually goes red, because nothing re-emits over the
   corruption first.
 
+  Task 007 (closes 006-audit items 2 & 3):
+    - Every fetch below now also asserts the served byte length and sha256
+      match the STAGING-INTEGRITY.json recorded at emit time, so a
+      truncated or corrupted file goes red instead of passing on a bare
+      HTTP 200 (presence-only checks cannot tell the difference; size/hash
+      can). This runs in every mode.
+    - A new --target=<base-url> mode runs the exact same check list (both
+      manifests, every URL-bearing field, every closure file + pinned
+      sentinel + registry sidecar, now with size/hash) over plain HTTPS
+      against a REAL host after upload, instead of against a local sim
+      server. Strictly read-only: every request is an unauthenticated GET,
+      nothing is ever written. --target= implies --no-emit (there is
+      nothing to "emit" against someone else's host) and still needs the
+      local artifact directory (default dist-staging/, or --out=) to crawl
+      for the closure's reference graph — only the FETCHES go to the real
+      host, not the structural analysis. Also reports the live host's
+      Cross-Origin-Opener-Policy / Access-Control-Allow-Origin headers on
+      both manifests: COOP present fails the run (breaks window.opener);
+      ACAO absent is a loud non-fatal warning (host CORS config varies).
+
   Usage:
     node scripts/test-staging-deploy.mjs
     node scripts/test-staging-deploy.mjs --base-url=https://example.test/as
     node scripts/test-staging-deploy.mjs --no-emit --base-url=https://example.test/as
     node scripts/test-staging-deploy.mjs --artifact=dist-staging --base-url=https://example.test/as
+    node scripts/test-staging-deploy.mjs --target=https://real-host.example/as
 */
 
 import fs from "node:fs/promises";
 import http from "node:http";
+import crypto from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { publishStaging, normalizeBaseUrl } from "./publish-staging.mjs";
@@ -48,7 +70,8 @@ import {
   manifestUrlEntries,
   extractRegistrySidecars,
   PINNED_SENTINEL_ASSETS,
-  REGISTRY_RELATIVE_PATH
+  REGISTRY_RELATIVE_PATH,
+  STAGING_INTEGRITY_FILENAME
 } from "./lib/owlbear-staging-assets.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -84,13 +107,21 @@ const MIME_TYPES = new Map([
 ]);
 
 function parseArgs(argv) {
-  const args = { baseUrl: null, outDir: null, noEmit: false };
+  const args = { baseUrl: null, outDir: null, noEmit: false, target: null };
   for (const raw of argv) {
     if (raw.startsWith("--base-url=")) args.baseUrl = raw.slice("--base-url=".length);
     else if (raw.startsWith("--out=")) args.outDir = raw.slice("--out=".length);
     else if (raw === "--no-emit") args.noEmit = true;
     else if (raw.startsWith("--artifact=")) {
       args.outDir = raw.slice("--artifact=".length);
+      args.noEmit = true;
+    } else if (raw.startsWith("--target=")) {
+      // Task 007 item 3: verify a REAL host after upload. Implies --no-emit
+      // (there is nothing local to build against someone else's host) —
+      // the local artifact dir is still used to derive the closure's
+      // reference graph, but every actual fetch goes to this URL instead
+      // of a local sim server.
+      args.target = raw.slice("--target=".length);
       args.noEmit = true;
     }
   }
@@ -148,10 +179,57 @@ function startDumbStaticServer(rootDir) {
   });
 }
 
-async function fetchLocal(origin, relPosixPath) {
+/**
+ * Fetch relPosixPath from `origin` (a local sim server address in default/
+ * --no-emit modes, or the real --target= base URL in target mode — this
+ * function does not care which, and always issues a plain unauthenticated
+ * GET; it never writes anything). Reads the full body so callers can assert
+ * on its bytes (task 007), not just its status.
+ */
+async function fetchBytes(origin, relPosixPath) {
   const url = `${origin}/${relPosixPath}`;
   const response = await fetch(url);
-  return { url, status: response.status, response };
+  if (response.status !== 200) {
+    return { url, status: response.status, buffer: null, response };
+  }
+  const buffer = Buffer.from(await response.arrayBuffer());
+  return { url, status: response.status, buffer, response };
+}
+
+/**
+ * Task 007 item 2 (closes 006-audit item 3, "presence-only checks"): HTTP
+ * 200 alone cannot tell a truncated or corrupted file from a good one — a
+ * partial upload to a static host is exactly this failure mode. When an
+ * integrity map was loaded from STAGING-INTEGRITY.json (built at emit time
+ * by buildFileManifest), assert the just-fetched buffer's byte length and
+ * sha256 match the recorded value. A no-op (adds nothing to `failures`) if
+ * `integrityByPath` is null, i.e. the integrity file itself could not be
+ * loaded — that failure was already reported once, where it was fetched.
+ */
+function checkIntegrity(relPosixPath, buffer, integrityByPath, failures, tag) {
+  if (!integrityByPath) return;
+  const expected = integrityByPath.get(relPosixPath);
+  if (!expected) {
+    failures.push(
+      `${tag}: no entry for "${relPosixPath}" in ${STAGING_INTEGRITY_FILENAME} -- cannot confirm it ` +
+        "wasn't truncated or corrupted."
+    );
+    return;
+  }
+  if (buffer.length !== expected.bytes) {
+    failures.push(
+      `${tag}: served ${buffer.length} byte(s), but ${expected.bytes} was recorded at emit time -- ` +
+        "looks truncated or corrupted."
+    );
+    return;
+  }
+  const sha256 = crypto.createHash("sha256").update(buffer).digest("hex");
+  if (sha256 !== expected.sha256) {
+    failures.push(
+      `${tag}: byte count matches (${buffer.length}) but its sha256 differs from the value recorded ` +
+        "at emit time -- content corrupted."
+    );
+  }
 }
 
 /** Audit M2: a friendly pre-check for --no-emit, instead of surfacing a raw ENOENT deep in the crawl. */
@@ -175,9 +253,14 @@ async function assertArtifactLooksStaged(absOutDir) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  const baseUrl = args.baseUrl || process.env.LYRIAN_STAGING_BASE_URL || DEFAULT_BASE_URL;
+  const isTargetMode = args.target !== null;
+  if (isTargetMode && !args.target) {
+    throw new Error("--target= requires a URL, e.g. --target=https://real-host.example/as");
+  }
+  const baseUrl = args.target || args.baseUrl || process.env.LYRIAN_STAGING_BASE_URL || DEFAULT_BASE_URL;
   const outDir = args.outDir || DEFAULT_OUT_DIR;
   const failures = [];
+  const warnings = [];
   let checked = 0;
   let server;
 
@@ -186,7 +269,13 @@ async function main() {
   if (args.noEmit) {
     absOutDir = path.isAbsolute(outDir) ? outDir : path.join(PROJECT_ROOT, outDir);
     normalizedBase = normalizeBaseUrl(baseUrl);
-    console.log(`--- WS2 deploy-simulation: verifying EXISTING artifact at ${absOutDir} (--no-emit) for ${normalizedBase} ---`);
+    const modeLabel = isTargetMode
+      ? `the REAL HOST ${normalizedBase} (--target; read-only GET, nothing written)`
+      : `EXISTING artifact at ${absOutDir} (--no-emit) for ${normalizedBase}`;
+    console.log(`--- WS2 deploy-simulation: verifying ${modeLabel} ---`);
+    // Target mode still needs the local artifact directory: it supplies the
+    // reference graph (which files SHOULD exist) that crawlExtensionAssets
+    // derives below. Only the actual byte fetches go to the real host.
     await assertArtifactLooksStaged(absOutDir);
   } else {
     console.log(`--- WS2 deploy-simulation: fresh emit for ${baseUrl} ---`);
@@ -196,23 +285,85 @@ async function main() {
   }
 
   try {
-    console.log("\nStarting a plain static server (no rewriting, no relay, zero custom headers)...");
-    server = await startDumbStaticServer(absOutDir);
-    const { port } = server.address();
-    const origin = `http://127.0.0.1:${port}`;
-    console.log(`Sim server listening at ${origin}, serving ${absOutDir}`);
+    let origin;
+    if (isTargetMode) {
+      origin = normalizedBase;
+      console.log(`\nTarget mode: every check below fetches (GET only, no auth, nothing written) from ${origin}.`);
+    } else {
+      console.log("\nStarting a plain static server (no rewriting, no relay, zero custom headers)...");
+      server = await startDumbStaticServer(absOutDir);
+      const { port } = server.address();
+      origin = `http://127.0.0.1:${port}`;
+      console.log(`Sim server listening at ${origin}, serving ${absOutDir}`);
+    }
+
+    // Task 007 item 2/3: load the size+hash record written at emit time so
+    // every fetch below can be checked for truncation/corruption, not just
+    // HTTP 200. Fetched from `origin` like everything else, so in target
+    // mode this itself proves the integrity file made it to the real host.
+    console.log(`\nFetching ${STAGING_INTEGRITY_FILENAME} (per-file byte size + sha256 recorded at emit time)...`);
+    checked += 1;
+    let integrityByPath = null;
+    {
+      const { status, buffer } = await fetchBytes(origin, STAGING_INTEGRITY_FILENAME);
+      if (status !== 200 || !buffer) {
+        failures.push(
+          `${STAGING_INTEGRITY_FILENAME}: expected HTTP 200, got ${status} -- size/hash checks below ` +
+            "cannot run without it."
+        );
+      } else {
+        try {
+          const parsed = JSON.parse(buffer.toString("utf8"));
+          integrityByPath = new Map((parsed.files || []).map((f) => [f.path, f]));
+          console.log(`  loaded ${integrityByPath.size} recorded file size/hash entrie(s).`);
+        } catch (error) {
+          failures.push(`${STAGING_INTEGRITY_FILENAME}: did not parse as JSON (${error.message}) -- size/hash checks cannot run.`);
+        }
+      }
+    }
 
     for (const extDir of EXTENSION_DIRS) {
       const manifestRel = `${extDir}/manifest.json`;
-      const { status, response } = await fetchLocal(origin, manifestRel);
       checked += 1;
-      if (status !== 200) {
+      const { status, buffer, response } = await fetchBytes(origin, manifestRel);
+      if (status !== 200 || !buffer) {
         failures.push(`${manifestRel}: expected HTTP 200, got ${status}`);
         continue;
       }
+      checked += 1;
+      checkIntegrity(manifestRel, buffer, integrityByPath, failures, manifestRel);
+
+      // Task 007 item 5 ("Header reality"): the local sim deliberately sends
+      // ZERO headers (that's the point of that proof), so this check is only
+      // meaningful — and only run — against a real host in target mode.
+      if (isTargetMode) {
+        checked += 1;
+        const coop = response.headers.get("cross-origin-opener-policy");
+        const acao = response.headers.get("access-control-allow-origin");
+        console.log(
+          `  ${manifestRel}: Cross-Origin-Opener-Policy = ${coop ? `"${coop}"` : "(absent)"}, ` +
+            `Access-Control-Allow-Origin = ${acao ? `"${acao}"` : "(absent)"}`
+        );
+        if (coop) {
+          failures.push(
+            `${manifestRel}: host sent Cross-Origin-Opener-Policy: "${coop}" -- this severs window.opener ` +
+              "between the character sheet and the Owlbear panel. The host must not send COOP on this path."
+          );
+        }
+        if (!acao) {
+          warnings.push(
+            `${manifestRel}: no Access-Control-Allow-Origin header observed. A real browser install fetches ` +
+              "this manifest cross-origin from owlbear.rodeo; without ACAO that fetch can fail in-browser " +
+              "even though this Node-based check just read it successfully (Node's fetch does not enforce " +
+              "CORS). Confirm your host's CORS configuration -- this may be fine or may need a config change " +
+              "depending on the host."
+          );
+        }
+      }
+
       let manifest;
       try {
-        manifest = await response.json();
+        manifest = JSON.parse(buffer.toString("utf8"));
       } catch (error) {
         failures.push(`${manifestRel}: response did not parse as JSON (${error.message})`);
         continue;
@@ -242,10 +393,13 @@ async function main() {
         }
         const relBack = `${extDir}/${value.slice(expectedPrefix.length)}`;
         checked += 1;
-        const { status: assetStatus } = await fetchLocal(origin, relBack);
-        if (assetStatus !== 200) {
+        const { status: assetStatus, buffer: assetBuffer } = await fetchBytes(origin, relBack);
+        if (assetStatus !== 200 || !assetBuffer) {
           failures.push(`${manifestRel}: field "${field}" -> "${relBack}" resolved HTTP ${assetStatus}, expected 200`);
+          continue;
         }
+        checked += 1;
+        checkIntegrity(relBack, assetBuffer, integrityByPath, failures, `${manifestRel} field "${field}" -> "${relBack}"`);
       }
 
       if (typeof manifest.homepage_url === "string" && manifest.homepage_url.startsWith(normalizedBase)) {
@@ -261,10 +415,13 @@ async function main() {
     const closureFiles = [...Object.values(perExtension).flat(), ...sharedAssets];
     for (const relPath of closureFiles) {
       checked += 1;
-      const { status } = await fetchLocal(origin, relPath);
-      if (status !== 200) {
+      const { status, buffer } = await fetchBytes(origin, relPath);
+      if (status !== 200 || !buffer) {
         failures.push(`${relPath}: expected HTTP 200 from the static sim server, got ${status}`);
+        continue;
       }
+      checked += 1;
+      checkIntegrity(relPath, buffer, integrityByPath, failures, relPath);
     }
 
     // Audit M2: the closure just derived above is read FROM the staged
@@ -277,10 +434,13 @@ async function main() {
     console.log("\nAsserting pinned sentinel files (independent of what the staged pages' own markup currently references)...");
     for (const relPath of PINNED_SENTINEL_ASSETS) {
       checked += 1;
-      const { status } = await fetchLocal(origin, relPath);
-      if (status !== 200) {
+      const { status, buffer } = await fetchBytes(origin, relPath);
+      if (status !== 200 || !buffer) {
         failures.push(`${relPath}: pinned sentinel asset expected HTTP 200 from the static sim server, got ${status}`);
+        continue;
       }
+      checked += 1;
+      checkIntegrity(relPath, buffer, integrityByPath, failures, `${relPath} (pinned sentinel)`);
     }
     const stagedRegistrySidecars = await extractRegistrySidecars(absOutDir, REGISTRY_RELATIVE_PATH);
     if (stagedRegistrySidecars.length === 0) {
@@ -291,13 +451,20 @@ async function main() {
     }
     for (const relPath of stagedRegistrySidecars) {
       checked += 1;
-      const { status } = await fetchLocal(origin, relPath);
-      if (status !== 200) {
+      const { status, buffer } = await fetchBytes(origin, relPath);
+      if (status !== 200 || !buffer) {
         failures.push(`${relPath}: registry-named sidecar expected HTTP 200 from the static sim server, got ${status}`);
+        continue;
       }
+      checked += 1;
+      checkIntegrity(relPath, buffer, integrityByPath, failures, `${relPath} (registry sidecar)`);
     }
 
     console.log(`\nChecked ${checked} condition(s) covering ${EXTENSION_DIRS.length} manifests and ${closureFiles.length} closure files.`);
+    if (warnings.length) {
+      console.warn(`\nWARN - ${warnings.length} advisory item(s) (informational; do not fail the run):`);
+      warnings.forEach((w) => console.warn(`  - ${w}`));
+    }
     if (failures.length) {
       console.error(`\nFAIL - ${failures.length} problem(s):`);
       failures.forEach((f) => console.error(`  - ${f}`));

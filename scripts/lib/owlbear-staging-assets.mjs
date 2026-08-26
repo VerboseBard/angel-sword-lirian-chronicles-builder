@@ -24,6 +24,7 @@
 
 import fs from "node:fs/promises";
 import path from "node:path";
+import crypto from "node:crypto";
 
 export const EXTENSION_DIRS = ["owlbear", "owlbear-dice"];
 
@@ -60,6 +61,111 @@ export const PINNED_SENTINEL_ASSETS = [
   "assets/vendor/GLTFLoader.js",
   REGISTRY_RELATIVE_PATH
 ];
+
+// Task 007 (closes 006-audit items 2 & 3): every prior check in this pipeline
+// is presence-only (HTTP 200), which cannot tell a truncated or corrupted
+// file from a good one -- exactly the failure mode a partial upload to a
+// static host produces. STAGING_INTEGRITY_FILENAME is written into the
+// artifact ROOT at emit time (see buildFileManifest below) recording every
+// real file's byte size + a cheap sha256, so a later verify pass -- local,
+// or (task 007 item 3) over HTTPS against the real host after upload -- can
+// assert the bytes it just fetched still match what was emitted. It is
+// never added as a manifest seed, an EXTRA_ENTRY_HTML page, or a pinned
+// sentinel, and crawlExtensionAssets() never walks the raw filesystem (only
+// reference graphs starting from manifests/HTML), so this file can never be
+// mistaken for something a page must load -- it exists solely for the
+// integrity check, deliberately outside the closure's own
+// must-be-referenced-by-a-page logic.
+export const STAGING_INTEGRITY_FILENAME = "STAGING-INTEGRITY.json";
+// Task 007 item 5 ("Header reality"): a short, plain-language note written
+// into the artifact root at emit time for whoever performs the upload,
+// stating the two header requirements a static host must satisfy (see
+// buildStagingHostNotes below). Also never referenced by any page/manifest.
+export const STAGING_HOST_NOTES_FILENAME = "STAGING-HOST-NOTES.md";
+
+async function listFilesRecursive(rootDir, relDir = "") {
+  const absDir = relDir ? toFsPath(rootDir, relDir) : rootDir;
+  const entries = await fs.readdir(absDir, { withFileTypes: true });
+  const files = [];
+  for (const entry of entries) {
+    const relPath = relDir ? `${relDir}/${entry.name}` : entry.name;
+    if (entry.isDirectory()) {
+      files.push(...(await listFilesRecursive(rootDir, relPath)));
+    } else if (entry.isFile()) {
+      files.push(relPath);
+    }
+  }
+  return files;
+}
+
+/**
+ * Record {path, bytes, sha256} for every real file under `rootDir` (posix-
+ * relative paths, sorted), EXCLUDING STAGING_INTEGRITY_FILENAME itself (a
+ * file cannot record its own hash before it exists). Called once, as the
+ * LAST step of publishStaging() -- after every copy and every manifest
+ * rewrite -- so the recorded bytes are exactly what a static host will
+ * actually serve, not the pre-absolutize source bytes.
+ */
+export async function buildFileManifest(rootDir) {
+  const relPaths = (await listFilesRecursive(rootDir))
+    .filter((relPath) => relPath !== STAGING_INTEGRITY_FILENAME)
+    .sort();
+  const files = [];
+  for (const relPath of relPaths) {
+    const contents = await fs.readFile(toFsPath(rootDir, relPath));
+    files.push({
+      path: relPath,
+      bytes: contents.length,
+      sha256: crypto.createHash("sha256").update(contents).digest("hex")
+    });
+  }
+  return { generatedAt: new Date().toISOString(), fileCount: files.length, files };
+}
+
+/**
+ * Task 007 item 5: the deploy-sim's headerless local server can only prove
+ * "works with zero headers" for a Node client. A real Owlbear install means
+ * owlbear.rodeo's BROWSER fetches these manifests cross-origin, so the real
+ * host requirement is a pair -- no COOP (or window.opener between the
+ * character sheet and the Owlbear panel breaks), and yes ACAO (or the
+ * browser's cross-origin fetch of the manifest fails even though a plain
+ * Node/curl request succeeds). Written plainly for whoever performs the
+ * upload; verified informationally by test-staging-deploy.mjs --target=.
+ */
+export function buildStagingHostNotes() {
+  return `# Staging host requirements
+
+This folder must be served by a static host that satisfies BOTH of the
+following on every path here, especially \`owlbear/manifest.json\` and
+\`owlbear-dice/manifest.json\`:
+
+1. **No \`Cross-Origin-Opener-Policy\` header.** The character sheet opens via
+   \`window.open()\` and talks back to the Owlbear panel through
+   \`window.opener\` postMessage. A COOP header of any value on these paths
+   severs that connection.
+2. **An \`Access-Control-Allow-Origin\` header IS present** (e.g. \`*\`, or at
+   least \`https://www.owlbear.rodeo\`). Installing/using this extension means
+   owlbear.rodeo's own browser page fetches these manifests (and their
+   assets) cross-origin. Without ACAO that fetch fails in a real browser even
+   though a plain command-line/Node request -- including this repo's own
+   deploy-sim -- reports success, because Node's fetch does not enforce CORS
+   at all.
+
+Known host defaults (verify before relying on this -- host behavior changes):
+- GitHub Pages: sends no COOP and sends \`Access-Control-Allow-Origin: *\` on
+  everything by default. Both requirements satisfied out of the box.
+- Cloudflare Pages: sends no COOP by default, but does NOT send ACAO by
+  default -- needs a \`_headers\` file adding
+  \`Access-Control-Allow-Origin: *\` (or a narrower origin) on these paths.
+
+After uploading, get an explicit PASS/FAIL/WARN report of both headers (and a
+full functional check: manifests, every asset, byte size + hash against what
+was recorded at emit time) by running, from this repo, read-only (GET only,
+no auth, nothing is ever written to the host):
+
+    node scripts/test-staging-deploy.mjs --target=https://<your-host>/<base-path>
+`;
+}
 
 async function readIfExists(absPath) {
   try {
