@@ -285,6 +285,31 @@ Format per entry:
 - Reports: 010, 009 on disk (executors wrote their own per Digest rule).
   008 still in flight (overlay.html/js + panel.html/js show uncommitted
   changes matching its scope — expected, not yet landed).
+- Update ~16:55: Task 008 LANDED — report saved verbatim to
+  BETA_2.5_TASKS/reports/008-ws4-overlay-roll-sounds-report.md, commit
+  `5d6ca6c` verified (4 files, +203/-1: overlay.html/js, panel.html/js).
+  GREEN: roll sound wired to the 3D engine's real `onSettle` hook (verified
+  in source, not invented), gated by the existing replay toggle plus a new
+  persistent per-viewer mute checkbox in the dice panel (localStorage
+  `asb.dice.soundMuted.v1`, defaults unmuted). Sound logic ported (not
+  imported) from `ui.js` into `overlay.js` to avoid dragging the builder's
+  8000-line monolith into the extension bundle. Sound asset paths declared
+  in `overlay.html` (not `overlay.js`) specifically so the WS2 staging
+  crawler — which only scans HTML text for asset references, never opens
+  bundled `dist/*.js` — can still find them; engineered around the gap
+  without touching any WS2 file. All required suites green (build,
+  test:vtt 109+48, bonus test:dice-skins + dice:core:check confirming the
+  Workshop-synced core stayed untouched). Structural proof only (both
+  mp3s confirmed loading byte-exact at their served URL) — audible
+  correctness stays an owner-only check per the brief.
+- All three of today's dispatches (008/009/010) are now landed, verified,
+  and committed. Session going idle pending owner direction — see
+  questions below.
+- Commits: e4f2a52 (010), c751829 (009), 5d6ca6c (008) — all by their
+  executors; 317fdaa, 974c68b, 0b1d3a8, 7e51e63 (session records / hub
+  updates / report filing, coordinator).
+- Reports: 008, 009, 010 all on disk (executors wrote their own per Digest
+  rule).
 - Questions parked for owner: (from task 010, refining existing question
   7) (9) fix the cache-buster gap in one script (promote-dice-skin.mjs)
   or both (it + prune-dice-catalog.mjs)?; (10) is the M9 double-download
@@ -295,13 +320,17 @@ Format per entry:
   from `77779b4` worth its own task, or fold into the d100 fix?; (13) is
   `panel.html`'s stale engine pin urgent enough to bump now, ahead of a
   general versioning fix?; (14) was the owner's original d20 sighting
-  already fixed by `77779b4`, or does it need its own repro? **Coordinator
-  observation:** three separate tasks (002, 009, 010) have now each
-  independently found a different consumer surface holding a different
-  stale version/cache token for shared code — this looks like one
-  systemic gap, not three unrelated bugs; worth a unified versioning pass
-  rather than three point patches, owner's call on sequencing. Task 008
-  (overlay sounds) still IN FLIGHT — results to follow in this same entry.
+  already fixed by `77779b4`, or does it need its own repro? (from task
+  008) (15) the WS2 crawler's HTML-only asset scan is a general limit —
+  worth its own hardening task, or leave it to "declare paths in HTML"
+  convention going forward? **Coordinator observation:** three separate
+  tasks (002, 009, 010) have now each independently found a different
+  consumer surface holding a different stale version/cache token for
+  shared code — this looks like one systemic gap, not three unrelated
+  bugs; worth a unified versioning pass rather than point patches, owner's
+  call on sequencing. None of questions 9-15 block further sub-agent work;
+  all are prioritization calls. The original eight (1-8) from prior
+  sessions remain open too.
 
 ### 2026-08-26 13:39 — ChatGPT/Codex (handoff verification)
 - Did: accepted the Beta 2.5 Online handoff and read `AGENTS.md`, this state
