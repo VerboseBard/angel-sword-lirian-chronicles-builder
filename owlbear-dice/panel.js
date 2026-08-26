@@ -3,6 +3,7 @@ import { ROLL_CHANNEL, ROOM_LOG_KEY, mergeRollLog, normalizeRollEvent } from "..
 
 const SET_STORAGE_KEY = "asb.dice.selectedSet.v1";
 const REPLAY_STORAGE_KEY = "asb.dice.replayEnabled.v1";
+const MUTE_STORAGE_KEY = "asb.dice.soundMuted.v1";
 const DEFAULT_SET = { id: "new-angelsword", name: "Angel Sword" };
 const DICE_TYPES = [20, 12, 100, 10, 8, 6, 4];
 const MAX_QUEUED = 12;
@@ -13,6 +14,7 @@ const diceButtonsHost = document.getElementById("dice-buttons");
 const resetButton = document.getElementById("dice-reset");
 const rollButton = document.getElementById("dice-roll");
 const replayToggle = document.getElementById("replay-toggle");
+const soundMuteToggle = document.getElementById("sound-mute-toggle");
 const feedback = document.getElementById("feedback");
 const flightLayer = document.getElementById("dice-flight-layer");
 
@@ -223,6 +225,22 @@ replayToggle.addEventListener("change", () => {
     localStorage.setItem(REPLAY_STORAGE_KEY, replayToggle.checked ? "1" : "0");
   } catch (error) {
     /* the preference falls back to on */
+  }
+});
+
+// Task 008 (WS4): persistent per-viewer mute for roll sound, read by the
+// overlay (owlbear-dice/overlay.js's soundMuted()) via the same
+// localStorage key — same mirrored pattern as replayToggle above.
+try {
+  soundMuteToggle.checked = localStorage.getItem(MUTE_STORAGE_KEY) === "1";
+} catch (error) {
+  soundMuteToggle.checked = false;
+}
+soundMuteToggle.addEventListener("change", () => {
+  try {
+    localStorage.setItem(MUTE_STORAGE_KEY, soundMuteToggle.checked ? "1" : "0");
+  } catch (error) {
+    /* the preference falls back to unmuted */
   }
 });
 

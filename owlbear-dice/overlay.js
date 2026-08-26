@@ -20,6 +20,11 @@ const OVERLAY_ID = "com.angelssword.lyrian-chronicles/dice-overlay";
 const OVERLAY_CHANNEL = "asb-dice-overlay.v1";
 const SET_STORAGE_KEY = "asb.dice.selectedSet.v1";
 const REPLAY_STORAGE_KEY = "asb.dice.replayEnabled.v1";
+const MUTE_STORAGE_KEY = "asb.dice.soundMuted.v1";
+const DEFAULT_DICE_SOUND_ASSETS = {
+  rollBed: "../assets/sounds/dice-roll-bed-142528.mp3",
+  impact: "../assets/sounds/dice-impact-95077.mp3"
+};
 const DICE_VISIBLE_MS = 5200;
 const CHIP_TTL_MS = 30000;
 const MAX_CHIPS = 3;
@@ -35,6 +40,8 @@ let shrinkTimer = 0;
 let idleTimer = 0;
 let chipSequence = 0;
 let rollGeneration = 0;
+let activeDiceAudioElements = [];
+let diceAudioTimers = [];
 const seenRollIds = new Set();
 const pendingEvents = [];
 const chips = new Map();
@@ -74,6 +81,29 @@ function selectedSetId() {
   } catch (error) {
     return "new-angelsword";
   }
+}
+
+/* Task 008 (WS4): persistent per-viewer mute for roll sound specifically,
+   mirroring replayEnabled()'s own localStorage pattern exactly (same
+   "absent/anything but the off-sentinel = default" shape). Defaults to
+   unmuted, so an empty/missing key is not muted. */
+function soundMuted() {
+  try {
+    return localStorage.getItem(MUTE_STORAGE_KEY) === "1";
+  } catch (error) {
+    return false;
+  }
+}
+
+function diceSoundAssets() {
+  const configured = window.ASD_DICE_SOUND_ASSETS;
+  if (configured && typeof configured === "object") {
+    return {
+      rollBed: configured.rollBed || DEFAULT_DICE_SOUND_ASSETS.rollBed,
+      impact: configured.impact || DEFAULT_DICE_SOUND_ASSETS.impact
+    };
+  }
+  return DEFAULT_DICE_SOUND_ASSETS;
 }
 
 function closeOverlay() {
@@ -191,6 +221,140 @@ function clearDiceCanvases() {
   document.querySelectorAll(".accurate-dice-canvas").forEach((canvas) => canvas.remove());
 }
 
+/* Task 008 (WS4) — roll sound, ported from the builder's
+   playDiceAssetRollSounds/playDiceAudioElement/fadeOutDiceAudio/
+   stopActiveDiceSounds (src/js/ui.js). Same asset(s), same choreography
+   (a looping roll-bed that fades near the end, plus per-die staggered
+   impact hits) and the same volume/timing formulas — reused as-is per the
+   brief. Not a shared import: ui.js is the builder's ~8000-line monolith
+   bundle with many builder-only dependencies, so pulling it into this
+   extension's bundle would drag in unrelated code for one function. The
+   builder's WebAudio-synthesis fallback (for when Audio/the mp3 assets
+   are unavailable) is intentionally not ported — DICE_SOUND_ASSETS is
+   always non-empty and Audio is universal in any real browser this
+   overlay runs in, so that fallback path is unreachable here. */
+function clampNumber(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function stopActiveDiceSounds() {
+  diceAudioTimers.forEach((timer) => {
+    window.clearTimeout(timer);
+    window.clearInterval(timer);
+  });
+  diceAudioTimers = [];
+  activeDiceAudioElements.forEach((audio) => {
+    try {
+      audio.pause();
+      audio.currentTime = 0;
+    } catch (error) {
+      /* browser-managed media cleanup can fail harmlessly */
+    }
+  });
+  activeDiceAudioElements = [];
+}
+
+function playDiceAudioElement(src, options = {}) {
+  if (typeof Audio === "undefined" || !src) {
+    return null;
+  }
+  const audio = new Audio(src);
+  audio.preload = "auto";
+  audio.loop = Boolean(options.loop);
+  audio.volume = clampNumber(Number(options.volume) || 0.34, 0, 1);
+  audio.playbackRate = clampNumber(Number(options.playbackRate) || 1, 0.65, 1.35);
+  activeDiceAudioElements.push(audio);
+  const removeAudio = () => {
+    activeDiceAudioElements = activeDiceAudioElements.filter((entry) => entry !== audio);
+  };
+  audio.addEventListener("ended", removeAudio, { once: true });
+  const startAudio = () => {
+    const playPromise = audio.play();
+    if (playPromise?.catch) {
+      playPromise.catch(removeAudio);
+    }
+  };
+  const delayMs = Math.max(0, Number(options.delayMs) || 0);
+  if (delayMs > 0) {
+    const timer = window.setTimeout(startAudio, delayMs);
+    diceAudioTimers.push(timer);
+  } else {
+    startAudio();
+  }
+  return audio;
+}
+
+function fadeOutDiceAudio(audio, startAfterMs, fadeMs) {
+  if (!audio) {
+    return;
+  }
+  const fadeTimer = window.setTimeout(() => {
+    const initialVolume = audio.volume;
+    const startedAt = performance.now();
+    const interval = window.setInterval(() => {
+      const progress = clampNumber((performance.now() - startedAt) / Math.max(1, fadeMs), 0, 1);
+      audio.volume = initialVolume * (1 - progress);
+      if (progress >= 1) {
+        window.clearInterval(interval);
+        try {
+          audio.pause();
+          audio.currentTime = 0;
+        } catch (error) {
+          /* playback may never have started */
+        }
+        activeDiceAudioElements = activeDiceAudioElements.filter((entry) => entry !== audio);
+      }
+    }, 45);
+    diceAudioTimers.push(interval);
+  }, Math.max(0, startAfterMs));
+  diceAudioTimers.push(fadeTimer);
+}
+
+/* The trigger point: called from the engine's onSettle hook (real dice-
+   physics "the roll has landed" event — assets/dice-3d/lyrian-accurate-
+   dice.js already supports options.onSettle, forwarded verbatim by
+   dice-roller-router.js), once per roll. Takes the overlay's own
+   normalized per-die results (not the onSettle callback's own argument)
+   so this stays decoupled from the engine's internal settled-result
+   shape — this file only relies on the pre-existing public onSettle
+   calling convention, nothing dice-core-internal. */
+function playRollLandingSound(diceResults = []) {
+  if (soundMuted()) {
+    return;
+  }
+  const assets = diceSoundAssets();
+  if (typeof Audio === "undefined" || !assets.rollBed) {
+    return;
+  }
+  const dice = diceResults.slice(0, 24);
+  if (!dice.length) {
+    return;
+  }
+  stopActiveDiceSounds();
+  const diceCount = Math.max(1, dice.length);
+  const rollDurationMs = clampNumber(1800 + Math.sqrt(diceCount) * 520, 2300, 4300);
+  const bedAudio = playDiceAudioElement(assets.rollBed, {
+    loop: true,
+    volume: clampNumber(0.23 + diceCount * 0.012, 0.22, 0.43),
+    playbackRate: 0.96 + Math.random() * 0.08
+  });
+  fadeOutDiceAudio(bedAudio, rollDurationMs - 850, 850);
+  const impactSrc = assets.impact || assets.rollBed;
+  dice.forEach((entry, index) => {
+    const hits = clampNumber(3 + Math.floor((Number(entry.sides) || 20) / 12), 3, 6);
+    const dieOffset = index * 46 + Math.random() * 60;
+    for (let hit = 0; hit < hits; hit += 1) {
+      const delayMs = dieOffset + 140 + hit * (95 + Math.random() * 55);
+      const volume = clampNumber((0.27 / Math.sqrt(diceCount)) * (1 - hit * 0.1) * (0.78 + Math.random() * 0.28), 0.04, 0.28);
+      playDiceAudioElement(impactSrc, {
+        delayMs,
+        volume,
+        playbackRate: 0.86 + Math.random() * 0.28
+      });
+    }
+  });
+}
+
 function playRoll(rawEvent) {
   const event = normalizeRollEvent(rawEvent);
   if (!event || !replayEnabled()) {
@@ -212,6 +376,7 @@ function playRoll(rawEvent) {
   const generation = rollGeneration += 1;
   clearTimeout(shrinkTimer);
   clearDiceCanvases();
+  stopActiveDiceSounds();
   addChip(event);
   expandOverlay().then(() => {
     if (generation !== rollGeneration) {
@@ -224,7 +389,12 @@ function playRoll(rawEvent) {
         results,
         setId: selectedSetId(),
         width: window.innerWidth,
-        height: window.innerHeight
+        height: window.innerHeight,
+        onSettle: () => {
+          if (generation === rollGeneration) {
+            playRollLandingSound(results);
+          }
+        }
       });
       if (Number.isFinite(Number(reported)) && Number(reported) > 0) {
         animationMs = Math.min(Number(reported), 12000);

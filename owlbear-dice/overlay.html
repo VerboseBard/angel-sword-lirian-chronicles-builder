@@ -37,6 +37,19 @@
   <div id="roll-chips"></div>
   <script>
     window.LYRIAN_DISABLE_LEGACY_GLB_DICE = true;
+    /* Task 008 (WS4): the builder's existing roll/impact sound assets,
+       reused as-is. Declared here (HTML text) rather than as a literal
+       inside overlay.js because the WS2 staging crawler only scans HTML
+       files for quoted asset-path references (see
+       scripts/lib/owlbear-staging-assets.mjs — "nested references
+       discovered here (dist/*.js, assets/*) are leaf files, not more
+       HTML"); a path buried only inside the bundled dist/overlay.js would
+       never be added to the staging closure and would silently 404 once
+       published. */
+    window.ASD_DICE_SOUND_ASSETS = {
+      rollBed: "../assets/sounds/dice-roll-bed-142528.mp3",
+      impact: "../assets/sounds/dice-impact-95077.mp3"
+    };
     (function () {
       function load(src) {
         return new Promise(function (resolve, reject) {
