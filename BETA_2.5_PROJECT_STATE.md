@@ -159,8 +159,19 @@ Workshop repo `f92d7b8` (master). Both local-only.
    static server. Remaining for WS2: host choice (owner's) + actual upload
    + the builder-co-hosting question (panel's Open-Sheet button resolves
    the builder at `../` of wherever the panel is hosted — see owner Q8).
-   Note: static hosts must not send COOP headers (severs window.opener;
-   GitHub Pages sends none).
+   **Host requirement is a PAIR (task 006 finding):** COOP absent AND
+   `Access-Control-Allow-Origin` present on `/owlbear*` — Owlbear fetches
+   the manifest from a browser, and the dev server has always sent CORS
+   there (the deploy-sim's headerless proof is Node-side only, so it is
+   blind to this). GitHub Pages gives both by default; Cloudflare Pages
+   needs a `_headers` file. Verify at staging with task 007's target mode.
+   **Pipeline is BUILT + AUDITED + HARDENED (001/004/005/006/007) and
+   judged sound to stage on.** Owner's upload ritual, in order:
+   (1) `npm run publish:staging -- --base-url=<real url>`;
+   (2) `npm run test:staging -- --no-emit` on the exact bytes to upload;
+   (3) upload `dist-staging/` (read `STAGING-HOST-NOTES.md` inside it);
+   (4) `node scripts/test-staging-deploy.mjs --target=<real url>` to prove
+   the live host — including COOP absent / ACAO present.
 2. **WS4 — overlay roll sounds**: wire the builder's existing roll sounds
    into the warm overlay; replay toggle also mutes; persistent mute.
 3. **WS5 — version-compat contract test**: extensions accept same-or-older
@@ -289,8 +300,70 @@ Format per entry:
   final-audit pass on the 001→004→005 chain if budget allows, then the
   batched records commit for 005's brief/report). Session records through
   004 committed now so the handoff is durable.
-- Reports: 001-004 on disk (003/004 written by executors per Digest rule);
-  005 pending.
+- Update ~21:30 (coordinator now OPUS 5 — owner flipped the model selector
+  mid-session; protocol v3 live): Task 005 LANDED GREEN, commit `6f767ff`
+  (3 staging scripts only, +279/-13 — coordinator verified contents match
+  the report). All four DECIDED fixes closed and proven BOTH directions
+  with 004's own attack commands: (M1) `assertSafeOutDir` refuses hostile
+  `--out` values — 7 on an isolated fixture with surviving canaries, 9 on
+  the real worktree incl. `.`, `..`, the frozen 2.20 sibling, `.git`; no
+  override flag; (M2) `--no-emit`/`--artifact=` verify-in-place with a
+  pinned sentinel list + independent staged-registry re-read — 004's exact
+  3-part mutation that silently passed 46/46 now fails with 7 specific
+  problems; (M3) base URLs with query/fragment/dot-segments/credentials
+  refused, legit subpaths still bake correctly (plus a mixed-case false-red
+  fixed); (M4) audio/font extensions added to the crawler so WS4's roll
+  sounds can't silently vanish from staging. Bonus: M6 (query-string
+  literal) and M8 (`copySharedAsset` boundary — real pre-fix exfiltration
+  proved, post-fix refused). Deferred by the brief's own guidance: M5→WS6,
+  M7 (structural, zero live impact), M9/M10 (owner-gated). Suites:
+  test:staging 46→53/53 green, test:vtt 109+48 unchanged green,
+  test:dice-skins green. FABLE FINAL-AUDIT pass dispatched over the whole
+  001→004→005 chain (protocol v3: substantial repo-mutating job).
+- Update ~21:50: FABLE FINAL AUDIT (task 006) landed — **WS2 pipeline is
+  SOUND TO STAGE ON** once a host is chosen. Reports agree; 005 did not
+  quietly redefine 004 (verified against the real code at 6f767ff). M2
+  verify-in-place judged genuinely sound. Three things all prior passes
+  missed: (a) the guards compare paths CASE-SENSITIVELY on NTFS, so
+  `--out=.GIT` slips past the `.git` check — and unlike the boundary
+  checks, this one fails DANGEROUS; (b) the deploy-sim's "needs no
+  headers" proof is Node-side and therefore blind to CORS — the real host
+  requirement is COOP-absent AND ACAO-present (recorded on queue item 1);
+  (c) nothing can run the checks against the REAL host after upload, and
+  the checks are presence-only so a truncated file would pass. Ship
+  caveats recorded: pre-upload ritual = run verify-in-place on the exact
+  bytes being uploaded (a default run only proves the emit); owner Q8
+  still gates the Open-Sheet button; 45MB downloads twice until WS3.
+  Task 007 (case-safe guards + size checks + read-only verify-against-host
+  mode + STAGING-HOST-NOTES.md in the artifact) DISPATCHED on Sonnet.
+- Update ~23:15: Task 007 LANDED GREEN, commit `80e48c5` (3 staging
+  scripts, +406/-40 — coordinator verified). Closes every 006 finding:
+  win32 case-folding in `assertSafeOutDir`/`assertWithinRoot` (19/19
+  mixed-case hostiles refused incl. a real `.GIT` against the real `.git`
+  pointer, canaries intact, legit paths not over-blocked); explicit
+  fail-safe try/catch on the guard's error path — and an errno probe
+  showed the pre-fix bug was **cleanly dangerous on this Windows/Node**,
+  not "saved by luck" as 006 hedged; `STAGING-INTEGRITY.json` (size +
+  sha256 for 37 files) written at emit and checked on every fetch, proven
+  red on truncation AND on same-size hash corruption; `--target=<url>`
+  read-only GET mode proven against an independently started/stopped
+  ephemeral server through green→truncated→removed→restored→simulated-COOP
+  →missing-ACAO-warns; `STAGING-HOST-NOTES.md` now ships inside the
+  artifact stating the COOP/ACAO requirement for whoever uploads. Suites:
+  test:staging 53→99/99 (default + `--no-emit`), test:vtt unchanged green,
+  test:dice-skins green.
+- **Fable final-audit pass on 007: DELIBERATELY SKIPPED** (protocol v3
+  skip clause). Reason: owner's Fable bucket at 81% with reset Sat 21:00,
+  and 007 is the closure of Fable's OWN 006 findings, each proven in both
+  directions with 006's spec as the test list; coordinator (Opus) verified
+  the commit contents instead. Available on owner request.
+- **New known nit (NOT fixed, low severity, typo-only risk):** `--out=`
+  pointed at an existing NON-git *file* inside the worktree silently
+  deletes and replaces it (guards cover the root, `.git`, and outside-tree
+  targets, but not "this is a file someone cares about"). Found by 007
+  outside its own scope. Tracked-file damage is git-recoverable. Queue as
+  a micro-task with M7 whenever the pipeline is next touched.
+- Reports: 001-007 all on disk (executors write their own per Digest rule).
 - Queue: item 1 (WS2 pipeline) marked BUILT in the queue above; added
   follow-up candidate — test-cross-browser.mjs's deployment-artifact phase
   predates owlbear-dice/ and still routes through the rewriting dev server
