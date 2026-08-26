@@ -14,3 +14,4 @@ Thumbs.db
 dist/
 qa-test-results/
 deploy-temp-dist/
+dist-staging/

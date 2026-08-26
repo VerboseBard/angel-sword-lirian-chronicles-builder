@@ -8,6 +8,8 @@
     "build": "node scripts/build-app.mjs && node scripts/build-owlbear.mjs && node scripts/check-bundle-compat.mjs",
     "start": "node scripts/build-owlbear.mjs && node scripts/server.mjs",
     "serve": "node scripts/build-owlbear.mjs && node scripts/server.mjs",
+    "publish:staging": "node scripts/publish-staging.mjs",
+    "test:staging": "node scripts/test-staging-deploy.mjs",
     "audit:minmax": "node scripts/audit-minmax-cascades.mjs",
     "test:rules0131": "npm run build && node scripts/test-rules-0131.mjs",
     "test:community": "npm run build && node scripts/test-community-update.mjs",
