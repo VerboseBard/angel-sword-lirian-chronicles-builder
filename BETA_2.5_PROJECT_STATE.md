@@ -218,6 +218,24 @@ Format per entry:
 - Questions parked for owner: ... (or "none")
 ```
 
+### 2026-08-26 13:39 — ChatGPT/Codex (handoff verification)
+- Did: accepted the Beta 2.5 Online handoff and read `AGENTS.md`, this state
+  hub, `BETA_2.5_ONLINE_CONVERSION_PLAN.md`, and the task template in full.
+  Verified that `c324b5b` created the coordinator system, while the clean
+  `agent/beta-2-5-online` branch now stands at `ca3b94f` after the recorded
+  WS2 staging-pipeline task/audit chain. No application code, build output,
+  deployment, or frozen Beta 2.20 file was changed. I explicitly acknowledge
+  the owner's standing ChatGPT/Codex audit permission and the matching
+  obligations: read state/plan first, honor DECIDED versus SKETCH, use scoped
+  task briefs/reports for any sub-agents, stage explicit paths only, never
+  push, run the required verification gates for implementation work, and log
+  every session here.
+- Commits: this work-log-only commit (hash recorded in the repository history;
+  local only, no push).
+- Reports: none (no sub-agents ran).
+- Questions parked for owner: none added; the existing decision ledger remains
+  authoritative.
+
 ### 2026-08-25 19:25 — Claude Fable 5 (coordinator session; entry updated as results land)
 - Did: session open per operating model (state file + plan read; worktree
   clean at c324b5b; no ChatGPT activity since hub creation). Authored and
