@@ -252,16 +252,56 @@ Format per entry:
   finding, at the cost of busting the full ~42-45MB engine cache on every
   promotion. Executor's own lean: dedicated registry-only token + a
   one-time manual sync for M9.
-- Commits: e4f2a52 (task 010, by its executor); 317fdaa (session records:
-  briefs 008-010, coordinator).
-- Reports: 010 on disk (executor wrote its own per Digest rule). 008/009
-  still in flight.
+- Update ~16:50: Task 009 LANDED — report saved verbatim to
+  BETA_2.5_TASKS/reports/009-dice-face-mismatch-scout-report.md, commit
+  `c751829` verified (392 insertions, report file only). **REPRODUCED, high
+  confidence:** every percentile (d100) roll of 1-9 shows a tens face of
+  "10" instead of "00", so the table reads 11-19 while the roll registers
+  1-9 — zero is unrepresentable across three stacked clamps (core
+  `expandPercentileResults` L1305, core `makeResultLabel` L1054,
+  `src/js/ui.js:7416`; the sheet duplicates the defect again at
+  `ui.js:7443`). Hits all four sets, ~9% of percentile rolls, sheet AND
+  Owlbear panel alike. Existing audits never caught it because they all
+  iterate face KEYS, never rolled VALUES. Settle/selection geometry itself
+  is exonerated by measurement, not assumption (1,400/1,400 checks clean)
+  — this is a display-mapping bug, not a placement/orientation one; do not
+  fold it into the placement-offset work. Minimal fix sketched (two
+  expressions, two files, route 1-9 to the already-supported `value: 100`
+  → "00") but NOT applied, per scope. Two more findings, unrelated to the
+  main bug: (a) since commit `77779b4`, settle-result measurement reads
+  world-up instead of the die's actual orientation, firing a false
+  `console.warn` on every roll for 220/320 dice plus a latent
+  wrong-number path when preview capture fails; (b) `owlbear-dice/panel.html`
+  is still pinned to an OLDER engine cache-buster (`-srgb-dice-v1`) than
+  `overlay.html` (`-numeral-dots-v3`) — **a third independent sighting of
+  the same version-skew pattern as task 010's registry finding and the
+  002-scout's schemaVersion/VTT_RELAY_VERSION findings** — the panel may be
+  serving viewers a stale, pre-fix engine right now. Owner's original d20
+  sighting logged 16 minutes BEFORE `77779b4`; today's d20 path measures
+  clean — parked as a question, not assumed fixed.
+- Commits: e4f2a52 (task 010), c751829 (task 009, both by their
+  executors); 317fdaa + 974c68b (session records / hub updates,
+  coordinator).
+- Reports: 010, 009 on disk (executors wrote their own per Digest rule).
+  008 still in flight (overlay.html/js + panel.html/js show uncommitted
+  changes matching its scope — expected, not yet landed).
 - Questions parked for owner: (from task 010, refining existing question
   7) (9) fix the cache-buster gap in one script (promote-dice-skin.mjs)
   or both (it + prune-dice-catalog.mjs)?; (10) is the M9 double-download
   worth fixing now, given WS3 dice-slimming may reshape this whole area
-  anyway? Tasks 008 (overlay sounds) and 009 (dice face-mismatch scout)
-  still IN FLIGHT — results to follow in this same entry.
+  anyway? (from task 009) (11) greenlight the minimal d100 "00" fix as its
+  own small task (two files, engine core — Workshop-sync discipline
+  applies)?; (12) is the false console.warn / latent wrong-number path
+  from `77779b4` worth its own task, or fold into the d100 fix?; (13) is
+  `panel.html`'s stale engine pin urgent enough to bump now, ahead of a
+  general versioning fix?; (14) was the owner's original d20 sighting
+  already fixed by `77779b4`, or does it need its own repro? **Coordinator
+  observation:** three separate tasks (002, 009, 010) have now each
+  independently found a different consumer surface holding a different
+  stale version/cache token for shared code — this looks like one
+  systemic gap, not three unrelated bugs; worth a unified versioning pass
+  rather than three point patches, owner's call on sequencing. Task 008
+  (overlay sounds) still IN FLIGHT — results to follow in this same entry.
 
 ### 2026-08-26 13:39 — ChatGPT/Codex (handoff verification)
 - Did: accepted the Beta 2.5 Online handoff and read `AGENTS.md`, this state
