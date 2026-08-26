@@ -36,9 +36,30 @@ export const EXTRA_ENTRY_HTML = {
 };
 
 const QUOTED_STRING_RE = /["']([^"'<>\s]+)["']/g;
-const ASSET_EXT_RE = /\.(?:js|mjs|css|svg|png|jpg|jpeg|webp|json)$/i;
+// Task 005 / audit M4: audio + font extensions added so WS4's overlay
+// sounds (and any future web font) are crawled the day they land instead
+// of silently vanishing from the staging closure.
+const ASSET_EXT_RE = /\.(?:js|mjs|css|svg|png|jpg|jpeg|webp|json|mp3|ogg|wav|m4a|woff2?|ttf|otf)$/i;
 const PATH_LIKE_RE = /^(?:\.\.\/)*[\w.-]+(?:\/[\w.-]+)*$/;
 const ABSOLUTE_URL_RE = /^[a-z][a-z0-9+.-]*:\/\//i;
+
+// Task 005 / audit M2: a fixed list of files the dice engine cannot run
+// without, checked directly against the STAGED tree regardless of what the
+// staged pages' own markup currently says. This exists because the normal
+// crawl derives its ground truth FROM those pages — if a page were ever
+// corrupted or truncated in a way that also ate the reference to one of
+// these files, the crawl-derived closure would shrink right along with it
+// and silently stop checking for the very file that went missing. Pinning
+// these paths breaks that self-reference. Sourced by reading
+// owlbear-dice/panel.html and owlbear-dice/overlay.html directly
+// (2026-08-25) — both load these four relative to the project root.
+export const REGISTRY_RELATIVE_PATH = "assets/dice/promoted-dice-skins.registry.js";
+export const PINNED_SENTINEL_ASSETS = [
+  "assets/dice-3d/dice-3d-embedded.js",
+  "assets/vendor/three.min.js",
+  "assets/vendor/GLTFLoader.js",
+  REGISTRY_RELATIVE_PATH
+];
 
 async function readIfExists(absPath) {
   try {
@@ -61,7 +82,12 @@ function resolveRelative(fromDir, relPath) {
 function extractAssetLiterals(text) {
   const found = new Set();
   for (const match of text.matchAll(QUOTED_STRING_RE)) {
-    const candidate = match[1];
+    // Task 005 / audit M6: strip a trailing "?v=..." BEFORE testing, same as
+    // extractRegistrySidecars already does for faceArtScript. Previously a
+    // literal that already carried its own query string (as opposed to the
+    // "...js" + V concatenation the current pages use) failed PATH_LIKE_RE
+    // (which rejects "?") and vanished from the closure with no warning.
+    const candidate = match[1].split("?")[0];
     if (ASSET_EXT_RE.test(candidate) && PATH_LIKE_RE.test(candidate)) {
       found.add(candidate);
     }
@@ -119,7 +145,13 @@ async function extractHtmlAssetRefs(rootDir, extDir, htmlFileName) {
   return refs;
 }
 
-async function extractRegistrySidecars(rootDir, registryRelPath) {
+/**
+ * Read the sidecar (faceArtScript) paths named by a promoted-dice-skins
+ * registry file. Exported (task 005) so test-staging-deploy.mjs can assert
+ * every registry-named sidecar exists by reading the STAGED registry
+ * directly, independent of whatever the staged pages' own HTML crawl finds.
+ */
+export async function extractRegistrySidecars(rootDir, registryRelPath) {
   const text = await readIfExists(toFsPath(rootDir, registryRelPath));
   if (text === null) return [];
   const sidecars = new Set();

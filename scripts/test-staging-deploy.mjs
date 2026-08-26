@@ -22,17 +22,34 @@
       resolves HTTP 200 from the sim server — re-derived independently by
       crawling the STAGED tree, not by trusting the emit step's own list
 
+  Task 005 / audit M2: this file also supports a verify-in-place mode
+  (--no-emit, or --artifact=<dir> which implies it) that SKIPS the fresh
+  emit and points the same checks at a directory that already exists. The
+  default emit-then-verify mode still exists (npm run test:staging keeps
+  working unchanged) but a verify-in-place pass over a corrupted or
+  incomplete tree now actually goes red, because nothing re-emits over the
+  corruption first.
+
   Usage:
     node scripts/test-staging-deploy.mjs
     node scripts/test-staging-deploy.mjs --base-url=https://example.test/as
+    node scripts/test-staging-deploy.mjs --no-emit --base-url=https://example.test/as
+    node scripts/test-staging-deploy.mjs --artifact=dist-staging --base-url=https://example.test/as
 */
 
 import fs from "node:fs/promises";
 import http from "node:http";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { publishStaging } from "./publish-staging.mjs";
-import { EXTENSION_DIRS, crawlExtensionAssets, manifestUrlEntries } from "./lib/owlbear-staging-assets.mjs";
+import { publishStaging, normalizeBaseUrl } from "./publish-staging.mjs";
+import {
+  EXTENSION_DIRS,
+  crawlExtensionAssets,
+  manifestUrlEntries,
+  extractRegistrySidecars,
+  PINNED_SENTINEL_ASSETS,
+  REGISTRY_RELATIVE_PATH
+} from "./lib/owlbear-staging-assets.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(__dirname, "..");
@@ -52,14 +69,30 @@ const MIME_TYPES = new Map([
   [".png", "image/png"],
   [".webp", "image/webp"],
   [".jpg", "image/jpeg"],
-  [".jpeg", "image/jpeg"]
+  [".jpeg", "image/jpeg"],
+  // Audit M4 companion: served with real types now too, so the sim reflects
+  // a real static host's behavior once WS4's sound files land in the closure
+  // instead of falling back to application/octet-stream.
+  [".mp3", "audio/mpeg"],
+  [".ogg", "audio/ogg"],
+  [".wav", "audio/wav"],
+  [".m4a", "audio/mp4"],
+  [".woff", "font/woff"],
+  [".woff2", "font/woff2"],
+  [".ttf", "font/ttf"],
+  [".otf", "font/otf"]
 ]);
 
 function parseArgs(argv) {
-  const args = { baseUrl: null, outDir: null };
+  const args = { baseUrl: null, outDir: null, noEmit: false };
   for (const raw of argv) {
     if (raw.startsWith("--base-url=")) args.baseUrl = raw.slice("--base-url=".length);
     else if (raw.startsWith("--out=")) args.outDir = raw.slice("--out=".length);
+    else if (raw === "--no-emit") args.noEmit = true;
+    else if (raw.startsWith("--artifact=")) {
+      args.outDir = raw.slice("--artifact=".length);
+      args.noEmit = true;
+    }
   }
   return args;
 }
@@ -121,6 +154,25 @@ async function fetchLocal(origin, relPosixPath) {
   return { url, status: response.status, response };
 }
 
+/** Audit M2: a friendly pre-check for --no-emit, instead of surfacing a raw ENOENT deep in the crawl. */
+async function assertArtifactLooksStaged(absOutDir) {
+  let stat;
+  try {
+    stat = await fs.stat(absOutDir);
+  } catch (error) {
+    if (error?.code === "ENOENT") {
+      throw new Error(
+        `--no-emit was given but "${absOutDir}" does not exist. Run "npm run publish:staging" first, ` +
+          "or omit --no-emit / --artifact= to let this script emit one."
+      );
+    }
+    throw error;
+  }
+  if (!stat.isDirectory()) {
+    throw new Error(`--no-emit was given but "${absOutDir}" is not a directory.`);
+  }
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const baseUrl = args.baseUrl || process.env.LYRIAN_STAGING_BASE_URL || DEFAULT_BASE_URL;
@@ -129,10 +181,19 @@ async function main() {
   let checked = 0;
   let server;
 
-  console.log(`--- WS2 deploy-simulation: fresh emit for ${baseUrl} ---`);
-  const emitResult = await publishStaging({ baseUrl, outDir, projectRoot: PROJECT_ROOT, log: (m) => console.log(m) });
-  const absOutDir = emitResult.outDir;
-  const normalizedBase = emitResult.baseUrl;
+  let absOutDir;
+  let normalizedBase;
+  if (args.noEmit) {
+    absOutDir = path.isAbsolute(outDir) ? outDir : path.join(PROJECT_ROOT, outDir);
+    normalizedBase = normalizeBaseUrl(baseUrl);
+    console.log(`--- WS2 deploy-simulation: verifying EXISTING artifact at ${absOutDir} (--no-emit) for ${normalizedBase} ---`);
+    await assertArtifactLooksStaged(absOutDir);
+  } else {
+    console.log(`--- WS2 deploy-simulation: fresh emit for ${baseUrl} ---`);
+    const emitResult = await publishStaging({ baseUrl, outDir, projectRoot: PROJECT_ROOT, log: (m) => console.log(m) });
+    absOutDir = emitResult.outDir;
+    normalizedBase = emitResult.baseUrl;
+  }
 
   try {
     console.log("\nStarting a plain static server (no rewriting, no relay, zero custom headers)...");
@@ -203,6 +264,36 @@ async function main() {
       const { status } = await fetchLocal(origin, relPath);
       if (status !== 200) {
         failures.push(`${relPath}: expected HTTP 200 from the static sim server, got ${status}`);
+      }
+    }
+
+    // Audit M2: the closure just derived above is read FROM the staged
+    // pages' own markup — if a page were ever corrupted in a way that also
+    // ate the text referencing one of these files, that derivation would
+    // shrink right along with it and stop checking for the missing file.
+    // These two passes are independent of that derivation: a fixed list the
+    // engine cannot run without, and a fresh read of the STAGED registry
+    // (not whatever the HTML crawl happened to find).
+    console.log("\nAsserting pinned sentinel files (independent of what the staged pages' own markup currently references)...");
+    for (const relPath of PINNED_SENTINEL_ASSETS) {
+      checked += 1;
+      const { status } = await fetchLocal(origin, relPath);
+      if (status !== 200) {
+        failures.push(`${relPath}: pinned sentinel asset expected HTTP 200 from the static sim server, got ${status}`);
+      }
+    }
+    const stagedRegistrySidecars = await extractRegistrySidecars(absOutDir, REGISTRY_RELATIVE_PATH);
+    if (stagedRegistrySidecars.length === 0) {
+      failures.push(
+        `${REGISTRY_RELATIVE_PATH}: no faceArtScript sidecars could be read from the staged registry ` +
+          "(missing file, or every promoted set lost its faceArtScript field)."
+      );
+    }
+    for (const relPath of stagedRegistrySidecars) {
+      checked += 1;
+      const { status } = await fetchLocal(origin, relPath);
+      if (status !== 200) {
+        failures.push(`${relPath}: registry-named sidecar expected HTTP 200 from the static sim server, got ${status}`);
       }
     }
 
