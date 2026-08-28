@@ -243,13 +243,44 @@ Format per entry:
   set's whole d20 sits low") are explicit follow-ups, not this task. Task
   also lands the Workshop's ~17-day-old uncommitted WIP as its own clean
   commit before layering the fix on top. IN FLIGHT.
-- Commits: fdf4439 (brief 011, coordinator).
-- Reports: none yet — task 011 in flight.
-- Questions parked for owner: none new yet (011's own parked questions, if
-  any, will land with its report). Reminder: this task uses the
-  still-unblessed placement offsets (existing question 1) as a working
-  default — flagging in case the owner wants to bless/adjust them before
-  results land rather than after.
+- Update: Task 011 LANDED GREEN — commits verified: Workshop `e3e9ce4`
+  (17-day-old WIP landed as-is, 14 paths, no behavior change) + `4cdb855`
+  (the actual fix, composer +182/-13, tests +220); builder `ec9eec9`
+  (report only). All four verification items green: 66/66 rendered faces
+  land within the audit's own 1.6% flag threshold (mean 0.28% deviation),
+  5 negative controls proven to each turn the new position-asserting test
+  red. **Important catch: the plan doc's stated d10/d100 offsets were
+  STALE** (-2.8%/-2.5%, pre-dating a kite-anchor construction change in
+  builder commit `d5caea5`) — live values are -17.33%/-17.07% (same
+  painted position, different reference point, verified arithmetically).
+  Left uncorrected this would have led to blessing the wrong numbers under
+  question 1 — coordinator fixed `BETA_2.5_ONLINE_CONVERSION_PLAN.md`
+  immediately (commit `554af3a`) rather than waiting. Bonus fix: the
+  composer now aligns each numeral's painted ink-center rather than its
+  font em-box (Georgia's old-style figures made this a 3.4%-of-canvas
+  spread) — cut mean deviation from 0.93%/4-flagged to 0.28%/0-flagged;
+  this is flagged as an eye-call for the owner (ink-center vs baseline
+  alignment), not asserted as strictly correct. d4 was explicitly NOT
+  touched: the placement audit doesn't measure d4 at all, and the brief's
+  own "never invent numbers" rule forbade guessing one — left
+  byte-identical, constant named `D4_CORNER_INSET` for whenever real d4
+  data exists.
+- Commits: fdf4439 (brief 011), e3e9ce4 + 4cdb855 (Workshop repo, task
+  011's executor), ec9eec9 (task 011's report), 554af3a (plan-doc
+  correction, coordinator).
+- Reports: 011 on disk (executor wrote its own per Digest rule).
+- Questions parked for owner: (16) ink-center vs baseline numeral
+  alignment — the just-shipped correction is a real accuracy improvement
+  by the audit's own measure, but it's an aesthetic call the owner hasn't
+  made; look at rendered output before deciding it stays. (17) d4 has no
+  measured placement rule and the audit tooling doesn't cover it — worth
+  extending the audit to d4, or is the existing 30%-corner-lerp treated as
+  "good enough, no measurement needed" for that one shape? (18) worth
+  making the new position-check a permanent gate (needs Playwright added
+  to the Workshop repo, which doesn't have it today) or leave it as a
+  manual/CI-adjacent script? Existing question 1 (bless the placement
+  offsets) should now be answered against the corrected numbers above, not
+  the ones originally quoted.
 
 ### 2026-08-26 (afternoon) — Claude Sonnet 5 (coordinator session; entry updated as results land)
 - Did: session opened per operating model (state file + plan + git log
