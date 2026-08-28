@@ -166,12 +166,32 @@ Collect requirements later; do not scope-creep 2.5.
   verified acceptable; Angel d4 is engine-drawn onto a blank plate and
   immune. Alternative if no art session: retrofit Angel-style engine corner
   redraw for rana (erase medallion interior, draw fitted number).
-- **Design tokens derived (owner idea — geometric anchor per face, 2026-08-25):**
-  numeral center target = face centroid + per-shape design offset, measured
-  from the art family itself: d6 +0.5%, d8 -2.9%, d10 -2.8%, d100 -2.5%,
-  d12 +0.5%, d20 -5.0% (negative = above centroid; triangles ride high
-  because frames own the bottom corners). Awaiting owner blessing as the
-  standing standard for re-bakes + the promote gate.
+- **Design tokens derived (owner idea — geometric anchor per face, 2026-08-25;
+  corrected 2026-08-28, see below):** numeral center target = face centroid
+  (or, for kite faces, the owner's corner-vector crossing) + per-shape design
+  offset, measured from the art family itself: d6 x+0.26/y+0.52%,
+  d8 x0/y-2.89%, d10 x0/y-17.33%, d100 x+0.26/y-17.07%, d12 x+0.26/y+0.49%,
+  d20 x0/y-4.97% (percent of canvas edge; negative y = above anchor;
+  triangles ride high because frames own the bottom corners). d10/d100 read
+  wildly different from the originally-quoted -2.8%/-2.5% here NOT because
+  the art moved, but because the anchor changed (commit `d5caea5`): kite
+  faces (d10/d100) now anchor at the pole-to-tail × wing-to-wing diagonal
+  crossing instead of the vertex average, and that crossing sits 14.5% of
+  canvas below the vertex average — same painted position, different
+  reference point (verified: -2.8 + -14.52 = -17.32 ≈ -17.33). The non-kite
+  shapes barely moved. This entry had gone stale and would have led the
+  owner to bless the wrong numbers (caught by task 011, 2026-08-28) — the
+  live source of truth is always
+  `qa-test-results/dice-face-audit/numeral-placement.json`'s
+  `designOffsets` (gitignored; regenerate via
+  `node scripts/dice-numeral-placement-audit.mjs`), never this prose
+  snapshot. Still awaiting owner blessing as the standing standard for
+  re-bakes + the promote gate — bless against the numbers above.
+  **Also flagged (task 011):** the audit aligns each numeral's painted INK
+  CENTER; the numeral font's old-style figures (3/4/5/7/9 hang below the
+  baseline, 6/8 rise above it) mean ink-center alignment and baseline
+  alignment visibly disagree with each other. Neither is "wrong" — it's an
+  eye-call the owner hasn't made yet, not a bug either way.
 - **Headline finds vs the standard:** the ENTIRE Rana d20 sits ~7% low (a
   family-level offset invisible to mean-based checks); two-digit d12
   numerals are 28-31% undersized on all three promoted sets (fix scale
