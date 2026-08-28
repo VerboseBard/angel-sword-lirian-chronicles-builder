@@ -218,6 +218,39 @@ Format per entry:
 - Questions parked for owner: ... (or "none")
 ```
 
+### 2026-08-28 — Claude Sonnet 5 (coordinator session; entry updated as results land)
+- Did: session resumed after a two-day gap; re-verified both repos before
+  touching anything (builder clean at f1e8ace, Workshop unchanged — no
+  ChatGPT or other activity in the interim). Owner is redesigning the dice
+  skin pipeline: separate flat/blank face art from numeral placement, add
+  numbers as a system-driven compositing step instead of baking them into
+  painted art. Investigated the Dice Builder Workshop's uncommitted WIP
+  (dated ~2026-08-09, never evaluated before now) via a read-only Explore
+  sub-agent: it already implements ~80% of this — a "flat artwork, numbers
+  added afterward" mode, font/style choice, per-face image overrides,
+  wired to the real promotion pipeline. The one real gap: its placement
+  math is a crude, incomplete guess (fixed 30% corner lerp for d4, a
+  blanket fudge for only d8/d20, nothing for d6/d10/d100/d12) with no
+  per-face correction capability — the same class of problem behind the
+  Rana d4 revert, just automated instead of manual. Authored and
+  dispatched brief 011 (Opus 5): wire the composer to the SIX real
+  per-shape offsets already measured in the 2026-08-25 audit
+  (`qa-test-results/dice-face-audit/numeral-placement.json`'s
+  `designOffsets`, still not formally owner-blessed — question 1 — but
+  adopted now as a working default since it's strictly better than the
+  current guesswork and trivially updatable later). Scoped to shape-level
+  only; per-face corrections and per-set-family adjustments (e.g. "this
+  set's whole d20 sits low") are explicit follow-ups, not this task. Task
+  also lands the Workshop's ~17-day-old uncommitted WIP as its own clean
+  commit before layering the fix on top. IN FLIGHT.
+- Commits: fdf4439 (brief 011, coordinator).
+- Reports: none yet — task 011 in flight.
+- Questions parked for owner: none new yet (011's own parked questions, if
+  any, will land with its report). Reminder: this task uses the
+  still-unblessed placement offsets (existing question 1) as a working
+  default — flagging in case the owner wants to bless/adjust them before
+  results land rather than after.
+
 ### 2026-08-26 (afternoon) — Claude Sonnet 5 (coordinator session; entry updated as results land)
 - Did: session opened per operating model (state file + plan + git log
   read; worktree clean at ca3b94f at session start — the ChatGPT
