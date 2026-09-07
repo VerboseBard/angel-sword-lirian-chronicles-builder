@@ -142,9 +142,9 @@ async function runDirectFileStartupAssertion() {
       };
     });
 
-    const startupIsValid = result.dataVersion === '0.13.1'
-      && result.selectedVersion === '0.13.1'
-      && result.versionCount >= 4
+    const startupIsValid = result.dataVersion === '0.13.2'
+      && result.selectedVersion === '0.13.2'
+      && result.versionCount >= 5
       && result.cardCount > 0
       && result.navCount > 0
       && result.summaryText.includes('Identity')
@@ -229,6 +229,7 @@ async function runBuildLabHandoffAssertion(browser, targetUrl) {
 }
 
 async function runMobileChoiceOverlayAssertions(page, browserName) {
+  await assertCurrentFixtureImagesDecoded(page, 'runMobileChoiceOverlayAssertions pre-reset');
   await page.evaluate(() => localStorage.clear());
   await page.reload({ waitUntil: 'load' });
 
@@ -321,11 +322,13 @@ async function runMobileChoiceOverlayAssertions(page, browserName) {
     throw new Error(`Mobile overlay accept-and-continue regression failed: ${JSON.stringify(acceptResult)}`);
   }
 
+  await assertCurrentFixtureImagesDecoded(page, 'runMobileChoiceOverlayAssertions pre-reset');
   await page.evaluate(() => localStorage.clear());
   await page.reload({ waitUntil: 'load' });
 }
 
 async function runMobileQuickBuildDetailAssertions(page, browserName) {
+  await assertCurrentFixtureImagesDecoded(page, 'runMobileQuickBuildDetailAssertions pre-reset');
   await page.evaluate(() => localStorage.clear());
   await page.reload({ waitUntil: 'load' });
   page.once('dialog', async (dialog) => dialog.accept());
@@ -371,11 +374,13 @@ async function runMobileQuickBuildDetailAssertions(page, browserName) {
     throw new Error(`Mobile Quick Build detail close regression failed: ${JSON.stringify(closed)}`);
   }
 
+  await assertCurrentFixtureImagesDecoded(page, 'runMobileQuickBuildDetailAssertions pre-reset');
   await page.evaluate(() => localStorage.clear());
   await page.reload({ waitUntil: 'load' });
 }
 
 async function runMobileSheetAppAssertions(page, browserName) {
+  await assertCurrentFixtureImagesDecoded(page, 'Mobile sheet pre-seed');
   await page.evaluate(() => {
     localStorage.clear();
     localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
@@ -523,12 +528,15 @@ async function runMobileSheetAppAssertions(page, browserName) {
     console.log('   Captured: qa-test-results/screenshot-chromium-mobile-sheet.png');
   }
 
+  await assertCurrentFixtureImagesDecoded(page, 'Mobile sheet pre-reset');
   await page.evaluate(() => localStorage.clear());
   await page.reload({ waitUntil: 'load' });
 }
 
 async function runVttIntegrationAssertions(page, browserName, targetUrl, isMobile = false) {
+  await assertCurrentFixtureImagesDecoded(page, 'VTT pre-navigation');
   await page.goto(targetUrl, { waitUntil: 'load', timeout: 15000 });
+  await assertCurrentFixtureImagesDecoded(page, 'VTT pre-reset');
   await page.evaluate(() => localStorage.clear());
   await page.reload({ waitUntil: 'load', timeout: 15000 });
   await page.waitForSelector('[data-builder-action="pick-race"].builder-option-card', { timeout: 10000 });
@@ -571,13 +579,19 @@ async function runVttIntegrationAssertions(page, browserName, targetUrl, isMobil
   );
   const expectedGuides = ['character-files', 'roll20', 'owlbear', 'foundry', 'world-anvil', 'official-builder'];
   const expectedPlatforms = ['Roll20', 'Owlbear Rodeo', 'Foundry VTT', 'World Anvil', 'Official Clio Builder'];
+  const expectedPlatformStatuses = {
+    'Owlbear Rodeo': 'Alpha',
+    'Official Clio Builder': 'Verified',
+    'Roll20': 'Coming Soon',
+    'Foundry VTT': 'Coming Soon',
+    'World Anvil': 'Coming Soon'
+  };
   if (
     !['save', 'load', 'export', 'import', 'recalculate', 'builder'].every((action) => tableToolActions.includes(action))
     || tableToolActions.includes('connections')
     || !expectedGuides.every((guide) => tableToolGuides.includes(guide))
     || expectedPlatforms.some((name) => !platformCards.some((card) => card.name === name))
-    || platformCards.filter((card) => card.name !== 'Official Clio Builder').some((card) => card.status !== 'Alpha')
-    || platformCards.find((card) => card.name === 'Official Clio Builder')?.status !== 'Verified'
+    || platformCards.some((card) => card.status !== expectedPlatformStatuses[card.name])
     || (await page.locator('#play-table-tools').textContent()).includes('All Connections')
   ) {
     throw new Error(`Table Tools connections are incomplete in ${browserName}: ${JSON.stringify({ tableToolActions, tableToolGuides, platformCards })}`);
@@ -668,8 +682,125 @@ function isIgnorableLocalMediaAbort(request) {
     && /abort|cancel/i.test(failureText);
 }
 
+function acknowledgedCanceledRelayPostId(request, responseStatus) {
+  let url;
+  try { url = new URL(request.url()); } catch { return ''; }
+  const exactCanceledPost = url.protocol === 'http:'
+    && ['127.0.0.1', 'localhost'].includes(url.hostname)
+    && url.port === String(PORT)
+    && url.pathname === '/api/vtt-relay/events'
+    && request.method() === 'POST'
+    && request.failure()?.errorText === 'net::ERR_ABORTED'
+    && responseStatus === 200;
+  if (!exactCanceledPost) return '';
+  try {
+    const id = request.postDataJSON()?.id;
+    return typeof id === 'string' && id.trim() ? id : '';
+  } catch { return ''; }
+}
+
+function relayServerRetainsEvent(id, responseStatus, payload) {
+  return Boolean(id && responseStatus === 200 && payload?.ok === true
+    && Array.isArray(payload.events) && payload.events.some((event) => event?.id === id));
+}
+
+async function proveCanceledRelayPostDelivery(id) {
+  const response = await fetch(`http://127.0.0.1:${PORT}/api/vtt-relay/events`, {signal: AbortSignal.timeout(5000)});
+  const payload = await response.json();
+  if (!relayServerRetainsEvent(id, response.status, payload)) {
+    throw new Error(`Independent relay GET did not confirm accepted event ${id}.`);
+  }
+}
+
+function assertCanceledRelayDeliveryBoundary() {
+  const base = `http://127.0.0.1:${PORT}`;
+  const cases = [
+    ['acknowledged canceled POST', `${base}/api/vtt-relay/events`, 'POST', 'net::ERR_ABORTED', 200, 'fixture', 'fixture'],
+    ['GET remains strict', `${base}/api/vtt-relay/events`, 'GET', 'net::ERR_ABORTED', 200, 'fixture', ''],
+    ['asset abort', `${base}/assets/data.js`, 'POST', 'net::ERR_ABORTED', 200, 'fixture', ''],
+    ['missing acknowledgement', `${base}/api/vtt-relay/events`, 'POST', 'net::ERR_ABORTED', undefined, 'fixture', ''],
+    ['HTTP failure', `${base}/api/vtt-relay/events`, 'POST', 'net::ERR_ABORTED', 500, 'fixture', ''],
+    ['timeout', `${base}/api/vtt-relay/events`, 'POST', 'net::ERR_TIMED_OUT', 200, 'fixture', ''],
+    ['connection error', `${base}/api/vtt-relay/events`, 'POST', 'net::ERR_CONNECTION_REFUSED', 200, 'fixture', ''],
+    ['other API', `${base}/api/vtt-relay/session`, 'POST', 'net::ERR_ABORTED', 200, 'fixture', ''],
+    ['foreign host', `http://example.invalid:${PORT}/api/vtt-relay/events`, 'POST', 'net::ERR_ABORTED', 200, 'fixture', ''],
+    ['other port', `http://127.0.0.1:${PORT + 1}/api/vtt-relay/events`, 'POST', 'net::ERR_ABORTED', 200, 'fixture', ''],
+    ['missing event ID', `${base}/api/vtt-relay/events`, 'POST', 'net::ERR_ABORTED', 200, undefined, '']
+  ];
+  for (const [label, url, method, errorText, status, id, expected] of cases) {
+    if (acknowledgedCanceledRelayPostId({url: () => url, method: () => method, failure: () => ({errorText}), postDataJSON: () => ({id})}, status) !== expected) {
+      throw new Error(`Canceled relay POST classification failed: ${label}`);
+    }
+  }
+  const retentionCases = [
+    ['exact retained ID', 200, {ok:true, events:[{id:'fixture'}]}, true],
+    ['missing ID', 200, {ok:true, events:[]}, false],
+    ['mismatched ID', 200, {ok:true, events:[{id:'different'}]}, false],
+    ['GET HTTP failure', 500, {ok:true, events:[{id:'fixture'}]}, false],
+    ['GET API failure', 200, {ok:false, events:[{id:'fixture'}]}, false],
+    ['invalid GET body', 200, {}, false]
+  ];
+  for (const [label, status, payload, expected] of retentionCases) {
+    if (relayServerRetainsEvent('fixture', status, payload) !== expected) throw new Error(`Relay delivery proof failed: ${label}`);
+  }
+  console.log(`Canceled relay delivery boundary: ${cases.length + retentionCases.length} positive/negative checks passed; GET, HTTP, unacknowledged and unproven failures remain strict.`);
+}
+
+const fixtureImageRequests = new WeakMap();
+function trackFixtureImageRequests(page) {
+  if (fixtureImageRequests.has(page)) return fixtureImageRequests.get(page);
+  const pending = new Map();
+  page.on('request', (request) => {
+    if (request.resourceType() !== 'image' || new URL(request.url()).origin !== new URL(page.url()).origin) return;
+    const completion = (async () => {
+      const response = await request.response();
+      if (!response || response.status() >= 400) throw new Error(`Fixture image response failed: ${request.url()}`);
+      const failure = await response.finished();
+      if (failure) throw new Error(`Fixture image response did not finish: ${request.url()} (${failure.message})`);
+      return request.url();
+    })().then(url => ({url}), error => ({error:error.message})).finally(() => pending.delete(request));
+    pending.set(request, completion);
+  });
+  fixtureImageRequests.set(page, pending);
+  return pending;
+}
+
+async function assertCurrentFixtureImagesDecoded(page, label) {
+  const pending = trackFixtureImageRequests(page);
+  let timeoutId;
+  try {
+    const decoded = await Promise.race([
+      (async () => {
+        const decoded = await page.evaluate(async () => {
+          const images = [...document.images].filter((image) => {
+            const source = image.currentSrc || image.getAttribute('src');
+            return source && new URL(source, location.href).origin === location.origin;
+          });
+          return Promise.all(images.map(async (image) => {
+            image.loading = 'eager';
+            await image.decode();
+            if (!image.naturalWidth || !image.naturalHeight) throw new Error(`Fixture image has no decoded dimensions: ${image.src}`);
+            return {url:image.currentSrc || image.src,width:image.naturalWidth,height:image.naturalHeight};
+          }));
+        });
+        if (!decoded.length) throw new Error(`No fixture images were available to verify: ${label}`);
+        // Re-rendered nodes can be detached while their original image request still runs.
+        while (pending.size) {
+          const results = await Promise.all([...pending.values()]);
+          const failed = results.find(result => result.error);
+          if (failed) throw new Error(failed.error);
+        }
+        return decoded;
+      })(),
+      new Promise((_, reject) => { timeoutId = setTimeout(() => reject(new Error(`Fixture image completion timed out: ${label}`)), 30000); })
+    ]);
+    console.log(`   [FIXTURE IMAGES DECODED] ${label}: ${decoded.length} local images before deliberate navigation.`);
+  } finally { clearTimeout(timeoutId); }
+}
+
 async function main() {
   console.log('--- Initializing Cross-Browser Testing against Deployment Artifact ---');
+  assertCanceledRelayDeliveryBoundary();
   await fs.mkdir(QA_DIR, { recursive: true });
   await assertDiceRollerHasNoPageDimmingPlane();
 
@@ -863,7 +994,7 @@ const browsers = [
       await page.evaluate((gameVersion) => {
         localStorage.clear();
         localStorage.setItem('lyrian-chronicles-selected-game-version-v2', gameVersion);
-        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.1');
+        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.2');
         localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
           ui: { mode: 'builder', gameVersion },
           fields: { Name: `All Class Progression Audit ${gameVersion}` },
@@ -880,7 +1011,7 @@ const browsers = [
         await page.evaluate(({ gameVersion, selectedClasses }) => {
           localStorage.clear();
           localStorage.setItem('lyrian-chronicles-selected-game-version-v2', gameVersion);
-          localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.1');
+          localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.2');
           localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
             ui: { mode: 'builder', gameVersion },
             fields: { Name: `All Class Progression Audit ${gameVersion}` },
@@ -933,16 +1064,18 @@ const browsers = [
     console.log('   Running version dropdown isolation and default-selection assertions...');
     await page.evaluate(() => localStorage.clear());
     await page.reload({ waitUntil: 'load' });
-    await page.waitForFunction(() => document.querySelector('#game-version-select')?.value === '0.13.1');
+    await page.waitForFunction(() => document.querySelector('#game-version-select')?.value === '0.13.2');
     await page.click('[data-builder-action="pick-race"][data-id="human"]');
     await page.click('[data-step-index="6"]');
 
     const expectations = [
+      { version: '0.13.2', classes: 185, sevenSorrows: true },
       { version: '0.13.1', classes: 181, sevenSorrows: true },
       { version: '0.13.0', classes: 180, sevenSorrows: false },
       { version: '0.12.6', classes: 174, sevenSorrows: false },
       { version: '0.12.5', classes: 170, sevenSorrows: false },
-      { version: '0.13.1', classes: 181, sevenSorrows: true }
+      { version: '0.13.1', classes: 181, sevenSorrows: true },
+      { version: '0.13.2', classes: 185, sevenSorrows: true }
     ];
 
     const results = [];
@@ -978,9 +1111,9 @@ const browsers = [
     });
 
     await page.reload({ waitUntil: 'load' });
-    await page.waitForFunction(() => document.querySelector('#game-version-select')?.value === '0.13.1');
+    await page.waitForFunction(() => document.querySelector('#game-version-select')?.value === '0.13.2');
     const persistedLatest = await page.locator('#game-version-select').inputValue();
-    if (persistedLatest !== '0.13.1') {
+    if (persistedLatest !== '0.13.2') {
       throw new Error(`Latest-version persistence regression failed: ${persistedLatest}`);
     }
   }
@@ -990,7 +1123,7 @@ const browsers = [
     await page.evaluate(() => {
       localStorage.clear();
       localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
-      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.1');
+      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.2');
       localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
         ui: { mode: 'sheet', playMode: 'combat', sheetTab: 'actions', gameVersion: '0.13.1' },
         fields: { Name: 'Performance Patch Audit', 'Primary Race': 'Fae', Agility: '3' },
@@ -1085,10 +1218,14 @@ const browsers = [
 
     await page.evaluate(() => localStorage.clear());
     await page.reload({ waitUntil: 'load' });
-    await page.waitForFunction(() => window.LYRIAN_DATA?.version === '0.13.1');
+    await page.waitForFunction(() => window.LYRIAN_DATA?.version === '0.13.2');
   }
 
   async function runRaceClassMatrixAssertions(page) {
+    // This historical matrix seeds 0.13.1 below. The preceding all-version
+    // progression audit now ends on 0.13.2, so read its inputs from 0.13.1 too.
+    await page.selectOption('#game-version-select', '0.13.1');
+    await page.waitForFunction(() => window.LYRIAN_DATA?.version === '0.13.1');
     const matrix = await page.evaluate(() => {
       const ancestriesByRace = new Map();
       for (const ancestry of window.LYRIAN_DETAIL_DATA.ancestries || []) {
@@ -1139,7 +1276,7 @@ const browsers = [
         await page.evaluate(({ raceId, ancestryId, startMode }) => {
           localStorage.clear();
           localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
-          localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.1');
+          localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.2');
           localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
             ui: { mode: 'builder', gameVersion: '0.13.1' },
             fields: { Name: `Race and Class Matrix Audit ${startMode}` },
@@ -1265,7 +1402,7 @@ const browsers = [
       await page.evaluate((selectedClasses) => {
         localStorage.clear();
         localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
-        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.1');
+        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.2');
         localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
           ui: { mode: 'builder', gameVersion: '0.13.1' },
           fields: { Name: 'Class Proficiency Choice Audit' },
@@ -1294,7 +1431,7 @@ const browsers = [
     await page.evaluate(() => {
       localStorage.clear();
       localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
-      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.1');
+      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.2');
       localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
         ui: { mode: 'builder', gameVersion: '0.13.1' },
         fields: { Name: 'Acolyte Fighter Proficiency Audit' },
@@ -1340,7 +1477,7 @@ const browsers = [
       await page.evaluate((classProgress) => {
         localStorage.clear();
         localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
-        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.1');
+        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.2');
         localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
           ui: { mode: 'builder', gameVersion: '0.13.1' },
           fields: { Name: 'Armorsmith Heart Proficiency Audit' },
@@ -1365,6 +1502,7 @@ const browsers = [
   }
 
   async function runQuickBuildStartModeAssertion(page) {
+    trackFixtureImageRequests(page);
     await page.evaluate(() => localStorage.clear());
     await page.reload({ waitUntil: 'load' });
 
@@ -1454,10 +1592,16 @@ const browsers = [
       raijinText: document.querySelector('[data-quick-build-action="select-species"][data-id="raijin"]')?.textContent?.replace(/\s+/g, ' ').trim() || '',
       selkieText: document.querySelector('[data-quick-build-action="select-species"][data-id="selkie"]')?.textContent?.replace(/\s+/g, ' ').trim() || ''
     }));
+    quickSpecies.slimefolkImageDecoded = await page.locator('[data-quick-build-action="select-species"][data-id="slimefolk"] img').evaluate(async (image) => {
+      image.loading = 'eager';
+      await image.decode();
+      return image.naturalWidth > 0 && image.naturalHeight > 0;
+    });
     if (
       quickSpecies.count !== 21
       || !quickSpecies.slimefolkText.includes('Chimera / Slimefolk')
-      || !quickSpecies.slimefolkImage.includes('Slime_GIrl')
+      || quickSpecies.slimefolkImage !== 'assets/item-images/0.13.2/ancestry-slimefolk-sm.webp'
+      || !quickSpecies.slimefolkImageDecoded
       || !quickSpecies.dullahanText.includes('Fae / Dullahan')
       || !quickSpecies.wolfFolkText.includes('Chimera / Wolf-folk')
       || !quickSpecies.gnomeText.includes('Free Class: Miner level 1')
@@ -1518,7 +1662,7 @@ const browsers = [
       throw new Error(`Quick Build Mirane review did not show all three legacy options: ${quickLegacyOptions}`);
     }
 
-    await page.waitForTimeout(500);
+    await assertCurrentFixtureImagesDecoded(page, 'Quick Build Slimefolk review reset');
     await page.evaluate(() => localStorage.clear());
     await page.reload({ waitUntil: 'load' });
   }
@@ -1556,6 +1700,7 @@ const browsers = [
     };
     const audited = [];
     for (const startMode of ['standard', 'mirane']) {
+      await assertCurrentFixtureImagesDecoded(page, `Quick Build ${startMode} fixture transition`);
       await page.evaluate(() => localStorage.clear());
       await page.reload({ waitUntil: 'load' });
 
@@ -1755,6 +1900,7 @@ const browsers = [
       throw new Error(`Quick Build species-change reset regression failed: ${JSON.stringify({ changedSpeciesSummary, staleRoleSelections })}`);
     }
 
+    await assertCurrentFixtureImagesDecoded(page, 'Quick Build Selkie to Phoenix fixture reset');
     await page.evaluate(() => localStorage.clear());
     await page.reload({ waitUntil: 'load' });
     page.once('dialog', async (dialog) => dialog.accept());
@@ -1859,7 +2005,7 @@ const browsers = [
     await page.evaluate(() => {
       localStorage.clear();
       localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
-      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.1');
+      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.2');
       localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
         ui: { mode: 'builder', builderStep: 9, gameVersion: '0.13.1' },
         fields: { Name: 'Mirane Legacy Audit', 'Spirit Core': '3200' },
@@ -1913,7 +2059,7 @@ const browsers = [
     await page.evaluate(() => {
       localStorage.clear();
       localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
-      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.1');
+      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.2');
       localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
         ui: { mode: 'sheet', playMode: 'crafting', sheetTab: 'actions', gameVersion: '0.13.1' },
         fields: { Name: 'Mirane Economy Audit', Exp: '0' },
@@ -2043,7 +2189,7 @@ const browsers = [
     await page.evaluate((selectedClassIds) => {
       localStorage.clear();
       localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
-      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.1');
+      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.2');
       localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
         ui: { mode: 'sheet', playMode: 'combat', sheetTab: 'actions', gameVersion: '0.13.1' },
         fields: { Name: 'Mirane Gameplay Override Audit', Toughness: '5' },
@@ -2167,6 +2313,7 @@ const browsers = [
     const seed = async (builder = {}, fields = {}, ui = {}) => {
       await page.evaluate(({ saveKey: key, builder: nextBuilder, fields: nextFields, ui: nextUi }) => {
         localStorage.clear();
+        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.2');
         localStorage.setItem(key, JSON.stringify({
           ui: { mode: 'builder', gameVersion: '0.13.1', ...nextUi },
           fields: { Name: 'Community Bug Sweep', ...nextFields },
@@ -4944,9 +5091,13 @@ const browsers = [
           viewport: { width: vp.width, height: vp.height }
         });
         const page = await context.newPage();
+        trackFixtureImageRequests(page);
 
         let testErrors = [];
         let missingResources = [];
+        let deliveredRelayCancellations = 0;
+        const relayResponseStatuses = new WeakMap();
+        const relayDeliveryProofs = [];
 
         // Attach listeners before navigation to catch load-time errors
         page.on('pageerror', (err) => {
@@ -4957,12 +5108,24 @@ const browsers = [
         // Track request failures (e.g. DNS or network dropouts)
         page.on('requestfailed', (req) => {
           const url = req.url();
+          const acknowledgedId = acknowledgedCanceledRelayPostId(req, relayResponseStatuses.get(req));
+          if (acknowledgedId) {
+            // A same-request 200 alone is insufficient: independently confirm delivery now.
+            relayDeliveryProofs.push(proveCanceledRelayPostDelivery(acknowledgedId).then(() => {
+              deliveredRelayCancellations++;
+              console.log(`   [DELIVERED RELAY RESPONSE CANCELED] [${browserInfo.name} - ${vp.name}]: POST ${url}; same-request 200 and independent GET retained event ${acknowledgedId}`);
+            }).catch((error) => {
+              console.error(`   [RELAY DELIVERY PROOF FAILED] [${browserInfo.name} - ${vp.name}]:`, error.message);
+              missingResources.push(`${url} (unproven event ${acknowledgedId})`);
+            }));
+            return;
+          }
           if (isIgnorableLocalMediaAbort(req)) {
             return;
           }
           if (isLocalTestUrl(url)) {
             const failureText = req.failure()?.errorText || 'unknown failure';
-            console.error(`   [REQUEST FAILED] [${browserInfo.name} - ${vp.name}]:`, `${url} (${failureText})`);
+            console.error(`   [REQUEST FAILED] [${browserInfo.name} - ${vp.name}]:`, `${req.method()} ${url} (${failureText})`);
             missingResources.push(url);
           }
         });
@@ -4971,6 +5134,7 @@ const browsers = [
         page.on('response', (response) => {
           const status = response.status();
           const url = response.url();
+          relayResponseStatuses.set(response.request(), status);
           if (status >= 400 && isLocalTestUrl(url)) {
             console.error(`   [HTTP ERROR ${status}] [${browserInfo.name} - ${vp.name}]:`, url);
             missingResources.push(url);
@@ -5109,9 +5273,12 @@ const browsers = [
           const safeBrowserName = browserInfo.name.split(' ')[0].toLowerCase();
           const fileName = `screenshot-${safeBrowserName}-${vp.name.toLowerCase()}.png`;
           const savePath = path.join(QA_DIR, fileName);
+          await assertCurrentFixtureImagesDecoded(page, `${browserInfo.name} ${vp.name} before screenshot`);
           await page.screenshot({ path: savePath });
           console.log(`   Captured: qa-test-results/${fileName}`);
 
+          await assertCurrentFixtureImagesDecoded(page, `${browserInfo.name} ${vp.name} before teardown`);
+          await Promise.all(relayDeliveryProofs);
           if (testErrors.length > 0 || missingResources.length > 0) {
             throw new Error(`Test failed with ${testErrors.length} console errors and ${missingResources.length} missing resources.`);
           }
@@ -5123,6 +5290,9 @@ const browsers = [
           testFailedGlobal = true;
         } finally {
           await closeWithTimeout(context, `${browserInfo.name} context`);
+          await Promise.all(relayDeliveryProofs);
+          if (testErrors.length > 0 || missingResources.length > 0) testFailedGlobal = true;
+          console.log(`   [DELIVERED RELAY RESPONSE CANCELLATIONS] [${browserInfo.name} - ${vp.name}]: ${deliveredRelayCancellations}`);
         }
       }
       await closeWithTimeout(browser, `${browserInfo.name} browser`);

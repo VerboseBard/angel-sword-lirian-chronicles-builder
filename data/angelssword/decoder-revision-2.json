@@ -1,0 +1,47 @@
+{
+  "revision": 2,
+  "createdAt": "2026-09-07T14:32:11.472Z",
+  "reason": "Preserve table cell boundaries in literal HTML text conversion",
+  "previousTransform": "normalized-transform-v1",
+  "rawHashes": {
+    "ancestries.json": "74fb6d0a7e60b188b3474a2621053fe5f6b5639f89a08f094ab4929644c5739f",
+    "ancestry_details.json": "90ee9853e3182e3887309b05d970c1ac249d1a7209fd747d9bbcbf36c23eb52a",
+    "breakthroughs.json": "2dcc9b5974b7e2bcccd9b5f453f11f446f61b220a0cf82590204f3603b2bb1a0",
+    "classes.json": "f8a726828378bc35dfa2d445ddb16f28cfd3f979f3af22b502f029ba6ffd6cac",
+    "class_details.json": "ee246e923473ddf369250eb143f56bb2d01b13a38943269b07f5c7feabebda9c",
+    "items.json": "5a2cd45e77af0cf647067cb00d1f23ac43305ea75ed33888885322d6c3d1d154",
+    "item_details.json": "9e7943d2f3c7d7acaf3e5a2b8df2938d82a38219164a7bcb476b51e048809031",
+    "keywords.json": "27b5820162f89d32597cdd1a6da1d8d262408c23b6c610c2a7f27c192d7caa32",
+    "key_abilities.json": "f07b5078f097b3ab866bcc49c897fcc02cddacbecf4520a528b3b7f1148aaf0b",
+    "metadata.json": "a734b37b3a0761505cc7107eed47cf739b630c47e4f64693bea2711f92fbb4b4",
+    "monsters.json": "5fc8500c5d557471415f1e232ebf04b9f8c471fd85afcd6785d231b984f99476",
+    "monster_abilities.json": "7a65cd7e9f7e89d73ea6fdd606485fdef250b3aa6cd57fc628b61cd92ed8960f",
+    "monster_ability_lists.json": "b628d585d47e2c32b24c5b60cc2e6be37d142ce36171790fdcf9c73736e97d20",
+    "monster_active_actions.json": "0bad9ccd326a65d6a997245961e1a3f5924cd62f907808ce1669d7bf34ffd23f",
+    "monster_active_action_lists.json": "c3e7fb17f52d0fa0caf3c7efb347614b8e08de6be24d842d92fd12e22b90438f",
+    "monster_details.json": "d16573d95d8bea1116f7ef34a81b5beaa31b7ef5933065871281ec37ed09ee37",
+    "patch_notes.json": "5be1b9a055373f1b9735626a12608480ed61faf2cd479fbcf7e87e100ba07323",
+    "primary_races.json": "6d72a3c28d7045bb21688986a02e44dac08f184294c78234a7988cb4ed06d2e4",
+    "primary_race_details.json": "39d8bd1ac18b84166b86df735a89cad74c39f1da201e2a48b75296c9c259c261",
+    "rulebook.json": "15299779e7e83840e22c25bd1259767adc7f0c6ced82ee738bff7560913fc889",
+    "settings_guide.json": "9116fad595ec8c3620f98fc3238a5ac99bd2470a6ed0a6591dfe89e805b7df64",
+    "true_abilities.json": "6888c01392f44ca8c8d217c80160b68bf6d6278b86218fdad16a7fc99cd51199",
+    "versions.json": "00fd54915fcb586308a325127985d14a0bd93b7a9b5d72e06bf20f0dabe2b276"
+  },
+  "rawUnchanged": true,
+  "changes": [
+    {
+      "path": "decoded/item_details.json",
+      "before": "c048330dce274b833c538e09224b9b57cdeb0c4ec261b6b42a900d932e7bec6d",
+      "after": "adf41e264cd746a10e77d738c5e8a938813edf96730a12ab2a7cf018e297cca0"
+    },
+    {
+      "path": "decoded/rulebook.json",
+      "before": "9597b136b3967af78a5b1c9bfee2ee627d7f97027a04d3cb3c7a8a7b631cfc8c",
+      "after": "8b48cf39da748c7b24499f4f9d03fdd69bf0990b1444f54e4b058d9c4572240f"
+    }
+  ],
+  "decoderSha256": "0175726612d2947d3523a5e5de9b0c0d2ed96419735c463f4c33fe6f28a338b2",
+  "fixture": "Rarity Fire\nCommon 50",
+  "fixturePass": true
+}

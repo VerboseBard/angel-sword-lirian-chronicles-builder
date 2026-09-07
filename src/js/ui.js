@@ -2604,13 +2604,28 @@ const UNKNOWN_PALADIN_DIVINE_OPTIONS = [
       { value: "Clio", label: "Clio - Arcane", damageType: "Arcane" },
       { value: "Yggdrasil", label: "Yggdrasil - Earth", damageType: "Earth" }
     ];
+function getDivineChoiceOptions() {
+      const source = lookup.breakthroughs.entries.find((entry) => normalizePhrase(entry.name) === "divine s chosen");
+      // Divine's Chosen changed Eisen from Slashing to Physical in 0.13.2.
+      // Read the active rules record so historical saves/version switches
+      // retain their own ruling and the stored divine name remains unchanged.
+      const eisenType = cleanText(source?.descriptionText || source?.description)
+        .match(/\bEisen:\s*\(Type\s+(Physical|Slashing)\)/i)?.[1];
+      if (!eisenType) {
+        return UNKNOWN_PALADIN_DIVINE_OPTIONS;
+      }
+      const damageType = eisenType.charAt(0).toUpperCase() + eisenType.slice(1).toLowerCase();
+      return UNKNOWN_PALADIN_DIVINE_OPTIONS.map((entry) => entry.value === "Eisen"
+        ? { ...entry, label: `Eisen - ${damageType}`, damageType }
+        : entry);
+    }
 function getSelectedDivineOption() {
       const breakthrough = getSelectedBreakthroughRecords().find((entry) => normalizePhrase(entry.name) === "divine s chosen");
       if (!breakthrough) {
         return null;
       }
       const selected = getBuilderChoiceValue(getBreakthroughChoiceId(breakthrough, "divine"));
-      return UNKNOWN_PALADIN_DIVINE_OPTIONS.find((entry) => entry.value === selected) || null;
+      return getDivineChoiceOptions().find((entry) => entry.value === selected) || null;
     }
 function getElementalMasteryKeys(value) {
       const target = normalizePhrase(value)
@@ -2864,6 +2879,11 @@ function getTrackedElementalMasteries() {
         if (id === ELEMENTAL_AFFINITY_ELEMENTS_CHOICE_ID) {
           return;
         }
+        // Class mastery choices are applied below only while that class is
+        // mastered. A saved/refunded choice is not itself a mastery grant.
+        if (id.startsWith("class-") && id.endsWith("-elemental-mastery")) {
+          return;
+        }
         const selectedKeys = getElementalMasteryKeys(selectedValue);
         if (!selectedKeys.length) {
           return;
@@ -3097,10 +3117,23 @@ function evaluateAbilityRequirement(clause) {
       const normalizedClause = normalizeRequirementClause(clause);
       const match = normalizedClause.match(/^(?:possess|have)\s+(?:the\s+)?(.+?)\s+ability$/i)
         || normalizedClause.match(/^(.+?)\s+learned$/i);
+      const shorthand = normalizedClause.match(/^(?:possess|have)\s+(?:the\s+)?(.+?)$/i);
+      // 0.13.2 Rapid Flash names the High Fae trait "Fae Flash II"; its
+      // actual ability record is "Faerie Flash II". Keep this alias narrow.
+      const abilityAliases = { "fae flash ii": "faerie flash ii" };
+      const shorthandName = normalizePhrase(shorthand?.[1]);
       if (!match) {
+        if (abilityAliases[shorthandName]) {
+          return {
+            met: getTrackedLearnedAbilityNames().has(abilityAliases[shorthandName]),
+            trackable: true,
+            label: normalizedClause
+          };
+        }
         return null;
       }
-      const targetAbility = normalizePhrase(match[1]).replace(/\bracial\b/g, "").trim();
+      const namedAbility = normalizePhrase(match[1]).replace(/\bracial\b/g, "").trim();
+      const targetAbility = abilityAliases[namedAbility] || namedAbility;
       return { met: getTrackedLearnedAbilityNames().has(targetAbility), trackable: true, label: normalizedClause };
     }
 function evaluateProficiencyRequirement(clause) {
@@ -3380,6 +3413,12 @@ function getNamedClassRequirementOverride(record, requirementsText) {
           || (hasMasteredClassCount(1) && hasArtProgress(10));
       } else if (className === "faerie light eyes") {
         met = hasSelectedBreakthroughName("Mystic Eyes of Faerie Light") && hasOpenMysticEyeSlot();
+      } else if (className === "mystic eyes of petrification") {
+        // The alternative's tier requirement belongs to Lamiafolk, not
+        // the Evil Eye route. The eye-slot requirement applies to both.
+        met = (hasMasteredClassName(["Evil Eye"])
+          || (hasSelectedLineage("Lamiafolk") && hasMasteredClassTier(2)))
+          && hasOpenMysticEyeSlot();
       } else if (className === "aurora blade style" || className === "flash star blade style") {
         met = hasMasteredClassCount(1)
           && hasTrackedSpecificProficiency(["Light Swords", "Longsword", "Katana", "Dueling Weapons"]);
@@ -3972,7 +4011,10 @@ function isWeaponItem(item) {
     }
 function isRangedWeaponItem(item) {
       const haystack = normalizePhrase([item?.name, item?.type, item?.subType, getBaseItemRulesText(item)].filter(Boolean).join(" "));
-      return /\b(range:\s*\d|gun|pistol|rifle|musket|shotgun|bow|crossbow|sling|missile|thrown|throwing|ranged)\b/.test(haystack);
+      // Check the printed range before normalization removes its colon.
+      // This also covers Cannon and future weapons with a range line.
+      return /\brange:\s*\d/i.test(getBaseItemRulesText(item))
+        || /\b(gun|pistol|rifle|musket|shotgun|bow|crossbow|sling|missile|thrown|throwing|ranged)\b/.test(haystack);
     }
 function isTwoHandedWeaponItem(item) {
       return /\btwo-handed\b/i.test(item?.name || "") || /\b2h\b/i.test(getBaseItemRulesText(item));
@@ -5099,10 +5141,10 @@ const idFor = (suffix) => getBreakthroughChoiceId(entry, getBreakthroughOccurren
             step: "breakthroughs",
             type: "text",
             label: "Divine's Chosen: choose Divine",
-            options: UNKNOWN_PALADIN_DIVINE_OPTIONS,
+            options: getDivineChoiceOptions(),
             pendingText: "Divine's Chosen: choose the Divine that sets Divine damage and Acolyte mastery.",
             resolvedText: (value) => {
-              const option = UNKNOWN_PALADIN_DIVINE_OPTIONS.find((entryOption) => entryOption.value === value);
+              const option = getDivineChoiceOptions().find((entryOption) => entryOption.value === value);
               return option ? `Divine's Chosen: ${option.value}, damage and mastery type ${option.damageType}.` : `Divine's Chosen: ${value}.`;
             }
           });
@@ -5115,10 +5157,10 @@ const idFor = (suffix) => getBreakthroughChoiceId(entry, getBreakthroughOccurren
             step: "breakthroughs",
             type: "text",
             label: "The Unknown Paladin: choose Divine",
-            options: UNKNOWN_PALADIN_DIVINE_OPTIONS,
+            options: getDivineChoiceOptions(),
             pendingText: "The Unknown Paladin: choose the Divine that sets Smite and Holy Weapon damage.",
             resolvedText: (value) => {
-              const option = UNKNOWN_PALADIN_DIVINE_OPTIONS.find((entryOption) => entryOption.value === value);
+              const option = getDivineChoiceOptions().find((entryOption) => entryOption.value === value);
               return option ? `The Unknown Paladin: ${option.value} damage type ${option.damageType}.` : `The Unknown Paladin: ${value}.`;
             }
           });
@@ -16456,6 +16498,21 @@ function buildInventoryActiveEffect(item = {}) {
       if (!name || !text) {
         return null;
       }
+      const updatedElixir = getUpdatedInventoryElixirKind(item);
+      if (updatedElixir) {
+        return {
+          name,
+          source: "Inventory",
+          summary: updatedElixir === "bear"
+            ? "Maximum RP +1 until the encounter ends. Further Bear Elixir uses have no effect while this is active."
+            : "Blood Elixir debuff: current and maximum HP reduced by 15 until the end of your next rest. Undispellable; further uses grant no mana while this is active.",
+          duration: updatedElixir === "bear" ? "Until end of encounter" : "Until next rest",
+          rules: {
+            id: `inventory-${updatedElixir}-elixir`, sourceType: "inventory",
+            modifiers: updatedElixir === "bear" ? { rpMax: 1 } : { hpMax: -15 }
+          }
+        };
+      }
       if (/shielding potion/.test(normalizedName) || /\btemporary hp\b.*\bstart of (?:your )?next turn\b/.test(normalizedText)) {
         return {
           name,
@@ -16498,6 +16555,20 @@ function buildInventoryActiveEffect(item = {}) {
       }
       return null;
     }
+function getUpdatedInventoryElixirKind(item) {
+      // Read the active rules text: older installed versions retain their
+      // original repeat-use behavior and manual maximum-resource tracking.
+      const name = normalizePhrase(item?.name);
+      const currentRecord = !item?.custom && lookup.items.resolve(item?.itemId || item?.id);
+      const text = getInventoryItemUseEffectText(currentRecord || item);
+      if (name === "bear elixir" && /another bear elixir has no effect/i.test(text)) {
+        return "bear";
+      }
+      if (name === "blood elixir" && /Blood Elixir debuff/i.test(text) && /If you lost max HP/i.test(text)) {
+        return "blood";
+      }
+      return "";
+    }
 function markInventoryPostUseRules(item = {}) {
       const notes = [];
       if (isFoodBenefitInventoryItem(item)) {
@@ -16525,6 +16596,14 @@ const item = mergeInventoryEntryWithRecord(entry);
       }
 const costLabel = cleanText(selectedCostLabel || getInventoryItemActivationCost(item));
 const effectText = getInventoryItemUseEffectText(item);
+const updatedElixir = getUpdatedInventoryElixirKind(item);
+      if (updatedElixir && state.play.activeEffects.some((effect) => normalizePhrase(effect.name) === normalizePhrase(item.name))) {
+        const message = `${item.name} is already active. No item or resources were spent. It becomes available when that effect ends.`;
+        showPlayFeedback("play-action-feedback", message);
+        setStatus(message);
+        return;
+      }
+const beforeUseDerived = updatedElixir ? getDerivedCombatStats() : null;
 const consumed = isConsumableInventoryItem(item);
 const readinessProfile = getInventoryItemReadinessProfile(item);
 const readinessWarnings = (readinessProfile.warnings || []).map((entry) => `Readiness: ${entry.label}`);
@@ -16551,14 +16630,39 @@ const used = usePlayCost(
         ],
         {
           feedbackId: "play-action-feedback",
-          effectText
+          // These two source-backed effects are applied atomically below;
+          // the generic text parser cannot evaluate Blood's HP-loss condition.
+          effectText: updatedElixir ? "" : effectText
         }
       );
       if (!used) {
         return;
       }
+      let postUseNotes = [];
+      if (updatedElixir) {
+        postUseNotes = markInventoryPostUseRules(item);
+        const afterUseDerived = getDerivedCombatStats();
+        const resources = state.play.resources;
+        if (updatedElixir === "bear") {
+          resources.hpCurrent = clamp(toNumber(resources.hpCurrent, beforeUseDerived.hpMax) - 11, 0, afterUseDerived.hpMax);
+          resources.rpCurrent = clamp(toNumber(resources.rpCurrent, 0) + 1, 0, afterUseDerived.rpMax);
+          postUseNotes.push("Took 11 true damage; gained 1 RP and +1 maximum RP until the encounter ends.");
+        } else {
+          const lostMaxHp = Math.max(0, beforeUseDerived.hpMax - afterUseDerived.hpMax);
+          resources.hpCurrent = clamp(toNumber(resources.hpCurrent, beforeUseDerived.hpMax) - 15, 0, afterUseDerived.hpMax);
+          if (lostMaxHp > 0) {
+            resources.manaCurrent = clamp(toNumber(resources.manaCurrent, 0) + 3, 0, afterUseDerived.manaMax);
+          }
+          postUseNotes.push(`Current HP reduced by 15 (minimum 0); maximum HP reduced by ${lostMaxHp} until next rest; ${lostMaxHp > 0 ? "recovered 3 mana, capped at maximum" : "no mana recovered because maximum HP did not decrease"}.`);
+        }
+        resources.hpMax = afterUseDerived.hpMax;
+        resources.rpMax = afterUseDerived.rpMax;
+        state.play.hpHasManualChange = resources.hpCurrent < afterUseDerived.hpMax;
+      }
 const consumeMessage = consumeInventoryItemUse(uid, item);
-const postUseNotes = markInventoryPostUseRules(item);
+      if (!updatedElixir) {
+        postUseNotes = markInventoryPostUseRules(item);
+      }
       if (postUseNotes.length) {
         appendPlayLog("Use Tracker", postUseNotes);
       }
@@ -22598,6 +22702,18 @@ const creationShare = Math.min(creationRemaining, cost);
         };
       });
     }
+function getCcsStatAssignment(stats, keys, arrayValues) {
+      // B/D45+ are stat-name selectors for the fixed A/C45+ arrays. The
+      // F/H bonus inputs carry the difference, including custom arrays.
+      const ordered = keys.map((key) => ({ key, value: toNumber(stats[key], 0) }))
+        .sort((left, right) => right.value - left.value);
+      return {
+        picks: ordered.map((entry) => entry.key),
+        residual: Object.fromEntries(ordered.map((entry, index) =>
+          [entry.key, entry.value - arrayValues[index]]
+        ))
+      };
+    }
 function buildCcsCellMap() {
       const context = buildAscharContext();
       const bonuses = getComputedBonuses();
@@ -22610,26 +22726,23 @@ function buildCcsCellMap() {
       put("Core", "B3", context.gender || "");
       put("Core", "D2", context.race?.name || "");
       put("Core", "D3", context.ancestry?.name || "");
-      put("Core", "B45", context.mainStats.power);
-      put("Core", "B46", context.mainStats.focus);
-      put("Core", "B47", context.mainStats.agility);
-      put("Core", "B48", context.mainStats.toughness);
-      put("Core", "D45", context.subStats.fitness);
-      put("Core", "D46", context.subStats.cunning);
-      put("Core", "D47", context.subStats.reason);
-      put("Core", "D48", context.subStats.awareness);
-      put("Core", "D49", context.subStats.presence);
+      const mainOrder = ["Power", "Focus", "Agility", "Toughness"];
+      const subOrder = ["Fitness", "Cunning", "Reason", "Awareness", "Presence"];
+      const mainAssignment = getCcsStatAssignment(
+        Object.fromEntries(mainOrder.map((key) => [key, getComputedMainStatValue(key, bonuses)])),
+        mainOrder, MAIN_STAT_CREATION_ARRAY
+      );
+      const subAssignment = getCcsStatAssignment(
+        Object.fromEntries(subOrder.map((key) => [key, getComputedSecondaryStatValue(key, bonuses)])),
+        subOrder, SECONDARY_STAT_CREATION_ARRAY
+      );
+      mainAssignment.picks.forEach((name, index) => put("Core", `B${45 + index}`, name));
+      subAssignment.picks.forEach((name, index) => put("Core", `D${45 + index}`, name));
       // Bonus columns follow the template's row labels: E45=Focus, E46=Power,
       // E47=Agility, E48=Toughness · G45..G49 = Fitness..Presence.
-      put("Core", "F45", toNumber(bonuses.mainStats?.Focus, 0));
-      put("Core", "F46", toNumber(bonuses.mainStats?.Power, 0));
-      put("Core", "F47", toNumber(bonuses.mainStats?.Agility, 0));
-      put("Core", "F48", toNumber(bonuses.mainStats?.Toughness, 0));
-      put("Core", "H45", toNumber(bonuses.secondaryStats?.Fitness, 0));
-      put("Core", "H46", toNumber(bonuses.secondaryStats?.Cunning, 0));
-      put("Core", "H47", toNumber(bonuses.secondaryStats?.Reason, 0));
-      put("Core", "H48", toNumber(bonuses.secondaryStats?.Awareness, 0));
-      put("Core", "H49", toNumber(bonuses.secondaryStats?.Presence, 0));
+      ["Focus", "Power", "Agility", "Toughness"].forEach((key, index) =>
+        put("Core", `F${45 + index}`, mainAssignment.residual[key]));
+      subOrder.forEach((key, index) => put("Core", `H${45 + index}`, subAssignment.residual[key]));
       const raceName = normalizePhrase(context.race?.name || "");
       const hasHumanChimera = getSelectedBreakthroughRecords().some((record) => normalizePhrase(record.name).includes("human chimera hybrid"));
       put("Core", "B49", raceName === "human" && !hasHumanChimera ? 100 : 0);

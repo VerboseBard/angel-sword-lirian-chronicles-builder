@@ -1,4 +1,6 @@
-# Lyrian Chronicles Character Builder - Beta 2.13
+# Lyrian Chronicles Character Builder — September 7, 2026 patch candidate
+
+Read [PATCH_2026-09-07_START_HERE.md](PATCH_2026-09-07_START_HERE.md) for this isolated local update, launch instructions, evidence and rollback. This candidate has not been published.
 
 Beta 2.13 is the standard public web build for the Angel Sword Lyrian Chronicles character builder and live play sheet.
 
@@ -8,8 +10,9 @@ https://verbosebard.github.io/angel-sword-lirian-chronicles-builder/
 
 ## What is included
 
-- Official bundled rules 0.13.1 as the fresh-install default.
-- Selectable historical rules 0.13.0, 0.12.6, and 0.12.5.
+- Official bundled rules 0.13.2 as the fresh-install default.
+- Selectable historical rules 0.13.1, 0.13.0, 0.12.6, and 0.12.5.
+- Pigfolk, four new classes, local artwork, and a searchable [offline rules reference](docs/offline-reference/RULES_0.13.2.html).
 - Standard Play and Mirane Expedition character creation.
 - Advanced Build as the default full creator, plus 14 validated Quick Build packages across 21 species choices.
 - A persistent Return to Advanced Build control throughout Quick Build, with applied package choices preserved for customization.
@@ -18,12 +21,15 @@ https://verbosebard.github.io/angel-sword-lirian-chronicles-builder/
 - Safari 15 syntax targeting, mobile layouts, deferred heavy runtimes, cached rules switching, and debounced sheet rendering.
 - Static GitHub Pages deployment with no in-app update checker.
 
-## Local development
+## Run this local candidate
 
 ```powershell
-npm install
+Set-Location -LiteralPath 'E:\Chat gpt Codex\Angels sword\Angel Sword Patch Candidate 2026-09-07'
+$env:LYRIAN_PORT = '4177'
 npm start
 ```
+
+Use the printed URL, normally `http://localhost:4177/`. This port keeps candidate browser storage separate from the existing localhost:4176 sheet. Dependencies and built assets are already present on this machine. See the start guide above for importing a copy of a character and returning to your existing setup.
 
 ## Required validation
 

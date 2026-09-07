@@ -1,0 +1,18 @@
+{
+  "revision": 2,
+  "previous": "transform-attempt-01/implementation-integrity.json",
+  "createdAt": "2026-09-07T14:33:24.034Z",
+  "captureSource": "E:/Chat gpt Codex/Angels sword/.tmp_official_site/patch-2026-09-07/api-attempt-01/data/angelssword",
+  "copiedCollections": 52,
+  "mismatches": [],
+  "hashes": {
+    "scripts/pull-angels-sword-data.js": "7b26ea3cd304c164dbcd2698c01e472972e60cdc2cbf91aa2bc9f24f086d2ba2",
+    "scripts/build-version-assets.mjs": "eba79dae95c8ef05ce966eb5bf82492b2e807dcc04061bd4e2a9921da4dc28a2",
+    "scripts/test-rules-0132-data.mjs": "50776bdaf0f6bd75d7e7f7b830648740bc0f54ef3198cfdc857462a8b07d2f1f",
+    "assets/versions/0.13.2/lyrian-data.js": "48cc5b4db73becb0e183292b1fbe372085990650ccbb3ab92f5a6abdd83cec2b",
+    "assets/versions/0.13.2/lyrian-detail-data.js": "3bb2c2bdf2333e2c946043443b104e90866a9effc70593ace66ee29f53971773",
+    "assets/versions/manifest.json": "97a890dae866383603c577ec84cf34310125e2db7005ed93b031f98b89702db0",
+    "assets/versions/manifest.js": "9d428d706dbd9e41230fa05a96ef2bd86def182bcbb2e45eebceadbbb5939eaf",
+    "index.html": "489a63d5d781a6b7c64660028641cb43ff7e4688da066335e5a8a7587892bce0"
+  }
+}

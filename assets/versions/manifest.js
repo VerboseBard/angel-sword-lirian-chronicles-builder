@@ -1,8 +1,8 @@
 window.LYRIAN_VERSION_MANIFEST = {
   "schema": 1,
   "product": "Lyrian Chronicles Character Suite",
-  "defaultVersion": "0.13.1",
-  "latestKnownVersion": "0.13.1",
+  "defaultVersion": "0.13.2",
+  "latestKnownVersion": "0.13.2",
   "officialManualUrl": "https://rpg.angelssword.com/game/online-manual",
   "versions": [
     {
@@ -114,6 +114,37 @@ window.LYRIAN_VERSION_MANIFEST = {
         "New Character Vault. Store your characters locally, save them and export to spreadsheet format! Then level them up, buy items.- Homebrew system! Easily add new classes, new items, breakthroughs and abilities via the DM Tool (DM access for now). Make and just send your players a copy/paste code or export file to import them.",
         "New fully immersive Adventure Mode.- Riannon Institute of Alchemy Library: Learn more about the lore, read webnovels and check out other lore related material.",
         "Mirane Tavern: Speak with Mirane NPCs"
+      ],
+      "sections": [
+        "Latest update",
+        "Settings guide",
+        "Rulebook",
+        "Breakthroughs",
+        "Keywords",
+        "Races",
+        "Classes",
+        "Abilities",
+        "Items",
+        "Monsters",
+        "Monster abilities"
+      ]
+    },
+    {
+      "id": "0.13.2",
+      "label": "0.13.2 - Lyrian Chronicles",
+      "status": "downloaded",
+      "dataPath": "assets/versions/0.13.2/lyrian-data.js",
+      "detailPath": "assets/versions/0.13.2/lyrian-detail-data.js",
+      "local": true,
+      "updates": [
+        "Website Updates",
+        "TTRPG website updated to be more in line with the new Clio UI. Also changed to a darker theme, to be more easy on the eyes. (So Julio stops complaining…)",
+        "Rulebook",
+        "Added basic rules for Open Shop and Modded Items.",
+        "Races:",
+        "NEW:Pigfolk",
+        "Flight now costs 0 RP instead of 0 AP and has the Rage keyword. Fixed some wording issues.",
+        "Classes:"
       ],
       "sections": [
         "Latest update",

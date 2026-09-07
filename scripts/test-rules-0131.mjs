@@ -10,6 +10,7 @@ try {
   await page.goto(pathToFileURL(path.join(projectRoot, "index.html")).href, { waitUntil: "load" });
   await page.evaluate(() => {
     localStorage.clear();
+    localStorage.setItem("lyrian-chronicles-selected-game-version-latest-v1", "0.13.2");
     localStorage.setItem("lyrian-chronicles-character-suite-v2", JSON.stringify({
       ui: { mode: "builder", gameVersion: "0.13.1" },
       fields: { Name: "Focused 0.13.1 Tester" },
@@ -39,6 +40,7 @@ try {
 
   await page.evaluate(() => {
     localStorage.clear();
+    localStorage.setItem("lyrian-chronicles-selected-game-version-latest-v1", "0.13.2");
     localStorage.setItem("lyrian-chronicles-character-suite-v2", JSON.stringify({
       ui: { mode: "builder", gameVersion: "0.13.1" },
       fields: { Name: "Selkie Grant Tester" },
@@ -66,6 +68,7 @@ try {
 
   await page.evaluate(() => {
     localStorage.clear();
+    localStorage.setItem("lyrian-chronicles-selected-game-version-latest-v1", "0.13.2");
     localStorage.setItem("lyrian-chronicles-character-suite-v2", JSON.stringify({
       ui: { mode: "builder", gameVersion: "0.13.1" },
       fields: { Name: "Seven Sorrows Tester" },
@@ -123,6 +126,7 @@ try {
   for (const testCase of creationBudgetCases) {
     await page.evaluate((entry) => {
       localStorage.clear();
+      localStorage.setItem("lyrian-chronicles-selected-game-version-latest-v1", "0.13.2");
       localStorage.setItem("lyrian-chronicles-character-suite-v2", JSON.stringify({
         ui: { mode: "builder", gameVersion: "0.13.1" },
         fields: { Name: `${entry.name} Budget Tester` },
@@ -163,6 +167,7 @@ try {
   for (const testCase of skilledFlierCases) {
     await page.evaluate((entry) => {
       localStorage.clear();
+      localStorage.setItem("lyrian-chronicles-selected-game-version-latest-v1", "0.13.2");
       localStorage.setItem("lyrian-chronicles-character-suite-v2", JSON.stringify({
         ui: { mode: "builder", gameVersion: "0.13.1" },
         fields: { Name: `${entry.name} Tester` },
@@ -193,6 +198,7 @@ try {
 
   await page.evaluate(() => {
     localStorage.clear();
+    localStorage.setItem("lyrian-chronicles-selected-game-version-latest-v1", "0.13.2");
     localStorage.setItem("lyrian-chronicles-character-suite-v2", JSON.stringify({
       ui: { mode: "builder", gameVersion: "0.13.1" },
       fields: { Name: "Speciality Weapon List Tester" },
@@ -217,6 +223,7 @@ try {
 
   await page.evaluate(() => {
     localStorage.clear();
+    localStorage.setItem("lyrian-chronicles-selected-game-version-latest-v1", "0.13.2");
     localStorage.setItem("lyrian-chronicles-character-suite-v2", JSON.stringify({
       ui: { mode: "builder", gameVersion: "0.13.1" },
       fields: { Name: "Skill Model Tester", Fitness: "2", SkillPoint1: "20" },
@@ -258,6 +265,7 @@ try {
   for (const testCase of acolyteGateCases) {
     await page.evaluate((entry) => {
       localStorage.clear();
+      localStorage.setItem("lyrian-chronicles-selected-game-version-latest-v1", "0.13.2");
       localStorage.setItem("lyrian-chronicles-character-suite-v2", JSON.stringify({
         ui: { mode: "builder", gameVersion: "0.13.1" },
         fields: { Name: `${entry.name} Acolyte Gate Tester` },
@@ -281,6 +289,7 @@ try {
 
   await page.evaluate(() => {
     localStorage.clear();
+    localStorage.setItem("lyrian-chronicles-selected-game-version-latest-v1", "0.13.2");
     localStorage.setItem("lyrian-chronicles-character-suite-v2", JSON.stringify({
       ui: { mode: "builder", gameVersion: "0.13.1" },
       fields: { Name: "Rogue Key Skill Grant Tester" },
@@ -312,6 +321,7 @@ try {
   for (const testCase of fixedRacialExpertiseCases) {
     await page.evaluate((entry) => {
       localStorage.clear();
+      localStorage.setItem("lyrian-chronicles-selected-game-version-latest-v1", "0.13.2");
       localStorage.setItem("lyrian-chronicles-character-suite-v2", JSON.stringify({
         ui: { mode: "builder", gameVersion: "0.13.1" },
         fields: { Name: `${entry.ancestryId} Expertise Tester` },
@@ -332,6 +342,7 @@ try {
 
   await page.evaluate(() => {
     localStorage.clear();
+    localStorage.setItem("lyrian-chronicles-selected-game-version-latest-v1", "0.13.2");
     localStorage.setItem("lyrian-chronicles-character-suite-v2", JSON.stringify({
       ui: { mode: "builder", gameVersion: "0.13.1" },
       fields: { Name: "All Paladins Override Tester" },

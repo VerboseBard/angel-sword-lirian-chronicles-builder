@@ -1,12 +1,54 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { createHash } from "node:crypto";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(__dirname, "..");
 const DATA_DIR = path.join(PROJECT_ROOT, "data", "angelssword");
 const VERSION_DIR = path.join(PROJECT_ROOT, "assets", "versions");
 const ITEM_IMAGE_DIR = path.join(PROJECT_ROOT, "assets", "item-images");
+const imageResponses = new Map();
+let imageRequests = 0;
+const imageWaiters = [];
+
+function verifyImageBytes(buffer, contentType, source) {
+  const mime = String(contentType).split(";")[0].trim().toLowerCase();
+  const valid = (mime === "image/webp" && buffer.toString("ascii", 0, 4) === "RIFF" && buffer.toString("ascii", 8, 12) === "WEBP")
+    || (mime === "image/png" && buffer.subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10])))
+    || (mime === "image/jpeg" && buffer[0] === 255 && buffer[1] === 216 && buffer[2] === 255)
+    || (mime === "image/gif" && /^GIF8[79]a/.test(buffer.toString("ascii", 0, 6)))
+    || (mime === "image/avif" && buffer.toString("ascii", 4, 8) === "ftyp" && /avif|avis/.test(buffer.toString("ascii", 8, 32)));
+  if (!valid || buffer.length < 32) throw new Error(`Invalid image MIME/signature for ${source}: ${mime}`);
+}
+
+async function fetchImage(source) {
+  if (imageRequests >= 6) await new Promise((resolve) => imageWaiters.push(resolve));
+  imageRequests += 1;
+  const evidence = { source, fetchedAt: new Date().toISOString() };
+  try {
+    const response = await fetch(source, {
+      headers: { accept: "image/avif,image/webp,image/png,image/jpeg,image/*", referer: "https://rpg.angelssword.com/" },
+      signal: AbortSignal.timeout(30000)
+    });
+    evidence.status = response.status;
+    evidence.headers = Object.fromEntries(response.headers);
+    if (!response.ok) throw new Error(`Image request failed: HTTP ${response.status}: ${source}`);
+    const buffer = Buffer.from(await response.arrayBuffer());
+    evidence.bytes = buffer.length;
+    evidence.sha256 = createHash("sha256").update(buffer).digest("hex");
+    verifyImageBytes(buffer, response.headers.get("content-type"), source);
+    return buffer;
+  } catch (error) {
+    evidence.error = error.message;
+    throw error;
+  } finally {
+    evidence.completedAt = new Date().toISOString();
+    await fs.appendFile(path.join(DATA_DIR, "image-cache-audit.jsonl"), JSON.stringify(evidence) + "\n");
+    imageRequests -= 1;
+    imageWaiters.shift()?.();
+  }
+}
 
 function slugify(value) {
   return String(value || "")
@@ -70,29 +112,24 @@ async function cacheRemoteImage(url, version, id, variant) {
   const versionDir = path.join(ITEM_IMAGE_DIR, version);
   const fileName = `${slugify(id)}-${variant}${getUrlExtension(source)}`;
   const outPath = path.join(versionDir, fileName);
-  if (await fileExists(outPath)) {
-    return toBrowserPath(outPath);
-  }
-
   await fs.mkdir(versionDir, { recursive: true });
-  try {
-    const response = await fetch(source, {
-      headers: {
-        accept: "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
-        referer: "https://rpg.angelssword.com/"
-      }
-    });
-    if (!response.ok) {
-      console.warn(`Could not cache image ${source}: HTTP ${response.status}`);
-      return source;
-    }
-    const buffer = Buffer.from(await response.arrayBuffer());
-    await fs.writeFile(outPath, buffer);
-    return toBrowserPath(outPath);
-  } catch (error) {
-    console.warn(`Could not cache image ${source}: ${error.message}`);
-    return source;
-  }
+  // Revalidate source bytes on each build, even for an already installed rules
+  // version. Deduplicate identical URLs within one build only.
+  if (!imageResponses.has(source)) imageResponses.set(source, fetchImage(source));
+  const buffer = await imageResponses.get(source);
+  await fs.writeFile(outPath, buffer);
+  return toBrowserPath(outPath);
+}
+
+async function buildRecordImageFields(entry, version, kind) {
+  const id = `${kind}-${entry.primaryRaceId || entry.ancestryId || entry.classId || entry.indexId || entry.name}`;
+  const small = entry.imageSmUrl || entry.imageLgUrl;
+  const large = entry.imageLgUrl || entry.imageSmUrl;
+  return {
+    imageSmUrl: small ? await cacheRemoteImage(small, version, id, "sm") : "",
+    imageLgUrl: large ? await cacheRemoteImage(large, version, id, "lg") : "",
+    imageAlignment: normalizeSpace(entry.imageAlignment)
+  };
 }
 
 function makeItemSummaryMap(entries = []) {
@@ -164,6 +201,7 @@ function maybeDecodeBase64Html(value) {
   if (/^[A-Za-z0-9+/=\s]+$/.test(text) && text.length % 4 === 0) {
     try {
       const decoded = Buffer.from(text, "base64").toString("utf8");
+      if (/[\u0000-\u0008\u000e-\u001f\ufffd]/.test(decoded)) return text;
       return decoded.startsWith("<") ? stripHtml(decoded) : normalizeSpace(decoded);
     } catch {
       return text;
@@ -203,6 +241,7 @@ function normalizeAbilityEntry(entry) {
   }
   return {
     id: entry.trueAbilityId || entry.abilityId || entry.indexId || slugify(entry.name),
+    indexId: entry.indexId || "",
     name: normalizeSpace(entry.name),
     descriptionText: normalizeSpace(entry.descriptionText) || maybeDecodeBase64Html(entry.description),
     descriptionHtml: entry.descriptionHtml || "",
@@ -311,11 +350,12 @@ async function buildDataBundle(version) {
       id: entry.breakthroughId || slugify(entry.name),
       name: normalizeSpace(entry.name),
       cost: normalizeSpace(entry.cost),
-      requirements: normalizeSpace(entry.requirements),
+      requirements: normalizeSpace(entry.requirementsText) || maybeDecodeBase64Html(entry.requirements),
       description: normalizeSpace(entry.descriptionText) || maybeDecodeBase64Html(entry.description)
     })),
     abilities: abilitiesRaw.map((entry) => ({
       id: entry.trueAbilityId || slugify(entry.name),
+      indexId: entry.indexId || "",
       name: normalizeSpace(entry.name),
       costLabel: buildCostLabel(entry),
       apCost: normalizeSpace(entry.apCost),
@@ -342,10 +382,10 @@ async function buildDetailBundle(version) {
 
   return {
     version,
-    races: raceRaw.map((entry) => {
+    races: await Promise.all(raceRaw.map(async (entry) => {
       const lineageChoices = {};
       for (const code of ["wi", "lir", "d", "ar", "lu", "ni", "un", "vi", "none"]) {
-        const rawChoice = entry[code];
+        const rawChoice = entry.lineageChoices?.[code] || entry[code];
         if (!rawChoice) continue;
         const [title, note] = splitTitleAndNote(rawChoice.text);
         lineageChoices[code] = {
@@ -365,28 +405,25 @@ async function buildDetailBundle(version) {
         attributes: normalizeSpace(entry.attributes),
         proficiencies: normalizeSpace(entry.proficiencies),
         skills: normalizeSpace(entry.skills),
-        imageSmUrl: entry.imageSmUrl || "",
-        imageLgUrl: entry.imageLgUrl || "",
-        imageAlignment: normalizeSpace(entry.imageAlignment),
+        ...(await buildRecordImageFields(entry, version, "race")),
         abilities: [normalizeAbilityEntry(entry.ability1Ref), normalizeAbilityEntry(entry.ability2Ref)].filter(Boolean),
         lineageChoices
       };
-    }),
-    ancestries: ancestryRaw.map((entry) => ({
+    })),
+    ancestries: await Promise.all(ancestryRaw.map(async (entry) => ({
       id: entry.ancestryId || slugify(entry.name),
       name: normalizeSpace(entry.name),
       primaryRace: normalizeSpace(entry.primaryRace),
       descriptionText: normalizeSpace(entry.descriptionText) || maybeDecodeBase64Html(entry.description),
       descriptionHtml: entry.descriptionHtml || "",
-      imageSmUrl: entry.imageSmUrl || "",
-      imageLgUrl: entry.imageLgUrl || "",
+      ...(await buildRecordImageFields(entry, version, "ancestry")),
       traits: [
         normalizeAbilityEntry(entry.trait1Ref),
         normalizeAbilityEntry(entry.trait2Ref),
         normalizeAbilityEntry(entry.trait3Ref)
       ].filter(Boolean)
-    })),
-    classes: classesRaw.map((entry) => ({
+    }))),
+    classes: await Promise.all(classesRaw.map(async (entry) => ({
       id: entry.classId || slugify(entry.name),
       name: normalizeSpace(entry.name),
       descriptionText: normalizeSpace(entry.descriptionText) || maybeDecodeBase64Html(entry.description),
@@ -401,9 +438,7 @@ async function buildDetailBundle(version) {
       heart: normalizeSpace(entry.heart),
       soul: normalizeSpace(entry.soul),
       tier: normalizeSpace(entry.tier),
-      imageSmUrl: entry.imageSmUrl || "",
-      imageLgUrl: entry.imageLgUrl || "",
-      imageAlignment: normalizeSpace(entry.imageAlignment),
+      ...(await buildRecordImageFields(entry, version, "class")),
       keyAbility: normalizeKeyAbility(entry.keyAbilityRef),
       abilities: [
         normalizeAbilityEntry(entry.ability1Ref),
@@ -411,7 +446,7 @@ async function buildDetailBundle(version) {
         normalizeAbilityEntry(entry.ability3Ref),
         normalizeAbilityEntry(entry.ultimateAbilityRef)
       ].filter(Boolean)
-    }))
+    })))
   };
 }
 
@@ -453,6 +488,10 @@ async function main() {
   if (!version) {
     throw new Error("No pulled Lyrian version was available to build.");
   }
+  if (version !== pulledManifest.latestVersion) {
+    throw new Error(`Requested version ${version} does not match captured source ${pulledManifest.latestVersion}; no output written.`);
+  }
+  if (!/^\d+\.\d+\.\d+$/.test(version)) throw new Error(`Invalid rules version: ${version}`);
 
   const outDir = path.join(VERSION_DIR, version);
   await fs.mkdir(outDir, { recursive: true });

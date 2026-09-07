@@ -1,0 +1,41 @@
+{
+  "copiedAt": "2026-09-07T14:15:49.749Z",
+  "source": "E:/Chat gpt Codex/Angels sword/.tmp_official_site/patch-2026-09-07/api-attempt-01",
+  "version": "0.13.2",
+  "captureReport": "BETA_2.5_TASKS/reports/012-api-capture-report.md",
+  "captureIntegrity": {
+    "sealedAt": "2026-09-07T14:07:43.763Z",
+    "http": {
+      "responses": 1089,
+      "success": 1089,
+      "statuses": [
+        200
+      ],
+      "bytes": 5719479,
+      "start": "2026-09-07T14:00:12.937Z",
+      "end": "2026-09-07T14:03:35.172Z",
+      "bodyHashErrors": []
+    },
+    "inputs": {
+      "scripts/pull-angels-sword-data.js": "511f19c627bc67ad896e58c0011b4ced020d94e8f1e97af4e14d61e34c681e0c",
+      "scripts/build-version-assets.mjs": "111d84f525dfd3c10487fa4f499c28fb55d06a8d156fc1fc11e1730a81642905",
+      "scripts/package.json": "58b55392b5778941e1e96892a70edc12e2d7bb8541289b237fbddc9926ed51bd",
+      "data/angelssword/manifest.json": "89f74c425ab177ebc0f9528dc9e985cc1f642e58de71c1049350a5474e5f3fd5",
+      "BETA_2.5_TASKS/012-execution-roles.md": "2b54af8b69f614ef31847d66425df17776a18e521c88d5be28f1c9b05a1e6bc4"
+    },
+    "outputs": {
+      "discovery.json": "90ceba549d77cafe1eabf3c43740105a930f816b6f3ef4723201d2f50aac5068",
+      "version-start.json": "2eaa9b49f7c453b94758f6d77dd88a87e43b1cbe4a6f2418b4c255995285f651",
+      "consistency.json": "13021a80a080eb3413355faede9cb59256bfba024f78227d1d8581f3ede0b11b",
+      "detail-consistency.json": "25998b349659fbab30e65d3b957134e3c85eee057ec25e91cd34185bee02b6b1",
+      "data-validation.json": "9bfc03791958f442295f047d772999099ea20f19acf58c01cf0c3209cbf64948",
+      "decoder-validation.json": "98319d6ad33c2a8c9ad5d3425eb21450afbac61b7ba4a15097e023dcc12b6446",
+      "semantic-change-ledger.json": "6633272e64084be9d148a03e9ef245ce7513aaac5e72a86f39a3f310318c1bf5",
+      "semantic-change-ledger.md": "f4520f7c45ca5d1743d58750975b8610dea67b6d1bf474807e868eba71b572b5",
+      "data/angelssword/manifest.json": "29eab3da5a7c64ae73de274fe6ae8098eec0fa84ff5870e65ad08669362f6be6",
+      "scripts/pull-angels-sword-data.js": "764fc2385a0c03184be801c0dac050bce7beb98cbd8e837d491e8b4fe8bf4847",
+      "scripts/archive-http.cjs": "3788a35f0e0a90844024ec1abb8b2ff74387657c287bb4f1bfbb679015104443",
+      "decoder-compatibility-snippet.txt": "5cb13ce261ce7ce457084537a94623e3d5a4467b7a9d0f5287b63c1152bf3e62"
+    }
+  }
+}

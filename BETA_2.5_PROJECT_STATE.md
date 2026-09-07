@@ -1,5 +1,7 @@
 # Beta 2.5 Online — PROJECT STATE (read this FIRST, every session, every AI)
 
+This is the isolated September 7 task012 candidate. Read `PATCH_2026-09-07_START_HERE.md` for its launch and rollback. The ongoing operations hub and final task reports remain in the sibling `../Angel Sword Lirian Chronicles Beta 2.5 Online/`; this file preserves the inherited project controls and a candidate-specific work-log entry.
+
 This is the ground-truth operations hub for the Beta 2.5 online conversion,
 modeled on the owner's Stellar Verge agent system. Any AI working here —
 Claude (any model), ChatGPT/Codex, or a sub-agent of either — reads this file
@@ -9,8 +11,8 @@ next session (and the owner) knows what happened without a handoff chat.
 
 ## Identity and hard rules
 
-- This folder is a **git worktree** of `.publish-public`, branch
-  `agent/beta-2-5-online`. The sibling `...Public Beta 2.20` folder is FROZEN
+- This folder is an isolated **git worktree** of `.publish-public`, branch
+  `agent/patch-2026-09-07`, created from canonical HEAD4722f45. The canonical branch remains `agent/beta-2-5-online`. The sibling `...Public Beta 2.20` folder is FROZEN
   (known-working local build, tag `beta-2.2-locked`) — never edit it.
 - **Nothing is pushed. Ever.** All commits are local; the owner holds
   publishing. The eventual public release name is **Beta 3**.
@@ -20,8 +22,7 @@ next session (and the owner) knows what happened without a handoff chat.
   that file is the plan. Read both.
 - The `../Dice Builder Workshop` repo carries OTHER uncommitted WIP — when
   syncing the dice core there, commit ONLY `dice roller/dice-roller-core.js`.
-- Dev server: `npm start` (builds extensions, serves on :4176; falls forward
-  if busy — the Owlbear extension install links REQUIRE localhost:4176).
+- Candidate dev server: follow `PATCH_2026-09-07_START_HERE.md` to set `LYRIAN_PORT=4177` before `npm start`. This keeps candidate storage separate. The existing installed Owlbear extension links still REQUIRE localhost:4176 and remain part of the original setup.
 - Cache-busters matter: bump `?v=` params (runtime-loader.js, overlay.html,
   index.html) and ROLLER_VERSION when their files change, or browsers serve
   stale code — this burned a whole debugging session once.
@@ -217,6 +218,21 @@ Format per entry:
 - Reports: BETA_2.5_TASKS/reports/... (if sub-agents ran)
 - Questions parked for owner: ... (or "none")
 ```
+
+### 2026-09-07 10:57 CDT — ChatGPT/Codex (verified local 0.13.2 candidate)
+- Did: completed the scheduled website/API capture, source comparison, candidate implementation, independent cross-audits, all 13 local verification gates and final upstream recheck. Followed studio/project controls, file-backed worker ownership, explicit-path staging and local-only commits. This is a verified local candidate; no live-room or founder visual approval is claimed.
+- Verification: data 14, UI/rules/CCS 91, historical/community/min-max execution, VTT 113 adapter plus 48 opener checks, dice/core and staging checks passed. Actual four-pair current/candidate sheet-extension matrix passed 277 checks. Final full npm passed all three engines and nine viewports at 15:50:56 UTC; evidence is `qa-test-results/patch-2026-09-07-verification/final-verification-summary.json`.
+- Source stability: final 15:52:05–15:52:31 UTC public recheck made 714 successful responses across 712 unique targets plus ending version checks. Zero changes/failures; release remains 0.13.2. Independent rehash matched every final response to metadata and accepted source bytes.
+- Preserved: original canonical runtime, frozen fallback, Workshop and existing staging output matched their protected baselines. All four historical bundle pairs remain unchanged. Candidate storage uses localhost:4177; existing installed Owlbear links remain on localhost:4176. All owned test servers stopped.
+- Commits: this local candidate commit on `agent/patch-2026-09-07`; canonical task records are committed separately in `agent/beta-2-5-online`. No push/publication. The post-commit file manifest is `qa-test-results/patch-2026-09-07-release/shipped-file-manifest.json`.
+- Reports: canonical sibling `BETA_2.5_TASKS/reports/012-website-patch-update-report.md`, final verification/independent audit, source/change ledger and implementation reports. Earlier failed attempts remain documented. Read `PATCH_2026-09-07_START_HERE.md` for launch, backup/import, limits and rollback.
+- Exact next step: evaluate a copied character using the guide. Public release or live-room installation remains an owner-controlled later step. No questions block this completed local task; coordinator pauses its bounded heartbeat after sealing the candidate.
+
+### 2026-09-07 08:56 CDT — ChatGPT/Codex (isolated rules0.13.2 candidate)
+- Did: created this separate candidate from the actual current canonical checkout for the scheduled task012 update. Followed the studio/project controls, standing audit permission, disjoint worker ownership, independent reviews, required gates and local-only release rules. No live room or existing saved character was replaced.
+- Implemented: current rules0.13.2 and local artwork, decoder/version/lineage corrections, CCS template/stat export, new prerequisite handling, active-version Eisen type and elixir effects. Added a standalone offline rules reference and launch/rollback guide. Four older data bundle pairs remain byte-identical to canonical.
+- Verification: focused data14 and UI91 checks pass; independent data and source audits pass after resolving their findings. Final full browser/Owlbear/staging verification and upstream recheck are running; use the canonical `BETA_2.5_TASKS/reports/012-website-patch-update-report.md` for the final disposition.
+- Commits: pending green gates and final audit. No push/publication. Runtime originals, frozen fallback, Workshop and installed Owlbear extensions remain in their existing folders. Owner questions: none for the local candidate.
 
 ### 2026-09-07 02:56 CDT — ChatGPT/Codex (website patch preflight and scheduled execution)
 - Did: reviewed the owning studio entry point, this hub, plan, task template,

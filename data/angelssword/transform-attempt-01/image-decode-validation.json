@@ -1,0 +1,7046 @@
+{
+  "decoded": 880,
+  "errors": [],
+  "images": [
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8ce-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8ce-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8cf-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8cf-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8d0-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8d0-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8d1-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8d1-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8d2-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8d2-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8d3-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8d3-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8d4-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8d4-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8d5-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8d5-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8d6-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8d6-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8d7-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8d7-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8d8-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8d8-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8d9-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8d9-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8da-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8da-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8db-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8db-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8dc-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8dc-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8dd-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8dd-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8de-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8de-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8df-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8df-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8e0-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8e0-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8e1-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8e1-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8e2-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8e2-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8e3-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8e3-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8e4-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8e4-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8e5-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8e5-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8e6-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8e6-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8e7-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8e7-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8e8-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8e8-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8e9-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8e9-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8ea-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8ea-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8eb-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8eb-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8ec-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8ec-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8ed-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8ed-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8ee-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8ee-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8ef-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8ef-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8f0-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8f0-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8f1-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8f1-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8f2-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8f2-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8f3-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8f3-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8f4-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8f4-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8f5-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8f5-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8f6-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8f6-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8f7-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8f7-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8f8-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8f8-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8f9-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8f9-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8fa-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8fa-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8fb-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8fb-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8fc-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8fc-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8fd-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8fd-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8fe-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8fe-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8ff-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b8ff-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b900-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b900-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b901-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b901-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b902-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b902-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b903-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b903-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b904-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b904-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b905-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b905-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b906-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b906-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b907-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b907-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b908-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b908-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b909-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b909-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b90a-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b90a-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b90b-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b90b-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b90c-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b90c-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b90d-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b90d-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b90e-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b90e-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b90f-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b90f-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b910-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b910-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b911-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b911-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b912-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b912-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b913-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b913-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b914-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b914-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b915-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b915-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b916-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b916-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b917-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b917-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b918-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b918-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b919-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b919-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b91a-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b91a-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b91b-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b91b-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b91c-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b91c-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b91d-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b91d-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b91e-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b91e-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b91f-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b91f-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b920-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b920-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b921-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b921-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b922-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b922-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b923-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b923-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b924-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b924-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b925-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b925-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b926-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b926-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b927-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b927-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b928-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b928-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b929-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b929-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b92a-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b92a-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b92b-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b92b-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b92c-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b92c-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b92d-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b92d-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b92e-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b92e-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b92f-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b92f-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b930-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b930-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b931-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b931-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b932-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b932-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b933-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b933-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b934-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b934-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b935-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b935-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b936-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b936-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b937-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b937-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b938-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b938-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b939-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b939-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b93a-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b93a-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b93b-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b93b-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b93c-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b93c-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b93d-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b93d-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b93e-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b93e-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b93f-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b93f-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b940-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b940-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b941-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b941-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b942-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b942-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b943-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b943-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b944-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b944-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b945-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b945-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b946-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b946-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b947-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b947-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b948-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b948-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b949-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b949-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b94a-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b94a-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b94b-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b94b-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b94c-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b94c-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b94d-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b94d-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b94e-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b94e-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b94f-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b94f-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b950-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b950-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b951-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b951-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b952-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b952-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b953-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b953-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b954-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b954-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b955-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b955-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b956-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b956-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b957-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b957-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b958-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b958-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b959-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b959-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b95a-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b95a-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b95b-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b95b-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b95c-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b95c-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b95d-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b95d-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b95e-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b95e-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b95f-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b95f-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b960-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b960-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b961-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b961-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b962-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b962-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b963-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b963-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b964-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b964-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b965-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b965-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b966-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b966-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b967-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b967-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b968-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b968-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b969-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b969-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b96a-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b96a-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b96b-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b96b-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b96c-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b96c-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b96d-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b96d-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b96e-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b96e-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b96f-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b96f-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b970-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b970-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b971-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b971-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b972-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b972-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b973-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b973-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b974-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b974-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b975-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b975-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b976-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b976-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b977-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b977-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b978-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b978-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b979-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b979-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b97a-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b97a-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b97b-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b97b-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b97c-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b97c-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b97d-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b97d-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b97e-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b97e-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b97f-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b97f-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b980-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b980-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b981-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b981-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b982-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b982-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b983-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b983-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b984-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b984-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b985-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b985-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b986-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b986-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b987-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b987-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b988-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b988-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b989-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b989-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b98a-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b98a-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b98b-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b98b-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b98c-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b98c-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b98d-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b98d-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b98e-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b98e-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b98f-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b98f-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b990-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b990-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b991-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b991-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b992-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b992-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b993-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b993-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b994-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b994-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b995-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b995-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b996-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b996-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b997-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b997-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b998-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b998-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b999-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b999-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b99a-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b99a-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b99b-lg.webp",
+      "format": "WEBP",
+      "size": [
+        600,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\6a5e50be98f4934cf278b99b-sm.webp",
+      "format": "WEBP",
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-ancient-marionette-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-ancient-marionette-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-anubis-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-anubis-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-bearfolk-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-bearfolk-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-bullfolk-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-bullfolk-sm.webp",
+      "format": "WEBP",
+      "size": [
+        201,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-cait-sith-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-cait-sith-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-catfolk-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-catfolk-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-centaur-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-centaur-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-cowfolk-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-cowfolk-sm.webp",
+      "format": "WEBP",
+      "size": [
+        201,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-cu-sith-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-cu-sith-sm.webp",
+      "format": "WEBP",
+      "size": [
+        201,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-dogfolk-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-dogfolk-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-dryad-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-dryad-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-dullahan-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-dullahan-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-gnome-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-gnome-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-harpy-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-harpy-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-high-fae-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-high-fae-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-horse-folk-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-horse-folk-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-jiangshi-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-jiangshi-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-kitsune-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-kitsune-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-lamiafolk-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-lamiafolk-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-lizardfolk-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-lizardfolk-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-mothfolk-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-mothfolk-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-nekomata-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-nekomata-sm.webp",
+      "format": "WEBP",
+      "size": [
+        201,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-nio-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-nio-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-oni-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-oni-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-phoenix-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-phoenix-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-pigfolk-lg.webp",
+      "format": "WEBP",
+      "size": [
+        480,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-pigfolk-sm.webp",
+      "format": "WEBP",
+      "size": [
+        240,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-pixie-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-pixie-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-rabbitfolk-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-rabbitfolk-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-raijin-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-raijin-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-ratfolk-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-ratfolk-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-red-pandafolk-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-red-pandafolk-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-ryujin-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-ryujin-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-salamander-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-salamander-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-selkie-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-selkie-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-sheepfolk-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-sheepfolk-sm.webp",
+      "format": "WEBP",
+      "size": [
+        201,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-slimefolk-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-slimefolk-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-spiderfolk-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-spiderfolk-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-suryan-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-suryan-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-sylph-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-sylph-sm.webp",
+      "format": "WEBP",
+      "size": [
+        201,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-tengu-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-tengu-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-unseelie-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-unseelie-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-willo-wisp-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-willo-wisp-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-wolf-folk-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-wolf-folk-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-yuki-onna-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\ancestry-yuki-onna-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-abjurer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-abjurer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-acolyte-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-acolyte-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-adventurer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-adventurer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-aerial-mage-lg.webp",
+      "format": "WEBP",
+      "size": [
+        452,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-aerial-mage-sm.webp",
+      "format": "WEBP",
+      "size": [
+        452,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-aeromancer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-aeromancer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-aeromaster-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-aeromaster-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-aetherie-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-aetherie-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-agrarian-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-agrarian-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-alchemeister-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-alchemeister-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-alchemist-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-alchemist-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-alkahest-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-alkahest-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-amanita-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-amanita-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-angelblooded-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-angelblooded-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-animal-summoner-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-animal-summoner-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-anti-mage-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-anti-mage-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-arcanist-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-arcanist-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-archer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-archer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-archsage-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-archsage-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-armiger-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-armiger-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-armorsmith-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-armorsmith-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-artificer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-artificer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-assassin-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-assassin-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-aurora-blade-style-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-aurora-blade-style-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-bajiquan-style-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-bajiquan-style-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-bard-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-bard-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-battle-mage-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-battle-mage-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-battlemaster-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-battlemaster-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-berserker-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-berserker-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-biochemist-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-biochemist-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-black-oath-style-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-black-oath-style-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-blacksmith-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-blacksmith-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-bloodbinder-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-bloodbinder-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-bodyguard-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-bodyguard-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-botanist-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-botanist-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-brawler-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-brawler-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-cannoneer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        398,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-cannoneer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        398,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-carpenter-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-carpenter-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-cavalier-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-cavalier-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-chronofighter-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-chronofighter-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-chronomancer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-chronomancer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-colossus-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-colossus-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-cryomancer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-cryomancer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-culinarian-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-culinarian-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-cultivator-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-cultivator-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-curse-knight-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-curse-knight-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-cutthroat-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-cutthroat-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-daionmyoji-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-daionmyoji-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-dark-priest-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-dark-priest-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-deadeye-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-deadeye-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-death-knight-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-death-knight-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-dragoon-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-dragoon-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-duelist-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-duelist-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-earthcleaving-style-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-earthcleaving-style-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-electromancer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-electromancer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-electromaster-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-electromaster-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-elementalist-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-elementalist-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-eremancer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-eremancer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-evil-eye-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-evil-eye-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-exalted-blade-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-exalted-blade-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-exalted-shield-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-exalted-shield-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-excavator-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-excavator-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-executor-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-executor-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-fae-knight-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-fae-knight-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-fae-knight-willow-style-lg.webp",
+      "format": "WEBP",
+      "size": [
+        398,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-fae-knight-willow-style-sm.webp",
+      "format": "WEBP",
+      "size": [
+        398,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-faerie-light-eyes-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-faerie-light-eyes-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-farmer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-farmer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-fencer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-fencer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-fighter-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-fighter-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-five-harmonies-style-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-five-harmonies-style-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-flame-sentinel-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-flame-sentinel-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-flash-star-blade-style-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-flash-star-blade-style-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-flowing-wind-style-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-flowing-wind-style-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-forager-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-forager-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-forgemaster-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-forgemaster-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-fusilier-lg.webp",
+      "format": "WEBP",
+      "size": [
+        411,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-fusilier-sm.webp",
+      "format": "WEBP",
+      "size": [
+        411,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-geomancer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-geomancer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-geomaster-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-geomaster-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-grandmaster-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-grandmaster-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-granite-warden-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-granite-warden-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-gravitect-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-gravitect-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-graviturge-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-graviturge-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-great-berserker-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-great-berserker-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-great-knight-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-great-knight-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-guardian-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-guardian-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-gun-paladin-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-gun-paladin-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-gunfu-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-gunfu-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-gunslinger-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-gunslinger-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-harrier-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-harrier-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-high-priest-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-high-priest-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-highlander-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-highlander-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-hoarfrost-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-hoarfrost-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-hussar-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-hussar-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-hydromancer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-hydromancer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-iai-style-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-iai-style-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-idol-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-idol-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-jewel-idol-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-jewel-idol-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-jonin-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-jonin-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-knight-paramount-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-knight-paramount-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-lancer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-lancer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-mage-knight-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-mage-knight-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-mage-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-mage-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-magitechnician-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-magitechnician-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-maid-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-maid-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-manifestor-lg.webp",
+      "format": "WEBP",
+      "size": [
+        411,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-manifestor-sm.webp",
+      "format": "WEBP",
+      "size": [
+        411,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-marksman-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-marksman-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-martial-artist-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-martial-artist-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-master-armorer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-master-armorer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-medic-lg.webp",
+      "format": "WEBP",
+      "size": [
+        398,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-medic-sm.webp",
+      "format": "WEBP",
+      "size": [
+        398,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-merchant-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-merchant-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-mime-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-mime-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-miner-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-miner-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-mist-veil-elegy-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-mist-veil-elegy-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-mogul-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-mogul-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-monk-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-monk-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-mycomancer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-mycomancer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-mystic-eyes-of-destruction-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-mystic-eyes-of-destruction-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-mystic-eyes-of-domination-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-mystic-eyes-of-domination-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-mystic-eyes-of-petrification-lg.webp",
+      "format": "WEBP",
+      "size": [
+        411,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-mystic-eyes-of-petrification-sm.webp",
+      "format": "WEBP",
+      "size": [
+        411,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-naturalist-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-naturalist-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-necromancer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-necromancer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-necromaster-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-necromaster-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-ninja-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-ninja-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-nomad-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-nomad-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-onmyoji-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-onmyoji-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-oracle-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-oracle-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-peltast-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-peltast-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-phantom-thief-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-phantom-thief-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-phosphomancer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-phosphomancer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-pierrot-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-pierrot-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-priest-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-priest-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-protector-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-protector-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-pyromancer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-pyromancer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-pyromaster-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-pyromaster-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-ranger-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-ranger-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-reaver-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-reaver-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-rogue-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-rogue-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-saboteur-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-saboteur-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-sage-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-sage-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-sanctioner-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-sanctioner-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-scout-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-scout-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-searing-lotus-style-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-searing-lotus-style-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-seven-sorrows-sword-style-lg.webp",
+      "format": "WEBP",
+      "size": [
+        398,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-seven-sorrows-sword-style-sm.webp",
+      "format": "WEBP",
+      "size": [
+        398,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-shadow-thief-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-shadow-thief-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-shadowbringer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-shadowbringer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-shield-paladin-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-shield-paladin-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-shield-saint-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-shield-saint-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-shieldwarden-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-shieldwarden-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-shinigami-eyes-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-shinigami-eyes-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-sky-knight-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-sky-knight-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-sky-talon-style-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-sky-talon-style-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-sniper-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-sniper-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-sorcerer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-sorcerer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-spearmaster-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-spearmaster-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-spell-blademaster-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-spell-blademaster-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-spellblade-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-spellblade-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-starcaller-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-starcaller-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-still-stone-style-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-still-stone-style-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-still-stone-testament-lg.webp",
+      "format": "WEBP",
+      "size": [
+        411,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-still-stone-testament-sm.webp",
+      "format": "WEBP",
+      "size": [
+        411,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-strategist-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-strategist-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-summoner-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-summoner-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-swashbuckler-lg.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-swashbuckler-sm.webp",
+      "format": "WEBP",
+      "size": [
+        403,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-sword-paladin-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-sword-paladin-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-sword-saint-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-sword-saint-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-tactician-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-tactician-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-tavern-brawler-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-tavern-brawler-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-temporal-trickster-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-temporal-trickster-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-thief-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-thief-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-timberwright-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-timberwright-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-time-thief-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-time-thief-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-transcendent-lightning-style-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-transcendent-lightning-style-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-transmuter-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-transmuter-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-trapper-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-trapper-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-trickster-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-trickster-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-true-shinigami-eyes-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-true-shinigami-eyes-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-vampire-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-vampire-lord-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-vampire-lord-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-vampire-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-veilguard-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-veilguard-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-venomancer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        450,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-venomancer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        450,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-venomblade-lg.webp",
+      "format": "WEBP",
+      "size": [
+        399,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-venomblade-sm.webp",
+      "format": "WEBP",
+      "size": [
+        399,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-warding-mage-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-warding-mage-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-wave-palm-style-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-wave-palm-style-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-wildheart-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-wildheart-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-windbringer-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-windbringer-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-zen-warrior-lg.webp",
+      "format": "WEBP",
+      "size": [
+        417,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-zen-warrior-sm.webp",
+      "format": "WEBP",
+      "size": [
+        417,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-zephyr-warder-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\class-zephyr-warder-sm.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\race-chimera-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\race-chimera-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\race-demon-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\race-demon-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\race-fae-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\race-fae-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\race-human-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\race-human-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\race-youkai-lg.webp",
+      "format": "WEBP",
+      "size": [
+        400,
+        600
+      ]
+    },
+    {
+      "path": "assets\\item-images\\0.13.2\\race-youkai-sm.webp",
+      "format": "WEBP",
+      "size": [
+        200,
+        300
+      ]
+    }
+  ]
+}
