@@ -218,6 +218,66 @@ Format per entry:
 - Questions parked for owner: ... (or "none")
 ```
 
+### 2026-09-07 02:56 CDT — ChatGPT/Codex (website patch preflight and scheduled execution)
+- Did: reviewed the owning studio entry point, this hub, plan, task template,
+  previous scrape lane, and offline/Owlbear version boundaries for the owner's
+  incoming official patch. I explicitly acknowledge the standing Codex audit
+  permission and obligations: state/plan first, DECIDED/SKETCH discipline,
+  file-backed briefs and executor reports, second-agent audit, explicit-path
+  staging, no pushes, required implementation gates, and automatic work logging.
+- Authored `BETA_2.5_TASKS/012-website-patch-update.md`. Two read-only workers
+  trace the official-source pipeline and Owlbear preservation gates; a third
+  independently audits their findings and the scheduled work order. Codex's
+  standing same-model worker/auditor allowance applies; Claude-only models
+  are unavailable here, so no Fable-specific pass is claimed.
+- Schedule: app accepted ACTIVE heartbeat `angel-sword-patch-refresh`, attached
+  to Codex task `01a07ad9-397b-7060-9a9f-2366d6ea22e9`, at 02:55 CDT;
+  first six-hour interval is approximately 08:55 CDT / 13:55 UTC September 7.
+  Scheduler one-occurrence attempt was rejected (no future occurrence); the
+  accepted interval prompt requires pausing after this bounded update and final
+  upstream hotfix check. The job needs the computer on and Codex running.
+- Authorized next execution: full official website/API + public builder-code
+  capture/diff, new content and same-version hotfix review, isolated updated
+  offline candidate from current Beta 2.5 state, sheet/rules/reference/migration
+  checks, build/VTT/dice/static/offline verification, independent audit, and
+  launch/rollback instructions. Re-inventory at wake-up; preserve existing
+  Owlbear work, saves, captures and staging; Public Beta 2.20 stays frozen.
+- Baseline from read-only worker inspection: canonical `e0536e9` clean before
+  this task's documentation, frozen Public Beta 2.20 `29caf3c`, Workshop
+  `4cdb855`. Prior test successes are historical, not freshly run here.
+  No new patch has been scraped, application code changed, build executed,
+  saved character edited, live room changed, or deployment made in preflight.
+- Findings: source baseline is rules 0.13.1 (July 20), with retained July 21
+  Clio sources and an August comparison proving same-version builder fixes.
+  Root puller is obsolete; convenience updater skips installed-version hotfixes;
+  pull output follows CWD while asset-builder output follows its own script.
+  Task 012 carries explicit isolation, full source/template capture, manifest
+  equality, reference/image checks and browser-execution coverage gates.
+  Nine Demon lineage references resolve in joined data but are missing from
+  generated detail references: independently reproduced as PRE-EXISTING;
+  actual runtime impact is unverified and queued for the scheduled update.
+  Existing schema/cache/d100/legacy-deployment gaps are recorded separately
+  from any future patch regression. Frozen 2.20 and Workshop remained clean
+  in the coordinator's final read-only Git checks.
+- Reports: completed source and preservation reports at
+  `BETA_2.5_TASKS/reports/012-source-workflow-report.md` and
+  `012-owlbear-safeguards-report.md`; independent `012-preflight-audit.md`
+  verdict PASS for scheduled execution readiness, no unresolved preflight
+  blocker. Audited brief SHA-256:
+  `63073CE40D987C48C2FED56A515CC37D37B7E0C473FE76EC51713DC32AFDF959`.
+  This certifies the preparation only, not the unseen patch or app runtime.
+- Verification: report/source/hash cross-audit and documentation diff checks
+  completed; no runtime suites run because this session changes documentation
+  only. Schedule persisted ACTIVE and shown in the app.
+- Commits: this documentation-only task-012 commit, hash in local Git history;
+  no push or deployment.
+- Questions parked for owner: none required for the authorized local work.
+  Existing unrelated creative/hosting decisions remain recorded above.
+- Exact next step: execute task 012 through the scheduled heartbeat at
+  approximately 08:55 CDT, starting with a fresh baseline inventory and
+  version-consistent capture; finish candidate verification and final hotfix
+  check, then pause the heartbeat.
+
 ### 2026-08-28 — Claude Sonnet 5 (coordinator session; entry updated as results land)
 - Did: session resumed after a two-day gap; re-verified both repos before
   touching anything (builder clean at f1e8ace, Workshop unchanged — no
