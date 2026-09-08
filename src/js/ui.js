@@ -1,7 +1,7 @@
 import { BUILDER_STEPS, CHARACTER_START_MODES, CLASS_GROUP_ROLE_ORDER, DEFAULT_CHARACTER_START_MODE, CLASS_PASSIVE_SLOTS, CLASS_PURCHASABLE_LEVELS, CLASS_ROWS, CLICKABLE_ROLL_FIELDS, COMMON_WEAPON_GROUP_OPTIONS, CREATION_INTERLUDE_ACTIONS, CREATION_SKILL_POINT_BUDGET, DEFAULT_DICE_SET_ID, DICE_PREVIEW_FALLBACK_URL, DICE_SETS, DICE_SET_ID_ALIASES, DICE_SOUND_ASSETS, DICE_TRAY_TYPES, EMBEDDED_STATE_CHUNK_SIZE, EMBEDDED_STATE_FORMAT, ENABLE_ACCURATE_DICE_ROLLS, ENABLE_WEBGL_DICE_ROLLS, INVENTORY_ROWS, MAIN_STATS, MAIN_STAT_CREATION_ARRAY, MAX_DICE_TRAY_DICE, MIRANE_CRAFTING_INTERLUDE_EXP, MIRANE_GATHER_BASE_UNITS, MIRANE_GATHER_MASTERY_BONUS_UNITS, MIRANE_IP_SHOP_PRICE_CAP, MIRANE_IP_SHOP_SALE_PERCENT_CAP, MIRANE_IP_SHOP_SLOT_LIMIT, MIRANE_JOB_ARTISAN_BONUS_CLIM, MIRANE_JOB_BASE_CLIM, MIRANE_RAW_MATERIAL_CLIM_LIMIT, MIRANE_SINGLE_MATERIAL_CLIM_LIMIT, MIRANE_START_MODE_ID, MULTILINE_FIELDS, NAME_FIELDS, OFFICIAL_LANGUAGE_OPTIONS, PAGE_BACKGROUNDS, PASSIVE_READ_ONLY_FIELDS, PDF_STATE_CHUNK_FIELD_PREFIX, PDF_STATE_MANIFEST_FIELD, PLAY_BASIC_ACTIONS, PLAY_ROLLS, PORTRAIT_JPEG_QUALITY, PORTRAIT_MAX_DIMENSION, PORTRAIT_NORMALIZE_THRESHOLD, SAVE_SNAPSHOT_PORTRAIT_LIMIT, SECONDARY_STATS, SECONDARY_STAT_CREATION_ARRAY, SKILL_ALIASES, SKILL_DEFINITIONS, SKILL_EXPERTISE_CAP, SKILL_EXPERTISE_OPTIONS, SKILL_OPTIONS, SKILL_POINT_CAP, SPECIALITY_WEAPON_GROUP_OPTIONS, STARTING_CLASS_EXP, STARTING_INTERLUDE_POINTS, SUBSTAT_OPTIONS, WEAPON_GROUP_REFERENCE_OPTIONS } from "./constants.js";
 import { asArray, clamp, cleanText, cssEscape, escapeHtml, formatModifier, normalizeKey, normalizePhrase, splitSentences, toNumber } from "./utils.js";
 import { clearSheet, createDefaultState, flushScheduledWorkingStatePersist, getSavedSlots, mergePlayState, persistWorkingState, scheduleWorkingStatePersist, setWorkingStatePersistenceReady, state, updateFieldValue } from "./state.js";
-import { applyGameVersion, detailLookup, exportPrepCache, getAncestryDetail, getAncestryOptionsByPrimaryRace, getAncestryRequirementPhrases, getBreakthroughBudgetState, getBuilderChoiceDefinitionsCacheKey, getCampaignProgressState, getCharacterStartMode, getClassDetail, getClassUnlockBudgetState, getComputedBonuses, getCurrentSecondaryLineageMode, getDemonClanOptions, getDerivedCombatStats, getHumanRaceSkillChoiceOptions, getRaceDetail, getRaceRequirementPhrases, getSecondaryLineageLabels, getSelectedAncestryDetail, getSelectedBreakthroughRecords, getSelectedClassDetails, getSelectedClassProgress, getSelectedGameVersionId, getSelectedItemRecords, getSelectedRaceDetail, getSkillBreakdownParts, getSkillRowsData, getStartingFundsState, getVersionRecord, getVersionRecords, lookup, syncPlayResourcesFromFields, usePlayCost, versionRuntime } from "./rules.js";
+import { applyGameVersion, detailLookup, exportPrepCache, getAncestryDetail, getAncestryOptionsByPrimaryRace, getAncestryRequirementPhrases, getBreakthroughBudgetState, getBuilderChoiceDefinitionsCacheKey, getCampaignProgressState, getCharacterStartMode, getClassDetail, getClassUnlockBudgetState, getComputedBonuses, getCurrentSecondaryLineageMode, getDemonClanOptions, getDerivedCombatStats, getHumanRaceSkillChoiceOptions, getRaceDetail, getRaceRequirementPhrases, getSecondaryLineageLabels, getSelectedAncestryDetail, getSelectedBreakthroughRecords, getSelectedClassDetails, getSelectedClassProgress, getSelectedGameVersionId, getSelectedItemRecords, getSelectedRaceDetail, getSkillBreakdownParts, getSkillRowsData, getStartingFundsState, getVersionRecords, lookup, syncPlayResourcesFromFields, usePlayCost, versionRuntime } from "./rules.js";
 import { dicePackRuntime, preloadDiceSetFaceArt, renderDiceTray } from "./dice.js";
 import { closeSheetModal, deriveSaveSlotName, exportJsonState, exportPatchedTemplateWorkbook, exportPdfState, exportSpreadsheetState, exportState, extractAbilityHeading, getWorksheetNumberText, getWorksheetText, handleImportedCharacterFile, handleSaveSlotAction, loadFromBrowser, openSheetModal, parseClimCost, parseNumericCost, saveCurrentCharacterToActiveSlot, saveCurrentCharacterToNewSlot, saveToBrowser, setSpreadsheetExportCell } from "./io.js";
 import { ensureDiceRuntimeLoaded, isDiceRuntimeLoaded } from "./runtime-loader.js";
@@ -9,6 +9,7 @@ import { buildCharacterProfileSummary, buildRoll20AbilityMacro, buildRoll20Actio
 import { BRIDGE_STATES, buildTokenModCommand, createRoll20Bridge } from "./roll20-bridge.js";
 import { getOwlbearOpenerState, publishVttEvent, publishVttHandoff, subscribeVttRoomEvents } from "./vtt-relay.js";
 import { buildAscharCharacter, normalizeAscharCharacter, wrapAscharExport } from "./aschar.js";
+import { APP_RELEASE_NOTES } from "./release-notes.js";
 
 const DICE_ASSET_REVISION = "20260811-srgb-dice-v1";
 const DICE_PACK_MANIFEST_URL = `assets/dice/dice-pack-manifest.json?v=${DICE_ASSET_REVISION}`;
@@ -175,13 +176,12 @@ const selectedVersion = getSelectedGameVersionId();
         option.selected = version.id === selectedVersion;
         select.appendChild(option);
       });
-const active = getVersionRecord(selectedVersion);
       updateList.innerHTML = "";
 const title = document.createElement("p");
       title.innerHTML = `<strong>Latest update</strong>`;
       updateList.appendChild(title);
 const list = document.createElement("ul");
-      (active?.updates?.length ? active.updates : ["No local update notes have been entered for this version yet."]).forEach((item) => {
+      APP_RELEASE_NOTES.forEach((item) => {
 const entry = document.createElement("li");
         entry.textContent = item;
         list.appendChild(entry);
