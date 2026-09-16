@@ -36,14 +36,9 @@ jobs:
           npm run build
 
       - name: Prepare static site
-        shell: bash
         run: |
-          mkdir -p dist/src/css
-          rsync -a index.html manifest.webmanifest dist/
-          rsync -a assets/ dist/assets/
-          rsync -a owlbear/ dist/owlbear/
-          rsync -a src/css/main.css dist/src/css/main.css
-          touch dist/.nojekyll
+          node scripts/publish-staging.mjs --include-builder --skip-build --out=dist --base-url=https://verbosebard.github.io/angel-sword-lirian-chronicles-builder/
+          node scripts/test-staging-deploy.mjs --include-builder --artifact=dist --base-url=https://verbosebard.github.io/angel-sword-lirian-chronicles-builder/
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

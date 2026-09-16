@@ -55,7 +55,12 @@
     node scripts/test-staging-deploy.mjs --base-url=https://example.test/as
     node scripts/test-staging-deploy.mjs --no-emit --base-url=https://example.test/as
     node scripts/test-staging-deploy.mjs --artifact=dist-staging --base-url=https://example.test/as
+    node scripts/test-staging-deploy.mjs --include-builder --artifact=dist --base-url=https://example.test/as
     node scripts/test-staging-deploy.mjs --target=https://real-host.example/as
+
+  Full-site mode also compares required builder resources to this source
+  checkout. For --target, use the source/artifact from the deployed build;
+  local Windows and fresh Linux CI builds can differ in line endings/maps.
 */
 
 import fs from "node:fs/promises";
@@ -71,7 +76,8 @@ import {
   extractRegistrySidecars,
   PINNED_SENTINEL_ASSETS,
   REGISTRY_RELATIVE_PATH,
-  STAGING_INTEGRITY_FILENAME
+  STAGING_INTEGRITY_FILENAME,
+  buildFileManifest
 } from "./lib/owlbear-staging-assets.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -107,11 +113,12 @@ const MIME_TYPES = new Map([
 ]);
 
 function parseArgs(argv) {
-  const args = { baseUrl: null, outDir: null, noEmit: false, target: null };
+  const args = { baseUrl: null, outDir: null, noEmit: false, target: null, includeBuilder: false };
   for (const raw of argv) {
     if (raw.startsWith("--base-url=")) args.baseUrl = raw.slice("--base-url=".length);
     else if (raw.startsWith("--out=")) args.outDir = raw.slice("--out=".length);
     else if (raw === "--no-emit") args.noEmit = true;
+    else if (raw === "--include-builder") args.includeBuilder = true;
     else if (raw.startsWith("--artifact=")) {
       args.outDir = raw.slice("--artifact=".length);
       args.noEmit = true;
@@ -251,6 +258,48 @@ async function assertArtifactLooksStaged(absOutDir) {
   }
 }
 
+// Derive the full-site requirement from the source tree, independently of
+// the emitted file list. An omitted file must fail even if it never made
+// it into STAGING-INTEGRITY.json in the first place.
+async function builderSourceFiles() {
+  const required = new Set([
+    "index.html", "manifest.webmanifest", "src/css/main.css", "data/ccs-template.xlsx",
+    "assets/app.bundle.js", "assets/lyrian-form-map.js", "assets/versions/manifest.js",
+    "assets/character-sheet-1.2.pdf", "assets/lyrian-google-template.xlsx",
+    "docs/offline-reference/RULES_0.13.2.html", "docs/offline-reference/provenance.json"
+  ]);
+  for (const dir of ["assets", "docs/offline-reference"]) {
+    const listing = await buildFileManifest(path.join(PROJECT_ROOT, dir));
+    for (const file of listing.files) required.add(`${dir}/${file.path}`);
+  }
+  const versionText = await fs.readFile(path.join(PROJECT_ROOT, "assets/versions/manifest.js"), "utf8");
+  const versions = JSON.parse(versionText.replace(/^\s*window\.LYRIAN_VERSION_MANIFEST\s*=\s*/, "").replace(/;\s*$/, ""));
+  if (!Array.isArray(versions.versions) || !versions.versions.length ||
+      !versions.versions.some((version) => version.id === versions.defaultVersion)) {
+    throw new Error("Source rules manifest has no valid default rules version.");
+  }
+  const referenceSources = ["index.html", "src/css/main.css", "src/js/constants.js", "src/js/ui.js"];
+  for (const version of versions.versions.filter((entry) => entry.local)) {
+    for (const key of ["dataPath", "detailPath"]) {
+      if (typeof version[key] !== "string" || !version[key].startsWith("assets/versions/")) {
+        throw new Error(`Source rules version ${version.id} has an invalid ${key}.`);
+      }
+      required.add(version[key]);
+      referenceSources.push(version[key]);
+    }
+  }
+  // Check concrete local references too; directory copies alone cannot
+  // detect an asset that was already missing from the source checkout.
+  for (const relPath of referenceSources) {
+    const text = await fs.readFile(path.join(PROJECT_ROOT, relPath), "utf8");
+    for (const match of text.matchAll(/["']((?:\.\/)?(?:\.\.\/)*(?:assets|docs|data)\/[^"'\s<>?]+\.(?:js|json|html|pdf|xlsx|png|webp|jpg|jpeg|svg|woff2?|ttf))(?:\?[^"']*)?["']/g)) {
+      const ref = match[1];
+      required.add(ref.startsWith("..") ? path.posix.normalize(path.posix.join(path.posix.dirname(relPath), ref)) : ref.replace(/^\.\//, ""));
+    }
+  }
+  return [...required].sort();
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const isTargetMode = args.target !== null;
@@ -279,7 +328,7 @@ async function main() {
     await assertArtifactLooksStaged(absOutDir);
   } else {
     console.log(`--- WS2 deploy-simulation: fresh emit for ${baseUrl} ---`);
-    const emitResult = await publishStaging({ baseUrl, outDir, projectRoot: PROJECT_ROOT, log: (m) => console.log(m) });
+    const emitResult = await publishStaging({ baseUrl, outDir, includeBuilder: args.includeBuilder, projectRoot: PROJECT_ROOT, log: (m) => console.log(m) });
     absOutDir = emitResult.outDir;
     normalizedBase = emitResult.baseUrl;
   }
@@ -314,6 +363,13 @@ async function main() {
       } else {
         try {
           const parsed = JSON.parse(buffer.toString("utf8"));
+          if (!Array.isArray(parsed.files) || parsed.fileCount !== parsed.files.length || !parsed.files.length ||
+              parsed.files.some((file) => typeof file.path !== "string" || !file.path ||
+                file.path.startsWith("/") || file.path.includes("\\") || file.path.split("/").includes("..") ||
+                !Number.isInteger(file.bytes) || file.bytes < 0 || !/^[a-f0-9]{64}$/.test(file.sha256)) ||
+              new Set(parsed.files.map((file) => file.path)).size !== parsed.files.length) {
+            throw new Error("invalid file count, duplicate/unsafe paths, byte lengths or SHA-256 values");
+          }
           integrityByPath = new Map((parsed.files || []).map((f) => [f.path, f]));
           console.log(`  loaded ${integrityByPath.size} recorded file size/hash entrie(s).`);
         } catch (error) {
@@ -402,10 +458,11 @@ async function main() {
         checkIntegrity(relBack, assetBuffer, integrityByPath, failures, `${manifestRel} field "${field}" -> "${relBack}"`);
       }
 
-      if (typeof manifest.homepage_url === "string" && manifest.homepage_url.startsWith(normalizedBase)) {
+      const sourceManifest = JSON.parse(await fs.readFile(path.join(PROJECT_ROOT, extDir, "manifest.json"), "utf8"));
+      if (manifest.homepage_url !== sourceManifest.homepage_url) {
         failures.push(
-          `${manifestRel}: homepage_url was unexpectedly rewritten to the staging base ("${manifest.homepage_url}") ` +
-            "— it should stay the real external homepage untouched."
+          `${manifestRel}: homepage_url changed from source ("${sourceManifest.homepage_url}") to ` +
+            `"${manifest.homepage_url}" — publishing must preserve it, including when it is this same site.`
         );
       }
     }
@@ -458,6 +515,29 @@ async function main() {
       }
       checked += 1;
       checkIntegrity(relPath, buffer, integrityByPath, failures, `${relPath} (registry sidecar)`);
+    }
+
+    if (args.includeBuilder) {
+      console.log("\nChecking full-site builder resources against the source checkout...");
+      for (const relPath of await builderSourceFiles()) {
+        checked += 1;
+        const source = await fs.readFile(path.join(PROJECT_ROOT, relPath));
+        if (!source.length) failures.push(`${relPath}: required builder resource is empty in the source checkout.`);
+        checkIntegrity(relPath, source, integrityByPath, failures, `${relPath} (required builder source)`);
+      }
+      checked += 1;
+      if (!integrityByPath?.has(".nojekyll")) failures.push(".nojekyll: missing from full-site integrity record.");
+      console.log(`Verifying every file in the full-site integrity record (${integrityByPath?.size || 0} files)...`);
+      for (const relPath of integrityByPath?.keys() || []) {
+        checked += 1;
+        const { status, buffer } = await fetchBytes(origin, relPath);
+        if (status !== 200 || !buffer) {
+          failures.push(`${relPath}: full-site resource expected HTTP 200, got ${status}`);
+          continue;
+        }
+        checked += 1;
+        checkIntegrity(relPath, buffer, integrityByPath, failures, `${relPath} (full site)`);
+      }
     }
 
     console.log(`\nChecked ${checked} condition(s) covering ${EXTENSION_DIRS.length} manifests and ${closureFiles.length} closure files.`);

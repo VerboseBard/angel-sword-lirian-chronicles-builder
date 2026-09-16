@@ -105,7 +105,7 @@ try {
   await page.click('[data-play-mode="table"]:visible');
   await page.waitForSelector('#play-table-tools:not([hidden])');
   const tableTools = await page.evaluate(() => ({
-    modeLabels: [...document.querySelectorAll('#play-header-card [data-play-mode]')].map((button) => button.innerText.trim()),
+    modeLabels: [...document.querySelectorAll('#play-header-card [data-play-mode]')].map((button) => button.innerText.replace(/\s+/g, " ").trim()),
     actions: [...document.querySelectorAll('#play-table-tools [data-table-tool-action]')].map((button) => button.dataset.tableToolAction),
     guides: [...document.querySelectorAll('#play-table-tools [data-table-tool-guide]')].map((button) => button.dataset.tableToolGuide),
     platformStatuses: [...document.querySelectorAll('#play-table-tools .table-platform-card')].map((card) => ({
@@ -114,12 +114,12 @@ try {
     })),
     hasRedundantAllConnections: document.querySelector('#play-table-tools')?.textContent.includes('All Connections') || false
   }));
-  if (tableTools.modeLabels.join("|") !== "Combat|Crafting|Gathering|Table Tools"
+  if (tableTools.modeLabels.join("|") !== "Combat|Crafting Alpha — still in testing|Gathering Alpha — still in testing|Table Tools Alpha — still in testing"
     || !["save", "load", "export", "import", "recalculate", "builder"].every((action) => tableTools.actions.includes(action))
     || tableTools.actions.includes("connections")
     || !["character-files", "roll20", "owlbear", "foundry", "world-anvil", "official-builder"].every((guide) => tableTools.guides.includes(guide))
     || tableTools.platformStatuses.find((entry) => entry.name === "Owlbear Rodeo")?.status !== "Alpha"
-    || tableTools.platformStatuses.find((entry) => entry.name === "Official Clio Builder")?.status !== "Verified"
+    || tableTools.platformStatuses.find((entry) => entry.name === "Official Clio Builder")?.status !== "Alpha — still in testing"
     || tableTools.platformStatuses.filter((entry) => !["Owlbear Rodeo", "Official Clio Builder"].includes(entry.name)).some((entry) => entry.status !== "Coming Soon")
     || tableTools.hasRedundantAllConnections) {
     throw new Error(`Table Tools workspace is incomplete: ${JSON.stringify(tableTools)}`);

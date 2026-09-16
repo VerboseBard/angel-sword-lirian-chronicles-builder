@@ -315,10 +315,11 @@ This applies the extra starting Clim and removes selections that are unavailable
               data-play-mode="${d(t)}"
               class="${t===e?"is-active":""}"
               aria-pressed="${t===e?"true":"false"}"
-              aria-label="${d(t==="combat"?"Character Sheet":a)}"
+              aria-label="${d(t==="combat"?"Character Sheet":`${a} \u2014 Alpha \u2014 still in testing`)}"
             >
               <span class="play-mode-label-desktop" aria-hidden="true">${d(a)}</span>
               <span class="play-mode-label-mobile" aria-hidden="true">${d(t==="combat"?"Character Sheet":a)}</span>
+              ${t==="combat"?"":'<small class="play-mode-alpha" aria-hidden="true">Alpha \u2014 still in testing</small>'}
             </button>
           `).join("")}
         </div>
@@ -331,8 +332,8 @@ This applies the extra starting Clim and removes selections that are unavailable
           </div>
           <div class="table-tools-status-row" aria-label="Table tool status">
             <span class="integration-status is-ready">Character files ready</span>
-            <span class="integration-status is-warn">Connections in Alpha</span>
-            <span class="integration-status is-ready">Official builder verified</span>
+            <span class="integration-status is-warn">Alpha \u2014 still in testing</span>
+            <span class="integration-status is-warn">Official file exchange in testing</span>
           </div>
         </div>
 
@@ -390,8 +391,8 @@ This applies the extra starting Clim and removes selections that are unavailable
               <span class="table-platform-card-link">Open Owlbear walkthrough <span aria-hidden="true">&rarr;</span></span>
             </button>
             <button type="button" class="table-platform-card table-platform-card-wide" data-table-tool-guide="official-builder">
-              <span class="table-platform-card-head"><strong>Official Clio Builder</strong><span class="integration-status is-ready">Verified</span></span>
-              <span>Move characters in either direction using the tested official character-file exchange.</span>
+              <span class="table-platform-card-head"><strong>Official Clio Builder</strong><span class="integration-status is-warn">Alpha \u2014 still in testing</span></span>
+              <span>Import and export official character files. Compatibility is still being tested; review imported choices before saving.</span>
               <span class="table-platform-card-link">Open official builder walkthrough <span aria-hidden="true">&rarr;</span></span>
             </button>
             <button type="button" class="table-platform-card" data-table-tool-guide="roll20">
@@ -415,6 +416,7 @@ This applies the extra starting Clim and removes selections that are unavailable
         <div class="play-panel play-crafting-dashboard-panel">
           <p class="eyebrow">${d(a)}</p>
           <h3>${d(`${a} Workspace`)}</h3>
+          <span class="integration-status is-warn">Alpha \u2014 still in testing</span>
           <p class="play-empty">This workspace could not render because one rule or material entry is incomplete. ${d(t?.message||String(t||""))}</p>
         </div>
       `}function Xp(e=""){try{return pw(e)}catch(t){return console.error(t),Jk(e,t)}}function ps(){let e=Array.from(document.querySelectorAll("#play-tab-nav [data-play-tab]")),t=l.ui.sheetTab||"actions";e.some(a=>a.dataset.playTab===t)||(t=e[0]?.dataset.playTab||"actions",l.ui.sheetTab=t),e.forEach(a=>{a.classList.toggle("is-active",a.dataset.playTab===t)}),document.querySelectorAll("[data-play-tab-panel]").forEach(a=>{a.classList.toggle("is-hidden",a.dataset.playTabPanel!==t)})}function lc(){return window.matchMedia("(max-width: 700px)").matches}function td(e){let t=p(e);return Zi.includes(t)?t:"overview"}function Zk(e){return e==="actions"?"combat":e==="abilities"?"abilities":e==="inventory"?"inventory":Zc.has(e)?"character":"overview"}function zr(){let e=document.getElementById("sheet-view"),t=document.getElementById("play-mobile-sheet-dock"),a=document.getElementById("play-mobile-page-nav"),n=document.getElementById("play-mobile-walkthrough-nav");if(!e||!t||!a||!n)return;let i=ai(),s=td(l.ui.mobileSheetPage),r=i==="combat";l.ui.mobileSheetPage=s,e.dataset.mobileSheetPage=s,e.dataset.mobilePlayMode=i,t.classList.toggle("is-walkthrough-mode",!r),a.hidden=!r,a.setAttribute("aria-hidden",r?"false":"true"),n.hidden=r,n.setAttribute("aria-hidden",r?"true":"false"),n.querySelectorAll("[data-play-mode]").forEach(o=>{let c=o.dataset.playMode===i;o.classList.toggle("is-active",c),o.setAttribute("aria-pressed",c?"true":"false")}),a.querySelectorAll("[data-mobile-sheet-page]").forEach(o=>{let c=o.dataset.mobileSheetPage===s;o.classList.toggle("is-active",c),o.setAttribute("aria-current",c?"page":"false")})}function cc(e,{persist:t=!0,scroll:a=!0}={}){let n=td(e);l.ui.mobileSheetPage=n,Qp[n]?l.ui.sheetTab=Qp[n]:n==="character"&&(l.ui.sheetTab=Zc.has(l.ui.mobileCharacterTab)?l.ui.mobileCharacterTab:"proficiencies"),ps(),zr(),t&&Q(!1),a&&lc()&&requestAnimationFrame(()=>{document.getElementById("play-mobile-sheet-dock")?.scrollIntoView({behavior:"auto",block:"start"});let i=document.getElementById("play-mobile-page-nav"),s=i?.querySelector(`[data-mobile-sheet-page="${bt(n)}"]`);if(i&&s&&i.scrollWidth>i.clientWidth+1){let r=s.offsetLeft-(i.clientWidth-s.offsetWidth)/2;i.scrollTo({left:Math.max(0,r),behavior:"auto"})}})}function eS(e){let t=td(l.ui.mobileSheetPage),n=(Zi.indexOf(t)+e+Zi.length)%Zi.length;cc(Zi[n])}function Jp(e,t,a="",n=""){return`
@@ -1777,6 +1779,7 @@ This applies the extra starting Clim and removes selections that are unavailable
               <div>
                 <p class="eyebrow">Crafting Wizard - Step ${T+1} of ${nt.length}</p>
                 <h3>${d(U.title)}</h3>
+                <span class="integration-status is-warn">Alpha \u2014 still in testing</span>
                 <p class="play-wizard-lead">${d(U.lead)}</p>
               </div>
               ${sw(T)}
@@ -1929,6 +1932,7 @@ This applies the extra starting Clim and removes selections that are unavailable
               <div>
                 <p class="eyebrow">Gathering Wizard - Step ${T+1} of ${Qe.length}</p>
                 <h3>${d(U.title)}</h3>
+                <span class="integration-status is-warn">Alpha \u2014 still in testing</span>
                 <p class="play-wizard-lead">${d(U.lead)}</p>
               </div>
               ${cw(T)}
@@ -3311,12 +3315,12 @@ The app cannot verify this requirement. Has the GM approved it for this characte
               <button type="button" class="sheet-modal-action" data-sheet-modal-close>Close</button>
             </div>
           </div>
-        `})}function sA(){Oe({eyebrow:"Verified Character Exchange",title:"Official Clio Builder \u2014 Verified",lead:"Characters have been successfully moved in both directions between this builder and the official Angel Sword character vault.",content:`
+        `})}function sA(){Oe({eyebrow:"Character File Exchange",title:"Official Clio Builder",lead:"Official character-file exchange is still being tested. Review imported choices and statistics before saving in either builder.",content:`
           <div class="sheet-modal-success table-tools-guide connection-walkthrough">
             <div class="table-tools-status-row">
-              <span class="integration-status is-ready">Verified</span>
-              <span class="integration-status is-ready">Import ready</span>
-              <span class="integration-status is-ready">Export ready</span>
+              <span class="integration-status is-warn">Alpha \u2014 still in testing</span>
+              <span class="integration-status">Import available</span>
+              <span class="integration-status">Export available</span>
             </div>
             <section>
               <strong>Move this character to the official builder</strong>

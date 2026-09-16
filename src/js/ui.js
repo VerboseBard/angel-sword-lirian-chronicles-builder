@@ -9827,10 +9827,11 @@ function renderPlayModeSwitch(activeMode = getActivePlayMode()) {
               data-play-mode="${escapeHtml(mode)}"
               class="${mode === activeMode ? "is-active" : ""}"
               aria-pressed="${mode === activeMode ? "true" : "false"}"
-              aria-label="${escapeHtml(mode === "combat" ? "Character Sheet" : label)}"
+              aria-label="${escapeHtml(mode === "combat" ? "Character Sheet" : `${label} — Alpha — still in testing`)}"
             >
               <span class="play-mode-label-desktop" aria-hidden="true">${escapeHtml(label)}</span>
               <span class="play-mode-label-mobile" aria-hidden="true">${escapeHtml(mode === "combat" ? "Character Sheet" : label)}</span>
+              ${mode === "combat" ? "" : '<small class="play-mode-alpha" aria-hidden="true">Alpha — still in testing</small>'}
             </button>
           `).join("")}
         </div>
@@ -9858,8 +9859,8 @@ function renderPlayTableToolsPanel() {
           </div>
           <div class="table-tools-status-row" aria-label="Table tool status">
             <span class="integration-status is-ready">Character files ready</span>
-            <span class="integration-status is-warn">Connections in Alpha</span>
-            <span class="integration-status is-ready">Official builder verified</span>
+            <span class="integration-status is-warn">Alpha — still in testing</span>
+            <span class="integration-status is-warn">Official file exchange in testing</span>
           </div>
         </div>
 
@@ -9917,8 +9918,8 @@ function renderPlayTableToolsPanel() {
               <span class="table-platform-card-link">Open Owlbear walkthrough <span aria-hidden="true">&rarr;</span></span>
             </button>
             <button type="button" class="table-platform-card table-platform-card-wide" data-table-tool-guide="official-builder">
-              <span class="table-platform-card-head"><strong>Official Clio Builder</strong><span class="integration-status is-ready">Verified</span></span>
-              <span>Move characters in either direction using the tested official character-file exchange.</span>
+              <span class="table-platform-card-head"><strong>Official Clio Builder</strong><span class="integration-status is-warn">Alpha — still in testing</span></span>
+              <span>Import and export official character files. Compatibility is still being tested; review imported choices before saving.</span>
               <span class="table-platform-card-link">Open official builder walkthrough <span aria-hidden="true">&rarr;</span></span>
             </button>
             <button type="button" class="table-platform-card" data-table-tool-guide="roll20">
@@ -9946,6 +9947,7 @@ function renderPlayDowntimePanelError(activityMode, error) {
         <div class="play-panel play-crafting-dashboard-panel">
           <p class="eyebrow">${escapeHtml(modeLabel)}</p>
           <h3>${escapeHtml(`${modeLabel} Workspace`)}</h3>
+          <span class="integration-status is-warn">Alpha — still in testing</span>
           <p class="play-empty">This workspace could not render because one rule or material entry is incomplete. ${escapeHtml(error?.message || String(error || ""))}</p>
         </div>
       `;
@@ -15982,6 +15984,7 @@ const gatheringWorkflowStepBadge = (step) => (isGatheringMode && step
               <div>
                 <p class="eyebrow">Crafting Wizard - Step ${wizardIndex + 1} of ${CRAFTING_WIZARD_STEPS.length}</p>
                 <h3>${escapeHtml(stepMeta.title)}</h3>
+                <span class="integration-status is-warn">Alpha — still in testing</span>
                 <p class="play-wizard-lead">${escapeHtml(stepMeta.lead)}</p>
               </div>
               ${renderCraftingWizardNav(wizardIndex)}
@@ -16162,6 +16165,7 @@ const gatheringWorkflowStepBadge = (step) => (isGatheringMode && step
               <div>
                 <p class="eyebrow">Gathering Wizard - Step ${gatheringWizardIndex + 1} of ${GATHERING_WIZARD_STEPS.length}</p>
                 <h3>${escapeHtml(gatheringStepMeta.title)}</h3>
+                <span class="integration-status is-warn">Alpha — still in testing</span>
                 <p class="play-wizard-lead">${escapeHtml(gatheringStepMeta.lead)}</p>
               </div>
               ${renderGatheringWizardNav(gatheringWizardIndex)}
@@ -23689,15 +23693,15 @@ function openWorldAnvilSetupGuide() {
     }
 function openOfficialBuilderGuide() {
       openSheetModal({
-        eyebrow: "Verified Character Exchange",
-        title: "Official Clio Builder — Verified",
-        lead: "Characters have been successfully moved in both directions between this builder and the official Angel Sword character vault.",
+        eyebrow: "Character File Exchange",
+        title: "Official Clio Builder",
+        lead: "Official character-file exchange is still being tested. Review imported choices and statistics before saving in either builder.",
         content: `
           <div class="sheet-modal-success table-tools-guide connection-walkthrough">
             <div class="table-tools-status-row">
-              <span class="integration-status is-ready">Verified</span>
-              <span class="integration-status is-ready">Import ready</span>
-              <span class="integration-status is-ready">Export ready</span>
+              <span class="integration-status is-warn">Alpha — still in testing</span>
+              <span class="integration-status">Import available</span>
+              <span class="integration-status">Export available</span>
             </div>
             <section>
               <strong>Move this character to the official builder</strong>

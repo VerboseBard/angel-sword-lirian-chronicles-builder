@@ -16,6 +16,7 @@
   Usage:
     node scripts/publish-staging.mjs --base-url=https://example.test/angel-sword-staging
     node scripts/publish-staging.mjs --base-url=https://example.test/as --out=dist-staging
+    node scripts/publish-staging.mjs --include-builder --base-url=https://example.test/as --out=dist
     LYRIAN_STAGING_BASE_URL=https://example.test/as node scripts/publish-staging.mjs
 */
 
@@ -60,7 +61,7 @@ async function pathExists(p) {
 }
 
 function parseArgs(argv) {
-  const args = { baseUrl: null, outDir: null, skipBuild: false };
+  const args = { baseUrl: null, outDir: null, skipBuild: false, includeBuilder: false };
   for (const raw of argv) {
     if (raw.startsWith("--base-url=")) {
       args.baseUrl = raw.slice("--base-url=".length);
@@ -68,6 +69,8 @@ function parseArgs(argv) {
       args.outDir = raw.slice("--out=".length);
     } else if (raw === "--skip-build") {
       args.skipBuild = true;
+    } else if (raw === "--include-builder") {
+      args.includeBuilder = true;
     } else if (!raw.startsWith("--") && !args.baseUrl) {
       args.baseUrl = raw;
     }
@@ -293,6 +296,7 @@ export async function publishStaging({
   outDir = DEFAULT_OUT_DIR,
   projectRoot = PROJECT_ROOT,
   skipBuild = false,
+  includeBuilder = false,
   log = () => {}
 } = {}) {
   const normalizedBaseUrl = normalizeBaseUrl(baseUrl);
@@ -302,6 +306,13 @@ export async function publishStaging({
   await assertSafeOutDir(absOutDir, projectRoot);
 
   if (!skipBuild) {
+    if (includeBuilder) {
+      log("Building the character builder (node scripts/build-app.mjs)...");
+      execFileSync(process.execPath, [path.join(projectRoot, "scripts", "build-app.mjs")], {
+        cwd: projectRoot,
+        stdio: "inherit"
+      });
+    }
     log("Building Owlbear extension bundles (node scripts/build-owlbear.mjs)...");
     execFileSync(process.execPath, [path.join(projectRoot, "scripts", "build-owlbear.mjs")], {
       cwd: projectRoot,
@@ -322,6 +333,19 @@ export async function publishStaging({
   const { sharedAssets } = await crawlExtensionAssets(projectRoot);
   for (const relPath of sharedAssets) {
     await copySharedAsset(projectRoot, absOutDir, relPath);
+  }
+
+  // Full-site publishing uses the same guarded emitter as extension-only
+  // staging. Copy these before sealing so the integrity record covers every
+  // builder resource, including the CCS export and offline rules reference.
+  if (includeBuilder) {
+    for (const dir of ["assets", "docs/offline-reference"]) {
+      await copyDirWholesale(path.join(projectRoot, dir), path.join(absOutDir, dir));
+    }
+    for (const relPath of ["index.html", "manifest.webmanifest", "src/css/main.css", "data/ccs-template.xlsx"]) {
+      await copySharedAsset(projectRoot, absOutDir, relPath);
+    }
+    await fs.writeFile(path.join(absOutDir, ".nojekyll"), "", "utf8");
   }
 
   const manifests = [];
@@ -370,6 +394,7 @@ async function main() {
     baseUrl,
     outDir: args.outDir || DEFAULT_OUT_DIR,
     skipBuild: args.skipBuild,
+    includeBuilder: args.includeBuilder,
     log: (msg) => console.log(msg)
   });
 
@@ -390,8 +415,10 @@ async function main() {
   );
   console.log(
     `\nAfter uploading, verify the live host (read-only, GET only, nothing written) with:\n` +
-      `  node scripts/test-staging-deploy.mjs --target=${result.baseUrl}`
+      `  node scripts/test-staging-deploy.mjs --artifact="${result.outDir}" --target=${result.baseUrl}` +
+      (args.includeBuilder ? " --include-builder" : "")
   );
+  console.log("This verification assumes these exact emitted bytes were uploaded; a fresh CI build needs its matching artifact/source checkout.");
 }
 
 function isRunAsScript() {

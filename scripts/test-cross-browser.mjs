@@ -420,7 +420,7 @@ async function runMobileSheetAppAssertions(page, browserName) {
       return rect.left >= pageNavRect.left - 1 && rect.right <= pageNavRect.right + 1;
     });
     return {
-      visibleModeLabels: modeButtons.map((button) => button.innerText.trim()),
+      visibleModeLabels: modeButtons.map((button) => button.innerText.replace(/\s+/g, ' ').trim()),
       positions,
       toolbarHidden: getComputedStyle(document.querySelector('#sheet-view .sheet-toolbar')).display === 'none',
       dockVisible: getComputedStyle(document.getElementById('play-mobile-sheet-dock')).display !== 'none',
@@ -432,7 +432,7 @@ async function runMobileSheetAppAssertions(page, browserName) {
     };
   });
 
-  const labelsValid = initial.visibleModeLabels.join('|') === 'Character Sheet|Crafting|Gathering|Table Tools';
+  const labelsValid = initial.visibleModeLabels.join('|') === 'Character Sheet|Crafting Alpha — still in testing|Gathering Alpha — still in testing|Table Tools Alpha — still in testing';
   const visualOrderValid = initial.positions.combat < initial.positions.gathering
     && initial.positions.gathering < initial.positions.crafting
     && initial.positions.crafting < initial.positions.table;
@@ -581,7 +581,7 @@ async function runVttIntegrationAssertions(page, browserName, targetUrl, isMobil
   const expectedPlatforms = ['Roll20', 'Owlbear Rodeo', 'Foundry VTT', 'World Anvil', 'Official Clio Builder'];
   const expectedPlatformStatuses = {
     'Owlbear Rodeo': 'Alpha',
-    'Official Clio Builder': 'Verified',
+    'Official Clio Builder': 'Alpha — still in testing',
     'Roll20': 'Coming Soon',
     'Foundry VTT': 'Coming Soon',
     'World Anvil': 'Coming Soon'
