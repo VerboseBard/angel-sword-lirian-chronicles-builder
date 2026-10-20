@@ -25,7 +25,8 @@ bundled so the CCS export works in one click.
 4. After building the app, run `node scripts/test-patch-0132-ui.mjs` to verify
    the actual CCS download's stat selectors, residual bonuses and preserved
    formulas, including custom arrays and racial/class/breakthrough bonuses.
-5. Update the captured-date/size/sha line above.
+5. Update the captured-date/size/sha line above **and `CCS_TEMPLATE_INFO` in `src/js/constants.js`** (the exporter writes it into `Core!R1` of every exported sheet so a reviewer can tell which template made the file; `node scripts/test-025-fixes.mjs` fails if it no longer matches the bundled file).
+6. Re-check the cells the exporter fills for gear and adjustments (`Core!G37:K42`, `E33`, `H33`, `G34`, `E35`, `H35`) against the new formulas; `scripts/test-025-fixes.mjs` section F4 pins the formulas it relies on.
 
 ## Why the template is patched, not rebuilt
 

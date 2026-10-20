@@ -1,15 +1,15 @@
-import { BUILDER_STEPS, CHARACTER_START_MODES, CLASS_GROUP_ROLE_ORDER, DEFAULT_CHARACTER_START_MODE, CLASS_PASSIVE_SLOTS, CLASS_PURCHASABLE_LEVELS, CLASS_ROWS, CLICKABLE_ROLL_FIELDS, COMMON_WEAPON_GROUP_OPTIONS, CREATION_INTERLUDE_ACTIONS, CREATION_SKILL_POINT_BUDGET, DEFAULT_DICE_SET_ID, DICE_PREVIEW_FALLBACK_URL, DICE_SETS, DICE_SET_ID_ALIASES, DICE_SOUND_ASSETS, DICE_TRAY_TYPES, EMBEDDED_STATE_CHUNK_SIZE, EMBEDDED_STATE_FORMAT, ENABLE_ACCURATE_DICE_ROLLS, ENABLE_WEBGL_DICE_ROLLS, INVENTORY_ROWS, MAIN_STATS, MAIN_STAT_CREATION_ARRAY, MAX_DICE_TRAY_DICE, MIRANE_CRAFTING_INTERLUDE_EXP, MIRANE_GATHER_BASE_UNITS, MIRANE_GATHER_MASTERY_BONUS_UNITS, MIRANE_IP_SHOP_PRICE_CAP, MIRANE_IP_SHOP_SALE_PERCENT_CAP, MIRANE_IP_SHOP_SLOT_LIMIT, MIRANE_JOB_ARTISAN_BONUS_CLIM, MIRANE_JOB_BASE_CLIM, MIRANE_RAW_MATERIAL_CLIM_LIMIT, MIRANE_SINGLE_MATERIAL_CLIM_LIMIT, MIRANE_START_MODE_ID, MULTILINE_FIELDS, NAME_FIELDS, OFFICIAL_LANGUAGE_OPTIONS, PAGE_BACKGROUNDS, PASSIVE_READ_ONLY_FIELDS, PDF_STATE_CHUNK_FIELD_PREFIX, PDF_STATE_MANIFEST_FIELD, PLAY_BASIC_ACTIONS, PLAY_ROLLS, PORTRAIT_JPEG_QUALITY, PORTRAIT_MAX_DIMENSION, PORTRAIT_NORMALIZE_THRESHOLD, SAVE_SNAPSHOT_PORTRAIT_LIMIT, SECONDARY_STATS, SECONDARY_STAT_CREATION_ARRAY, SKILL_ALIASES, SKILL_DEFINITIONS, SKILL_EXPERTISE_CAP, SKILL_EXPERTISE_OPTIONS, SKILL_OPTIONS, SKILL_POINT_CAP, SPECIALITY_WEAPON_GROUP_OPTIONS, STARTING_CLASS_EXP, STARTING_INTERLUDE_POINTS, SUBSTAT_OPTIONS, WEAPON_GROUP_REFERENCE_OPTIONS } from "./constants.js";
+import { BUILDER_STEPS, CCS_TEMPLATE_INFO, DUPLICATE_ABILITY_REFUND_RULE, CHARACTER_START_MODES, CLASS_GROUP_ROLE_ORDER, DEFAULT_CHARACTER_START_MODE, CLASS_PASSIVE_SLOTS, CLASS_PURCHASABLE_LEVELS, CLASS_ROWS, CLICKABLE_ROLL_FIELDS, COMMON_WEAPON_GROUP_OPTIONS, CREATION_INTERLUDE_ACTIONS, CREATION_SKILL_POINT_BUDGET, DEFAULT_DICE_SET_ID, DICE_PREVIEW_FALLBACK_URL, DICE_SETS, DICE_SET_ID_ALIASES, DICE_SOUND_ASSETS, DICE_TRAY_TYPES, EMBEDDED_STATE_CHUNK_SIZE, EMBEDDED_STATE_FORMAT, ENABLE_ACCURATE_DICE_ROLLS, ENABLE_WEBGL_DICE_ROLLS, INVENTORY_ROWS, MAIN_STATS, MAIN_STAT_CREATION_ARRAY, MAX_DICE_TRAY_DICE, MIRANE_CRAFTING_INTERLUDE_EXP, MIRANE_GATHER_BASE_UNITS, MIRANE_GATHER_MASTERY_BONUS_UNITS, MIRANE_IP_SHOP_PRICE_CAP, MIRANE_IP_SHOP_SALE_PERCENT_CAP, MIRANE_IP_SHOP_SLOT_LIMIT, MIRANE_JOB_ARTISAN_BONUS_CLIM, MIRANE_JOB_BASE_CLIM, MIRANE_RAW_MATERIAL_CLIM_LIMIT, MIRANE_SINGLE_MATERIAL_CLIM_LIMIT, MIRANE_START_MODE_ID, MULTILINE_FIELDS, NAME_FIELDS, OFFICIAL_LANGUAGE_OPTIONS, PAGE_BACKGROUNDS, PASSIVE_READ_ONLY_FIELDS, PDF_STATE_CHUNK_FIELD_PREFIX, PDF_STATE_MANIFEST_FIELD, PLAY_BASIC_ACTIONS, PLAY_ROLLS, PORTRAIT_JPEG_QUALITY, PORTRAIT_MAX_DIMENSION, PORTRAIT_NORMALIZE_THRESHOLD, SAVE_SNAPSHOT_PORTRAIT_LIMIT, SECONDARY_STATS, SECONDARY_STAT_CREATION_ARRAY, SKILL_ALIASES, SKILL_DEFINITIONS, SKILL_EXPERTISE_CAP, SKILL_EXPERTISE_OPTIONS, SKILL_OPTIONS, SKILL_POINT_CAP, SPECIALITY_WEAPON_GROUP_OPTIONS, STARTING_CLASS_EXP, STARTING_INTERLUDE_POINTS, SUBSTAT_OPTIONS, WEAPON_GROUP_REFERENCE_OPTIONS } from "./constants.js";
 import { asArray, clamp, cleanText, cssEscape, escapeHtml, formatModifier, normalizeKey, normalizePhrase, splitSentences, toNumber } from "./utils.js";
 import { clearSheet, createDefaultState, flushScheduledWorkingStatePersist, getSavedSlots, mergePlayState, persistWorkingState, scheduleWorkingStatePersist, setWorkingStatePersistenceReady, state, updateFieldValue } from "./state.js";
-import { applyGameVersion, detailLookup, exportPrepCache, getAncestryDetail, getAncestryOptionsByPrimaryRace, getAncestryRequirementPhrases, getBreakthroughBudgetState, getBuilderChoiceDefinitionsCacheKey, getCampaignProgressState, getCharacterStartMode, getClassDetail, getClassUnlockBudgetState, getComputedBonuses, getCurrentSecondaryLineageMode, getDemonClanOptions, getDerivedCombatStats, getHumanRaceSkillChoiceOptions, getRaceDetail, getRaceRequirementPhrases, getSecondaryLineageLabels, getSelectedAncestryDetail, getSelectedBreakthroughRecords, getSelectedClassDetails, getSelectedClassProgress, getSelectedGameVersionId, getSelectedItemRecords, getSelectedRaceDetail, getSkillBreakdownParts, getSkillRowsData, getStartingFundsState, getVersionRecords, lookup, syncPlayResourcesFromFields, usePlayCost, versionRuntime } from "./rules.js";
+import { applyGameVersion, detailLookup, exportPrepCache, getAncestryDetail, getAncestryOptionsByPrimaryRace, getAncestryRequirementPhrases, getBreakthroughBudgetState, getBuilderChoiceDefinitionsCacheKey, getCampaignProgressState, getCharacterStartMode, getClassDetail, getClassUnlockBudgetState, getComputedBonuses, getCurrentMainStatValues, getCurrentSecondaryLineageMode, getDemonClanOptions, getDerivedCombatStats, getInitiativeBreakdown, getSaveBreakdown, getHumanRaceSkillChoiceOptions, getRaceDetail, getRaceRequirementPhrases, getSecondaryLineageLabels, getSelectedAncestryDetail, getSelectedBreakthroughRecords, getSelectedClassDetails, getSelectedClassProgress, getSelectedGameVersionId, getSelectedItemRecords, getSelectedRaceDetail, getSkillBreakdownParts, getSkillRowsData, getStartingFundsState, getVersionRecords, lookup, rememberPlayResourcesBeforeBuilderVisit, restorePlayResourcesAfterBuilderVisit, syncPlayResourcesFromFields, usePlayCost, versionRuntime } from "./rules.js";
 import { dicePackRuntime, preloadDiceSetFaceArt, renderDiceTray } from "./dice.js";
 import { closeSheetModal, deriveSaveSlotName, exportJsonState, exportPatchedTemplateWorkbook, exportPdfState, exportSpreadsheetState, exportState, extractAbilityHeading, getWorksheetNumberText, getWorksheetText, handleImportedCharacterFile, handleSaveSlotAction, loadFromBrowser, openSheetModal, parseClimCost, parseNumericCost, saveCurrentCharacterToActiveSlot, saveCurrentCharacterToNewSlot, saveToBrowser, setSpreadsheetExportCell } from "./io.js";
 import { ensureDiceRuntimeLoaded, isDiceRuntimeLoaded } from "./runtime-loader.js";
 import { buildCharacterProfileSummary, buildRoll20AbilityMacro, buildRoll20ActionMacro, buildRoll20CharacterMacro, buildWorldAnvilBBCodeProfile, copyIntegrationText, VTT_PLATFORM_URLS } from "./integrations.js";
 import { BRIDGE_STATES, buildTokenModCommand, createRoll20Bridge } from "./roll20-bridge.js";
-import { getOwlbearOpenerState, publishVttEvent, publishVttHandoff, subscribeVttRoomEvents } from "./vtt-relay.js";
+import { getOwlbearOpenerState, isOpenedByOwlbearCompanion, publishVttEvent, publishVttHandoff, subscribeVttRoomEvents } from "./vtt-relay.js";
 import { buildAscharCharacter, normalizeAscharCharacter, wrapAscharExport } from "./aschar.js";
-import { APP_RELEASE_NOTES } from "./release-notes.js";
+import { APP_RELEASE_NOTES, APP_RELEASE_SUMMARY } from "./release-notes.js";
 
 const DICE_ASSET_REVISION = "20260811-srgb-dice-v1";
 const DICE_PACK_MANIFEST_URL = `assets/dice/dice-pack-manifest.json?v=${DICE_ASSET_REVISION}`;
@@ -22,6 +22,21 @@ const DICE_PACK_MANIFEST_URL = `assets/dice/dice-pack-manifest.json?v=${DICE_ASS
       "BDescription",
       ...Array.from({ length: 24 }, (_, index) => `Ability${index + 1}`)
     ]);
+const SPREADSHEET_CLASS_FIRST_ROW = 15;
+const SPREADSHEET_CLASS_ROW_COUNT = 21;
+// Task 038 (ledger B17): the official sheet template's list rows, read from
+// data/ccs-template.xlsx (2026-09-07): Breakthrough!A2:A37 (its data validation
+// range) and Inventory!A2:A137 (the range its totals add up). The import reads
+// at least these rows, and further down when a sheet has more filled rows.
+const SPREADSHEET_BREAKTHROUGH_LAST_ROW = 37;
+const SPREADSHEET_INVENTORY_LAST_ROW = 137;
+function getWorksheetLastRow(sheet, templateLastRow) {
+      const ref = cleanText(sheet?.["!ref"] || "");
+      const lastRow = Number(/(\d+)$/.exec(ref.split(":").pop() || "")?.[1] || 0);
+      // A sheet formatted to the bottom can claim a million rows; 5000 is far
+      // past any real character.
+      return Math.max(templateLastRow, Math.min(5000, Number.isFinite(lastRow) ? lastRow : 0));
+    }
 const SPREADSHEET_MAIN_STAT_ROWS = {
       Toughness: 45,
       Power: 46,
@@ -176,17 +191,40 @@ const selectedVersion = getSelectedGameVersionId();
         option.selected = version.id === selectedVersion;
         select.appendChild(option);
       });
-      updateList.innerHTML = "";
-const title = document.createElement("p");
-      title.innerHTML = `<strong>Latest update</strong>`;
-      updateList.appendChild(title);
-const list = document.createElement("ul");
-      APP_RELEASE_NOTES.forEach((item) => {
-const entry = document.createElement("li");
-        entry.textContent = item;
-        list.appendChild(entry);
+      // Task 042 (owner design, 2026-10-19): under the version selector the
+      // sidebar shows three short lines only: the builder version (static in
+      // index.html), the rules version selected here, and the one-line update
+      // summary. The full list opens in a popup ("See full update list"), so
+      // the sidebar steps are not pushed down.
+const rulesLine = updateList.querySelector("[data-latest-update-rules]");
+      if (rulesLine) {
+        rulesLine.textContent = `Rules ${selectedVersion}`;
+      }
+const summaryLine = updateList.querySelector("[data-latest-update-line]");
+      if (summaryLine) {
+        summaryLine.textContent = APP_RELEASE_SUMMARY;
+      }
+    }
+// Task 042: the full curated list (task 039's lines, one heading, one flat
+// list as before) in the builder's own dialog. The player stays in the builder.
+function openReleaseNotesModal() {
+const buildVersion = cleanText(document.querySelector(".builder-build-version strong")?.textContent) || "Builder";
+      openSheetModal({
+        eyebrow: `Builder ${buildVersion}`,
+        title: "Latest update",
+        lead: APP_RELEASE_SUMMARY,
+        content: `
+          <div class="sheet-modal-success release-notes-guide" data-release-notes-list>
+            <ul>
+              ${APP_RELEASE_NOTES.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+            </ul>
+            <div class="sheet-modal-form-actions">
+              <button type="button" class="sheet-modal-action" data-sheet-modal-close>Close</button>
+            </div>
+          </div>
+        `
       });
-      updateList.appendChild(list);
+      document.getElementById("sheet-modal-close")?.focus();
     }
 export function loadScriptAsset(src) {
       // No cache-buster: rules data and dice assets live at version-specific
@@ -1402,7 +1440,7 @@ const profileNameInput = document.querySelector('[data-profile-field="Name"]');
 
       refreshSheetToolbar();
       refreshBuilderIdentity();
-      renderBuilderDetail();
+      rerenderActiveBuilderDetail();
       renderBuilderSummary();
       if (options.renderPlay !== false) {
         renderPlayDashboardIfVisible();
@@ -1712,11 +1750,29 @@ function getClassRequirementsText(record) {
         record?.requirements
       );
     }
+// Task 025 F6: the Human-Chimera Hybrid breakthrough says "You do not get the
+// 100 extra exp that humans normally get or human adaptability." The +100 EXP is
+// removed in rules.js (getCreationClassExpState); this removes the ability.
+const HUMAN_ADAPTABILITY_ABILITY_IDS = new Set(["human-adaptability", "2e0a8599-3bfd-4efb-bee5-9098f82e2536"]);
+function isHumanChimeraHybridHeld() {
+      return getSelectedBreakthroughRecords().some((entry) => normalizePhrase(entry?.name) === "human chimera hybrid race");
+    }
+function isAbilityRemovedByHeldBreakthrough(ability) {
+      if (!ability || typeof ability !== "object") {
+        return false;
+      }
+      const isHumanAdaptability = normalizePhrase(ability.name) === "human adaptability"
+        || [ability.id, ability.indexId, ability.trueAbilityId, ability.abilityId].some((value) => HUMAN_ADAPTABILITY_ABILITY_IDS.has(cleanText(value)));
+      return isHumanAdaptability && isHumanChimeraHybridHeld();
+    }
 function getReferencedAbilityRecords(record = {}) {
       const seen = new Set();
 const abilities = [];
 const push = (ability) => {
         if (!ability) {
+          return;
+        }
+        if (isAbilityRemovedByHeldBreakthrough(ability)) {
           return;
         }
         const name = cleanText(typeof ability === "string" ? ability : ability.name);
@@ -2171,6 +2227,9 @@ const push = (value) => {
           lines.push(cleaned);
         }
       };
+      // Task 038: a group the text offers only as a pick-one choice is not a
+      // granted line (the pick arrives as its own tracked line).
+const grantedText = stripPickOneProficiencySentences(text);
 
       [
         "Light Armor",
@@ -2184,7 +2243,7 @@ const push = (value) => {
         if (isAcolyte && normalizePhrase(label) === "channeling weapons") {
           return;
         }
-        if (includesPhrase(text, label)) {
+        if (includesPhrase(grantedText, label)) {
           push(label);
         }
       });
@@ -2192,6 +2251,26 @@ const push = (value) => {
       if (!isAcolyte && (/\bchanneling weapon(?: group)?(?:'s)? weapons\b/i.test(text)
         || /\bproficien(?:t|cy)\s+in\s+(?:the\s+)?channeling weapons?\b/i.test(text))) {
         push("Channeling Weapons");
+      }
+      // Key texts that name a group in the plural or share "armor" between two
+      // weights: "proficiency in pistols" (Gunslinger, Mogul, Tactician; not
+      // Fusilier's "pistols, muskets or crossbows", which is one of three),
+      // "Sniper Rifles" (Sniper), "wands" (Idol), "sets of missiles" (Maid),
+      // "light and medium armor" (Ranger).
+      if (/\bproficien(?:t|cy)\s+in\s+pistols\s*(?:\.|$)/i.test(text)) {
+        push("Pistol");
+      }
+      if (/\bproficien(?:t|cy)\s+in\s+sniper rifles\b/i.test(text)) {
+        push("Sniper Rifle");
+      }
+      if (/\bproficien(?:t|cy)\s+in\s+wands\b/i.test(text)) {
+        push("Wands");
+      }
+      if (/\bsets\s+of\s+missiles\b/i.test(text)) {
+        push("Set of Missiles");
+      }
+      if (/\blight\s+and\s+medium\s+armou?r\b/i.test(text)) {
+        push("Light Armor");
       }
       if (/\bunarmed attack damage is treated as a one-handed weapon in which you are proficient\b/i.test(text)
         || /\bproficien(?:t|cy)\s+(?:in|with)\s+unarmed\b/i.test(text)) {
@@ -2282,20 +2361,74 @@ const weaponSignals = [
       ];
       return weaponSignals.some((phrase) => includesPhrase(text, phrase));
     }
+// Task 036: a "pick one" grant gives only the group the player picks. Key texts
+// such as "proficiency in pistols, muskets or crossbows" (Fusilier) or "either
+// bows or crossbows" (Carpenter) name every option in the plural; the pick
+// itself arrives as its own tracked line ("Carpenter: Bow proficiency."), so a
+// plural name inside an either/or sentence must not count as granted.
+// Task 038 (036 audit finding 3): the same rule now covers every way of naming
+// a group, not only the plural. Forager ("your choice between Axes or Hori"),
+// Miner ("1 armor or in the shield") and Adventurer ("you may pick the shield or
+// greatshield") were still credited every option through the plain or singular
+// name. Inside one source text, a group named in a pick-one sentence is not
+// granted by that text at all, also not through another sentence of the same
+// text that mentions it ("You may use axes for harvesting foraging outcrops.").
+function getProficiencyGroupNameVariants(option) {
+      const normalized = normalizePhrase(option);
+      const variants = new Set([normalized]);
+      if (normalized === "staves") {
+        variants.add("staff");
+      } else if (normalized.endsWith("ies") && normalized.length > 3) {
+        variants.add(`${normalized.slice(0, -3)}y`);
+      } else if (normalized.endsWith("s") && !normalized.endsWith("ss") && normalized.length > 1) {
+        variants.add(normalized.slice(0, -1));
+      } else {
+        // Key texts often name a group in the plural ("proficiency in wands").
+        variants.add(`${normalized}s`);
+      }
+      return [...variants].filter(Boolean);
+    }
+function getProficiencyGroupLabels() {
+      return ["Light Armor", "Medium Armor", "Heavy Armor", "Shields", "Greatshields", ...COMMON_WEAPON_GROUP_OPTIONS, ...SPECIALITY_WEAPON_GROUP_OPTIONS, "Wands", "Staves", "Channeling Weapons"];
+    }
+function textNamesProficiencyGroup(text, label) {
+      return getProficiencyGroupNameVariants(label).some((variant) => includesPhrase(text, variant));
+    }
+let pickOneProficiencyStripCache = { text: null, result: "" };
+function stripPickOneProficiencySentences(text) {
+      const source = String(text || "");
+      if (pickOneProficiencyStripCache.text === source) {
+        return pickOneProficiencyStripCache.result;
+      }
+      const result = stripPickOneProficiencySentencesUncached(source);
+      pickOneProficiencyStripCache = { text: source, result };
+      return result;
+    }
+function stripPickOneProficiencySentencesUncached(source) {
+      const labels = getProficiencyGroupLabels();
+      return source
+        .split(/\s*\|\s*/)
+        .map((chunk) => {
+          const sentences = chunk.split(/[.!?]\s+|\n+/).map((sentence) => cleanText(sentence)).filter(Boolean);
+          const pickOne = sentences.filter((sentence) => /\b(?:either|or)\b/i.test(sentence));
+          if (!pickOne.length) {
+            return sentences.join(". ");
+          }
+          const offered = labels.filter((label) => pickOne.some((sentence) => textNamesProficiencyGroup(sentence, label)));
+          // A sentence that itself grants proficiency ("You gain proficiency
+          // with Dueling Weapons.") always counts; a side remark that only
+          // mentions an offered group does not.
+          return sentences
+            .filter((sentence) => !pickOne.includes(sentence)
+              && (/\bproficien(?:cy|cies|t)\b/i.test(sentence) || !offered.some((label) => textNamesProficiencyGroup(sentence, label))))
+            .join(". ");
+        })
+        .filter(Boolean)
+        .join(" | ");
+    }
 function hasTrackedSpecificProficiency(options) {
-      const text = getTrackedProficiencyText();
-      return options.some((option) => {
-        const normalized = normalizePhrase(option);
-        const variants = new Set([normalized]);
-        if (normalized === "staves") {
-          variants.add("staff");
-        } else if (normalized.endsWith("ies") && normalized.length > 3) {
-          variants.add(`${normalized.slice(0, -3)}y`);
-        } else if (normalized.endsWith("s") && !normalized.endsWith("ss") && normalized.length > 1) {
-          variants.add(normalized.slice(0, -1));
-        }
-        return [...variants].some((variant) => includesPhrase(text, variant));
-      });
+      const grantedText = stripPickOneProficiencySentences(getTrackedProficiencyText());
+      return options.some((option) => getProficiencyGroupNameVariants(option).some((variant) => includesPhrase(grantedText, variant)));
     }
 function normalizeRequirementClause(clause) {
       return cleanText(clause)
@@ -2323,6 +2456,14 @@ function getRequirementCount(value) {
     }
 function getMasteredClassProgressEntries() {
       return getSelectedClassProgress().filter((entry) => isTrackedClassMastered(entry));
+    }
+// Task 036: the Job interlude action pays 300 Clim more while a crafting class is
+// mastered. Crafting classes are the Artisan-role classes (Alchemist, Artificer,
+// Armorsmith, Blacksmith, Carpenter, Culinarian, Farmer, Transmuter and their
+// Tier 2 classes); the Gatherer-role classes (Forager, Miner, ...) do not count.
+export function hasMasteredCraftingClass() {
+      return getMasteredClassProgressEntries().some((entry) =>
+        [entry.record?.role1, entry.record?.role2].some((role) => normalizePhrase(role) === "artisan"));
     }
 function hasMasteredClassName(options) {
       const targets = getClassRequirementTargetSet(options);
@@ -4194,7 +4335,18 @@ function createComputedBonusBucket() {
           block: 0
         },
         autoApplied: [],
-        pendingChoices: []
+        pendingChoices: [],
+        // Task 036: which source added how much initiative, so the sheet and the
+        // roll breakdown can label each part ({ label, amount }).
+        initiativeSources: [],
+        // Task 038 (B13): the same for the save bonus, so the saving-throw roll
+        // names Toughness and each other bonus instead of calling it all
+        // "Toughness".
+        saveSources: [],
+        // Task 038: named stat bonuses from a rules text ("You gain +1 Vampire
+        // Lord bonus to Presence."), so the sheet can say where they come from
+        // ({ label, key, amount }).
+        namedStatSources: []
       };
     }
 function isPassiveAbilityRecord(record) {
@@ -5541,7 +5693,28 @@ function isTemporaryOrActiveBonusSentence(sentence) {
       }
       return /\b(while|when|until|before|after|during|next|this attack|this ability|this action|this stance|against that target|for melee attacks against|for ranged attacks against|if you|if the|if they)\b/.test(normalized);
     }
+// Adds what a rules text gives to the bonus bucket, and remembers how much
+// initiative (task 036) and save bonus (task 038) this one source added so
+// each can be shown by name.
 function collectComputedTextBonuses(bucket, sourceLabel, rawText, mode = "passive") {
+      const initiativeBefore = bucket.derived.initiative;
+      const saveBefore = bucket.derived.saveBonus;
+      collectComputedTextBonusesFromText(bucket, sourceLabel, rawText, mode);
+      const recordSource = (list, amount) => {
+        if (!amount) {
+          return;
+        }
+        const existing = list.find((entry) => entry.label === sourceLabel);
+        if (existing) {
+          existing.amount += amount;
+        } else {
+          list.push({ label: sourceLabel, amount });
+        }
+      };
+      recordSource(bucket.initiativeSources, bucket.derived.initiative - initiativeBefore);
+      recordSource(bucket.saveSources, bucket.derived.saveBonus - saveBefore);
+    }
+function collectComputedTextBonusesFromText(bucket, sourceLabel, rawText, mode = "passive") {
       const text = cleanText(rawText);
       if (!text) {
         return;
@@ -5695,12 +5868,26 @@ const isConditionalBonus = isTemporaryOrActiveBonusSentence(getSentenceAroundMat
 const givesBonusMatches = Array.from(text.matchAll(/\bgives(?:\s+(?:you|the wearer|the armor they are attached to|this armor))?\s+(?:a\s+)?([-+]\d+)\s+(?:[a-z]+\s+){0,3}?bonus\s+to\s+(?:your\s+)?([^.\n]+)/gi));
       givesBonusMatches.forEach((match) => {
         const amount = Number(match[1]);
-        cleanText(match[2])
+        // Task 045 (040 gate, Sonnet F5): a "gives ... bonus" that holds only
+        // under a condition is left out of the totals, like the other passes
+        // above and below. The Sniper Rifle's scope, "gives you a +10 bonus to
+        // Perception when looking at things further than 60ft away", was added
+        // to Perception all the time (Catfolk Scout Sniper showed +33, not +23).
+        const isConditionalBonus = isTemporaryOrActiveBonusSentence(getSentenceAroundMatch(text, match.index));
+        // Task 025 F5: "Gives a +1 Shield bonus to your guard, but a -1 penalty to
+        // your Initiative and a -2 penalty to your Evasion and Dodge." The "but ..."
+        // clause is a penalty handled by the penalty pass below. Without this cut the
+        // "and Dodge" words in it were credited the +1 bonus (Great Shield dodge -1,
+        // official -2).
+        cleanText(match[2]).split(/,?\s+but\b/i)[0]
           .split(/\s+and\s+|,\s*/g)
           .map((entry) => entry.replace(/^your\s+/i, "").trim())
           .filter(Boolean)
           .forEach((piece) => {
             const resolved = resolveComputedBonusTarget(piece);
+            if (resolved && isConditionalBonus) {
+              return;
+            }
             if (applyComputedBonus(bucket, amount, resolved)) {
               pushUniqueNotice(bucket.autoApplied, `${sourceLabel}: ${formatModifier(amount)} ${resolved.label}.`);
             }
@@ -5768,6 +5955,29 @@ const amount = Number(match[1]);
         if (amount) {
           bucket.derived.speed += amount;
           pushUniqueNotice(bucket.autoApplied, `${sourceLabel}: +${amount} Speed.`);
+        }
+      });
+// Task 036: a named bonus to initiative, "You gain +1 Gunslinger bonus to
+// Initiative." (the Gunslinger key). Named bonuses stack with other named or
+// unnamed bonuses, so it is added next to On the Draw's plain +1.
+// Task 038 (036 audit finding 4): the same pattern for a named bonus to a main
+// or secondary stat, "You gain +1 Vampire Lord bonus to Presence." (the
+// Vampire Lord key, the only such text in 0.13.2), remembered by source so the
+// sheet can name it. Conditional texts ("While ...", "After ...") and other
+// targets (Anti-Mage's "saves against Spells", block, accuracy) are not
+// applied by this pattern.
+const namedBonusMatches = Array.from(text.matchAll(/\bgains?\s+(?:a\s+)?([-+]\d+)\s+(?:[A-Za-z'\u2019-]+\s+){1,3}?bonus\s+to\s+(?:your\s+)?(initiative|power|focus|agility|toughness|fitness|cunning|reason|awareness|presence)\b/gi));
+      namedBonusMatches.forEach((match) => {
+        if (isTemporaryOrActiveBonusSentence(getSentenceAroundMatch(text, match.index))) {
+          return;
+        }
+const amount = Number(match[1]);
+const resolved = resolveComputedBonusTarget(match[2]);
+        if (applyComputedBonus(bucket, amount, resolved)) {
+          pushUniqueNotice(bucket.autoApplied, `${sourceLabel}: ${formatModifier(amount)} ${resolved.label}.`);
+          if (resolved.bucket === "mainStats" || resolved.bucket === "secondaryStats") {
+            bucket.namedStatSources.push({ label: sourceLabel, key: resolved.key, amount });
+          }
         }
       });
 const shorthandMatches = Array.from(text.matchAll(/([-+]\d+)\s+(movement speed|speed|initiative|guard|evasion|dodge|block|potency|save|saving throw|saving throws|hp|hit points|mana|rp)(?:\s+and\s+(movement speed|speed|initiative|guard|evasion|dodge|block|potency|save|saving throw|saving throws|hp|hit points|mana|rp))?\b/gi));
@@ -6329,7 +6539,16 @@ function filteredBreakthroughs() {
         return !search || haystack.includes(search);
       });
     }
-function pruneIneligibleBreakthroughSelections() {
+// Task 025 F3. Two modes:
+//  - load (keepUnmet): nothing is deleted. Saved breakthroughs whose requirement now
+//    reads as unmet stay selected and are listed in unmetBreakthroughIds so the builder
+//    can flag them (getBuilderAttentionNotes); ids this rules version does not have stay
+//    in the list too (they resolve to nothing, so they have no effect).
+//  - interactive sync (default): a breakthrough the player's own edit made ineligible is
+//    still removed, as before, but one already flagged at load is left for the player to
+//    remove by hand, and unknown ids are never dropped.
+function pruneIneligibleBreakthroughSelections({ keepUnmet = false } = {}) {
+      const flagged = new Set(state.builder.unmetBreakthroughIds || []);
       let changed = false;
 
       do {
@@ -6338,10 +6557,18 @@ const selectedIds = new Set(state.builder.selectedBreakthroughIds);
 const nextIds = state.builder.selectedBreakthroughIds.filter((id) => {
           const record = lookup.breakthroughs.resolve(id);
           if (!record) {
-            return false;
+            return true;
           }
           const status = getBreakthroughRequirementStatus(record, selectedIds);
-          return status.met || status.manualOnly;
+          if (status.met || status.manualOnly) {
+            flagged.delete(id);
+            return true;
+          }
+          if (keepUnmet) {
+            flagged.add(id);
+            return true;
+          }
+          return flagged.has(id);
         });
 
         if (nextIds.length !== state.builder.selectedBreakthroughIds.length) {
@@ -6349,6 +6576,12 @@ const nextIds = state.builder.selectedBreakthroughIds.filter((id) => {
           changed = true;
         }
       } while (changed);
+      const keptIds = new Set(state.builder.selectedBreakthroughIds);
+      const nextFlagged = Array.from(flagged).filter((id) => keptIds.has(id));
+      const currentFlagged = state.builder.unmetBreakthroughIds || [];
+      if (nextFlagged.length !== currentFlagged.length || nextFlagged.some((id, index) => id !== currentFlagged[index])) {
+        state.builder.unmetBreakthroughIds = nextFlagged;
+      }
 const eligibleIds = new Set(eligibleBreakthroughs().map((entry) => entry.id));
       if (!eligibleIds.has(state.builder.inspected.breakthrough)) {
         state.builder.inspected.breakthrough = getSelectedBreakthroughRecords()[0]?.id || eligibleBreakthroughs()[0]?.id || "";
@@ -6450,7 +6683,7 @@ let countFromLevel = savedLevel;
           .filter(Boolean);
       }
 
-      pruneIneligibleBreakthroughSelections();
+      pruneIneligibleBreakthroughSelections({ keepUnmet: true });
     }
 function seedBuilderInspection() {
       if (!state.builder.inspected.race) {
@@ -6465,8 +6698,13 @@ function seedBuilderInspection() {
         state.builder.inspected.ancestry = selectedInCurrentOptions ? selectedAncestry.id : "";
       }
 
+      // Task 042 (041c walk): only the character's own class is remembered here.
+      // The catalog's first class (Abjurer) used to be stored when no class was
+      // chosen yet, and the Classes panel then kept showing it after the
+      // character had classes. With no class chosen the panel still shows the
+      // first catalog entry (renderBuilderDetail), it is just not stored.
       if (!state.builder.inspected.class) {
-        state.builder.inspected.class = getSelectedClassDetails()[0]?.id || detailLookup.classes.entries[0]?.id || "";
+        state.builder.inspected.class = getSelectedClassDetails()[0]?.id || "";
       }
 
       if (!state.builder.inspected.item) {
@@ -6936,7 +7174,7 @@ function getBuiltInPlayReferenceRecords() {
           name: "Initiative",
           aliases: ["Roll Initiative", "initiative"],
           keywords: ["Turn Order", "Roll"],
-          descriptionText: "Roll initiative to establish turn order. The sheet uses the current Initiative bonus from the character's derived stats."
+          descriptionText: "Roll initiative to establish turn order: 1d4 plus the current Initiative bonus from the character's derived stats. Initiative cannot go below 0."
         },
         {
           kind: "Turn Tool",
@@ -7482,7 +7720,10 @@ function expandPercentileRollResults(results = []) {
           return [entry];
         }
 const value = clamp(Math.round(entry.value), 1, 100);
-const tensValue = value === 100 ? 100 : Math.floor(value / 10) * 10;
+// Standard percentile reading (task 032): the tens die shows "00" for 1-9
+// (00 + 7 = 7) and for 100 (00 + 0). 100 is the d00 die's "00" face; the
+// old 0 here was clamped up to the "10" face, so 7 read as 17.
+const tensValue = value === 100 || value < 10 ? 100 : Math.floor(value / 10) * 10;
 const onesValue = value % 10 === 0 ? 10 : value % 10;
         return [
           { ...entry, sides: 100, value: tensValue, label: "d00" },
@@ -7544,7 +7785,11 @@ const minHeight = count <= 1
       entries.forEach((entry) => {
         const image = document.createElement("img");
         image.src = entry.previewDataUrl || getRollPreviewImage(entry, imageSize);
-        image.alt = `${entry.label || `d${entry.sides}`} ${entry.value}`;
+        // The tens die names its face ("00", "50"), not the internal 100/0.
+        const faceText = entry.sides === 100 && cleanText(entry.label || entry.die).toLowerCase() === "d00"
+          ? (entry.value >= 100 || entry.value < 10 ? "00" : String(Math.floor(entry.value / 10) * 10))
+          : String(entry.value);
+        image.alt = `${entry.label || `d${entry.sides}`} ${faceText}`;
         gridNode.appendChild(image);
       });
       gridNode.classList.remove("is-hidden");
@@ -8205,7 +8450,11 @@ function getSettledTopReadDisplay(settledResults = []) {
       }
       return settledResults
         .map((entry) => {
-          const value = entry.readMode === "vertex" ? (entry.topVertex || entry.topFace) : entry.topFace;
+          // Task 032: show the face the engine aimed at the viewer (the
+          // result), not a measured "top" face. Before the core measured
+          // toward the viewer, topFace was the world-up face, so a weak GPU
+          // with no preview pictures printed a wrong number here.
+          const value = entry.requested || (entry.readMode === "vertex" ? (entry.topVertex || entry.topFace) : entry.topFace);
           if (entry.die === "d00") {
             return value === "00" ? "00" : String(value || "0").padStart(2, "0");
           }
@@ -8389,6 +8638,9 @@ const hasPreviewGrid = renderRollPreviewGrid(previewGridNode, visualDiceResults)
           }
 const settledDisplay = getSettledTopReadDisplay(settledResults);
           if (settledDisplay && !previewResults.length) {
+            // Task 032: on a slow device the rolling-text timer can still be
+            // ticking at settle; stop it so the settled faces stay shown.
+            clearInterval(rollOverlayTimer);
             faceNode.textContent = settledDisplay;
           }
         }
@@ -8748,11 +9000,28 @@ let diceResults = [];
 
       if (type === "initiative") {
         label = "Initiative";
-        const roll = rollDie(20);
-        diceResults = [{ sides: 20, value: roll, label: "d20" }];
+        // Task 044: the 0.13.2 rulebook (Initiative): "every participant rolls a
+        // 1d4 and adds their initiative bonus to it" and "Initiative cannot go
+        // below 0." The official builder rolls 1d4 + bonus (min 0) too. It used
+        // to roll a d20.
+        const roll = rollDie(4);
+        dieType = "d4";
+        diceResults = [{ sides: 4, value: roll, label: "d4" }];
         rollText = String(roll);
-        total = roll + derived.initiative;
-        breakdown = `d20: ${roll} | Agility: ${formatModifier(derived.initiative)}`;
+        const rawTotal = roll + derived.initiative;
+        total = Math.max(0, rawTotal);
+        // Task 025 F8: show the Agility part and the rest (armor penalty, class and
+        // breakthrough bonuses) separately instead of calling all of it "Agility".
+        // Task 036: every part is named ("On the Draw: +1 | Gunslinger key ability:
+        // +1 | Armor (Light) equipped: -1"); only what no source explains is "Other".
+        const initiativeParts = getInitiativeBreakdown();
+        breakdown = [
+          `d4: ${roll}`,
+          `Agility: ${formatModifier(initiativeParts.agility)}`,
+          ...initiativeParts.parts.map((part) => `${part.label}: ${formatModifier(part.amount)}`),
+          ...(initiativeParts.other ? [`Other initiative modifiers (effects): ${formatModifier(initiativeParts.other)}`] : []),
+          ...(rawTotal < 0 ? [`Initiative cannot go below 0 (${rawTotal} counts as 0)`] : [])
+        ].join(" | ");
       } else if (type === "saveBonus") {
         label = "Saving Throw";
 const rolls = rollDice(2, 10);
@@ -8761,7 +9030,15 @@ const rollTotal = rolls.reduce((sum, value) => sum + value, 0);
         dieType = "2d10";
         rollText = rolls.join(" + ");
         total = rollTotal + derived.saveBonus;
-        breakdown = `2d10: ${rollText} | Toughness: ${formatModifier(derived.saveBonus)}`;
+        // Task 038 (ledger B13): the modifier is the save total, not "Toughness".
+        // Name the total, then Toughness and each other bonus, the way task 025
+        // F8 and task 036 label initiative ("Save bonus: +4 (Toughness +3, ...)").
+        const saveParts = getSaveBreakdown();
+        breakdown = `2d10: ${rollText} | Save bonus: ${formatModifier(derived.saveBonus)} (${[
+          `Toughness ${formatModifier(saveParts.toughness)}`,
+          ...saveParts.parts.map((part) => `${part.label} ${formatModifier(part.amount)}`),
+          ...(saveParts.other ? [`other save modifiers (effects) ${formatModifier(saveParts.other)}`] : [])
+        ].join(", ")})`;
       } else if (type === "lightAttack") {
         label = costedAction?.label || "Light Attack";
 const roll = rollDie(20);
@@ -9849,7 +10126,6 @@ function renderPlayModePanels(activeMode = getActivePlayMode()) {
       });
     }
 function renderPlayTableToolsPanel() {
-      const localPreviewAvailable = /^(?:127\.0\.0\.1|localhost)$/i.test(window.location.hostname);
       return `
         <div class="table-tools-hero play-panel">
           <div>
@@ -9914,7 +10190,7 @@ function renderPlayTableToolsPanel() {
           <div class="table-platform-grid">
             <button type="button" class="table-platform-card table-platform-card-wide" data-table-tool-guide="owlbear">
               <span class="table-platform-card-head"><strong>Owlbear Rodeo</strong><span class="integration-status is-warn">Alpha</span></span>
-              <span>${localPreviewAvailable ? "Send this character and its circular token straight into your Owlbear room, place it with one click, and share rolls in the live room feed." : "Character binding is built; public extension publishing and live-room verification remain."}</span>
+              <span>Share your character and dice rolls with your Owlbear Rodeo room. Your GM installs two free extensions once; you open your sheet from the room and send your character.</span>
               <span class="table-platform-card-link">Open Owlbear walkthrough <span aria-hidden="true">&rarr;</span></span>
             </button>
             <button type="button" class="table-platform-card table-platform-card-wide" data-table-tool-guide="official-builder">
@@ -10059,6 +10335,16 @@ function cycleMobileSheetPage(direction) {
       const nextIndex = (currentIndex + direction + MOBILE_SHEET_PAGE_ORDER.length) % MOBILE_SHEET_PAGE_ORDER.length;
       setMobileSheetPage(MOBILE_SHEET_PAGE_ORDER[nextIndex]);
     }
+// The parts of the Initiative number by name, for the play sheet card (task 036).
+function describeInitiativeParts() {
+      const parts = getInitiativeBreakdown();
+      const named = [
+        `Agility ${formatModifier(parts.agility)}`,
+        ...parts.parts.map((part) => `${part.label} ${formatModifier(part.amount)}`),
+        ...(parts.other ? [`other ${formatModifier(parts.other)}`] : [])
+      ];
+      return named.length > 1 ? `${named.join(", ")}.` : "";
+    }
 function renderPlayDerivedCard(label, value, summary = "", cardClass = "") {
       return `
         <div class="play-derived-card${cardClass ? ` ${escapeHtml(cardClass)}` : ""}">
@@ -10166,9 +10452,16 @@ function renderPlayEditableDerivedCard({ label, value, summary = "", fieldName, 
         </div>
       `;
     }
+// Task 038: the named stat bonuses on one stat, " (Vampire Lord key ability
+// +1)", so the sheet says where such a bonus comes from ("" when none).
+function describeNamedStatBonuses(key, bonuses = getComputedBonuses()) {
+      const parts = asArray(bonuses.namedStatSources).filter((source) => source.key === key && source.amount);
+      return parts.length ? ` (${parts.map((part) => `${part.label} ${formatModifier(part.amount)}`).join(", ")})` : "";
+    }
 function renderPlaySecondaryStatCard(stat) {
       const baseValue = toNumber(state.fields[stat.key], 0);
-const bonusValue = getComputedBonuses().secondaryStats[stat.key] || 0;
+const bonuses = getComputedBonuses();
+const bonusValue = bonuses.secondaryStats[stat.key] || 0;
 const value = baseValue + bonusValue;
       return `
         <div class="play-secondary-card">
@@ -10176,7 +10469,7 @@ const value = baseValue + bonusValue;
             <strong>${escapeHtml(stat.key)}</strong>
             <div class="play-secondary-value">${escapeHtml(String(value))}</div>
           </div>
-          ${bonusValue ? `<p>${escapeHtml(`Base ${baseValue} ${bonusValue > 0 ? `+ ${bonusValue}` : `- ${Math.abs(bonusValue)}`}`)}</p>` : ""}
+          ${bonusValue ? `<p>${escapeHtml(`Base ${baseValue} ${bonusValue > 0 ? `+ ${bonusValue}` : `- ${Math.abs(bonusValue)}`}${describeNamedStatBonuses(stat.key, bonuses)}`)}</p>` : ""}
           <p>${escapeHtml(stat.description)}</p>
         </div>
       `;
@@ -10184,8 +10477,7 @@ const value = baseValue + bonusValue;
 function renderPlaySkillRollControls(skill, buttonClass = "play-skill-roll", options = {}) {
       const contextualBonus = options.contextualBonus || null;
       const displayTotal = skill.total + (contextualBonus ? contextualBonus.bonus : 0);
-      const groups = (skill.expertiseGroups || [])
-        .filter((group) => normalizeExpertiseSpecialtyName(group?.name) && !/^unassigned\b/i.test(cleanText(group.name)));
+      const groups = getNamedSkillExpertiseGroups(skill);
       return `
         <div class="play-skill-roll-controls">
           <button type="button" class="${escapeHtml(buttonClass)}" data-play-roll-skill="${skill.index}">
@@ -10252,14 +10544,132 @@ function openSheetViewFromShortcut() {
       }
       openSheetView();
     }
-function openExpSpending() {
-      const classesStep = BUILDER_STEPS.findIndex((step) => step.id === "classes");
-      state.ui.mode = "builder";
-      state.ui.builderStep = classesStep >= 0 ? classesStep : Math.max(0, BUILDER_STEPS.length - 1);
+/* Task 037: a built character has a primary race, its ancestry or clan when
+   the race has them, and at least one class. A name is not needed (Quick
+   Build does not ask for one). */
+export function hasBuiltCharacter() {
+      const race = getSelectedRaceDetail();
+      if (!race) {
+        return false;
+      }
+      if (getCurrentSecondaryLineageMode(race) !== "none" && !getSelectedAncestryDetail()) {
+        return false;
+      }
+      return getSelectedClassDetails().length > 0;
+    }
+/* Task 031 T3 (ledger B19): a complete character has a name, a primary
+   race, its ancestry or clan when the race has them, and at least one class. */
+export function hasCompleteCharacterForPlay() {
+      return Boolean(cleanText(state.fields.Name)) && hasBuiltCharacter();
+    }
+function getBuilderStepIndex(stepId) {
+      const index = BUILDER_STEPS.findIndex((step) => step.id === stepId);
+      return index >= 0 ? index : BUILDER_STEPS.length - 1;
+    }
+/* Task 038 (037 audit finding 1): a save slot stores no screen, so a built
+   character loaded from a slot (Load Saved, or a page reload with an active
+   slot) used to land on "Choose a Primary Race". It lands on Review & Finish,
+   the landing task 037 gives every way back from the sheet. A character with
+   no class yet, Quick Build, and any other step are left alone. */
+export function landBuiltCharacterOnReview() {
+      if (state.ui.mode !== "builder" || state.ui.quickBuildActive || state.ui.builderStep !== 0 || !hasBuiltCharacter()) {
+        return false;
+      }
+      state.ui.builderStep = getBuilderStepIndex("review");
       renderBuilder();
-      updateModeVisibility();
-      document.getElementById("builder-view").scrollIntoView({ behavior: "auto", block: "start" });
-      setStatus("Opened class progression. Spend EXP through character upgrades there; spent EXP is what raises Spirit Core.");
+      return true;
+    }
+/* Task 037: every way from the play sheet back into the builder goes through
+   here (the Lyrian symbol, the sheet's status pill, Table Tools "Return to
+   Builder", the phone "Builder" button and "Spend XP"). Quick Build is over
+   once a character is on the sheet, so this always opens the full Advanced
+   builder with the whole character in it. A built character lands on Review
+   & Finish (everything it has, one click from Classes, Breakthroughs and
+   Equipment); "Spend XP" lands on Classes. A character with no class yet goes
+   back to the Advanced step it was on, as before. The current HP, Mana, RP
+   and AP of a built character are kept for the trip back to the sheet. */
+function returnToBuilderFromSheet({ stepId = "", status = "Returned to the builder." } = {}) {
+      flushPlayDashboardSync({ render: false });
+const built = hasBuiltCharacter();
+      if (state.ui.mode === "sheet" && built) {
+        rememberPlayResourcesBeforeBuilderVisit();
+      }
+      state.ui.quickBuildActive = false;
+      state.ui.quickBuildStep = 0;
+const targetStepId = stepId || (built ? "review" : "");
+      if (targetStepId) {
+        state.ui.builderStep = getBuilderStepIndex(targetStepId);
+      }
+      renderBuilder();
+      setMode("builder");
+      scheduleWorkingStatePersist();
+      setStatus(status);
+    }
+/* Task 037 (031 audit finding 2): the Companion landing happens once per
+   window. The window remembers the mode the player is in (sessionStorage
+   lives as long as the tab and survives a reload), so a reload keeps the
+   builder or the sheet, whichever the player chose. Only Companion windows
+   write it. null means sessionStorage is not available here. */
+const COMPANION_WINDOW_MODE_KEY = "angel-sword-companion-window-mode-v1";
+function readCompanionWindowMode() {
+      try {
+        return window.sessionStorage.getItem(COMPANION_WINDOW_MODE_KEY) || "";
+      } catch (error) {
+        return null;
+      }
+    }
+function rememberCompanionWindowMode(mode) {
+      if (!isOpenedByOwlbearCompanion()) {
+        return;
+      }
+      try {
+        window.sessionStorage.setItem(COMPANION_WINDOW_MODE_KEY, mode === "sheet" ? "sheet" : "builder");
+      } catch (error) {
+        /* no per-window memory here: each load lands as task 031 did */
+      }
+    }
+/* When the Owlbear Companion's Open My Character Sheet opened this window and
+   a complete character is loaded, the first load starts on the play sheet
+   instead of Advanced Build step 1. Later loads of the same window keep the
+   mode the player chose. Opening the builder any other way is unchanged. */
+export function openPlaySheetIfOpenedFromCompanion() {
+      if (!isOpenedByOwlbearCompanion()) {
+        return false;
+      }
+const remembered = readCompanionWindowMode();
+      if (remembered === "builder") {
+        if (state.ui.mode === "sheet") {
+          returnToBuilderFromSheet({ status: "Kept the builder open for your Owlbear room." });
+        } else {
+          // A save slot does not store the builder step; a built character
+          // reopens on Review, as the sheet's builder buttons do.
+          landBuiltCharacterOnReview();
+        }
+        return false;
+      }
+      if (!hasCompleteCharacterForPlay()) {
+        if (remembered === "") {
+          rememberCompanionWindowMode(state.ui.mode);
+        }
+        return false;
+      }
+      syncBuilderSelectionsIntoSheet();
+      setMode("sheet");
+      setStatus("Opened your character sheet for your Owlbear room.");
+      return true;
+    }
+function openExpSpending() {
+      // Task 042 (041c walk): Spend XP lands on Classes, so its panel shows one
+      // of the character's own classes. An older save can still hold the
+      // catalog default (Abjurer) from before the character had classes.
+      const ownClassIds = state.builder.selectedClassIds || [];
+      if (ownClassIds.length && !ownClassIds.includes(state.builder.inspected.class)) {
+        state.builder.inspected.class = getSelectedClassDetails()[0]?.id || "";
+      }
+      returnToBuilderFromSheet({
+        stepId: "classes",
+        status: "Opened class progression. Spend EXP through character upgrades there; spent EXP is what raises Spirit Core."
+      });
     }
 export function renderPlayDashboard() {
       state.play = mergePlayState(state.play);
@@ -10326,7 +10736,7 @@ const meta = entry.key === "Power"
             : entry.key === "Agility"
               ? [`Initiative ${derived.initiative}`, `RP ${derived.rpMax}`]
               : [`Save ${formatModifier(derived.saveBonus)}`, `HP ${derived.hpMax}`];
-const bonusMeta = bonusValue ? `Base ${baseValue} ${bonusValue > 0 ? `+ ${bonusValue}` : `- ${Math.abs(bonusValue)}`}` : "";
+const bonusMeta = bonusValue ? `Base ${baseValue} ${bonusValue > 0 ? `+ ${bonusValue}` : `- ${Math.abs(bonusValue)}`}${describeNamedStatBonuses(entry.key, computedBonuses)}` : "";
         return `
           <div class="play-main-stat-card">
             <div class="play-main-stat-head">
@@ -10365,8 +10775,11 @@ const bonusMeta = bonusValue ? `Base ${baseValue} ${bonusValue > 0 ? `+ ${bonusV
       `).join("");
 
       document.getElementById("play-derived-grid").innerHTML = [
+        // Task 042 (041c walk): the number is the banked (unspent) EXP, the same
+        // "Banked EXP" the builder's Current Build panel shows. A fresh
+        // character's 0 next to Spirit Core 1200 read as "no EXP".
         renderPlayEditableDerivedCard({
-          label: "EXP",
+          label: "Banked EXP",
           value: progress.expBank,
           summary: "Unspent EXP available for progression. Spending it through upgrades increases Spirit Core.",
           fieldName: "Exp",
@@ -10380,7 +10793,7 @@ const bonusMeta = bonusValue ? `Base ${baseValue} ${bonusValue > 0 ? `+ ${bonusV
 
       document.getElementById("play-utility-grid").innerHTML = [
         renderPlayDerivedCard("Speed", derived.speed, "Current movement distance.", "play-tracker-utility"),
-        renderPlayDerivedCard("Initiative", formatModifier(derived.initiative), "Used for turn order and quick reactions.", "play-tracker-utility")
+        renderPlayDerivedCard("Initiative", formatModifier(derived.initiative), `Used for turn order and quick reactions. ${describeInitiativeParts()}`.trim(), "play-tracker-utility")
       ].join("");
 
       document.getElementById("play-hit-points").innerHTML = `
@@ -11243,6 +11656,7 @@ const readinessProfile = getInventoryItemReadinessProfile(entry);
             ${renderInventoryReadinessProfile(readinessProfile)}
             ${isWeaponItem(entry) ? `<p>${escapeHtml(`Weapon attacks: ${getWeaponRangeLabel(entry)} | ${getWeaponDamageType(entry)} damage`)}</p>` : ""}
             ${baseText ? `<p class="play-item-notes">${escapeHtml(getFirstSentence(baseText).slice(0, 240))}</p>` : ""}
+            ${cleanText(entry.modNotes) ? `<p class="play-item-notes" data-item-mod-notes>${escapeHtml(`Mod notes: ${cleanText(entry.modNotes)}`.slice(0, 600))}</p>` : ""}
             ${renderInventoryQuantityAdjuster(entry, quantity)}
             <div class="play-inventory-actions">
               ${useOptions.map((option) => `<button type="button" data-inventory-use="${escapeHtml(entry.uid)}" data-inventory-use-cost-label="${escapeHtml(option.costLabel)}">${escapeHtml(option.label)}</button>`).join("")}
@@ -11898,6 +12312,7 @@ function summarizeRecipeRequirements(requirements) {
         : "";
     }
 const CRAFTING_RULE_CLARIFICATION_ITEMS = [
+      "Whether the final crafting points must equal the item's crafting HP exactly, or only reach it. The rulebook says \"equal\" in two places, but its worked example says \"a minimum of 30\" and \"enough\". This sheet follows the example: points at or above the HP complete the item.",
       "Whether a facility is required for some crafts, or only gives a limited-use bonus when the GM says the location supports the craft.",
       "Which facility applies to Armorsmithing. The facility list names Blacksmith Workshop, but not a separate Armorsmithing Workshop.",
       "Exact official node values for every gatherable material. The rules give the node structure and at least one mining example, but not a full table for every resource.",
@@ -11967,7 +12382,9 @@ const CRAFTING_FACILITY_PROFILES = {
       },
       artificing: {
         name: "Artificer's Atelier",
-        skill: "Artifice",
+        // Task 033: the crafting skill is "Artificer"; "Artifice" is the Reason
+        // knowledge skill (the mix-up players hit in the Discord feedback).
+        skill: "Artificer",
         note: "Crafting workshop/atelier rule: level 1/2/3 gives +2/+4/+6 facility bonus to the respective crafting skill."
       },
       armorsmithing: {
@@ -11977,7 +12394,8 @@ const CRAFTING_FACILITY_PROFILES = {
       },
       blacksmithing: {
         name: "Blacksmith Workshop",
-        skill: "Blacksmithing",
+        // Task 033: the skill list calls it "Blacksmith", not "Blacksmithing".
+        skill: "Blacksmith",
         note: "Crafting workshop/atelier rule: level 1/2/3 gives +2/+4/+6 facility bonus to the respective crafting skill."
       },
       carpentry: {
@@ -12033,6 +12451,13 @@ function getCraftingCategoryKey(value = "") {
 function getSelectedRecipeCategoryKey(recipe = {}) {
       return getCraftingCategoryKey(recipe?.craftingType || recipe?.type || recipe?.subType || "");
     }
+// Task 033b: rulebook "Alchemists always craft at least 3 of the item and this
+// is reflected in the costs already." One Alchemy craft therefore makes 3 of
+// the item (the materials were already priced for 3). Every other craft: 1.
+const ALCHEMY_CRAFT_QUANTITY = 3;
+function getCraftedQuantity(recipe = {}) {
+      return getSelectedRecipeCategoryKey(recipe) === "alchemy" ? ALCHEMY_CRAFT_QUANTITY : 1;
+    }
 function getInventoryCorpus(inventory = []) {
       return inventory.map((entry) =>
         normalizePhrase([entry.name, entry.type, entry.subType, entry.description, entry.descriptionText].filter(Boolean).join(" "))
@@ -12076,6 +12501,47 @@ function getCraftingHelperTools(recipe = {}, inventory = []) {
 function getCraftingFacilityProfile(recipe = {}) {
       const profile = CRAFTING_FACILITY_PROFILES[getSelectedRecipeCategoryKey(recipe)];
       return profile || null;
+    }
+// Task 033: the skill row a recipe is crafted with. The facility profile table
+// already pairs each crafting category with its skill ("a +2/+4/+6 facility
+// bonus to the respective crafting skill"), so the pairing lives only there.
+function getCraftingSkillRowForRecipe(recipe = {}) {
+      const profile = recipe ? getCraftingFacilityProfile(recipe) : null;
+      if (!profile) {
+        return null;
+      }
+      const wanted = normalizePhrase(profile.skill);
+      const index = SKILL_DEFINITIONS.findIndex((definition) => normalizePhrase(definition.name) === wanted);
+      return index >= 0 ? getSkillRowData(index + 1) : null;
+    }
+// Task 033b: the expertise a crafting roll may add. Rulebook: "D10 + Crafting
+// Skill (+Expertise) + Modifiers" and "Blacksmithing 5 and Longsword 10, then
+// your crafting bonus would be +15". Only expertise the character owns on the
+// recipe's own crafting skill counts, and only one at a time (the guide text:
+// "Expertise does not stack with other expertise"). Points that have no
+// specialty name yet ("Unassigned ...") are left out, as in the d20 menu.
+function getNamedSkillExpertiseGroups(skill) {
+      return (skill?.expertiseGroups || [])
+        .filter((group) => normalizeExpertiseSpecialtyName(group?.name) && !/^unassigned\b/i.test(cleanText(group.name)));
+    }
+function pickCraftingRollExpertise(skillRow, crafting = getCraftingTrackerState()) {
+      const options = getNamedSkillExpertiseGroups(skillRow);
+      const chosen = skillRow ? findSkillExpertiseGroup({ expertiseGroups: options }, cleanText(crafting.rollExpertise)) : null;
+      return { options, chosen };
+    }
+// Task 033: rulebook "Crafting Time" / "Failed Crafting" and the worked example
+// ("a minimum of 30 crafting points", "30 points is enough"). The crafting
+// points still left after paying for mods must reach the item's crafting HP.
+function getCraftingHpCheck(recipe, crafting = getCraftingTrackerState()) {
+      const hp = recipe ? Math.max(0, parseNumericCost(recipe.craftingPoints)) : 0;
+      const points = Math.max(0, toNumber(crafting.pointsAvailable, 0));
+      return {
+        hp,
+        points,
+        hasHp: hp > 0,
+        enough: hp <= 0 || points >= hp,
+        short: Math.max(0, hp - points)
+      };
     }
 function getCraftingFacilityUsesForLevel(level) {
       return [0, 2, 3, 4][Math.max(0, Math.min(3, Math.floor(toNumber(level, 0))))] || 0;
@@ -12486,7 +12952,9 @@ const GATHERING_RESOURCE_PROFILES = {
       "escudo": {
         nodeType: "mining",
         name: "Escudo Deposit",
-        variation: "Elite Rare Material",
+        // Task 033: the 0.13.2 rulebook has tier 1 and tier 2 nodes only. This
+        // tier-3 node stays as a GM option, labeled as such.
+        variation: "GM option — not in the 0.13.2 rules",
         tier: 3,
         hpMax: 4,
         nodeTarget: 60,
@@ -12494,12 +12962,12 @@ const GATHERING_RESOURCE_PROFILES = {
         strikeDiceMax: 5,
         skill: "Mining",
         tool: "Pickaxe",
-        requiredAbility: "Advanced Ore Hunter or GM Permission",
+        requiredAbility: "Ore Hunter or GM Permission",
         yieldName: "Orichalcum",
         yieldQuantity: 500,
         luckyYieldName: "Escudo",
         luckyYieldQuantity: 500,
-        basis: "Inferred high-tier mining preset.",
+        basis: "GM option — not in the 0.13.2 rules. The rulebook lists tier 1 and tier 2 nodes only; Ore Hunter opens tier 2.",
         discovery: "Treat as an expert or specialist discovery unless the GM has already revealed the deposit."
       },
       "stone": {
@@ -13660,45 +14128,6 @@ const amount = Math.max(0, crafting.pendingPointSpend);
       persistWorkingState();
       renderPlayDashboard();
     }
-function getSelectedCraftingRecipePointCost(crafting = getCraftingTrackerState()) {
-      const recipe = getCraftingRecipeById(crafting.selectedRecipeId);
-      return {
-        recipe,
-        cost: Math.max(0, parseNumericCost(recipe?.craftingPoints))
-      };
-    }
-function spendSelectedRecipePoints() {
-      const crafting = getCraftingTrackerState();
-      const { recipe, cost } = getSelectedCraftingRecipePointCost(crafting);
-      if (!recipe) {
-        setStatus("Select a recipe before spending recipe crafting points.");
-        return;
-      }
-      if (!cost) {
-        setStatus(`${recipe.name} does not have a numeric crafting point cost.`);
-        return;
-      }
-      const availability = getCraftingRecipeAvailability(recipe, getPlayInventoryEntries(), crafting);
-      if (!availability.available) {
-        setStatus(`${recipe.name} is unavailable. ${availability.reasonLabel}`);
-        return;
-      }
-      if (crafting.pointsAvailable < cost) {
-        setStatus(`${recipe.name} needs ${cost} crafting points, but only ${crafting.pointsAvailable} are available.`);
-        return;
-      }
-      state.play = mergePlayState(state.play);
-      state.play.crafting.pointsSpent = Math.min(crafting.pointsGenerated, crafting.pointsSpent + cost);
-      appendPlayLog("Recipe Crafting Points Spent", [
-        `Recipe: ${recipe.name}`,
-        `Spent: ${cost}`,
-        `Spent total: ${state.play.crafting.pointsSpent}`,
-        `Remaining: ${Math.max(0, crafting.pointsAvailable - cost)}`
-      ]);
-      persistWorkingState();
-      renderPlayDashboard();
-      setStatus(`Spent ${cost} crafting points on ${recipe.name}.`);
-    }
 function setFacilityUsesFromLevel() {
       const crafting = getCraftingTrackerState();
       const uses = getCraftingFacilityUsesForLevel(crafting.facilityLevel);
@@ -13779,13 +14208,25 @@ const recipe = getCraftingRecipeById(crafting.selectedRecipeId);
 const roll = rollDie(10);
 const support = getCraftingSupportState(recipe || {}, crafting, getPlayInventoryEntries());
 const manualBonus = Math.max(0, toNumber(crafting.rollBonus, 0));
-const totalBonus = manualBonus + support.facilityBonus;
+      // Task 033: rulebook "D10 + Crafting Skill (+Expertise) + Modifiers". The
+      // crafting skill comes from the recipe's category. Task 033b: the one
+      // expertise the player picked for this item (default none) is added too,
+      // but only if the character still owns it on that skill.
+const skillRow = recipe ? getCraftingSkillRowForRecipe(recipe) : null;
+const skillBonus = skillRow ? skillRow.total : 0;
+const expertiseGroup = pickCraftingRollExpertise(skillRow, crafting).chosen;
+const expertiseBonus = expertiseGroup ? expertiseGroup.bonus : 0;
+const totalBonus = skillBonus + expertiseBonus + manualBonus + support.facilityBonus;
 const total = roll + totalBonus;
       state.play = mergePlayState(state.play);
       state.play.crafting.diceRemaining = Math.max(0, crafting.diceRemaining - 1);
       state.play.crafting.pointsGenerated = crafting.pointsGenerated + total;
 const facilityText = support.facilityBonus ? ` | ${support.facility?.name || "Facility"}: ${formatModifier(support.facilityBonus)}` : "";
-const breakdown = `d10: ${roll} | Manual bonus: ${formatModifier(manualBonus)}${facilityText}`;
+const skillText = skillRow
+        ? ` | Crafting skill (${skillRow.name}): ${formatModifier(skillBonus)}`
+        : (recipe ? " | Crafting skill: none found for this recipe (+0)" : " | Crafting skill: none, pick a recipe to add it (+0)");
+const expertiseText = expertiseGroup ? ` | Expertise (${expertiseGroup.name}): ${formatModifier(expertiseBonus)}` : "";
+const breakdown = `d10: ${roll}${skillText}${expertiseText} | Manual bonus: ${formatModifier(manualBonus)}${facilityText}`;
       appendPlayLog("Crafting Check", [
         cleanText(crafting.recipeName) ? `Recipe: ${crafting.recipeName}` : "",
         breakdown,
@@ -13805,8 +14246,34 @@ const breakdown = `d10: ${roll} | Manual bonus: ${formatModifier(manualBonus)}${
       renderPlayDashboard();
       setStatus(`Rolled crafting check for ${total} crafting points.`);
     }
+// Task 033b: the player picks which expertise (if any) the d10 roll adds. A
+// name the character does not own on the recipe's crafting skill is refused
+// and treated as "none".
+function setCraftingRollExpertise(name) {
+      const crafting = getCraftingTrackerState();
+      const recipe = crafting.selectionMode === "recipe" ? getCraftingRecipeById(crafting.selectedRecipeId) : null;
+      const skillRow = recipe ? getCraftingSkillRowForRecipe(recipe) : null;
+      const group = findSkillExpertiseGroup({ expertiseGroups: getNamedSkillExpertiseGroups(skillRow) }, cleanText(name));
+      state.play = mergePlayState(state.play);
+      state.play.crafting.rollExpertise = group ? group.name : "";
+      persistWorkingState();
+      renderPlayDashboard();
+      setStatus(group
+        ? `Crafting rolls now add ${group.name} expertise ${formatModifier(group.bonus)} to ${skillRow.name}.`
+        : "Crafting rolls add no expertise.");
+    }
 function resetCraftingSession() {
       state.play = mergePlayState(state.play);
+      // Task 033b: after a SUCCESSFUL craft the mod notes are already on the
+      // crafted item, so the next craft starts with an empty box. After a failed
+      // craft, or with no craft resolved yet (a mid-craft Reset Session), the
+      // notes stay: the player may retry the same build.
+      // Task 042 (033b/038b audit should-fix 5): only when the box still holds
+      // the notes that went onto that item. Notes typed since (for a new recipe)
+      // stay. An older outcome record without saved notes clears nothing.
+      const lastOutcome = state.play.crafting.lastCraftOutcome;
+      const clearModNotes = lastOutcome?.type === "success"
+        && cleanText(state.play.crafting.selectedMods) === cleanText(lastOutcome.modNotes);
       state.play.crafting = {
         ...state.play.crafting,
         craftingWizardStep: 0,
@@ -13818,11 +14285,19 @@ function resetCraftingSession() {
         recipeName: "",
         materialCost: "",
         selectedRecipeId: "",
-        selectedMods: "",
+        // Task 033b: the expertise choice belongs to the item, which is cleared.
+        rollExpertise: "",
+        // Task 033: the mod notes are no longer wiped here. They stay until the
+        // player changes them, and a successful craft copies them onto the item.
+        ...(clearModNotes ? { selectedMods: "" } : {}),
         notes: "",
         lastCraftOutcome: null
       };
-      appendPlayLog("Crafting Session Reset", ["Crafting points, recipe notes, and selected mods/alloys were cleared."]);
+      appendPlayLog("Crafting Session Reset", [
+        clearModNotes
+          ? "Crafting points and session notes were cleared. Dice are back at the maximum. The mod notes went onto the crafted item, so the box was cleared for the next craft."
+          : "Crafting points and session notes were cleared. Dice are back at the maximum. Mod notes were kept."
+      ]);
       persistWorkingState();
       renderPlayDashboard();
       setStatus("Reset the crafting session.");
@@ -13876,6 +14351,10 @@ function selectCraftingRecipe(recipeId) {
       const requirements = getRecipeRequirements(recipe);
       state.play = mergePlayState(state.play);
       state.play.crafting.selectionMode = "recipe";
+      if (state.play.crafting.selectedRecipeId !== recipe.id) {
+        // Task 033b: the expertise choice was for the previous item.
+        state.play.crafting.rollExpertise = "";
+      }
       state.play.crafting.selectedRecipeId = recipe.id;
       state.play.crafting.recipeName = recipe.name;
       state.play.crafting.materialCost = summarizeRecipeRequirements(requirements);
@@ -14014,7 +14493,9 @@ function purchaseCraftingRequirement(customCostKey) {
       }
       state.play = mergePlayState(state.play);
       if (record) {
-        const carriedEntry = state.play.inventoryItems.find((entry) => entry.itemId === record.id);
+        // Task 042 (033b/038b audit must-fix 2): crafted copies (custom: true)
+        // keep their recipe's id but are not the bought stack; never add them in.
+        const carriedEntry = state.play.inventoryItems.find((entry) => entry.itemId === record.id && !entry.custom);
         const currentQuantity = Math.max(getBuilderItemQuantity(record.id), Math.floor(toNumber(carriedEntry?.quantity, 0)));
         setBuilderItemQuantity(record.id, currentQuantity + packages);
         ensurePlayInventoryFromBuilder();
@@ -14566,6 +15047,7 @@ function renderCraftingNotesPanel(crafting) {
           <label class="play-crafting-field">
             <strong>Selected Mods / Alloys / Point Spending</strong>
             <textarea data-crafting-field="selectedMods" placeholder="Track chosen mods, alloys, artisan bonuses, or harvest difficulty here.">${escapeHtml(crafting.selectedMods)}</textarea>
+            <small data-crafting-mod-notes-hint>These notes are kept when you reset the session or after a failed craft, and they are copied onto the item when the craft succeeds. Start New Craft after a success clears the box, because the notes are then on the item.</small>
           </label>
           <label class="play-crafting-field">
             <strong>Session Notes</strong>
@@ -14632,13 +15114,14 @@ const DOWNTIME_RULE_GUIDE = {
           "Review the build outline, item effect, use cost, and visible recipe requirements.",
           "Use the material-cost panel to compare need, have, missing cost, and custom price before buying or spending materials.",
           "Check required tool, facility access, class access, expertise, and any class abilities. Facility and tool bonuses are separate rule sources.",
-          "Roll the matching crafting skill when the rules or GM call for it. Expertise does not stack with other expertise.",
-          "Use the crafting session tracker to roll crafting dice, add generated points, spend points, and record mods, alloys, or complications."
+          "Each crafting die is a d10 plus your crafting skill (plus one expertise) and other modifiers. The sheet adds the crafting skill for you. If the character has an expertise that matches the item (for example Longsword for a longsword), pick it in the Matching Expertise box next to Roll d10 and it is added too. Expertise does not stack with other expertise.",
+          "Use the crafting session tracker to roll crafting dice, add generated points, pay for mods out of the points, and record mods, alloys, or complications."
         ],
         reminders: [
           "Level 1/2/3 facilities give +2/+4/+6 to the matching crafting skill when available.",
+          "You start a craft with 5 crafting dice. Your crafting points left after paying for mods must reach the item's crafting HP, or the craft fails and the materials are lost.",
           "Missing recipe costs or material lists should stay GM-set until clarified by the rules.",
-          "Use session notes for alloys, mods, helper rulings, location limits, and unusual ingredient substitutions."
+          "Use the mod notes box for mods and alloys; it goes onto the crafted item. Use session notes for helper rulings, location limits, and unusual ingredient substitutions."
         ]
       },
       gathering: {
@@ -14850,9 +15333,15 @@ function renderGatheringSessionPanel(crafting, inventory = []) {
     }
 function renderCraftingSessionPanel(crafting, options = {}) {
       const activeRecipe = options.activeRecipe || null;
-      const activeRecipePointCost = Math.max(0, toNumber(options.activeRecipePointCost, 0));
       const activeRecipeRequirementsMet = options.activeRecipeRequirementsMet !== false;
-      const activeRecipeSpendLabel = cleanText(options.activeRecipeSpendLabel) || "Select a recipe";
+      const activeRecipeHpLabel = cleanText(options.activeRecipeHpLabel) || "Select a recipe";
+      // Task 033: the d10 button names the crafting skill it will add.
+      const rollSkillRow = activeRecipe ? getCraftingSkillRowForRecipe(activeRecipe) : null;
+      // Task 033b: the matching expertise, when the character has one on this skill.
+      const rollExpertise = pickCraftingRollExpertise(rollSkillRow, crafting);
+      const rollFormulaLabel = rollSkillRow
+        ? `d10 + ${rollSkillRow.name} ${formatModifier(rollSkillRow.total)}${rollExpertise.chosen ? ` + ${rollExpertise.chosen.name} ${formatModifier(rollExpertise.chosen.bonus)}` : ""} + bonuses`
+        : "d10 + bonuses (pick a recipe to add its crafting skill)";
       return `
         <div>
           <p class="eyebrow">Crafting Session Tracker</p>
@@ -14867,7 +15356,7 @@ function renderCraftingSessionPanel(crafting, options = {}) {
               <input class="play-number-input" type="number" inputmode="numeric" min="0" data-crafting-field="diceMax" value="${escapeHtml(String(crafting.diceMax))}">
             </div>
             <div class="play-crafting-die-roller">
-              <span>d10 + Bonus</span>
+              <span data-crafting-roll-formula>${escapeHtml(rollFormulaLabel)}</span>
               <button type="button" data-crafting-action="roll-die" ${activeRecipe && !activeRecipeRequirementsMet ? "disabled" : ""}>Roll d10</button>
             </div>
           </div>
@@ -14879,7 +15368,7 @@ function renderCraftingSessionPanel(crafting, options = {}) {
           <div class="play-crafting-card">
             <strong>Spent</strong>
             <div class="play-crafting-value">${escapeHtml(String(crafting.pointsSpent))}</div>
-            <p>Recipe costs, mods, alloys, finishes, or gathering difficulty.</p>
+            <p>Points paid for mods, alloys, or finishes.</p>
           </div>
           <div class="play-crafting-card">
             <strong>Available</strong>
@@ -14890,10 +15379,9 @@ function renderCraftingSessionPanel(crafting, options = {}) {
 
         <div class="play-crafting-spend-strip">
           <div>
-            <strong>Active Recipe Cost</strong>
-            <span>${escapeHtml(activeRecipeSpendLabel)}</span>
+            <strong>Crafting HP</strong>
+            <span>${escapeHtml(activeRecipeHpLabel)}</span>
           </div>
-          <button type="button" data-crafting-action="spend-recipe" ${activeRecipe && activeRecipePointCost && activeRecipeRequirementsMet ? "" : "disabled"}>Spend Recipe Points</button>
         </div>
 
         <div class="play-crafting-field-grid">
@@ -14905,6 +15393,16 @@ function renderCraftingSessionPanel(crafting, options = {}) {
             <strong>Point Amount</strong>
             <input type="number" inputmode="numeric" min="0" data-crafting-field="pendingPointSpend" value="${escapeHtml(String(crafting.pendingPointSpend))}">
           </label>
+          ${rollSkillRow && rollExpertise.options.length ? `
+          <label class="play-crafting-field" style="grid-column: 1 / -1;" data-crafting-expertise-pick>
+            <strong>Matching Expertise (adds to each d10 roll)</strong>
+            <select data-crafting-roll-expertise aria-label="${escapeHtml(`Expertise to add to ${rollSkillRow.name} crafting rolls`)}">
+              <option value="">No expertise</option>
+              ${rollExpertise.options.map((group) => `<option value="${escapeHtml(group.name)}"${rollExpertise.chosen && rollExpertise.chosen.name === group.name ? " selected" : ""}>${escapeHtml(`${group.name} ${formatModifier(group.bonus)}`)}</option>`).join("")}
+            </select>
+            <span>Pick the expertise that matches the item, as in the rulebook example (Blacksmithing 5 + Longsword 10 = +15). Only one expertise counts.</span>
+          </label>
+          ` : ""}
         </div>
         <div class="play-crafting-actions">
           <button type="button" data-crafting-action="add-points">Add Points</button>
@@ -15203,14 +15701,14 @@ const CRAFTING_WIZARD_STEPS = [
       {
         id: "rolls",
         title: "Roll Points",
-        lead: "Roll crafting dice into crafting points and make any required crafting skill checks. Facility bonuses apply to the matching crafting skill.",
-        goal: "Generate enough points for the selected recipe and record any GM-called checks.",
-        next: "Roll d10, add generated points, spend points if needed, then Continue."
+        lead: "You start with 5 crafting dice. Each roll is a d10 plus your crafting skill and any bonuses, and the total is added to your crafting points. Facility bonuses apply to the matching crafting skill.",
+        goal: "Generate enough points to reach the recipe's crafting HP, and pay for any mods out of them.",
+        next: "Roll d10, add points by hand if needed, spend points on mods, then Continue."
       },
       {
         id: "complete",
         title: "Resolve Craft",
-        lead: "Spend the recipe points, then resolve the craft once. Success adds the item and consumes materials; failure consumes materials as a GM-adjustable default.",
+        lead: "Check that your crafting points reach the item's crafting HP, then resolve the craft once. Success adds the item and uses up the materials. A failed craft loses all the materials too.",
         goal: "Finish the session without double-adding the crafted item.",
         next: "Click Craft Succeeded or Craft Failed one time."
       }
@@ -15253,7 +15751,7 @@ function getCraftingWizardStepWarnings(stepIndex, crafting, inventory) {
       if (stepId === "rolls" && recipe) {
         const pointCost = Math.max(0, parseNumericCost(recipe.craftingPoints));
         if (pointCost && crafting.pointsAvailable < pointCost) {
-          warnings.push(`${recipe.name} needs ${pointCost} crafting points; ${crafting.pointsAvailable} are available.`);
+          warnings.push(`${recipe.name} needs a minimum of ${pointCost} crafting points; ${crafting.pointsAvailable} are available.`);
         }
       }
       return warnings;
@@ -15414,6 +15912,13 @@ function resolveCraftOutcome(didSucceed) {
         setStatus("This craft is already resolved. Undo the last outcome or start a new crafting session before resolving again.");
         return;
       }
+      // Task 033: Craft Succeeded needs the crafting points left after mods to
+      // reach the item's crafting HP (rulebook example: "a minimum of 30").
+      const hpCheck = getCraftingHpCheck(recipe, crafting);
+      if (didSucceed && !hpCheck.enough) {
+        setStatus(`Craft Succeeded needs a minimum of ${hpCheck.hp} crafting points left after any mods, and you have ${hpCheck.points}. Roll more dice, or use Craft Failed if the dice are spent.`);
+        return;
+      }
       state.play = mergePlayState(state.play);
       const snapshot = createCraftOutcomeSnapshot();
       const consumption = consumeCraftingMaterials(recipe, crafting);
@@ -15429,13 +15934,18 @@ function resolveCraftOutcome(didSucceed) {
         }
       }
       let craftedLine = "";
+      let modNotesLine = "";
+      const craftedQuantity = getCraftedQuantity(recipe);
       if (didSucceed) {
+        // Task 033: the free-text mod notes travel with the crafted item
+        // (structured mods come later, with task 023).
+        const modNotes = cleanText(crafting.selectedMods);
         state.play.inventoryItems.push({
           uid: createInventoryUid("crafted"),
           itemId: recipe.id,
           custom: true,
           equipped: false,
-          quantity: 1,
+          quantity: craftedQuantity,
           name: recipe.name,
           type: cleanText(recipe.type || "Crafted Item"),
           subType: cleanText(recipe.subType || ""),
@@ -15443,9 +15953,11 @@ function resolveCraftOutcome(didSucceed) {
           burden: cleanText(recipe.burden || ""),
           imageSmUrl: recipe.imageSmUrl || "assets/lyrian-symbol.png",
           imageLgUrl: recipe.imageLgUrl || recipe.imageSmUrl || "assets/lyrian-symbol.png",
-          description: `Crafted by this character. ${cleanText(recipe.description || "")}`.trim()
+          description: `Crafted by this character. ${cleanText(recipe.description || "")}`.trim(),
+          ...(modNotes ? { modNotes } : {})
         });
-        craftedLine = `Crafted: 1 x ${recipe.name} (added to inventory).`;
+        craftedLine = `Crafted: ${craftedQuantity} x ${recipe.name} (added to inventory).`;
+        modNotesLine = modNotes ? `Mod notes saved on the item: ${modNotes}` : "";
       }
       state.play.crafting.craftedOutcomePending = false;
       state.play.crafting.lastCraftOutcome = {
@@ -15453,6 +15965,9 @@ function resolveCraftOutcome(didSucceed) {
         recipeId: recipe.id,
         recipeName: recipe.name,
         at: new Date().toISOString(),
+        // Task 042: the mod notes that went onto the crafted item (see
+        // resetCraftingSession).
+        modNotes: didSucceed ? cleanText(crafting.selectedMods) : "",
         snapshot
       };
       appendPlayLog(didSucceed ? "Craft Succeeded" : "Craft Failed", [
@@ -15461,16 +15976,19 @@ function resolveCraftOutcome(didSucceed) {
         consumption.shortfalls.length ? `Shortfall (GM ruled it proceeded): ${consumption.shortfalls.join(", ")}` : "",
         miraneExpLine,
         craftedLine,
+        didSucceed && craftedQuantity > 1 ? "Alchemy: the rulebook says Alchemists always craft at least 3 of the item, and the cost already covers all 3." : "",
+        modNotesLine,
+        hpCheck.hasHp ? `Crafting points left: ${hpCheck.points} (the item needs a minimum of ${hpCheck.hp}).` : "",
         didSucceed
           ? ""
-          : "Failure consumption note: the official rules do not spell out failure costs. Materials were consumed as the default; use Undo Last Outcome if the GM rules otherwise.",
+          : "Failed craft: the rulebook says you lose all materials used for crafting. Use Undo Last Outcome only if you pressed the wrong button.",
         "Undo Last Outcome (final crafting step) restores materials and removes the crafted item."
       ].filter(Boolean));
       persistWorkingState();
       renderPlayDashboard();
       setStatus(didSucceed
-        ? `Craft succeeded: ${recipe.name} added to inventory and materials consumed.`
-        : `Craft failed: materials consumed by default. Undo is available if the GM rules otherwise.`);
+        ? `Craft succeeded: ${craftedQuantity > 1 ? `${craftedQuantity} x ` : ""}${recipe.name} added to inventory and materials consumed.`
+        : `Craft failed: all the materials used for the craft are lost, as the rulebook says. Undo is there for a wrong click.`);
     }
 function undoLastCraftOutcome() {
       const crafting = getCraftingTrackerState();
@@ -15570,13 +16088,13 @@ function renderWizardStepCoach(step, modeLabel, warnings = []) {
 function renderCraftingWizardCompleteStep(crafting, inventory) {
       const recipe = crafting.selectionMode === "recipe" ? getCraftingRecipeById(crafting.selectedRecipeId) : null;
       const pointCost = recipe ? Math.max(0, parseNumericCost(recipe.craftingPoints)) : 0;
-      const availability = recipe ? getCraftingRecipeAvailability(recipe, inventory, crafting) : null;
       const requirementStates = recipe
         ? getRecipeRequirements(recipe).map((entry) => getRecipeRequirementState(entry, inventory, recipe, crafting))
         : [];
       const missing = requirementStates.filter((entry) => entry.need > 0);
       const lastOutcome = crafting.lastCraftOutcome;
       const outcomeResolved = Boolean(lastOutcome?.snapshot);
+      const hpCheck = getCraftingHpCheck(recipe, crafting);
       return `
         <div class="play-wizard-complete">
           <div class="play-recipe-selected-summary">
@@ -15586,25 +16104,28 @@ function renderCraftingWizardCompleteStep(crafting, inventory) {
               : "Go back to step 1 and pick a recipe before resolving a craft.")}</span>
             ${recipe ? renderCraftingAvailabilityNotice(recipe, inventory, crafting) : ""}
           </div>
-          <div class="play-crafting-card">
-            <strong>Spend Recipe Points</strong>
-            <p>${escapeHtml(recipe
-              ? `${recipe.name} costs ${pointCost || "no numeric"} crafting points. ${crafting.pointsAvailable} points are available.`
-              : "Select a recipe first.")}</p>
-            <button type="button" data-crafting-action="spend-recipe" ${recipe && pointCost && (availability ? availability.available : true) && crafting.pointsAvailable >= pointCost ? "" : "disabled"}>Spend ${escapeHtml(String(pointCost || 0))} Points</button>
+          <div class="play-gathering-tool-check ${!recipe || !pointCost ? "is-neutral" : hpCheck.enough ? "is-ready" : "is-missing"}" data-crafting-hp-check>
+            <strong>Crafting HP</strong>
+            <span>${escapeHtml(!recipe
+              ? "Select a recipe first."
+              : !pointCost
+                ? `${recipe.name} has no crafting HP in the sheet's data, so any total completes it.`
+                : hpCheck.enough
+                  ? `${recipe.name} needs a minimum of ${pointCost} crafting points left after any mods. You have ${hpCheck.points}, which is enough to complete it.`
+                  : `${recipe.name} needs a minimum of ${pointCost} crafting points left after any mods. You have ${hpCheck.points}, which is ${hpCheck.short} short. Craft Succeeded stays locked until you have enough; if the dice are spent, use Craft Failed.`)}</span>
           </div>
           ${missing.length ? `
             <p class="play-recipe-inferred-note">Missing before resolving: ${escapeHtml(missing.map((entry) => `${entry.label} (${formatRequirementQuantity(entry.need, entry.unit)})`).join(", "))}. You can still resolve the craft if the GM allows it; the shortfall is logged.</p>
           ` : ""}
           <div class="play-wizard-outcome-row">
-            <button type="button" class="play-wizard-outcome-success" data-crafting-action="craft-success" ${recipe && !outcomeResolved ? "" : "disabled"}>Craft Succeeded</button>
+            <button type="button" class="play-wizard-outcome-success" data-crafting-action="craft-success" ${recipe && !outcomeResolved && hpCheck.enough ? "" : "disabled"}>Craft Succeeded</button>
             <button type="button" class="play-wizard-outcome-failure" data-crafting-action="craft-failure" ${recipe && !outcomeResolved ? "" : "disabled"}>Craft Failed</button>
             ${lastOutcome ? `<button type="button" class="secondary" data-crafting-action="craft-undo">Undo Last Outcome</button>` : ""}
             ${lastOutcome ? `<button type="button" class="secondary" data-crafting-action="reset-session">Start New Craft</button>` : ""}
           </div>
           <p class="play-recipe-inferred-note">${escapeHtml(outcomeResolved
-            ? "This outcome is locked so it cannot be resolved twice. Undo restores the pre-resolution state; Start New Craft keeps this outcome and clears the wizard for another craft."
-            : "Success adds the crafted item to inventory and consumes the recipe materials (packages are opened; loose units stay visible and count toward future crafts). Failure also consumes materials, but the official rules do not spell out failure costs, so treat that consumption as a GM-adjustable default and use Undo if the table rules otherwise.")}</p>
+            ? `This outcome is locked so it cannot be resolved twice. Undo restores the pre-resolution state; Start New Craft keeps this outcome and clears the wizard for another craft. ${lastOutcome.type === "success" ? "Your mod notes are on the finished item, so Start New Craft clears the notes box for the next craft." : "Your mod notes are kept, so you can retry the same build."}`
+            : `Success adds ${recipe && getCraftedQuantity(recipe) > 1 ? `${getCraftedQuantity(recipe)} of the crafted item (an Alchemy craft makes ${getCraftedQuantity(recipe)}; the materials already cover them)` : "the crafted item"} to inventory, with your mod notes, and consumes the recipe materials (packages are opened; loose units stay visible and count toward future crafts). A failed craft loses all the materials used for crafting, as the rulebook says. Undo Last Outcome is for a wrong click.`)}</p>
           ${lastOutcome ? `
             <div class="play-recipe-selected-summary">
               <strong>Last outcome</strong>
@@ -15816,8 +16337,8 @@ const activeRecipe = crafting.selectionMode === "recipe" ? getCraftingRecipeById
 const activeRecipeAvailability = activeRecipe ? getCraftingRecipeAvailability(activeRecipe, inventory, crafting) : null;
 const activeRecipeRequirementsMet = activeRecipeAvailability ? activeRecipeAvailability.available : true;
 const activeRecipePointCost = activeRecipe ? Math.max(0, parseNumericCost(activeRecipe.craftingPoints)) : 0;
-const activeRecipeSpendLabel = activeRecipe
-        ? `${activeRecipe.name}: ${activeRecipePointCost || "No numeric"} points${activeRecipeRequirementsMet ? "" : " | Requirements not met"}`
+const activeRecipeHpLabel = activeRecipe
+        ? `${activeRecipe.name}: ${activeRecipePointCost ? `needs a minimum of ${activeRecipePointCost} crafting points left after mods (you have ${crafting.pointsAvailable})` : "no crafting HP in the sheet's data"}${activeRecipeRequirementsMet ? "" : " | Requirements not met"}`
         : "Select a recipe";
 const referenceEntries = lookup.items.entries
         .filter(isCraftingOrGatheringReference)
@@ -15945,15 +16466,15 @@ const gatheringWorkflowStepBadge = (step) => (isGatheringMode && step
             <div class="play-wizard-panel">
               ${renderCraftingSessionPanel(crafting, {
                 activeRecipe,
-                activeRecipePointCost,
-                activeRecipeSpendLabel,
+                activeRecipeHpLabel,
                 activeRecipeRequirementsMet
               })}
             </div>
             <div class="play-wizard-panel">
               <div>
                 <p class="eyebrow">Skill Shortcuts</p>
-                <h3>Crafting Checks</h3>
+                <h3>Skill Checks (d20)</h3>
+                <p class="play-recipe-inferred-note">These are ordinary d20 skill checks for when the GM calls for one. Crafting dice use the Roll d10 button, which adds your crafting skill itself.</p>
               </div>
               <div class="play-skill-mini-list">
                 ${renderCraftingSkillRows(craftingSkills, "No crafting skill rows are available yet.")}
@@ -16263,7 +16784,9 @@ const cost = market.purchasePrice;
       state.play = mergePlayState(state.play);
 const stackable = isStackableBuilderItem(record);
 const alreadySelected = state.builder.selectedItemIds.includes(record.id);
-const alreadyCarried = state.play.inventoryItems.some((entry) => entry.itemId === record.id);
+// Task 042 (033b/038b audit must-fix 2): a crafted copy (custom: true) keeps its
+// recipe's id but is not a bought copy, so it never counts toward a purchase.
+const alreadyCarried = state.play.inventoryItems.some((entry) => entry.itemId === record.id && !entry.custom);
       if (alreadySelected || alreadyCarried) {
         if (stackable) {
           const funds = getStartingFundsState();
@@ -16290,7 +16813,7 @@ const alreadyCarried = state.play.inventoryItems.some((entry) => entry.itemId ==
               return;
             }
           }
-          const carriedEntry = state.play.inventoryItems.find((entry) => entry.itemId === record.id);
+          const carriedEntry = state.play.inventoryItems.find((entry) => entry.itemId === record.id && !entry.custom);
           const currentQuantity = Math.max(getBuilderItemQuantity(record.id), Math.floor(toNumber(carriedEntry?.quantity, 0)));
           const nextQuantity = setBuilderItemQuantity(record.id, currentQuantity + 1);
           applyCraftingRequirementPurchasePrice(baseCost, cost);
@@ -16398,15 +16921,30 @@ const entry = state.play.inventoryItems.find((item) => item.uid === uid);
         return;
       }
       entry.equipped = !entry.equipped;
-      syncPlayResourcesFromFields(true);
-      renderPlayDashboard();
+      // Task 043: equipped items feed the computed bonuses, which are cached on
+      // the state's edit counter. Move it and recalculate, so Guard, Evasion,
+      // Dodge, Block, Initiative and skills (a rifle scope's Perception) change
+      // now, not only after a reload, and an export writes the new numbers.
+      state.revision = (state.revision || 0) + 1;
+      recalcBasics(false);
+      // Task 044b (043 audit): recalcBasics only saves when a number changes, so
+      // Equip/Unequip of an item that changes no number (a dagger, a pistol) was
+      // lost on a reload. Save every Equip click the same way.
+      scheduleWorkingStatePersist();
+      // recalcBasics already redrew the play sheet when it is on screen; draw it
+      // here only when it is not (one render per click, not two).
+      if (state.ui.mode !== "sheet") {
+        renderPlayDashboard();
+      }
       setStatus(`${entry.equipped ? "Equipped" : "Unequipped"} ${mergeInventoryEntryWithRecord(entry).name}.`);
     }
 function removeInventoryItem(uid) {
       state.play = mergePlayState(state.play);
 const entry = state.play.inventoryItems.find((item) => item.uid === uid);
       state.play.inventoryItems = state.play.inventoryItems.filter((item) => item.uid !== uid);
-      if (entry?.itemId) {
+      // Task 042 (033b/038b audit must-fix 1): removing a crafted copy must not
+      // remove the bought copy of the same item from the builder (or refund it).
+      if (entry?.itemId && !entry.custom) {
         state.builder.selectedItemIds = state.builder.selectedItemIds.filter((id) => id !== entry.itemId);
         if (state.builder.itemQuantities) {
           delete state.builder.itemQuantities[entry.itemId];
@@ -16463,9 +17001,15 @@ const entry = state.play.inventoryItems.find((inventoryItem) => inventoryItem.ui
         return "";
       }
 const quantity = Math.max(1, Math.floor(toNumber(entry.quantity, 1)));
+      // Task 033b: a crafted stack (custom: true) keeps the id of its recipe but
+      // is NOT one of the builder's purchased items. Only official entries are
+      // mirrored into the builder's item list; otherwise using one of three
+      // crafted potions would add a second, official stack of the recipe (and
+      // using the last one would remove a copy the player bought).
+      const mirrorsBuilderItem = Boolean(entry.itemId) && !entry.custom;
       if (quantity > 1) {
         entry.quantity = quantity - 1;
-        if (entry.itemId) {
+        if (mirrorsBuilderItem) {
           setBuilderItemQuantity(entry.itemId, quantity - 1);
         }
         syncBuilderSelectionsIntoSheet();
@@ -16473,7 +17017,7 @@ const quantity = Math.max(1, Math.floor(toNumber(entry.quantity, 1)));
       }
 
       state.play.inventoryItems = state.play.inventoryItems.filter((inventoryItem) => inventoryItem.uid !== uid);
-      if (entry.itemId) {
+      if (mirrorsBuilderItem) {
         state.builder.selectedItemIds = state.builder.selectedItemIds.filter((id) => id !== entry.itemId);
         if (state.builder.itemQuantities) {
           delete state.builder.itemQuantities[entry.itemId];
@@ -16693,6 +17237,15 @@ const startModeNote = document.getElementById("builder-start-mode-note");
           ? "Mirane campaign restrictions, costs, and starting funds are active."
           : "Standard rules-as-written character creation.";
       }
+      // Task 038 (037 audit finding 2): once the character is built it is no
+      // longer a Quick Build, so the Quick Build card is hidden. Its OK + "Return
+      // to Advanced Build" used to reset Spirit Core, the start mode and the
+      // Quick Build record of a finished character. Reset Character still
+      // starts over, and a fresh state shows the card again.
+const quickBuildEntry = document.getElementById("quick-build-entry");
+      if (quickBuildEntry) {
+        quickBuildEntry.classList.toggle("is-hidden", hasBuiltCharacter());
+      }
 const portraitImage = document.getElementById("builder-portrait-image");
 const portraitPlaceholder = document.getElementById("builder-portrait-placeholder");
       if (state.builder.portraitDataUrl) {
@@ -16787,15 +17340,106 @@ const topSkills = getTopSkillRows(4);
 const funds = getStartingFundsState();
 const mainStatText = MAIN_STATS.map((stat) => `${stat.key} ${state.fields[stat.key] || "—"}`).join(" | ");
 const secondaryStatText = SECONDARY_STATS.map((stat) => `${stat.key} ${state.fields[stat.key] || "—"}`).join(" | ");
+      // Task 038b (038 audit must-fix 1): EXP spent and banked belong in this top
+      // "Current Build" panel, where the player lands, not only on the Review step.
+      // Same two lines as the Review step's EXP card.
+const expBudget = getClassUnlockBudgetState();
+const expBanked = getCampaignProgressState().expBank;
 
       document.getElementById("builder-summary").innerHTML = [
         renderSummaryCard("Identity", [state.fields.Name || "Unnamed character", race?.name || "No primary race", ancestry?.name || `No ${getSecondaryLineageLabels(race).short.toLowerCase()}`].filter(Boolean).join(" | ")),
         renderSummaryCard("Stats", `${mainStatText}\n${secondaryStatText}`),
         renderSummaryCard("Breakthroughs", breakthroughs.length ? breakthroughs.map((entry) => entry.displayName).join(", ") : "No breakthroughs chosen yet."),
         renderSummaryCard("Classes", classes.length ? classes.map((entry) => entry.name).join(", ") : "No classes chosen yet."),
+        renderSummaryCard("EXP", `Spent ${expBudget.spentExp} / ${expBudget.expBudget}; remaining ${expBudget.remainingExp}\nBanked EXP: ${expBanked}`),
         renderSummaryCard("Skills", topSkills.length ? topSkills.map((entry) => `${entry.name} ${formatModifier(entry.total)}`).join(", ") : "No trained skills yet."),
         renderSummaryCard("Equipment", getEquipmentSummaryText(items, funds), "summary-card-equipment")
-      ].join("");
+      ].join("") + renderBuilderAttentionCards();
+    }
+// Task 025: notes the builder shows next to the Current Build cards instead of
+// changing the character silently (duplicate abilities now; kept-but-unmet
+// breakthroughs and unknown saved ids in the same place).
+function getBuilderAttentionNotes() {
+      const notes = [];
+      getUnmetKeptBreakthroughs().forEach(({ record, reasons }) => {
+        notes.push({
+          title: "Breakthrough kept",
+          text: `${record.name} is kept as saved, but its requirement no longer reads as met under rules ${getActiveRulesVersionLabel()}${reasons.length ? ` (${reasons.join(" ")})` : ""}. Remove it on the Breakthroughs step if it should no longer apply.`
+        });
+      });
+      getUnknownSavedIdGroups().forEach((group) => {
+        notes.push({
+          title: `Saved ${group.kind} not in these rules`,
+          text: `${group.ids.length} saved ${group.kind} ${group.ids.length === 1 ? "id is" : "ids are"} not in rules ${getActiveRulesVersionLabel()} and ignored here, but kept in your save (${group.ids.join(", ")}). They apply again if you switch to a rules version that has them.`
+        });
+      });
+      getDuplicateClassAbilityGroups().forEach((group) => {
+        notes.push({
+          title: "Duplicate ability",
+          text: `${group.name} is granted by ${joinWithAnd(group.classes)}. Rulebook, Unlocking more abilities (rules 0.13.2): “${DUPLICATE_ABILITY_REFUND_RULE}” The builder does not refund EXP automatically (the amounts are a designer question): adjust the Exp field by hand once your GM confirms the refund.`
+        });
+      });
+      return notes;
+    }
+function getActiveRulesVersionLabel() {
+      return cleanText(window.LYRIAN_DATA?.version) || cleanText(state.ui?.gameVersion) || "this version";
+    }
+// Task 025 F3: breakthroughs kept at load although their requirement reads unmet.
+function getUnmetKeptBreakthroughs() {
+      return (state.builder.unmetBreakthroughIds || [])
+        .map((id) => lookup.breakthroughs.resolve(id))
+        .filter(Boolean)
+        .map((record) => ({ record, reasons: getBreakthroughRequirementStatus(record).reasons.filter(Boolean) }));
+    }
+// Task 025 F3: saved ids (classes, breakthroughs, items) the loaded rules do not contain.
+function getUnknownSavedIdGroups() {
+      const groups = [
+        { kind: "class", ids: (state.builder.selectedClassIds || []).filter((id) => !getClassDetail(id)) },
+        { kind: "breakthrough", ids: (state.builder.selectedBreakthroughIds || []).filter((id) => !lookup.breakthroughs.resolve(id)) },
+        { kind: "item", ids: (state.builder.selectedItemIds || []).filter((id) => !lookup.items.resolve(id)) }
+      ];
+      return groups
+        .map((group) => ({ kind: group.kind, ids: Array.from(new Set(group.ids.map(cleanText).filter(Boolean))) }))
+        .filter((group) => group.ids.length);
+    }
+function renderBuilderAttentionCards() {
+      return getBuilderAttentionNotes()
+        .map((note) => renderSummaryCard(note.title, note.text, "summary-card-attention"))
+        .join("");
+    }
+function joinWithAnd(values) {
+      const list = values.map(cleanText).filter(Boolean);
+      if (list.length <= 2) {
+        return list.join(" and ");
+      }
+      return `${list.slice(0, -1).join(", ")}, and ${list[list.length - 1]}`;
+    }
+// Task 025 F7: which ability is granted by more than one chosen class, counting
+// each class's key ability (given on unlock) and the slot abilities it has bought.
+function getDuplicateClassAbilityGroups() {
+      const byKey = new Map();
+      const add = (ability, className) => {
+        const name = cleanText(ability?.name);
+        if (!name || !className) {
+          return;
+        }
+        const key = normalizePhrase(name);
+        if (!byKey.has(key)) {
+          byKey.set(key, { name, classes: [] });
+        }
+        const group = byKey.get(key);
+        if (!group.classes.includes(className)) {
+          group.classes.push(className);
+        }
+      };
+      getSelectedClassProgress().forEach((entry) => {
+        const className = cleanText(entry.record?.name);
+        const keyAbility = getClassKeyAbilityRecord(entry.record);
+        add(keyAbility, className);
+        add(keyAbility?.associatedAbilityRef, className);
+        getPurchasedClassAbilities(entry.record).forEach((ability) => add(ability, className));
+      });
+      return [...byKey.values()].filter((group) => group.classes.length > 1);
     }
 function applyClassExpDelta(delta, budgetBefore = getClassUnlockBudgetState()) {
       const amount = Math.floor(toNumber(delta, 0));
@@ -16843,7 +17487,15 @@ const breakthroughBudget = getBreakthroughBudgetState();
 // Human's racial +100 is explicitly granted to Spirit Core as well as to the
 // spendable creation EXP bank. It is therefore present even before that EXP is
 // spent; the normal class/general EXP contributions still enter on spending.
-const nextSpiritCore = String(budget.spentExp + breakthroughBudget.generalSpent + budget.humanExpBonus);
+// Task 044: count that +100 only once. Spirit Core is the EXP spent, and the
+// Human's +100 is already in it from the start, so spending those last 100
+// creation EXP adds nothing more (all 1100 spent = 1100, as in the rulebook,
+// the official builder and the CCS; it used to show 1200). EXP spent past the
+// creation budget (EXP added on the sheet) counts in full, as before.
+const totalSpentExp = budget.spentExp + breakthroughBudget.generalSpent;
+const baseCreationExp = Math.max(0, budget.startingExpBudget - budget.humanExpBonus);
+const humanBonusAlreadySpent = Math.min(budget.humanExpBonus, Math.max(0, totalSpentExp - baseCreationExp));
+const nextSpiritCore = String(totalSpentExp + budget.humanExpBonus - humanBonusAlreadySpent);
 const currentSpiritCore = cleanText(state.fields["Spirit Core"]);
       if (!currentSpiritCore || currentSpiritCore === cleanText(state.builder.autoSpiritCore)) {
         updateFieldValue("Spirit Core", nextSpiritCore);
@@ -17116,8 +17768,12 @@ function furthestUnlockedBuilderStep() {
     }
 export function setMode(mode) {
       state.ui.mode = mode;
+      rememberCompanionWindowMode(mode);
       updateModeVisibility();
       if (mode === "sheet") {
+        // Task 037: back from a builder visit, put the current HP, Mana, RP
+        // and AP back (no-op when no visit is in progress).
+        restorePlayResourcesAfterBuilderVisit();
         renderPlayDashboard();
         document.getElementById("sheet-view").scrollIntoView({ behavior: "auto", block: "start" });
       } else {
@@ -17131,8 +17787,12 @@ function updateModeVisibility() {
     }
 function renderDetailImage(url, alt) {
       const resolved = url || "assets/lyrian-symbol.png";
+      // Task 042 (041c walk): the Lyrian symbol is a small 180 px picture. The
+      // panel used to stretch it to the full panel width (large and blurry);
+      // it is now drawn at its own size, centered.
+      const isSymbol = resolved === "assets/lyrian-symbol.png";
       return `
-        <div class="detail-figure">
+        <div class="detail-figure${isSymbol ? " detail-figure-symbol" : ""}">
           <img src="${resolved}" alt="${escapeHtml(alt)}">
         </div>
       `;
@@ -18280,7 +18940,7 @@ function renderProfileStep() {
           <p class="builder-note">The profile fields below feed directly into the corresponding PDF-backed fields on page 1.</p>
           <p class="builder-note"><strong>Spirit Core:</strong> Spirit Core normally tracks EXP spent. It starts at 0, but a fresh character normally spends 1000 EXP on starting classes during creation, so most finished starting characters land at Spirit Core 1000. Pure Humans are the exception: their racial +100 EXP is also added directly to Spirit Core, while Human-Chimera Hybrid removes that bonus. The separate 300 breakthrough-only EXP from character creation does not count toward Spirit Core. <strong>These values are awarded at the correct points already; do not add them again unless the GM uses a special start condition.</strong></p>
           ${state.ui.quickBuildActive ? renderQuickBuildStartModeControl() : ""}
-          ${renderBuilderChoiceSection("profile", "Profile Choices")}
+          ${state.ui.quickBuildActive ? "" : renderBuilderChoiceSection("profile", "Profile Choices")}
           <div class="stat-grid">
             ${(state.ui.quickBuildActive ? profileFields : [
               profileFields[0],
@@ -18493,6 +19153,14 @@ const next = Math.max(0, current + change);
         ? `GM Additional IP set to +${next}. Class unlock pool increased to ${STARTING_INTERLUDE_POINTS + next} IP.`
         : `GM Additional IP cleared. Class unlock pool reset to ${STARTING_INTERLUDE_POINTS} IP.`);
     }
+// What one creation interlude action pays right now. A Job pays its artisanClim
+// more while a crafting class is mastered (task 036).
+function describeCreationInterludeAction(action) {
+      if (action?.artisanClim && hasMasteredCraftingClass()) {
+        return `+${action.clim + action.artisanClim} Clim (crafting class mastered)`;
+      }
+      return action?.description || "";
+    }
 function addCreationInterludeAction(actionId) {
       const action = CREATION_INTERLUDE_ACTIONS.find((entry) => entry.id === actionId);
       if (!action) {
@@ -18504,7 +19172,7 @@ function addCreationInterludeAction(actionId) {
         return false;
       }
       state.builder.creationInterludeActions = [...(state.builder.creationInterludeActions || []), action.id];
-      setStatus(`Added creation interlude action: ${action.label} (${action.description}).`);
+      setStatus(`Added creation interlude action: ${action.label} (${describeCreationInterludeAction(action)}).`);
       return true;
     }
 function removeCreationInterludeAction(index) {
@@ -18576,12 +19244,12 @@ const groupedEntries = new Map();
           <section class="review-panel builder-creation-interlude-panel" aria-labelledby="builder-creation-interlude-title">
             <div>
               <strong id="builder-creation-interlude-title">Creation Interlude Actions</strong>
-              <p>Spend an unused starting Interlude Point on Job (+300 Clim), Train (+25 class EXP), or Other (GM decides). Actions may be selected more than once.</p>
+              <p>Spend an unused starting Interlude Point on Job (+300 Clim, or +600 while a crafting class is mastered), Train (+25 class EXP), or Other (GM decides). Actions may be selected more than once.</p>
             </div>
             <div class="sheet-modal-form-actions">
               ${CREATION_INTERLUDE_ACTIONS.map((action) => `
                 <button type="button" class="secondary" data-add-creation-interlude-action="${escapeHtml(action.id)}" ${budget.remainingInterlude < 1 ? "disabled" : ""}>
-                  ${escapeHtml(action.label)} — ${escapeHtml(action.description)}
+                  ${escapeHtml(action.label)} — ${escapeHtml(action.description)}${action.artisanNote ? ` (${escapeHtml(action.artisanNote)})` : ""}
                 </button>
               `).join("")}
             </div>
@@ -18589,7 +19257,7 @@ const groupedEntries = new Map();
               ${budget.creationInterludeActionRecords.length
                 ? budget.creationInterludeActionRecords.map((action, index) => `
                     <button type="button" class="selected-chip" data-remove-creation-interlude-action="${index}" title="Remove ${escapeHtml(action.label)}">
-                      ${escapeHtml(action.label)}: ${escapeHtml(action.description)} ×
+                      ${escapeHtml(action.label)}: ${escapeHtml(describeCreationInterludeAction(action))} ×
                     </button>
                   `).join("")
                 : `<span class="builder-empty">No creation interlude actions selected.</span>`}
@@ -19206,6 +19874,10 @@ const items = getSelectedItemRecords();
 const topSkills = getTopSkillRows(6);
 const funds = getStartingFundsState();
 const miraneMaterials = getMiraneMaterialSelectionState();
+      // Task 038 (037 audit finding 3): the Review landing shows EXP, in the
+      // Quick Build review's wording, plus the banked EXP the sheet's EXP card shows.
+const expBudget = getClassUnlockBudgetState();
+const expBanked = getCampaignProgressState().expBank;
 
       return `
         <div class="builder-content-grid">
@@ -19234,6 +19906,11 @@ const miraneMaterials = getMiraneMaterialSelectionState();
             <div class="review-panel">
               <strong>Classes</strong>
               <p>${escapeHtml(classes.length ? classes.map((entry) => entry.name).join(", ") : "None selected yet.")}</p>
+            </div>
+            <div class="review-panel">
+              <strong>EXP</strong>
+              <p>${escapeHtml(`Spent ${expBudget.spentExp} / ${expBudget.expBudget}; remaining ${expBudget.remainingExp}`)}</p>
+              <p>${escapeHtml(`Banked EXP: ${expBanked}`)}</p>
             </div>
             <div class="review-panel">
               <strong>Skills</strong>
@@ -19292,7 +19969,7 @@ const QUICK_BUILD_SPECIES = [
   { id: "gnome", label: "Gnome", race: "Fae", ancestry: "Gnome", grantedClass: "Miner level 1", note: "Crafting-minded fae pick that starts with Miner unlocked for free." },
   { id: "selkie", label: "Selkie", race: "Fae", ancestry: "Selkie", grantedClass: "Hydromancer level 2", note: "Aquatic fae pick that starts with Hydromancer unlocked at level 2." },
   { id: "unseelie", label: "Unseelie", race: "Fae", ancestry: "Unseelie", note: "Darker fae pick for magic, stealth, or social builds." },
-  { id: "human", label: "Human", race: "Human", defer: "Human bonuses are chosen after role selection.", note: "Human bonus choices are optimized around the selected class." },
+  { id: "human", label: "Human", race: "Human", defer: "Human bonuses are picked for you to fit your role.", note: "Quick Build picks the Human bonuses that best fit the role you choose." },
   { id: "tengu", label: "Tengu", race: "Youkai", ancestry: "Tengu", note: "Winged youkai pick for mobile fighters and ranged builds." },
   { id: "kitsune", label: "Kitsune", race: "Youkai", ancestry: "Kitsune", note: "Fox-spirit pick for magic, charm, trickery, and social characters." },
   { id: "oni", label: "Oni", race: "Youkai", ancestry: "Oni", note: "Powerful youkai pick for heavy melee and intimidation." },
@@ -19316,7 +19993,8 @@ const QUICK_BUILD_ROLES = [
         mainStats: { Focus: 4, Power: 4, Agility: 3, Toughness: 5 },
         secondaryStats: { Fitness: 5, Cunning: 2, Reason: 3, Awareness: 4, Presence: 1 },
         skills: { Athletics: 4, Perception: 3, Intimidation: 2, "Common Knowledge": 1 },
-        items: ["Armor (Medium)", "Shield (Great)", "Longsword (One-Handed/Two-Handed)", "Adventurer's Kit", "Military Ration"],
+        skillSpill: ["Insight", "Riding", "Medicine", "History"],
+        items: ["Armor (Medium)", "Shield (Great)", "Longsword (One-Handed/Two-Handed)", "Adventurer's Kit", "Military Ration", "Healing Potion", "Healing Potion"],
         breakthroughPlan: [
           { name: "Greatshield Training" },
           { name: "Secondary Stat Training", choice: "Fitness" }
@@ -19324,9 +20002,10 @@ const QUICK_BUILD_ROLES = [
         weaponGroup: "Longsword",
         humanStat: "Toughness",
         humanSecondary: "Fitness",
+        human: { weaponGroup: "Thrown" },
         demonClan: "d",
         why: "Built to stand in front, block attacks, and protect allies. Toughness, Fitness, armor, and a shield are prioritized.",
-        playstyle: "A deliberate front-line defender. You occupy the dangerous space, force enemies to deal with you, and spend reactions to block the attacks that would punish your allies.",
+        playstyle: "A deliberate front-line defender. You occupy the dangerous space, force enemies to deal with you, and spend reactions to block the attacks that would punish your allies. Medium armor plus a greatshield gives the same guard, block and penalties as heavy armor plus a normal shield, but costs 500 Clim less and leaves room for a longsword.",
         gameplayLoop: ["Close the gap with Fighter movement tools.", "Use the greatshield and Guardian's Controlled Opportunities to hold a lane.", "Slam, reposition, or protect an ally when an enemy tries to pass you."],
         bestFor: "Choose this if you want to be the dependable wall of the party and do not mind trading speed for protection.",
         classPathWhy: "Fighter is the strongest Guardian prerequisite for a combat tank: Charge, Slam, and Defensive Flexibility all support positioning and protection, while the alternate Armorsmith route spends its mastery on crafting.",
@@ -19344,7 +20023,8 @@ const QUICK_BUILD_ROLES = [
         mainStats: { Focus: 4, Power: 5, Agility: 4, Toughness: 3 },
         secondaryStats: { Fitness: 5, Cunning: 2, Reason: 3, Awareness: 1, Presence: 4 },
         skills: { Athletics: 4, Intimidation: 3, Perception: 2, "Common Knowledge": 1 },
-        items: ["Armor (Light)", "Axe (Two-Handed)", "Adventurer's Kit", "Military Ration", "Healing Potion"],
+        skillSpill: ["Insight", "Riding", "Survival", "Medicine"],
+        items: ["Armor (Medium)", "Axe (Two-Handed)", "Thrown (One-Handed)", "Adventurer's Kit", "Military Ration", "Healing Potion", "Healing Potion", "Healing Potion"],
         breakthroughPlan: [
           { name: "Secondary Stat Training", choice: "Fitness" },
           { name: "Skill Training", choice: "Athletics" },
@@ -19353,12 +20033,14 @@ const QUICK_BUILD_ROLES = [
           { name: "Skill Training", choice: "Common Knowledge" }
         ],
         weaponGroup: "Axes",
+        weaponGroups: ["Thrown", "Heavy Blades", "Polearms", "Longsword"],
         humanStat: "Power",
         humanSecondary: "Fitness",
+        human: { weaponGroup: "Musket" },
         demonClan: "d",
-        why: "Built for simple heavy hits. Power and Athletics support a direct melee plan with a two-handed weapon.",
-        playstyle: "A straightforward heavy striker. You use Fighter's mobility and setup attacks to reach priority targets, then let a two-handed axe and Highlander's Aftershocks turn clean hits into extra pressure.",
-        gameplayLoop: ["Charge or move into a strong melee position.", "Set up a heavy attack with Fighter abilities.", "Use the Highlander key to make successful heavy hits hurt more."],
+        why: "Built for simple heavy hits. Power and Athletics support a direct melee plan with a two-handed axe, medium armor, and a returning thrown weapon for targets out of reach.",
+        playstyle: "A straightforward heavy striker. You use Fighter's mobility and setup attacks to reach priority targets, then let a two-handed axe and Highlander's Aftershocks turn clean hits into extra pressure. Fighter already gives medium armor proficiency, so the build wears medium armor instead of light; one of Fighter's five weapon picks is Thrown, and the thrown weapon it buys returns to your hand.",
+        gameplayLoop: ["Charge or move into a strong melee position.", "Set up a heavy attack with Fighter abilities.", "Use the Highlander key to make successful heavy hits hurt more, and throw the returning weapon at anything you cannot reach."],
         bestFor: "Choose this if you want a direct, low-fuss melee character built around large weapon hits.",
         classPathWhy: "Highlander accepts several mastered foundations, but Fighter contributes the best immediate combat package for a dedicated two-handed striker; the other routes trade combat abilities for exploration, farming, mining, or crafting.",
         nextClass: "Reaver",
@@ -19376,7 +20058,8 @@ const QUICK_BUILD_ROLES = [
         mainStats: { Focus: 4, Power: 5, Agility: 4, Toughness: 3 },
         secondaryStats: { Fitness: 5, Cunning: 3, Reason: 1, Awareness: 2, Presence: 4 },
         skills: { Athletics: 4, Intimidation: 3, Perception: 2, Stealth: 1 },
-        items: ["Armor (Light)", "Katana (Two-Handed)", "Adventurer's Kit", "Military Ration", "Healing Potion"],
+        skillSpill: ["Insight", "Common Knowledge", "Riding", "Survival"],
+        items: ["Armor (Medium)", "Katana (Two-Handed)", "Thrown (One-Handed)", "Adventurer's Kit", "Military Ration", "Healing Potion", "Healing Potion", "Healing Potion"],
         breakthroughPlan: [
           { name: "Secondary Stat Training", choice: "Fitness" },
           { name: "Skill Training", choice: "Athletics" },
@@ -19385,12 +20068,13 @@ const QUICK_BUILD_ROLES = [
           { name: "Skill Training", choice: "Stealth" }
         ],
         weaponGroup: "Katana",
-        weaponGroups: ["Heavy Blades", "Small Weapons", "Longsword", "Light Swords"],
+        weaponGroups: ["Thrown", "Heavy Blades", "Longsword", "Light Swords"],
         humanStat: "Power",
         humanSecondary: "Fitness",
+        human: { weaponGroup: "Musket" },
         demonClan: "un",
         why: "A high-acceleration 0.13.1 power route: master Fighter and immediately unlock Seven Sorrows with Katana proficiency.",
-        playstyle: "A decisive lone-sword striker. Fighter supplies the complete martial foundation, while Dark Weapon and Lone Wolf Stance begin the Seven Sorrows damage route at character creation.",
+        playstyle: "A decisive lone-sword striker. Fighter supplies the complete martial foundation, while Dark Weapon and Lone Wolf Stance begin the Seven Sorrows damage route at character creation. Lone Wolf Stance shuts out allied buffs and healing, so the build wears medium armor (a Fighter proficiency) and carries a potion and a returning thrown weapon of its own.",
         gameplayLoop: ["Use Fighter movement to isolate the priority target.", "Enter Lone Wolf Stance when the battlefield supports fighting alone.", "Convert weapon damage to Dark and develop the three Sorrows next."],
         bestFor: "Choose this if you want the new Seven Sorrows class immediately and are comfortable with an aggressively optimized melee route.",
         classPathWhy: "Fighter mastery satisfies the class gate, and Fighter/Human/Demon weapon choices can supply Katana proficiency without spending another class unlock. The full 1000 class EXP buys Fighter mastery and the Seven Sorrows key.",
@@ -19414,7 +20098,9 @@ const QUICK_BUILD_ROLES = [
         mainStats: { Focus: 5, Power: 3, Agility: 4, Toughness: 4 },
         secondaryStats: { Fitness: 2, Cunning: 5, Reason: 3, Awareness: 4, Presence: 1 },
         skills: { Stealth: 4, Roguecraft: 3, Perception: 2, Deception: 1 },
-        items: ["Armor (Light)", "Small Weapons (One-Handed)", "Wand (One-Handed)", "Adventurer's Kit", "Smoke Flask", "Military Ration"],
+        skillSpill: ["Insight", "Athletics", "Negotiation", "Appraise", "Magic"],
+        expertiseNames: { Roguecraft: "Lockpicking", Magic: "Dispel" },
+        items: ["Armor (Light)", "Small Weapons (One-Handed)", "Wand (One-Handed)", "Adventurer's Kit", "Smoke Flask", "Smoke Flask", "Healing Potion", "Healing Potion", "Speed Potion", "Military Ration"],
         breakthroughPlan: [
           { name: "Secondary Stat Training", choice: "Cunning" },
           { name: "Skill Training", choice: "Stealth" },
@@ -19425,9 +20111,13 @@ const QUICK_BUILD_ROLES = [
         weaponGroup: "Small Weapons",
         humanStat: "Focus",
         humanSecondary: "Cunning",
+        human: {
+          weaponGroup: "Set of Missiles",
+          items: ["Armor (Light)", "Small Weapons (One-Handed)", "Wand (One-Handed)", "Set of Missiles (One-Handed)", "Adventurer's Kit", "Smoke Flask", "Smoke Flask", "Healing Potion", "Healing Potion", "Speed Potion", "Military Ration"]
+        },
         demonClan: "wi",
         why: "Built to sneak, solve problems, and strike from advantage. Focus and Cunning support stealthy play.",
-        playstyle: "A mobile infiltrator and problem-solver. Rogue supplies stealth, feints, evasive movement, and sneak attacks; Mage adds Decipher Magic now so magical locks, wards, and the Tier‑2 Thief path are already covered.",
+        playstyle: "A mobile infiltrator and problem-solver. Rogue supplies stealth, feints, evasive movement, and sneak attacks; Mage adds Decipher Magic now so magical locks, wards, and the Tier‑2 Thief path are already covered. A small weapon and a wand in each hand allow dual-wield attacks, and two Smoke Flasks cover escapes. A Human also buys a Set of Missiles for its free weapon group: attacks with it do not break stealth.",
         gameplayLoop: ["Scout ahead and enter fights from concealment.", "Use Evasive Maneuver and Movement Burst to keep a safe angle.", "Exploit Sneak Attack, Roguecraft, and Decipher Magic to solve both combat and dungeon problems."],
         bestFor: "Choose this if you want stealth, locks, traps, clever movement, and a clear route into the true Thief class.",
         classPathWhy: "Mastered Rogue is the strongest immediate thief foundation. Spending the remaining 200 EXP on Mage and Decipher Magic is better than a bare Scout key because it adds magical investigation and completes Thief's prerequisites; Thief can then be unlocked with the next 200 class EXP.",
@@ -19446,7 +20136,8 @@ const QUICK_BUILD_ROLES = [
         mainStats: { Focus: 4, Power: 4, Agility: 5, Toughness: 3 },
         secondaryStats: { Fitness: 5, Cunning: 2, Reason: 1, Awareness: 4, Presence: 3 },
         skills: { Athletics: 4, Perception: 3, Insight: 2, Medicine: 1 },
-        items: ["Armor (Light)", "Gauntlets (One-handed)", "Adventurer's Kit", "Speed Potion", "Military Ration"],
+        skillSpill: ["Intimidation", "Common Knowledge", "Stealth", "Deception"],
+        items: ["Armor (Light)", "Gauntlets (One-handed)", "Set of Missiles (One-Handed)", "Adventurer's Kit", "Speed Potion", "Healing Potion", "Healing Potion", "Military Ration"],
         breakthroughPlan: [
           { name: "Secondary Stat Training", choice: "Fitness" },
           { name: "Skill Training", choice: "Athletics" },
@@ -19455,11 +20146,13 @@ const QUICK_BUILD_ROLES = [
           { name: "Skill Training", choice: "Medicine" }
         ],
         weaponGroup: "Gauntlets",
+        weaponGroups: ["Set of Missiles"],
         humanStat: "Agility",
         humanSecondary: "Fitness",
+        human: { weaponGroup: "Thrown" },
         demonClan: "d",
         why: "Built for fast close-range pressure. Agility, Athletics, and gauntlets support a mobile martial style.",
-        playstyle: "A fast unarmed combo fighter. Martial Artist provides the complete opening combo package, while Cultivator adds Ki Circulation so you can clear disabling conditions and keep your turn moving.",
+        playstyle: "A fast unarmed combo fighter. Martial Artist provides the complete opening combo package, while Cultivator adds Ki Circulation so you can clear disabling conditions and keep your turn moving. Cultivator's free weapon pick is Set of Missiles, and the build buys one so the monk has a ranged attack.",
         gameplayLoop: ["Approach with speed and choose the best adjacent target.", "Chain the Martial Artist attacks in their intended combo order.", "Use Ki Circulation when a condition would interrupt your pressure."],
         bestFor: "Choose this if you want mobile close combat, martial-arts combos, and self-sufficient ki techniques.",
         classPathWhy: "Martial Artist mastery establishes the full unarmed combo engine. Cultivator's key and Ki Circulation provide more immediate value than Monk's key alone and still satisfy Monk's alternate prerequisite; the next 200 class EXP unlocks Monk.",
@@ -19484,20 +20177,24 @@ const QUICK_BUILD_ROLES = [
         mainStats: { Focus: 5, Power: 4, Agility: 4, Toughness: 3 },
         secondaryStats: { Fitness: 2, Cunning: 3, Reason: 1, Awareness: 5, Presence: 4 },
         skills: { Survival: 3, Perception: 3, Stealth: 2, "Animal Husbandry": 2 },
-        items: ["Armor (Light)", "Bow (Two-Handed)", "Small Weapons (One-Handed)", "Adventurer's Kit", "Camping Kit", "Military Ration"],
+        skillPriority: ["Stealth", "Perception", "Survival", "Animal Husbandry"],
+        skillSpill: ["Insight", "Athletics", "Medicine", "Common Knowledge"],
+        items: ["Armor (Light)", "Bow (Two-Handed)", "Small Weapons (One-Handed)", "Adventurer's Kit", "Camping Kit", "Binoculars", "Healing Potion", "Military Ration"],
         breakthroughPlan: [
           { name: "Secondary Stat Training", choice: "Awareness" },
-          { name: "Skill Training", choice: "Survival" },
           { name: "Skill Training", choice: "Perception" },
           { name: "Skill Training", choice: "Stealth" },
+          { name: "Skill Training", choice: "Survival" },
           { name: "Skill Training", choice: "Animal Husbandry" }
         ],
         weaponGroup: "Bow",
+        weaponGroups: ["Small Weapons", "Set of Missiles"],
         humanStat: "Focus",
         humanSecondary: "Awareness",
-        demonClan: "ar",
+        human: { weaponGroup: "Musket" },
+        demonClan: "d",
         why: "Built for wilderness scouting and reliable ranged attacks. Awareness and Focus support finding and hitting targets.",
-        playstyle: "A practical wilderness archer. Ranger provides tracking, aim support, crippling shots, and field skills; Rogue adds Evasive Maneuver and a concealed sidearm so you are not helpless when enemies close in.",
+        playstyle: "A practical wilderness archer. Ranger provides tracking, aim support, crippling shots, and field skills; Rogue adds Evasive Maneuver. Ranger's melee weapon pick is Small Weapons, and the build buys one as a concealed sidearm so you are not helpless when enemies close in. Binoculars (+10 Perception beyond 60 ft) do the scouting from a distance.",
         gameplayLoop: ["Track or spot the target before the fight.", "Use Guided Aim and ranged attacks from a protected angle.", "Sidestep with Evasive Maneuver and draw the hidden sidearm if the line collapses."],
         bestFor: "Choose this if you want a bow user who is also the party's tracker, scout, and outdoor problem-solver.",
         classPathWhy: "Ranger mastery is the required Archer foundation. Rogue plus Evasive Maneuver gives more immediate mobility and defensive value than Archer's key alone while preserving the direct Archer unlock for the next 200 class EXP.",
@@ -19508,7 +20205,7 @@ const QUICK_BUILD_ROLES = [
       },
       {
         id: "scout-sniper-path",
-        label: "Scout Sniper Path",
+        label: "Scout Sniper",
         className: "Ranger",
         targetClass: "Rogue",
         classPlan: [{ name: "Ranger", purchasedCount: 7 }, { name: "Rogue", purchasedCount: 1 }],
@@ -19516,27 +20213,59 @@ const QUICK_BUILD_ROLES = [
         mainStats: { Focus: 5, Power: 4, Agility: 3, Toughness: 4 },
         secondaryStats: { Fitness: 1, Cunning: 4, Reason: 2, Awareness: 5, Presence: 3 },
         skills: { Perception: 4, Stealth: 3, Survival: 2, Medicine: 1 },
-        items: ["Armor (Light)", "Crossbow (Two-Handed)", "Small Weapons (One-Handed)", "Binoculars", "Adventurer's Kit", "Military Ration"],
+        skillSpill: ["Insight", "Athletics", "Common Knowledge"],
+        items: ["Armor (Light)", "Sniper Rifle (Two-Handed)", "Small Weapons (One-Handed)", "Adventurer's Kit", "Healing Potion", "Military Ration"],
         breakthroughPlan: [
           { name: "Secondary Stat Training", choice: "Awareness" },
-          { name: "Skill Training", choice: "Perception" },
-          { name: "Skill Training", choice: "Stealth" },
-          { name: "Skill Training", choice: "Survival" },
-          { name: "Skill Training", choice: "Medicine" }
+          { name: "Speciality Weapon Training", choice: "Sniper Rifle" }
         ],
-        weaponGroup: "Crossbow",
+        weaponGroup: "Musket",
+        weaponGroups: ["Small Weapons", "Set of Missiles"],
         humanStat: "Focus",
         humanSecondary: "Awareness",
-        demonClan: "ar",
-        why: "Built as a careful ranged setup that can grow toward precision shooting. Perception and Stealth are emphasized.",
-        playstyle: "A patient ranged skirmisher preparing for the sniper route. Ranger supplies accuracy and target control; Rogue adds a reaction sidestep, stealth tools, and a hidden backup weapon for emergencies.",
-        gameplayLoop: ["Use binoculars and Perception to identify the safest firing lane.", "Aim and fire from concealment or cover.", "Use Evasive Maneuver to preserve distance instead of trading blows."],
-        bestFor: "Choose this if you enjoy careful positioning, long sight lines, stealth, and growing into a dedicated sniper.",
-        classPathWhy: "Ranger mastery is the exact Marksman prerequisite. Rogue and Evasive Maneuver are the stronger creation purchase because they protect the firing position now; the next 200 class EXP then unlocks Marksman.",
+        human: { weaponGroup: "Crossbow" },
+        demonClan: "d",
+        why: "Built as a real sniper from the start: Speciality Weapon Training gives Sniper Rifle proficiency, and the build buys a Sniper Rifle (720 ft range; its scope gives +10 Perception beyond 60 ft).",
+        playstyle: "A patient long-range shooter. Ranger supplies accuracy and target control; Rogue adds Evasive Maneuver to keep your distance. The rifle's proficiency costs 100 breakthrough EXP, so this build gives up the four Skill Trainings the other Ranger builds take. The 2000-Clim rifle takes most of the starting Clim; the Job money from the spare Interlude Point buys a small-weapon sidearm for when enemies close in.",
+        gameplayLoop: ["Scan through the rifle scope (+10 Perception beyond 60 ft) to find the safest firing lane.", "Fire from concealment or cover at long range.", "Use Evasive Maneuver to preserve distance instead of trading blows."],
+        bestFor: "Choose this if you want a sniper rifle at character creation, long sight lines, and careful positioning.",
+        classPathWhy: "Ranger mastery is the exact Marksman prerequisite. Rogue and Evasive Maneuver are the stronger creation purchase because they protect the firing position now; the next 200 class EXP then unlocks Marksman. The Sniper class is Tier 3 and cannot be reached at creation, so Speciality Weapon Training supplies the rifle proficiency now.",
         nextClass: "Marksman",
         nextClassWhy: "Ranger is already mastered, so the next 200 class EXP unlocks Marksman and its key ability.",
         laterClass: "Sniper",
-        laterClassWhy: "After Marksman mastery, Sniper is the most role-specific precision continuation."
+        laterClassWhy: "After Marksman mastery, the Sniper class adds its own rifle bonuses."
+      },
+      {
+        id: "gunslinger",
+        label: "Gunslinger",
+        className: "Ranger",
+        targetClass: "Gunslinger",
+        classPlan: [{ name: "Ranger", purchasedCount: 7 }, { name: "Gunslinger", purchasedCount: 0 }],
+        role: "Striker",
+        mainStats: { Focus: 5, Power: 4, Agility: 4, Toughness: 3 },
+        secondaryStats: { Fitness: 2, Cunning: 3, Reason: 1, Awareness: 5, Presence: 4 },
+        skills: { Perception: 3, Intimidation: 3, Stealth: 2, Survival: 2 },
+        skillSpill: ["Athletics", "Insight", "Common Knowledge"],
+        items: ["Armor (Light)", "Pistol (One-Handed)", "Pistol (One-Handed)", "Adventurer's Kit", "Healing Potion", "Healing Potion", "Healing Potion", "Military Ration"],
+        breakthroughPlan: [
+          { name: "On the draw" },
+          { name: "Secondary Stat Training", choice: "Awareness" }
+        ],
+        weaponGroup: "Musket",
+        weaponGroups: ["Small Weapons"],
+        humanStat: "Focus",
+        humanSecondary: "Awareness",
+        human: { weaponGroup: "Light Swords" },
+        demonClan: "d",
+        why: "Built for fast pistol fights. Ranger mastery unlocks the Gunslinger class at creation; its key gives pistol proficiency, and two pistols let you dual-wield.",
+        playstyle: "A quick-drawing pistol striker. Ranger supplies Guided Aim, Crippling Attack and Snap Shot; Gunslinger's Agility adds pistol proficiency and +1 initiative, and the On the Draw breakthrough adds another +1 so you act early. A pistol in each hand gives a free extra light attack each turn.",
+        gameplayLoop: ["Act early: Gunslinger's Agility and On the Draw each add +1 initiative (Light armor takes 1 back, so you are 1 above your Agility).", "Open with Guided Aim or Snap Shot, then make light attacks with both pistols for the dual-wield attack.", "Use Crippling Attack to slow anyone closing in and keep your 60 ft range."],
+        bestFor: "Choose this if you want guns at character creation, to act first, and a mobile two-pistol shooting style.",
+        classPathWhy: "Gunslinger needs any one class mastered. Ranger is the best foundation for a shooter: its key gives light and medium armor and a ranged and a melee weapon pick, and Guided Aim, Crippling Attack and Snap Shot all work with pistols. Ranger mastery (800 EXP) plus the Gunslinger key (200 EXP) spends the full 1000.",
+        nextClass: "Gunslinger",
+        nextClassWhy: "Gunslinger is already unlocked, so future class EXP buys Ricochet, Warning Shot, Quickdraw and Fan the Hammer in order.",
+        laterClass: "Deadeye",
+        laterClassWhy: "After Gunslinger mastery, Deadeye is the Tier 3 precision continuation."
       }
     ]
   },
@@ -19554,20 +20283,23 @@ const QUICK_BUILD_ROLES = [
         mainStats: { Focus: 5, Power: 4, Agility: 3, Toughness: 4 },
         secondaryStats: { Fitness: 1, Cunning: 2, Reason: 5, Awareness: 4, Presence: 3 },
         skills: { Magic: 4, History: 2, Appraise: 2, "Common Knowledge": 2 },
-        items: ["Armor (Clothing)", "Wand (One-Handed)", "Research Kit", "Adventurer's Kit", "Healing Potion"],
+        skillSpill: ["Linguistics", "Religion", "Insight", "Perception"],
+        expertiseNames: { Magic: "Dispel" },
+        items: ["Armor (Light)", "Wand (One-Handed)", "Wand (One-Handed)", "Research Kit", "Adventurer's Kit", "Healing Potion", "Healing Potion"],
         breakthroughPlan: [
           { name: "Secondary Stat Training", choice: "Reason" },
+          { name: "Light Armor Training" },
           { name: "Skill Training", choice: "Magic" },
           { name: "Skill Training", choice: "History" },
-          { name: "Skill Training", choice: "Appraise" },
           { name: "Skill Training", choice: "Common Knowledge" }
         ],
         weaponGroup: "Wand",
         humanStat: "Focus",
         humanSecondary: "Reason",
+        human: { weaponGroup: "Small Weapons" },
         demonClan: "lu",
         why: "Built around reliable spell accuracy and utility. Focus and Reason support magic checks and control play.",
-        playstyle: "A battlefield problem-solver rather than a pure damage caster. Mage gives barriers, revealing magic, and dependable arcane attacks; Elemental Convergence lets you change the element you need from encounter to encounter.",
+        playstyle: "A battlefield problem-solver rather than a pure damage caster. Mage gives barriers, revealing magic, and dependable arcane attacks; Elemental Convergence lets you change the element you need from encounter to encounter. Light Armor Training (25 breakthrough EXP, in place of one Skill Training) lets the wizard wear light armor, and a wand in each hand allows dual-wield attacks at 60 ft.",
         gameplayLoop: ["Identify the encounter's important threat or terrain problem.", "Use barriers, Glittershards, or elemental effects to change the battlefield.", "Finish exposed targets with accurate spells rather than chasing maximum burst damage."],
         bestFor: "Choose this if you like having the right magical tool, protecting allies, and controlling where enemies can safely stand.",
         classPathWhy: "Elementalist can follow Mage or Sorcerer. Mage is the stronger controller foundation because Decipher Magic, Arcane Barrier, Glittershards, Reason, and Magic Missile provide more control and utility than Sorcerer's damage-first progression.",
@@ -19585,13 +20317,16 @@ const QUICK_BUILD_ROLES = [
         mainStats: { Focus: 5, Power: 4, Agility: 3, Toughness: 4 },
         secondaryStats: { Fitness: 1, Cunning: 3, Reason: 5, Awareness: 2, Presence: 4 },
         skills: { Magic: 4, Intimidation: 2, Deception: 2, Religion: 2 },
-        items: ["Armor (Clothing)", "Staff (Two-Handed)", "Adventurer's Kit", "Shielding Potion", "Healing Potion"],
+        skillSpill: ["History", "Common Knowledge", "Medicine", "Negotiation"],
+        expertiseNames: { Magic: "Fire Magic" },
+        items: ["Armor (Light)", "Wand (One-Handed)", "Wand (One-Handed)", "Adventurer's Kit", "Shielding Potion", "Healing Potion", "Healing Potion"],
         weaponGroup: "Wand",
         humanStat: "Focus",
         humanSecondary: "Reason",
+        human: { weaponGroup: "Small Weapons" },
         demonClan: "lu",
         why: "Built for magical damage. Focus keeps attacks accurate while Power and Magic support the blaster plan.",
-        playstyle: "A fire-first spell striker. The alternate Fire Mastery entry lets Pyromancer reach mastery at creation, giving you its full damage kit; Sorcerer's key then adds a flexible arcane fallback.",
+        playstyle: "A fire-first spell striker. The alternate Fire Mastery entry lets Pyromancer reach mastery at creation, giving you its full damage kit; Sorcerer's key then adds a flexible arcane fallback. Sorcerer's key already gives light armor proficiency, so the blaster wears light armor, and it carries a one-handed wand in each hand (60 ft, dual-wield) whose Magic Blast property turns basic shots into fire.",
         gameplayLoop: ["Open with the fire effect that best fits the enemy grouping.", "Use Controlled Blaze and Pyromancer abilities to sustain pressure.", "Fall back on Sorcerer's arcane channeling when fire is a poor answer."],
         bestFor: "Choose this if you want immediate spell damage, explosive turns, and a very clear fire-specialist identity.",
         classStrategy: "specialty-first",
@@ -19615,7 +20350,9 @@ const QUICK_BUILD_ROLES = [
         mainStats: { Focus: 4, Power: 3, Agility: 4, Toughness: 5 },
         secondaryStats: { Fitness: 2, Cunning: 1, Reason: 4, Awareness: 3, Presence: 5 },
         skills: { Medicine: 3, Religion: 3, Insight: 2, Negotiation: 2 },
-        items: ["Armor (Light)", "Shield", "Staff (One-Handed)", "Medical Kit", "Military Ration"],
+        skillSpill: ["History", "Common Knowledge", "Magic", "Athletics"],
+        expertiseNames: { Medicine: "Natural Medicines", Religion: "Faith Spell Identification" },
+        items: ["Armor (Light)", "Shield", "Staff (One-Handed)", "Medical Kit", "Healing Potion", "Healing Potion", "Military Ration"],
         breakthroughPlan: [
           { name: "Secondary Stat Training", choice: "Presence" },
           { name: "Skill Training", choice: "Medicine" },
@@ -19626,9 +20363,10 @@ const QUICK_BUILD_ROLES = [
         weaponGroup: "Magic Staff",
         humanStat: "Toughness",
         humanSecondary: "Presence",
+        human: { weaponGroup: "Bludgeoning Weapons" },
         demonClan: "vi",
         why: "Built to keep allies alive and stabilize rough fights. Toughness, Presence, Medicine, and Religion are emphasized.",
-        playstyle: "A sturdy combat healer. Acolyte supplies magical healing, protection, and Sanctuary; Medic adds First Aid plus a medical kit so you have a practical recovery option when mana or crafted supplies are tight.",
+        playstyle: "A sturdy combat healer. Acolyte supplies magical healing, protection, and Sanctuary; Medic adds First Aid plus a medical kit so you have a practical recovery option when mana or crafted supplies are tight. Two Healing Potions are spare healing when your mana runs out.",
         gameplayLoop: ["Stay close enough to reach endangered allies without standing in the front rank.", "Use Cure Touch or Acolyte protection when the fight swings.", "Use First Aid and the medical kit for efficient stabilization and recovery."],
         bestFor: "Choose this if you want the party to survive mistakes and prefer several kinds of healing over a single narrow trick.",
         classPathWhy: "Acolyte mastery supplies the complete magical support foundation. Medic and First Aid are more useful at creation than Priest's social key alone, and Acolyte mastery still leaves Priest as the next 200-EXP unlock.",
@@ -19647,7 +20385,9 @@ const QUICK_BUILD_ROLES = [
         mainStats: { Focus: 4, Power: 3, Agility: 4, Toughness: 5 },
         secondaryStats: { Fitness: 1, Cunning: 3, Reason: 2, Awareness: 4, Presence: 5 },
         skills: { Art: 4, Negotiation: 3, Insight: 2, Linguistics: 1 },
-        items: ["Armor (Light)", "Small Weapons (One-Handed)", "Adventurer's Kit", "Healing Potion", "Smoke Flask"],
+        skillSpill: ["Deception", "Common Knowledge", "Stealth", "Perception"],
+        expertiseNames: { Art: "Singing" },
+        items: ["Armor (Light)", "Small Weapons (One-Handed)", "Wand (One-Handed)", "Adventurer's Kit", "Healing Potion", "Healing Potion", "Smoke Flask"],
         breakthroughPlan: [
           { name: "Secondary Stat Training", choice: "Presence" },
           { name: "Skill Training", choice: "Art" },
@@ -19658,9 +20398,10 @@ const QUICK_BUILD_ROLES = [
         weaponGroup: "Small Weapons",
         humanStat: "Toughness",
         humanSecondary: "Presence",
+        human: { weaponGroup: "Dueling Weapons" },
         demonClan: "un",
         why: "Built as a social and performance-based support. Presence and Art are prioritized for the support fantasy.",
-        playstyle: "A mobile party buffer whose songs shape the whole encounter. Idol provides the core performance engine and support songs; Jewel Idol's Cool Spotlight makes that engine more reliable immediately.",
+        playstyle: "A mobile party buffer whose songs shape the whole encounter. Idol provides the core performance engine and support songs; Jewel Idol's Cool Spotlight makes that engine more reliable immediately. Idol's key also gives wand proficiency, so the build carries a wand for 60 ft shots next to its hidden small weapon (one in each hand allows dual-wield attacks).",
         gameplayLoop: ["Choose the song that best answers the party's current problem.", "Use movement and Twinkle Step to keep the performance safely positioned.", "Maintain support while using social skills and a hidden weapon when direct action is needed."],
         bestFor: "Choose this if you want to make everyone else better, solve social scenes, and play a flashy performer rather than a traditional healer.",
         classPathWhy: "Jewel Idol specifically requires Idol mastery. Idol's three foundational songs and Mashup are more valuable to a new performance support than using an expertise shortcut to enter Bard without the Idol song engine.",
@@ -19678,9 +20419,12 @@ const QUICK_BUILD_ROLES = [
         powerBuild: true,
         mainStats: { Focus: 4, Power: 3, Agility: 4, Toughness: 5 },
         secondaryStats: { Fitness: 1, Cunning: 3, Reason: 2, Awareness: 4, Presence: 5 },
-        skills: { Art: 2, Negotiation: 2, Insight: 2, Linguistics: 1 },
-        expertisePlan: [{ skill: "Art", name: "Singing", points: 3 }],
-        items: ["Armor (Light)", "Small Weapons (One-Handed)", "Adventurer's Kit", "Healing Potion", "Smoke Flask"],
+        skills: { Negotiation: 2, Insight: 2, Linguistics: 1 },
+        skillPriority: ["Art", "Negotiation", "Insight", "Linguistics"],
+        skillSpill: ["Deception", "Common Knowledge", "Appraise", "Stealth"],
+        expertiseNames: { Art: "Singing" },
+        expertisePlan: [{ skill: "Art", name: "Singing", points: 5 }],
+        items: ["Armor (Light)", "Small Weapons (One-Handed)", "Wand (One-Handed)", "Adventurer's Kit", "Healing Potion", "Healing Potion", "Smoke Flask"],
         breakthroughPlan: [
           { name: "Secondary Stat Training", choice: "Presence" },
           { name: "Skill Training", choice: "Art" },
@@ -19691,12 +20435,13 @@ const QUICK_BUILD_ROLES = [
         weaponGroup: "Small Weapons",
         humanStat: "Toughness",
         humanSecondary: "Presence",
+        human: { weaponGroup: "Dueling Weapons" },
         demonClan: "un",
-        why: "A high-acceleration expertise route: three creation points become +6 Singing expertise, unlocking Bard without mastering Idol first.",
-        playstyle: "A fully developed Bard at character creation. The build uses the expertise alternate prerequisite, masters Bard for its complete support kit, and spends the final 100 EXP on Idol's key ability.",
+        why: "A high-acceleration expertise route: five creation points become +10 Singing expertise, unlocking Bard without mastering Idol first.",
+        playstyle: "A fully developed Bard at character creation. The build uses the expertise alternate prerequisite, masters Bard for its complete support kit, and spends the final 100 EXP on Idol's key ability, which also gives wand proficiency: the build carries a wand next to its small weapon.",
         gameplayLoop: ["Choose the Bard performance that best changes the encounter.", "Use high Presence and Singing expertise to control social and performance scenes.", "Layer Idol's key support onto the mastered Bard engine."],
         bestFor: "Choose this if you deliberately want the strongest legal performance-class acceleration rather than the gentler Idol-first learning path.",
-        classPathWhy: "Three of the ten creation skill points convert into +6 Art (Singing) expertise and satisfy Bard's alternate gate. Bard mastery costs 900 EXP including its Tier 2 unlock; Idol's key uses the remaining 100 EXP.",
+        classPathWhy: "Five of the ten creation skill points convert into +10 Art (Singing) expertise. That meets Bard's alternate gate under either reading of \"at least 5 skill points in the Art (Singing) expertise\": a +5 expertise value, or 5 skill points invested. Bard mastery costs 900 EXP including its Tier 2 unlock; Idol's key uses the remaining 100 EXP.",
         nextClass: "Mist Veil Elegy",
         laterClass: "Mist Veil Elegy",
         nextClassWhy: "Bard is already mastered. Mist Veil Elegy is the strongest direct style continuation once its remaining access conditions are satisfied."
@@ -19717,15 +20462,17 @@ const QUICK_BUILD_ROLES = [
         mainStats: { Focus: 5, Power: 3, Agility: 4, Toughness: 4 },
         secondaryStats: { Fitness: 2, Cunning: 1, Reason: 5, Awareness: 4, Presence: 3 },
         skills: { Artifice: 4, Magic: 2, History: 2, Flight: 2 },
-        items: ["Artificer's Kit", "Artificer's Multitool", "Small Shell", "Adventurer's Kit", "Musket (Two-Handed)"],
+        skillSpill: ["Linguistics", "Common Knowledge", "Appraise", "Perception"],
+        items: ["Artificer's Kit", "Artificer's Multitool", "Musket (Two-Handed)", "Silencer", "Grappling Hook Artifice", "Small Shell", "Small Shell", "Adventurer's Kit"],
         breakthrough: "Rich Parents",
         weaponGroup: "Musket",
         humanStat: "Focus",
         humanSecondary: "Reason",
+        human: { weaponGroup: "Small Weapons" },
         demonClan: "ni",
-        why: "Built to use tools and artifice immediately. Rich Parents gives extra starting funds for the expensive inventor kit.",
-        playstyle: "A prepared gadget user who solves problems with devices, repairs, shells, and a firearm. Artificer supplies the working toolkit; Magitechnician's Advanced Artificing opens the stronger constructions immediately.",
-        gameplayLoop: ["Prepare or repair the device the scenario is likely to need.", "Use Blackbird, Overclock, or a shell to create an advantage.", "Fire the musket from range while the inventions do the specialized work."],
+        why: "Built to use tools and artifice immediately. Rich Parents (+3000 Clim) can only be taken at character creation, so the build takes it and spends the money on the gadgets it uses.",
+        playstyle: "A prepared gadget user who solves problems with devices, repairs, shells, and a firearm. Artificer supplies the working toolkit (Artificer's Kit and Multitool) and musket proficiency; Magitechnician's Advanced Artificing opens the stronger constructions immediately. Rich Parents pays for a Silencer on the musket and a Grappling Hook Artifice, with shells to run them. The classes give no armor proficiency; Light Armor Training costs only 25 EXP after creation and is the first thing to buy.",
+        gameplayLoop: ["Prepare or repair the device the scenario is likely to need.", "Use Blackbird, the Grappling Hook, Overclock, or a shell to create an advantage.", "Fire the silenced musket from range while the inventions do the specialized work."],
         bestFor: "Choose this if you enjoy equipment, crafting decisions, drones, and turning preparation into battlefield advantages.",
         classPathWhy: "Magitechnician specifically requires Artificer mastery. Artificer supplies the core crafting permission, Artificing points, scouting drone, Overclock, and reload tool that its advanced class assumes.",
         nextClass: "Transmuter",
@@ -19742,14 +20489,17 @@ const QUICK_BUILD_ROLES = [
         mainStats: { Focus: 5, Power: 3, Agility: 4, Toughness: 4 },
         secondaryStats: { Fitness: 1, Cunning: 2, Reason: 5, Awareness: 3, Presence: 4 },
         skills: { Medicine: 4, Magic: 3, "Common Knowledge": 3 },
-        items: ["Armor (Light)", "Small Weapons (One-Handed)", "Alchemy Rig (Deluxe)", "Healing Potion", "Healing Potion", "Cleansing Potion", "Antidote Shot Potion", "Adventurer's Kit"],
+        skillSpill: ["Religion", "Insight", "History", "Negotiation"],
+        items: ["Armor (Light)", "Small Weapons (One-Handed)", "Alchemy Rig (Deluxe)", "Alchemist's Alembic", "Healing Potion", "Healing Potion", "Cleansing Potion", "Antidote Shot Potion", "Adventurer's Kit"],
         breakthrough: "Rich Parents",
         weaponGroup: "Small Weapons",
+        weaponGroups: ["Staves", "Crossbow"],
         humanStat: "Focus",
         humanSecondary: "Reason",
+        human: { weaponGroup: "Crossbow" },
         demonClan: "vi",
         why: "Built around potions, recovery, and alchemy support. Rich Parents funds the alchemy package.",
-        playstyle: "A supply-based healer and battlefield chemist. Mastered Alchemist makes potions efficient to craft, draw, and throw; Acolyte adds Cure Touch so one injured ally does not always consume valuable stock.",
+        playstyle: "A supply-based healer and battlefield chemist. Mastered Alchemist makes potions efficient to craft, draw, and throw; Acolyte adds Cure Touch so one injured ally does not always consume valuable stock. The build buys the Alchemist's Alembic, the alchemy crafting tool the Alchemist key names, so it can brew more at its first interlude.",
         gameplayLoop: ["Prepare the recovery and counter-potions the mission is likely to need.", "Throw or quickdraw the correct potion when a condition appears.", "Use Cure Touch for routine healing and save expensive consumables for decisive moments."],
         bestFor: "Choose this if you enjoy preparation, crafting, inventory choices, and supporting the party with the right consumable.",
         classPathWhy: "Alchemist mastery supplies the complete potion engine. Acolyte plus Cure Touch is a stronger creation purchase than Alchemeister's key alone because it prevents routine healing from draining crafted stock; Alchemeister remains the next 200-EXP unlock.",
@@ -19820,6 +20570,18 @@ function getQuickBuildResolvedClassPlan(build, species = getQuickBuildSpecies())
       }
       if (ancestryName === "selkie") {
         addGrantedClass("Hydromancer", 0, 2);
+      }
+      if (raceName === "human") {
+        // Humans start with 100 more class EXP. Quick Build spends it on the
+        // next ability of the role's class that is not mastered yet (the last
+        // paid class unless the role names another in build.human.extraClass).
+        const extraClass = normalizePhrase(build.human?.extraClass);
+        const paid = plan.filter((entry) => !entry.raceGranted && entry.purchasedCount < CLASS_PURCHASABLE_LEVELS);
+        const target = paid.find((entry) => extraClass && normalizePhrase(entry.name) === extraClass) || paid[paid.length - 1];
+        if (target) {
+          target.purchasedCount += 1;
+          target.humanExtraLevel = true;
+        }
       }
       let paidClassCount = 0;
       return plan.filter((entry) => {
@@ -19955,7 +20717,7 @@ function renderQuickBuildClassRoadmap(build = getQuickBuildById()) {
               `).join("")}
             </ol>
             ${futureNote}
-            <p class="builder-note">Class levels are learned in order. Quick Build spends all 1000 starting class EXP. Some roles take a Tier 2 key immediately; others buy the first ability of a complementary Tier 1 class because that creates a stronger starting kit and leaves the advertised Tier 2 class as the next 200-EXP unlock.</p>
+            <p class="builder-note">Class levels are learned in order. Quick Build spends all the starting class EXP (1000, or 1100 for a Human). Some roles take a Tier 2 key immediately; others buy the first ability of a complementary Tier 1 class because that creates a stronger starting kit and leaves the advertised Tier 2 class as the next 200-EXP unlock.</p>
           </div>
         </details>
       `;
@@ -20031,7 +20793,7 @@ function getQuickBuildSpeciesDetailText(species) {
       if (normalizePhrase(species.id) === "human") {
         return [
           raceIntro,
-          "Quick Build chooses the Human stat, skill, language, and weapon benefits after you pick a class package."
+          "You don't pick the Human bonuses yourself. When you choose a role, Quick Build picks the +1 main stat, +1 sub stat, 5 skill points, extra language, and weapon group that fit it, and lists them in the role details."
         ].filter(Boolean).join("\n\n");
       }
       return raceIntro || species.note;
@@ -20077,6 +20839,19 @@ function getQuickBuildClassPlanPreview(build) {
         `;
       }).join("");
     }
+// The gear a role package buys for this species. A role may give Humans a
+// different list (build.human.items) when their free weapon group buys a
+// matching weapon.
+function getQuickBuildItems(build, species = getQuickBuildSpecies()) {
+      const isHuman = normalizePhrase(resolveQuickBuildRace(species)?.name) === "human";
+      const items = isHuman && Array.isArray(build?.human?.items) ? build.human.items : build?.items;
+      return asArray(items).map(cleanText).filter(Boolean);
+    }
+function formatQuickBuildItemList(items) {
+      const counts = new Map();
+      asArray(items).forEach((name) => counts.set(name, (counts.get(name) || 0) + 1));
+      return [...counts.entries()].map(([name, count]) => (count > 1 ? `${name} x${count}` : name)).join(", ");
+    }
 function renderQuickBuildBuildDetail(build) {
       if (!build) {
         return "<p>Pick a role package to inspect its gameplay, exact class levels, skills, perks, and equipment before applying it.</p>";
@@ -20088,6 +20863,7 @@ function renderQuickBuildBuildDetail(build) {
       const generalSkillSpend = Object.values(build.skills || {}).reduce((total, amount) => total + Math.max(0, toNumber(amount, 0)), 0);
       const expertiseSpend = asArray(build.expertisePlan).reduce((total, entry) => total + Math.max(0, toNumber(entry.points, 0)), 0);
       const perks = getQuickBuildPreviewBreakthroughPlan(build).map((entry) => `${entry.name}${entry.choice ? ` (${entry.choice})` : ""}`);
+      const interludeNote = describeQuickBuildInterludePreview(build);
       return `
         <section class="quick-build-detail-section">
           <h4>How It Plays</h4>
@@ -20107,8 +20883,9 @@ function renderQuickBuildBuildDetail(build) {
         </section>
         <section class="quick-build-detail-section">
           <h4>Equipment and Perks</h4>
-          <p><strong>Gear:</strong> ${escapeHtml((build.items || []).join(", "))}.</p>
+          <p><strong>Gear:</strong> ${escapeHtml(formatQuickBuildItemList(getQuickBuildItems(build)))}.</p>
           <p><strong>Breakthroughs:</strong> ${escapeHtml(perks.join(", "))}.</p>
+          ${interludeNote ? `<p><strong>Interlude Points:</strong> ${escapeHtml(interludeNote)}</p>` : ""}
           <p>${escapeHtml(getQuickBuildRaceOptimizationNote(build))}</p>
         </section>
       `;
@@ -20161,6 +20938,7 @@ function clearQuickBuildGeneratedFields() {
       state.builder.gmApprovedBreakthroughIds = [];
       state.builder.choiceSelections = {};
       state.builder.skillExpertiseEntries = [];
+      state.builder.creationInterludeActions = [];
       MAIN_STATS.forEach((entry) => updateFieldValue(entry.key, ""));
       SECONDARY_STATS.forEach((entry) => updateFieldValue(entry.key, ""));
       SKILL_DEFINITIONS.forEach((entry, index) => {
@@ -20219,9 +20997,9 @@ const name = normalizePhrase(record.name);
         || name === "shield great"
         || name === "binoculars";
     }
-function equipQuickBuildLoadout(build) {
+function equipQuickBuildLoadout(build, species = getQuickBuildSpecies()) {
       state.play = mergePlayState(state.play);
-const autoEquipRecords = (build?.items || [])
+const autoEquipRecords = getQuickBuildItems(build, species)
         .map((name) => findRecordByName(lookup.items.entries, name))
         .filter((record) => isQuickBuildAutoEquipItem(record));
 const autoEquipIds = new Set(autoEquipRecords.map((record) => record.id));
@@ -20230,7 +21008,7 @@ const autoEquipIds = new Set(autoEquipRecords.map((record) => record.id));
           entry.equipped = autoEquipIds.has(entry.itemId);
         }
       });
-      return autoEquipRecords.map((record) => record.name);
+      return formatQuickBuildItemList(autoEquipRecords.map((record) => record.name)).split(", ").filter(Boolean);
     }
 function addQuickBuildBreakthrough(name, fallback = "Skill Training") {
       const record = findRecordByName(lookup.breakthroughs.entries, name) || findRecordByName(lookup.breakthroughs.entries, fallback);
@@ -20273,7 +21051,19 @@ function applyQuickBuildBreakthroughPlan(build) {
           ? `${getSelectedAncestryDetail()?.name || "The selected lineage"} already grants Fire Mastery, so Pyromancer's alternate prerequisite is satisfied without breakthrough EXP. Wide Circuits I and six Magic skill trainings spend the full 300-EXP breakthrough budget on the fire kit.`
           : "Elemental Affinity (Fire) supplies Fire Mastery, satisfying Pyromancer's alternate prerequisite without a mastered Tier 1 class. Wide Circuits I uses the other 150 breakthrough EXP to support the mana-heavy fire kit.";
       }
-      getQuickBuildBreakthroughPlan(build).forEach((entry) => addQuickBuildBreakthrough(entry.name));
+      const plan = getQuickBuildBreakthroughPlan(build);
+      plan.forEach((entry) => addQuickBuildBreakthrough(entry.name));
+      // Weapon Training and Speciality Weapon Training store their weapon
+      // group in the repeatable-choice list (this also keeps one selected
+      // breakthrough per chosen group).
+      Object.values(REPEATABLE_UNIQUE_BREAKTHROUGH_CONFIGS).forEach((config) => {
+        const choices = plan
+          .filter((entry) => getRepeatableUniqueBreakthroughConfig(entry.name) === config && cleanText(entry.choice))
+          .map((entry) => entry.choice);
+        if (choices.length) {
+          setSelectedRepeatableBreakthroughChoices(config, choices);
+        }
+      });
       return "";
     }
 function applyQuickBuildClassProgress(build) {
@@ -20286,6 +21076,47 @@ function applyQuickBuildClassProgress(build) {
         setClassPurchasedAbilityCount(record.id, planned.purchasedCount);
       });
     }
+// Task 036: the starting Interlude Points the class plan does not use. Unused
+// points are lost at the start of the next arc (rulebook, Interlude Actions),
+// and the Job is the best use for every Quick Build role: no role has a class
+// action or crafting use that beats +300 Clim (+600 with a crafting class
+// mastered), and all the starting class EXP is already spent, so Train (+25 EXP)
+// buys nothing. Count and amount come from the real budget so race-granted
+// classes (a Demon clan's free class) leave more points to spend.
+function getQuickBuildSpareInterludePoints() {
+      const budget = getClassUnlockBudgetState();
+      return Math.max(0, Math.min(budget.remainingInterlude, STARTING_INTERLUDE_POINTS - budget.spentClassInterlude));
+    }
+function applyQuickBuildSpareInterludePoints() {
+      const spare = getQuickBuildSpareInterludePoints();
+      state.builder.creationInterludeActions = Array.from({ length: spare }, () => "job");
+      return spare;
+    }
+// The summary line after the build is applied.
+function describeQuickBuildInterlude() {
+      const budget = getClassUnlockBudgetState();
+      const jobs = (state.builder.creationInterludeActions || []).filter((id) => id === "job").length;
+      if (!jobs) {
+        return `Interlude Points: all ${budget.spentClassInterlude} go to unlocking classes.`;
+      }
+      return `Interlude Points: ${budget.spentClassInterlude} unlock classes; the ${jobs} spare ${jobs === 1 ? "point goes" : "points go"} to ${jobs === 1 ? "a Job" : `${jobs} Jobs`} for +${getStartingFundsState().creationInterludeClim} Clim (unused points are lost at the start of the next arc).`;
+    }
+// The same idea before the build is applied, for the role details.
+function describeQuickBuildInterludePreview(build) {
+      const plan = getQuickBuildResolvedClassPlan(build);
+      const spare = Math.max(0, STARTING_INTERLUDE_POINTS - plan.filter((entry) => !entry.raceGranted).length);
+      if (!spare) {
+        return "";
+      }
+      const craftingMastered = plan.some((entry) => {
+        const record = findRecordByName(lookup.classes.entries, entry.name);
+        const detail = record ? getClassDetail(record.id) || record : null;
+        return entry.purchasedCount >= CLASS_PURCHASABLE_LEVELS
+          && [detail?.role1, detail?.role2].some((role) => normalizePhrase(role) === "artisan");
+      });
+      const each = craftingMastered ? 600 : 300;
+      return `Spare Interlude Point${spare === 1 ? "" : "s"}: the ${spare} left after the classes ${spare === 1 ? "goes" : "go"} to ${spare === 1 ? "a Job" : "Jobs"} for +${spare * each} Clim${craftingMastered ? " (a mastered crafting class doubles the Job)" : ""}.`;
+    }
 function setFirstMatchingBuilderChoice(choiceId, preferred = []) {
       const choice = getBuilderChoiceDefinitions().find((entry) => entry.id === choiceId);
       if (!choice || !Array.isArray(choice.options) || !choice.options.length) {
@@ -20297,47 +21128,30 @@ function setFirstMatchingBuilderChoice(choiceId, preferred = []) {
       return selected;
     }
 function assignQuickBuildRacialAndClassChoices(build) {
-      const preferredSkills = Object.keys(build.skills || {});
-      setBuilderChoiceValue("race-human-main-stat", build.humanStat || "Focus");
-      setBuilderChoiceValue("race-human-secondary-stat", build.humanSecondary || "Reason");
-      setFirstMatchingBuilderChoice("race-human-language", ["Sorthen", "Sylvan"]);
-      setFirstMatchingBuilderChoice("race-human-weapon-group", [build.weaponGroup, "Small Weapons"]);
-      if (getBuilderChoiceDefinitions().some((choice) => choice.id === "race-human-skill")) {
-        const choice = getBuilderChoiceDefinitions().find((entry) => entry.id === "race-human-skill");
-        const skill = preferredSkills.find((name) => choice.options.includes(name)) || choice.options[0];
-        const row = getQuickBuildSkillIndex(skill);
-        if (row > 0) {
-          setRacialSkillAllocation(choice.id, row, 5);
-        }
-      }
+      // Classes, breakthroughs and items were just selected without touching a
+      // field; refresh the cached choice list so every class choice below is
+      // found (Gnome Elemental Blaster's Miner pick was skipped without this).
+      refreshQuickBuildSkillCaches();
+      const humanPlan = getQuickBuildHumanPlan(build);
+      setBuilderChoiceValue("race-human-main-stat", humanPlan.stat);
+      setBuilderChoiceValue("race-human-secondary-stat", humanPlan.secondary);
+      setFirstMatchingBuilderChoice("race-human-language", [humanPlan.language, "Sorthen", "Sylvan"]);
       setBuilderChoiceValue("race-demon-bonus-mode", "skill");
-      if (getBuilderChoiceDefinitions().some((choice) => choice.id === "race-demon-clan-skill")) {
-        const choice = getBuilderChoiceDefinitions().find((entry) => entry.id === "race-demon-clan-skill");
-        const skill = preferredSkills.find((name) => choice.options.includes(name)) || choice.options[0];
-        const row = getQuickBuildSkillIndex(skill);
-        if (row > 0) {
-          setRacialSkillAllocation(choice.id, row, 5);
-        }
-      } else {
+      if (!getBuilderChoiceDefinitions().some((choice) => choice.id === "race-demon-clan-skill")) {
         setFirstMatchingBuilderChoice("race-demon-weapon-group", [build.weaponGroup, "Small Weapons"]);
       }
-      getBuilderChoiceDefinitions()
-        .filter((choice) => choice.type === "racial-skill-pool" && isBuilderChoiceVisible(choice))
-        .forEach((choice) => {
-          const skill = preferredSkills.find((name) => choice.options.includes(name)) || choice.options[0];
-          const row = getQuickBuildSkillIndex(skill);
-          if (row > 0) {
-            setRacialSkillAllocation(choice.id, row, choice.amount || 0);
-          }
-        });
+      // Class weapon and armor picks never repeat a proficiency the character
+      // already has: the fixed grants of every selected class (race-granted
+      // classes included) and of the breakthroughs, plus earlier picks.
+      const granted = getQuickBuildFixedProficiencyGrants();
       getSelectedClassProgress().forEach((progressEntry) => {
         const record = progressEntry.record;
-        const selectedProficiencies = new Set();
         getClassProficiencyChoiceDefinitions(record).forEach((choice) => {
           const buildWeaponKey = normalizePhrase(build.weaponGroup);
 const channelingWeaponPreference = /\bstaff\b/.test(buildWeaponKey)
             ? "Staves"
             : (/\bwand\b/.test(buildWeaponKey) ? "Wands" : "");
+          const options = getChoiceOptionList(choice).map((option) => cleanText(option.value)).filter(Boolean);
           const preferredProficiencies = [
             build.weaponGroup,
             ...asArray(build.weaponGroups),
@@ -20347,27 +21161,36 @@ const channelingWeaponPreference = /\bstaff\b/.test(buildWeaponKey)
             "Small Weapons",
             "Light Armor",
             "Shields",
-            ...asArray(choice.options)
-          ].filter((value) => value && !selectedProficiencies.has(normalizePhrase(value)));
-          const selected = setFirstMatchingBuilderChoice(choice.id, preferredProficiencies);
+            ...options
+          ].filter((value) => value && !granted.has(normalizePhrase(value)));
+          const selected = setFirstMatchingBuilderChoice(choice.id, preferredProficiencies.length ? preferredProficiencies : options);
           if (selected) {
-            selectedProficiencies.add(normalizePhrase(selected));
+            granted.add(normalizePhrase(selected));
           }
         });
         setFirstMatchingBuilderChoice(getClassChoiceId(record, "heart-stat"), [build.humanSecondary, "Fitness", "Reason", "Presence"]);
         setFirstMatchingBuilderChoice(getClassChoiceId(record, "soul-stat"), [build.humanStat, "Focus", "Power", "Toughness", "Agility"]);
       });
-      getVisibleClassSkillPoolChoices().forEach((choice) => {
-        const skill = preferredSkills.find((name) => choice.options.includes(name)) || choice.options[0];
-        const row = getQuickBuildSkillIndex(skill);
-        if (row > 0) {
-          setClassSkillPoolAllocation(choice.id, row, "skill", choice.amount || 0);
-        }
-      });
+      assignQuickBuildHumanWeaponGroup(humanPlan);
+      // Classes and choices above change builder selections without touching
+      // a field, so refresh the cached choice list before reading the pools.
+      refreshQuickBuildSkillCaches();
+      // Racial and class skill pools, most restrictive first: a pool limited to
+      // one skill (Mage's Magic, Idol's Art, ...) claims that skill before the
+      // flexible pools, which then spill to the role's other skills. The Human
+      // +5 is placed last, after the Skill Training picks (below).
+      [
+        ...getVisibleRacialSkillPoolChoices().filter((choice) => choice.id !== QUICK_BUILD_HUMAN_SKILL_CHOICE_ID),
+        ...getVisibleClassSkillPoolChoices()
+      ]
+        .map((choice, index) => ({ choice, index, size: getChoiceOptionList(choice).length }))
+        .sort((left, right) => left.size - right.size || left.index - right.index)
+        .forEach(({ choice }) => allocateQuickBuildSkillPool(choice, build));
       const nativeFireMastery = build.classStrategy === "specialty-first" && hasTrackedElementalMastery("Fire") && getSelectedElementalAffinityElements().length === 0;
       const breakthroughPlan = getQuickBuildBreakthroughPlan(build, nativeFireMastery);
       const secondaryChoices = breakthroughPlan.filter((entry) => normalizePhrase(entry.name) === "secondary stat training");
       const skillChoices = breakthroughPlan.filter((entry) => normalizePhrase(entry.name) === "skill training");
+      const skillTargets = [];
       getBuilderChoiceDefinitions().forEach((choice) => {
         const source = cleanText(choice.source);
         const occurrenceMatch = source.match(/#(\d+)$/);
@@ -20379,7 +21202,7 @@ const channelingWeaponPreference = /\bstaff\b/.test(buildWeaponKey)
           if (/skill point or expertise/i.test(choice.label)) {
             setBuilderChoiceValue(choice.id, "skill");
           } else if (/choose the skill for \+1/i.test(choice.label)) {
-            setBuilderChoiceValue(choice.id, skillChoices[occurrence - 1]?.choice || preferredSkills[0] || choice.options?.[0] || "");
+            skillTargets.push({ choice, occurrence });
           }
         }
         if (normalizePhrase(source) === "divine s chosen") {
@@ -20387,11 +21210,312 @@ const channelingWeaponPreference = /\bstaff\b/.test(buildWeaponKey)
           setBuilderChoiceValue(choice.id, divineChoice);
         }
       });
+      // Each Skill Training point goes to its planned skill while that skill
+      // has room under the 15-point cap, otherwise to the role's next skill
+      // with room, so no point is lost above the cap.
+      skillTargets
+        .sort((left, right) => left.occurrence - right.occurrence)
+        .forEach(({ choice, occurrence }) => {
+          const allowed = getChoiceOptionList(choice).map((option) => cleanText(option.value));
+          const order = [...new Set([
+            getCanonicalSkillName(skillChoices[occurrence - 1]?.choice || ""),
+            ...getQuickBuildSkillPriority(build),
+            ...allowed
+          ])].filter((name) => name && allowed.includes(name));
+          refreshQuickBuildSkillCaches();
+          const target = order.find((name) => {
+            const row = getQuickBuildSkillIndex(name);
+            return row > 0 && (getSkillRowData(row)?.uncappedSkillPoints || 0) < SKILL_POINT_CAP;
+          }) || order[0] || "";
+          setBuilderChoiceValue(choice.id, target);
+        });
+      refreshQuickBuildSkillCaches();
+      assignQuickBuildHumanSkillPoints(build);
+    }
+function refreshQuickBuildSkillCaches() {
+      state.revision = (state.revision || 0) + 1;
+    }
+// The order a role package fills its skills in: an optional explicit
+// priority, its creation skills, then its spill list (canonical names).
+function getQuickBuildSkillPriority(build) {
+      return [...new Set([
+        ...asArray(build?.skillPriority),
+        ...Object.keys(build?.skills || {}),
+        ...asArray(build?.skillSpill)
+      ].map((name) => getCanonicalSkillName(name)).filter(Boolean))];
+    }
+function getQuickBuildExpertiseNames(build, skillName) {
+      const canonical = getCanonicalSkillName(skillName) || cleanText(skillName);
+      return [...new Set([build?.expertiseNames?.[canonical], ...getSkillExpertiseOptionList(canonical)]
+        .map(normalizeExpertiseSpecialtyName)
+        .filter(Boolean))];
+    }
+// Places every point of one racial or class skill pool. It fills the role's
+// skills in priority order up to the 15-point cap, then the pool's other
+// skills; only when every allowed skill is full does it use the pool's
+// "2 expertise per point" exchange (pools limited to one skill, such as the
+// Mage key's Magic points, reach this).
+function allocateQuickBuildSkillPool(choice, build) {
+      const isClassPool = choice?.type === "class-skill-pool";
+      if (!choice || (isClassPool && isFixedClassSkillPool(choice))) {
+        return;
+      }
+      const allowed = getChoiceOptionList(choice).map((option) => cleanText(option.value));
+      const order = [...new Set([...getQuickBuildSkillPriority(build), ...allowed])].filter((name) => allowed.includes(name));
+      const remaining = () => (isClassPool ? getClassSkillPoolState(choice) : getRacialSkillPoolState(choice)).remaining;
+      for (const skill of order) {
+        if (remaining() <= 0) {
+          break;
+        }
+        const row = getQuickBuildSkillIndex(skill);
+        if (row <= 0) {
+          continue;
+        }
+        const room = isClassPool
+          ? getClassSkillAllocationOptions(choice, row, "skill").maxSpend
+          : getRacialSkillAllocationOptions(choice, row).maxSpend;
+        if (room > 0) {
+          if (isClassPool) {
+            setClassSkillPoolAllocation(choice.id, row, "skill", room);
+          } else {
+            setRacialSkillAllocation(choice.id, row, room);
+          }
+        }
+      }
+      if (!isClassPool || !choice.allowExpertise) {
+        return;
+      }
+      for (const skill of order) {
+        const row = getQuickBuildSkillIndex(skill);
+        if (row <= 0 || !canSkillUseExpertise(SKILL_DEFINITIONS[row - 1])) {
+          continue;
+        }
+        for (const name of getQuickBuildExpertiseNames(build, skill)) {
+          const left = remaining();
+          if (left <= 0) {
+            return;
+          }
+          const group = getSkillExpertiseGroups(row).find((entry) => normalizePhrase(entry.name) === normalizePhrase(name));
+          const points = Math.min(left, Math.floor((SKILL_EXPERTISE_CAP - (group?.uncappedBonus || 0)) / 2));
+          if (points > 0) {
+            setStoredSkillExpertiseEntries([
+              ...getStoredSkillExpertiseEntries(),
+              { skillIndex: row, name, source: "class", choiceId: choice.id, points }
+            ]);
+            refreshQuickBuildSkillCaches();
+            syncSkillFields();
+          }
+        }
+      }
+    }
+const QUICK_BUILD_HUMAN_LANGUAGE = "Sorthen";
+const QUICK_BUILD_HUMAN_SKILL_CHOICE_ID = "race-human-skill";
+// The Human racial picks for a Quick Build role. Each role names its Human
+// weapon group in build.human; the stats fall back to humanStat/humanSecondary.
+function getQuickBuildHumanPlan(build) {
+      const human = build?.human || {};
+      return {
+        stat: cleanText(human.stat || build?.humanStat || "Focus"),
+        secondary: cleanText(human.secondary || build?.humanSecondary || "Reason"),
+        language: cleanText(human.language || QUICK_BUILD_HUMAN_LANGUAGE),
+        weaponGroup: cleanText(human.weaponGroup || build?.weaponGroup || ""),
+        weaponFallbacks: asArray(human.weaponFallbacks).map(cleanText).filter(Boolean)
+      };
+    }
+// Proficiencies the character has without any pick: the groups and armor a
+// selected class key names outright, and the breakthrough grants (Weapon
+// Training, Speciality Weapon Training, armor trainings). Groups a class only
+// offers as an either/or list (every option named in the class text, like
+// Rogue's four) are not counted here; they count once one is picked.
+function getQuickBuildFixedProficiencyGrants() {
+      const granted = new Set();
+      getSelectedClassProgress().forEach(({ record }) => {
+        const canonical = new Set(getCanonicalClassProficiencyLines(record).map(normalizePhrase));
+        const listedChoiceOptions = new Set();
+        (CLASS_PROFICIENCY_CHOICE_CONFIGS[normalizeKey(record?.id || record?.name)] || []).forEach((spec) => {
+          if (spec.options.length && spec.options.every((option) => canonical.has(normalizePhrase(option)))) {
+            spec.options.forEach((option) => listedChoiceOptions.add(normalizePhrase(option)));
+          }
+        });
+        canonical.forEach((label) => {
+          if (!listedChoiceOptions.has(label)) {
+            granted.add(label);
+          }
+        });
+      });
+      getSelectedBreakthroughEffects().extraProficiencies.forEach((label) => granted.add(normalizePhrase(label)));
+      return granted;
+    }
+// Weapon groups the character already has: the fixed grants above plus what
+// each class weapon choice picked.
+function getQuickBuildClassGrantedWeaponGroups() {
+      const granted = getQuickBuildFixedProficiencyGrants();
+      getSelectedClassProgress().forEach(({ record }) => {
+        getClassProficiencyChoiceDefinitions(record).forEach((choice) => {
+          const value = getBuilderChoiceValue(choice.id);
+          if (value) {
+            granted.add(normalizePhrase(value));
+          }
+        });
+      });
+      return granted;
+    }
+// Runs after the class weapon choices so the Human pick never repeats a group
+// a class already grants; falls back to the next group that is not granted.
+function assignQuickBuildHumanWeaponGroup(humanPlan) {
+      const choice = getBuilderChoiceDefinitions().find((entry) => entry.id === "race-human-weapon-group");
+      if (!choice) {
+        return "";
+      }
+      const granted = getQuickBuildClassGrantedWeaponGroups();
+      const candidates = [
+        humanPlan.weaponGroup,
+        ...humanPlan.weaponFallbacks,
+        ...getChoiceOptionList(choice).map((option) => option.value)
+      ].filter((value) => value && !granted.has(normalizePhrase(value)));
+      return setFirstMatchingBuilderChoice(choice.id, candidates);
+    }
+// Runs last, after the class skill pools and the breakthrough skill picks, so
+// the Human +5 only uses room those leave under the 15-point cap. It fills the
+// role's skills in priority order (splitting when one fills up), then any
+// other skill a Human may take, so all 5 points are always placed.
+function assignQuickBuildHumanSkillPoints(build) {
+      const choice = getVisibleRacialSkillPoolChoices().find((entry) => entry.id === QUICK_BUILD_HUMAN_SKILL_CHOICE_ID);
+      if (!choice) {
+        return;
+      }
+      SKILL_DEFINITIONS.forEach((definition, index) => {
+        if (getRacialSkillSpend(choice, index + 1) > 0) {
+          setRacialSkillAllocation(choice.id, index + 1, 0);
+        }
+      });
+      // Breakthrough skill picks above change choice values only; refresh the
+      // cached skill totals so the cap room below includes them.
+      refreshQuickBuildSkillCaches();
+      allocateQuickBuildSkillPool(choice, build);
+    }
+// What the Human picks are in the current state, in the order they were placed.
+function readQuickBuildHumanPicks(build) {
+      const choice = getVisibleRacialSkillPoolChoices().find((entry) => entry.id === QUICK_BUILD_HUMAN_SKILL_CHOICE_ID);
+      const roleSkills = getQuickBuildSkillPriority(build);
+      const skills = choice
+        ? SKILL_DEFINITIONS
+          .map((definition, index) => ({ skill: definition.name, points: getRacialSkillSpend(choice, index + 1) }))
+          .filter((entry) => entry.points > 0)
+          .sort((left, right) => {
+            const leftIndex = roleSkills.includes(left.skill) ? roleSkills.indexOf(left.skill) : roleSkills.length;
+            const rightIndex = roleSkills.includes(right.skill) ? roleSkills.indexOf(right.skill) : roleSkills.length;
+            return leftIndex - rightIndex;
+          })
+        : [];
+      return {
+        stat: getBuilderChoiceValue("race-human-main-stat"),
+        secondary: getBuilderChoiceValue("race-human-secondary-stat"),
+        language: getBuilderChoiceValue("race-human-language"),
+        weaponGroup: getBuilderChoiceValue("race-human-weapon-group"),
+        skills
+      };
+    }
+// The role detail shows the Human picks before Continue, when nothing is
+// applied yet. The picks depend on the class skill pools, so they are worked
+// out by running the same apply steps on a throwaway copy of the builder
+// state, then everything is put back exactly as it was.
+const quickBuildHumanPickPreviewCache = new Map();
+const QUICK_BUILD_PREVIEW_STATE_KEYS = ["fields", "abilitySelections", "librarySelections", "builder", "play"];
+function previewQuickBuildHumanPicks(build, species) {
+      const key = [build?.id, species?.id, getCharacterStartMode().id, window.LYRIAN_DATA?.version || ""].join("|");
+      if (quickBuildHumanPickPreviewCache.has(key)) {
+        return quickBuildHumanPickPreviewCache.get(key);
+      }
+      const saved = Object.fromEntries(QUICK_BUILD_PREVIEW_STATE_KEYS.map((stateKey) => [stateKey, state[stateKey]]));
+      const savedFields = saved.fields;
+      let sandboxFields = null;
+      let picks = null;
+      try {
+        QUICK_BUILD_PREVIEW_STATE_KEYS.forEach((stateKey) => {
+          state[stateKey] = saved[stateKey] && typeof saved[stateKey] === "object"
+            ? JSON.parse(JSON.stringify(saved[stateKey]))
+            : saved[stateKey];
+        });
+        sandboxFields = state.fields;
+        if (applyQuickBuildCoreSelections(build, species)) {
+          picks = readQuickBuildHumanPicks(build);
+        }
+      } catch (error) {
+        console.warn("Quick Build Human preview failed.", error);
+        picks = null;
+      } finally {
+        QUICK_BUILD_PREVIEW_STATE_KEYS.forEach((stateKey) => {
+          state[stateKey] = saved[stateKey];
+        });
+        state.revision = (state.revision || 0) + 1;
+        if (sandboxFields) {
+          new Set([...Object.keys(sandboxFields), ...Object.keys(savedFields)]).forEach((fieldName) => {
+            const realValue = String(savedFields[fieldName] ?? "");
+            if (String(sandboxFields[fieldName] ?? "") === realValue) {
+              return;
+            }
+            const node = document.querySelector(`[data-field="${cssEscape(fieldName)}"]`);
+            if (node && node.value !== realValue) {
+              node.value = realValue;
+            }
+          });
+        }
+      }
+      if (picks) {
+        quickBuildHumanPickPreviewCache.set(key, picks);
+      }
+      return picks;
+    }
+function getQuickBuildHumanPicks(build, species = getQuickBuildSpecies()) {
+      const applied = state.builder.quickBuild?.appliedBuildId === build?.id
+        && normalizePhrase(getSelectedRaceDetail()?.name) === "human";
+      return applied ? readQuickBuildHumanPicks(build) : previewQuickBuildHumanPicks(build, species);
+    }
+function getQuickBuildHumanOptimizationNote(build, species) {
+      const picks = getQuickBuildHumanPicks(build, species);
+      if (!picks || !picks.stat) {
+        return "Human optimization: the Human bonuses are picked for this role when you press Continue.";
+      }
+      const skillText = picks.skills.length
+        ? picks.skills.map((entry) => `${entry.skill} +${entry.points}`).join(", ")
+        : "none placed";
+      const boughtWeapon = getQuickBuildItems(build, species)
+        .map((name) => findRecordByName(lookup.items.entries, name))
+        .find((record) => record && getLikelyWeaponProficiencyLabels(record).some((label) => normalizePhrase(label) === normalizePhrase(picks.weaponGroup)));
+      const weaponText = boughtWeapon
+        ? `${picks.weaponGroup} weapon group proficiency (the build buys a ${boughtWeapon.name.replace(/\s*\([^)]*\)\s*$/, "")} for it)`
+        : `${picks.weaponGroup} weapon group proficiency`;
+      const extraText = getQuickBuildHumanExtraAbilityText(build, species);
+      // Task 038 (036 audit): the Glove costs 1 Interlude Point to make, so the
+      // Human Gadgeteer may use the spare point on it instead of the Job.
+      const gloveText = build?.id === "gadgeteer" && /artificer['’]s glove/i.test(extraText)
+        ? " With your GM's OK, the spare Interlude Point may go to the Glove instead of the Job."
+        : "";
+      return `Human optimization: +1 ${picks.stat} (main stat), +1 ${picks.secondary} (sub stat), 5 skill points (${skillText}), ${weaponText}, ${picks.language} as the extra language.${extraText ? ` ${extraText}` : ""}${gloveText}`;
+    }
+// What the Human +100 class EXP buys for this role: the next ability of the
+// class getQuickBuildResolvedClassPlan gave the extra level to.
+function getQuickBuildHumanExtraAbilityText(build, species = getQuickBuildSpecies()) {
+      const planned = getQuickBuildResolvedClassPlan(build, species).find((entry) => entry.humanExtraLevel);
+      const indexRecord = planned ? findRecordByName(lookup.classes.entries, planned.name) : null;
+      const record = indexRecord ? getClassDetail(indexRecord.id) || indexRecord : null;
+      const slot = record ? getClassProgressSlots(record)[planned.purchasedCount - 1] : null;
+      if (!slot) {
+        return "";
+      }
+      const what = slot.type === "passive"
+        ? (slot.passiveType === "skills" ? `${record.name}'s class skill bonus (+5 skill points)` : `${record.name}'s ${slot.label.toLowerCase()}`)
+        : `${slot.name} (${record.name})`;
+      return `The extra 100 Human EXP buys ${what}.`;
     }
 function getQuickBuildRaceOptimizationNote(build, species = getQuickBuildSpecies()) {
       const { race, ancestry } = getQuickBuildSpeciesRecords(species, build);
       const raceName = normalizePhrase(race?.name);
       const ancestryName = normalizePhrase(ancestry?.name);
+      if (raceName === "human") {
+        return getQuickBuildHumanOptimizationNote(build, species);
+      }
       if (raceName === "demon" && build.id === "sneak-thief") {
         return "Demon optimization: clan WI starts with Saboteur unlocked at level 1, so its key is added as a free class without delaying Rogue, Decipher Magic, or the future Thief unlock.";
       }
@@ -20427,17 +21551,22 @@ function getQuickBuildRaceOptimizationNote(build, species = getQuickBuildSpecies
       }
       return `${ancestry?.name || race?.name || species?.label || "This species"} can use every class and item in this package; no fallback is required.`;
     }
-function applyQuickBuildPreset() {
-      const species = getQuickBuildSpecies();
-      const build = getQuickBuildById();
-      if (!species || !build) {
-        setStatus("Choose a species and quick build before applying the preset.");
-        return false;
-      }
+// The sheet's Primary Race / Sub Race fields are a fallback for the selected
+// race and ancestry (getSelectedAncestryDetail reads "Sub Race" when no
+// ancestry id is set). Quick Build writes both whenever it sets the species,
+// so a species without an ancestry (Human) never inherits the last one's
+// (a Demon clan such as "NONE - Those without family skills").
+function syncQuickBuildIdentityFields(race, ancestry) {
+      updateFieldValue("Primary Race", race?.name || "");
+      updateFieldValue("Sub Race", ancestry?.name || "");
+    }
+// The builder selections a role package makes (race, stats, skills,
+// breakthroughs, classes, gear and every choice). Shared by the real apply and
+// the Human pick preview, so the preview shows exactly what Continue applies.
+function applyQuickBuildCoreSelections(build, species) {
       const race = resolveQuickBuildRace(species);
       if (!race) {
-        setStatus(`Could not find the ${species.race} race data for Quick Build.`);
-        return false;
+        return null;
       }
       clearQuickBuildGeneratedFields();
       state.builder.selectedRaceId = race.id;
@@ -20445,17 +21574,39 @@ function applyQuickBuildPreset() {
       const ancestry = resolveQuickBuildAncestry(species, build, race);
       state.builder.selectedAncestryId = ancestry?.id || "";
       state.builder.inspected.ancestry = ancestry?.id || "";
+      syncQuickBuildIdentityFields(race, ancestry);
       setQuickBuildStats(build);
       setQuickBuildSkills(build);
       setQuickBuildExpertise(build);
       const classPrerequisiteSource = applyQuickBuildBreakthroughPlan(build);
       applyQuickBuildClassProgress(build);
-      (build.items || []).forEach(addQuickBuildItem);
+      applyQuickBuildSpareInterludePoints();
+      getQuickBuildItems(build, species).forEach(addQuickBuildItem);
       assignQuickBuildRacialAndClassChoices(build);
+      return { classPrerequisiteSource };
+    }
+function applyQuickBuildPreset() {
+      const species = getQuickBuildSpecies();
+      const build = getQuickBuildById();
+      if (!species || !build) {
+        setStatus("Choose a species and quick build before applying the preset.");
+        return false;
+      }
+      const core = applyQuickBuildCoreSelections(build, species);
+      if (!core) {
+        setStatus(`Could not find the ${species.race} race data for Quick Build.`);
+        return false;
+      }
+      const { classPrerequisiteSource } = core;
       const removedForMirane = enforceMiraneStartSelections();
       syncBuilderSelectionsIntoSheet();
       ensurePlayInventoryFromBuilder();
-const autoEquippedItems = equipQuickBuildLoadout(build);
+const autoEquippedItems = equipQuickBuildLoadout(build, species);
+      // Equipping changes armor and shield bonuses without touching a field;
+      // refresh the cached bonuses and the derived combat stats (Guard, Block,
+      // Evasion, Dodge, Initiative) so they include the equipped gear.
+      state.revision = (state.revision || 0) + 1;
+      recalcBasics(false);
       state.builder.quickBuild.appliedBuildId = build.id;
       state.builder.quickBuild.classPrerequisiteSource = classPrerequisiteSource;
       const classPlan = getQuickBuildClassPlanState(build);
@@ -20464,10 +21615,12 @@ const autoEquippedItems = equipQuickBuildLoadout(build);
         `Character start: ${getCharacterStartMode().label}.`,
         build.why,
         classPlan?.currentPlanText || `Class plan: master ${build.className}${build.targetClass ? ` and unlock ${build.targetClass}` : ""}.`,
+        describeQuickBuildInterlude(),
         classPrerequisiteSource ? `Prerequisite route: ${classPrerequisiteSource}` : "",
         getQuickBuildRaceOptimizationNote(build, species),
         build.classPathWhy,
-        `Gear package: ${(build.items || []).join(", ")}.`,
+        `Breakthroughs: ${formatQuickBuildItemList(getSelectedBreakthroughDisplayEntries().map((entry) => cleanText(entry.displayName || entry.name).replace(/\s+#\d+$/, "")))}.`,
+        `Gear package: ${formatQuickBuildItemList(getQuickBuildItems(build, species))}.`,
         autoEquippedItems.length ? `Auto-equipped loadout: ${autoEquippedItems.join(", ")}. Consumables remain carried for use.` : "",
         removedForMirane.length ? `Unavailable in Mirane and removed: ${removedForMirane.join(", ")}.` : ""
       ].filter(Boolean).join("\n");
@@ -20653,6 +21806,10 @@ function renderQuickBuild() {
 function enterQuickBuildMode() {
       state.ui.quickBuildActive = true;
       state.ui.quickBuildStep = 0;
+      // Task 037: a new Quick Build character starts with full pools, not
+      // with the ones a sheet visit remembered for the old character.
+      state.play = mergePlayState(state.play);
+      state.play.resourcesBeforeBuilderVisit = null;
       state.builder.quickBuild = {
         ...(state.builder.quickBuild || {}),
         speciesId: "",
@@ -20747,6 +21904,23 @@ let html = "";
       }
 
       content.innerHTML = html;
+      renderBuilderDetail();
+    }
+// Shared builder controls redraw through these two helpers so a redraw made
+// while Quick Build is open stays on the Quick Build screen instead of
+// painting the hidden Advanced Build step.
+function rerenderActiveBuilderStep() {
+      if (state.ui.quickBuildActive) {
+        renderQuickBuildStepContent();
+        return;
+      }
+      renderBuilderStepContent();
+    }
+function rerenderActiveBuilderDetail() {
+      if (state.ui.quickBuildActive) {
+        renderQuickBuildDetail();
+        return;
+      }
       renderBuilderDetail();
     }
 function renderBuilderStepNav() {
@@ -21361,14 +22535,25 @@ const searches = builder.searches || {};
         fields: snapshot.fields || {},
         abilitySelections: snapshot.abilitySelections || {},
         builder: {
+          // Task 025 F1: these fields were missing, so a Mirane character saved
+          // to a slot reloaded as Standard. scripts/test-025-fixes.mjs audits
+          // this list against createDefaultState() so a new field cannot be
+          // dropped silently again.
+          startMode: builder.startMode || "",
           portraitDataUrl: builder.portraitDataUrl || "",
           selectedRaceId: builder.selectedRaceId || "",
           selectedAncestryId: builder.selectedAncestryId || "",
           selectedClassIds: builder.selectedClassIds || [],
+          classAbilityProgress: builder.classAbilityProgress || {},
+          creationInterludeActions: builder.creationInterludeActions || [],
+          autoSpiritCore: builder.autoSpiritCore || "",
+          autoExpBank: builder.autoExpBank || "",
+          quickBuild: builder.quickBuild || {},
           selectedItemIds: builder.selectedItemIds || [],
           itemQuantities: builder.itemQuantities || {},
           selectedBreakthroughIds: builder.selectedBreakthroughIds || [],
           gmApprovedBreakthroughIds: builder.gmApprovedBreakthroughIds || [],
+          unmetBreakthroughIds: builder.unmetBreakthroughIds || [],
           importedFinalStats: Boolean(builder.importedFinalStats),
           skillExpertiseEntries: builder.skillExpertiseEntries || [],
           choiceSelections: builder.choiceSelections || {},
@@ -21381,6 +22566,17 @@ const searches = builder.searches || {};
           resources: snapshot.play?.resources || {},
           hpAdjustAmount: snapshot.play?.hpAdjustAmount || "",
           hpHasManualChange: Boolean(snapshot.play?.hpHasManualChange),
+          // Task 037: a sheet -> builder -> sheet trip in progress survives a
+          // reload from an active save slot.
+          resourcesBeforeBuilderVisit: snapshot.play?.resourcesBeforeBuilderVisit || undefined,
+          foodUsedSinceRest: Boolean(snapshot.play?.foodUsedSinceRest),
+          activeEffects: snapshot.play?.activeEffects || [],
+          // Roll20 token pin + opt-in flags live in state.play (see
+          // getRoll20TokenPin); `|| undefined` keeps unused keys out of saves.
+          roll20TokenId: snapshot.play?.roll20TokenId || undefined,
+          roll20TokenName: snapshot.play?.roll20TokenName || undefined,
+          roll20TokenSync: snapshot.play?.roll20TokenSync || undefined,
+          roll20TurnTracker: snapshot.play?.roll20TurnTracker || undefined,
           playerNotes: snapshot.play?.playerNotes || "",
           inventoryItems: snapshot.play?.inventoryItems || [],
           inventorySearch: snapshot.play?.inventorySearch || "",
@@ -22178,7 +23374,8 @@ function createSpreadsheetInventoryImportContext(core) {
         visibleEquipment: getSpreadsheetVisibleEquipmentInfo(core),
         seenOfficialIds: new Set(),
         seenCustomNames: new Set(),
-        fieldIndex: 1,
+        officialCount: 0,
+        overflowNames: [],
         customIndex: 1
       };
     }
@@ -22196,10 +23393,20 @@ const record = resolveSpreadsheetItemRecord(name);
       if (record) {
         if (!context.seenOfficialIds.has(record.id)) {
           context.seenOfficialIds.add(record.id);
-          payload.fields[`CombatInventory${context.fieldIndex}`] = record.name;
-          payload.fields[`Amount${context.fieldIndex}`] = amountText;
-          payload.fields[`Bulk${context.fieldIndex}`] = cleanText(entry.burden) || cleanText(record.burden);
-          payload.fields[`Description${context.fieldIndex}`] = cleanText(entry.description)
+          // Task 038 (B17): the builder holds INVENTORY_ROWS.length catalog items,
+          // on the sheet's own item rows (there is no row 18). Fill exactly those
+          // rows (the 18th item used to land on a missing row and vanish), and
+          // report the items past them instead of dropping them silently.
+          const row = INVENTORY_ROWS[context.officialCount];
+          if (row === undefined) {
+            context.overflowNames.push(record.name);
+            return true;
+          }
+          context.officialCount += 1;
+          payload.fields[`CombatInventory${row}`] = record.name;
+          payload.fields[`Amount${row}`] = amountText;
+          payload.fields[`Bulk${row}`] = cleanText(entry.burden) || cleanText(record.burden);
+          payload.fields[`Description${row}`] = cleanText(entry.description)
             || [record.type, record.subType, record.cost, record.materialUnitLabel].filter(Boolean).join(" | ");
           payload.play.inventoryItems.push({
             uid: getOfficialInventoryUid(record.id),
@@ -22208,7 +23415,6 @@ const record = resolveSpreadsheetItemRecord(name);
             quantity,
             equipped
           });
-          context.fieldIndex += 1;
         }
         return true;
       }
@@ -22335,13 +23541,27 @@ const importedRp = getWorksheetLabeledNumberText(core, SPREADSHEET_VISIBLE_RESOU
         payload.fields[`Expertise${fieldIndex}`] = getWorksheetText(core, `I${row}`);
       }
 
-      for (let index = 0; index < 12; index += 1) {
-        const row = 15 + index;
+      // Task 025 F2: the CCS has 21 class rows (Core!A15:A35); only 12 used to be read.
+      // This builder holds CLASS_ROWS.length classes, so rows past that are reported
+      // instead of vanishing. A named row with no level and no EXP is a class the sheet
+      // lists but the character has not learned: it is skipped as before, without a note.
+      const importNotes = [];
+      const overflowClasses = [];
+      for (let index = 0; index < SPREADSHEET_CLASS_ROW_COUNT; index += 1) {
+        const row = SPREADSHEET_CLASS_FIRST_ROW + index;
 const className = getWorksheetText(core, `A${row}`);
 const classLevel = getWorksheetNumberText(core, `C${row}`);
 const classCost = getWorksheetNumberText(core, `D${row}`);
 const hasClassProgress = classLevel !== "" || toNumber(classCost, 0) > 0;
-        if (className && hasClassProgress) {
+        if (!className) {
+          continue;
+        }
+        if (!hasClassProgress) {
+          continue;
+        }
+        if (index >= CLASS_ROWS.length) {
+          overflowClasses.push(className);
+        } else {
           payload.fields[`Class${index + 1}`] = className;
           if (classLevel) {
             payload.fields[`ClassLevel${index + 1}`] = classLevel;
@@ -22351,9 +23571,17 @@ const hasClassProgress = classLevel !== "" || toNumber(classCost, 0) > 0;
           }
         }
       }
+      if (overflowClasses.length) {
+        importNotes.push(`${overflowClasses.length} class row(s) past the ${CLASS_ROWS.length} this builder can hold were not imported: ${summarizeImportNames(overflowClasses)}.`);
+      }
+      if (importNotes.length) {
+        payload.importNotes = importNotes;
+      }
 const breakthroughNames = [];
-      for (let index = 0; index < 40; index += 1) {
-        const name = getWorksheetText(breakthroughs, `A${index + 2}`);
+      // Task 038 (B17): every template row (A2:A37) and any filled row below it
+      // (this used to stop after 40 rows).
+      for (let row = 2; row <= getWorksheetLastRow(breakthroughs, SPREADSHEET_BREAKTHROUGH_LAST_ROW); row += 1) {
+        const name = getWorksheetText(breakthroughs, `A${row}`);
         if (name) {
           breakthroughNames.push(name);
         }
@@ -22372,8 +23600,9 @@ const description = getWorksheetText(abilities, `F${index + 2}`);
 
 let importedInventorySheetRows = 0;
 const inventoryImportContext = createSpreadsheetInventoryImportContext(core);
-      for (let index = 0; index < 25; index += 1) {
-        const row = 2 + index;
+      // Task 038 (B17): every template row (A2:A137) and any filled row below it
+      // (this used to stop after 25 rows).
+      for (let row = 2; row <= getWorksheetLastRow(inventory, SPREADSHEET_INVENTORY_LAST_ROW); row += 1) {
 const name = getWorksheetText(inventory, `A${row}`);
         if (!name) {
           continue;
@@ -22388,6 +23617,11 @@ const name = getWorksheetText(inventory, `A${row}`);
       }
       if (!importedInventorySheetRows) {
         addSpreadsheetVisibleInventoryFallback(payload, core);
+      }
+      if (inventoryImportContext.overflowNames.length) {
+        // Same wording as the F2 class-row note above.
+        importNotes.push(`${inventoryImportContext.overflowNames.length} catalog item row(s) past the ${INVENTORY_ROWS.length} this builder can hold were not imported: ${summarizeImportNames(inventoryImportContext.overflowNames)}.`);
+        payload.importNotes = importNotes;
       }
 
       return payload;
@@ -22579,11 +23813,187 @@ async function sendRoll20AbilityFromIndex(index, button) {
    auto-detected by the normal Import button (io.js routes matching JSON
    here). Everything unmappable lands in the import summary — never dropped
    silently. */
+/* Task 038 (ledger B15/B16): each breakthrough purchase's `choice`, the one
+   text the official format keeps per purchase (the element, weapon group,
+   language, stat, skill or Divine picked). Breakthroughs with several picks
+   (Universal Training) join them with ", "; the Skill Training expertise path
+   is written "<skill> expertise: <specialty>". The import reads the same
+   shapes back. */
+const ASCHAR_BREAKTHROUGH_CHOICE_SLOTS = {
+      "primary stat training": ["main-stat"],
+      "secondary stat training": ["secondary-stat"],
+      "universal training": ["main-stat", "secondary-stat", "skill-target"],
+      "divine s chosen": ["divine"],
+      "the unknown paladin": ["divine"],
+      "mixed house demon": ["house"],
+      "blend in slimefolk": ["disguise-race"],
+      "human chimera hybrid race": ["chimera-subrace"],
+      "faerie chimera hybrid race": ["hybrid-subrace"]
+    };
+const SKILL_TRAINING_EXPERTISE_CHOICE_PATTERN = /^(.+?)\s+expertise(?:\s*:\s*(.+))?$/i;
+function getBreakthroughPurchaseChoiceId(record, occurrence, suffix) {
+      return getBreakthroughChoiceId(record, getBreakthroughOccurrenceSuffix(suffix, occurrence));
+    }
+function getBreakthroughExportChoices() {
+      const occurrences = new Map();
+      const elements = getSelectedElementalAffinityElements();
+      return getSelectedBreakthroughRecords().map((record) => {
+        const occurrence = (occurrences.get(record.id) || 0) + 1;
+        occurrences.set(record.id, occurrence);
+        const name = normalizePhrase(record.name);
+        const value = (suffix) => getBuilderChoiceValue(getBreakthroughPurchaseChoiceId(record, occurrence, suffix));
+        if (name === "elemental affinity") {
+          return elements[occurrence - 1] || "";
+        }
+        const repeatable = getRepeatableUniqueBreakthroughConfig(record);
+        if (repeatable) {
+          return getSelectedRepeatableBreakthroughChoices(repeatable)[occurrence - 1] || "";
+        }
+        if (name === "skill training") {
+          const mode = value("skill-mode");
+          if (mode === "expertise" && value("expertise-target")) {
+            const specialty = value("expertise-specialty");
+            return `${value("expertise-target")} expertise${specialty && !isCustomChoiceMarker(specialty) ? `: ${specialty}` : ""}`;
+          }
+          return mode === "skill" ? value("skill-target") : "";
+        }
+        return (ASCHAR_BREAKTHROUGH_CHOICE_SLOTS[name] || [])
+          .map((suffix) => value(suffix))
+          .filter((entry) => entry && !isCustomChoiceMarker(entry))
+          .join(", ");
+      });
+    }
+// A choice text the builder accepts for one choice screen, or "" when it does not match.
+function resolveImportedBuilderChoiceValue(choice, value) {
+      const cleaned = cleanText(value);
+      if (!choice || !cleaned) {
+        return "";
+      }
+      const options = getChoiceOptionList(choice);
+      if (!options.length) {
+        return cleaned;
+      }
+      const match = options.find((option) => normalizePhrase(option.value) === normalizePhrase(cleaned) || normalizePhrase(option.label) === normalizePhrase(cleaned));
+      if (match) {
+        return cleanText(match.value);
+      }
+      return choice.allowCustom ? cleaned : "";
+    }
+function applyImportedBreakthroughSlotChoice(record, occurrence, value) {
+      const name = normalizePhrase(record.name);
+      const definitionFor = (suffix) => {
+        const id = getBreakthroughPurchaseChoiceId(record, occurrence, suffix);
+        return getBuilderChoiceDefinitions().find((choice) => choice.id === id) || null;
+      };
+      const setValue = (suffix, resolved) => {
+        setBuilderChoiceValue(getBreakthroughPurchaseChoiceId(record, occurrence, suffix), resolved);
+        state.revision = (state.revision || 0) + 1;
+      };
+      if (name === "skill training") {
+        const expertise = SKILL_TRAINING_EXPERTISE_CHOICE_PATTERN.exec(value);
+        if (expertise) {
+          const skill = resolveImportedBuilderChoiceValue(definitionFor("expertise-target"), expertise[1]);
+          if (!skill) {
+            return false;
+          }
+          setValue("skill-mode", "expertise");
+          setValue("expertise-target", skill);
+          if (cleanText(expertise[2])) {
+            const specialty = resolveImportedBuilderChoiceValue(definitionFor("expertise-specialty"), expertise[2]);
+            if (!specialty) {
+              return false;
+            }
+            setValue("expertise-specialty", specialty);
+          }
+          return true;
+        }
+        const skill = resolveImportedBuilderChoiceValue(definitionFor("skill-target"), value);
+        if (!skill) {
+          return false;
+        }
+        setValue("skill-mode", "skill");
+        setValue("skill-target", skill);
+        return true;
+      }
+      const slots = ASCHAR_BREAKTHROUGH_CHOICE_SLOTS[name] || [];
+      if (!slots.length) {
+        return false;
+      }
+      // Several picks (Universal Training): each part goes to the first open
+      // screen that accepts it; a part no screen accepts is reported.
+      const parts = slots.length > 1 ? value.split(",").map(cleanText).filter(Boolean) : [value];
+      const filled = new Set();
+      const unmatched = parts.filter((part) => {
+        const suffix = slots.find((entry) => !filled.has(entry) && resolveImportedBuilderChoiceValue(definitionFor(entry), part));
+        if (!suffix) {
+          return true;
+        }
+        filled.add(suffix);
+        setValue(suffix, resolveImportedBuilderChoiceValue(definitionFor(suffix), part));
+        return false;
+      });
+      return unmatched.length === 0;
+    }
+/* The import side of B15/B16: apply each purchase's choice when it matches a
+   valid option and say in the import notes when it does not. Elemental
+   Affinity and the one-pick-per-purchase breakthroughs (Weapon / Speciality
+   Weapon / Language Training, Blend In II) only exist with their pick here, so
+   a purchase whose choice is missing or unknown is not added, and the notes
+   say so. */
+function applyImportedBreakthroughChoices(entries, notes) {
+      state.revision = (state.revision || 0) + 1;
+      const occurrences = new Map();
+      const elementalEntries = [];
+      const repeatableValues = new Map();
+      const notApplied = [];
+      const notAdded = [];
+      entries.forEach(({ record, choice }) => {
+        const occurrence = (occurrences.get(record.id) || 0) + 1;
+        occurrences.set(record.id, occurrence);
+        const value = cleanText(choice);
+        if (normalizePhrase(record.name) === "elemental affinity") {
+          const label = value ? normalizeElementChoiceLabel(value) : "";
+          if (label) {
+            elementalEntries.push(label);
+          } else {
+            notAdded.push(value ? `${record.name} "${value}"` : `${record.name} (no choice in the file)`);
+          }
+          return;
+        }
+        const config = getRepeatableUniqueBreakthroughConfig(record);
+        if (config) {
+          const resolved = value ? normalizeRepeatableChoiceValue(config, value) : "";
+          const list = repeatableValues.get(config) || [];
+          repeatableValues.set(config, list);
+          if (resolved && !list.some((entry) => normalizePhrase(entry) === normalizePhrase(resolved))) {
+            list.push(resolved);
+          } else {
+            notAdded.push(!value ? `${record.name} (no choice in the file)` : (resolved ? `${record.name} "${value}" (already taken once)` : `${record.name} "${value}"`));
+          }
+          return;
+        }
+        if (value && !applyImportedBreakthroughSlotChoice(record, occurrence, value)) {
+          notApplied.push(`${record.name} "${value}"`);
+        }
+      });
+      if (entries.some(({ record }) => normalizePhrase(record.name) === "elemental affinity")) {
+        setSelectedElementalAffinityElements(elementalEntries);
+      }
+      repeatableValues.forEach((values, config) => setSelectedRepeatableBreakthroughChoices(config, values));
+      state.revision = (state.revision || 0) + 1;
+      if (notApplied.length) {
+        notes.push(`Breakthrough choice${notApplied.length === 1 ? "" : "s"} not matched here, so not applied: ${summarizeImportNames(notApplied)}. Choose ${notApplied.length === 1 ? "it" : "them"} in the builder.`);
+      }
+      if (notAdded.length) {
+        notes.push(`Breakthrough purchase${notAdded.length === 1 ? "" : "s"} not added because the choice is missing or not an option here: ${summarizeImportNames(notAdded)}. Add ${notAdded.length === 1 ? "it" : "them"} again on the Breakthroughs step.`);
+      }
+    }
 function buildAscharContext() {
       const race = getSelectedRaceDetail();
       const ancestry = getSelectedAncestryDetail();
       const classProgress = getSelectedClassProgress();
       const breakthroughs = getSelectedBreakthroughRecords();
+      const breakthroughChoices = getBreakthroughExportChoices();
       const funds = getStartingFundsState();
       const classBudget = getClassUnlockBudgetState();
       const breakthroughBudget = getBreakthroughBudgetState();
@@ -22627,10 +24037,12 @@ function buildAscharContext() {
           tier: toNumber(entry.record.tier, 1),
           levels: entry.level
         })),
-        breakthroughs: breakthroughs.map((record) => ({
+        breakthroughs: breakthroughs.map((record, index) => ({
           breakthroughId: record.breakthroughId || record.id,
           name: record.name,
-          cost: parseNumericCost(record.cost)
+          cost: parseNumericCost(record.cost),
+          // Task 038 (B15): the purchase's choice ("" when it has none).
+          choice: breakthroughChoices[index] || ""
         })),
         skills,
         equipment: getPlayInventoryEntries().map((record) => ({
@@ -22718,6 +24130,14 @@ function getCcsStatAssignment(stats, keys, arrayValues) {
         ))
       };
     }
+let ccsExportNotes = [];
+// What one equipped item adds to Guard / Evasion / Dodge / Block / Initiative,
+// computed with the same text parser as the builder's totals (F4).
+function getCcsItemDerivedParts(item) {
+      const bucket = createComputedBonusBucket();
+      collectComputedTextBonuses(bucket, `${item.name} equipped`, item.custom ? item.description : getBaseItemRulesText(item));
+      return bucket.derived;
+    }
 function buildCcsCellMap() {
       const context = buildAscharContext();
       const bonuses = getComputedBonuses();
@@ -22783,16 +24203,21 @@ function buildCcsCellMap() {
       });
 const finalPower = context.mainStats.power + toNumber(bonuses.mainStats?.Power, 0);
 const finalToughness = context.mainStats.toughness + toNumber(bonuses.mainStats?.Toughness, 0);
-const hpAdjustment = toNumber(context.derived?.hpMax, 0) - (20 + (finalToughness * 10));
-const manaAdjustment = toNumber(context.derived?.manaMax, 0) - (6 + finalPower);
+      // Task 038 (ledger B14): these are permanent cells, so they take the
+      // numbers without temporary play effects (Slow, Root, elixirs ...). With no
+      // active effect these equal context.derived, so such a character exports
+      // exactly as before.
+const permanentDerived = getDerivedCombatStats({ includeActiveEffects: false });
+const hpAdjustment = toNumber(permanentDerived.hpMax, 0) - (20 + (finalToughness * 10));
+const manaAdjustment = toNumber(permanentDerived.manaMax, 0) - (6 + finalPower);
       if (hpAdjustment) {
         put("Core", "H7", hpAdjustment);
       }
       if (manaAdjustment) {
         put("Core", "K34", manaAdjustment);
       }
-      if (toNumber(context.derived?.speed, 20) !== 20) {
-        put("Core", "H6", toNumber(context.derived.speed, 20));
+      if (toNumber(permanentDerived.speed, 20) !== 20) {
+        put("Core", "H6", toNumber(permanentDerived.speed, 20));
       }
       const weapons = [];
       const wearables = [];
@@ -22800,10 +24225,60 @@ const manaAdjustment = toNumber(context.derived?.manaMax, 0) - (6 + finalPower);
         (isWeaponItem(record) ? weapons : wearables).push(record);
       });
       weapons.slice(0, 6).forEach((item, index) => put("Core", `A${37 + index}`, item.name));
-      wearables.slice(0, 6).forEach((item, index) => {
-        put("Core", `F${37 + index}`, item.name);
-        put("Core", `L${37 + index}`, true);
+      // Task 025 F4: the sheet's Guard / Evasion / Dodge / Block / Initiative read
+      // G37:K42 (per equipped row, summed where L is TRUE) plus the adjustment cells
+      // E33 (evasion), H33 (dodge), G34 (save), E35 (RP, subtracted) and H35
+      // (initiative). Only the row names used to be written, so armor never reached
+      // the exported numbers. Each row gets that item's own contribution; whatever
+      // the builder adds from other sources (race, class, breakthroughs, 7th+ items)
+      // goes into the adjustment cells so the sheet's totals equal the builder's.
+      const gearRows = wearables.slice(0, 6).map((item) => ({ item, parts: getCcsItemDerivedParts(item) }));
+      gearRows.forEach(({ item, parts }, index) => {
+        const row = 37 + index;
+        put("Core", `F${row}`, item.name);
+        put("Core", `L${row}`, true);
+        [["G", parts.guard], ["H", parts.evasion], ["I", parts.dodge], ["J", parts.block], ["K", -parts.initiative]].forEach(([column, value]) => {
+          if (value) {
+            put("Core", `${column}${row}`, value);
+          }
+        });
       });
+      const gearTotal = (key) => gearRows.reduce((total, entry) => total + toNumber(entry.parts[key], 0), 0);
+      const staticDerived = bonuses.derived || {};
+      const adjustments = {
+        E33: toNumber(staticDerived.evasion, 0) - gearTotal("evasion"),
+        H33: toNumber(staticDerived.dodge, 0) - gearTotal("dodge"),
+        G34: toNumber(staticDerived.saveBonus, 0),
+        E35: -toNumber(staticDerived.rpMax, 0),
+        H35: toNumber(getSelectedBreakthroughEffects().initiativeBonus, 0) + toNumber(staticDerived.initiative, 0) - gearTotal("initiative")
+      };
+      Object.entries(adjustments).forEach(([address, value]) => {
+        if (value) {
+          put("Core", address, value);
+        }
+      });
+      // The sheet has no adjustment cell for Guard or Block. Non-gear sources go
+      // on a spare equipment row (the rows are generic bonus inputs); if all six
+      // rows are taken the export says so instead of silently differing.
+      const guardRest = toNumber(staticDerived.guard, 0) - gearTotal("guard");
+      const blockRest = toNumber(staticDerived.block, 0) - gearTotal("block");
+      ccsExportNotes = [];
+      if (guardRest || blockRest) {
+        if (gearRows.length < 6) {
+          const row = 37 + gearRows.length;
+          put("Core", `F${row}`, "Other bonuses (race, class, abilities)");
+          put("Core", `L${row}`, true);
+          if (guardRest) {
+            put("Core", `G${row}`, guardRest);
+          }
+          if (blockRest) {
+            put("Core", `J${row}`, blockRest);
+          }
+        } else {
+          ccsExportNotes.push(`Guard ${formatModifier(guardRest)} and Block ${formatModifier(blockRest)} from race, class or ability bonuses could not be placed: the sheet's six equipment rows are all in use, so those two totals will read lower than in the builder.`);
+        }
+      }
+      put("Core", "R1", `Filled by the Lyrian Chronicles character builder (rules ${cleanText(state.ui?.gameVersion) || cleanText(window.LYRIAN_DATA?.version) || "unknown"}). CCS template: ${CCS_TEMPLATE_INFO.source}, captured ${CCS_TEMPLATE_INFO.captured}, ${CCS_TEMPLATE_INFO.bytes} bytes, SHA-256 ${CCS_TEMPLATE_INFO.sha256}.`);
       getCcsBreakthroughXpEntries().slice(0, 36).forEach(({ record, xpSpent }, index) => {
         const row = 2 + index;
         put("Breakthrough", `A${row}`, record.name);
@@ -22831,7 +24306,7 @@ async function exportCcsState() {
       try {
         const fileStem = (cleanText(state.fields.Name) || "lyrian-character").replace(/[^\w\- ]+/g, "").trim().replace(/\s+/g, "-") || "lyrian-character";
         await exportPatchedTemplateWorkbook("data/ccs-template.xlsx", buildCcsCellMap(), `${fileStem}-ccs.xlsx`);
-        setIntegrationFeedback("CCS spreadsheet exported — upload it to Google Drive and open it with Google Sheets to revive the template's formulas.");
+        setIntegrationFeedback(["CCS spreadsheet exported — upload it to Google Drive and open it with Google Sheets to revive the template's formulas.", ...ccsExportNotes].join(" "));
       } catch (error) {
         setIntegrationFeedback(error.message || "The CCS export failed.", true);
       }
@@ -22896,15 +24371,19 @@ export async function applyAscharImport(character, sourceLabel = "official chara
       state.builder.selectedClassIds = selectedClassIds;
       state.builder.classAbilityProgress = abilityProgress;
       const selectedBreakthroughIds = [];
+      const importedBreakthroughs = [];
       plan.breakthroughs.forEach((bt) => {
         const record = lookup.breakthroughs.resolve(bt.breakthroughId) || lookup.breakthroughs.resolve(bt.name);
         if (record) {
           selectedBreakthroughIds.push(record.id);
+          importedBreakthroughs.push({ record, choice: bt.choice });
         } else {
           plan.notes.push(`Breakthrough "${bt.name || bt.breakthroughId}" was not found in the loaded rules version.`);
         }
       });
       state.builder.selectedBreakthroughIds = selectedBreakthroughIds;
+      // Task 038 (ledger B16): apply each purchase's choice, or say why not.
+      applyImportedBreakthroughChoices(importedBreakthroughs, plan.notes);
       syncBuilderSelectionsIntoSheet();
       /* Skills: the official model stores TOTAL allocated points per skill.
          Our fixed grants recompute automatically, so the creation field gets
@@ -22966,15 +24445,137 @@ export async function applyAscharImport(character, sourceLabel = "official chara
       invalidateExportCache();
       persistWorkingState(false);
       setStatus(`Imported ${plan.name || "character"} from the ${sourceLabel}.`);
-      openSheetModal({
+      showImportNotesModal({
         eyebrow: "Import Complete",
         title: `Imported: ${escapeHtml(plan.name || "Unnamed character")}`,
         lead: `Loaded from the ${escapeHtml(sourceLabel)}. Everything mappable was applied; review the notes below.`,
+        summaryHtml: `${plan.classes.length} class(es), ${plan.breakthroughs.length} breakthrough(s), ${plan.interludeActions.length} creation interlude action(s), ${plan.skills.length} skill row(s), ${plan.equipment.length} item(s) processed.`,
+        notes: plan.notes,
+        emptyHtml: "<li>No caveats — clean import.</li>"
+      });
+      return true;
+    }
+/* The notes modal first built for .aschar imports, shared with the xlsx / pdf /
+   JSON-state imports (task 025 F2) so every import path reports what did not match. */
+function showImportNotesModal({ eyebrow, title, lead, summaryHtml = "", notes = [], emptyHtml = "" }) {
+      openSheetModal({
+        eyebrow,
+        title,
+        lead,
         content: `
           <ul class="save-slot-feedback" style="display:block; list-style: disc inside;">
-            <li>${plan.classes.length} class(es), ${plan.breakthroughs.length} breakthrough(s), ${plan.interludeActions.length} creation interlude action(s), ${plan.skills.length} skill row(s), ${plan.equipment.length} item(s) processed.</li>
-            ${plan.notes.map((note) => `<li>${escapeHtml(note)}</li>`).join("") || "<li>No caveats — clean import.</li>"}
+            ${summaryHtml ? `<li>${summaryHtml}</li>` : ""}
+            ${notes.map((note) => `<li>${escapeHtml(note)}</li>`).join("") || emptyHtml}
           </ul>`
+      });
+    }
+const IMPORT_NOTE_NAME_LIMIT = 12;
+function summarizeImportNames(names) {
+      const unique = Array.from(new Set(names.map(cleanText).filter(Boolean)));
+      const shown = unique.slice(0, IMPORT_NOTE_NAME_LIMIT).join(", ");
+      return unique.length > IMPORT_NOTE_NAME_LIMIT ? `${shown}, and ${unique.length - IMPORT_NOTE_NAME_LIMIT} more` : shown;
+    }
+// Task 025 F2: classes, breakthroughs and items in an imported xlsx / pdf / JSON-state
+// character that the loaded rules do not contain. Spreadsheet and PDF imports resolve
+// names from the sheet fields (unmatched ones are dropped); JSON states carry ids (kept
+// but ignored). Names are only read from fields when the file has no ids, mirroring
+// hydrateBuilderSelectionsFromFields.
+// The references are copied BEFORE the load: loading aliases parsed.fields into the live
+// state, and the sync that follows rewrites the class/breakthrough/item rows in place.
+export function captureImportEntryReferences(parsed) {
+      const captured = { importNotes: [], groups: [], racialPointPoolIds: [] };
+      if (!parsed || typeof parsed !== "object") {
+        return captured;
+      }
+      captured.importNotes = (Array.isArray(parsed.importNotes) ? parsed.importNotes : []).map(cleanText).filter(Boolean);
+      const fields = parsed.fields && typeof parsed.fields === "object" ? parsed.fields : {};
+      // Task 044b: which free racial skill pools the file holds points for
+      // ("RacialSkillPoint:<pool>:<skill row>"), read before the load.
+      captured.racialPointPoolIds = Array.from(new Set(Object.keys(fields)
+        .filter((fieldName) => fieldName.startsWith("RacialSkillPoint:") && toNumber(fields[fieldName], 0) > 0)
+        .map((fieldName) => {
+          const suffix = fieldName.slice("RacialSkillPoint:".length);
+          const separator = suffix.lastIndexOf(":");
+          return separator >= 0 ? suffix.slice(0, separator) : "";
+        })
+        .filter(Boolean)));
+      const builder = parsed.builder && typeof parsed.builder === "object" ? parsed.builder : {};
+      const idList = (value) => (Array.isArray(value) ? value.map(cleanText).filter(Boolean) : []);
+      const classIds = idList(builder.selectedClassIds);
+      captured.groups.push({
+        kind: "class", singular: "class", plural: "classes", hasIds: classIds.length > 0,
+        refs: classIds.length ? classIds : CLASS_ROWS.map((row) => cleanText(fields[`Class${row}`])).filter(Boolean)
+      });
+      const breakthroughIds = idList(builder.selectedBreakthroughIds);
+      captured.groups.push({
+        kind: "breakthrough", singular: "breakthrough", plural: "breakthroughs", hasIds: breakthroughIds.length > 0,
+        refs: breakthroughIds.length ? breakthroughIds : cleanText(fields.BName).split(/\n+/).map((value) => value.trim()).filter(Boolean)
+      });
+      const itemIds = idList(builder.selectedItemIds);
+      captured.groups.push({
+        kind: "item", singular: "item", plural: "items", hasIds: itemIds.length > 0,
+        refs: itemIds.length ? itemIds : INVENTORY_ROWS.map((row) => cleanText(fields[`CombatInventory${row}`])).filter(Boolean)
+      });
+      return captured;
+    }
+function collectUnmatchedImportEntryNotes(captured) {
+      const notes = [];
+      const version = getActiveRulesVersionLabel();
+      const resolvers = {
+        class: (ref) => getClassDetail(ref),
+        breakthrough: (ref) => lookup.breakthroughs.resolve(ref),
+        item: (ref) => lookup.items.resolve(ref)
+      };
+      (captured?.groups || []).forEach((group) => {
+        const missing = group.refs.filter((ref) => !resolvers[group.kind](ref));
+        if (!missing.length) {
+          return;
+        }
+        const many = missing.length > 1;
+        const names = summarizeImportNames(missing);
+        notes.push(group.hasIds
+          ? `${missing.length} ${many ? group.plural : group.singular} in the file ${many ? "are" : "is"} not in rules ${version}, so ${many ? "they are" : "it is"} ignored here (kept in the character data): ${names}.`
+          : `${missing.length} ${many ? group.plural : group.singular} in the file ${many ? "were" : "was"} not found in rules ${version} and ${many ? "were" : "was"} not imported: ${names}.`);
+      });
+      return notes;
+    }
+// Task 044b (brief 043, DECIDED): a file that truly holds no free racial skill
+// points (files older than Beta 1.4, other tools' sheets) says so plainly,
+// instead of silently showing the pool as unassigned. Only a pool the loaded
+// character has, with nothing assigned, and with no points for it in the file.
+function describeMissingFreeSkillPoints(captured) {
+      if (!captured || !Array.isArray(captured.racialPointPoolIds)) {
+        return "";
+      }
+      const fromFile = new Set(captured.racialPointPoolIds);
+      const labels = getVisibleRacialSkillPoolChoices()
+        .filter((choice) => !fromFile.has(choice.id))
+        .filter((choice) => {
+          const pool = getRacialSkillPoolState(choice);
+          return pool.budget > 0 && pool.spent === 0;
+        })
+        .map((choice) => cleanText(choice.label))
+        .filter(Boolean);
+      if (!labels.length) {
+        return "";
+      }
+      return `This file has no record of the free racial skill points (${labels.join("; ")}), so they show as not assigned yet. Check them on the Skills step.`;
+    }
+export function reportImportMatchNotes(captured, fileName = "") {
+      const matchNotes = [...(captured?.importNotes || []), ...collectUnmatchedImportEntryNotes(captured)];
+      const freePointNote = describeMissingFreeSkillPoints(captured);
+      const notes = [...matchNotes, ...(freePointNote ? [freePointNote] : [])];
+      if (!notes.length) {
+        return false;
+      }
+      const loadedText = fileName ? `${fileName} was loaded` : "The file was loaded";
+      showImportNotesModal({
+        eyebrow: "Import Notes",
+        title: matchNotes.length ? "Some entries could not be imported" : "Check the free skill points",
+        lead: matchNotes.length
+          ? `${loadedText}, but these entries did not match the loaded rules. Everything else was applied.`
+          : `${loadedText}. Everything in it was applied.`,
+        notes
       });
       return true;
     }
@@ -23204,6 +24805,15 @@ function getLocalOwlbearManifestUrl(extensionPath = OWLBEAR_EXTENSION_PATH) {
 function isLocalOwlbearPreviewAvailable() {
       return /^(?:127\.0\.0\.1|localhost)$/i.test(window.location.hostname);
     }
+async function copyOwlbearInstallLink(trigger, url, statusMessage, copiedMessage) {
+      const copied = await copyIntegrationValue(url, statusMessage);
+      const feedback = trigger.closest("[data-owlbear-install-block]")?.querySelector("[data-owlbear-install-feedback]");
+      if (feedback) {
+        feedback.textContent = copied ? copiedMessage : "The browser could not copy the link. Select the address above and copy it by hand.";
+        feedback.classList.toggle("is-error", !copied);
+      }
+      return copied;
+    }
 function openOwlbearSetupGuide() {
       const localPreviewAvailable = isLocalOwlbearPreviewAvailable();
       const localInstallUrl = getLocalOwlbearManifestUrl();
@@ -23218,38 +24828,47 @@ function openOwlbearSetupGuide() {
             <div class="table-tools-status-row">
               <span class="integration-status is-warn">Alpha connection</span>
               <span class="integration-status ${openerConnected ? "is-ready" : "is-warn"}">${openerConnected ? "Linked to your game room" : "Not linked to a room yet"}</span>
-              <span class="integration-status is-warn">Public release not published</span>
+              <span class="integration-status is-ready">Public install links ready</span>
             </div>
             <section>
               <strong>For Game Masters — install both extensions (one time)</strong>
               <p>Open your Owlbear profile, choose <em>Add Extension</em>, and paste each install link: <em>Angel Sword Companion</em> (characters, tokens, the shared roll feed) and <em>Angel Sword Dice</em> (3D dice everyone watches fly over the map). Players never install anything — they just join your room.</p>
-              ${localPreviewAvailable ? `
-                <p><strong>Testing on this computer today</strong> — keep this builder's local server running while Owlbear uses these:</p>
-                <p><small>Companion: <code>${escapeHtml(localInstallUrl)}</code></small></p>
-                <p><small>Dice: <code>${escapeHtml(localDiceInstallUrl)}</code></small></p>
-                <div class="sheet-modal-form-actions">
-                  <button type="button" class="sheet-modal-action" data-owlbear-copy-local-install>Copy Companion Install Link</button>
-                  <button type="button" class="sheet-modal-action" data-owlbear-copy-local-dice-install>Copy Dice Install Link</button>
-                </div>
-              ` : `
-                <p><small>Planned public addresses (not deployed yet):</small></p>
+              <div data-owlbear-install-block="public">
+                <p><small>Install links (copy each one, then paste it into Add Extension):</small></p>
                 <p><small>Companion: <code>${escapeHtml(OWLBEAR_PUBLIC_MANIFEST_URL)}</code></small></p>
                 <p><small>Dice: <code>${escapeHtml(OWLBEAR_DICE_PUBLIC_MANIFEST_URL)}</code></small></p>
-              `}
-              <div class="sheet-modal-form-actions">
-                <a class="sheet-modal-action" href="https://www.owlbear.rodeo/profile" target="_blank" rel="noopener noreferrer">Open Owlbear Profile</a>
-                ${localPreviewAvailable ? "" : `<button type="button" class="sheet-modal-action" disabled title="The public extensions are not deployed yet.">Public Install Coming Soon</button>`}
+                <div class="sheet-modal-form-actions">
+                  <button type="button" class="sheet-modal-action" data-owlbear-copy-public-install>Copy Companion Install Link</button>
+                  <button type="button" class="sheet-modal-action" data-owlbear-copy-public-dice-install>Copy Dice Install Link</button>
+                  <a class="sheet-modal-action" href="https://www.owlbear.rodeo/profile" target="_blank" rel="noopener noreferrer">Open Owlbear Profile</a>
+                </div>
+                <p class="save-slot-feedback" data-owlbear-install-feedback aria-live="polite"></p>
               </div>
               <p><small>After adding each one, click the heart on its card to favorite it — every new room you create will offer it automatically. Then switch both on in the room's Extensions Manager and invite players with Owlbear's <em>Invite Players</em> button.</small></p>
+              <p><small>If a card in your Owlbear profile says localhost, it is an old test install and will not load. Add the links above instead.</small></p>
+              ${localPreviewAvailable ? `
+                <div data-owlbear-install-block="local">
+                  <p><strong>Testing on this computer today</strong> — keep this builder's local server running while Owlbear uses these:</p>
+                  <p><small>Companion: <code>${escapeHtml(localInstallUrl)}</code></small></p>
+                  <p><small>Dice: <code>${escapeHtml(localDiceInstallUrl)}</code></small></p>
+                  <div class="sheet-modal-form-actions">
+                    <button type="button" class="sheet-modal-action" data-owlbear-copy-local-install>Copy Local Test Link</button>
+                    <button type="button" class="sheet-modal-action" data-owlbear-copy-local-dice-install>Copy Local Dice Test Link</button>
+                  </div>
+                  <p class="save-slot-feedback" data-owlbear-install-feedback aria-live="polite"></p>
+                </div>
+              ` : ""}
             </section>
             <section>
               <strong>Your token (each player)</strong>
               <p>Drag inside the circle to center your character. Scroll on it to zoom. By default this uses your character's portrait.</p>
               <canvas id="owlbear-token-canvas" width="200" height="200" style="display:block;margin:0 auto;border-radius:50%;border:2px solid #53698f;background:#111a2c;touch-action:none;cursor:grab;"></canvas>
+              <p data-owlbear-token-missing${getOwlbearTokenSource(loadOwlbearTokenCrop()) ? ` class="is-hidden"` : ""}><strong>No picture yet.</strong> Press <em>Change Image</em> and choose one first. <em>Download Token Image</em> appears in the Companion once your token has a picture.</p>
               <div class="sheet-modal-form-actions">
                 <button type="button" class="sheet-modal-action" data-owlbear-token-change>Change Image</button>
                 <button type="button" class="sheet-modal-action" data-owlbear-token-lock>Lock Token</button>
               </div>
+              <p class="save-slot-feedback" data-owlbear-token-feedback aria-live="polite"></p>
               <input id="owlbear-token-file" type="file" accept="image/*" style="display:none">
             </section>
             <section>
@@ -23257,7 +24876,7 @@ function openOwlbearSetupGuide() {
               ${openerConnected ? `
                 <p>This sheet is already linked to your game room. Press the button to send this character and its token to the Angel Sword Companion there.</p>
               ` : `
-                <p>Paste the Owlbear room invitation from your GM. The builder saves your character and takes you to the room in this same tab — nothing left behind. In the room, open the Angel Sword panel and press <em>Open My Character Sheet</em>: your sheet comes back already linked, and your character and dice rolls flow to the table.</p>
+                <p>Paste the Owlbear room invitation from your GM. The builder saves your character and takes you to the room in this same tab. In the room, open the Angel Sword panel and press <em>Open My Character Sheet</em>. That opens a linked copy of this sheet: check your character is loaded there, then press <em>Send Character to Room</em>. Dice rolls from the linked sheet reach the table on their own; your character only arrives when you send it.</p>
               `}
               <input id="owlbear-room-link" type="text" placeholder="https://www.owlbear.rodeo/room/..." value="${escapeHtml(getStoredOwlbearRoomLink())}" style="width:100%;padding:8px;border-radius:7px;border:1px solid #53698f;background:#111a2c;color:#dce7fb;${openerConnected ? "display:none;" : ""}">
               <div class="sheet-modal-form-actions">
@@ -23266,8 +24885,8 @@ function openOwlbearSetupGuide() {
             </section>
             <section>
               <strong>In the room (each player)</strong>
-              <p>Open the Angel Sword panel and press <em>Place My Token</em> — your token appears on the map already bound to your character, and rolls from this sheet show up in the room's shared feed automatically.</p>
-              <p><small>Fallbacks: import a Character JSON or official <code>.aschar.json</code> with <em>Choose File</em>, or use <em>Download Token Image</em>, add the file to Owlbear's asset library as a Character, drag it in, and press <em>Bind Selected Token</em>. Damage, movement, conditions, and initiative are intentionally not part of this milestone.</small></p>
+              <p>Open the Angel Sword panel. <strong>First time:</strong> press <em>Download Token Image</em>, drag the file onto the Owlbear map and choose <em>Character</em> when Owlbear asks. Your token is on the map and saved in your Owlbear Characters list. <strong>Later sessions:</strong> it stays in that scene; for a new scene drag it in from your Characters list or press <em>Place My Token</em>. <em>Bind Selected Token</em> (optional) links a token on the map to this character. Rolls from the linked sheet show up in the room's shared feed on their own.</p>
+              <p><small>Fallback: import a Character JSON or an official <code>.aschar.json</code> with <em>Choose File</em> in the panel. The Angel Sword extensions don't track damage, movement, conditions or initiative yet.</small></p>
             </section>
             <p id="owlbear-setup-feedback" class="save-slot-feedback" aria-live="polite"></p>
             <div class="sheet-modal-form-actions">
@@ -23402,6 +25021,12 @@ function wireOwlbearTokenEditor() {
       const redraw = () => drawOwlbearTokenPreview(canvas, image, crop);
       const loadSource = () => {
         const source = getOwlbearTokenSource(crop);
+        // Task 038 (041a research): with no picture the send carries no token,
+        // so the Companion never shows Download Token Image. Say so here.
+        const missingNote = document.querySelector("[data-owlbear-token-missing]");
+        if (missingNote) {
+          missingNote.classList.toggle("is-hidden", Boolean(source));
+        }
         if (!source) {
           image = null;
           redraw();
@@ -23461,6 +25086,9 @@ function wireOwlbearTokenEditor() {
         if (!file) {
           return;
         }
+        // Task 042 (041c walk): say that the new picture took, in the line
+        // under the token buttons and in the status line, as Add portrait does.
+        const tokenFeedback = document.querySelector("[data-owlbear-token-feedback]");
         try {
           crop.imageDataUrl = await downscaleOwlbearTokenSource(file);
           crop.offsetX = 0;
@@ -23468,7 +25096,15 @@ function wireOwlbearTokenEditor() {
           crop.scale = 1;
           saveOwlbearTokenCrop(crop);
           loadSource();
+          const message = `Loaded token picture ${file.name}.`;
+          if (tokenFeedback) {
+            tokenFeedback.textContent = message;
+          }
+          setStatus(message);
         } catch (error) {
+          if (tokenFeedback) {
+            tokenFeedback.textContent = "";
+          }
           const feedbackEl = document.getElementById("owlbear-setup-feedback");
           if (feedbackEl) {
             feedbackEl.textContent = error.message || "That image could not be read.";
@@ -23487,6 +25123,55 @@ function toggleOwlbearTokenLock(button) {
       const canvas = document.getElementById("owlbear-token-canvas");
       if (canvas) {
         canvas.style.cursor = crop.locked ? "default" : "grab";
+      }
+    }
+/* Task 031: what the Owlbear Companion stores for this character. These are
+   the CURRENT numbers the main play sheet shows right now, computed by the
+   sheet's own functions, so the Companion never recomputes rules:
+   - main stats: base + bonuses + active play-effect stat changes (no
+     built-in effect changes a main stat today, so this equals the stat strip);
+   - secondary stats: base + bonuses (play effects never change them);
+   - speed: the Speed card, which includes Slow and Root;
+   - clim, exp, spiritCore: the Clim, EXP and Spirit Core cards.
+   It is an additive field next to the unchanged state snapshot. The version
+   repeats CHARACTER_SCHEMA_VERSION from owlbear/core.js (the app bundle does
+   not import extension code); scripts/test-vtt-adapters.mjs pins the two. */
+const VTT_SUMMARY_SCHEMA_VERSION = 1;
+export function buildVttSummary() {
+      const bonuses = getComputedBonuses();
+      const currentMain = getCurrentMainStatValues(bonuses);
+      const progress = getCampaignProgressState();
+      return {
+        schemaVersion: VTT_SUMMARY_SCHEMA_VERSION,
+        basis: "current",
+        stats: {
+          power: currentMain.Power,
+          focus: currentMain.Focus,
+          agility: currentMain.Agility,
+          toughness: currentMain.Toughness,
+          fitness: getComputedSecondaryStatValue("Fitness", bonuses),
+          cunning: getComputedSecondaryStatValue("Cunning", bonuses),
+          reason: getComputedSecondaryStatValue("Reason", bonuses),
+          awareness: getComputedSecondaryStatValue("Awareness", bonuses),
+          presence: getComputedSecondaryStatValue("Presence", bonuses)
+        },
+        speed: getDerivedCombatStats().speed,
+        clim: getStartingFundsState().availableClim,
+        exp: progress.expBank,
+        spiritCore: progress.spiritCore
+      };
+    }
+/* The character as sent to the room and written by Export Character JSON:
+   the unchanged state snapshot plus vttSummary. The builder's own import
+   reads only the state keys, so the extra field is ignored there. Never let
+   a summary problem block a send or an export. */
+export function createVttCharacterSnapshot() {
+      const snapshot = createStateSnapshot();
+      try {
+        return { ...snapshot, vttSummary: buildVttSummary() };
+      } catch (error) {
+        console.warn("Could not build the Owlbear summary; sending the character without it.", error);
+        return snapshot;
       }
     }
 async function sendCharacterToOwlbear() {
@@ -23518,7 +25203,7 @@ async function sendCharacterToOwlbear() {
       }
       const characterName = cleanText(state.fields.Name) || "Unnamed character";
       const sent = await publishVttHandoff({
-        character: createStateSnapshot(),
+        character: createVttCharacterSnapshot(),
         tokenImages,
         characterName
       });
@@ -23530,7 +25215,7 @@ async function sendCharacterToOwlbear() {
       if (sent) {
         say(`Sent ${characterName}${tokenImages ? " with its token" : ""} to the Angel Sword Companion.${link ? " Taking you to your room…" : ""}`);
       } else if (link) {
-        say("Saving your character and taking you to your room — open the Angel Sword panel there and press Open My Character Sheet to link up.");
+        say("Saving your character and taking you to your room — open the Angel Sword panel there and press Open My Character Sheet to link up, then press Send Character to Room in that sheet.");
       } else {
         say("This sheet is not linked to a game room yet. Paste your GM's room invitation above, or open the Angel Sword Companion panel in your Owlbear room and press Open My Character Sheet.", true);
         return;
@@ -23798,6 +25483,13 @@ export async function bindEvents() {
         await applyGameVersion(event.target.value);
       });
 
+      // Task 042: "See full update list" under the version summary.
+      document.getElementById("version-update-list")?.addEventListener("click", (event) => {
+        if (event.target.closest("[data-latest-update-open]")) {
+          openReleaseNotesModal();
+        }
+      });
+
       ["save-browser", "builder-save-browser"].forEach((id) => {
         document.getElementById(id)?.addEventListener("click", saveToBrowser);
       });
@@ -23815,8 +25507,7 @@ export async function bindEvents() {
       });
 
       document.getElementById("status-pill")?.addEventListener("click", () => {
-        setMode("builder");
-        setStatus("Returned to the builder.");
+        returnToBuilderFromSheet();
       });
 
       document.getElementById("recalc-basics")?.addEventListener("click", () => {
@@ -23859,8 +25550,7 @@ export async function bindEvents() {
         } else if (action === "recalculate") {
           recalcBasics(true);
         } else if (action === "builder") {
-          setMode("builder");
-          setStatus("Returned to the builder.");
+          returnToBuilderFromSheet();
         }
       });
 
@@ -23969,10 +25659,6 @@ const addButton = event.target.closest("[data-dice-add]");
           setPlayMode("table");
           return;
         }
-        if (event.target.closest("[data-owlbear-setup-guide]")) {
-          openOwlbearSetupGuide();
-          return;
-        }
         if (event.target.closest("[data-owlbear-token-change]")) {
           document.getElementById("owlbear-token-file")?.click();
           return;
@@ -23986,22 +25672,24 @@ const addButton = event.target.closest("[data-dice-add]");
           await sendCharacterToOwlbear();
           return;
         }
-        if (event.target.closest("[data-owlbear-copy-local-dice-install]")) {
-          await copyIntegrationValue(getLocalOwlbearManifestUrl(OWLBEAR_DICE_EXTENSION_PATH), "Local Angel Sword Dice install link copied.");
-          const feedback = document.getElementById("owlbear-setup-feedback");
-          if (feedback) {
-            feedback.textContent = "Dice install link copied. Keep this builder server running while Owlbear loads it.";
-            feedback.classList.remove("is-error");
-          }
+        const owlbearPublicCompanionCopy = event.target.closest("[data-owlbear-copy-public-install]");
+        if (owlbearPublicCompanionCopy) {
+          await copyOwlbearInstallLink(owlbearPublicCompanionCopy, OWLBEAR_PUBLIC_MANIFEST_URL, "Angel Sword Companion install link copied.", "Companion install link copied. Paste it into Owlbear's Add Extension box.");
           return;
         }
-        if (event.target.closest("[data-owlbear-copy-local-install]")) {
-          await copyIntegrationValue(getLocalOwlbearManifestUrl(), "Local Owlbear test install link copied.");
-          const feedback = document.getElementById("owlbear-setup-feedback");
-          if (feedback) {
-            feedback.textContent = "Companion install link copied. Keep this builder server running while Owlbear loads it.";
-            feedback.classList.remove("is-error");
-          }
+        const owlbearPublicDiceCopy = event.target.closest("[data-owlbear-copy-public-dice-install]");
+        if (owlbearPublicDiceCopy) {
+          await copyOwlbearInstallLink(owlbearPublicDiceCopy, OWLBEAR_DICE_PUBLIC_MANIFEST_URL, "Angel Sword Dice install link copied.", "Dice install link copied. Paste it into Owlbear's Add Extension box.");
+          return;
+        }
+        const owlbearLocalDiceCopy = event.target.closest("[data-owlbear-copy-local-dice-install]");
+        if (owlbearLocalDiceCopy) {
+          await copyOwlbearInstallLink(owlbearLocalDiceCopy, getLocalOwlbearManifestUrl(OWLBEAR_DICE_EXTENSION_PATH), "Local Angel Sword Dice test link copied.", "Local Dice test link copied. Keep this builder server running while Owlbear loads it.");
+          return;
+        }
+        const owlbearLocalCompanionCopy = event.target.closest("[data-owlbear-copy-local-install]");
+        if (owlbearLocalCompanionCopy) {
+          await copyOwlbearInstallLink(owlbearLocalCompanionCopy, getLocalOwlbearManifestUrl(), "Local Angel Sword Companion test link copied.", "Local Companion test link copied. Keep this builder server running while Owlbear loads it.");
           return;
         }
         if (event.target.closest("[data-integration-aschar-export]")) {
@@ -24026,8 +25714,6 @@ const integrationCopyButton = event.target.closest("[data-integration-copy]");
             await copyIntegrationValue(buildCharacterProfileSummary(context), "Character profile summary copied.");
           } else if (integrationCopyButton.dataset.integrationCopy === "worldanvil-bbcode") {
             await copyIntegrationValue(buildWorldAnvilBBCodeProfile(context), "World Anvil BBCode article copied.");
-          } else if (integrationCopyButton.dataset.integrationCopy === "owlbear-manifest") {
-            await copyIntegrationValue(new URL("owlbear/manifest.json", window.location.href).href, "Owlbear extension manifest URL copied.");
           }
           return;
         }
@@ -24137,6 +25823,12 @@ const portraitWasNormalized = await normalizeCurrentPortraitDataUrl();
       });
 
       document.getElementById("quick-build-entry")?.addEventListener("click", () => {
+        // Task 038: the card is hidden for a built character; a click that
+        // still reaches it changes nothing.
+        if (hasBuiltCharacter()) {
+          refreshBuilderIdentity();
+          return;
+        }
         const confirmed = window.confirm("Are you sure you want to go to Quick Build? This opens the guided fast-start path and can later fill in starter choices for you.");
         if (confirmed) {
           enterQuickBuildMode();
@@ -24251,6 +25943,7 @@ const button = event.target.closest("[data-step-index]");
             state.builder.inspected.race = race?.id || "";
             state.builder.selectedAncestryId = ancestry?.id || "";
             state.builder.inspected.ancestry = ancestry?.id || "";
+            syncQuickBuildIdentityFields(race, ancestry);
             syncBuilderSelectionsIntoSheet();
             renderBuilder();
           } else if (action === "select-build") {
@@ -24275,8 +25968,8 @@ const button = event.target.closest("[data-step-index]");
         if (clearChoice) {
           clearBuilderChoiceValue(clearChoice.dataset.builderChoiceClear);
           syncBuilderSelectionsIntoSheet();
-          renderBuilderStepContent();
-          renderBuilderDetail();
+          rerenderActiveBuilderStep();
+          rerenderActiveBuilderDetail();
           renderBuilderSummary();
           renderPlayDashboardIfVisible();
           scheduleWorkingStatePersist();
@@ -24302,8 +25995,8 @@ const didAdd = addSkillExpertisePoint(addExpertise.dataset.addSkillExpertise, so
               customInput.value = "";
             }
           }
-          renderBuilderStepContent();
-          renderBuilderDetail();
+          rerenderActiveBuilderStep();
+          rerenderActiveBuilderDetail();
           renderBuilderSummary();
           renderPlayDashboardIfVisible();
           scheduleWorkingStatePersist();
@@ -24328,8 +26021,8 @@ const didAssign = assignUnassignedSkillExpertise(
               customInput.value = "";
             }
           }
-          renderBuilderStepContent();
-          renderBuilderDetail();
+          rerenderActiveBuilderStep();
+          rerenderActiveBuilderDetail();
           renderBuilderSummary();
           renderPlayDashboardIfVisible();
           scheduleWorkingStatePersist();
@@ -24343,8 +26036,8 @@ const adjustExpertise = event.target.closest("[data-adjust-skill-expertise]");
             adjustExpertise.dataset.skillExpertiseName,
             adjustExpertise.dataset.adjustSkillExpertise
           );
-          renderBuilderStepContent();
-          renderBuilderDetail();
+          rerenderActiveBuilderStep();
+          rerenderActiveBuilderDetail();
           renderBuilderSummary();
           renderPlayDashboardIfVisible();
           scheduleWorkingStatePersist();
@@ -24357,8 +26050,8 @@ const adjustSkill = event.target.closest("[data-adjust-skill-allocation]");
             adjustSkill.dataset.skillAllocationType,
             adjustSkill.dataset.adjustSkillAllocation
           );
-          renderBuilderStepContent();
-          renderBuilderDetail();
+          rerenderActiveBuilderStep();
+          rerenderActiveBuilderDetail();
           renderBuilderSummary();
           renderPlayDashboardIfVisible();
           scheduleWorkingStatePersist();
@@ -24371,8 +26064,8 @@ const adjustRacialSkill = event.target.closest("[data-adjust-racial-skill]");
             adjustRacialSkill.dataset.racialSkillIndex,
             adjustRacialSkill.dataset.adjustRacialSkill
           );
-          renderBuilderStepContent();
-          renderBuilderDetail();
+          rerenderActiveBuilderStep();
+          rerenderActiveBuilderDetail();
           renderBuilderSummary();
           renderPlayDashboardIfVisible();
           scheduleWorkingStatePersist();
@@ -24386,8 +26079,8 @@ const adjustClassSkill = event.target.closest("[data-adjust-class-skill]");
             adjustClassSkill.dataset.classSkillKind,
             adjustClassSkill.dataset.adjustClassSkill
           );
-          renderBuilderStepContent();
-          renderBuilderDetail();
+          rerenderActiveBuilderStep();
+          rerenderActiveBuilderDetail();
           renderBuilderSummary();
           renderPlayDashboardIfVisible();
           scheduleWorkingStatePersist();
@@ -24397,8 +26090,8 @@ const adjustClassIp = event.target.closest("[data-adjust-class-ip]");
         if (adjustClassIp) {
           adjustGmClassIp(adjustClassIp.dataset.adjustClassIp);
           syncBuilderSelectionsIntoSheet();
-          renderBuilderStepContent();
-          renderBuilderDetail();
+          rerenderActiveBuilderStep();
+          rerenderActiveBuilderDetail();
           renderBuilderSummary();
           renderPlayDashboardIfVisible();
           scheduleWorkingStatePersist();
@@ -24408,8 +26101,8 @@ const addCreationInterlude = event.target.closest("[data-add-creation-interlude-
         if (addCreationInterlude) {
           if (addCreationInterludeAction(addCreationInterlude.dataset.addCreationInterludeAction)) {
             syncBuilderSelectionsIntoSheet();
-            renderBuilderStepContent();
-            renderBuilderDetail();
+            rerenderActiveBuilderStep();
+            rerenderActiveBuilderDetail();
             renderBuilderSummary();
             renderPlayDashboardIfVisible();
             scheduleWorkingStatePersist();
@@ -24420,8 +26113,8 @@ const removeCreationInterlude = event.target.closest("[data-remove-creation-inte
         if (removeCreationInterlude) {
           if (removeCreationInterludeAction(removeCreationInterlude.dataset.removeCreationInterludeAction)) {
             syncBuilderSelectionsIntoSheet();
-            renderBuilderStepContent();
-            renderBuilderDetail();
+            rerenderActiveBuilderStep();
+            rerenderActiveBuilderDetail();
             renderBuilderSummary();
             renderPlayDashboardIfVisible();
             scheduleWorkingStatePersist();
@@ -24496,7 +26189,7 @@ const id = trigger.dataset.id;
           const key = event.target.dataset.builderSearch;
           state.builder.searches[key] = event.target.value;
           if (event.target.tagName === "SELECT") {
-            renderBuilderStepContent();
+            rerenderActiveBuilderStep();
             renderBuilderSummary();
             scheduleWorkingStatePersist();
             return;
@@ -24511,7 +26204,7 @@ const id = trigger.dataset.id;
             syncNameFields(event.target.value, "Name");
           } else {
             updateFieldValue(fieldName, event.target.value);
-            renderBuilderDetail();
+            rerenderActiveBuilderDetail();
             renderBuilderSummary();
           }
           return;
@@ -24519,8 +26212,8 @@ const id = trigger.dataset.id;
 
         if (event.target.dataset.racialSkillChoice) {
           setRacialSkillAllocation(event.target.dataset.racialSkillChoice, event.target.dataset.racialSkillIndex, event.target.value);
-          renderBuilderStepContent();
-          renderBuilderDetail();
+          rerenderActiveBuilderStep();
+          rerenderActiveBuilderDetail();
           renderBuilderSummary();
           renderPlayDashboardIfVisible();
           scheduleWorkingStatePersist();
@@ -24534,8 +26227,8 @@ const id = trigger.dataset.id;
             event.target.dataset.classSkillKind,
             event.target.value
           );
-          renderBuilderStepContent();
-          renderBuilderDetail();
+          rerenderActiveBuilderStep();
+          rerenderActiveBuilderDetail();
           renderBuilderSummary();
           renderPlayDashboardIfVisible();
           scheduleWorkingStatePersist();
@@ -24550,7 +26243,7 @@ const id = trigger.dataset.id;
             setBuilderChoiceValue(choiceId, event.target.value);
           }
           syncBuilderSelectionsIntoSheet();
-          renderBuilderStepContent();
+          rerenderActiveBuilderStep();
           renderBuilderSummary();
           renderPlayDashboardIfVisible();
           scheduleWorkingStatePersist();
@@ -24577,7 +26270,7 @@ const id = trigger.dataset.id;
         if (event.target.dataset.classIpField) {
           updateFieldValue(event.target.dataset.classIpField, event.target.value);
           syncBuilderSelectionsIntoSheet();
-          renderBuilderStepContent();
+          rerenderActiveBuilderStep();
           renderPlayDashboardIfVisible();
           scheduleWorkingStatePersist();
           return;
@@ -24596,7 +26289,7 @@ const id = trigger.dataset.id;
       document.getElementById("builder-step-content").addEventListener("change", (event) => {
         if (event.target.dataset.builderSearch && event.target.tagName === "SELECT") {
           state.builder.searches[event.target.dataset.builderSearch] = event.target.value;
-          renderBuilderStepContent();
+          rerenderActiveBuilderStep();
           renderBuilderSummary();
           scheduleWorkingStatePersist();
           return;
@@ -24605,14 +26298,14 @@ const id = trigger.dataset.id;
         if (event.target.dataset.builderMode) {
           const key = event.target.dataset.builderMode;
           state.builder.searches[key] = cleanText(event.target.value) === "custom" ? "custom" : "array";
-          renderBuilderStepContent();
+          rerenderActiveBuilderStep();
           renderBuilderSummary();
           return;
         }
 
         if (event.target.dataset.skillAllocationIndex) {
           setSkillAllocation(event.target.dataset.skillAllocationIndex, event.target.dataset.skillAllocationType, event.target.value);
-          renderBuilderStepContent();
+          rerenderActiveBuilderStep();
           renderBuilderSummary();
           renderPlayDashboardIfVisible();
           scheduleWorkingStatePersist();
@@ -24621,7 +26314,7 @@ const id = trigger.dataset.id;
 
         if (event.target.dataset.racialSkillChoice) {
           setRacialSkillAllocation(event.target.dataset.racialSkillChoice, event.target.dataset.racialSkillIndex, event.target.value);
-          renderBuilderStepContent();
+          rerenderActiveBuilderStep();
           renderBuilderSummary();
           renderPlayDashboardIfVisible();
           scheduleWorkingStatePersist();
@@ -24635,7 +26328,7 @@ const id = trigger.dataset.id;
             event.target.dataset.classSkillKind,
             event.target.value
           );
-          renderBuilderStepContent();
+          rerenderActiveBuilderStep();
           renderBuilderSummary();
           renderPlayDashboardIfVisible();
           scheduleWorkingStatePersist();
@@ -24648,7 +26341,7 @@ const id = trigger.dataset.id;
           syncBuilderSelectionsIntoSheet();
           renderBuilderSummary();
           renderPlayDashboardIfVisible();
-          renderBuilderStepContent();
+          rerenderActiveBuilderStep();
           scheduleWorkingStatePersist();
           return;
         }
@@ -24658,7 +26351,7 @@ const id = trigger.dataset.id;
           syncBuilderSelectionsIntoSheet();
           renderBuilderSummary();
           renderPlayDashboardIfVisible();
-          renderBuilderStepContent();
+          rerenderActiveBuilderStep();
           scheduleWorkingStatePersist();
           return;
         }
@@ -24669,14 +26362,14 @@ const id = trigger.dataset.id;
           syncReferenceNotes();
           renderBuilderSummary();
           renderPlayDashboardIfVisible();
-          renderBuilderStepContent();
+          rerenderActiveBuilderStep();
           return;
         }
 
         if (event.target.dataset.classIpField) {
           updateFieldValue(event.target.dataset.classIpField, event.target.value);
           syncBuilderSelectionsIntoSheet();
-          renderBuilderStepContent();
+          rerenderActiveBuilderStep();
           renderPlayDashboardIfVisible();
           scheduleWorkingStatePersist();
           return;
@@ -24688,12 +26381,11 @@ const id = trigger.dataset.id;
         updateFieldValue(event.target.dataset.statField, event.target.value);
         recalcBasics(false);
         renderBuilderSummary();
-        renderBuilderStepContent();
+        rerenderActiveBuilderStep();
       });
 
       document.getElementById("return-to-builder").addEventListener("click", () => {
-        setMode("builder");
-        setStatus("Returned to the builder.");
+        returnToBuilderFromSheet();
       });
 
       document.getElementById("play-resource-grid").addEventListener("input", (event) => {
@@ -24889,8 +26581,7 @@ const ability = getQuickPlayAbilities()[Number(useButton.dataset.playUseAbility)
 
       document.getElementById("play-header-card").addEventListener("click", (event) => {
         if (event.target.closest("[data-mobile-return-builder]")) {
-          setMode("builder");
-          setStatus("Returned to the builder.");
+          returnToBuilderFromSheet();
           return;
         }
         if (event.target.closest("[data-mobile-sheet-tools]")) {
@@ -25146,8 +26837,6 @@ const action = actionButton.dataset.craftingAction;
           addCraftingPoints();
         } else if (action === "spend-points") {
           spendCraftingPoints("spend");
-        } else if (action === "spend-recipe") {
-          spendSelectedRecipePoints();
         } else if (action === "facility-fill-uses") {
           setFacilityUsesFromLevel();
         } else if (action === "facility-spend-use") {
@@ -25200,6 +26889,10 @@ const handlePlayCraftingPanelInput = (event) => {
         setCraftingField(fieldName, event.target.value);
       };
 const handlePlayCraftingPanelChange = (event) => {
+        if (event.target.dataset.craftingRollExpertise !== undefined) {
+          setCraftingRollExpertise(event.target.value);
+          return;
+        }
         if (event.target.dataset.miraneNaturalIp !== undefined) {
           state.play = mergePlayState(state.play);
           state.play.crafting.miraneUseNaturalIp = Boolean(event.target.checked);

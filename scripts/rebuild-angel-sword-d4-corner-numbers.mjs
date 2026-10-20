@@ -5,7 +5,7 @@ import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 
 const require = createRequire(import.meta.url);
-const sharp = require("C:/Users/bulld/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/sharp");
+const sharp = require("sharp"); // one-off tool: install the sharp package first (it is not a project dependency)
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const faceArtPath = path.join(projectRoot, "assets", "dice-3d", "new-angelsword-dice-face-art.384-webp.js");

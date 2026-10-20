@@ -52,6 +52,9 @@ export function createDefaultState() {
           itemQuantities: {},
           selectedBreakthroughIds: [],
           gmApprovedBreakthroughIds: [],
+          // Task 025 F3: breakthroughs kept after a load although their requirement
+          // now reads as unmet (flagged on screen instead of being deleted).
+          unmetBreakthroughIds: [],
           skillExpertiseEntries: [],
           choiceSelections: {},
           inspected: {
@@ -93,6 +96,10 @@ export function createDefaultState() {
           },
           hpAdjustAmount: "",
           hpHasManualChange: false,
+          // Task 037: current HP, Mana, RP and AP (with their maximums) taken
+          // when an accepted character leaves the play sheet for the builder.
+          // The trip back to the sheet restores them; null otherwise.
+          resourcesBeforeBuilderVisit: null,
           foodUsedSinceRest: false,
           activeEffects: [],
           playerNotes: "",
@@ -110,11 +117,20 @@ export function createDefaultState() {
             craftingWizardStep: 0,
             craftedOutcomePending: false,
             gatheringWizardStep: 0,
-            diceMax: 0,
-            diceRemaining: 0,
+            // Task 033: the rulebook gives 5 Crafting Dice per craft. Saves made
+            // before this task kept an untouched 0 / 0 here. mergePlayState moves
+            // that old default to 5 once; `diceStartMigrated` then marks the save
+            // so a value the player sets by hand (even 0) is never changed again.
+            diceMax: 5,
+            diceRemaining: 5,
+            diceStartMigrated: true,
             pointsGenerated: 0,
             pointsSpent: 0,
             rollBonus: 0,
+            // Task 033b: the one expertise (by name) the player added to the
+            // crafting roll, as in the rulebook example (Blacksmithing 5 + Longsword
+            // expertise 10). "" = none. Old saves have no such field and get "".
+            rollExpertise: "",
             pendingPointSpend: 0,
             recipeName: "",
             materialCost: "",
@@ -213,6 +229,7 @@ export function mergeBuilderState(source = {}) {
         itemQuantities,
         selectedBreakthroughIds: Array.isArray(source.selectedBreakthroughIds) ? source.selectedBreakthroughIds.filter(Boolean) : [...defaults.selectedBreakthroughIds],
         gmApprovedBreakthroughIds: Array.isArray(source.gmApprovedBreakthroughIds) ? source.gmApprovedBreakthroughIds.filter(Boolean) : [...defaults.gmApprovedBreakthroughIds],
+        unmetBreakthroughIds: Array.isArray(source.unmetBreakthroughIds) ? Array.from(new Set(source.unmetBreakthroughIds.map((id) => cleanText(id)).filter(Boolean))) : [...defaults.unmetBreakthroughIds],
         skillExpertiseEntries: Array.isArray(source.skillExpertiseEntries)
           ? source.skillExpertiseEntries
             .map((entry) => ({
@@ -230,6 +247,11 @@ export function mergeBuilderState(source = {}) {
         inspected: {
           ...defaults.inspected,
           ...(source.inspected || {})
+        },
+        // Compact saves drop empty strings, so refill the quick-build keys.
+        quickBuild: {
+          ...defaults.quickBuild,
+          ...(source.quickBuild && typeof source.quickBuild === "object" ? source.quickBuild : {})
         },
         searches: {
           ...defaults.searches,
@@ -269,13 +291,42 @@ function clonePlayEffectRules(rules = {}) {
         resourceGrant: rules.resourceGrant && typeof rules.resourceGrant === "object" ? { ...rules.resourceGrant } : {}
       };
     }
+// Task 037: keep only a well-formed { hp, mana, rp, ap } record of
+// { current, max } numbers; anything else means "no trip in progress".
+function normalizeResourcesBeforeBuilderVisit(value) {
+      if (!value || typeof value !== "object") {
+        return null;
+      }
+const normalized = {};
+      ["hp", "mana", "rp", "ap"].forEach((key) => {
+        const entry = value[key];
+        const current = Number(entry?.current);
+        const max = Number(entry?.max);
+        if (entry && typeof entry === "object" && Number.isFinite(current) && Number.isFinite(max)) {
+          normalized[key] = { current, max };
+        }
+      });
+      return Object.keys(normalized).length ? normalized : null;
+    }
 export function mergePlayState(source = {}) {
       const defaults = createDefaultState().play;
 const sourceHasHpFlag = Object.prototype.hasOwnProperty.call(source, "hpHasManualChange");
+      // Task 033 save migration. A crafting block with no `diceStartMigrated`
+      // flag was written before the dice started at 5. If it holds the old
+      // untouched default (0 dice max, 0 remaining), it becomes 5 / 5. Any other
+      // value is the player's own and stays. Every merged block is flagged, so
+      // a later hand-set 0 survives saving and loading.
+      const sourceCrafting = source.crafting && typeof source.crafting === "object" ? source.crafting : null;
+      const hasOldUntouchedDiceDefault = Boolean(sourceCrafting)
+        && !Object.prototype.hasOwnProperty.call(sourceCrafting, "diceStartMigrated")
+        && Object.prototype.hasOwnProperty.call(sourceCrafting, "diceMax")
+        && toNumber(sourceCrafting.diceMax, 0) <= 0
+        && toNumber(sourceCrafting.diceRemaining, 0) <= 0;
       return {
         ...defaults,
         ...source,
         hpHasManualChange: sourceHasHpFlag ? Boolean(source.hpHasManualChange) : hasManualHpHistory(source),
+        resourcesBeforeBuilderVisit: normalizeResourcesBeforeBuilderVisit(source.resourcesBeforeBuilderVisit),
         resources: {
           ...defaults.resources,
           ...(source.resources || {})
@@ -287,6 +338,10 @@ const sourceHasHpFlag = Object.prototype.hasOwnProperty.call(source, "hpHasManua
         crafting: {
           ...defaults.crafting,
           ...(source.crafting || {}),
+          ...(hasOldUntouchedDiceDefault
+            ? { diceMax: defaults.crafting.diceMax, diceRemaining: defaults.crafting.diceRemaining }
+            : {}),
+          diceStartMigrated: true,
           materialCustomCosts: source.crafting?.materialCustomCosts && typeof source.crafting.materialCustomCosts === "object"
             ? Object.fromEntries(
               Object.entries(source.crafting.materialCustomCosts)

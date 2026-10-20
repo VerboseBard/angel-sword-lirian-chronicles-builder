@@ -1,0 +1,405 @@
+{
+  "source": "Exported 2026-10-20 with the live site's code (git archive 3346d32) through its own Quick Build, Use This Character, Table Tools, Export Character, JSON File. Files are the raw downloads. skills = the live sheet's skill totals (Bonus fields) at export time.",
+  "files": {
+    "human-shield-warrior-standard.json": {
+      "species": "human",
+      "build": "shield-warrior",
+      "mode": "standard",
+      "name": "Live Human Shield Warrior",
+      "skills": {
+        "Athletics": "+21",
+        "Riding": "+7",
+        "Deception": "+2",
+        "Roguecraft": "+2",
+        "Stealth": "+2",
+        "Artifice": "+3",
+        "Appraise": "+3",
+        "Common Knowledge": "+4",
+        "Flight": "+3",
+        "History": "+3",
+        "Linguistics": "+3",
+        "Magic": "+3",
+        "Medicine": "+3",
+        "Religion": "+3",
+        "Animal Husbandry": "+4",
+        "Insight": "+4",
+        "Perception": "+7",
+        "Survival": "+4",
+        "Art": "+1",
+        "Intimidation": "+3",
+        "Negotiation": "+1",
+        "Alchemy": "+0",
+        "Armorsmithing": "+0",
+        "Art Magic": "+1",
+        "Blacksmith": "+0",
+        "Carpentry": "+0",
+        "Culinary": "+0",
+        "Expert Knowledge": "+3",
+        "Farming": "+0",
+        "Foraging": "+0",
+        "Magic Perception": "+4",
+        "Mining": "+0",
+        "Artificer": "+0",
+        "Herbalism": "+0",
+        "Fishing": "+0",
+        "Hunting": "+0",
+        "Logging": "+0"
+      },
+      "pools": [
+        {
+          "id": "race-human-skill",
+          "budget": 5,
+          "spent": 5,
+          "remaining": 0
+        }
+      ],
+      "downloadName": "live human shield warrior.json",
+      "intendedChanges": {
+        "play.crafting.diceMax": {
+          "change": [
+            0,
+            5
+          ],
+          "why": "Task 033: the rulebook gives 5 Crafting Dice per craft; an old untouched 0 / 0 becomes 5 / 5 once."
+        },
+        "play.crafting.diceRemaining": {
+          "change": [
+            0,
+            5
+          ],
+          "why": "Task 033: same migration as diceMax."
+        },
+        "fields.Dodge": {
+          "change": [
+            "18",
+            "17"
+          ],
+          "why": "Task 025 F5: the Great Shield gives -2 Dodge, as its item text says (the live site applied -1)."
+        }
+      }
+    },
+    "catfolk-hunter-archer-mirane.json": {
+      "species": "catfolk",
+      "build": "hunter-archer",
+      "mode": "mirane",
+      "name": "Live Catfolk Hunter Archer",
+      "skills": {
+        "Athletics": "+2",
+        "Riding": "+2",
+        "Deception": "+3",
+        "Roguecraft": "+8",
+        "Stealth": "+6",
+        "Artifice": "+1",
+        "Appraise": "+1",
+        "Common Knowledge": "+1",
+        "Flight": "+1",
+        "History": "+1",
+        "Linguistics": "+1",
+        "Magic": "+1",
+        "Medicine": "+1",
+        "Religion": "+1",
+        "Animal Husbandry": "+11",
+        "Insight": "+8",
+        "Perception": "+17",
+        "Survival": "+22",
+        "Art": "+4",
+        "Intimidation": "+4",
+        "Negotiation": "+4",
+        "Alchemy": "+0",
+        "Armorsmithing": "+0",
+        "Art Magic": "+4",
+        "Blacksmith": "+0",
+        "Carpentry": "+0",
+        "Culinary": "+0",
+        "Expert Knowledge": "+1",
+        "Farming": "+0",
+        "Foraging": "+0",
+        "Magic Perception": "+8",
+        "Mining": "+0",
+        "Artificer": "+0",
+        "Herbalism": "+0",
+        "Fishing": "+0",
+        "Hunting": "+0",
+        "Logging": "+0"
+      },
+      "pools": [
+        {
+          "id": "race-chimera-skill",
+          "budget": 5,
+          "spent": 5,
+          "remaining": 0
+        }
+      ],
+      "downloadName": "live catfolk hunter archer.json",
+      "intendedChanges": {
+        "play.crafting.diceMax": {
+          "change": [
+            0,
+            5
+          ],
+          "why": "Task 033: the rulebook gives 5 Crafting Dice per craft; an old untouched 0 / 0 becomes 5 / 5 once."
+        },
+        "play.crafting.diceRemaining": {
+          "change": [
+            0,
+            5
+          ],
+          "why": "Task 033: same migration as diceMax."
+        }
+      }
+    },
+    "demon-sneak-thief-standard.json": {
+      "species": "demon",
+      "build": "sneak-thief",
+      "mode": "standard",
+      "name": "Live Demon Sneak Thief",
+      "skills": {
+        "Athletics": "+2",
+        "Riding": "+2",
+        "Deception": "+9",
+        "Roguecraft": "+16",
+        "Stealth": "+22",
+        "Artifice": "+4",
+        "Appraise": "+4",
+        "Common Knowledge": "+9",
+        "Flight": "+4",
+        "History": "+4",
+        "Linguistics": "+4",
+        "Magic": "+9",
+        "Medicine": "+4",
+        "Religion": "+4",
+        "Animal Husbandry": "+4",
+        "Insight": "+4",
+        "Perception": "+7",
+        "Survival": "+4",
+        "Art": "+1",
+        "Intimidation": "+1",
+        "Negotiation": "+1",
+        "Alchemy": "+0",
+        "Armorsmithing": "+0",
+        "Art Magic": "+1",
+        "Blacksmith": "+0",
+        "Carpentry": "+0",
+        "Culinary": "+0",
+        "Expert Knowledge": "+4",
+        "Farming": "+0",
+        "Foraging": "+0",
+        "Magic Perception": "+4",
+        "Mining": "+0",
+        "Artificer": "+0",
+        "Herbalism": "+0",
+        "Fishing": "+0",
+        "Hunting": "+0",
+        "Logging": "+0"
+      },
+      "pools": [
+        {
+          "id": "race-demon-skill",
+          "budget": 5,
+          "spent": 5,
+          "remaining": 0
+        },
+        {
+          "id": "race-demon-clan-skill",
+          "budget": 5,
+          "spent": 5,
+          "remaining": 0
+        }
+      ],
+      "downloadName": "live demon sneak thief.json",
+      "intendedChanges": {
+        "play.crafting.diceMax": {
+          "change": [
+            0,
+            5
+          ],
+          "why": "Task 033: the rulebook gives 5 Crafting Dice per craft; an old untouched 0 / 0 becomes 5 / 5 once."
+        },
+        "play.crafting.diceRemaining": {
+          "change": [
+            0,
+            5
+          ],
+          "why": "Task 033: same migration as diceMax."
+        }
+      }
+    },
+    "human-control-wizard-mirane.json": {
+      "species": "human",
+      "build": "control-wizard",
+      "mode": "mirane",
+      "name": "Live Human Control Wizard",
+      "skills": {
+        "Athletics": "+1",
+        "Riding": "+1",
+        "Deception": "+2",
+        "Roguecraft": "+2",
+        "Stealth": "+2",
+        "Artifice": "+8",
+        "Appraise": "+11",
+        "Common Knowledge": "+11",
+        "Flight": "+8",
+        "History": "+11",
+        "Linguistics": "+8",
+        "Magic": "+23",
+        "Medicine": "+8",
+        "Religion": "+8",
+        "Animal Husbandry": "+4",
+        "Insight": "+4",
+        "Perception": "+4",
+        "Survival": "+4",
+        "Art": "+3",
+        "Intimidation": "+3",
+        "Negotiation": "+3",
+        "Alchemy": "+0",
+        "Armorsmithing": "+0",
+        "Art Magic": "+3",
+        "Blacksmith": "+0",
+        "Carpentry": "+0",
+        "Culinary": "+0",
+        "Expert Knowledge": "+8",
+        "Farming": "+0",
+        "Foraging": "+0",
+        "Magic Perception": "+4",
+        "Mining": "+0",
+        "Artificer": "+0",
+        "Herbalism": "+0",
+        "Fishing": "+0",
+        "Hunting": "+0",
+        "Logging": "+0"
+      },
+      "pools": [
+        {
+          "id": "race-human-skill",
+          "budget": 5,
+          "spent": 5,
+          "remaining": 0
+        }
+      ],
+      "downloadName": "live human control wizard.json",
+      "intendedChanges": {
+        "play.crafting.diceMax": {
+          "change": [
+            0,
+            5
+          ],
+          "why": "Task 033: the rulebook gives 5 Crafting Dice per craft; an old untouched 0 / 0 becomes 5 / 5 once."
+        },
+        "play.crafting.diceRemaining": {
+          "change": [
+            0,
+            5
+          ],
+          "why": "Task 033: same migration as diceMax."
+        }
+      }
+    },
+    "human-sneak-thief-standard-used.json": {
+      "species": "human",
+      "build": "sneak-thief",
+      "mode": "standard",
+      "name": "Live Human Sneak Thief Used",
+      "skills": {
+        "Athletics": "+2",
+        "Riding": "+2",
+        "Deception": "+10",
+        "Roguecraft": "+17",
+        "Stealth": "+23",
+        "Artifice": "+3",
+        "Appraise": "+3",
+        "Common Knowledge": "+3",
+        "Flight": "+3",
+        "History": "+3",
+        "Linguistics": "+3",
+        "Magic": "+8",
+        "Medicine": "+3",
+        "Religion": "+3",
+        "Animal Husbandry": "+4",
+        "Insight": "+4",
+        "Perception": "+7",
+        "Survival": "+4",
+        "Art": "+1",
+        "Intimidation": "+1",
+        "Negotiation": "+1",
+        "Alchemy": "+0",
+        "Armorsmithing": "+0",
+        "Art Magic": "+1",
+        "Blacksmith": "+0",
+        "Carpentry": "+0",
+        "Culinary": "+0",
+        "Expert Knowledge": "+3",
+        "Farming": "+0",
+        "Foraging": "+0",
+        "Magic Perception": "+4",
+        "Mining": "+0",
+        "Artificer": "+0",
+        "Herbalism": "+0",
+        "Fishing": "+0",
+        "Hunting": "+0",
+        "Logging": "+0"
+      },
+      "pools": [
+        {
+          "id": "race-human-skill",
+          "budget": 5,
+          "spent": 5,
+          "remaining": 0
+        }
+      ],
+      "downloadName": "live human sneak thief used.json",
+      "usedOnTheSheet": "After Use This Character, on the live sheet: took 7 damage, Mana set to 6, AP to 2, unequipped the light armor, wrote a player note, rolled a saving throw (log entry), typed an ability name into the first ability slot.",
+      "intendedChanges": {
+        "play.crafting.diceMax": {
+          "change": [
+            0,
+            5
+          ],
+          "why": "Task 033: the rulebook gives 5 Crafting Dice per craft; an old untouched 0 / 0 becomes 5 / 5 once."
+        },
+        "play.crafting.diceRemaining": {
+          "change": [
+            0,
+            5
+          ],
+          "why": "Task 033: same migration as diceMax."
+        },
+        "fields.Guard": {
+          "change": [
+            "5",
+            "4"
+          ],
+          "why": "Task 043: the live sheet never refreshed these after Unequip (light armor off), so the file holds the numbers with armor; a load computes them without it."
+        },
+        "fields.Evasion": {
+          "change": [
+            "9",
+            "11"
+          ],
+          "why": "Task 043: the live sheet never refreshed these after Unequip (light armor off), so the file holds the numbers with armor; a load computes them without it."
+        },
+        "fields.Dodge": {
+          "change": [
+            "22",
+            "24"
+          ],
+          "why": "Task 043: the live sheet never refreshed these after Unequip (light armor off), so the file holds the numbers with armor; a load computes them without it."
+        },
+        "fields.Block": {
+          "change": [
+            "12",
+            "8"
+          ],
+          "why": "Task 043: the live sheet never refreshed these after Unequip (light armor off), so the file holds the numbers with armor; a load computes them without it."
+        },
+        "fields.Initiative": {
+          "change": [
+            "3",
+            "4"
+          ],
+          "why": "Task 043: the live sheet never refreshed these after Unequip (light armor off), so the file holds the numbers with armor; a load computes them without it."
+        }
+      }
+    }
+  },
+  "intendedChangesNote": "intendedChanges: the only differences an import of these old files may show, each made on purpose by a later task. Keys the old builder did not have yet (they appear with their defaults) are allowed by the test itself."
+}

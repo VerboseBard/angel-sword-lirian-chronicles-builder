@@ -1543,6 +1543,23 @@
       min-height: 220px;
     }
 
+    /* Task 042: the Lyrian symbol fallback (180 x 180 px) at its own size,
+       centered, instead of stretched to the panel width. */
+    .detail-figure.detail-figure-symbol {
+      display: grid;
+      place-items: center;
+      min-height: 0;
+      padding: 18px;
+    }
+
+    .detail-figure.detail-figure-symbol img {
+      width: auto;
+      height: auto;
+      max-width: min(100%, 180px);
+      min-height: 0;
+      object-fit: contain;
+    }
+
     .detail-copy {
       padding: 16px;
       border-radius: 18px;
@@ -7638,6 +7655,35 @@
       color: #ffc4ae;
     }
 
+    /* Task 045 (040 gate, Haiku): the status pills are pale text made for the
+       dark cards. Inside the cream guide boxes (the Owlbear setup guide and the
+       other table-tool guides) the same colors were unreadable, about 1:1.
+       Here they use dark text on a light tint, 9:1 or better; the dark cards
+       are unchanged. */
+    .sheet-modal-success .integration-status {
+      border-color: rgba(122, 90, 0, 0.55);
+      background: rgba(255, 204, 64, 0.28);
+      color: #2d2100;
+    }
+
+    .sheet-modal-success .integration-status.is-ready {
+      border-color: rgba(18, 110, 70, 0.6);
+      background: rgba(44, 158, 108, 0.16);
+      color: #043420;
+    }
+
+    .sheet-modal-success .integration-status.is-live {
+      border-color: rgba(18, 110, 70, 0.7);
+      background: rgba(44, 158, 108, 0.28);
+      color: #03301e;
+    }
+
+    .sheet-modal-success .integration-status.is-warn {
+      border-color: rgba(160, 62, 28, 0.6);
+      background: rgba(196, 84, 48, 0.14);
+      color: #601804;
+    }
+
     .play-table-tools-dashboard {
       display: grid;
       gap: 16px;
@@ -9290,6 +9336,58 @@
       padding-left: 18px;
     }
 
+    /* Task 042 (owner design): under the version selector, three short lines
+       (builder version, selected rules version, one-line update summary) and a
+       small button that opens the full list in a popup. */
+    .version-update-summary {
+      gap: 3px;
+      padding: 7px 8px;
+      border: 1px solid rgba(7, 21, 39, 0.24);
+      background: rgba(255, 247, 218, 0.64);
+    }
+
+    .version-update-summary .builder-build-version {
+      display: block;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: none;
+    }
+
+    .version-update-rules {
+      color: rgba(7, 21, 39, 0.75);
+      font-size: 0.74rem;
+      font-weight: 700;
+    }
+
+    .version-manager .version-update-open {
+      justify-self: start;
+      min-height: 28px;
+      margin-top: 3px;
+      padding: 3px 10px;
+      border-radius: 7px;
+      font-size: 0.72rem;
+    }
+
+    .version-update-summary .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .release-notes-guide ul {
+      display: grid;
+      gap: 6px;
+      margin: 0;
+      padding-left: 20px;
+    }
+
     .version-progress {
       display: grid;
       gap: 5px;
@@ -9339,6 +9437,15 @@
       padding-bottom: 2px;
     }
 
+    /* Task 042 (033b/038b audit): with the EXP card there are six top cards.
+       Where six fit (1200 px and wider), keep them in one row so Skills does
+       not wrap alone; narrower screens keep five columns (six would overflow). */
+    @media (min-width: 1200px) {
+      .builder-stage-summary .summary-grid {
+        grid-template-columns: repeat(6, minmax(120px, 1fr));
+      }
+    }
+
     .builder-stage-summary .summary-card {
       padding: 10px 12px;
       min-height: 100%;
@@ -9358,6 +9465,19 @@
     .builder-stage-summary .summary-card-equipment {
       grid-column: 1 / -1;
       min-height: 0;
+    }
+
+    /* Task 025: heads-up notes in the Current Build panel (duplicate abilities,
+       breakthroughs kept although their requirement is no longer met). */
+    .builder-stage-summary .summary-card-attention {
+      grid-column: 1 / -1;
+      min-height: 0;
+      background: rgba(255, 236, 196, 0.97);
+      border-color: rgba(176, 108, 12, 0.55);
+    }
+
+    .builder-stage-summary .summary-card-attention strong {
+      color: #7a4300;
     }
 
     .play-header-class-strip.is-single {
@@ -9746,10 +9866,42 @@
         padding: 8px;
       }
 
-      .version-manager .builder-build-version,
-      .version-manager > label,
-      .version-manager .version-update-list {
+      .version-manager > label {
         display: none;
+      }
+
+      /* Task 042: the short update summary also shows on phones, kept to two
+         rows: "Beta 3.0  Rules 0.13.2  [See full update list]", then the
+         one-line summary. */
+      .version-manager .version-update-summary {
+        grid-column: 1 / -1;
+        grid-template-columns: auto auto minmax(0, 1fr) auto;
+        align-items: center;
+        column-gap: 8px;
+        row-gap: 3px;
+        padding: 5px 8px;
+      }
+
+      .version-manager .version-update-summary .builder-build-version {
+        grid-column: 1;
+        grid-row: 1;
+      }
+
+      .version-manager .version-update-rules {
+        grid-column: 2;
+        grid-row: 1;
+      }
+
+      .version-manager .version-update-open {
+        grid-column: 4;
+        grid-row: 1;
+        margin-top: 0;
+        min-height: 32px;
+      }
+
+      .version-manager .version-update-line {
+        grid-column: 1 / -1;
+        grid-row: 2;
       }
 
       .version-manager .version-learn-link {

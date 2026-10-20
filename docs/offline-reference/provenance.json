@@ -2,7 +2,7 @@
   "sections": [
     {
       "section": "rulebook",
-      "sourceFile": "E:\\Chat gpt Codex\\Angels sword\\.tmp_official_site\\patch-2026-09-07\\api-attempt-01\\data\\angelssword\\decoded\\rulebook.json",
+      "sourceFile": "data/angelssword/decoded/rulebook.json",
       "sourceSha256": "8b48cf39da748c7b24499f4f9d03fdd69bf0990b1444f54e4b058d9c4572240f",
       "sourceChars": 139276,
       "visibleChars": 120345,
@@ -10,7 +10,7 @@
     },
     {
       "section": "settings_guide",
-      "sourceFile": "E:\\Chat gpt Codex\\Angels sword\\.tmp_official_site\\patch-2026-09-07\\api-attempt-01\\data\\angelssword\\decoded\\settings_guide.json",
+      "sourceFile": "data/angelssword/decoded/settings_guide.json",
       "sourceSha256": "78cff5d9471778f7412bb5eaaea6e33541cfffa8ab05618330ed703f60e0199f",
       "sourceChars": 37505,
       "visibleChars": 36670,
@@ -18,7 +18,7 @@
     },
     {
       "section": "patch_notes",
-      "sourceFile": "E:\\Chat gpt Codex\\Angels sword\\.tmp_official_site\\patch-2026-09-07\\api-attempt-01\\data\\angelssword\\decoded\\patch_notes.json",
+      "sourceFile": "data/angelssword/decoded/patch_notes.json",
       "sourceSha256": "05705b4c8e5278dda9022dde9ef99bef65a395b9e013b633fd56ac05c5db400b",
       "sourceChars": 3423,
       "visibleChars": 2544,
@@ -26,7 +26,7 @@
     }
   ],
   "keywords": 92,
-  "keywordsSourceFile": "E:\\Chat gpt Codex\\Angels sword\\.tmp_official_site\\patch-2026-09-07\\api-attempt-01\\data\\angelssword\\decoded\\keywords.json",
+  "keywordsSourceFile": "data/angelssword/decoded/keywords.json",
   "keywordsSourceSha256": "ab88c464d25f333e33ae7bc106c88f32ca24827e3de74b86f8ed0e02808a0fa7",
   "outputSha256": "ed699d3b824d103247d1218c791f9fddfb015dd84f1d09942a8fa0cee97a1f5f"
 }

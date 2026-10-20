@@ -153,6 +153,9 @@ const OPENER_ACK_TIMEOUT_MS = 5000;
    about one a minute; postMessage delivery itself is never throttled. */
 const OPENER_STALE_MS = 75000;
 const OPENER_CONNECT_WAIT_MS = 2000;
+/* The fixed window name the Companion's Open My Character Sheet uses
+   (OPENER_POPUP_NAME in owlbear/opener-bridge.js; pinned by the test). */
+const OPENER_POPUP_NAME = "angel-sword-sheet-bridge";
 
 let openerInitialized = false;
 let openerHandshaken = false;
@@ -256,6 +259,22 @@ export function getOwlbearOpenerState() {
     return "connected";
   }
   return "connecting";
+}
+
+/**
+ * True when this window was opened by the Owlbear Companion's Open My
+ * Character Sheet button: it has an opener and carries the Companion's fixed
+ * popup name. A plain builder tab never matches. (Task 031 T3.)
+ */
+export function isOpenedByOwlbearCompanion() {
+  if (!getOwlbearOpener()) {
+    return false;
+  }
+  try {
+    return globalThis.window?.name === OPENER_POPUP_NAME;
+  } catch (error) {
+    return false;
+  }
 }
 
 function waitForOpenerConnected(timeoutMs = OPENER_CONNECT_WAIT_MS) {

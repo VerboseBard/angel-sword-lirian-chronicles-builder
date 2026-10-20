@@ -159,6 +159,15 @@ function baseBreakthroughId(id) {
   return text(id).split("::")[0];
 }
 
+/** Task 038 (ledger B16): the official builder keys a repeatable purchase as
+    "id::choice" or "id::choice::N" and reads the choice back from there when
+    the `choice` field is empty. A bare number there is only a uniqueness
+    count, never a choice. */
+function choiceFromBreakthroughId(id) {
+  const part = text(text(id).split("::")[1]);
+  return part && !/^\d+$/.test(part) ? part : "";
+}
+
 export function normalizeAscharCharacter(character = {}) {
   const notes = [];
   const race = character.race || {};
@@ -202,7 +211,7 @@ export function normalizeAscharCharacter(character = {}) {
       breakthroughId: baseBreakthroughId(bt?.breakthroughId),
       name: text(bt?.name),
       cost: num(bt?.cost, 0),
-      choice: text(bt?.choice)
+      choice: text(bt?.choice) || choiceFromBreakthroughId(bt?.breakthroughId)
     })).filter((bt) => bt.breakthroughId || bt.name),
     skills,
     equipment: (Array.isArray(character.equipment) ? character.equipment : []).map((item) => ({
@@ -224,6 +233,22 @@ export function normalizeAscharCharacter(character = {}) {
     notes
   };
 
+  // Task 025 F8: entries with no id/name were filtered out without a word.
+  const droppedCount = (raw, kept) => Math.max(0, (Array.isArray(raw) ? raw.length : 0) - kept.length);
+  const droppedNote = (count, noun, missing) =>
+    `${count} ${noun} entr${count === 1 ? "y" : "ies"} in the file had no ${missing} and could not be imported.`;
+  const droppedClasses = droppedCount(character.classes, plan.classes);
+  const droppedBreakthroughs = droppedCount(character.breakthroughs, plan.breakthroughs);
+  const droppedItems = droppedCount(character.equipment, plan.equipment);
+  if (droppedClasses) {
+    notes.push(droppedNote(droppedClasses, "class", "class id or name"));
+  }
+  if (droppedBreakthroughs) {
+    notes.push(droppedNote(droppedBreakthroughs, "breakthrough", "breakthrough id or name"));
+  }
+  if (droppedItems) {
+    notes.push(droppedNote(droppedItems, "item", "name"));
+  }
   if (character.portraitData) {
     notes.push("The official portrait image was not imported (different portrait systems).");
   }

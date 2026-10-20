@@ -193,8 +193,10 @@ export let SKILL_EXPERTISE_OPTIONS = {
       Negotiation: ["Mercantile", "Nobility", "Commonfolk"],
       Alchemy: ["Flasks", "Elixirs", "Potions", "Poisons", "Salves"],
       Armorsmithing: ["Clothing", "Light Armor", "Medium Armor", "Heavy Armor", "Shields"],
-      Artificing: ["Pistol", "Shotgun", "Musket", "Sniper Rifle", "Airships", "Weapon Artifice", "Assist Artifice", "Basic Artifice"],
-      Blacksmithing: [
+      // Task 042 (033b/038b audit must-fix 3): keys match the skill names in
+      // SKILL_DEFINITIONS (renamed from Artificing / Blacksmithing in 15defa6).
+      Artificer: ["Pistol", "Shotgun", "Musket", "Sniper Rifle", "Airships", "Weapon Artifice", "Assist Artifice", "Basic Artifice"],
+      Blacksmith: [
         "Small Weapons", "Polearms", "Light Swords", "Longsword", "Dueling Weapons",
         "Axes", "Bludgeoning Weapons", "Katana", "Heavy Blades", "Twinblade",
         "Thrown", "Set of Missiles", "Bow", "Crossbow", "Musket", "Tools",
@@ -267,12 +269,30 @@ export const DEMON_CLAN_SKILL_OPTIONS = {
     };
 export const CREATION_SKILL_POINT_BUDGET = 10;
 export const BREAKTHROUGH_CREATION_BUDGET = 300;
+// Identity of the bundled CCS template (data/ccs-template.xlsx). It is written into
+// every CCS export (Core!R1) so a reviewer can tell which template made a sheet.
+// Keep in step with data/CCS_TEMPLATE_README.md when the template is re-captured.
+export const CCS_TEMPLATE_INFO = {
+      source: "Angel's Sword Clio ccs-template.xlsx (clio.angelssword.com/characterbuilder/data/ccs-template.xlsx)",
+      captured: "2026-09-07",
+      bytes: 587331,
+      sha256: "3aba3065ae76dcbb86baf712446c13f8fd1ff13f7dc052252a609affb127b6c6"
+    };
+// Rulebook sentence about duplicate abilities ("Unlocking more abilities", rules 0.13.2,
+// rulebook.json). Quoted verbatim in the duplicate-ability warning; the builder does not
+// apply this refund because the amounts are a designer question (task 025 F7).
+export const DUPLICATE_ABILITY_REFUND_RULE = "If there is a situation in which you would get a duplicate ability by spending EXP in a class, the EXP spent is refunded. This applies even when learning a new class, though unlocking the class would still require an Interlude Point as normal. If there is a situation where the abilities don't exactly match, but you still have everything else the ability has to give, then you get a half exp refund.";
 export const BASE_STARTING_CLIM = 3000;
 export const DEFAULT_CHARACTER_START_MODE = "standard";
 export const MIRANE_START_MODE_ID = "mirane";
 export const MIRANE_STARTING_CLIM_BONUS = 1000;
+// Interlude actions a creation Interlude Point can buy (rulebook, Interlude Actions).
+// Job: "Base: 300 Clim" and "Artisan Mastery: If you have at least 1 crafting class
+// mastered, you gain an additional 300 Clim (Does not stack)." (task 036: the
+// artisanClim part is credited by getStartingFundsState). Mirane's 150 / +50 Job is
+// a downtime rule and does not change creation math (docs/mirane-start-rules.md).
 export const CREATION_INTERLUDE_ACTIONS = [
-      { id: "job", label: "Job", description: "+300 Clim", clim: 300, exp: 0 },
+      { id: "job", label: "Job", description: "+300 Clim", artisanNote: "+300 more with a crafting class mastered", clim: 300, artisanClim: 300, exp: 0 },
       { id: "train", label: "Train", description: "+25 class EXP", clim: 0, exp: 25 },
       { id: "other", label: "Other", description: "GM decides", clim: 0, exp: 0 }
     ];

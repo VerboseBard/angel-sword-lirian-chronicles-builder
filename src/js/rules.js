@@ -2,7 +2,7 @@ import { BASE_STARTING_CLIM, BREAKTHROUGH_CREATION_BUDGET, CHARACTER_START_MODES
 import { asArray, buildLookup, clamp, cleanText, formatModifier, normalizeKey, normalizePhrase, splitSentences, toNumber } from "./utils.js";
 import { mergePlayState, persistWorkingState, state, trySetLocalStorage } from "./state.js";
 import { parseNumericCost } from "./io.js";
-import { appendPlayLog, applyStateToDom, buildComputedBonuses, buildDemonClanEntry, clearPlayFeedback, createDatalists, firstReadableText, formatCostLabelForDisplay, formatTrackedCostSpend, getAllSecondaryLineageOptions, getClassInterludeCost, getClassProgressCost, getClassProgressSlotCount, getClassPurchasedAbilityCount, getSelectedBreakthroughEffects, getSelectedEquipmentCost, getSkillRowData, hideVersionProgress, invalidateExportCache, loadScriptAsset, parseResourceCost, renderBuilder, renderPlayDashboard, renderPlayDashboardIfVisible, renderVersionManager, setStatus, setVersionProgress, showPlayFeedback, syncBuilderSelectionsIntoSheet } from "./ui.js";
+import { appendPlayLog, applyStateToDom, buildComputedBonuses, buildDemonClanEntry, clearPlayFeedback, createDatalists, firstReadableText, formatCostLabelForDisplay, formatTrackedCostSpend, getAllSecondaryLineageOptions, getClassInterludeCost, getClassProgressCost, getClassProgressSlotCount, getClassPurchasedAbilityCount, getSelectedBreakthroughEffects, getSelectedEquipmentCost, getSkillRowData, hasMasteredCraftingClass, hideVersionProgress, invalidateExportCache, loadScriptAsset, parseResourceCost, renderBuilder, renderPlayDashboard, renderPlayDashboardIfVisible, renderVersionManager, setStatus, setVersionProgress, showPlayFeedback, syncBuilderSelectionsIntoSheet } from "./ui.js";
 
 
 let computedBonusesCacheKey = "";
@@ -427,15 +427,21 @@ export function getSelectedItemRecords() {
         .map((id) => lookup.items.resolve(id))
         .filter(Boolean);
     }
+// The skills that "any non-crafting or gathering skill" can name. Task 036: the
+// 0.13.2 text bars only the artisan skills, so this list is every skill except
+// the crafting and gathering ones (SKILL_DEFINITIONS group). Artifice, Appraise,
+// Animal Husbandry and Survival are ordinary main skills in the rulebook (they
+// were barred here since Beta 1.4 with no rule behind it).
+//   Human race:        "You gain +5 skill points in any non-crafting or gathering skill of your choice."
+//   Universal Training: "You may put these skill points into any normal skill, except crafting and gathering skills."
+//   Skill Training:    "Crafting skills cannot be selected with this training." The rulebook adds that
+//                      artisan skills "cannot be selected normally by any class or feature that lets you
+//                      pick skills", so gathering skills stay barred there too.
+// Every user of this list (Human, Skill Training, Universal Training and the
+// class skill pools that say "any non crafting") is worded the same way.
 export function getHumanRaceSkillChoiceOptions() {
-      const excludedSkills = new Set([
-        "Artifice",
-        "Appraise",
-        "Animal Husbandry",
-        "Survival"
-      ]);
       return SKILL_DEFINITIONS
-        .filter((entry) => !excludedSkills.has(entry.name) && entry.group !== "crafting" && entry.group !== "gathering")
+        .filter((entry) => entry.group !== "crafting" && entry.group !== "gathering")
         .map((entry) => entry.name);
     }
 export function getAncestryOptionsByPrimaryRace(primaryRace) {
@@ -469,12 +475,15 @@ export function getStartingFundsState() {
       const effects = getSelectedBreakthroughEffects();
 const startMode = getCharacterStartMode();
 const campaignBonusClim = startMode.id === MIRANE_START_MODE_ID ? MIRANE_STARTING_CLIM_BONUS : 0;
-const creationInterludeClim = (Array.isArray(state.builder.creationInterludeActions)
+const creationInterludeActions = (Array.isArray(state.builder.creationInterludeActions)
         ? state.builder.creationInterludeActions
         : [])
         .map((id) => CREATION_INTERLUDE_ACTIONS.find((action) => action.id === id))
-        .filter(Boolean)
-        .reduce((total, action) => total + action.clim, 0);
+        .filter(Boolean);
+      // Task 036: a Job pays +300 Clim more while a crafting class is mastered.
+const craftingMastered = creationInterludeActions.some((action) => action.artisanClim) && hasMasteredCraftingClass();
+const creationInterludeClim = creationInterludeActions
+        .reduce((total, action) => total + action.clim + (craftingMastered ? toNumber(action.artisanClim, 0) : 0), 0);
 const overrideRaw = cleanText(state.fields["Clim Override"]);
 const earnedClim = toNumber(cleanText(state.fields["Earned Clim"]), 0);
 const suggestedTotal = BASE_STARTING_CLIM + campaignBonusClim + effects.bonusClim + creationInterludeClim;
@@ -510,14 +519,17 @@ export function getCampaignProgressState() {
         spiritCore: Math.max(0, toNumber(cleanText(state.fields["Spirit Core"]), 0))
       };
     }
-function getActivePlayEffectModifierSummary() {
-      const summary = {
+function createEmptyPlayEffectModifierSummary() {
+      return {
         stat: { Power: 0, Focus: 0, Agility: 0, Toughness: 0 },
         derived: {},
         speedMultiplier: 1,
         speedSet: null,
         dodgeSet: null
       };
+    }
+function getActivePlayEffectModifierSummary() {
+      const summary = createEmptyPlayEffectModifierSummary();
       const effects = Array.isArray(state.play?.activeEffects) ? state.play.activeEffects : [];
       effects.forEach((effect) => {
         const modifiers = effect?.rules?.modifiers && typeof effect.rules.modifiers === "object" ? effect.rules.modifiers : {};
@@ -558,13 +570,27 @@ function getActivePlayEffectCurrentAllowance(resourceKey) {
         return total + Math.max(0, grant);
       }, 0);
     }
-export function getDerivedCombatStats() {
+// Task 031: the main stats the sheet's derived numbers use right now: base +
+// computed bonuses + active play-effect stat changes. getDerivedCombatStats
+// reads these same totals, and the Owlbear summary sends them, so the room
+// and the sheet cannot drift apart.
+export function getCurrentMainStatValues(bonuses = getComputedBonuses(), activeEffectModifiers = getActivePlayEffectModifierSummary()) {
+      return Object.fromEntries(["Power", "Focus", "Agility", "Toughness"].map((key) => [
+        key,
+        toNumber(state.fields[key], 0) + (bonuses.mainStats[key] || 0) + (activeEffectModifiers.stat[key] || 0)
+      ]));
+    }
+// Task 038 (ledger B14): { includeActiveEffects: false } gives the permanent
+// numbers, without temporary play effects (Slow, Root, elixirs and so on).
+// The CCS export writes its permanent cells from these.
+export function getDerivedCombatStats({ includeActiveEffects = true } = {}) {
       const bonuses = getComputedBonuses();
-const activeEffectModifiers = getActivePlayEffectModifierSummary();
-const power = toNumber(state.fields.Power, 0) + (bonuses.mainStats.Power || 0) + activeEffectModifiers.stat.Power;
-const focus = toNumber(state.fields.Focus, 0) + (bonuses.mainStats.Focus || 0) + activeEffectModifiers.stat.Focus;
-const agility = toNumber(state.fields.Agility, 0) + (bonuses.mainStats.Agility || 0) + activeEffectModifiers.stat.Agility;
-const toughness = toNumber(state.fields.Toughness, 0) + (bonuses.mainStats.Toughness || 0) + activeEffectModifiers.stat.Toughness;
+const activeEffectModifiers = includeActiveEffects ? getActivePlayEffectModifierSummary() : createEmptyPlayEffectModifierSummary();
+const currentMainStats = getCurrentMainStatValues(bonuses, activeEffectModifiers);
+const power = currentMainStats.Power;
+const focus = currentMainStats.Focus;
+const agility = currentMainStats.Agility;
+const toughness = currentMainStats.Toughness;
 const breakthroughEffects = getSelectedBreakthroughEffects();
 const hpMax = Math.max(0, 20 + toughness * 10 + (bonuses.derived.hpMax || 0) + (activeEffectModifiers.derived.hpMax || 0));
 const manaMax = 6 + power + (bonuses.derived.manaMax || 0);
@@ -597,6 +623,44 @@ const dodge = activeEffectModifiers.dodgeSet == null ? dodgeBeforeSet : activeEf
         dodge,
         block: (toughness * 2) + (derivedBonuses.block || 0)
       };
+    }
+// Task 025 F8: split the initiative modifier into the Agility part and
+// everything else (armor penalty, class/breakthrough bonuses, effects) so the
+// roll breakdown no longer labels the whole modifier "Agility".
+// Task 036: the "everything else" part is now listed by name in `parts`
+// (On the Draw, the Gunslinger key's bonus, the armor penalty, ...). `other`
+// is only what no named source explains (active play effects).
+export function getInitiativeBreakdown() {
+      const derived = getDerivedCombatStats();
+      const bonuses = getComputedBonuses();
+      const activeEffectModifiers = getActivePlayEffectModifierSummary();
+      const agility = toNumber(state.fields.Agility, 0) + (bonuses.mainStats.Agility || 0) + activeEffectModifiers.stat.Agility;
+      const parts = [];
+      const onTheDraw = toNumber(getSelectedBreakthroughEffects().initiativeBonus, 0);
+      if (onTheDraw) {
+        parts.push({ label: "On the Draw", amount: onTheDraw });
+      }
+      asArray(bonuses.initiativeSources).forEach((source) => {
+        if (source.amount) {
+          parts.push({ label: source.label, amount: source.amount });
+        }
+      });
+      const named = parts.reduce((total, part) => total + part.amount, 0);
+      return { agility, parts, other: derived.initiative - agility - named, total: derived.initiative };
+    }
+// Task 038 (ledger B13): the save modifier is the current Toughness plus every
+// save bonus. Each part is named, the way task 025 F8 and task 036 label
+// initiative; `other` is only what no named source explains (active play
+// effects).
+export function getSaveBreakdown() {
+      const derived = getDerivedCombatStats();
+      const bonuses = getComputedBonuses();
+      const toughness = getCurrentMainStatValues(bonuses).Toughness;
+      const parts = asArray(bonuses.saveSources)
+        .filter((source) => source.amount)
+        .map((source) => ({ label: source.label, amount: source.amount }));
+      const named = parts.reduce((total, part) => total + part.amount, 0);
+      return { toughness, parts, other: derived.saveBonus - toughness - named, total: derived.saveBonus };
     }
 export function hasManualHpHistory(play = {}) {
       const entries = Array.isArray(play.log) ? play.log : [];
@@ -667,6 +731,59 @@ const oldHpMax = previousHpMax;
       resources.manaCurrent = clamp(toNumber(resources.manaCurrent, derived.manaMax), 0, Math.max(0, derived.manaMax));
       resources.rpCurrent = clamp(toNumber(resources.rpCurrent, derived.rpMax), 0, Math.max(0, derived.rpMax + getActivePlayEffectCurrentAllowance("rpCurrent")));
       resources.apCurrent = clamp(toNumber(resources.apCurrent, derived.apMax), 0, Math.max(0, derived.apMax + getActivePlayEffectCurrentAllowance("apCurrent")));
+    }
+// Task 037: a character that has been accepted onto the play sheet keeps its
+// current HP, Mana, RP and AP across a trip into the builder and back. While
+// the builder is open the pools still track their maximums (builder rule
+// above), so the values are taken when the sheet is left and put back when
+// the sheet opens again.
+export function rememberPlayResourcesBeforeBuilderVisit() {
+      state.play = mergePlayState(state.play);
+const resources = state.play.resources;
+const entry = (currentKey, maxKey) => ({
+        current: toNumber(resources[currentKey], NaN),
+        max: toNumber(resources[maxKey], NaN)
+      });
+      state.play.resourcesBeforeBuilderVisit = mergePlayState({
+        resourcesBeforeBuilderVisit: {
+          hp: entry("hpCurrent", "hpMax"),
+          mana: entry("manaCurrent", "manaMax"),
+          rp: entry("rpCurrent", "rpMax"),
+          ap: entry("apCurrent", "apMax")
+        }
+      }).resourcesBeforeBuilderVisit;
+      return Boolean(state.play.resourcesBeforeBuilderVisit);
+    }
+// Put the remembered values back, clamped to the maximums the builder visit
+// left. A pool that was full stays full (a brand-new character still starts
+// full, and an untouched pool keeps tracking its maximum as on the sheet);
+// a pool below full keeps its exact number, capped at the new maximum.
+export function restorePlayResourcesAfterBuilderVisit() {
+      state.play = mergePlayState(state.play);
+const saved = state.play.resourcesBeforeBuilderVisit;
+      if (!saved) {
+        return false;
+      }
+      state.play.resourcesBeforeBuilderVisit = null;
+const derived = getDerivedCombatStats();
+const resources = state.play.resources;
+const restore = (savedEntry, currentKey, maxKey, newMax) => {
+        resources[maxKey] = newMax;
+        if (!savedEntry) {
+          return;
+        }
+        resources[currentKey] = savedEntry.current >= savedEntry.max
+          ? Math.max(0, savedEntry.current + (newMax - savedEntry.max))
+          : clamp(savedEntry.current, 0, Math.max(0, newMax));
+      };
+      restore(saved.hp, "hpCurrent", "hpMax", derived.hpMax);
+      restore(saved.mana, "manaCurrent", "manaMax", derived.manaMax);
+      restore(saved.rp, "rpCurrent", "rpMax", derived.rpMax);
+      restore(saved.ap, "apCurrent", "apMax", derived.apMax);
+      // Below max counts as a manual HP state, so the sheet's own sync keeps
+      // the number instead of refilling it.
+      state.play.hpHasManualChange = toNumber(resources.hpCurrent, derived.hpMax) < derived.hpMax;
+      return true;
     }
 function applyTrackedPlayUseEffects(label, effectText, cost, options = {}) {
       const resources = state.play.resources;

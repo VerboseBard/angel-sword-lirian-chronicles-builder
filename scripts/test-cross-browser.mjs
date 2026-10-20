@@ -148,7 +148,7 @@ async function runDirectFileStartupAssertion() {
       && result.cardCount > 0
       && result.navCount > 0
       && result.summaryText.includes('Identity')
-      && result.buildLabel.includes('Beta 2.13')
+      && result.buildLabel.includes('Beta 3.0')
       && result.learnLink.text.includes('Learn How to Play')
       && result.learnLink.href === 'https://clio.angelssword.com/#'
       && result.learnLink.target === '_blank'
@@ -865,6 +865,12 @@ const browsers = [
     await page.click('[data-play-mode="crafting"]');
     await page.waitForSelector('#play-crafting [data-crafting-select-recipe="axolotl-elixir"]', { timeout: 5000 });
     await page.click('#play-crafting [data-crafting-select-recipe="axolotl-elixir"]');
+    // Task 033b: an Alchemy craft (Axolotl Elixir) makes 3, so the log says "Crafted: 3 x".
+    // Task 033: Craft Succeeded needs the points left to reach the item's
+    // crafting HP (Axolotl Elixir: 50), so the craft gets its points first.
+    await page.click('#play-crafting [data-crafting-wizard-goto="3"]');
+    await page.locator('#play-crafting [data-crafting-field="pendingPointSpend"]').first().fill('50');
+    await page.click('#play-crafting [data-crafting-action="add-points"]');
     await page.click('#play-crafting [data-crafting-wizard-goto="4"]');
     await page.waitForSelector('#play-crafting [data-crafting-action="craft-success"]', { timeout: 5000 });
     await page.click('#play-crafting [data-crafting-action="craft-success"]');
@@ -877,7 +883,7 @@ const browsers = [
         undoAvailable: Boolean(document.querySelector('#play-crafting [data-crafting-action="craft-undo"]')),
         newCraftAvailable: Boolean(document.querySelector('#play-crafting [data-crafting-action="reset-session"]')),
         craftSucceededMentions: (logText.match(/Craft Succeeded/g) || []).length,
-        craftedLineMentions: (logText.match(/Crafted: 1 x Axolotl Elixir/g) || []).length
+        craftedLineMentions: (logText.match(/Crafted: 3 x Axolotl Elixir/g) || []).length
       };
     });
 
@@ -912,7 +918,7 @@ const browsers = [
       const logText = document.querySelector('#play-log')?.textContent || '';
       return {
         craftSucceededMentions: (logText.match(/Craft Succeeded/g) || []).length,
-        craftedLineMentions: (logText.match(/Crafted: 1 x Axolotl Elixir/g) || []).length
+        craftedLineMentions: (logText.match(/Crafted: 3 x Axolotl Elixir/g) || []).length
       };
     });
     if (duplicateAttemptResult.craftSucceededMentions !== 1 || duplicateAttemptResult.craftedLineMentions !== 1) {
@@ -1676,6 +1682,7 @@ const browsers = [
       'unarmed-monk': [{ name: 'Martial Artist', purchasedCount: 7 }, { name: 'Cultivator', purchasedCount: 1 }],
       'hunter-archer': [{ name: 'Ranger', purchasedCount: 7 }, { name: 'Rogue', purchasedCount: 1 }],
       'scout-sniper-path': [{ name: 'Ranger', purchasedCount: 7 }, { name: 'Rogue', purchasedCount: 1 }],
+      gunslinger: [{ name: 'Ranger', purchasedCount: 7 }, { name: 'Gunslinger', purchasedCount: 0 }],
       'control-wizard': [{ name: 'Mage', purchasedCount: 7 }, { name: 'Elementalist', purchasedCount: 0 }],
       'elemental-blaster': [{ name: 'Pyromancer', purchasedCount: 7 }, { name: 'Sorcerer', purchasedCount: 0 }],
       'cleric-support': [{ name: 'Acolyte', purchasedCount: 7 }, { name: 'Medic', purchasedCount: 1 }],
@@ -1686,14 +1693,14 @@ const browsers = [
     };
     const powerPackageExpectations = {
       'seven-sorrows-rush': {
-        gear: ['Armor (Light)', 'Katana (Two-Handed)', "Adventurer's Kit", 'Military Ration', 'Healing Potion'],
+        gear: ['Armor (Medium)', 'Katana (Two-Handed)', 'Thrown (One-Handed)', "Adventurer's Kit", 'Military Ration', 'Healing Potion'],
         proficiency: 'Katana',
         secondaryStat: 'Fitness',
         skillTargets: ['Athletics', 'Intimidation', 'Perception', 'Stealth']
       },
       'bard-expertise-rush': {
-        gear: ['Armor (Light)', 'Small Weapons (One-Handed)', "Adventurer's Kit", 'Healing Potion', 'Smoke Flask'],
-        expertise: { name: 'Singing', points: 3 },
+        gear: ['Armor (Light)', 'Small Weapons (One-Handed)', 'Wand (One-Handed)', "Adventurer's Kit", 'Healing Potion', 'Smoke Flask'],
+        expertise: { name: 'Singing', points: 5 },
         secondaryStat: 'Presence',
         skillTargets: ['Art', 'Negotiation', 'Insight', 'Linguistics']
       }
@@ -1717,7 +1724,7 @@ const browsers = [
       await page.waitForSelector('[data-quick-build-action="select-build"]', { timeout: 5000 });
 
       const buildIds = await page.locator('[data-quick-build-action="select-build"]').evaluateAll((cards) => cards.map((card) => card.dataset.id));
-      if (buildIds.length !== 14 || new Set(buildIds).size !== buildIds.length) {
+      if (buildIds.length !== 15 || new Set(buildIds).size !== buildIds.length) {
         throw new Error(`Quick Build package inventory regression failed for ${startMode}: ${JSON.stringify(buildIds)}`);
       }
 
@@ -1813,7 +1820,7 @@ const browsers = [
           Number(entry.skillIndex) === 19
           && entry.name === 'Singing'
           && entry.source === 'creation'
-          && Number(entry.points) === 3
+          && Number(entry.points) === 5
         );
         const powerPackageValid = !powerExpectation || (
           powerExpectation.gear.every((name) => result.inventory.some((entry) => entry.name === name))
@@ -3095,8 +3102,9 @@ const browsers = [
     });
 
     if (
-      summaryEquipmentLayout.topCardCount !== 5 ||
-      summaryEquipmentLayout.titles.join('|') !== 'Identity|Stats|Breakthroughs|Classes|Skills|Equipment' ||
+      // Task 038b: the Current Build panel gained an EXP card (six top cards).
+      summaryEquipmentLayout.topCardCount !== 6 ||
+      summaryEquipmentLayout.titles.join('|') !== 'Identity|Stats|Breakthroughs|Classes|EXP|Skills|Equipment' ||
       !summaryEquipmentLayout.equipment?.isEquipment ||
       !summaryEquipmentLayout.equipmentSpansPanel ||
       !summaryEquipmentLayout.equipmentBelowTopCards ||
@@ -4623,6 +4631,14 @@ const browsers = [
       const saved = JSON.parse(localStorage.getItem(key) || '{}');
       return saved?.fields?.Name === 'Roland Beaumont' && saved?.fields?.Toughness === '6';
     }, storageKey, { timeout: 10000 });
+    // Task 044b: a CCS sheet holds no record of the free racial skill points, so
+    // the import notes window says so in one plain line. Check it, then close it.
+    await page.waitForSelector('#sheet-modal:not([hidden])', { timeout: 5000 });
+    const rolandImportNotes = await page.locator('#sheet-modal-content').innerText();
+    if (!rolandImportNotes.includes('This file has no record of the free racial skill points (Human bonus: spend 5 racial skill points)')) {
+      throw new Error(`CCS import free-point note missing: ${rolandImportNotes}`);
+    }
+    await page.click('#sheet-modal-close');
     await page.click('#builder-sheet-shortcut-top');
     await page.waitForSelector('.play-hit-max', { timeout: 5000 });
 
@@ -4796,6 +4812,14 @@ const browsers = [
       const saved = JSON.parse(localStorage.getItem(key) || '{}');
       return saved?.fields?.Name === 'Masaru' && saved?.fields?.Mana === '13';
     }, storageKey, { timeout: 10000 });
+    // Task 044b: a CCS sheet holds no record of the free racial skill points, so
+    // the import notes window says so in one plain line. Check it, then close it.
+    await page.waitForSelector('#sheet-modal:not([hidden])', { timeout: 5000 });
+    const masaruImportNotes = await page.locator('#sheet-modal-content').innerText();
+    if (!masaruImportNotes.includes('This file has no record of the free racial skill points (Youkai bonus: spend 5 racial skill points)')) {
+      throw new Error(`CCS import free-point note missing: ${masaruImportNotes}`);
+    }
+    await page.click('#sheet-modal-close');
     await page.click('#builder-sheet-shortcut-top');
     await page.waitForSelector('.play-hit-max', { timeout: 5000 });
 
@@ -5172,7 +5196,7 @@ const browsers = [
             const contentValid = stepContent && stepContent.children.length > 0 && stepContent.textContent.trim().length > 0;
             const navValid = stepNav && stepNav.querySelectorAll('button').length > 0;
             const versionsValid = versionSelect && versionSelect.querySelectorAll('option').length > 0;
-            const builderBuildValid = builderBuildVersion && builderBuildVersion.textContent.includes('Beta 2.13');
+            const builderBuildValid = builderBuildVersion && builderBuildVersion.textContent.includes('Beta 3.0');
             const learnLinkValid = learnLink
               && learnLink.textContent.includes('Learn How to Play')
               && learnLink.getAttribute('href') === 'https://clio.angelssword.com/#'
@@ -5185,6 +5209,31 @@ const browsers = [
               && learnRect.top >= versionRect.bottom
               && Math.abs(learnRect.left - versionRect.left) < 1
               && Math.abs(learnRect.right - versionRect.right) < 1);
+            // Task 042 (owner design): under the selector, three short lines and
+            // the "See full update list" button, at every size (phones too); the
+            // long list is gone from the sidebar.
+            const summaryNode = document.querySelector('[data-latest-update-summary]');
+            const summaryRect = summaryNode?.getBoundingClientRect();
+            const summaryLine = (selector) => (summaryNode?.querySelector(selector)?.innerText || '').replace(/\s+/g, ' ').trim();
+            const latestSummaryValid = Boolean(summaryNode && summaryRect && versionRect
+              && summaryRect.height > 0
+              && getComputedStyle(summaryNode).display !== 'none'
+              && summaryRect.top >= versionRect.bottom
+              && summaryLine('.builder-build-version strong') === 'Beta 3.0'
+              && summaryLine('[data-latest-update-rules]') === 'Rules ' + (versionSelect?.value || '')
+              && summaryLine('[data-latest-update-line]') === 'Multiple dice sets, Owlbear Rodeo connection, quality-of-life improvements.'
+              && summaryLine('[data-latest-update-open]') === 'See full update list'
+              && !document.querySelector('.version-manager li'));
+            const latestSummaryDetail = {
+              present: Boolean(summaryNode),
+              height: Math.round(summaryRect?.height || 0),
+              display: summaryNode ? getComputedStyle(summaryNode).display : '',
+              top: Math.round(summaryRect?.top || 0),
+              selectBottom: Math.round(versionRect?.bottom || 0),
+              lines: ['.builder-build-version strong', '[data-latest-update-rules]', '[data-latest-update-line]', '[data-latest-update-open]'].map(summaryLine),
+              selectValue: versionSelect?.value || '',
+              listItems: document.querySelectorAll('.version-manager li').length
+            };
             const updateControlsRemoved = !document.getElementById('version-check-button')
               && !document.getElementById('version-download-button')
               && !document.getElementById('version-connection');
@@ -5196,6 +5245,8 @@ const browsers = [
               builderBuildValid,
               learnLinkValid,
               learnLinkDirectlyBelow,
+              latestSummaryValid,
+              latestSummaryDetail,
               sheetToolbarSimplified,
               updateControlsRemoved,
               contentHtml: stepContent ? stepContent.innerHTML : 'null',
@@ -5230,6 +5281,12 @@ const browsers = [
 
           if (!checkResults.learnLinkValid || !checkResults.learnLinkDirectlyBelow) {
             const errText = 'App state check failed: Learn How to Play must be a safe official-site link directly below the game-version selector.';
+            console.error(`   [STATE ERROR] [${browserInfo.name} - ${vp.name}]:`, errText);
+            testErrors.push(errText);
+          }
+
+          if (!checkResults.latestSummaryValid) {
+            const errText = `App state check failed: the Latest update summary (Beta 3.0, the rules version, the one-line summary and See full update list) must show under the game-version selector. ${JSON.stringify(checkResults.latestSummaryDetail)}`;
             console.error(`   [STATE ERROR] [${browserInfo.name} - ${vp.name}]:`, errText);
             testErrors.push(errText);
           }

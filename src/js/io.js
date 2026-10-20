@@ -1,8 +1,8 @@
 import { CLASS_PURCHASABLE_LEVELS, CLASS_ROWS, EMBEDDED_STATE_FORMAT, INVENTORY_ROWS, PDF_STATE_CHUNK_FIELD_PREFIX, PDF_STATE_MANIFEST_FIELD, PDF_STATE_MARKER_END, PDF_STATE_MARKER_START, PDF_TEMPLATE_ASSET, PDF_VISIBLE_FIELD_TEXT_LIMIT, SAVE_SLOTS_KEY, SPREADSHEET_CELL_TEXT_LIMIT, SPREADSHEET_META_SHEET, SPREADSHEET_TEMPLATE_ASSET, XLSX_CONTENT_TYPES_NS, XLSX_MAIN_NS, XLSX_OFFICE_REL_NS, XLSX_REL_NS, XLSX_WORKSHEET_CONTENT_TYPE, XLSX_WORKSHEET_REL_TYPE } from "./constants.js";
 import { cleanText } from "./utils.js";
 import { createDefaultState, getSavedSlots, mergeBuilderState, mergePlayState, persistWorkingState, setActiveSaveSlotId, state, trySetLocalStorage } from "./state.js";
-import { alignLoadedStateGameVersion, exportPrepCache, getAncestryDetail, getBreakthroughBudgetState, getClassDetail, getDefaultGameVersionId, getRaceDetail, getSelectedGameVersionId, getStartingFundsState, lookup, shouldPromoteSavedVersionToLatest } from "./rules.js";
-import { PDF_LONG_TEXT_FIELDS, appendFieldText, applyAscharImport, applyStateToDom, base64ToBytes, buildExportFileStem, buildPdfImportPayload, buildSlotId, buildSpreadsheetExportCellMap, buildSpreadsheetImportPayload, buildSpreadsheetMetadataSheet, compactSaveSlotEntry, createStateSnapshot, createStorableStateSnapshot, decodeEmbeddedStateText, fillAbilityField, firstEmptyField, getBreakthroughRequirementStatus, getStorageFailureMessage, hydrateBuilderSelectionsFromFields, normalizeCurrentPortraitDataUrl, openLoadSavedModal, openSaveSlotModal, prepareExportCache, promptForSlotName, refreshSaveSlotList, renderBuilder, setStatus, showExportFailureModal, showExportSuccessModal, syncNameFields, updateSheetModalProgress, withTimeout } from "./ui.js";
+import { alignLoadedStateGameVersion, exportPrepCache, rememberPlayResourcesBeforeBuilderVisit, getAncestryDetail, getBreakthroughBudgetState, getClassDetail, getDefaultGameVersionId, getRaceDetail, getSelectedGameVersionId, getStartingFundsState, lookup, shouldPromoteSavedVersionToLatest } from "./rules.js";
+import { PDF_LONG_TEXT_FIELDS, captureImportEntryReferences, reportImportMatchNotes, appendFieldText, applyAscharImport, applyStateToDom, base64ToBytes, buildExportFileStem, buildPdfImportPayload, buildSlotId, buildSpreadsheetExportCellMap, buildSpreadsheetImportPayload, buildSpreadsheetMetadataSheet, compactSaveSlotEntry, createStorableStateSnapshot, createVttCharacterSnapshot, decodeEmbeddedStateText, fillAbilityField, firstEmptyField, getBreakthroughRequirementStatus, getStorageFailureMessage, hasBuiltCharacter, hydrateBuilderSelectionsFromFields, landBuiltCharacterOnReview, normalizeCurrentPortraitDataUrl, openLoadSavedModal, openSaveSlotModal, prepareExportCache, promptForSlotName, refreshSaveSlotList, renderBuilder, setStatus, showExportFailureModal, showExportSuccessModal, syncNameFields, updateSheetModalProgress, withTimeout } from "./ui.js";
 import { ensurePdfRuntimeLoaded, ensureSpreadsheetRuntimeLoaded } from "./runtime-loader.js";
 import { ASCHAR_FORMAT, parseAscharFile } from "./aschar.js";
 
@@ -880,7 +880,7 @@ const confirmed = typeof window.confirm !== "function" || window.confirm(
 const loaded = loadSavedState(parsed, { activeSlotId: "", statusOnFailure: false });
       return { present: true, loaded, packageName, error: loaded ? "" : "The Build Lab package could not be loaded." };
     }
-function hydrateStateFromObject(parsed, { activeSlotId = "", promoteStaleVersion = false, startInAdvancedBuild = false } = {}) {
+function hydrateStateFromObject(parsed, { activeSlotId = "", promoteStaleVersion = false, startInAdvancedBuild = false, keepSavedPlayResources = false } = {}) {
       if (!parsed || typeof parsed !== "object") {
         return false;
       }
@@ -911,7 +911,22 @@ const defaults = createDefaultState();
       };
       state.builder = mergeBuilderState(parsed.builder || {});
       state.play = mergePlayState(parsed.play || {});
+      // Task 043: the whole character was just replaced, so move the edit
+      // counter. The builder's choice list and computed bonuses are cached on
+      // it; without this the load checked the new character against the
+      // previous character's choices and cleared what did not fit (the Human's
+      // five free skill points, class weapon and stat picks, Skill Training
+      // picks). Import Character, Load Saved and the JSON inside PDF and
+      // spreadsheet exports all load through here.
+      state.revision = (state.revision || 0) + 1;
       hydrateBuilderSelectionsFromFields();
+      // Task 038 (037 audit finding 1): a save slot stores no screen, so a slot
+      // load opens the builder, and the builder keeps every pool at its maximum.
+      // For a built character, remember the saved HP, Mana, RP and AP first;
+      // the trip back to the sheet puts them back (clamped), as task 037 does.
+      if (keepSavedPlayResources && state.ui.mode === "builder" && !state.play.resourcesBeforeBuilderVisit && hasBuiltCharacter()) {
+        rememberPlayResourcesBeforeBuilderVisit();
+      }
       setActiveSaveSlotId(activeSlotId || state.ui.activeSaveSlotId || "");
       applyStateToDom();
       if (state.fields.Name) {
@@ -936,9 +951,11 @@ async function loadSaveSlotById(slotId) {
         setStatus("That saved character slot could not be found.");
         return false;
       }
-const didLoad = loadSavedState(slot.snapshot, { activeSlotId: slot.id, statusOnFailure: true });
+const didLoad = loadSavedState(slot.snapshot, { activeSlotId: slot.id, statusOnFailure: true, keepSavedPlayResources: true });
       if (didLoad) {
         await alignLoadedStateGameVersion({ statusLabel: `Loaded ${slot.name}` });
+        // Task 038: a built character opens on Review & Finish, not step 1.
+        landBuiltCharacterOnReview();
         closeSheetModal();
         if (cleanText(state.ui.gameVersion) === cleanText(window.LYRIAN_DATA?.version)) {
           setStatus(`Loaded ${slot.name}.`);
@@ -1165,18 +1182,22 @@ const fieldMap = {};
       });
 const embedded = await tryDecodeEmbeddedStatePackage(extractPdfEmbeddedPackage(fieldMap), "PDF embedded character data");
       if (embedded) {
+        const embeddedReport = captureImportEntryReferences(embedded);
         const didLoadEmbedded = loadSavedState(embedded, { activeSlotId: "", statusOnFailure: true });
         if (didLoadEmbedded) {
           await alignLoadedStateGameVersion({ statusLabel: `Imported ${file.name}` });
           setStatus(`Imported ${file.name}.`);
+          reportImportMatchNotes(embeddedReport, file.name);
           return true;
         }
       }
 const payload = buildPdfImportPayload(fieldMap);
+const payloadReport = captureImportEntryReferences(payload);
 const didLoad = loadSavedState(payload, { activeSlotId: "", statusOnFailure: true });
       if (didLoad) {
         await alignLoadedStateGameVersion({ statusLabel: `Imported ${file.name}` });
         setStatus(`Imported ${file.name}.`);
+        reportImportMatchNotes(payloadReport, file.name);
       }
       return didLoad;
     }
@@ -1186,18 +1207,22 @@ async function importSpreadsheetState(file) {
 const workbook = window.XLSX.read(await readFileAsArrayBuffer(file), { type: "array" });
 const embedded = await extractSpreadsheetMetadata(workbook);
       if (embedded) {
+        const embeddedReport = captureImportEntryReferences(embedded);
         const didLoadEmbedded = loadSavedState(embedded, { activeSlotId: "", statusOnFailure: true });
         if (didLoadEmbedded) {
           await alignLoadedStateGameVersion({ statusLabel: `Imported ${file.name}` });
           setStatus(`Imported ${file.name}.`);
+          reportImportMatchNotes(embeddedReport, file.name);
           return true;
         }
       }
 const payload = buildSpreadsheetImportPayload(workbook);
+const payloadReport = captureImportEntryReferences(payload);
 const didLoad = loadSavedState(payload, { activeSlotId: "", statusOnFailure: true });
       if (didLoad) {
         await alignLoadedStateGameVersion({ statusLabel: `Imported ${file.name}` });
         setStatus(`Imported ${file.name}.`);
+        reportImportMatchNotes(payloadReport, file.name);
       }
       return didLoad;
     }
@@ -1219,9 +1244,11 @@ export async function handleImportedCharacterFile(file) {
             return applyAscharImport(aschar.character, `official export ${file.name}`);
           }
         }
+        const jsonReport = captureImportEntryReferences(parsedJson);
         if (loadSavedState(raw, { activeSlotId: "", statusOnFailure: false })) {
           await alignLoadedStateGameVersion({ statusLabel: `Imported ${file.name}` });
           setStatus(`Imported ${file.name}.`);
+          reportImportMatchNotes(jsonReport, file.name);
           return true;
         }
         // Not our format — accept a BARE official character object (vault
@@ -1274,7 +1301,9 @@ export function loadFromBrowser() {
       openLoadSavedModal();
     }
 export function exportJsonState() {
-      const payload = JSON.stringify(createStateSnapshot(), null, 2);
+      // Task 031: the Character JSON also carries vttSummary, so the
+      // Companion's Choose File import gets the numbers the sheet shows.
+      const payload = JSON.stringify(createVttCharacterSnapshot(), null, 2);
       downloadBlob(new Blob([payload], { type: "application/json" }), `${buildExportFileStem()}.json`);
       closeSheetModal();
       setStatus("Exported character JSON.");

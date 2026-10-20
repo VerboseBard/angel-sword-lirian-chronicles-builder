@@ -184,7 +184,11 @@ async function browserPairings() {
   try {
     for (const sheetLane of lanes) for (const panelLane of lanes) {
       const label = `${sheetLane.name}-sheet__${panelLane.name}-extension`;
-      const defaultVersion = sheetLane.name === 'candidate' ? '0.13.2' : '0.13.1';
+      // Task 045 (040 gate, Sonnet F3): the version a fresh browser starts on is
+      // whatever each sheet's own manifest says. It was hard-coded to 0.13.1 for the
+      // older sheet, and the live site now starts on 0.13.2 too.
+      const defaultVersion = JSON.parse(await fs.readFile(path.join(sheetLane.root, 'assets/versions/manifest.json'), 'utf8')).defaultVersion;
+      assert.match(defaultVersion, /^\d+\.\d+\.\d+$/, `${label}: the sheet's manifest names a default rules version`);
       const errors = [], localFailures = [], blockedRemote = [], serverRequests = [];
       const server = http.createServer(async (req, res) => {
         const rawPath = new URL(req.url, 'http://localhost').pathname;
@@ -287,7 +291,11 @@ async function browserPairings() {
         });
         equal(restored, {version: '0.13.1', race: 'human', ancestry: '', classes: ['gunslinger', 'deadeye']}, `${label}: old saved selections survive offline load/edit/reload`);
         result.oldSaveReload = restored;
-        await sheet.locator('#builder-sheet-shortcut-top').click();
+        // Task 045 (040 gate, Sonnet F3): the newer builder hides this top shortcut on the
+        // Review step, where a loaded character now lands. Use it when it shows;
+        // otherwise take the Review step's own button to the sheet.
+        if (await sheet.locator('#builder-sheet-shortcut-top').isVisible()) await sheet.locator('#builder-sheet-shortcut-top').click();
+        else await sheet.locator('#builder-next').click();
         await sheet.locator('[data-play-mode="table"]:visible').first().click();
         await sheet.locator('[data-table-tool-guide="owlbear"]').click();
         await sheet.locator('[data-owlbear-send]').click();

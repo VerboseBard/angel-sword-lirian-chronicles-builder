@@ -1,3 +1,7 @@
+// Task 033: keep this import first. ui.js, rules.js and this file import each
+// other, and rules.js builds its lookup while they load; the crafting points
+// table has to be ready before that happens.
+import { withCraftingPoints } from "./crafting-points.js";
 import { normalizeLyrianText, normalizePulledRulesEntry } from "./ui.js";
 
 
@@ -344,7 +348,8 @@ const byName = new Map();
         races: makeMap(data.races),
         ancestries: makeMap(data.ancestries),
         classes: makeMap(data.classes),
-        items: makeMap(expandMaterialItemEntries(data.items)),
+        // Task 033: the shipped item data has no crafting HP; add it for the rules version that has it.
+        items: makeMap(withCraftingPoints(expandMaterialItemEntries(data.items), data.version)),
         breakthroughs: makeMap(data.breakthroughs),
         abilities: makeMap(data.abilities)
       };

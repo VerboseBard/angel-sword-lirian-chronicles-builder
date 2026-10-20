@@ -1,11 +1,11 @@
 Lyrian Chronicles Character Builder
-Beta 2.13 public release
-Rules default: 0.13.1
-Historical rules retained: 0.13.0, 0.12.6, 0.12.5
+Beta 3.0 public release
+Rules default: 0.13.2
+Historical rules retained: 0.13.1, 0.13.0, 0.12.6, 0.12.5
 Public link: https://verbosebard.github.io/angel-sword-lirian-chronicles-builder/
 
 Focus:
-- Complete 0.13.1 rules and Quick Build update.
+- Complete 0.13.2 rules and Quick Build update.
 - Advanced Build is the default full creator, with a return control on every Quick Build step.
 - Cross-browser and mobile compatibility.
 - Performance, caching, autosave, and version-switching hardening.

@@ -2,7 +2,7 @@ import { ACTIVE_SAVE_SLOT_KEY, STORAGE_KEY } from "./constants.js";
 import { flushScheduledWorkingStatePersist, getSavedSlots, hasWorkingStateStorage, persistWorkingState, setWorkingStatePersistenceReady, setWorkingStateStorageWasPresent } from "./state.js";
 import { alignLoadedStateGameVersion, loadInitialGameVersion, refreshGameDataRuntime } from "./rules.js";
 import { loadBuildLabHandoffFromLocation, loadSavedState } from "./io.js";
-import { applyStateToDom, bindEvents, buildSheet, createDatalists, flushPlayerNotesAutosave, flushPlayDashboardSync, populateSheetFields, renderVersionManager, setStatus } from "./ui.js";
+import { applyStateToDom, bindEvents, buildSheet, createDatalists, flushPlayerNotesAutosave, flushPlayDashboardSync, landBuiltCharacterOnReview, openPlaySheetIfOpenedFromCompanion, populateSheetFields, renderVersionManager, setStatus } from "./ui.js";
 
 
 
@@ -32,6 +32,7 @@ const modalClose = document.getElementById("sheet-modal-close");
         modalClose.innerHTML = "&times;";
       }
 let didLoad = false;
+let loadedFromSlot = false;
 const buildLabHandoff = loadBuildLabHandoffFromLocation();
       didLoad = buildLabHandoff.loaded;
       setWorkingStateStorageWasPresent(hasWorkingStateStorage());
@@ -39,7 +40,10 @@ const activeSlotId = localStorage.getItem(ACTIVE_SAVE_SLOT_KEY) || "";
       if (!didLoad && activeSlotId) {
         const activeSlot = getSavedSlots().find((entry) => entry.id === activeSlotId);
         if (activeSlot) {
-          didLoad = loadSavedState(activeSlot.snapshot, { activeSlotId, statusOnFailure: false, promoteStaleVersion: true, startInAdvancedBuild: true });
+          // Task 038: a slot stores no screen; keep its HP, Mana, RP and AP for
+          // the trip to the sheet (see hydrateStateFromObject).
+          didLoad = loadSavedState(activeSlot.snapshot, { activeSlotId, statusOnFailure: false, promoteStaleVersion: true, startInAdvancedBuild: true, keepSavedPlayResources: true });
+          loadedFromSlot = didLoad;
         }
       }
       if (!didLoad) {
@@ -48,11 +52,24 @@ const activeSlotId = localStorage.getItem(ACTIVE_SAVE_SLOT_KEY) || "";
       if (!didLoad) {
         applyStateToDom();
         setStatus(`Ready with Lyrian data v${window.LYRIAN_DATA.version} from bundled local data.`);
+        // Task 037: a Companion window opened with no character yet records
+        // that it is in the builder, so its one landing is spent (no-op in a
+        // plain tab).
+        openPlaySheetIfOpenedFromCompanion();
       } else if (buildLabHandoff.loaded) {
         setStatus(`Loaded ${buildLabHandoff.packageName} from Lyrian Build Lab. Finish identity, stats, skills, and choices, then save or export the character.`);
       } else {
         await alignLoadedStateGameVersion();
+        if (loadedFromSlot) {
+          // Task 038 (037 audit finding 1): a built character from the active
+          // slot opens on Review & Finish, not "Choose a Primary Race".
+          landBuiltCharacterOnReview();
+        }
         setStatus(activeSlotId ? "Loaded the active saved character slot." : "Loaded saved character.");
+        // Task 031 T3: opened from the Owlbear Companion with a complete
+        // character, start on the play sheet (no-op otherwise). Task 037:
+        // only on the window's first load; a reload keeps the player's mode.
+        openPlaySheetIfOpenedFromCompanion();
       }
       setWorkingStatePersistenceReady(true);
       if (buildLabHandoff.loaded) {

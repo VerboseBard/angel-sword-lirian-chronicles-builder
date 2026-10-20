@@ -118,7 +118,7 @@ async function handleApi(request, response, pathname) {
       mode: "local-server",
       projectRoot: PROJECT_ROOT,
       campaignPrototype: true,
-      message: "Beta 2.13 public build local development server is connected."
+      message: "Beta 3.0 public build local development server is connected."
     });
   }
 
@@ -244,7 +244,7 @@ async function start() {
       }
       const displayHost = HOST === "127.0.0.1" ? "localhost" : HOST;
       const url = `http://${displayHost}:${port}/`;
-      console.log(`Lyrian Beta 2.13 public build running at ${url}`);
+      console.log(`Lyrian Beta 3.0 public build running at ${url}`);
       console.log(`Owlbear local install link: http://localhost:${port}/owlbear/manifest.json`);
       console.log("Close this terminal window to stop the local development server.");
       openBrowser(url);

@@ -1,5 +1,7 @@
 # Angel Sword Owlbear Extension Architecture
 
+> **Status (2026-10):** two extensions ship (Companion and Dice); the sheet connects through the window.opener bridge (`owlbear/opener-bridge.js`); both manifests are public. The sections below are the original 0.2 design.
+
 ## Product decision
 
 Ship one installed extension named **Angel Sword Companion**. Keep its features

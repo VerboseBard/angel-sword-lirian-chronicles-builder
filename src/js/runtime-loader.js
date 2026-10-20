@@ -99,7 +99,8 @@ export function ensureDiceRuntimeLoaded() {
       "assets/dice-3d/legacy-dice-roller-capture.js?v=20260811-srgb-dice-v1",
       "assets/dice-3d/dice-geometry.js?v=20260811-srgb-dice-v1",
       "assets/dice-3d/character-sheet-skin-studio.js?v=20260811-srgb-dice-v1",
-      "assets/dice-3d/shared-dice-roller-core.js?v=20260825-numeral-dots-v3",
+      // Same core token as owlbear-dice/overlay.html CORE_V (task 032).
+      "assets/dice-3d/shared-dice-roller-core.js?v=20261019-task032-dice",
       "assets/dice-3d/dice-roller-router.js?v=20260811-srgb-dice-v1"
     ]).catch((error) => {
       diceRuntimePromise = null;

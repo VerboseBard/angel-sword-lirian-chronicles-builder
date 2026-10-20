@@ -105,6 +105,12 @@ async function testSpecDrift() {
   check("vtt-relay.js repeats PONG_TIMEOUT_MS",
     relaySource.includes(String(OPENER_BRIDGE_TIMING.PONG_TIMEOUT_MS)));
   check("popup name is stable", OPENER_POPUP_NAME === "angel-sword-sheet-bridge");
+  // Task 031 T3: the sheet recognises the Companion's popup by this name.
+  check("vtt-relay.js repeats the Companion popup name",
+    relaySource.includes(`const OPENER_POPUP_NAME = "${OPENER_POPUP_NAME}";`));
+  const relay = await import("../src/js/vtt-relay.js");
+  check("a window without an opener is never treated as opened by the Companion",
+    typeof relay.isOpenedByOwlbearCompanion === "function" && relay.isOpenedByOwlbearCompanion() === false);
 }
 
 async function testStateMachine() {

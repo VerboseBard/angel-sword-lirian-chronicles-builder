@@ -430,7 +430,7 @@ try {
   for (const result of quickBuildResults) {
     const classesValid = result.expectedClasses.every((name) => result.classes.includes(name));
     const expertiseValid = !result.expectsBardExpertise || result.expertise.some((entry) =>
-      entry.name === "Singing" && Number(entry.points) === 3 && entry.source === "creation"
+      entry.name === "Singing" && Number(entry.points) === 5 && entry.source === "creation"
     );
     const divineValid = !result.expectsDivineChoice || (result.breakthroughs.includes("Divine's Chosen") && result.divine === "Kari");
     const gearValid = result.inventory.some((entry) => entry.name === result.expectedGear && entry.equipped);

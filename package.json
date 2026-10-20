@@ -1,8 +1,8 @@
 {
   "name": "angel-sword-lirian-chronicles-builder",
-  "version": "2.13.0",
+  "version": "3.0.0",
   "private": true,
-  "description": "Web-ready Angel Sword Lyrian Chronicles character builder, Beta 2.13 public release.",
+  "description": "Web-ready Angel Sword Lyrian Chronicles character builder, Beta 3.0 public release.",
   "type": "module",
   "scripts": {
     "build": "node scripts/build-app.mjs && node scripts/build-owlbear.mjs && node scripts/check-bundle-compat.mjs",
@@ -23,6 +23,20 @@
     "test:dice-skins": "node scripts/test-dice-skin-integration.mjs",
     "test:dice-browsers": "node scripts/test-dice-browser-matrix.mjs",
     "test:followups": "node scripts/test-ui-followups.mjs",
+    "test:025": "node scripts/test-025-fixes.mjs",
+    "test:028": "npm run build && node scripts/test-028-owlbear-copy.mjs",
+    "test:029": "npm run build && node scripts/test-029-quick-build-human.mjs",
+    "test:030": "npm run build && node scripts/test-030-quick-build-minmax.mjs",
+    "test:031": "npm run build && node scripts/test-031-companion-sheet.mjs",
+    "test:032": "npm run build && node scripts/test-032-dice-display.mjs",
+    "test:033": "npm run build && node scripts/test-033-crafting.mjs",
+    "test:036": "npm run build && node scripts/test-036-skill-list.mjs",
+    "test:037": "npm run build && node scripts/test-037-back-to-builder.mjs",
+    "test:038": "npm run build && node scripts/test-038-small-fixes.mjs",
+    "test:042": "npm run build && node scripts/test-042-final-fixes.mjs",
+    "test:043": "npm run build && node scripts/test-043-import-round-trip.mjs",
+    "test:044": "npm run build && node scripts/test-044-gate-wave1-fixes.mjs",
+    "test:045": "npm run build && node scripts/test-045-gate-wave2-fixes.mjs",
     "test": "npm run build && node scripts/test-cross-browser.mjs"
   },
   "devDependencies": {

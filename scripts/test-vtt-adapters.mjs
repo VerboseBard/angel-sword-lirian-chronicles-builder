@@ -120,6 +120,210 @@ async function testOwlbearCore() {
   check("unknown character formats are rejected", rejected);
 }
 
+/* Task 031: the Companion stores the sheet's real numbers (vttSummary), with
+   corrected fallbacks for files and sheets that predate it. */
+function liveBuilderSnapshot({ fields = {}, builder = {}, resources = {} } = {}) {
+  /* Shaped like what the LIVE builder (main 3346d32) sends today:
+     sendCharacterToOwlbear() posts character: createStateSnapshot(), the
+     whole working state, with sheet inputs stored as strings and no
+     vttSummary. Keys follow 3346d32's createDefaultState(). */
+  return {
+    ui: { mode: "sheet", builderStep: 9, playMode: "combat", sheetTab: "actions", mobileSheetPage: "overview", mobileCharacterTab: "proficiencies", showPdf: false, activeSaveSlotId: "", gameVersion: "0.13.2", quickBuildActive: false, quickBuildStep: 0 },
+    fields: {
+      Name: "Mira Vale", "Primary Race": "Chimera", "Sub Race": "Catfolk", Class1: "Fighter", ClassTier1: "1",
+      Power: "2", Focus: "3", Agility: "3", Toughness: "3", Fitness: "2", Cunning: "1", Reason: "1", Awareness: "1", Presence: "2",
+      Speed: "25", Exp: "1000", "Spirit Core": "1100", "Earned Clim": "500", HP: "60", Mana: "8", RP: "5",
+      ...fields
+    },
+    abilitySelections: {},
+    lastFocusedField: "",
+    librarySelections: { race: "", ancestry: "", class: "", item: "", breakthrough: "", ability: "" },
+    builder: {
+      startMode: "standard", portraitDataUrl: "", selectedRaceId: "chimera", selectedAncestryId: "catfolk", selectedClassIds: ["fighter"],
+      classAbilityProgress: {}, creationInterludeActions: [], autoSpiritCore: "1100", autoExpBank: "1000", selectedItemIds: [], itemQuantities: {},
+      selectedBreakthroughIds: [], gmApprovedBreakthroughIds: [], skillExpertiseEntries: [], choiceSelections: {},
+      inspected: { race: "", ancestry: "", class: "", item: "", breakthrough: "" },
+      searches: { ancestry: "", class: "", classRole: "", classTier: "", classSort: "role", item: "", breakthrough: "", mainStatMode: "array", secondaryStatMode: "array" },
+      quickBuild: { speciesId: "", buildId: "", appliedBuildId: "", summary: "" },
+      ...builder
+    },
+    play: {
+      resources: { hpCurrent: 60, hpMax: 60, tempHp: 0, manaCurrent: 8, manaMax: 8, rpCurrent: 5, rpMax: 5, apCurrent: 4, apMax: 4, ...resources },
+      hpAdjustAmount: "", hpHasManualChange: false, foodUsedSinceRest: false, activeEffects: [], playerNotes: "", inventoryItems: []
+    }
+  };
+}
+
+async function testCompanionNumbers() {
+  console.log("— companion numbers (task 031) —");
+  const core = await import("../owlbear/core.js");
+
+  // The live builder (3346d32) sends no vttSummary: the corrected fallbacks
+  // must give no worse numbers than the old Companion did.
+  const live = core.normalizeCharacterExport(liveBuilderSnapshot());
+  check("live builder: stats fall back to the sheet's base points, as before", live.stats.toughness === 3 && live.stats.awareness === 1 && live.stats.power === 2);
+  check("live builder: EXP read from the real field name Exp", live.resources.exp === 1000);
+  check("live builder: Spirit Core read from the real field name \"Spirit Core\"", live.resources.spiritCore === 1100);
+  check("live builder: Speed read from the sheet's Speed field", live.speed === 25);
+  check("live builder: Clim unknown without a summary (0, as before)", live.resources.clim === 0);
+  check("live builder: resources unchanged", live.resources.hpCurrent === 60 && live.resources.manaMax === 8 && live.resources.rpMax === 5 && live.resources.apMax === 4);
+  check("live builder: no newer-version note", core.characterSchemaNote(liveBuilderSnapshot()) === "");
+  // EXP changed by hand on the sheet: the builder clears autoExpBank, so the
+  // old Companion (fields.EXP, then autoExpBank) received 0 here.
+  const handExp = core.normalizeCharacterExport(liveBuilderSnapshot({ fields: { Exp: "900" }, builder: { autoExpBank: "" } }));
+  check("EXP changed by hand on the sheet arrives (old Companion: 0)", handExp.resources.exp === 900);
+  const handCore = core.normalizeCharacterExport(liveBuilderSnapshot({ fields: { "Spirit Core": "1200" }, builder: { autoSpiritCore: "" } }));
+  check("Spirit Core changed by hand arrives (old Companion: 0)", handCore.resources.spiritCore === 1200);
+  // A blank Speed field used to win as 0 (audit C6); now the default applies.
+  const blankSpeed = core.normalizeCharacterExport(liveBuilderSnapshot({ fields: { Speed: "" } }));
+  check("blank Speed falls back to 20 (old Companion: 0)", blankSpeed.speed === 20);
+  const blankHp = core.normalizeCharacterExport(liveBuilderSnapshot({ resources: { hpCurrent: "" }, fields: { HP: "55" } }));
+  check("an empty resource string no longer beats a later fallback", blankHp.resources.hpCurrent === 55);
+  const legacyNames = core.normalizeCharacterExport({ fields: { Name: "Old Fixture", EXP: "300", SpiritCore: "400" }, builder: {}, play: { resources: {} } });
+  check("old hand-made SpiritCore/EXP spellings still read as a last resort", legacyNames.resources.exp === 300 && legacyNames.resources.spiritCore === 400);
+
+  // New builder: vttSummary carries the numbers the play sheet shows.
+  const summary = { schemaVersion: 1, basis: "current", stats: { power: 2, focus: 3, agility: 3, toughness: 4, fitness: 2, cunning: 1, reason: 1, awareness: 2, presence: 2 }, speed: 25, clim: 3500, exp: 900, spiritCore: 1100 };
+  const withSummary = core.normalizeCharacterExport({ ...liveBuilderSnapshot({ fields: { Exp: "900" }, builder: { autoExpBank: "" } }), vttSummary: summary });
+  check("vttSummary stats win over base points (race bonuses kept)", withSummary.stats.toughness === 4 && withSummary.stats.awareness === 2);
+  check("vttSummary Clim, EXP, Spirit Core and speed are stored", withSummary.resources.clim === 3500 && withSummary.resources.exp === 900 && withSummary.resources.spiritCore === 1100 && withSummary.speed === 25);
+  check("vttSummary does not change the character id (existing bindings keep matching)", withSummary.characterId === live.characterId);
+  const slowed = core.normalizeCharacterExport({ ...liveBuilderSnapshot(), vttSummary: { ...summary, speed: 12 } });
+  check("vttSummary speed is the current speed (e.g. Slow)", slowed.speed === 12);
+  const partial = core.normalizeCharacterExport({ ...liveBuilderSnapshot(), vttSummary: { schemaVersion: 1, stats: { toughness: "" }, speed: null } });
+  check("empty or missing summary values fall back to the sheet fields", partial.stats.toughness === 3 && partial.speed === 25 && partial.resources.exp === 1000);
+  check("the normalized character carries no summary-only extras", !("vttSummary" in withSummary) && !("basis" in withSummary));
+
+  // Official .aschar: prefer effective (with bonuses) stats when present.
+  const effective = core.normalizeCharacterExport({
+    format: "angelssword-character",
+    character: { name: "Effective Fixture", race: { primaryRaceName: "Chimera" }, mainStats: { power: 2, toughness: 3 }, subStats: { awareness: 1 }, effectiveMainStats: { power: 2, toughness: 4 }, effectiveSubStats: { awareness: 2 }, classes: [], derivedStats: { hp: 60 } }
+  });
+  check(".aschar effectiveMainStats/effectiveSubStats win when present", effective.stats.toughness === 4 && effective.stats.awareness === 2 && effective.stats.power === 2);
+  const ourExport = core.normalizeCharacterExport({
+    format: "angelssword-character",
+    character: { name: "Our Export", race: {}, mainStats: { power: 4, toughness: 3 }, subStats: { reason: 5 }, effectiveMainStats: null, effectiveSubStats: null, classes: [], derivedStats: {} }
+  });
+  check(".aschar with null effective stats (our own export) keeps today's base stats", ourExport.stats.power === 4 && ourExport.stats.toughness === 3 && ourExport.stats.reason === 5);
+}
+
+/* Task 031 / plan WS5: the version-skew contract, pinned. */
+async function testSchemaContract() {
+  console.log("— schema contract (WS5) —");
+  const core = await import("../owlbear/core.js");
+  check("CHARACTER_SCHEMA_VERSION stays 1 (vttSummary is additive)", core.CHARACTER_SCHEMA_VERSION === 1);
+  check("ROLL_SCHEMA_VERSION stays 1", core.ROLL_SCHEMA_VERSION === 1);
+  for (const version of [undefined, null, "", 0, 1, "1"]) {
+    const data = { ...liveBuilderSnapshot(), vttSummary: { schemaVersion: version, stats: { toughness: 4 } } };
+    const normalized = core.normalizeCharacterExport(data);
+    check(`character schema ${JSON.stringify(version)} is accepted without a note`, normalized.stats.toughness === 4 && core.characterSchemaNote(data) === "");
+  }
+  const newer = { ...liveBuilderSnapshot(), schemaVersion: 2, futureTopLevel: { x: 1 }, vttSummary: { schemaVersion: 2, stats: { toughness: 4, luck: 9 }, speed: 30, futureField: true } };
+  let newerNormalized = null;
+  try {
+    newerNormalized = core.normalizeCharacterExport(newer);
+  } catch (error) {
+    newerNormalized = null;
+  }
+  check("a newer character schema is still accepted", Boolean(newerNormalized) && newerNormalized.name === "Mira Vale");
+  check("a newer character schema keeps the known fields", newerNormalized?.stats.toughness === 4 && newerNormalized?.speed === 30);
+  check("unknown character fields are ignored", newerNormalized && !("luck" in newerNormalized.stats) && !("futureTopLevel" in newerNormalized) && !("futureField" in newerNormalized));
+  check("the stored record is stamped with the version this Companion understands", newerNormalized?.schemaVersion === 1);
+  const note = core.characterSchemaNote(newer);
+  check("a newer character schema produces a clear note (not silence)", note.includes("newer Angel Sword version") && note.includes("format 2") && note.includes("format 1"));
+  check("a top-level schemaVersion is honoured when there is no summary", core.characterSchemaNote({ schemaVersion: 3, fields: {}, play: {} }).includes("format 3"));
+  check("schema reader treats junk as no version", core.readSchemaVersion({ schemaVersion: "abc" }) === null && core.readSchemaVersion(null) === null);
+
+  for (const version of [undefined, 0, 1]) {
+    const roll = core.normalizeRollEvent({ id: `same-or-older-${version}`, total: 9, schemaVersion: version });
+    check(`roll schema ${JSON.stringify(version)} is accepted`, roll?.total === 9 && !core.isNewerSchema({ schemaVersion: version }, core.ROLL_SCHEMA_VERSION));
+  }
+  const newerRoll = core.normalizeRollEvent({ id: "newer-roll", total: 14, schemaVersion: 2, label: "Future Roll", futureRollField: "x", dice: [{ sides: 20, value: 14, glow: true }] });
+  check("a newer roll schema is accepted with its known fields", newerRoll?.total === 14 && newerRoll.label === "Future Roll" && newerRoll.dice[0].value === 14);
+  check("unknown roll fields are ignored", newerRoll && !("futureRollField" in newerRoll) && !("glow" in newerRoll.dice[0]));
+  check("a newer roll schema is detectable for the panel's note", core.isNewerSchema({ schemaVersion: 2 }, core.ROLL_SCHEMA_VERSION));
+  check("the shared newer-version note names both formats", core.describeNewerSchema("A shared roll", 2, 1).includes("format 2") && core.describeNewerSchema("A shared roll", 2, 1).includes("format 1"));
+
+  const character = core.normalizeCharacterExport(liveBuilderSnapshot());
+  const binding = core.createBindingRecord(character, { id: "p1", name: "Mira's player" }, { id: "t1", name: "Mira" });
+  check("a newer binding record is never overwritten by a refresh", core.refreshBindingRecord({ ...binding, schemaVersion: 2 }, character, "p1") === null);
+  check("a newer binding record can still be restored (read-only)", core.pickRestorableBinding([{ ...binding, schemaVersion: 2 }], "p1", character.characterId)?.tokenId === "t1");
+}
+
+/* Task 031: token binding safety and Place My Token sizing. */
+async function testBindingSafety() {
+  console.log("— binding safety and token size (task 031) —");
+  const core = await import("../owlbear/core.js");
+  const first = core.normalizeCharacterExport(liveBuilderSnapshot());
+  const mine = core.createBindingRecord(first, { id: "player-a", name: "A" }, { id: "token-a", name: "Mira (A)" });
+  const theirs = core.createBindingRecord(first, { id: "player-b", name: "B" }, { id: "token-b", name: "Mira (B)" });
+  check("two players importing the same identity share a character id (the A6 setup)", mine.characterId === theirs.characterId);
+  check("reconnect never adopts another player's token with the same character id",
+    core.pickRestorableBinding([theirs], "player-a", first.characterId) === null);
+  check("reconnect adopts this player's own record even when another player's comes first",
+    core.pickRestorableBinding([theirs, mine], "player-a", first.characterId)?.tokenId === "token-a");
+  const other = core.createBindingRecord({ ...first, characterId: "builder-other", name: "Other" }, { id: "player-a", name: "A" }, { id: "token-o", name: "Other" });
+  check("among this player's own records the active character's token is preferred",
+    core.pickRestorableBinding([other, mine], "player-a", first.characterId)?.tokenId === "token-a");
+  check("without a matching character, this player's own record is still restored",
+    core.pickRestorableBinding([other], "player-a", first.characterId)?.tokenId === "token-o");
+  check("no player id means nothing is adopted", core.pickRestorableBinding([mine], "", first.characterId) === null);
+  check("records without an owner are never adopted", core.pickRestorableBinding([{ ...mine, ownerPlayerId: "" }], "player-a", first.characterId) === null);
+
+  const resent = core.normalizeCharacterExport({ ...liveBuilderSnapshot({ resources: { hpCurrent: 41 } }), vttSummary: { schemaVersion: 1, stats: {}, speed: 12, exp: 900, spiritCore: 1100, clim: 3500 } });
+  const refreshed = core.refreshBindingRecord(mine, resent, "player-a");
+  check("a re-send for the same character refreshes the binding's resources and speed",
+    refreshed?.resources.hpCurrent === 41 && refreshed.resources.clim === 3500 && refreshed.resources.exp === 900 && refreshed.speed === 12);
+  check("a refresh never rebinds: token, owner and character stay",
+    refreshed?.tokenId === "token-a" && refreshed.tokenName === "Mira (A)" && refreshed.ownerPlayerId === "player-a" && refreshed.characterId === mine.characterId);
+  check("a refresh does not mutate the old record", mine.resources.hpCurrent === 60 && mine.speed === 25);
+  check("another player's binding is never refreshed", core.refreshBindingRecord(theirs, resent, "player-a") === null);
+  check("a different character never refreshes the binding", core.refreshBindingRecord(mine, { ...resent, characterId: "builder-other" }, "player-a") === null);
+
+  const grid = core.tokenGridForOneSquare({ width: 720, height: 720, mime: "image/webp", url: "x" }, { dpi: 150, offset: { x: 75, y: 75 } });
+  check("Place My Token: a 720 px token is one grid square (dpi 720, centred)", grid.dpi === 720 && grid.offset.x === 360 && grid.offset.y === 360);
+  check("Place My Token: the old 150-dpi library setting would have been 4.8 squares", 720 / 150 === 4.8);
+  const wide = core.tokenGridForOneSquare({ width: 400, height: 200 }, { dpi: 150, offset: { x: 0, y: 0 } });
+  check("Place My Token: a non-square picture fits inside one square", wide.dpi === 400 && wide.offset.x === 200 && wide.offset.y === 100);
+  /* Task 031b (audit E10): a TALL picture must be sized by its height. Sizing by
+     the width alone would pass every wide or square picture above. */
+  const tall = core.tokenGridForOneSquare({ width: 200, height: 400 }, { dpi: 150, offset: { x: 0, y: 0 } });
+  check("Place My Token: a tall picture is sized by its longer side (height)", tall.dpi === 400 && tall.offset.x === 100 && tall.offset.y === 200);
+  const unknown = { dpi: 150, offset: { x: 75, y: 75 } };
+  check("Place My Token: unknown picture size keeps the library's grid", core.tokenGridForOneSquare({}, unknown) === unknown);
+
+  const panelSource = await readFile(path.join(root, "owlbear", "panel.js"), "utf8");
+  check("Place My Token no longer tries the hidden upload", !panelSource.includes("uploadImages") && !panelSource.includes("buildImageUpload"));
+  check("Place My Token places at one grid square", panelSource.includes("tokenGridForOneSquare(pick.image, pick.grid)"));
+  check("Place My Token has a double-click guard", /if \(placeTokenInFlight \|\|/.test(panelSource) && panelSource.includes("placeTokenInFlight = false"));
+  const watchdogMs = Number(/const PLACE_TOKEN_WATCHDOG_MS = (\d+);/.exec(panelSource)?.[1] || 0);
+  check("Place My Token has a watchdog of 20 to 60 seconds, so the button can never stay stuck (task 031b)",
+    watchdogMs >= 20000 && watchdogMs <= 60000 && panelSource.includes("setTimeout(() => {") && panelSource.includes("PLACE_TOKEN_WATCHDOG_MS);"), `${watchdogMs} ms`);
+  check("reconnect uses the owner-only picker", panelSource.includes("pickRestorableBinding(records, playerRecord.id"));
+}
+
+/* Task 031, builder side: the sheet sends the numbers its play sheet shows,
+   and its summary version is the extension's character schema version. */
+async function testVttSummaryContract() {
+  console.log("— builder vttSummary contract (task 031) —");
+  const core = await import("../owlbear/core.js");
+  const uiSource = await readFile(path.join(root, "src", "js", "ui.js"), "utf8");
+  const ioSource = await readFile(path.join(root, "src", "js", "io.js"), "utf8");
+  const pinned = /const VTT_SUMMARY_SCHEMA_VERSION = (\d+);/.exec(uiSource);
+  check("ui.js repeats the character schema version for vttSummary", Boolean(pinned) && Number(pinned[1]) === core.CHARACTER_SCHEMA_VERSION);
+  const builder = /export function buildVttSummary\(\) \{[\s\S]*?\n {4}\}/.exec(uiSource)?.[0] || "";
+  check("vttSummary main stats come from the sheet's current totals", builder.includes("getCurrentMainStatValues(bonuses)"));
+  check("vttSummary secondary stats come from the play sheet's own function", ["Fitness", "Cunning", "Reason", "Awareness", "Presence"].every((key) => builder.includes(`getComputedSecondaryStatValue("${key}", bonuses)`)));
+  check("vttSummary speed is the Speed card's value", builder.includes("speed: getDerivedCombatStats().speed"));
+  check("vttSummary Clim, EXP and Spirit Core are the cards' values", builder.includes("clim: getStartingFundsState().availableClim") && builder.includes("exp: progress.expBank") && builder.includes("spiritCore: progress.spiritCore"));
+  check("vttSummary states its basis", builder.includes('basis: "current"'));
+  check("Send Character to Room sends the summary", /publishVttHandoff\(\{\s*character: createVttCharacterSnapshot\(\)/.test(uiSource));
+  check("Export Character JSON writes the summary", ioSource.includes("JSON.stringify(createVttCharacterSnapshot(), null, 2)"));
+  check("saves and slots stay free of the summary", !/function createStateSnapshot\(\) \{[\s\S]{0,80}vttSummary/.test(uiSource));
+  const rulesSource = await readFile(path.join(root, "src", "js", "rules.js"), "utf8");
+  check("derived combat stats read the same current main stats", rulesSource.includes("const currentMainStats = getCurrentMainStatValues(bonuses, activeEffectModifiers);"));
+}
+
 async function testFoundryModule() {
   console.log("— foundry module —");
   const manifest = JSON.parse(await readFile(path.join(root, "foundry", "module.json"), "utf8"));
@@ -270,8 +474,29 @@ async function testRollDice() {
     !rollerCore.includes("CAMERA_LIFT_MS"));
   check("6/9 disambiguation dot is stamped engine-side",
     rollerCore.includes("shouldStampSixNineDot") && rollerCore.includes("drawSixNineDot"));
-  check("overlay expands and waits for real height before rolling (no stretch)",
-    diceOverlay.includes("expandOverlay().then") && diceOverlay.includes("window.innerHeight - targetHeight"));
+  /* Task 032 L1: replaces the old "overlay expands and waits for real height"
+     pin. The overlay must be a full-screen modal that ignores the mouse, and
+     nothing may open, resize or close a popover any more (a popover has no
+     pass-through option and swallowed Owlbear's clicks for ~30 s per roll).
+     scripts/test-032-dice-display.mjs proves the click-through in a
+     fake-Owlbear room. */
+  const modalOptions = /const OVERLAY_MODAL = Object\.freeze\(\{([^}]*)\}\)/.exec(diceBackground)?.[1] || "";
+  check("dice overlay opens as a full-screen click-through modal",
+    diceBackground.includes("OBR.modal.open(") && diceBackground.includes("...OVERLAY_MODAL")
+    && ["fullScreen: true", "hideBackdrop: true", "hidePaper: true", "disablePointerEvents: true"].every((option) => modalOptions.includes(option)));
+  check("dice overlay never uses a popover (open, resize or close)",
+    !/OBR\.popover\./.test(diceBackground) && !/OBR\.popover\./.test(diceOverlay));
+  check("dice overlay closes itself as a modal", diceOverlay.includes("OBR.modal.close(OVERLAY_ID)"));
+  /* Task 032b safety net. The runtime proof is scripts/test-032-dice-display.mjs
+     (B6); these pins keep the pieces from being dropped quietly. */
+  check("dice overlay watches pointerdown, mousedown, touchstart and wheel and reports a hit to the background (task 032b)",
+    ["pointerdown", "mousedown", "touchstart", "wheel"].every((type) => diceOverlay.includes(`"${type}"`))
+    && diceOverlay.includes('kind: "overlay-blocks-clicks"'));
+  check("dice background opens no more overlays once one reports a hit, and keeps that in memory only (task 032b)",
+    diceBackground.includes('data.kind === "overlay-blocks-clicks"') && diceBackground.includes("if (overlayBlocksClicks)")
+    && !diceBackground.includes("setItem(") && !diceBackground.includes("sessionStorage"));
+  check("dice background replays only rolls since the overlay's boot (task 032 L2)",
+    diceBackground.includes("entry.at >= since") && diceBackground.includes("bootSince = rollArrivedAt"));
   const uiSource = await readFile(path.join(root, "src", "js", "ui.js"), "utf8");
   for (const kind of ["dice", "action-damage", "check", "skill"]) {
     const site = new RegExp(`publishVttEvent\\("${kind}",\\s*\\{[\\s\\S]{0,220}?\\bdice:`);
@@ -367,6 +592,10 @@ async function testAscharInterop() {
 async function main() {
   await testOwlbearManifest();
   await testOwlbearCore();
+  await testCompanionNumbers();
+  await testSchemaContract();
+  await testBindingSafety();
+  await testVttSummaryContract();
   await testRollDice();
   await testFoundryModule();
   await testWorldAnvilBuilder();
