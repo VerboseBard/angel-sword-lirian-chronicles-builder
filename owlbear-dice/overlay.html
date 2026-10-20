@@ -60,7 +60,12 @@
           document.head.appendChild(script);
         });
       }
+      /* Cache-busters. V covers the dice art and the engine files that did
+         not change; CORE_V covers shared-dice-roller-core.js (bump it when the
+         core changes). owlbear-dice/panel.html must carry the SAME two
+         tokens (task 032; scripts/test-032-dice-display.mjs pins them). */
       var V = "?v=20260825-numeral-dots-v3";
+      var CORE_V = "?v=20261019-task032-dice";
       load("../assets/dice/promoted-dice-skins.registry.js" + V)
         .catch(function () { /* promoted sets are optional */ })
         .then(function () {
@@ -78,7 +83,7 @@
             "../assets/dice-3d/legacy-dice-roller-capture.js" + V,
             "../assets/dice-3d/dice-geometry.js" + V,
             "../assets/dice-3d/character-sheet-skin-studio.js" + V,
-            "../assets/dice-3d/shared-dice-roller-core.js" + V,
+            "../assets/dice-3d/shared-dice-roller-core.js" + CORE_V,
             "../assets/dice-3d/dice-roller-router.js" + V
           ]);
           return list.reduce(function (chain, src) {
@@ -93,6 +98,6 @@
         });
     })();
   </script>
-  <script type="module" src="dist/overlay.js"></script>
+  <script type="module" src="dist/overlay.js?v=20261019-task032b-safety-net"></script>
 </body>
 </html>

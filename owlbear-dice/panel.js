@@ -21,8 +21,16 @@ const flightLayer = document.getElementById("dice-flight-layer");
 let obrApi = null;
 let playerRecord = null;
 let runtimeReady = false;
+/* Task 032 L3: panel.html skips the 3D engine inside an Owlbear room (this
+   panel only shares the roll there; the overlay animates it). Then Roll
+   waits for the room connection, not for the engine. */
+const engineSkipped = window.ASD_DICE_ENGINE_SKIPPED === true;
 const queue = new Map();
 const seenRollIds = new Set();
+
+function canRoll() {
+  return engineSkipped ? Boolean(obrApi && playerRecord) : runtimeReady;
+}
 
 function setFeedback(message, isError = false) {
   feedback.textContent = message;
@@ -91,7 +99,7 @@ function renderQueue() {
   });
   const total = totalQueued();
   resetButton.disabled = !total;
-  rollButton.disabled = !total || !runtimeReady;
+  rollButton.disabled = !total || !canRoll();
   rollButton.textContent = total ? `Roll ${total} ${total === 1 ? "die" : "dice"}` : "Roll";
 }
 
@@ -170,7 +178,7 @@ async function shareLocalRoll(results, total, formula, breakdown) {
 }
 
 function rollQueued() {
-  if (!runtimeReady || !totalQueued()) {
+  if (!canRoll() || !totalQueued()) {
     return;
   }
   const results = [];
@@ -259,6 +267,11 @@ window.addEventListener("asd-dice-runtime-ready", () => {
   }
 });
 
+window.addEventListener("asd-dice-sets-ready", () => {
+  populateSets();
+  renderQueue();
+});
+
 window.addEventListener("asd-dice-runtime-error", () => {
   statusChip.textContent = "Engine failed";
   setFeedback(`The dice engine could not load (${window.ASD_DICE_RUNTIME_ERROR || "unknown reason"}).`, true);
@@ -275,6 +288,7 @@ async function connectOwlbear() {
     statusChip.textContent = `${role === "GM" ? "GM" : "Player"} connected`;
     statusChip.classList.add("is-live");
     OBR.broadcast.onMessage(ROLL_CHANNEL, (broadcastEvent) => replayRoomRoll(broadcastEvent.data));
+    renderQueue();
   });
 }
 

@@ -42,14 +42,64 @@ function number(value, fallback = 0) {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
+/* Task 031: missing values never win. Number("") and Number(null) are both 0,
+   which used to beat every later fallback (a blank Speed gave speed 0). */
 function firstNumber(values, fallback = 0) {
   for (const value of values) {
+    if (value === undefined || value === null || (typeof value === "string" && !value.trim())) {
+      continue;
+    }
     const parsed = Number(value);
     if (Number.isFinite(parsed)) {
       return parsed;
     }
   }
   return fallback;
+}
+
+function plainObject(value) {
+  return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+}
+
+/* ── Version-skew contract (plan WS5, task 031) ──────────────────────────
+   Every record we share carries a schemaVersion. Readers accept the same or
+   an older version, ignore fields they do not know, and report a newer
+   version with a clear note instead of failing silently. Players' Owlbear
+   caches the manifest URL, not the code, so a sheet, a Companion and other
+   players' Companions can run different versions at the same table. */
+export function readSchemaVersion(record) {
+  if (!record || typeof record !== "object") {
+    return null;
+  }
+  const raw = record.schemaVersion;
+  if (raw === undefined || raw === null || (typeof raw === "string" && !raw.trim())) {
+    return null;
+  }
+  const parsed = Number(raw);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+export function isNewerSchema(record, supportedVersion) {
+  const version = readSchemaVersion(record);
+  return version !== null && version > supportedVersion;
+}
+
+/* A builder character's version lives on its VTT summary (task 031); a
+   top-level schemaVersion is honoured too. No version means an older file. */
+export function getCharacterSchemaVersion(data) {
+  const fromSummary = readSchemaVersion(data?.vttSummary);
+  return fromSummary !== null ? fromSummary : readSchemaVersion(data);
+}
+
+export function describeNewerSchema(subject, version, supportedVersion) {
+  return `${subject} came from a newer Angel Sword version (format ${version}; this Companion reads format ${supportedVersion}). The parts this Companion knows were kept. Reload the Owlbear room to update the Companion.`;
+}
+
+export function characterSchemaNote(data) {
+  const version = getCharacterSchemaVersion(data);
+  return version !== null && version > CHARACTER_SCHEMA_VERSION
+    ? describeNewerSchema("This character", version, CHARACTER_SCHEMA_VERSION)
+    : "";
 }
 
 function stableHash(value) {
@@ -69,11 +119,18 @@ function collectFieldClasses(fields = {}, selectedIds = []) {
   return Array.from(new Set(named.length ? named : selectedIds.map((value) => text(value, 80)).filter(Boolean)));
 }
 
+/* Builder characters. The sheet sends `vttSummary` (task 031): the numbers its
+   main play sheet shows, computed by the sheet's own rules, so this file never
+   recomputes bonuses. Files and sheets from before task 031 have no summary;
+   for them the raw sheet fields below are the fallback (stats are then the
+   base points, without race/class bonuses, and Clim is unknown). */
 function normalizeBuilderState(data) {
   const fields = data.fields && typeof data.fields === "object" ? data.fields : {};
   const builder = data.builder && typeof data.builder === "object" ? data.builder : {};
   const play = data.play && typeof data.play === "object" ? data.play : {};
   const resources = play.resources && typeof play.resources === "object" ? play.resources : {};
+  const summary = plainObject(data.vttSummary);
+  const summaryStats = plainObject(summary.stats);
   const name = text(fields.Name || fields.CharacterName || "Unnamed character", 100);
   const race = text(fields["Primary Race"] || fields.Race, 80);
   const ancestry = text(fields["Sub Race"] || fields.Subrace || fields.SubRace, 80);
@@ -88,15 +145,15 @@ function normalizeBuilderState(data) {
     ancestry,
     classes,
     stats: {
-      power: number(fields.Power),
-      focus: number(fields.Focus),
-      agility: number(fields.Agility),
-      toughness: number(fields.Toughness),
-      fitness: number(fields.Fitness),
-      cunning: number(fields.Cunning),
-      reason: number(fields.Reason),
-      awareness: number(fields.Awareness),
-      presence: number(fields.Presence)
+      power: firstNumber([summaryStats.power, fields.Power], 0),
+      focus: firstNumber([summaryStats.focus, fields.Focus], 0),
+      agility: firstNumber([summaryStats.agility, fields.Agility], 0),
+      toughness: firstNumber([summaryStats.toughness, fields.Toughness], 0),
+      fitness: firstNumber([summaryStats.fitness, fields.Fitness], 0),
+      cunning: firstNumber([summaryStats.cunning, fields.Cunning], 0),
+      reason: firstNumber([summaryStats.reason, fields.Reason], 0),
+      awareness: firstNumber([summaryStats.awareness, fields.Awareness], 0),
+      presence: firstNumber([summaryStats.presence, fields.Presence], 0)
     },
     resources: {
       hpCurrent: firstNumber([resources.hpCurrent, fields.HPCurrent, fields.HP], 0),
@@ -107,11 +164,15 @@ function normalizeBuilderState(data) {
       apMax: firstNumber([resources.apMax, fields.APMax], 4),
       rpCurrent: firstNumber([resources.rpCurrent, fields.RPCurrent], 0),
       rpMax: firstNumber([resources.rpMax, fields.RPMax], 0),
-      spiritCore: firstNumber([fields.SpiritCore, builder.autoSpiritCore], 0),
-      exp: firstNumber([fields.EXP, builder.autoExpBank], 0),
-      clim: firstNumber([fields.Clim], 0)
+      // The sheet's real field names are "Spirit Core" and "Exp"; the old
+      // SpiritCore/EXP spellings stay as last-resort fallbacks.
+      spiritCore: firstNumber([summary.spiritCore, fields["Spirit Core"], fields.SpiritCore, builder.autoSpiritCore], 0),
+      exp: firstNumber([summary.exp, fields.Exp, fields.EXP, builder.autoExpBank], 0),
+      // The sheet has no Clim field: the shown Clim is computed (starting
+      // Clim + earned - gear), so only the summary knows it.
+      clim: firstNumber([summary.clim, fields.Clim], 0)
     },
-    speed: firstNumber([fields.Speed], 20)
+    speed: firstNumber([summary.speed, fields.Speed], 20)
   };
 }
 
@@ -129,6 +190,13 @@ function normalizeAschar(data) {
   const identitySeed = JSON.stringify({ name, race, classes });
   const hpMax = firstNumber([derived.hp, derived.hpMax, derived.maxHp], 0);
   const manaMax = firstNumber([derived.maxMana, derived.manaMax], 0);
+  /* The official model's mainStats/subStats are the base points; its
+     effectiveMainStats/effectiveSubStats hold the totals with bonuses. Prefer
+     the effective numbers when a file has them (task 031). */
+  const main = plainObject(character.mainStats);
+  const sub = plainObject(character.subStats);
+  const effectiveMain = plainObject(character.effectiveMainStats);
+  const effectiveSub = plainObject(character.effectiveSubStats);
   return {
     schemaVersion: CHARACTER_SCHEMA_VERSION,
     characterId: `aschar-${stableHash(identitySeed)}`,
@@ -138,15 +206,15 @@ function normalizeAschar(data) {
     ancestry: text(race.ancestryName || race.ancestryId, 80),
     classes: Array.from(new Set(classes)),
     stats: {
-      power: number(character.mainStats?.power),
-      focus: number(character.mainStats?.focus),
-      agility: number(character.mainStats?.agility),
-      toughness: number(character.mainStats?.toughness),
-      fitness: number(character.subStats?.fitness),
-      cunning: number(character.subStats?.cunning),
-      reason: number(character.subStats?.reason),
-      awareness: number(character.subStats?.awareness),
-      presence: number(character.subStats?.presence)
+      power: firstNumber([effectiveMain.power, main.power], 0),
+      focus: firstNumber([effectiveMain.focus, main.focus], 0),
+      agility: firstNumber([effectiveMain.agility, main.agility], 0),
+      toughness: firstNumber([effectiveMain.toughness, main.toughness], 0),
+      fitness: firstNumber([effectiveSub.fitness, sub.fitness], 0),
+      cunning: firstNumber([effectiveSub.cunning, sub.cunning], 0),
+      reason: firstNumber([effectiveSub.reason, sub.reason], 0),
+      awareness: firstNumber([effectiveSub.awareness, sub.awareness], 0),
+      presence: firstNumber([effectiveSub.presence, sub.presence], 0)
     },
     resources: {
       hpCurrent: hpMax,
@@ -198,6 +266,64 @@ export function createBindingRecord(character, player = {}, item = {}) {
     resources: { ...character.resources },
     speed: number(character.speed, 20),
     updatedAt: new Date().toISOString()
+  };
+}
+
+/* Task 031 (audit C5): a later Send for the same character refreshes the
+   numbers on the player's own active binding. Only resources, speed and the
+   timestamp change; the token id, name and owner stay, so the token is never
+   rebound or moved. Returns null when the refresh is not allowed: another
+   character, another player's binding, or a binding written by a newer
+   Companion version (we only write records we fully understand). */
+export function refreshBindingRecord(binding, character, playerId) {
+  if (!binding || typeof binding !== "object" || !character?.characterId) {
+    return null;
+  }
+  if (binding.characterId !== character.characterId) {
+    return null;
+  }
+  if (!playerId || binding.ownerPlayerId !== text(playerId, 120)) {
+    return null;
+  }
+  if (isNewerSchema(binding, CHARACTER_SCHEMA_VERSION)) {
+    return null;
+  }
+  return {
+    ...binding,
+    resources: { ...character.resources },
+    speed: number(character.speed, 20),
+    updatedAt: new Date().toISOString()
+  };
+}
+
+/* Task 031 (ledger A6): reconnect only adopts a binding this player owns.
+   The character-id match now chooses among the player's own records (when
+   they bound more than one token); it never adopts another player's token,
+   even when both imported the same character identity. */
+export function pickRestorableBinding(records, playerId, characterId = "") {
+  const owner = text(playerId, 120);
+  if (!owner) {
+    return null;
+  }
+  const owned = (Array.isArray(records) ? records : [])
+    .filter((record) => record && typeof record === "object" && record.ownerPlayerId === owner);
+  return owned.find((record) => characterId && record.characterId === characterId) || owned[0] || null;
+}
+
+/* Task 031 (T1): Place My Token puts the picked image on the map at exactly
+   one grid square. An Owlbear image's grid.dpi is "image pixels per grid
+   square", so dpi = the image's longer side makes it one square; the offset
+   centres it. The library's own setting (often 150 dpi, which made a 720 px
+   token about five squares wide) is used only if the size is unknown. */
+export function tokenGridForOneSquare(image, fallbackGrid) {
+  const width = Number(image?.width);
+  const height = Number(image?.height);
+  if (!(width > 0) || !(height > 0)) {
+    return fallbackGrid;
+  }
+  return {
+    dpi: Math.max(width, height),
+    offset: { x: width / 2, y: height / 2 }
   };
 }
 

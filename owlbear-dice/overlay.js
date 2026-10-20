@@ -6,9 +6,11 @@
      badge), what it was (Light Attack, skill check, ...), the total, and the
      per-die breakdown. Up to three chips; the oldest fades as new ones
      arrive, and every chip fades on its own after a while;
-   - while dice fly the popover covers the viewport; once they land it
-     shrinks to the chip strip so the map stays clickable, expanding again on
-     the next roll; when the last chip fades the popover closes itself.
+   - task 032 L1: this page runs in a full-screen, click-through Owlbear
+     MODAL (background.js opens it with disablePointerEvents), so it never
+     changes size and never takes a click: Owlbear underneath stays usable
+     while dice fly and while chips show. The dice canvas is cleared once they
+     land; when the last chip fades the modal closes itself.
    Rolls arrive directly over OBR.broadcast; rolls fired while this page was
    still booting are replayed by background.js over a same-partition
    BroadcastChannel handshake. */
@@ -28,7 +30,6 @@ const DEFAULT_DICE_SOUND_ASSETS = {
 const DICE_VISIBLE_MS = 5200;
 const CHIP_TTL_MS = 30000;
 const MAX_CHIPS = 3;
-const STRIP_HEIGHT = 190;
 const IDLE_CLOSE_DELAY_MS = 1200;
 const HEARTBEAT_MS = 2000;
 
@@ -36,7 +37,7 @@ let obrReady = false;
 let runtimeReady = false;
 let closing = false;
 let animatingUntil = 0;
-let shrinkTimer = 0;
+let diceClearTimer = 0;
 let idleTimer = 0;
 let chipSequence = 0;
 let rollGeneration = 0;
@@ -106,51 +107,55 @@ function diceSoundAssets() {
   return DEFAULT_DICE_SOUND_ASSETS;
 }
 
+function closeModal() {
+  try {
+    Promise.resolve(OBR.modal.close(OVERLAY_ID)).catch(() => {
+      /* the modal may already be closing */
+    });
+  } catch (error) {
+    /* the modal may already be closing */
+  }
+}
+
 function closeOverlay() {
   if (closing) {
     return;
   }
   closing = true;
+  /* Tell the background at once, so a roll that arrives right after this
+     closes opens a fresh overlay instead of waiting out the heartbeat
+     (task 032: such a roll used to be dropped for up to ~5 s). */
+  overlayChannel?.postMessage("overlay-closing");
   if (obrReady) {
-    try {
-      OBR.popover.close(OVERLAY_ID);
-    } catch (error) {
-      /* the popover may already be closing */
-    }
+    closeModal();
   }
 }
 
-async function setOverlayHeight(pixels) {
-  if (!obrReady) {
+/* Task 032b safety net. The background opens this page click-through
+   (disablePointerEvents), so it should never receive a pointer event. If it
+   ever does, this room's Owlbear is not passing clicks through the modal, and
+   a full-screen overlay would block the whole screen for about 32 s after
+   every roll. So the first such event closes the overlay, tells the
+   background to leave it closed until the room reloads, and says why once.
+   Rolls still reach the Room Rolls log and the Dice panel's roll line; only
+   the 3D animation and the chips stop. The cost is one lost click. Nothing
+   in this page makes pointer events of its own, so any one is the host's. */
+const CLICK_THROUGH_FAILURE_EVENTS = ["pointerdown", "mousedown", "touchstart", "wheel"];
+let clickThroughFailed = false;
+
+function handleUnexpectedPointerEvent(event) {
+  if (clickThroughFailed) {
     return;
   }
-  try {
-    await OBR.popover.setHeight(OVERLAY_ID, pixels);
-  } catch (error) {
-    /* resizing is cosmetic */
-  }
+  clickThroughFailed = true;
+  console.warn(`Angel Sword Dice overlay: this room is not passing clicks through the roll overlay (it got a ${event.type}). Closing the overlay and leaving it closed until the room reloads. Rolls still reach the Room Rolls log.`);
+  overlayChannel?.postMessage({ kind: "overlay-blocks-clicks", event: event.type });
+  closeOverlay();
 }
 
-/* Expand the popover and wait for THIS window to actually reach the new
-   size before returning. Rolling while the iframe is still at chip-strip
-   height sizes the 3D canvas to ~190px and the later expansion stretches
-   the render vertically — the "compression distortion" the owner saw. */
-async function expandOverlay() {
-  if (!obrReady) {
-    return;
-  }
-  let targetHeight = 0;
-  try {
-    targetHeight = Math.max(420, Math.round(await OBR.viewport.getHeight()));
-    await OBR.popover.setHeight(OVERLAY_ID, targetHeight);
-  } catch (error) {
-    return;
-  }
-  const deadline = Date.now() + 700;
-  while (Date.now() < deadline && Math.abs(window.innerHeight - targetHeight) > 24) {
-    await new Promise((resolve) => requestAnimationFrame(resolve));
-  }
-}
+CLICK_THROUGH_FAILURE_EVENTS.forEach((type) => {
+  window.addEventListener(type, handleUnexpectedPointerEvent, { capture: true, passive: true });
+});
 
 function scheduleIdleCheck() {
   clearTimeout(idleTimer);
@@ -218,7 +223,9 @@ function clearDiceCanvases() {
   } catch (error) {
     /* a mid-flight clear must never break the next roll */
   }
-  document.querySelectorAll(".accurate-dice-canvas").forEach((canvas) => canvas.remove());
+  // The engine keeps (and hides) its one pooled canvas between rolls (task
+  // 032 L4); only stray canvases are removed here.
+  document.querySelectorAll(".accurate-dice-canvas:not([data-pooled])").forEach((canvas) => canvas.remove());
 }
 
 /* Task 008 (WS4) — roll sound, ported from the builder's
@@ -357,7 +364,8 @@ function playRollLandingSound(diceResults = []) {
 
 function playRoll(rawEvent) {
   const event = normalizeRollEvent(rawEvent);
-  if (!event || !replayEnabled()) {
+  if (!event || !replayEnabled() || closing) {
+    // A closing overlay leaves the roll to the fresh one the background opens.
     return;
   }
   if (!runtimeReady) {
@@ -374,41 +382,40 @@ function playRoll(rawEvent) {
     return;
   }
   const generation = rollGeneration += 1;
-  clearTimeout(shrinkTimer);
+  clearTimeout(diceClearTimer);
   clearDiceCanvases();
   stopActiveDiceSounds();
   addChip(event);
-  expandOverlay().then(() => {
-    if (generation !== rollGeneration) {
-      return;
-    }
-    let animationMs = DICE_VISIBLE_MS;
-    try {
-      const reported = window.LyrianAccurateDiceRoller.rollDice({
-        layer: document.getElementById("dice-flight-layer"),
-        results,
-        setId: selectedSetId(),
-        width: window.innerWidth,
-        height: window.innerHeight,
-        onSettle: () => {
-          if (generation === rollGeneration) {
-            playRollLandingSound(results);
-          }
+  /* The modal is always full screen, so the canvas is sized right from the
+     first frame (the old popover had to grow back from the chip strip
+     before each roll, or the render stretched). */
+  let animationMs = DICE_VISIBLE_MS;
+  try {
+    const reported = window.LyrianAccurateDiceRoller.rollDice({
+      layer: document.getElementById("dice-flight-layer"),
+      results,
+      setId: selectedSetId(),
+      width: window.innerWidth,
+      height: window.innerHeight,
+      // One WebGL context for every roll in this overlay (task 032 L4).
+      reuseRenderer: true,
+      onSettle: () => {
+        if (generation === rollGeneration) {
+          playRollLandingSound(results);
         }
-      });
-      if (Number.isFinite(Number(reported)) && Number(reported) > 0) {
-        animationMs = Math.min(Number(reported), 12000);
       }
-    } catch (error) {
-      /* chips still record the result even if the 3D flight fails */
+    });
+    if (Number.isFinite(Number(reported)) && Number(reported) > 0) {
+      animationMs = Math.min(Number(reported), 12000);
     }
-    animatingUntil = Date.now() + animationMs;
-    shrinkTimer = setTimeout(() => {
-      clearDiceCanvases();
-      setOverlayHeight(STRIP_HEIGHT);
-      scheduleIdleCheck();
-    }, Math.min(animationMs, DICE_VISIBLE_MS));
-  });
+  } catch (error) {
+    /* chips still record the result even if the 3D flight fails */
+  }
+  animatingUntil = Date.now() + animationMs;
+  diceClearTimer = setTimeout(() => {
+    clearDiceCanvases();
+    scheduleIdleCheck();
+  }, Math.min(animationMs, DICE_VISIBLE_MS));
 }
 
 function drainPending() {
@@ -447,6 +454,11 @@ overlayChannel?.addEventListener("message", (messageEvent) => {
 if (OBR?.onReady) {
   OBR.onReady(() => {
     obrReady = true;
+    if (closing) {
+      // Closed (safety net or engine error) before the SDK was ready.
+      closeModal();
+      return;
+    }
     OBR.broadcast.onMessage(ROLL_CHANNEL, (broadcastEvent) => playRoll(broadcastEvent.data));
     overlayChannel?.postMessage("overlay-ready");
     scheduleIdleCheck();

@@ -28,7 +28,7 @@
     100: "d00"
   };
 
-  const ROLLER_VERSION = "dice-lab-scripted-side-entry-27-rana-d4-reverted";
+  const ROLLER_VERSION = "dice-lab-scripted-side-entry-28-percentile-00-viewer-check";
 
   /* Dice whose result face is aimed at the camera at rest (owner contract:
      "what is on the dice is what's shown"). d4 reads at a corner and d6's
@@ -1051,7 +1051,13 @@
       return v === 10 ? "0" : String(v);
     }
     if (sides === 100) {
-      const v = clamp(Math.round(Number(value) || 10), 10, 100);
+      // A tens value of 0 is the "00" face (task 032). It used to fall
+      // through `Number(0) || 10` and show "10".
+      const rounded = Math.round(Number(value));
+      if (rounded === 0) {
+        return "00";
+      }
+      const v = clamp(rounded || 10, 10, 100);
       return v >= 100 ? "00" : String(Math.floor(v / 10) * 10).padStart(2, "0");
     }
     return String(clamp(Math.round(Number(value) || 1), 1, sides));
@@ -1185,9 +1191,16 @@
     return new THREE.Quaternion().setFromAxisAngle(target, angle).multiply(lift);
   }
 
-  function topFaceLabelForDie(die, quaternion = die.quaternion) {
+  /* Which face (or d4 vertex) points most along `toward` — world up unless a
+     direction is given. A roll's settle report passes the same direction
+     the die was aimed along (toward the camera), so it measures the face the
+     viewer actually sees (task 032). Measuring world up for dice that face
+     the viewer reported a wrong face on almost every d10/d12/d20/d100. */
+  function topFaceLabelForDie(die, quaternion = die.quaternion, toward = null) {
     const THREE = window.THREE;
-    const up = new THREE.Vector3(0, 1, 0);
+    const up = toward && toward.lengthSq?.() > 0
+      ? toward.clone().normalize()
+      : new THREE.Vector3(0, 1, 0);
     const isVertexRead = die.userData.readMode === "vertex";
     const labels = isVertexRead
       ? die.userData.vertexNormals.map((_, index) => String(index + 1))
@@ -1302,7 +1315,10 @@
         return [entry];
       }
       const value = clamp(Math.round(Number(entry.value) || 100), 1, 100);
-      const percentileValue = value === 100 ? 100 : Math.floor(value / 10) * 10;
+      // Standard percentile reading (task 032): the tens die shows "00" for
+      // results 1-9 (00 + 7 = 7) and for 100 (00 + 0 = 100). The value 100
+      // is the d00 die's "00" face. It used to show "10" for 1-9 (read 11-19).
+      const percentileValue = value === 100 || value < 10 ? 100 : Math.floor(value / 10) * 10;
       const onesValue = value % 10 === 0 ? 10 : value % 10;
       return [
         { ...entry, sides: 100, value: percentileValue, label: "d00" },
@@ -1453,6 +1469,43 @@
     }
   }
 
+  /* Task 032 L4: an opt-in pooled renderer (options.reuseRenderer), used by
+     the Owlbear overlay, which rolls again and again in one full-screen
+     page. One WebGL context and one set of compiled shaders serve every roll
+     instead of a new context per roll. The renderer settings are the same,
+     so the dice look the same. The builder tray does not opt in and keeps a
+     fresh renderer per roll. */
+  let pooledRenderer = null;
+
+  function releasePooledRenderer() {
+    if (!pooledRenderer) {
+      return;
+    }
+    try {
+      pooledRenderer.renderer.dispose();
+      pooledRenderer.renderer.forceContextLoss?.();
+    } catch (error) {
+      /* a lost context needs no cleanup */
+    }
+    pooledRenderer.canvas.remove();
+    pooledRenderer = null;
+  }
+
+  function pooledRendererFor(layer, constrainToLayer) {
+    if (!pooledRenderer) {
+      return null;
+    }
+    const usable = pooledRenderer.layer === layer
+      && pooledRenderer.constrainToLayer === constrainToLayer
+      && pooledRenderer.canvas.isConnected
+      && !pooledRenderer.renderer.getContext?.()?.isContextLost?.();
+    if (!usable) {
+      releasePooledRenderer();
+      return null;
+    }
+    return pooledRenderer;
+  }
+
   function clear() {
     if (!activeRoll) {
       return;
@@ -1463,8 +1516,16 @@
     if (activeRoll.timeout) {
       clearTimeout(activeRoll.timeout);
     }
-    activeRoll.renderer?.dispose?.();
-    activeRoll.canvas?.remove?.();
+    if (activeRoll.pooled) {
+      // Keep the context: free this roll's geometry, then hide the canvas
+      // and shrink its buffer (which also blanks it) until the next roll.
+      activeRoll.scene?.traverse?.((object) => object.geometry?.dispose?.());
+      activeRoll.canvas.style.visibility = "hidden";
+      activeRoll.renderer.setSize(1, 1, false);
+    } else {
+      activeRoll.renderer?.dispose?.();
+      activeRoll.canvas?.remove?.();
+    }
     activeRoll = null;
     lastStatus = "cleared";
   }
@@ -1494,17 +1555,32 @@
     lastMotionMode = useHybridPhysics ? "hybrid-physics" : "scripted-fallback";
     lastSettledResults = [];
 
-    const canvas = document.createElement("canvas");
-    canvas.className = "accurate-dice-canvas";
     const constrainToLayer = options.constrainToLayer === true;
     if (constrainToLayer && window.getComputedStyle(layer).position === "static") {
       layer.style.position = "relative";
     }
-    canvas.style.cssText = `position:${constrainToLayer ? "absolute" : "fixed"};inset:0;width:100%;height:100%;pointer-events:none;z-index:4;`;
-    layer.appendChild(canvas);
+    const reuseRenderer = options.reuseRenderer === true;
+    const pooled = reuseRenderer ? pooledRendererFor(layer, constrainToLayer) : null;
+    let canvas;
+    let renderer;
+    if (pooled) {
+      ({ canvas, renderer } = pooled);
+      pooled.rolls += 1;
+      canvas.style.visibility = "";
+      canvas.style.opacity = "1";
+    } else {
+      canvas = document.createElement("canvas");
+      canvas.className = "accurate-dice-canvas";
+      canvas.style.cssText = `position:${constrainToLayer ? "absolute" : "fixed"};inset:0;width:100%;height:100%;pointer-events:none;z-index:4;`;
+      layer.appendChild(canvas);
 
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-    configureRendererColor(renderer);
+      renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+      configureRendererColor(renderer);
+      if (reuseRenderer) {
+        canvas.dataset.pooled = "true";
+        pooledRenderer = { renderer, canvas, layer, constrainToLayer, rolls: 1 };
+      }
+    }
     renderer.setPixelRatio(crispPixelRatio());
     renderer.setSize(width, height, false);
     renderer.shadowMap.enabled = false;
@@ -1649,6 +1725,7 @@
         end,
         startQuat,
         finalQuat,
+        presentDirection,
         spinAxisA: randomUnitVector(),
         spinAxisB: randomUnitVector(),
         startAt: index * (useHybridPhysics ? (results.length > 14 ? 12 : 28) : 110),
@@ -1675,14 +1752,16 @@
       ? physicsMs + guideMs
       : Math.max(...dice.map((die) => die.startAt + die.travelMs + die.settleMs), 0);
     const totalMs = settleCompleteMs + holdMs + fadeMs;
-    activeRoll = { renderer, canvas, animationFrame: 0, timeout: 0, motionMode: lastMotionMode };
+    activeRoll = { renderer, canvas, scene, pooled: reuseRenderer, animationFrame: 0, timeout: 0, motionMode: lastMotionMode };
     lastStatus = `${lastMotionMode} rolling ${dice.length} dice at ${Math.round(targetPixels)}px target size`;
 
     // The outcome is fully determined before the animation starts - the roll
     // is presentation. Verify and record it up front so results survive even
     // if the tab is hidden and animation frames never run.
     lastSettledResults = dice.map((entry) => {
-      const top = topFaceLabelForDie(entry.die, entry.finalQuat);
+      // Measure the face aimed at the viewer (d4/d6: the top), i.e. the face
+      // the settled die really shows, so `matched` is a true self-check.
+      const top = topFaceLabelForDie(entry.die, entry.finalQuat, entry.presentDirection);
       return {
         die: entry.die.userData.dieType,
         sides: entry.die.userData.sides,
@@ -1982,6 +2061,9 @@
         active: Boolean(activeRoll),
         motionMode: activeRoll?.motionMode || lastMotionMode,
         settledResults: lastSettledResults,
+        pooledRenderer: pooledRenderer
+          ? { rolls: pooledRenderer.rolls, geometries: pooledRenderer.renderer.info?.memory?.geometries ?? null }
+          : null,
         supportedDice: Object.keys(DIE_TYPES).map(Number)
       };
     }

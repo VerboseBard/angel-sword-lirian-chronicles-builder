@@ -1,16 +1,25 @@
 import {
+  CHARACTER_SCHEMA_VERSION,
   PLAYER_BINDING_KEY,
   RELAY_CHANNEL,
   ROLL_CHANNEL,
+  ROLL_SCHEMA_VERSION,
   ROOM_LOG_KEY,
   TOKEN_BINDING_KEY,
+  characterSchemaNote,
   createBindingRecord,
+  describeNewerSchema,
+  isNewerSchema,
   mergeRollLog,
   normalizeCharacterExport,
-  normalizeRollEvent
+  normalizeRollEvent,
+  pickRestorableBinding,
+  readSchemaVersion,
+  refreshBindingRecord,
+  tokenGridForOneSquare
 } from "./core.js";
 import { loadOwlbearSdk } from "./sdk.js";
-import { buildImage, buildImageUpload } from "@owlbear-rodeo/sdk";
+import { buildImage } from "@owlbear-rodeo/sdk";
 import { createOwlbearOpenerBridge } from "./opener-bridge.js";
 import { OPENER_STATES } from "./core.js";
 
@@ -21,6 +30,21 @@ const HANDOFF_CLEARED_AT_KEY = "asb.owlbear.clearedAt.v1";
 const SHEET_BRIDGE_SEEN_KEY = "asb.owlbear.sheetBridge.seenAt.v1";
 const SHEET_BRIDGE_RECONNECT_WINDOW_MS = 6 * 60 * 60 * 1000;
 const MAX_RENDERED_ROLLS = 60;
+/* Task 031 (owner flow, 2026-10-18): the first token comes from Download
+   Token Image + a drag onto the map; Place My Token only picks from the
+   player's Owlbear library. */
+const PLACE_TOKEN_FIRST_TIME_HELP = "Drag your downloaded token onto the map first, choose Character, then try again.";
+/* Task 031b (031 audit finding 3): the SDK call that opens Owlbear's picker,
+   assets.downloadImages, has no timeout at all (it waits for the player as
+   long as it takes). If the player dismisses the picker and Owlbear never
+   answers, Place My Token would stay disabled until the panel reloads. So the
+   button comes back when the picker answers or after this long, whichever is
+   first. 45 s: opening the picker, looking at the list and clicking a token
+   takes a person 5 to 15 s, so 45 s is three times that and a slow but real
+   pick still lands; it is also short enough that a player whose button is
+   stuck gets it back before giving up on the panel. A pick made after the
+   watchdog is ignored (see placeMyToken). */
+const PLACE_TOKEN_WATCHDOG_MS = 45000;
 
 const statusChip = document.getElementById("status");
 const openSheetButton = document.getElementById("open-sheet");
@@ -48,6 +72,10 @@ let tokenImageDataUrl = null;
 let tokenImageFullDataUrl = null;
 let handoffCursor = null;
 let relayChannel = null;
+let placeTokenInFlight = false;
+/* Counts Place My Token runs; the watchdog bumps it to abandon a run. */
+let placeTokenRun = 0;
+let newerRollNoteShown = false;
 const renderedRollIds = new Set();
 
 function ensureRelayChannel() {
@@ -135,6 +163,10 @@ function appendRoll(rawEvent) {
   if (!event || renderedRollIds.has(event.id)) {
     return;
   }
+  if (!newerRollNoteShown && isNewerSchema(rawEvent, ROLL_SCHEMA_VERSION)) {
+    newerRollNoteShown = true;
+    setFeedback(describeNewerSchema("A shared roll", readSchemaVersion(rawEvent), ROLL_SCHEMA_VERSION));
+  }
   renderedRollIds.add(event.id);
   empty.hidden = true;
   feed.hidden = false;
@@ -153,12 +185,72 @@ function renderRoomLog(log) {
   (Array.isArray(log) ? [...log].reverse() : []).forEach(appendRoll);
 }
 
+/* Joins a status sentence and optional notes into one feedback line. */
+function joinFeedback(...parts) {
+  return parts.filter(Boolean).join(" ");
+}
+
 async function readCharacterFile(file) {
   const parsed = JSON.parse(await file.text());
-  activeCharacter = normalizeCharacterExport(parsed);
+  const normalized = normalizeCharacterExport(parsed);
+  activeCharacter = normalized;
   localStorage.setItem(CHARACTER_STORAGE_KEY, JSON.stringify(activeCharacter));
   renderCharacter();
-  setFeedback(`Imported ${activeCharacter.name}. Select its Owlbear token next.`);
+  const message = joinFeedback(`Imported ${normalized.name}.`, characterSchemaNote(parsed));
+  setFeedback(message);
+  refreshActiveBinding(normalized, message);
+}
+
+/* Task 031 (audit C5): when the same character arrives again and this player
+   owns the active binding, copy the new numbers onto the binding (token
+   metadata and player metadata). The token itself is not moved or rebound. */
+async function refreshActiveBinding(character, message) {
+  if (!obrApi || !playerRecord || !activeBinding) {
+    return false;
+  }
+  if (isNewerSchema(activeBinding, CHARACTER_SCHEMA_VERSION)
+    && activeBinding.characterId === character?.characterId
+    && activeBinding.ownerPlayerId === playerRecord.id) {
+    setFeedback(joinFeedback(message, describeNewerSchema("Your token binding", readSchemaVersion(activeBinding), CHARACTER_SCHEMA_VERSION), "Its numbers were not changed."));
+    return false;
+  }
+  const next = refreshBindingRecord(activeBinding, character, playerRecord.id);
+  if (!next) {
+    /* Task 031b (031 audit finding 4): the token's character id is a hash of
+       name, race, ancestry and classes, so a rename or a class change looks
+       like another character and the refresh is refused. Say so, once, and
+       never rebind on the player's behalf. It may also be a different
+       character altogether, so the wording does not claim more than that. */
+    if (character?.characterId && activeBinding.characterId !== character.characterId) {
+      setFeedback(joinFeedback(message, `This may be a new version of ${activeBinding.characterName || "your bound character"}. To link it, select your token and press Bind Selected Token.`));
+    }
+    return false;
+  }
+  try {
+    const [item] = await obrApi.scene.items.getItems([next.tokenId]);
+    let tokenUpdated = false;
+    if (item) {
+      await obrApi.scene.items.updateItems([next.tokenId], (drafts) => {
+        for (const draft of drafts) {
+          const existing = draft.metadata?.[TOKEN_BINDING_KEY];
+          if (existing?.ownerPlayerId === playerRecord.id && existing.characterId === next.characterId) {
+            draft.metadata[TOKEN_BINDING_KEY] = next;
+            tokenUpdated = true;
+          }
+        }
+      });
+    }
+    await obrApi.player.setMetadata({ [PLAYER_BINDING_KEY]: next });
+    activeBinding = next;
+    renderBinding();
+    if (tokenUpdated) {
+      setFeedback(joinFeedback(message, `Updated the numbers on your token ${next.tokenName}.`));
+    }
+    return true;
+  } catch (error) {
+    setFeedback(joinFeedback(message, "Your token's numbers could not be updated; press Bind Selected Token to refresh them."), true);
+    return false;
+  }
 }
 
 async function bindSelectedToken() {
@@ -260,7 +352,13 @@ function applyHandoff(event, consumed) {
     consumed.push(event.id);
     localStorage.setItem(HANDOFF_CONSUMED_KEY, JSON.stringify(consumed.slice(-50)));
     renderCharacter();
-    setFeedback(`${normalized.name} arrived from the builder at ${new Date(Number(event.ts) || Date.now()).toLocaleTimeString()}.${tokenImageDataUrl && obrApi ? " Place My Token is ready." : ""}`);
+    const message = joinFeedback(
+      `${normalized.name} arrived from the builder at ${new Date(Number(event.ts) || Date.now()).toLocaleTimeString()}.`,
+      tokenImageFullDataUrl ? "Your token picture is ready: use Download Token Image the first time." : "",
+      characterSchemaNote(event.character)
+    );
+    setFeedback(message);
+    refreshActiveBinding(normalized, message);
     return true;
   } catch (error) {
     setFeedback(error.message || "A character arrived from the builder but could not be read.", true);
@@ -317,7 +415,7 @@ async function placePickedToken(pick) {
   }
   const [width, height] = await Promise.all([obrApi.viewport.getWidth(), obrApi.viewport.getHeight()]);
   const center = await obrApi.viewport.inverseTransformPoint({ x: width / 2, y: height / 2 });
-  const item = buildImage(pick.image, pick.grid)
+  const item = buildImage(pick.image, tokenGridForOneSquare(pick.image, pick.grid))
     .layer("CHARACTER")
     .name(activeCharacter.name)
     .position(center)
@@ -332,57 +430,57 @@ async function placePickedToken(pick) {
   return true;
 }
 
+/* Task 031 (T1): one picker, no hidden upload (Owlbear's upload never
+   reliably landed and made duplicates), a clear first-time message, and a
+   guard so a second click while Owlbear's picker is open does nothing.
+   Task 031b: a watchdog (PLACE_TOKEN_WATCHDOG_MS) so the button can never stay
+   stuck disabled. When it fires it frees the button and abandons this run:
+   a picker answer that arrives later places nothing, binds nothing and
+   throws nothing, and it cannot disturb a newer run. */
 async function placeMyToken() {
-  if (!obrApi || !activeCharacter || !tokenImageFullDataUrl || !playerRecord) {
+  if (placeTokenInFlight || !obrApi || !activeCharacter || !tokenImageFullDataUrl || !playerRecord) {
     return;
   }
+  placeTokenInFlight = true;
+  placeButton.disabled = true;
+  const run = (placeTokenRun += 1);
+  const abandoned = () => run !== placeTokenRun;
   const tokenName = `${activeCharacter.name} Token`;
+  const watchdog = setTimeout(() => {
+    if (abandoned()) {
+      return;
+    }
+    placeTokenRun += 1;
+    placeTokenInFlight = false;
+    placeButton.disabled = false;
+    setFeedback(`Owlbear's picker did not answer in ${PLACE_TOKEN_WATCHDOG_MS / 1000} seconds, so Place My Token stopped waiting. Press it again to try once more; a pick made in the old dialog is ignored.`, true);
+  }, PLACE_TOKEN_WATCHDOG_MS);
   try {
     setFeedback(`Pick ${tokenName} in Owlbear's dialog to place it.`);
     const pick = await pickTokenFromLibrary(tokenName);
+    if (abandoned()) {
+      return;
+    }
+    // The picker answered: the placing calls below have SDK timeouts of their own.
+    clearTimeout(watchdog);
     if (pick) {
       await placePickedToken(pick);
       return;
     }
+    setFeedback(`No token was picked. ${PLACE_TOKEN_FIRST_TIME_HELP}`, true);
   } catch (error) {
-    console.error("Angel Sword library pick failed:", error);
-  }
-  try {
-    const sourceDataUrl = tokenImageDataUrl || tokenImageFullDataUrl;
-    const blob = dataUrlToBlob(sourceDataUrl);
-    const sizePixels = sourceDataUrl === tokenImageDataUrl ? 150 : 720;
-    const upload = buildImageUpload(blob)
-      .name(tokenName)
-      .dpi(sizePixels)
-      .offset({ x: sizePixels / 2, y: sizePixels / 2 })
-      .build();
-    setFeedback(`Trying to save ${tokenName} to your Owlbear library (${sizePixels}px, ${Math.max(1, Math.round(blob.size / 1024))} KB)…`);
-    console.info(`Angel Sword token upload: ${sizePixels}px, ${blob.size} bytes, type ${blob.type}`);
-    await obrApi.assets.uploadImages([upload]);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setFeedback(`Pick ${tokenName} in Owlbear's dialog to place it.`);
-    const pick = await pickTokenFromLibrary(tokenName);
-    if (pick) {
-      await placePickedToken(pick);
+    if (abandoned()) {
       return;
     }
-  } catch (error) {
-    console.error("Angel Sword token upload failed:", error);
+    console.error("Angel Sword Place My Token failed:", error);
+    setFeedback(`${tokenName} could not be placed. ${PLACE_TOKEN_FIRST_TIME_HELP}`, true);
+  } finally {
+    clearTimeout(watchdog);
+    if (!abandoned()) {
+      placeTokenInFlight = false;
+      placeButton.disabled = false;
+    }
   }
-  setFeedback(`${tokenName} is not in your Owlbear library yet. Use Download Token Image, add the file to Owlbear's asset library as a Character, then press Place My Token again.`, true);
-}
-
-function dataUrlToBlob(dataUrl) {
-  const match = /^data:([^;]+);base64,(.+)$/.exec(dataUrl);
-  if (!match) {
-    throw new Error("The token image data could not be read.");
-  }
-  const binary = atob(match[2]);
-  const bytes = new Uint8Array(binary.length);
-  for (let index = 0; index < binary.length; index += 1) {
-    bytes[index] = binary.charCodeAt(index);
-  }
-  return new Blob([bytes], { type: match[1] });
 }
 
 function downloadTokenImage() {
@@ -404,18 +502,23 @@ async function restoreBindingFromScene() {
   }
   try {
     const items = await obrApi.scene.items.getItems();
-    const bound = items
-      .map((item) => ({ item, record: item.metadata?.[TOKEN_BINDING_KEY] }))
-      .filter((entry) => entry.record);
-    const mine = bound.find((entry) => entry.record.ownerPlayerId === playerRecord.id)
-      || bound.find((entry) => activeCharacter && entry.record.characterId === activeCharacter.characterId);
+    const records = items
+      .map((item) => item.metadata?.[TOKEN_BINDING_KEY])
+      .filter(Boolean);
+    // Only this player's own records; never another player's token (A6).
+    const mine = pickRestorableBinding(records, playerRecord.id, activeCharacter?.characterId);
     if (!mine) {
       return;
     }
-    activeBinding = mine.record;
+    activeBinding = mine;
     await obrApi.player.setMetadata({ [PLAYER_BINDING_KEY]: activeBinding });
     renderBinding();
-    setFeedback(`Restored binding: ${activeBinding.characterName} is bound to ${activeBinding.tokenName}.`);
+    setFeedback(joinFeedback(
+      `Restored binding: ${activeBinding.characterName} is bound to ${activeBinding.tokenName}.`,
+      isNewerSchema(activeBinding, CHARACTER_SCHEMA_VERSION)
+        ? describeNewerSchema("This binding", readSchemaVersion(activeBinding), CHARACTER_SCHEMA_VERSION)
+        : ""
+    ));
   } catch (error) {
     // The scene may not be open yet; onReadyChange retries.
   }
@@ -516,7 +619,7 @@ function openCharacterSheet() {
     setFeedback("Your browser blocked the sheet window. Allow pop-ups for owlbear.rodeo, then press Open My Character Sheet again.", true);
     return;
   }
-  setFeedback("Opened your character sheet in a new tab. Your character and its rolls connect to this room automatically.");
+  setFeedback("Opened your character sheet in a new tab. Its rolls now reach this room. To bring your character here, press Send Character to Room in that sheet.");
 }
 
 /* After a room-tab reload the sheet tab may still be open under its fixed
@@ -605,6 +708,9 @@ try {
   const stored = JSON.parse(localStorage.getItem(CHARACTER_STORAGE_KEY) || "null");
   if (stored?.characterId && stored?.name) {
     activeCharacter = stored;
+    if (isNewerSchema(stored, CHARACTER_SCHEMA_VERSION)) {
+      setFeedback(describeNewerSchema("Your saved character", readSchemaVersion(stored), CHARACTER_SCHEMA_VERSION));
+    }
   }
 } catch (error) {
   localStorage.removeItem(CHARACTER_STORAGE_KEY);

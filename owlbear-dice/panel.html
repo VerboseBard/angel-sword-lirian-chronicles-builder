@@ -72,10 +72,27 @@
           document.head.appendChild(script);
         });
       }
-      var V = "?v=20260811-srgb-dice-v1";
+      /* Same two cache-buster tokens as owlbear-dice/overlay.html (task 032:
+         the panel used to pin an older engine token than the overlay). */
+      var V = "?v=20260825-numeral-dots-v3";
+      var CORE_V = "?v=20261019-task032-dice";
+      /* Task 032 L3: inside an Owlbear room (Owlbear adds ?obrref= to every
+         extension page) this panel never animates dice; the overlay does.
+         So it loads only the dice-set list, not the 3D engine and ~32 MB of
+         dice art, and Roll works as soon as the room connects. The full
+         chain still loads for the standalone preview (no room). */
+      var inRoom = /[?&]obrref=/.test(window.location.search);
+      window.ASD_DICE_ENGINE_SKIPPED = inRoom;
+      if (inRoom) {
+        document.getElementById("status").textContent = "Connecting to the room…";
+      }
       load("../assets/dice/promoted-dice-skins.registry.js" + V)
         .catch(function () { /* promoted sets are optional */ })
         .then(function () {
+          if (inRoom) {
+            window.dispatchEvent(new CustomEvent("asd-dice-sets-ready"));
+            return "skipped";
+          }
           var sidecars = (window.LYRIAN_PROMOTED_DICE_SKINS || [])
             .map(function (pack) { return pack && pack.faceArtScript; })
             .filter(Boolean)
@@ -90,14 +107,17 @@
             "../assets/dice-3d/legacy-dice-roller-capture.js" + V,
             "../assets/dice-3d/dice-geometry.js" + V,
             "../assets/dice-3d/character-sheet-skin-studio.js" + V,
-            "../assets/dice-3d/shared-dice-roller-core.js" + V,
+            "../assets/dice-3d/shared-dice-roller-core.js" + CORE_V,
             "../assets/dice-3d/dice-roller-router.js" + V
           ]);
           return list.reduce(function (chain, src) {
             return chain.then(function () { return load(src); });
           }, Promise.resolve());
         })
-        .then(function () {
+        .then(function (outcome) {
+          if (outcome === "skipped") {
+            return;
+          }
           window.dispatchEvent(new CustomEvent("asd-dice-runtime-ready"));
         })
         .catch(function (error) {
@@ -106,6 +126,6 @@
         });
     })();
   </script>
-  <script type="module" src="dist/panel.js"></script>
+  <script type="module" src="dist/panel.js?v=20261019-task032b-safety-net"></script>
 </body>
 </html>
