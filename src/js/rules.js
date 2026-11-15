@@ -61,7 +61,7 @@ function cacheActiveVersionData() {
 const RACE_REQUIREMENT_ALIASES = {
       fae: ["faerie"]
     };
-function compareVersionIds(a, b) {
+export function compareVersionIds(a, b) {
       const left = String(a || "").match(/\d+/g)?.map(Number) || [];
 const right = String(b || "").match(/\d+/g)?.map(Number) || [];
 const length = Math.max(left.length, right.length);
@@ -137,6 +137,9 @@ export async function applyGameVersion(versionId, options = {}) {
         return false;
       }
 
+      const previousData = window.LYRIAN_DATA;
+      const previousDetailData = window.LYRIAN_DETAIL_DATA;
+      const previousVersion = state.ui.gameVersion;
       versionRuntime.isLoading = true;
       try {
         cacheActiveVersionData();
@@ -157,13 +160,13 @@ const cached = loadedVersionDataCache.get(version.id);
             setVersionProgress(55, `Loading ${version.id} detail data`);
             await loadScriptAsset(version.detailPath);
           }
-          cacheActiveVersionData();
         }
+        if (window.LYRIAN_DATA?.version !== version.id || window.LYRIAN_DETAIL_DATA?.version !== version.id) {
+          throw new Error(`Could not load both rules bundles for ${version.id}.`);
+        }
+        cacheActiveVersionData();
         refreshGameDataRuntime();
         state.ui.gameVersion = version.id;
-        if (options.persistSelection !== false) {
-          persistSelectedGameVersion(version.id);
-        }
         createDatalists();
         renderVersionManager();
         if (options.render !== false) {
@@ -173,6 +176,11 @@ const cached = loadedVersionDataCache.get(version.id);
           renderPlayDashboard();
           invalidateExportCache();
         }
+        if (options.persistSelection !== false) {
+          // A character snapshot takes precedence over the standalone preference on reload.
+          persistSelectedGameVersion(version.id);
+          persistWorkingState();
+        }
         if (options.status !== false) {
           setStatus(`Loaded Lyrian rules version ${version.id}.`);
         }
@@ -180,6 +188,10 @@ const cached = loadedVersionDataCache.get(version.id);
         setTimeout(hideVersionProgress, 450);
         return true;
       } catch (error) {
+        window.LYRIAN_DATA = previousData;
+        window.LYRIAN_DETAIL_DATA = previousDetailData;
+        state.ui.gameVersion = previousVersion;
+        refreshGameDataRuntime();
         hideVersionProgress();
         setStatus(error.message || "Unable to load the selected Lyrian version.");
         renderVersionManager();
@@ -517,6 +529,23 @@ export function getCampaignProgressState() {
         expBank: Math.max(0, toNumber(cleanText(state.fields.Exp), 0)),
         earnedClim: toNumber(cleanText(state.fields["Earned Clim"]), 0),
         spiritCore: Math.max(0, toNumber(cleanText(state.fields["Spirit Core"]), 0))
+      };
+    }
+const SKYBOUND_EXP_LIMIT = 9999;
+const SKYBOUND_HELD_EXP_LIMIT = 1000;
+
+export function getSkyboundTrialState() {
+      const enabled = window.LYRIAN_DATA?.version === "0.13.3";
+      const completed = state.play.skyboundTrial?.completed === true;
+      const heldExp = state.play.skyboundTrial?.heldExp || 0;
+      const { spiritCore, expBank } = getCampaignProgressState();
+      return {
+        enabled,
+        completed,
+        heldExp,
+        spendRoom: enabled && !completed ? Math.max(0, SKYBOUND_EXP_LIMIT - spiritCore) : Infinity,
+        availableHeldSpace: Math.max(0, SKYBOUND_HELD_EXP_LIMIT - heldExp),
+        expBank
       };
     }
 function createEmptyPlayEffectModifierSummary() {
@@ -980,6 +1009,9 @@ const parts = [
       }
       if (skill.featureSkillPoints) {
         parts.push(`Feature Skill ${formatModifier(skill.featureSkillPoints)}`);
+      }
+      if (window.LYRIAN_DATA?.version === "0.13.3" && skill.overSkillPointCap) {
+        parts.push(`Skill cap ${formatModifier(-skill.overSkillPointCap)}`);
       }
       if (expertiseGroup) {
         parts.push(`${expertiseGroup.name} Expertise ${formatModifier(expertiseGroup.bonus)}`);

@@ -1,6 +1,6 @@
 [
   {
-    "id": "6a5e50be98f4934cf278b7f7",
+    "id": "6a9e68822d5e42e3f51b7733",
     "indexId": "aafdafa8-abe6-478f-85a8-bda44172b78f",
     "breakthroughId": "8-eyes--spiderfolk-",
     "name": "8 Eyes (Spiderfolk)",
@@ -12,7 +12,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7f4",
+    "id": "6a9e68822d5e42e3f51b7730",
     "indexId": "b3238ec2-b29b-42e2-83fd-fdfe572380a9",
     "breakthroughId": "angelblooded--human---restricted-",
     "name": "Angelblooded (Human) (Restricted)",
@@ -24,7 +24,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b80c",
+    "id": "6a9e68822d5e42e3f51b775c",
     "indexId": "986e7955-0941-467d-9043-a9341bbda7a9",
     "breakthroughId": "arachne--spiderfolk-",
     "name": "Arachne (Spiderfolk)",
@@ -36,7 +36,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7ee",
+    "id": "6a9e68822d5e42e3f51b772e",
     "indexId": "fd764314-601d-434a-aa7b-9a3eee8dd7ce",
     "breakthroughId": "become-fire--salamander-",
     "name": "Become Fire (Salamander)",
@@ -48,7 +48,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7ef",
+    "id": "6a9e68822d5e42e3f51b772f",
     "indexId": "8d9791d3-2c3b-404f-af15-9fed79ef46a3",
     "breakthroughId": "become-ice--yuki-onna-",
     "name": "Become Ice (Yuki-Onna)",
@@ -60,7 +60,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7d7",
+    "id": "6a9e68822d5e42e3f51b7720",
     "indexId": "f319aea5-b094-4157-91a4-763e4e8e3b85",
     "breakthroughId": "become-lightning--raijin-",
     "name": "Become Lightning (Raijin)",
@@ -72,7 +72,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b817",
+    "id": "6a9e68822d5e42e3f51b776c",
     "indexId": "04663818-6856-4c01-a7d2-a219b7f50475",
     "breakthroughId": "become-wind--sylph-",
     "name": "Become Wind (Sylph)",
@@ -84,7 +84,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7f5",
+    "id": "6a9e68822d5e42e3f51b7731",
     "indexId": "0e5b0dc1-f105-4621-ace9-4f56029c8c5e",
     "breakthroughId": "blend-in--slimefolk-",
     "name": "Blend In (Slimefolk)",
@@ -96,7 +96,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b80d",
+    "id": "6a9e68822d5e42e3f51b7766",
     "indexId": "33729faa-0de7-44d9-960a-2f3c944468a1",
     "breakthroughId": "blend-in-ii--slimefolk-",
     "name": "Blend In II (Slimefolk)",
@@ -108,7 +108,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7d1",
+    "id": "6a9e68822d5e42e3f51b771d",
     "indexId": "1b0f7b2b-5414-4cb9-aab3-afc69390d50a",
     "breakthroughId": "blessed-by-kari--human-",
     "name": "Blessed by Kari (Human)",
@@ -120,7 +120,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7e2",
+    "id": "6a9e68822d5e42e3f51b774a",
     "indexId": "f16beb54-87c1-49b9-9db0-fec7c01e2684",
     "breakthroughId": "bully",
     "name": "Bully",
@@ -132,7 +132,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b80b",
+    "id": "6a9e68822d5e42e3f51b775b",
     "indexId": "60a9f33e-f68d-4483-8cb7-87c61f925613",
     "breakthroughId": "celestial-dragon--ryujin-",
     "name": "Celestial Dragon (Ryujin)",
@@ -144,7 +144,7 @@
     "ability": "5b304038-c45a-4521-b58f-2ad9545e1a9d"
   },
   {
-    "id": "6a5e50be98f4934cf278b813",
+    "id": "6a9e68822d5e42e3f51b775e",
     "indexId": "b71866fc-efab-44fe-88d3-92b0c54fb418",
     "breakthroughId": "combat-doggy--cu-sith-",
     "name": "Combat Doggy (Cu Sith)",
@@ -156,7 +156,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b808",
+    "id": "6a9e68822d5e42e3f51b7759",
     "indexId": "ac1771fd-fad7-414a-bda2-491df277347d",
     "breakthroughId": "combat-kitty--cait-sith-",
     "name": "Combat Kitty (Cait Sith)",
@@ -168,7 +168,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7f3",
+    "id": "6a9e68822d5e42e3f51b7752",
     "indexId": "cba3fb90-fefe-4899-8b3f-8a52c13b57cc",
     "breakthroughId": "curse-of-vampirism",
     "name": "Curse of Vampirism",
@@ -180,7 +180,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b812",
+    "id": "6a9e68822d5e42e3f51b776a",
     "indexId": "c6b4d9b7-06e5-452c-9054-9f49a2a76a76",
     "breakthroughId": "deep-connection",
     "name": "Deep Connection",
@@ -192,7 +192,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7ce",
+    "id": "6a9e68822d5e42e3f51b7741",
     "indexId": "7ad03e80-b3f9-4ffa-be35-6a460363ccf8",
     "breakthroughId": "deus-ex-machina",
     "name": "Deus Ex Machina",
@@ -204,7 +204,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7da",
+    "id": "6a9e68822d5e42e3f51b7722",
     "indexId": "b3ef521f-a8d6-481f-8c90-c05d959b1089",
     "breakthroughId": "divine-luck-i",
     "name": "Divine Luck I",
@@ -216,19 +216,19 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7db",
+    "id": "6a9e68822d5e42e3f51b7747",
     "indexId": "fc6a7e76-d7ac-41e3-a8d8-d5500ed8d308",
     "breakthroughId": "divine-luck-ii",
     "name": "Divine Luck II",
     "cost": "600",
     "requirements": "Must have purchased Divine Luck I.",
-    "description": "<p>Once per arc, you may choose to automatically succeed on a check (if success is possible).</p>",
-    "descriptionHtml": "<p>Once per arc, you may choose to automatically succeed on a check (if success is possible).</p>",
-    "descriptionText": "Once per arc, you may choose to automatically succeed on a check (if success is possible).",
+    "description": "<p>Once per arc, you may choose to automatically succeed on a check (if success is possible).&nbsp;</p><p>This may be used after a roll is made for a check.&nbsp;</p><p>If used for an accuracy check, it sets your accuracy equal to the minimum value required to pass at the time of its use. This cannot give you a value higher than what is possible for you to achieve.</p>",
+    "descriptionHtml": "<p>Once per arc, you may choose to automatically succeed on a check (if success is possible).&nbsp;</p><p>This may be used after a roll is made for a check.&nbsp;</p><p>If used for an accuracy check, it sets your accuracy equal to the minimum value required to pass at the time of its use. This cannot give you a value higher than what is possible for you to achieve.</p>",
+    "descriptionText": "Once per arc, you may choose to automatically succeed on a check (if success is possible).\nThis may be used after a roll is made for a check.\nIf used for an accuracy check, it sets your accuracy equal to the minimum value required to pass at the time of its use. This cannot give you a value higher than what is possible for you to achieve.",
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b818",
+    "id": "6a9e68822d5e42e3f51b776d",
     "indexId": "6e3d4067-515c-43d3-b38f-c64802840152",
     "breakthroughId": "divine-s-chosen",
     "name": "Divine's Chosen",
@@ -240,7 +240,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7f6",
+    "id": "6a9e68822d5e42e3f51b7732",
     "indexId": "d1c3d5ef-65bb-43f5-8a04-51771146f0b2",
     "breakthroughId": "drag-along--lamia-",
     "name": "Drag along (Lamia)",
@@ -252,7 +252,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7d9",
+    "id": "6a9e68822d5e42e3f51b7721",
     "indexId": "40caec22-8ca7-4055-83d9-1790f56ef7a3",
     "breakthroughId": "dual-personality",
     "name": "Dual Personality",
@@ -264,7 +264,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7f1",
+    "id": "6a9e68822d5e42e3f51b7750",
     "indexId": "9ffa91f3-be68-4877-b4fd-91c91ba3d0af",
     "breakthroughId": "early-ascension",
     "name": "Early Ascension",
@@ -276,7 +276,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7e0",
+    "id": "6a9e68822d5e42e3f51b7725",
     "indexId": "05009dd0-73e9-4f90-98bc-e6fbe75a1c5f",
     "breakthroughId": "elemental-affinity",
     "name": "Elemental Affinity",
@@ -288,7 +288,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b80a",
+    "id": "6a9e68822d5e42e3f51b7765",
     "indexId": "f9283358-e643-4552-bed5-42724a980de8",
     "breakthroughId": "elemental-breath--ryujin-",
     "name": "Elemental Breath (Ryujin)",
@@ -300,7 +300,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7e5",
+    "id": "6a9e68822d5e42e3f51b774b",
     "indexId": "0917066a-bf81-46fd-8013-8f0738b734c8",
     "breakthroughId": "elixir-addict",
     "name": "Elixir Addict",
@@ -312,7 +312,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b816",
+    "id": "6a9e68822d5e42e3f51b776b",
     "indexId": "7f83a2c6-5300-41f3-959d-ad0fe0a9603f",
     "breakthroughId": "expert-summoner",
     "name": "Expert Summoner",
@@ -324,7 +324,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7e6",
+    "id": "6a9e68822d5e42e3f51b774c",
     "indexId": "02e547b9-990c-48b3-8831-9d82f9c6ea24",
     "breakthroughId": "fae-flash-acrobat--fae-",
     "name": "Fae Flash Acrobat (Fae)",
@@ -336,7 +336,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7d2",
+    "id": "6a9e68822d5e42e3f51b771e",
     "indexId": "75c704e5-20d8-4791-9ca7-6ebe362103ea",
     "breakthroughId": "faerie-flash-master--fae-",
     "name": "Faerie Flash Master (Fae)",
@@ -348,7 +348,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7c1",
+    "id": "6a9e68822d5e42e3f51b7715",
     "indexId": "4179c9b9-1eee-4a1a-8460-7b2f40921204",
     "breakthroughId": "faerie-chimera-hybrid--race-",
     "name": "Faerie-Chimera Hybrid (Race)",
@@ -360,7 +360,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7fe",
+    "id": "6a9e68822d5e42e3f51b7739",
     "indexId": "97ccaea7-ffb4-4fdd-ac25-4eb9d6a7b143",
     "breakthroughId": "fast-metabolism",
     "name": "Fast Metabolism",
@@ -372,7 +372,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7f9",
+    "id": "6a9e68822d5e42e3f51b7735",
     "indexId": "adf2da75-1740-4532-affe-bebf9bcc7c59",
     "breakthroughId": "fast-movement--centaur-",
     "name": "Fast Movement (Centaur)",
@@ -384,7 +384,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7e1",
+    "id": "6a9e68822d5e42e3f51b7726",
     "indexId": "f15a735e-f8ca-432f-b075-202bd284f62f",
     "breakthroughId": "fearless",
     "name": "Fearless",
@@ -396,7 +396,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7d5",
+    "id": "6a9e68822d5e42e3f51b7744",
     "indexId": "a9dd9a11-8408-40c7-98e1-f5a3b16c392c",
     "breakthroughId": "fight-and-flight--chimera-",
     "name": "Fight and Flight (Chimera)",
@@ -408,7 +408,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7e8",
+    "id": "6a9e68822d5e42e3f51b774d",
     "indexId": "e6591f4f-eec0-4b4f-8ec3-32f2007cd00d",
     "breakthroughId": "flesheater--jiangshi-",
     "name": "Flesheater (Jiangshi)",
@@ -420,7 +420,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7e9",
+    "id": "6a9e68822d5e42e3f51b772a",
     "indexId": "7e563b66-935f-4edc-8a8f-766c3e7794c8",
     "breakthroughId": "flying-counter--kitsune-",
     "name": "Flying Counter (Kitsune)",
@@ -432,7 +432,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7eb",
+    "id": "6a9e68822d5e42e3f51b772c",
     "indexId": "1666248a-dd60-4cb9-83af-18d4c978f6de",
     "breakthroughId": "four-paw-sprint--catfolk-",
     "name": "Four Paw Sprint (Catfolk)",
@@ -444,7 +444,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7cb",
+    "id": "6a9e68822d5e42e3f51b773f",
     "indexId": "d2dfb912-5ff7-40e4-9c96-44ab480673d9",
     "breakthroughId": "greatshield-training",
     "name": "Greatshield Training",
@@ -456,7 +456,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7ca",
+    "id": "6a9e68822d5e42e3f51b771a",
     "indexId": "f729ba66-87cd-47cf-bb73-b3558d805c52",
     "breakthroughId": "heavy-armor-training",
     "name": "Heavy Armor Training",
@@ -468,19 +468,19 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7ed",
+    "id": "6a9e68822d5e42e3f51b774e",
     "indexId": "a199aec1-ae91-43b0-a1d1-ee2a3a0c8f8c",
     "breakthroughId": "hide-behind-ally--pixie-",
     "name": "Hide Behind Ally (Pixie)",
     "cost": "300",
     "requirements": "Must be a Pixie.",
-    "description": "<p>When occupying the same space as a conscious ally that's at least a size bigger than you, you may choose to become untargetable to single target attacks.&nbsp;</p><p>When targeted by a single target attack, you may direct the attack a willing ally with which you spare the space. They may react to this attack as normal. After you re-direct an attack like this once, you automatically redirect all other attacks you can until the start of your next turn</p><p>While occupying the same space as a conscious ally, any effect that triggers upon not being targeted by an enemy (such as Challenge) will not be triggered. Does not work against Attacks of Opportunity.</p>",
-    "descriptionHtml": "<p>When occupying the same space as a conscious ally that's at least a size bigger than you, you may choose to become untargetable to single target attacks.&nbsp;</p><p>When targeted by a single target attack, you may direct the attack a willing ally with which you spare the space. They may react to this attack as normal. After you re-direct an attack like this once, you automatically redirect all other attacks you can until the start of your next turn</p><p>While occupying the same space as a conscious ally, any effect that triggers upon not being targeted by an enemy (such as Challenge) will not be triggered. Does not work against Attacks of Opportunity.</p>",
-    "descriptionText": "When occupying the same space as a conscious ally that's at least a size bigger than you, you may choose to become untargetable to single target attacks.\nWhen targeted by a single target attack, you may direct the attack a willing ally with which you spare the space. They may react to this attack as normal. After you re-direct an attack like this once, you automatically redirect all other attacks you can until the start of your next turn\nWhile occupying the same space as a conscious ally, any effect that triggers upon not being targeted by an enemy (such as Challenge) will not be triggered. Does not work against Attacks of Opportunity.",
+    "description": "<p>When occupying the same space as a conscious ally that's at least a size bigger than you, you may choose to become untargetable to single target attacks.&nbsp;</p><p>When targeted by a single target attack, you may direct the attack a willing ally with which you spare the space. They may react to this attack as normal. After you re-direct an attack like this once, you automatically redirect all other attacks you can until the start of your next turn</p><p>While redirecting attacks, any effect that triggers upon not being targeted by an enemy (such as Challenge) will not be triggered.&nbsp;</p><p>Does not work against Attacks of Opportunity.</p>",
+    "descriptionHtml": "<p>When occupying the same space as a conscious ally that's at least a size bigger than you, you may choose to become untargetable to single target attacks.&nbsp;</p><p>When targeted by a single target attack, you may direct the attack a willing ally with which you spare the space. They may react to this attack as normal. After you re-direct an attack like this once, you automatically redirect all other attacks you can until the start of your next turn</p><p>While redirecting attacks, any effect that triggers upon not being targeted by an enemy (such as Challenge) will not be triggered.&nbsp;</p><p>Does not work against Attacks of Opportunity.</p>",
+    "descriptionText": "When occupying the same space as a conscious ally that's at least a size bigger than you, you may choose to become untargetable to single target attacks.\nWhen targeted by a single target attack, you may direct the attack a willing ally with which you spare the space. They may react to this attack as normal. After you re-direct an attack like this once, you automatically redirect all other attacks you can until the start of your next turn\nWhile redirecting attacks, any effect that triggers upon not being targeted by an enemy (such as Challenge) will not be triggered.\nDoes not work against Attacks of Opportunity.",
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7c0",
+    "id": "6a9e68822d5e42e3f51b773a",
     "indexId": "d676b6a8-0840-41c6-bcd9-6b99ef9d2831",
     "breakthroughId": "human-chimera-hybrid--race-",
     "name": "Human-Chimera Hybrid (Race)",
@@ -492,7 +492,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7d0",
+    "id": "6a9e68822d5e42e3f51b7742",
     "indexId": "f21a4bb6-0543-4ee9-9942-712262b3a2fd",
     "breakthroughId": "improved-demonic-divine-release--demon-",
     "name": "Improved Demonic Divine Release (Demon)",
@@ -504,7 +504,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7d6",
+    "id": "6a9e68822d5e42e3f51b7745",
     "indexId": "dab7e9ee-ff71-41aa-b474-3389400e235f",
     "breakthroughId": "in-sync--youkai-",
     "name": "In Sync (Youkai)",
@@ -516,7 +516,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b802",
+    "id": "6a9e68822d5e42e3f51b7761",
     "indexId": "bb5d7dd1-af65-4fce-9675-a4fea97cded4",
     "breakthroughId": "kit-expert",
     "name": "Kit Expert",
@@ -528,7 +528,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7e3",
+    "id": "6a9e68822d5e42e3f51b7727",
     "indexId": "49576f97-4ab5-45ca-ad3e-c98b9bdafdfe",
     "breakthroughId": "language-training",
     "name": "Language Training",
@@ -540,19 +540,19 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b806",
+    "id": "6a9e68822d5e42e3f51b7763",
     "indexId": "712791f4-6cbb-4681-80b4-4666b34b1c66",
-    "breakthroughId": "large-specimen--nio--bullfolk-or-bearfolk-",
-    "name": "Large Specimen (Nio, Bullfolk or Bearfolk)",
+    "breakthroughId": "large-specimen--nio--bullfolk--bearfolk-or-male-oni-",
+    "name": "Large Specimen (Nio, Bullfolk, Bearfolk or Male Oni)",
     "cost": "100",
-    "requirements": "Must be a Nio, Bullfolk or Bearfolk.",
+    "requirements": "Must be a Nio, Bullfolk, Bearfolk or Male Oni",
     "description": "<p>Your size becomes Large.</p>",
     "descriptionHtml": "<p>Your size becomes Large.</p>",
     "descriptionText": "Your size becomes Large.",
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7c8",
+    "id": "6a9e68822d5e42e3f51b7718",
     "indexId": "0327396a-1722-494b-93ac-bf8a79babb26",
     "breakthroughId": "light-armor-training",
     "name": "Light Armor Training",
@@ -564,7 +564,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7d8",
+    "id": "6a9e68822d5e42e3f51b7746",
     "indexId": "7956f508-8c8c-4a6a-8aa7-266b75e8668c",
     "breakthroughId": "light-sleeper",
     "name": "Light Sleeper",
@@ -576,7 +576,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b80f",
+    "id": "6a9e68822d5e42e3f51b775d",
     "indexId": "4c457daa-aa10-4b8e-879a-99bc8ce97a87",
     "breakthroughId": "mark-of-conflict",
     "name": "Mark of Conflict",
@@ -588,7 +588,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7c9",
+    "id": "6a9e68822d5e42e3f51b7719",
     "indexId": "ab136b22-8d6a-45dd-b2b8-4479b11caa54",
     "breakthroughId": "medium-armor-training",
     "name": "Medium Armor Training",
@@ -600,7 +600,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b809",
+    "id": "6a9e68822d5e42e3f51b775a",
     "indexId": "df29a1bf-6089-4108-b852-6d5557dbcaa6",
     "breakthroughId": "mental-torture--unseelie-",
     "name": "Mental Torture (Unseelie)",
@@ -612,7 +612,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7cf",
+    "id": "6a9e68822d5e42e3f51b771c",
     "indexId": "5fad2fbd-117f-45de-a874-23ec8d9550fe",
     "breakthroughId": "mixed-house--demon-",
     "name": "Mixed House (Demon)",
@@ -624,7 +624,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7d3",
+    "id": "6a9e68822d5e42e3f51b771f",
     "indexId": "7898e2c7-2a72-4fa8-bc06-13b93e171466",
     "breakthroughId": "mystic-eyes-of-faerie-light--fae-",
     "name": "Mystic Eyes of Faerie Light (Fae)",
@@ -636,7 +636,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7fc",
+    "id": "6a9e68822d5e42e3f51b7737",
     "indexId": "0fa5b003-e9eb-49c9-a5f9-5e50b58c34cf",
     "breakthroughId": "natural-immunity--ratfolk-",
     "name": "Natural Immunity (Ratfolk)",
@@ -648,7 +648,19 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b804",
+    "id": "6aea4cb1ee297894130ef296",
+    "indexId": "80aaf412-b8fa-4898-92e4-2785dc13687d",
+    "breakthroughId": "navy-seal--selkie-",
+    "name": "Navy Seal (Selkie)",
+    "cost": "100",
+    "requirements": "Must be a Selkie.",
+    "description": "<p>You may use abilities like normal while in seal form and may use One-Handed weapon. Any abilities that require a specific armor or other specific physical requirements still cannot be used.</p><p>In addition, you can now hold your breath indefinitely while in seal form.</p>",
+    "descriptionHtml": "<p>You may use abilities like normal while in seal form and may use One-Handed weapon. Any abilities that require a specific armor or other specific physical requirements still cannot be used.</p><p>In addition, you can now hold your breath indefinitely while in seal form.</p>",
+    "descriptionText": "You may use abilities like normal while in seal form and may use One-Handed weapon. Any abilities that require a specific armor or other specific physical requirements still cannot be used.\nIn addition, you can now hold your breath indefinitely while in seal form.",
+    "ability": ""
+  },
+  {
+    "id": "6a9e68822d5e42e3f51b7762",
     "indexId": "34b8e8e7-d8b9-43ea-a0bd-50d873600df2",
     "breakthroughId": "on-the-draw",
     "name": "On the draw",
@@ -660,7 +672,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7c2",
+    "id": "6a9e68822d5e42e3f51b7716",
     "indexId": "fe8267f3-b340-4f24-a59f-388750fe73e3",
     "breakthroughId": "organized-inventory",
     "name": "Organized Inventory",
@@ -672,7 +684,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7dc",
+    "id": "6a9e68822d5e42e3f51b7748",
     "indexId": "319b2e72-de29-441b-a0a8-f8f65a684b73",
     "breakthroughId": "organized-inventory-ii",
     "name": "Organized Inventory II",
@@ -684,19 +696,19 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7dd",
+    "id": "6a9e68822d5e42e3f51b7749",
     "indexId": "d4e1caca-8e77-4b4c-8156-9a1e425e0eaa",
     "breakthroughId": "organized-inventory-iii",
     "name": "Organized Inventory III",
     "cost": "300",
     "requirements": "Must have the Organized Inventory II breakthrough",
-    "description": "<p>Your in-combat Burden capacity is increased by 1.</p>",
-    "descriptionHtml": "<p>Your in-combat Burden capacity is increased by 1.</p>",
-    "descriptionText": "Your in-combat Burden capacity is increased by 1.",
+    "description": "<p>Your in-combat Burden capacity is increased by 1.</p><p>You may take this breakthrough multiple times. The effects stack.</p>",
+    "descriptionHtml": "<p>Your in-combat Burden capacity is increased by 1.</p><p>You may take this breakthrough multiple times. The effects stack.</p>",
+    "descriptionText": "Your in-combat Burden capacity is increased by 1.\nYou may take this breakthrough multiple times. The effects stack.",
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7f0",
+    "id": "6a9e68822d5e42e3f51b774f",
     "indexId": "99ff1560-2863-4f33-9301-ee7cf4d5a627",
     "breakthroughId": "overrun--centaur-",
     "name": "Overrun (Centaur)",
@@ -708,7 +720,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7ff",
+    "id": "6a9e68822d5e42e3f51b7754",
     "indexId": "7f3433df-8797-49d0-a254-b8a6b3759aa4",
     "breakthroughId": "panda-martial-arts--red-panda-",
     "name": "Panda Martial Arts (Red Panda)",
@@ -720,7 +732,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7fd",
+    "id": "6a9e68822d5e42e3f51b7738",
     "indexId": "37a3c35d-e778-4741-b787-704bbae5b73b",
     "breakthroughId": "photosynthesis--dryad-",
     "name": "Photosynthesis (Dryad)",
@@ -732,7 +744,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b803",
+    "id": "6a9e68822d5e42e3f51b7757",
     "indexId": "aebebfc4-e6c3-4e70-ad36-4b0063732300",
     "breakthroughId": "power-saving-mode--ancient-marionette-",
     "name": "Power Saving Mode (Ancient Marionette)",
@@ -744,7 +756,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7e7",
+    "id": "6a9e68822d5e42e3f51b7729",
     "indexId": "b312c868-2837-42e2-9045-8fba8e3602ca",
     "breakthroughId": "powerful-ki--oni-",
     "name": "Powerful Ki (Oni)",
@@ -756,7 +768,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7cc",
+    "id": "6a9e68822d5e42e3f51b7740",
     "indexId": "45822ac3-a314-4d89-bcd6-2d8344dc2d9a",
     "breakthroughId": "primary-stat-training",
     "name": "Primary Stat Training",
@@ -768,7 +780,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7fb",
+    "id": "6a9e68822d5e42e3f51b7753",
     "indexId": "5ba5e6af-a6bb-4823-8bcf-9e2daf512be2",
     "breakthroughId": "racial-flight",
     "name": "Racial Flight",
@@ -780,7 +792,7 @@
     "ability": "5b304038-c45a-4521-b58f-2ad9545e1a9d"
   },
   {
-    "id": "6a5e50be98f4934cf278b7e4",
+    "id": "6a9e68822d5e42e3f51b7728",
     "indexId": "2a202a86-be68-4862-a6fa-668874701d8c",
     "breakthroughId": "rapid-flash--high-fae-",
     "name": "Rapid Flash (High Fae)",
@@ -792,7 +804,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b801",
+    "id": "6a9e68822d5e42e3f51b7756",
     "indexId": "b7b38bd5-0123-4000-b73d-046fe2898b41",
     "breakthroughId": "rich-parents",
     "name": "Rich Parents",
@@ -804,7 +816,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7cd",
+    "id": "6a9e68822d5e42e3f51b771b",
     "indexId": "bf5c2d85-7a07-4a2c-9e3f-6a51a915aed1",
     "breakthroughId": "secondary-stat-training",
     "name": "Secondary Stat Training",
@@ -816,7 +828,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7c5",
+    "id": "6a9e68822d5e42e3f51b773d",
     "indexId": "29589820-d937-49d7-88dd-5f3ab90ee5ce",
     "breakthroughId": "skill-training",
     "name": "Skill Training",
@@ -828,7 +840,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7fa",
+    "id": "6a9e68822d5e42e3f51b7736",
     "indexId": "296b5632-0f01-444f-aae5-dffb22d5fd2b",
     "breakthroughId": "skilled-flier",
     "name": "Skilled Flier",
@@ -840,7 +852,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b811",
+    "id": "6a9e68822d5e42e3f51b7769",
     "indexId": "94c72324-0872-435e-90b9-bd7b8e0d3d3f",
     "breakthroughId": "slime-summoner",
     "name": "Slime Summoner",
@@ -852,7 +864,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7f2",
+    "id": "6a9e68822d5e42e3f51b7751",
     "indexId": "69ad5786-9e4b-4099-bf12-036fd89873f1",
     "breakthroughId": "slow-starter",
     "name": "Slow Starter",
@@ -864,7 +876,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b814",
+    "id": "6a9e68822d5e42e3f51b775f",
     "indexId": "2a89d4f8-4911-487a-89e6-413cd15931e5",
     "breakthroughId": "small-doggy--cu-sith-",
     "name": "Small Doggy (Cu Sith)",
@@ -876,7 +888,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b810",
+    "id": "6a9e68822d5e42e3f51b7768",
     "indexId": "d5492d93-94da-4c58-94ea-82a66d05d4f5",
     "breakthroughId": "small-specimen--cowfolk-",
     "name": "Small Specimen (Cowfolk)",
@@ -888,7 +900,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7c7",
+    "id": "6a9e68822d5e42e3f51b7717",
     "indexId": "0e92a4c2-fad0-4b5c-81a3-9310307dadc1",
     "breakthroughId": "speciality-weapon-training",
     "name": "Speciality Weapon Training",
@@ -900,7 +912,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b800",
+    "id": "6a9e68822d5e42e3f51b7755",
     "indexId": "23ade1b1-4956-4974-8601-52b61d8516e9",
     "breakthroughId": "summon-contract--fortuna--lady-luck",
     "name": "Summon Contract: Fortuna, Lady Luck",
@@ -912,7 +924,7 @@
     "ability": "7d26f4ec-eaef-4dc8-a244-a5cecc769b09"
   },
   {
-    "id": "6a5e50be98f4934cf278b805",
+    "id": "6a9e68822d5e42e3f51b7758",
     "indexId": "9d2ff949-92dd-45ba-a6d7-ba52c40f87b1",
     "breakthroughId": "summon-contract--ixilune--the-swarm",
     "name": "Summon Contract: Ixilune, The Swarm",
@@ -924,7 +936,7 @@
     "ability": "40915658-9ccb-49b5-bae4-04f51db828c8"
   },
   {
-    "id": "6a5e50be98f4934cf278b7f8",
+    "id": "6a9e68822d5e42e3f51b7734",
     "indexId": "cb8daf36-337c-4cde-b338-5a539b51dfcc",
     "breakthroughId": "summon-contract--pipoltr--the-gardener",
     "name": "Summon Contract: Pipoltr, The Gardener",
@@ -936,7 +948,7 @@
     "ability": "2fce3db9-f052-4ae5-825e-c9ddd82589ef"
   },
   {
-    "id": "6a5e50be98f4934cf278b7ec",
+    "id": "6a9e68822d5e42e3f51b772d",
     "indexId": "51d9c6b8-cb21-48a4-93cb-39e70b752e85",
     "breakthroughId": "superior-escapist--rabbitfolk-",
     "name": "Superior Escapist (Rabbitfolk)",
@@ -948,7 +960,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7ea",
+    "id": "6a9e68822d5e42e3f51b772b",
     "indexId": "81f1de89-e38d-42c7-9710-8166449e5c11",
     "breakthroughId": "tengu-defensive-aura--tengu-",
     "name": "Tengu Defensive Aura (Tengu)",
@@ -960,7 +972,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7c3",
+    "id": "6a9e68822d5e42e3f51b773b",
     "indexId": "8521fc76-4efd-4951-b84f-8356867598d5",
     "breakthroughId": "the-unknown-paladin",
     "name": "The Unknown Paladin",
@@ -972,7 +984,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b815",
+    "id": "6a9e68822d5e42e3f51b7760",
     "indexId": "e68daed1-6d5b-4f61-99da-b253b007143d",
     "breakthroughId": "third-eye",
     "name": "Third Eye",
@@ -984,7 +996,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7d4",
+    "id": "6a9e68822d5e42e3f51b7743",
     "indexId": "ed1c6436-8f72-4788-9a54-9356464133a4",
     "breakthroughId": "touched-by-death",
     "name": "Touched by Death",
@@ -996,7 +1008,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b807",
+    "id": "6a9e68822d5e42e3f51b7764",
     "indexId": "3366d50c-0f52-4ed7-a1ed-b51c21445936",
     "breakthroughId": "universal-training",
     "name": "Universal Training",
@@ -1008,7 +1020,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7c6",
+    "id": "6a9e68822d5e42e3f51b773e",
     "indexId": "2bd098f7-6554-42a0-afa7-7b6a15df122a",
     "breakthroughId": "weapon-training",
     "name": "Weapon Training",
@@ -1020,7 +1032,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7c4",
+    "id": "6a9e68822d5e42e3f51b773c",
     "indexId": "fb1ecde9-ff6d-4d94-bde7-e8881be68963",
     "breakthroughId": "wide-circuits-i",
     "name": "Wide Circuits I",
@@ -1032,7 +1044,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7de",
+    "id": "6a9e68822d5e42e3f51b7723",
     "indexId": "e2a0e613-f37d-4d8a-bfae-dfb6db0edd39",
     "breakthroughId": "wide-circuits-ii",
     "name": "Wide Circuits II",
@@ -1044,7 +1056,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b7df",
+    "id": "6a9e68822d5e42e3f51b7724",
     "indexId": "82825f86-6850-4b0a-8830-3fa4c268ee1b",
     "breakthroughId": "wide-circuits-iii",
     "name": "Wide Circuits III",
@@ -1056,7 +1068,7 @@
     "ability": ""
   },
   {
-    "id": "6a5e50be98f4934cf278b80e",
+    "id": "6a9e68822d5e42e3f51b7767",
     "indexId": "782d71a7-b467-4a2d-a7dd-80bd047d6cbd",
     "breakthroughId": "wide-circuits-iv",
     "name": "Wide Circuits IV",

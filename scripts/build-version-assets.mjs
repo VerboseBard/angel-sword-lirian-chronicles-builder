@@ -293,6 +293,8 @@ async function buildDataBundle(version) {
   const itemSummaryMap = makeItemSummaryMap(itemSummariesRaw);
   const items = await Promise.all(itemsRaw.map(async (entry) => {
     const summary = resolveItemSummary(itemSummaryMap, entry);
+    const craftingType = normalizeSpace(entry.craftingType);
+    const craftingPoints = normalizeSpace(entry.craftingPoints);
     return {
       id: entry.itemId || summary?.itemId || slugify(entry.name),
       name: normalizeSpace(entry.name),
@@ -302,7 +304,8 @@ async function buildDataBundle(version) {
       burden: normalizeSpace(entry.burden),
       activationCost: normalizeSpace(entry.activationCost),
       fuelUsage: normalizeSpace(entry.fuelUsage),
-      craftingType: normalizeSpace(entry.craftingType),
+      craftingType,
+      ...(craftingType && craftingType !== "-" && /^\d+$/.test(craftingPoints) ? { craftingPoints } : {}),
       description: normalizeSpace(entry.descriptionText) || maybeDecodeBase64Html(entry.description),
       ...(await buildItemImageFields(entry, summary, version))
     };

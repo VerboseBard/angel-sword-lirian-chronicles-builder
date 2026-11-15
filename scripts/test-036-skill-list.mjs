@@ -258,6 +258,12 @@ try {
   }
   browser = await chromium.launch();
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  await context.addInitScript(() => {
+    const key = "lyrian-chronicles-selected-game-version-v2";
+    if (location.protocol !== "http:" || localStorage.getItem(key)) return;
+    localStorage.setItem(key, "0.13.2");
+    localStorage.setItem("lyrian-chronicles-selected-game-version-latest-v1", "0.13.3");
+  });
   const page = await context.newPage();
   const pageErrors = [];
   page.on("pageerror", (error) => pageErrors.push(error.message));

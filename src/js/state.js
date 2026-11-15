@@ -327,6 +327,10 @@ const sourceHasHpFlag = Object.prototype.hasOwnProperty.call(source, "hpHasManua
         ...source,
         hpHasManualChange: sourceHasHpFlag ? Boolean(source.hpHasManualChange) : hasManualHpHistory(source),
         resourcesBeforeBuilderVisit: normalizeResourcesBeforeBuilderVisit(source.resourcesBeforeBuilderVisit),
+        skyboundTrial: source.skyboundTrial ? {
+          completed: source.skyboundTrial.completed === true,
+          heldExp: Math.min(1000, Math.max(0, Math.floor(toNumber(source.skyboundTrial.heldExp, 0))))
+        } : undefined,
         resources: {
           ...defaults.resources,
           ...(source.resources || {})

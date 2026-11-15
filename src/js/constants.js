@@ -269,6 +269,16 @@ export const DEMON_CLAN_SKILL_OPTIONS = {
     };
 export const CREATION_SKILL_POINT_BUDGET = 10;
 export const BREAKTHROUGH_CREATION_BUDGET = 300;
+export const LARGE_SPECIMEN_BREAKTHROUGH = {
+  historical: {
+    id: "large-specimen--nio--bullfolk-or-bearfolk-",
+    name: "Large Specimen (Nio, Bullfolk or Bearfolk)"
+  },
+  maleOni: {
+    id: "large-specimen--nio--bullfolk--bearfolk-or-male-oni-",
+    name: "Large Specimen (Nio, Bullfolk, Bearfolk or Male Oni)"
+  }
+};
 // Identity of the bundled CCS template (data/ccs-template.xlsx). It is written into
 // every CCS export (Core!R1) so a reviewer can tell which template made a sheet.
 // Keep in step with data/CCS_TEMPLATE_README.md when the template is re-captured.

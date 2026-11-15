@@ -3,12 +3,17 @@ import { fork } from 'child_process';
 import path from 'path';
 import fs from 'fs/promises';
 import { fileURLToPath, pathToFileURL } from 'url';
+import { APP_RELEASE_SUMMARY } from '../src/js/release-notes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(__dirname, '..');
 const QA_DIR = path.join(PROJECT_ROOT, 'qa-test-results');
 const DEPLOY_TEMP_DIR = path.join(PROJECT_ROOT, 'deploy-temp-dist');
 const PORT = 4202; // Dedicated test port to avoid conflict with local development.
+const BUILD_LABEL = 'Beta 3.1';
+const rulesManifest = JSON.parse(await fs.readFile(path.join(PROJECT_ROOT, 'assets', 'versions', 'manifest.json'), 'utf8'));
+const LATEST_RULES = rulesManifest.latestKnownVersion || rulesManifest.defaultVersion;
+const LOCAL_RULES_COUNT = rulesManifest.versions.filter((entry) => entry.local).length;
 
 async function copyDirectory(src, dest) {
   await fs.mkdir(dest, { recursive: true });
@@ -134,6 +139,9 @@ async function runDirectFileStartupAssertion() {
           (window.LYRIAN_DATA?.keywords || []).some((entry) => entry.name === name)
         ),
         hasBlueSoul: (window.LYRIAN_DATA?.abilities || []).some((entry) => entry.name === 'Blue Soul'),
+        hasNewClasses: ['Aetherologist', 'Enforcer', 'Fateweaver'].every((name) =>
+          (window.LYRIAN_DETAIL_DATA?.classes || []).some((entry) => entry.name === name)
+        ),
         optionalRuntimesDeferred: !window.PDFLib
           && !window.XLSX
           && !window.JSZip
@@ -142,13 +150,13 @@ async function runDirectFileStartupAssertion() {
       };
     });
 
-    const startupIsValid = result.dataVersion === '0.13.2'
-      && result.selectedVersion === '0.13.2'
-      && result.versionCount >= 5
+    const startupIsValid = result.dataVersion === LATEST_RULES
+      && result.selectedVersion === LATEST_RULES
+      && result.versionCount === LOCAL_RULES_COUNT
       && result.cardCount > 0
       && result.navCount > 0
       && result.summaryText.includes('Identity')
-      && result.buildLabel.includes('Beta 3.0')
+      && result.buildLabel.includes(BUILD_LABEL)
       && result.learnLink.text.includes('Learn How to Play')
       && result.learnLink.href === 'https://clio.angelssword.com/#'
       && result.learnLink.target === '_blank'
@@ -160,6 +168,7 @@ async function runDirectFileStartupAssertion() {
       && result.hasDivinesChosen
       && result.hasNewKeywords
       && result.hasBlueSoul
+      && result.hasNewClasses
       && result.optionalRuntimesDeferred;
 
     if (!startupIsValid || errors.length || failedFileRequests.length) {
@@ -1000,7 +1009,7 @@ const browsers = [
       await page.evaluate((gameVersion) => {
         localStorage.clear();
         localStorage.setItem('lyrian-chronicles-selected-game-version-v2', gameVersion);
-        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.2');
+        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', window.LYRIAN_VERSION_MANIFEST.latestKnownVersion);
         localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
           ui: { mode: 'builder', gameVersion },
           fields: { Name: `All Class Progression Audit ${gameVersion}` },
@@ -1017,7 +1026,7 @@ const browsers = [
         await page.evaluate(({ gameVersion, selectedClasses }) => {
           localStorage.clear();
           localStorage.setItem('lyrian-chronicles-selected-game-version-v2', gameVersion);
-          localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.2');
+          localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', window.LYRIAN_VERSION_MANIFEST.latestKnownVersion);
           localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
             ui: { mode: 'builder', gameVersion },
             fields: { Name: `All Class Progression Audit ${gameVersion}` },
@@ -1070,18 +1079,20 @@ const browsers = [
     console.log('   Running version dropdown isolation and default-selection assertions...');
     await page.evaluate(() => localStorage.clear());
     await page.reload({ waitUntil: 'load' });
-    await page.waitForFunction(() => document.querySelector('#game-version-select')?.value === '0.13.2');
+    await page.waitForFunction((version) => document.querySelector('#game-version-select')?.value === version, LATEST_RULES);
     await page.click('[data-builder-action="pick-race"][data-id="human"]');
     await page.click('[data-step-index="6"]');
 
     const expectations = [
+      { version: '0.13.3', classes: 188, sevenSorrows: true },
       { version: '0.13.2', classes: 185, sevenSorrows: true },
       { version: '0.13.1', classes: 181, sevenSorrows: true },
       { version: '0.13.0', classes: 180, sevenSorrows: false },
       { version: '0.12.6', classes: 174, sevenSorrows: false },
       { version: '0.12.5', classes: 170, sevenSorrows: false },
       { version: '0.13.1', classes: 181, sevenSorrows: true },
-      { version: '0.13.2', classes: 185, sevenSorrows: true }
+      { version: '0.13.2', classes: 185, sevenSorrows: true },
+      { version: '0.13.3', classes: 188, sevenSorrows: true }
     ];
 
     const results = [];
@@ -1099,6 +1110,9 @@ const browsers = [
         dataVersion: window.LYRIAN_DATA?.version || '',
         classCount: document.querySelectorAll('button[data-builder-action="toggle-class"]').length,
         sevenSorrows: Boolean(document.querySelector('button[data-builder-action="toggle-class"][data-id="seven-sorrows-sword-style"]')),
+        currentClassIds: ['aetherologist', 'enforcer', 'fateweaver'].filter((id) =>
+          document.querySelector('button[data-builder-action="toggle-class"][data-id="' + id + '"]')
+        ),
         status: document.querySelector('#builder-status-pill')?.textContent || ''
       })));
     }
@@ -1110,6 +1124,7 @@ const browsers = [
         || result.dataVersion !== expectation.version
         || result.classCount !== expectation.classes
         || result.sevenSorrows !== expectation.sevenSorrows
+        || result.currentClassIds.length !== (expectation.version === '0.13.3' ? 3 : 0)
         || (index > 0 && !result.status.includes(`Loaded Lyrian rules version ${expectation.version}`))
       ) {
         throw new Error(`Version switch isolation regression failed: ${JSON.stringify({ expectation, result, results })}`);
@@ -1117,9 +1132,9 @@ const browsers = [
     });
 
     await page.reload({ waitUntil: 'load' });
-    await page.waitForFunction(() => document.querySelector('#game-version-select')?.value === '0.13.2');
+    await page.waitForFunction((version) => document.querySelector('#game-version-select')?.value === version, LATEST_RULES);
     const persistedLatest = await page.locator('#game-version-select').inputValue();
-    if (persistedLatest !== '0.13.2') {
+    if (persistedLatest !== LATEST_RULES) {
       throw new Error(`Latest-version persistence regression failed: ${persistedLatest}`);
     }
   }
@@ -1129,7 +1144,7 @@ const browsers = [
     await page.evaluate(() => {
       localStorage.clear();
       localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
-      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.2');
+      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', window.LYRIAN_VERSION_MANIFEST.latestKnownVersion);
       localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
         ui: { mode: 'sheet', playMode: 'combat', sheetTab: 'actions', gameVersion: '0.13.1' },
         fields: { Name: 'Performance Patch Audit', 'Primary Race': 'Fae', Agility: '3' },
@@ -1224,14 +1239,18 @@ const browsers = [
 
     await page.evaluate(() => localStorage.clear());
     await page.reload({ waitUntil: 'load' });
-    await page.waitForFunction(() => window.LYRIAN_DATA?.version === '0.13.2');
+    await page.waitForFunction((version) => window.LYRIAN_DATA?.version === version, LATEST_RULES);
   }
 
   async function runRaceClassMatrixAssertions(page) {
     // This historical matrix seeds 0.13.1 below. The preceding all-version
-    // progression audit now ends on 0.13.2, so read its inputs from 0.13.1 too.
+    // progression audit includes newer versions, so read its inputs from 0.13.1 too.
     await page.selectOption('#game-version-select', '0.13.1');
-    await page.waitForFunction(() => window.LYRIAN_DATA?.version === '0.13.1');
+    // The data script arrives before the detail script and final save. Wait
+    // for the whole switch before seeding the first historical character.
+    await page.waitForFunction(() => window.LYRIAN_DATA?.version === '0.13.1'
+      && window.LYRIAN_DETAIL_DATA?.version === '0.13.1'
+      && document.getElementById('builder-status-pill')?.textContent === 'Loaded Lyrian rules version 0.13.1.');
     const matrix = await page.evaluate(() => {
       const ancestriesByRace = new Map();
       for (const ancestry of window.LYRIAN_DETAIL_DATA.ancestries || []) {
@@ -1282,7 +1301,7 @@ const browsers = [
         await page.evaluate(({ raceId, ancestryId, startMode }) => {
           localStorage.clear();
           localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
-          localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.2');
+          localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', window.LYRIAN_VERSION_MANIFEST.latestKnownVersion);
           localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
             ui: { mode: 'builder', gameVersion: '0.13.1' },
             fields: { Name: `Race and Class Matrix Audit ${startMode}` },
@@ -1408,7 +1427,7 @@ const browsers = [
       await page.evaluate((selectedClasses) => {
         localStorage.clear();
         localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
-        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.2');
+        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', window.LYRIAN_VERSION_MANIFEST.latestKnownVersion);
         localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
           ui: { mode: 'builder', gameVersion: '0.13.1' },
           fields: { Name: 'Class Proficiency Choice Audit' },
@@ -1437,7 +1456,7 @@ const browsers = [
     await page.evaluate(() => {
       localStorage.clear();
       localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
-      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.2');
+      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', window.LYRIAN_VERSION_MANIFEST.latestKnownVersion);
       localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
         ui: { mode: 'builder', gameVersion: '0.13.1' },
         fields: { Name: 'Acolyte Fighter Proficiency Audit' },
@@ -1483,7 +1502,7 @@ const browsers = [
       await page.evaluate((classProgress) => {
         localStorage.clear();
         localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
-        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.2');
+        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', window.LYRIAN_VERSION_MANIFEST.latestKnownVersion);
         localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
           ui: { mode: 'builder', gameVersion: '0.13.1' },
           fields: { Name: 'Armorsmith Heart Proficiency Audit' },
@@ -1606,7 +1625,7 @@ const browsers = [
     if (
       quickSpecies.count !== 21
       || !quickSpecies.slimefolkText.includes('Chimera / Slimefolk')
-      || quickSpecies.slimefolkImage !== 'assets/item-images/0.13.2/ancestry-slimefolk-sm.webp'
+      || quickSpecies.slimefolkImage !== ('assets/item-images/' + LATEST_RULES + '/ancestry-slimefolk-sm.webp')
       || !quickSpecies.slimefolkImageDecoded
       || !quickSpecies.dullahanText.includes('Fae / Dullahan')
       || !quickSpecies.wolfFolkText.includes('Chimera / Wolf-folk')
@@ -1676,6 +1695,9 @@ const browsers = [
   async function runAllQuickBuildPackageAssertions(page) {
     const expectedClassPlans = {
       'shield-warrior': [{ name: 'Fighter', purchasedCount: 7 }, { name: 'Guardian', purchasedCount: 0 }],
+      enforcer: [{ name: 'Ranger', purchasedCount: 7 }, { name: 'Enforcer', purchasedCount: 0 }],
+      'aetherologist-path': [{ name: 'Sorcerer', purchasedCount: 7 }, { name: 'Elementalist', purchasedCount: 0 }],
+      fateweaver: [{ name: 'Medic', purchasedCount: 7 }, { name: 'Fateweaver', purchasedCount: 0 }],
       'great-weapon-striker': [{ name: 'Fighter', purchasedCount: 7 }, { name: 'Highlander', purchasedCount: 0 }],
       'seven-sorrows-rush': [{ name: 'Fighter', purchasedCount: 7 }, { name: 'Seven Sorrows Sword Style', purchasedCount: 0 }],
       'sneak-thief': [{ name: 'Rogue', purchasedCount: 7 }, { name: 'Mage', purchasedCount: 1 }],
@@ -1724,7 +1746,9 @@ const browsers = [
       await page.waitForSelector('[data-quick-build-action="select-build"]', { timeout: 5000 });
 
       const buildIds = await page.locator('[data-quick-build-action="select-build"]').evaluateAll((cards) => cards.map((card) => card.dataset.id));
-      if (buildIds.length !== 15 || new Set(buildIds).size !== buildIds.length) {
+      const expectedBuildIds = Object.keys(expectedClassPlans);
+      if (buildIds.length !== 18 || new Set(buildIds).size !== buildIds.length
+        || expectedBuildIds.length !== buildIds.length || !expectedBuildIds.every((id) => buildIds.includes(id))) {
         throw new Error(`Quick Build package inventory regression failed for ${startMode}: ${JSON.stringify(buildIds)}`);
       }
 
@@ -2012,7 +2036,7 @@ const browsers = [
     await page.evaluate(() => {
       localStorage.clear();
       localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
-      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.2');
+      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', window.LYRIAN_VERSION_MANIFEST.latestKnownVersion);
       localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
         ui: { mode: 'builder', builderStep: 9, gameVersion: '0.13.1' },
         fields: { Name: 'Mirane Legacy Audit', 'Spirit Core': '3200' },
@@ -2066,7 +2090,7 @@ const browsers = [
     await page.evaluate(() => {
       localStorage.clear();
       localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
-      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.2');
+      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', window.LYRIAN_VERSION_MANIFEST.latestKnownVersion);
       localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
         ui: { mode: 'sheet', playMode: 'crafting', sheetTab: 'actions', gameVersion: '0.13.1' },
         fields: { Name: 'Mirane Economy Audit', Exp: '0' },
@@ -2196,7 +2220,7 @@ const browsers = [
     await page.evaluate((selectedClassIds) => {
       localStorage.clear();
       localStorage.setItem('lyrian-chronicles-selected-game-version-v2', '0.13.1');
-      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.2');
+      localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', window.LYRIAN_VERSION_MANIFEST.latestKnownVersion);
       localStorage.setItem('lyrian-chronicles-character-suite-v2', JSON.stringify({
         ui: { mode: 'sheet', playMode: 'combat', sheetTab: 'actions', gameVersion: '0.13.1' },
         fields: { Name: 'Mirane Gameplay Override Audit', Toughness: '5' },
@@ -2320,7 +2344,7 @@ const browsers = [
     const seed = async (builder = {}, fields = {}, ui = {}) => {
       await page.evaluate(({ saveKey: key, builder: nextBuilder, fields: nextFields, ui: nextUi }) => {
         localStorage.clear();
-        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', '0.13.2');
+        localStorage.setItem('lyrian-chronicles-selected-game-version-latest-v1', window.LYRIAN_VERSION_MANIFEST.latestKnownVersion);
         localStorage.setItem(key, JSON.stringify({
           ui: { mode: 'builder', gameVersion: '0.13.1', ...nextUi },
           fields: { Name: 'Community Bug Sweep', ...nextFields },
@@ -5171,7 +5195,7 @@ const browsers = [
           await page.waitForTimeout(2500);
 
           // Assertions
-          const checkResults = await page.evaluate(() => {
+          const checkResults = await page.evaluate(({ buildLabel, releaseSummary, latestRules, localRulesCount }) => {
             const stepContent = document.getElementById('builder-step-content');
             const stepNav = document.getElementById('builder-step-nav');
             const versionSelect = document.getElementById('game-version-select');
@@ -5195,8 +5219,11 @@ const browsers = [
 
             const contentValid = stepContent && stepContent.children.length > 0 && stepContent.textContent.trim().length > 0;
             const navValid = stepNav && stepNav.querySelectorAll('button').length > 0;
-            const versionsValid = versionSelect && versionSelect.querySelectorAll('option').length > 0;
-            const builderBuildValid = builderBuildVersion && builderBuildVersion.textContent.includes('Beta 3.0');
+            const versionsValid = versionSelect
+              && versionSelect.querySelectorAll('option').length === localRulesCount
+              && versionSelect.value === latestRules
+              && window.LYRIAN_DATA?.version === latestRules;
+            const builderBuildValid = builderBuildVersion && builderBuildVersion.textContent.includes(buildLabel);
             const learnLinkValid = learnLink
               && learnLink.textContent.includes('Learn How to Play')
               && learnLink.getAttribute('href') === 'https://clio.angelssword.com/#'
@@ -5219,9 +5246,9 @@ const browsers = [
               && summaryRect.height > 0
               && getComputedStyle(summaryNode).display !== 'none'
               && summaryRect.top >= versionRect.bottom
-              && summaryLine('.builder-build-version strong') === 'Beta 3.0'
+              && summaryLine('.builder-build-version strong') === buildLabel
               && summaryLine('[data-latest-update-rules]') === 'Rules ' + (versionSelect?.value || '')
-              && summaryLine('[data-latest-update-line]') === 'Multiple dice sets, Owlbear Rodeo connection, quality-of-life improvements.'
+              && summaryLine('[data-latest-update-line]') === releaseSummary
               && summaryLine('[data-latest-update-open]') === 'See full update list'
               && !document.querySelector('.version-manager li'));
             const latestSummaryDetail = {
@@ -5253,7 +5280,7 @@ const browsers = [
               navCount: stepNav ? stepNav.querySelectorAll('button').length : 0,
               versionCount: versionSelect ? versionSelect.querySelectorAll('option').length : 0
             };
-          });
+          }, { buildLabel: BUILD_LABEL, releaseSummary: APP_RELEASE_SUMMARY, latestRules: LATEST_RULES, localRulesCount: LOCAL_RULES_COUNT });
 
           if (!checkResults.contentValid) {
             const errText = `App state check failed: #builder-step-content is empty or missing. Content HTML: ${checkResults.contentHtml}`;
@@ -5286,7 +5313,7 @@ const browsers = [
           }
 
           if (!checkResults.latestSummaryValid) {
-            const errText = `App state check failed: the Latest update summary (Beta 3.0, the rules version, the one-line summary and See full update list) must show under the game-version selector. ${JSON.stringify(checkResults.latestSummaryDetail)}`;
+            const errText = `App state check failed: the Latest update summary (Beta 3.1, the rules version, the one-line summary and See full update list) must show under the game-version selector. ${JSON.stringify(checkResults.latestSummaryDetail)}`;
             console.error(`   [STATE ERROR] [${browserInfo.name} - ${vp.name}]:`, errText);
             testErrors.push(errText);
           }

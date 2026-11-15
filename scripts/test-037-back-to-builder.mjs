@@ -186,6 +186,13 @@ function startServer() {
   });
 }
 
+function pinBaselineRules() {
+  const key = "lyrian-chronicles-selected-game-version-v2";
+  if (location.protocol !== "http:" || localStorage.getItem(key)) return;
+  localStorage.setItem(key, "0.13.2");
+  localStorage.setItem("lyrian-chronicles-selected-game-version-latest-v1", "0.13.3");
+}
+
 let server;
 let browser;
 try {
@@ -205,6 +212,7 @@ try {
   const baseUrl = server.url;
   browser = await chromium.launch();
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, acceptDownloads: true });
+  await context.addInitScript(pinBaselineRules);
   await context.route("**/assets/app.bundle.js*", (route) => route.fulfill({ contentType: "application/javascript", body: bundle.outputFiles[0].text }));
   await context.route("**/api/vtt-relay/events*", (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, boot: "t37", seq: 0, events: [] }) }));
   const page = await context.newPage();
@@ -213,7 +221,12 @@ try {
   page.on("dialog", (dialog) => dialog.accept());
 
   const ready = async (target = page) => {
-    await target.waitForFunction(() => window.__t37 && window.LYRIAN_DATA?.version === "0.13.2" && (document.getElementById("builder-step-content")?.innerHTML || "").length > 100, null, { timeout: 20000 });
+    try {
+      await target.waitForFunction(() => window.__t37 && window.LYRIAN_DATA?.version === "0.13.2" && (document.getElementById("builder-step-content")?.innerHTML || "").length > 100, null, { timeout: 20000 });
+    } catch (error) {
+      const state = await target.evaluate(() => ({ url: location.href, rules: window.LYRIAN_DATA?.version, testBundle: Boolean(window.__t37) }));
+      throw new Error(`${error.message} ${JSON.stringify(state)}`, { cause: error });
+    }
     await target.waitForTimeout(1600); // the production idle sheet build
   };
   const fresh = async () => {
@@ -578,6 +591,7 @@ try {
     const seedPage = await context.newPage();
     await seedPage.goto(`${baseUrl}owlbear/panel.html`, { waitUntil: "domcontentloaded" });
     await seedPage.evaluate(seed);
+    await seedPage.evaluate(pinBaselineRules);
     const popupPromise = seedPage.waitForEvent("popup", { timeout: 20000 });
     await seedPage.locator("#open-sheet").click();
     const popup = await popupPromise;
@@ -632,6 +646,7 @@ try {
     const seedPage = await context.newPage();
     await seedPage.goto(`${baseUrl}owlbear/panel.html`, { waitUntil: "domcontentloaded" });
     await seedPage.evaluate(() => localStorage.clear());
+    await seedPage.evaluate(pinBaselineRules);
     const popupPromise = seedPage.waitForEvent("popup", { timeout: 20000 });
     await seedPage.locator("#open-sheet").click();
     const popup = await popupPromise;
@@ -666,6 +681,7 @@ try {
     localStorage.clear();
     localStorage.setItem(${JSON.stringify(STORAGE_KEY)}, ${JSON.stringify(roomWorking.replace('"mode":"sheet"', '"mode":"builder"'))});
   `));
+  await opener.evaluate(pinBaselineRules);
   const otherPromise = opener.waitForEvent("popup", { timeout: 20000 });
   await opener.evaluate((url) => { window.open(url, "some-other-window"); }, baseUrl);
   const other = await otherPromise;

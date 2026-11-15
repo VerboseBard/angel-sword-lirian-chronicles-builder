@@ -1,7 +1,7 @@
 # Angel's Sword Data Pull
 
-Generated: 2026-09-07T14:00:56.548Z
-Latest version: 0.13.2
+Generated: 2026-11-10T18:16:39.698Z
+Latest version: 0.13.3
 
 ## Source URLs
 - site: https://rpg.angelssword.com
@@ -19,13 +19,13 @@ Latest version: 0.13.2
 - monsterAbilities: https://rpg.angelssword.com/game/latest/monster-abilities
 
 ## Counts
-- versions: 38
-- classes: 185
-- classDetails: 185
-- keyAbilities: 179
-- trueAbilities: 958
-- items: 206
-- itemDetails: 206
+- versions: 39
+- classes: 188
+- classDetails: 188
+- keyAbilities: 182
+- trueAbilities: 973
+- items: 208
+- itemDetails: 208
 - monsters: 84
 - monsterDetails: 84
 - monsterAbilities: 144
@@ -36,7 +36,7 @@ Latest version: 0.13.2
 - primaryRaceDetails: 5
 - ancestries: 44
 - ancestryDetails: 44
-- breakthroughs: 89
+- breakthroughs: 90
 - keywords: 92
 
 ## Files

@@ -1,12 +1,13 @@
 Lyrian Chronicles Character Builder
-Beta 3.0 public release
-Rules default: 0.13.2
-Historical rules retained: 0.13.1, 0.13.0, 0.12.6, 0.12.5
+Beta 3.1 public release
+Rules default: 0.13.3
+Historical rules retained: 0.13.2, 0.13.1, 0.13.0, 0.12.6, 0.12.5
 Public link: https://verbosebard.github.io/angel-sword-lirian-chronicles-builder/
 
 Focus:
-- Complete 0.13.2 rules and Quick Build update.
-- Advanced Build is the default full creator, with a return control on every Quick Build step.
-- Cross-browser and mobile compatibility.
-- Performance, caching, autosave, and version-switching hardening.
+- Rules 0.13.3: Aetherologist, Enforcer and Fateweaver, new gear, the Navy Seal breakthrough and the Skybound Trial.
+- Three new Quick Builds, with every earlier Quick Build reviewed against 0.13.3.
+- The Skybound Trial and the Spirit Core skill caps for rules 0.13.3 characters.
+- Crafting HP from the official item records. Artifice parts and Alchemy Materials on recipes follow the rulebook's market price.
+- Searchable offline rulebooks for 0.13.3 and 0.13.2.
 - Static public deployment with the existing URL and save-data contracts.

@@ -1,6 +1,6 @@
 [
   {
-    "id": "6a5e50be98f4934cf278bc23",
+    "id": "6a9e68822d5e42e3f51b7b81",
     "indexId": "675a52b4-b8b7-43f8-8a97-fdb6125f0da3",
     "primaryRaceId": "chimera",
     "name": "Chimera",
@@ -52,7 +52,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278bc25",
+    "id": "6a9e68822d5e42e3f51b7b83",
     "indexId": "913ce48c-ee4b-4a4e-a71d-90ceb5eb1b8e",
     "primaryRaceId": "demon",
     "name": "Demon",
@@ -104,7 +104,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278bc24",
+    "id": "6a9e68822d5e42e3f51b7b82",
     "indexId": "cb5ea351-a25c-4934-896f-74b17000992d",
     "primaryRaceId": "fae",
     "name": "Fae",
@@ -156,7 +156,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278bc21",
+    "id": "6a9e68822d5e42e3f51b7b80",
     "indexId": "f59714f1-f4cf-47f3-912d-39284c4a225d",
     "primaryRaceId": "human",
     "name": "Human",
@@ -208,7 +208,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278bc22",
+    "id": "6a9e68822d5e42e3f51b7b7f",
     "indexId": "d4f38a14-5d79-4ddc-9fac-07c5e7800a1a",
     "primaryRaceId": "youkai",
     "name": "Youkai",

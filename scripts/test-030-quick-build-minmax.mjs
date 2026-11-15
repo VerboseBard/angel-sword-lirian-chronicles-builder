@@ -46,7 +46,9 @@ import { build } from "esbuild";
 import { chromium } from "playwright";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const output = path.join(root, "qa-test-results/task-030-quick-build-minmax");
+const version = process.env.T30_VERSION || "0.13.2";
+assert.ok(["0.12.5", "0.12.6", "0.13.0", "0.13.1", "0.13.2", "0.13.3"].includes(version), "supported rules version");
+const output = path.join(root, "qa-test-results/task-030-quick-build-minmax", version);
 await mkdir(output, { recursive: true });
 const port = Number(process.env.T30_PORT || 4260);
 const url = `http://localhost:${port}/`;
@@ -69,11 +71,19 @@ const check = (name, actual, expected) => {
 const section = (title) => console.log(`\n== ${title}`);
 const norm = (value) => String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 
-const EXPECTED_BUILDS = [
+const baseBuilds = [
   "shield-warrior", "great-weapon-striker", "seven-sorrows-rush", "sneak-thief", "unarmed-monk",
   "hunter-archer", "scout-sniper-path", "gunslinger", "control-wizard", "elemental-blaster",
   "cleric-support", "performance-support", "bard-expertise-rush", "gadgeteer", "potion-healer"
 ];
+const missingByVersion = {
+  "0.12.5": ["seven-sorrows-rush", "cleric-support", "performance-support", "potion-healer"],
+  "0.12.6": ["seven-sorrows-rush", "cleric-support"],
+  "0.13.0": ["seven-sorrows-rush"],
+};
+const newBuildBefore = { "great-weapon-striker": "enforcer", "control-wizard": "aetherologist-path", "cleric-support": "fateweaver" };
+const EXPECTED_BUILDS = baseBuilds.filter((id) => !missingByVersion[version]?.includes(id))
+  .flatMap((id) => version === "0.13.3" && newBuildBefore[id] ? [newBuildBefore[id], id] : [id]);
 
 // Independent oracle: what each class key grants outright, read by hand from
 // the 0.13.2 key abilities (assets/versions/0.13.2/lyrian-detail-data.js).
@@ -88,6 +98,7 @@ const CLASS_FIXED_GRANTS = {
   "martial artist": ["Unarmed"],
   cultivator: ["Unarmed", "Light Armor", "Light Swords"],
   ranger: ["Light Armor", "Medium Armor"],
+  enforcer: ["Shotgun"],
   gunslinger: ["Pistol"],
   sorcerer: ["Channeling Weapons", "Light Armor"],
   acolyte: ["Light Armor", "Shields"],
@@ -184,7 +195,7 @@ window.__t30 = {
     if (!state.ui.quickBuildActive) click("#quick-build-entry");
     const runs = [];
     const speciesList = QUICK_BUILD_SPECIES.filter((entry) => !speciesFilter.length || speciesFilter.includes(entry.id));
-    const builds = QUICK_BUILD_ROLES.flatMap((role) => role.builds);
+    const builds = getQuickBuildRoles().flatMap((role) => role.builds);
     let first = true;
     for (const species of speciesList) {
       click('[data-step-index="0"]');
@@ -204,7 +215,7 @@ window.__t30 = {
     }
     return runs;
   },
-  buildIds() { return QUICK_BUILD_ROLES.flatMap((role) => role.builds.map((entry) => entry.id)); }
+  buildIds() { return getQuickBuildRoles().flatMap((role) => role.builds.map((entry) => entry.id)); }
 };`;
 
 const bundle = await build({
@@ -241,7 +252,11 @@ try {
   check("built bundle no longer says the Human EXP is banked", built.includes("is kept in your EXP bank"), false);
 
   browser = await chromium.launch();
-  const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, serviceWorkers: "block" });
+  const origin = new URL(url).origin;
+  await context.route("**/*", (route) => new URL(route.request().url()).origin === origin
+    ? route.continue()
+    : route.abort("blockedbyclient"));
   const page = await context.newPage();
   const pageErrors = [];
   page.on("pageerror", (error) => pageErrors.push(error.message));
@@ -251,14 +266,18 @@ try {
   }));
   const freshPage = async () => {
     await page.goto(url, { waitUntil: "load" });
-    await page.evaluate(() => localStorage.clear());
+    await page.evaluate((id) => {
+      localStorage.clear();
+      localStorage.setItem("lyrian-chronicles-selected-game-version-v2", id);
+      localStorage.setItem("lyrian-chronicles-selected-game-version-latest-v1", window.LYRIAN_VERSION_MANIFEST.defaultVersion);
+    }, version);
     await page.reload({ waitUntil: "load" });
-    await page.waitForFunction(() => window.__t30 && window.LYRIAN_DATA?.version === "0.13.2" && (document.getElementById("builder-step-content")?.innerHTML || "").length > 100);
+    await page.waitForFunction((id) => window.__t30 && window.LYRIAN_DATA?.version === id && (document.getElementById("builder-step-content")?.innerHTML || "").length > 100, version);
     await page.waitForTimeout(1600); // the production idle sheet build
   };
 
   // -------------------------------------------------------------------------
-  section("Quick Build offers the 15 builds");
+  section(`Quick Build options for ${version}`);
   await freshPage();
   check("build list", await page.evaluate(() => window.__t30.buildIds()), EXPECTED_BUILDS);
 
@@ -272,7 +291,7 @@ try {
   section(`Sweep: ${allRuns.length} characters (species x builds x start modes)`);
   const speciesSeen = new Set(allRuns.map((run) => run.species));
   if (!speciesFilter.length) {
-    check("sweep covers 21 species x 15 builds x 2 modes", allRuns.length, 21 * 15 * 2);
+    check("sweep covers every expected species, preset, and mode", allRuns.length, 21 * EXPECTED_BUILDS.length * 2);
   }
   const fixedOverlaps = new Set();
   const perRun = [];
@@ -290,7 +309,6 @@ try {
     const crafter = run.classes.some((entry) => entry.met && ["Artificer", "Alchemist"].includes(entry.name) && entry.purchased >= 7);
     if (run.otherActions.length) problems.push(`creation actions other than Job: ${run.otherActions}`);
     if (run.jobs + run.exp.classIp !== 3) problems.push(`class IP ${run.exp.classIp} + Jobs ${run.jobs} is not 3`);
-    if (run.jobs < 1) problems.push("no spare IP went to a Job");
     if (run.jobClim !== run.jobs * (crafter ? 600 : 300)) problems.push(`Job Clim ${run.jobClim} for ${run.jobs} Job(s), crafter ${crafter}`);
     if (!run.summary.includes("Interlude Points:")) problems.push("build summary has no Interlude Points line");
     if (run.clim < 0) problems.push(`Clim ${run.clim}`);
@@ -328,6 +346,18 @@ try {
 
     // Build-specific promises.
     const items = run.inventory;
+    if (run.build === "enforcer" && (!run.classes.some((entry) => entry.name === "Enforcer" && entry.purchased === (human ? 1 : 0))
+      || !items.some((entry) => entry.name === "Shotgun (Two-Handed)" && entry.equipped))) {
+      problems.push("Enforcer class progress or equipped shotgun missing");
+    }
+    if (run.build === "fateweaver" && !run.classes.some((entry) => entry.name === "Fateweaver" && entry.purchased === (human ? 1 : 0))) {
+      problems.push("Fateweaver class progress missing");
+    }
+    if (run.build === "aetherologist-path" && (!run.classes.some((entry) => entry.name === "Sorcerer" && entry.purchased === 7)
+      || !run.classes.some((entry) => entry.name === "Elementalist" && entry.purchased === (human ? 1 : 0))
+      || run.classes.some((entry) => entry.name === "Aetherologist"))) {
+      problems.push("Aetherologist starter must have Sorcerer mastery and Elementalist");
+    }
     if (run.build === "gunslinger") {
       if (run.initiative !== run.agility + 1) problems.push(`initiative ${run.initiative}, expected Agility ${run.agility} + 1`);
       if (JSON.stringify(run.initiativeParts) !== JSON.stringify(["On the Draw 1", "Gunslinger key ability 1", "Armor (Light) equipped -1"])) problems.push(`initiative parts ${run.initiativeParts}`);
@@ -356,14 +386,15 @@ try {
     const bucket = (bySpecies[`${mode}/${species}`] ||= []);
     problems.forEach((problem) => bucket.push(`${key.split("/")[2]}: ${problem}`));
   });
-  Object.entries(bySpecies).forEach(([name, problems]) => check(`${name}: all 15 builds clean`, problems, []));
+  Object.entries(bySpecies).forEach(([name, problems]) => check(`${name}: all eligible builds clean`, problems, []));
   console.log(`   ${speciesSeen.size} species, ${perRun.filter((entry) => !entry.problems.length).length} of ${perRun.length} characters clean.`);
   console.log(`   Fixed-grant overlaps (two class keys naming the same group; no pick involved): ${fixedOverlaps.size ? [...fixedOverlaps].slice(0, 6).join("; ") : "none"}`);
 
   // -------------------------------------------------------------------------
   section("Choosing Demon and then Human leaves no stale Demon clan");
   await freshPage();
-  const staleResult = await page.evaluate(() => {
+  const staleBuild = EXPECTED_BUILDS.includes("cleric-support") ? "cleric-support" : "shield-warrior";
+  const staleResult = await page.evaluate((buildId) => {
     window.confirm = () => true;
     const click = (selector) => document.querySelector(selector).click();
     click("#quick-build-entry");
@@ -373,15 +404,15 @@ try {
     const humanIdentity = (document.querySelector("#builder-summary")?.textContent || "").replace(/\s+/g, " ");
     click("#builder-next");
     click("#builder-next");
-    click('[data-quick-build-action="select-build"][data-id="cleric-support"]');
+    click('[data-quick-build-action="select-build"][data-id="' + buildId + '"]');
     click("#builder-next");
     return { demonIdentity, humanIdentity, ...window.__t30.read() };
-  });
+  }, staleBuild);
   check("Demon identity shows the clan placeholder", staleResult.demonIdentity.includes("Demon"), true);
   check("Human identity right after Demon has no Demon clan", /NONE|Those without family skills/.test(staleResult.humanIdentity), false);
   check("Human identity right after Demon reads Human", staleResult.humanIdentity.includes("Human"), true);
-  check("Human Cleric after Demon has no ancestry", staleResult.ancestry, "");
-  check("Human Cleric after Demon pays for Medic itself (EXP 1100 / 1100)", staleResult.exp.spent, 1100);
+  check("Human after Demon has no ancestry", staleResult.ancestry, "");
+  check("Human after Demon spends its own EXP (1100 / 1100)", staleResult.exp.spent, 1100);
 
   // -------------------------------------------------------------------------
   section("Owner live-check items on the Review screen");

@@ -1,0 +1,32 @@
+{
+  "sections": [
+    {
+      "section": "rulebook",
+      "sourceFile": "../../data/angelssword/decoded/rulebook.json",
+      "sourceSha256": "f1fd7bd83c5399e15753ffd5dbc4732a6d51277f46fe9b433b2fde6f8b75de08",
+      "sourceChars": 141076,
+      "visibleChars": 122096,
+      "visibleTextSha256": "602739848f59c877fd3c7623cd81e54e2203c03f82b86ea18f481662e91f84db"
+    },
+    {
+      "section": "settings_guide",
+      "sourceFile": "../../data/angelssword/decoded/settings_guide.json",
+      "sourceSha256": "7a39427e3ce6840036400bf5f2cdb43a6f63ba4a9c7fbe6d775810f30218d4ca",
+      "sourceChars": 37505,
+      "visibleChars": 36670,
+      "visibleTextSha256": "c3969f7d14e12bb4c52d0ab6179df082d48a0782a73e0ee2de71f4604697352c"
+    },
+    {
+      "section": "patch_notes",
+      "sourceFile": "../../data/angelssword/decoded/patch_notes.json",
+      "sourceSha256": "5c1595e1535a75ec933ae619c3277bd15b4a9d66d32f1eeceb8e420b69485952",
+      "sourceChars": 2894,
+      "visibleChars": 2205,
+      "visibleTextSha256": "b28e7d88f848311e1d68820b22f13a7c2e4374a306fc74fb6bd968e4ce042d7d"
+    }
+  ],
+  "keywords": 92,
+  "keywordsSourceFile": "../../data/angelssword/decoded/keywords.json",
+  "keywordsSourceSha256": "34cdb4653208eb3df514f79b48db0fc0bb5f44f7015d0d39c8a46ba2957cf7f9",
+  "outputSha256": "70a19073a78486100127f5382f56b870756fa4604c35e8051c69745522c7b6ba"
+}

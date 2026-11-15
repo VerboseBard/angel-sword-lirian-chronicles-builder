@@ -11138,3 +11138,29 @@
         grid-template-columns: minmax(0, 1fr);
       }
     }
+
+    /* Task 059 (owner 2026-11-15): Crafting and Gathering are marked "PC only".
+       The pill shows at every size beside the Alpha pill. The sentence shows
+       only on phone-width screens, where these tools are long to scroll. */
+    .play-pc-only-pill {
+      margin-left: 6px;
+    }
+
+    .play-pc-only-note {
+      display: none;
+    }
+
+    @media (max-width: 700px) {
+      .play-pc-only-note {
+        display: block;
+        margin: 8px 0 0;
+        padding: 8px 10px;
+        border: 1px solid rgba(255, 138, 101, 0.5);
+        border-radius: 10px;
+        background: rgba(196, 84, 48, 0.18);
+        color: #ffd9cc;
+        font-size: 0.9rem;
+        font-weight: 700;
+        line-height: 1.4;
+      }
+    }

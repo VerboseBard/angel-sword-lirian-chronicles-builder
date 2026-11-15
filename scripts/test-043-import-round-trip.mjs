@@ -48,6 +48,7 @@
 // Env:  T43_PORT (default 4493); T43_SRC=<folder with src/js> runs against
 //       another source tree (used to show the old code fails); T43_ONLY=A,C
 //       limits parts; T43_SPECIES=human,catfolk limits the part A sweep.
+//       T43_VERSION=0.13.3 exercises the current roster instead of the 0.13.2 baseline.
 import assert from "node:assert/strict";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -58,7 +59,10 @@ import { chromium } from "playwright";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const sourceRoot = process.env.T43_SRC ? path.resolve(process.env.T43_SRC) : root;
-const output = path.join(root, "qa-test-results/task-043-import-round-trip");
+const version = process.env.T43_VERSION || "0.13.2";
+const expectedBuilds = { "0.13.2": 15, "0.13.3": 18 }[version];
+if (!expectedBuilds) throw new Error(`Unsupported round-trip test rules version ${version}`);
+const output = path.join(root, "qa-test-results/task-043-import-round-trip", version);
 await mkdir(output, { recursive: true });
 const port = Number(process.env.T43_PORT || 4493);
 const url = `http://localhost:${port}/`;
@@ -125,7 +129,8 @@ function t43Diff(before, after, ignored, { emptyEqualsMissing = false } = {}, ba
 }
 window.__t43 = {
   ids() {
-    return { species: QUICK_BUILD_SPECIES.map((entry) => entry.id), builds: QUICK_BUILD_ROLES.flatMap((role) => role.builds.map((entry) => entry.id)) };
+    const roles = typeof getQuickBuildRoles === "function" ? getQuickBuildRoles() : QUICK_BUILD_ROLES;
+    return { species: QUICK_BUILD_SPECIES.map((entry) => entry.id), builds: roles.flatMap((role) => role.builds.map((entry) => entry.id)) };
   },
   snapshot() { return JSON.parse(JSON.stringify(createVttCharacterSnapshot())); },
   reset() { clearSheet(); },
@@ -220,6 +225,12 @@ try {
   browser = await chromium.launch();
   const openPage = async () => {
     const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, acceptDownloads: true });
+    await context.addInitScript((rulesVersion) => {
+      const key = "lyrian-chronicles-selected-game-version-v2";
+      if (location.protocol !== "http:" || localStorage.getItem(key)) return;
+      localStorage.setItem(key, rulesVersion);
+      localStorage.setItem("lyrian-chronicles-selected-game-version-latest-v1", "0.13.3");
+    }, version);
     const page = await context.newPage();
     page.on("pageerror", (error) => pageErrors.push(error.message));
     page.on("dialog", (dialog) => dialog.accept());
@@ -227,7 +238,7 @@ try {
       contentType: "application/javascript", body: bundle.outputFiles[0].text
     }));
     await page.goto(url, { waitUntil: "load" });
-    await page.waitForFunction(() => window.__t43 && window.LYRIAN_DATA?.version === "0.13.2" && (document.getElementById("builder-step-content")?.innerHTML || "").length > 100, null, { timeout: 30000 });
+    await page.waitForFunction((rulesVersion) => window.__t43 && window.LYRIAN_DATA?.version === rulesVersion && (document.getElementById("builder-step-content")?.innerHTML || "").length > 100, version, { timeout: 30000 });
     await page.waitForTimeout(1600); // the production idle sheet build
     return { context, page };
   };
@@ -247,12 +258,12 @@ try {
     await context.close();
     return value;
   })();
-  check("Quick Build has 21 species and 15 builds", [ids.species.length, ids.builds.length], [21, 15]);
+  check(`Quick Build has 21 species and ${expectedBuilds} builds in ${version}`, [ids.species.length, ids.builds.length], [21, expectedBuilds]);
 
   // -------------------------------------------------------------------------
   if (runPart("A")) {
-    section("A. Every Quick Build character survives Export -> Import exactly (630 characters, two imports each)");
     const species = ids.species.filter((entry) => !speciesFilter.length || speciesFilter.includes(entry));
+    section(`A. Each selected Quick Build character survives Export -> Import exactly (${species.length * expectedBuilds * 2} characters, two imports each)`);
     // Two pages work side by side (one per start mode) to keep the run short.
     const buildMode = async (mode) => {
       const builder = await openPage();
@@ -267,7 +278,7 @@ try {
     };
     const exported = (await Promise.all(["standard", "mirane"].map(buildMode))).flat();
     if (!speciesFilter.length) {
-      check("sweep covers 21 species x 15 builds x 2 start modes", exported.length, 630);
+      check(`sweep covers 21 species x ${expectedBuilds} builds x 2 start modes`, exported.length, 21 * expectedBuilds * 2);
     }
     const sanity = exported.filter((entry) => entry.snapshot.fields?.Name !== `T43 ${entry.species} ${entry.build}`
       || entry.snapshot.builder?.startMode !== entry.mode || entry.snapshot.ui?.mode !== "sheet" || !entry.hasSummary);
@@ -329,8 +340,8 @@ try {
     }
     for (const mode of ["standard", "mirane"]) {
       species.forEach((speciesId) => {
-        check(`${mode}/${speciesId}: all 15 builds exact when imported on top of another character`, sweepProblems.onTop[`${mode}/${speciesId}`] || [], []);
-        check(`${mode}/${speciesId}: all 15 builds exact when imported on a reset page`, sweepProblems.reset[`${mode}/${speciesId}`] || [], []);
+        check(`${mode}/${speciesId}: all ${expectedBuilds} builds exact when imported on top of another character`, sweepProblems.onTop[`${mode}/${speciesId}`] || [], []);
+        check(`${mode}/${speciesId}: all ${expectedBuilds} builds exact when imported on a reset page`, sweepProblems.reset[`${mode}/${speciesId}`] || [], []);
       });
     }
     const exact = results.sweep.filter((entry) => !entry.onTop.length && !entry.reset.length).length;

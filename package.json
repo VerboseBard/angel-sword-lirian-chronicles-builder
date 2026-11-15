@@ -1,8 +1,8 @@
 {
   "name": "angel-sword-lirian-chronicles-builder",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "private": true,
-  "description": "Web-ready Angel Sword Lyrian Chronicles character builder, Beta 3.0 public release.",
+  "description": "Web-ready Angel Sword Lyrian Chronicles character builder, Beta 3.1 public release.",
   "type": "module",
   "scripts": {
     "build": "node scripts/build-app.mjs && node scripts/build-owlbear.mjs && node scripts/check-bundle-compat.mjs",

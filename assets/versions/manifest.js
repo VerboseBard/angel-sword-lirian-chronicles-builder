@@ -1,8 +1,8 @@
 window.LYRIAN_VERSION_MANIFEST = {
   "schema": 1,
   "product": "Lyrian Chronicles Character Suite",
-  "defaultVersion": "0.13.2",
-  "latestKnownVersion": "0.13.2",
+  "defaultVersion": "0.13.3",
+  "latestKnownVersion": "0.13.3",
   "officialManualUrl": "https://rpg.angelssword.com/game/online-manual",
   "versions": [
     {
@@ -145,6 +145,37 @@ window.LYRIAN_VERSION_MANIFEST = {
         "NEW:Pigfolk",
         "Flight now costs 0 RP instead of 0 AP and has the Rage keyword. Fixed some wording issues.",
         "Classes:"
+      ],
+      "sections": [
+        "Latest update",
+        "Settings guide",
+        "Rulebook",
+        "Breakthroughs",
+        "Keywords",
+        "Races",
+        "Classes",
+        "Abilities",
+        "Items",
+        "Monsters",
+        "Monster abilities"
+      ]
+    },
+    {
+      "id": "0.13.3",
+      "label": "0.13.3 - Lyrian Chronicles",
+      "status": "downloaded",
+      "dataPath": "assets/versions/0.13.3/lyrian-data.js",
+      "detailPath": "assets/versions/0.13.3/lyrian-detail-data.js",
+      "local": true,
+      "updates": [
+        "Rulebook",
+        "Skybound Trial added to the rulesSkybound tier is now 10k+ (skill point increase at 5k unaffected)",
+        "To go past 10k, a challenge must now be undertaken.",
+        "Added some kit rules for storing picked up kits.",
+        "Fall damage prone wording slightly changed to be based on fall dmg taken rather than pure distance.",
+        "Escaping the map rules updated slightly to not disallow defensive actions before escape.",
+        "Races",
+        "Nio are now immune to Petrification."
       ],
       "sections": [
         "Latest update",

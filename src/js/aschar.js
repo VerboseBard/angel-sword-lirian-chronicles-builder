@@ -188,6 +188,7 @@ export function normalizeAscharCharacter(character = {}) {
 
   const plan = {
     name: text(character.name),
+    gender: text(character.gender),
     gameMode: character.gameMode === "mirane" ? "mirane" : "standard",
     race: {
       primaryRaceId: text(race.primaryRaceId),

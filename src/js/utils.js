@@ -2,6 +2,7 @@
 // other, and rules.js builds its lookup while they load; the crafting points
 // table has to be ready before that happens.
 import { withCraftingPoints } from "./crafting-points.js";
+import { LARGE_SPECIMEN_BREAKTHROUGH } from "./constants.js";
 import { normalizeLyrianText, normalizePulledRulesEntry } from "./ui.js";
 
 
@@ -344,13 +345,25 @@ const byName = new Map();
         };
       };
 
+      const breakthroughs = makeMap(data.breakthroughs);
+      const largeSpecimenVersions = Object.values(LARGE_SPECIMEN_BREAKTHROUGH);
+      const largeSpecimen = largeSpecimenVersions
+        .map(({ id }) => breakthroughs.byId.get(id))
+        .find(Boolean);
+      if (largeSpecimen) {
+        for (const { id, name } of largeSpecimenVersions) {
+          breakthroughs.byId.set(id, largeSpecimen);
+          breakthroughs.byName.set(normalizeKey(name), largeSpecimen);
+        }
+      }
+
       return {
         races: makeMap(data.races),
         ancestries: makeMap(data.ancestries),
         classes: makeMap(data.classes),
         // Task 033: the shipped item data has no crafting HP; add it for the rules version that has it.
         items: makeMap(withCraftingPoints(expandMaterialItemEntries(data.items), data.version)),
-        breakthroughs: makeMap(data.breakthroughs),
+        breakthroughs,
         abilities: makeMap(data.abilities)
       };
     }

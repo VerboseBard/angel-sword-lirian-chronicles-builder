@@ -1,20 +1,22 @@
-Angel Sword Beta 3.0 Public Release
+Angel Sword Beta 3.1 Public Release
 
 PUBLIC LINK
 
 https://verbosebard.github.io/angel-sword-lirian-chronicles-builder/
 
-The link is unchanged. After the Beta 3.0 deployment completes, refresh the page. If an older copy remains open, close and reopen the tab or perform one hard refresh.
+The link is unchanged. After the Beta 3.1 deployment completes, refresh the page. If an older copy remains open, close and reopen the tab or perform one hard refresh.
 
 WHAT TO TEST
 
-- A fresh browser starts on rules 0.13.2.
-- Rules 0.13.1, 0.13.0, 0.12.6, and 0.12.5 remain selectable and survive reload.
+- A fresh browser starts on rules 0.13.3.
+- Rules 0.13.2, 0.13.1, 0.13.0, 0.12.6, and 0.12.5 remain selectable and survive reload.
+- Aetherologist, Enforcer, Fateweaver and their abilities appear in the class catalog.
 - Custom Build and Quick Build both finish successfully.
 - Gnome, Raijin, and Selkie Quick Builds receive the correct granted classes.
 - Seven Sorrows Rush and Bard Expertise Rush receive their required proficiencies, breakthroughs, and gear.
 - Character saves, JSON/PDF/spreadsheet exports, and imports work.
-- Phone layouts do not clip navigation, cards, sheets, crafting, gathering, or dice controls.
+- Phone layouts do not clip navigation, cards, sheets, or dice controls.
+- Crafting and Gathering show "PC only": they are Alpha tools built for a computer screen for now.
 
 SAVE DATA WARNING
 

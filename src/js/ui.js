@@ -1,7 +1,7 @@
-import { BUILDER_STEPS, CCS_TEMPLATE_INFO, DUPLICATE_ABILITY_REFUND_RULE, CHARACTER_START_MODES, CLASS_GROUP_ROLE_ORDER, DEFAULT_CHARACTER_START_MODE, CLASS_PASSIVE_SLOTS, CLASS_PURCHASABLE_LEVELS, CLASS_ROWS, CLICKABLE_ROLL_FIELDS, COMMON_WEAPON_GROUP_OPTIONS, CREATION_INTERLUDE_ACTIONS, CREATION_SKILL_POINT_BUDGET, DEFAULT_DICE_SET_ID, DICE_PREVIEW_FALLBACK_URL, DICE_SETS, DICE_SET_ID_ALIASES, DICE_SOUND_ASSETS, DICE_TRAY_TYPES, EMBEDDED_STATE_CHUNK_SIZE, EMBEDDED_STATE_FORMAT, ENABLE_ACCURATE_DICE_ROLLS, ENABLE_WEBGL_DICE_ROLLS, INVENTORY_ROWS, MAIN_STATS, MAIN_STAT_CREATION_ARRAY, MAX_DICE_TRAY_DICE, MIRANE_CRAFTING_INTERLUDE_EXP, MIRANE_GATHER_BASE_UNITS, MIRANE_GATHER_MASTERY_BONUS_UNITS, MIRANE_IP_SHOP_PRICE_CAP, MIRANE_IP_SHOP_SALE_PERCENT_CAP, MIRANE_IP_SHOP_SLOT_LIMIT, MIRANE_JOB_ARTISAN_BONUS_CLIM, MIRANE_JOB_BASE_CLIM, MIRANE_RAW_MATERIAL_CLIM_LIMIT, MIRANE_SINGLE_MATERIAL_CLIM_LIMIT, MIRANE_START_MODE_ID, MULTILINE_FIELDS, NAME_FIELDS, OFFICIAL_LANGUAGE_OPTIONS, PAGE_BACKGROUNDS, PASSIVE_READ_ONLY_FIELDS, PDF_STATE_CHUNK_FIELD_PREFIX, PDF_STATE_MANIFEST_FIELD, PLAY_BASIC_ACTIONS, PLAY_ROLLS, PORTRAIT_JPEG_QUALITY, PORTRAIT_MAX_DIMENSION, PORTRAIT_NORMALIZE_THRESHOLD, SAVE_SNAPSHOT_PORTRAIT_LIMIT, SECONDARY_STATS, SECONDARY_STAT_CREATION_ARRAY, SKILL_ALIASES, SKILL_DEFINITIONS, SKILL_EXPERTISE_CAP, SKILL_EXPERTISE_OPTIONS, SKILL_OPTIONS, SKILL_POINT_CAP, SPECIALITY_WEAPON_GROUP_OPTIONS, STARTING_CLASS_EXP, STARTING_INTERLUDE_POINTS, SUBSTAT_OPTIONS, WEAPON_GROUP_REFERENCE_OPTIONS } from "./constants.js";
+import { BUILDER_STEPS, CCS_TEMPLATE_INFO, DUPLICATE_ABILITY_REFUND_RULE, CHARACTER_START_MODES, CLASS_GROUP_ROLE_ORDER, DEFAULT_CHARACTER_START_MODE, CLASS_PASSIVE_SLOTS, CLASS_PURCHASABLE_LEVELS, CLASS_ROWS, CLICKABLE_ROLL_FIELDS, COMMON_WEAPON_GROUP_OPTIONS, CREATION_INTERLUDE_ACTIONS, CREATION_SKILL_POINT_BUDGET, DEFAULT_DICE_SET_ID, DICE_PREVIEW_FALLBACK_URL, DICE_SETS, DICE_SET_ID_ALIASES, DICE_SOUND_ASSETS, DICE_TRAY_TYPES, EMBEDDED_STATE_CHUNK_SIZE, EMBEDDED_STATE_FORMAT, ENABLE_ACCURATE_DICE_ROLLS, ENABLE_WEBGL_DICE_ROLLS, INVENTORY_ROWS, LARGE_SPECIMEN_BREAKTHROUGH, MAIN_STATS, MAIN_STAT_CREATION_ARRAY, MAX_DICE_TRAY_DICE, MIRANE_CRAFTING_INTERLUDE_EXP, MIRANE_GATHER_BASE_UNITS, MIRANE_GATHER_MASTERY_BONUS_UNITS, MIRANE_IP_SHOP_PRICE_CAP, MIRANE_IP_SHOP_SALE_PERCENT_CAP, MIRANE_IP_SHOP_SLOT_LIMIT, MIRANE_JOB_ARTISAN_BONUS_CLIM, MIRANE_JOB_BASE_CLIM, MIRANE_RAW_MATERIAL_CLIM_LIMIT, MIRANE_SINGLE_MATERIAL_CLIM_LIMIT, MIRANE_START_MODE_ID, MULTILINE_FIELDS, NAME_FIELDS, OFFICIAL_LANGUAGE_OPTIONS, PAGE_BACKGROUNDS, PASSIVE_READ_ONLY_FIELDS, PDF_STATE_CHUNK_FIELD_PREFIX, PDF_STATE_MANIFEST_FIELD, PLAY_BASIC_ACTIONS, PLAY_ROLLS, PORTRAIT_JPEG_QUALITY, PORTRAIT_MAX_DIMENSION, PORTRAIT_NORMALIZE_THRESHOLD, SAVE_SNAPSHOT_PORTRAIT_LIMIT, SECONDARY_STATS, SECONDARY_STAT_CREATION_ARRAY, SKILL_ALIASES, SKILL_DEFINITIONS, SKILL_EXPERTISE_CAP, SKILL_EXPERTISE_OPTIONS, SKILL_OPTIONS, SKILL_POINT_CAP, SPECIALITY_WEAPON_GROUP_OPTIONS, STARTING_CLASS_EXP, STARTING_INTERLUDE_POINTS, SUBSTAT_OPTIONS, WEAPON_GROUP_REFERENCE_OPTIONS } from "./constants.js";
 import { asArray, clamp, cleanText, cssEscape, escapeHtml, formatModifier, normalizeKey, normalizePhrase, splitSentences, toNumber } from "./utils.js";
 import { clearSheet, createDefaultState, flushScheduledWorkingStatePersist, getSavedSlots, mergePlayState, persistWorkingState, scheduleWorkingStatePersist, setWorkingStatePersistenceReady, state, updateFieldValue } from "./state.js";
-import { applyGameVersion, detailLookup, exportPrepCache, getAncestryDetail, getAncestryOptionsByPrimaryRace, getAncestryRequirementPhrases, getBreakthroughBudgetState, getBuilderChoiceDefinitionsCacheKey, getCampaignProgressState, getCharacterStartMode, getClassDetail, getClassUnlockBudgetState, getComputedBonuses, getCurrentMainStatValues, getCurrentSecondaryLineageMode, getDemonClanOptions, getDerivedCombatStats, getInitiativeBreakdown, getSaveBreakdown, getHumanRaceSkillChoiceOptions, getRaceDetail, getRaceRequirementPhrases, getSecondaryLineageLabels, getSelectedAncestryDetail, getSelectedBreakthroughRecords, getSelectedClassDetails, getSelectedClassProgress, getSelectedGameVersionId, getSelectedItemRecords, getSelectedRaceDetail, getSkillBreakdownParts, getSkillRowsData, getStartingFundsState, getVersionRecords, lookup, rememberPlayResourcesBeforeBuilderVisit, restorePlayResourcesAfterBuilderVisit, syncPlayResourcesFromFields, usePlayCost, versionRuntime } from "./rules.js";
+import { applyGameVersion, compareVersionIds, detailLookup, exportPrepCache, getAncestryDetail, getAncestryOptionsByPrimaryRace, getAncestryRequirementPhrases, getBreakthroughBudgetState, getBuilderChoiceDefinitionsCacheKey, getCampaignProgressState, getCharacterStartMode, getClassDetail, getClassUnlockBudgetState, getComputedBonuses, getCurrentMainStatValues, getCurrentSecondaryLineageMode, getDemonClanOptions, getDerivedCombatStats, getInitiativeBreakdown, getSaveBreakdown, getHumanRaceSkillChoiceOptions, getRaceDetail, getRaceRequirementPhrases, getSecondaryLineageLabels, getSelectedAncestryDetail, getSelectedBreakthroughRecords, getSelectedClassDetails, getSelectedClassProgress, getSelectedGameVersionId, getSelectedItemRecords, getSelectedRaceDetail, getSkillBreakdownParts, getSkillRowsData, getSkyboundTrialState, getStartingFundsState, getVersionRecords, lookup, rememberPlayResourcesBeforeBuilderVisit, restorePlayResourcesAfterBuilderVisit, syncPlayResourcesFromFields, usePlayCost, versionRuntime } from "./rules.js";
 import { dicePackRuntime, preloadDiceSetFaceArt, renderDiceTray } from "./dice.js";
 import { closeSheetModal, deriveSaveSlotName, exportJsonState, exportPatchedTemplateWorkbook, exportPdfState, exportSpreadsheetState, exportState, extractAbilityHeading, getWorksheetNumberText, getWorksheetText, handleImportedCharacterFile, handleSaveSlotAction, loadFromBrowser, openSheetModal, parseClimCost, parseNumericCost, saveCurrentCharacterToActiveSlot, saveCurrentCharacterToNewSlot, saveToBrowser, setSpreadsheetExportCell } from "./io.js";
 import { ensureDiceRuntimeLoaded, isDiceRuntimeLoaded } from "./runtime-loader.js";
@@ -579,7 +579,22 @@ const entries = computed
       }
       return entries;
     }
+function usesSpiritCoreSkillCaps() {
+      return window.LYRIAN_DATA?.version === "0.13.3";
+    }
+function getSkillAllocationCap(baseCap) {
+      if (!usesSpiritCoreSkillCaps()) {
+        return baseCap;
+      }
+      const spiritCore = toNumber(state.fields["Spirit Core"], 0);
+      if (spiritCore >= 10000) {
+        return Number.POSITIVE_INFINITY;
+      }
+      return baseCap + (spiritCore >= 5000 ? 5 : 0);
+    }
 function getSkillExpertiseGroups(index, bonuses = getComputedBonuses()) {
+      const expertiseCap = getSkillAllocationCap(SKILL_EXPERTISE_CAP);
+      const assignedPointsOnly = usesSpiritCoreSkillCaps();
       const groups = new Map();
       getSkillExpertiseEntries(index).forEach((entry) => {
         const key = normalizePhrase(entry.name);
@@ -615,11 +630,15 @@ const current = groups.get(key) || {
       });
 
       return Array.from(groups.values())
-        .map((entry) => ({
-          ...entry,
-          uncappedBonus: entry.bonus,
-          bonus: Math.min(SKILL_EXPERTISE_CAP, entry.bonus)
-        }))
+        .map((entry) => {
+          const bonusSubjectToCap = assignedPointsOnly ? entry.points * 2 : entry.bonus;
+          const outsideCapBonus = entry.bonus - bonusSubjectToCap;
+          return {
+            ...entry,
+            bonusSubjectToCap,
+            bonus: Math.min(expertiseCap, bonusSubjectToCap) + outsideCapBonus
+          };
+        })
         .filter((entry) => entry.bonus > 0)
         .sort((a, b) => b.bonus - a.bonus || a.name.localeCompare(b.name));
     }
@@ -634,14 +653,25 @@ function getBestCreationExpertiseBonusForSkill(index) {
           const key = normalizePhrase(entry.name);
           groups.set(key, (groups.get(key) || 0) + entry.points);
         });
-      return Math.min(SKILL_EXPERTISE_CAP, Array.from(groups.values()).reduce((best, points) => Math.max(best, points * 2), 0));
+      const bestBonus = Array.from(groups.values()).reduce((best, points) => Math.max(best, points * 2), 0);
+      return Math.min(getSkillAllocationCap(SKILL_EXPERTISE_CAP), bestBonus);
     }
 function getTotalExpertiseSpendForSkill(index) {
       return getSkillExpertiseEntries(index).reduce((total, entry) => total + entry.points, 0);
     }
-function syncExpertiseDisplayField(index) {
+function syncExpertiseDisplayField(index, setField = updateFieldValue) {
+      const field = `Expertise${index}`;
+      const legacySpend = getExpertiseSpendFromValue(state.fields[field]);
+      const cap = getSkillAllocationCap(SKILL_EXPERTISE_CAP);
+      // For older saves the display field may be the only copy of the allocation.
+      if (legacySpend > Math.ceil(cap / 2) && !getStoredExpertiseEntriesForSource(index, "creation").length) {
+        setStoredSkillExpertiseEntries([
+          ...getStoredSkillExpertiseEntries(),
+          { skillIndex: index, name: "Unassigned creation expertise", source: "creation", points: legacySpend }
+        ]);
+      }
       const bestBonus = getBestCreationExpertiseBonusForSkill(index);
-      updateFieldValue(`Expertise${index}`, bestBonus ? formatModifier(bestBonus) : "");
+      setField(field, bestBonus ? formatModifier(bestBonus) : "");
     }
 function addSkillExpertisePoint(index, sourceSpec, name) {
       const row = Number(index);
@@ -658,8 +688,9 @@ const specialty = normalizeExpertiseSpecialtyName(name);
       }
       const currentGroup = getSkillExpertiseGroups(row)
         .find((entry) => normalizePhrase(entry.name) === normalizePhrase(specialty));
-      if ((currentGroup?.uncappedBonus || 0) + 2 > SKILL_EXPERTISE_CAP) {
-        setStatus(`${definition.name} expertise cannot exceed +${SKILL_EXPERTISE_CAP}.`);
+      const expertiseCap = getSkillAllocationCap(SKILL_EXPERTISE_CAP);
+      if ((currentGroup?.bonusSubjectToCap || 0) + 2 > expertiseCap) {
+        setStatus(`${definition.name} expertise points cannot give more than +${expertiseCap}.`);
         return false;
       }
 
@@ -749,8 +780,9 @@ let points = storedUnassigned.reduce((total, entry) => total + entry.points, 0);
 
       const targetGroup = getSkillExpertiseGroups(row)
         .find((entry) => normalizePhrase(entry.name) === normalizePhrase(specialty));
-      if ((targetGroup?.uncappedBonus || 0) + points * 2 > SKILL_EXPERTISE_CAP) {
-        setStatus(`${definition.name} expertise cannot exceed +${SKILL_EXPERTISE_CAP}.`);
+      const expertiseCap = getSkillAllocationCap(SKILL_EXPERTISE_CAP);
+      if ((targetGroup?.bonusSubjectToCap || 0) + points * 2 > expertiseCap) {
+        setStatus(`${definition.name} expertise points cannot give more than +${expertiseCap}.`);
         return false;
       }
 
@@ -911,7 +943,7 @@ const currentSpend = getRacialSkillSpend(choice, index);
 const pool = getRacialSkillPoolState(choice);
 const spentElsewhere = pool.spent - currentSpend;
 const skill = getSkillRowData(index);
-const pointCapRoom = Math.max(0, SKILL_POINT_CAP - Math.max(0, (skill?.uncappedSkillPoints || 0) - currentSpend));
+const pointCapRoom = Math.max(0, getSkillAllocationCap(SKILL_POINT_CAP) - Math.max(0, (skill?.uncappedSkillPoints || 0) - currentSpend));
 const maxSpend = Math.min(Math.max(0, pool.budget - spentElsewhere), pointCapRoom);
       return {
         currentSpend,
@@ -944,8 +976,8 @@ const pool = getClassSkillPoolState(choice);
 const spentElsewhere = pool.spent - currentSpend;
 const skill = getSkillRowData(index);
 const pointCapRoom = kind === "skill"
-        ? Math.max(0, SKILL_POINT_CAP - Math.max(0, (skill?.uncappedSkillPoints || 0) - currentSpend))
-        : Math.max(0, Math.floor((SKILL_EXPERTISE_CAP - Math.max(0, (skill?.expertiseValue || 0) - currentSpend * 2)) / 2));
+        ? Math.max(0, getSkillAllocationCap(SKILL_POINT_CAP) - Math.max(0, (skill?.uncappedSkillPoints || 0) - currentSpend))
+        : Math.max(0, Math.floor((getSkillAllocationCap(SKILL_EXPERTISE_CAP) - Math.max(0, (skill?.expertiseBonusForAllocation || 0) - currentSpend * 2)) / 2));
 const maxSpend = Math.min(Math.max(0, pool.budget - spentElsewhere), pointCapRoom);
       return {
         currentSpend,
@@ -974,6 +1006,13 @@ const breakdown = getVisibleRacialSkillPoolChoices()
         breakdown
       };
     }
+function clampSkillAllocation(requestedSpend, { currentSpend, maxSpend }) {
+      // An allocation saved before a cap dropped can still be reduced one point at a time.
+      if (usesSpiritCoreSkillCaps() && requestedSpend < currentSpend) {
+        return requestedSpend;
+      }
+      return clamp(requestedSpend, 0, maxSpend);
+    }
 function setRacialSkillAllocation(choiceId, index, value) {
       const choice = getVisibleRacialSkillPoolChoices().find((entry) => entry.id === choiceId);
 const row = Number(index);
@@ -982,7 +1021,7 @@ const row = Number(index);
       }
 const optionState = getRacialSkillAllocationOptions(choice, row);
 const requestedSpend = Math.max(0, toNumber(value, 0));
-const safeSpend = optionState.choices.includes(requestedSpend) ? requestedSpend : clamp(requestedSpend, 0, optionState.maxSpend);
+const safeSpend = clampSkillAllocation(requestedSpend, optionState);
       updateFieldValue(getRacialSkillFieldName(choice.id, row), safeSpend ? String(safeSpend) : "");
       syncSkillFields();
     }
@@ -1008,7 +1047,7 @@ const allocationKind = kind === "expertise" ? "expertise" : "skill";
       }
 const optionState = getClassSkillAllocationOptions(choice, row, allocationKind);
 const requestedSpend = Math.max(0, toNumber(value, 0));
-const safeSpend = optionState.choices.includes(requestedSpend) ? requestedSpend : clamp(requestedSpend, 0, optionState.maxSpend);
+const safeSpend = clampSkillAllocation(requestedSpend, optionState);
       updateFieldValue(getClassSkillPoolFieldName(choice.id, row, allocationKind), safeSpend ? String(safeSpend) : "");
       syncSkillFields();
     }
@@ -1069,8 +1108,8 @@ const currentSpend = type === "expertise"
 const budget = getSkillBudgetState();
 const spentElsewhere = budget.spent - currentSpend;
 const capRoom = type === "expertise"
-        ? Math.max(0, Math.floor((SKILL_EXPERTISE_CAP - Math.max(0, skill.expertiseValue - currentSpend * 2)) / 2))
-        : Math.max(0, SKILL_POINT_CAP - Math.max(0, skill.uncappedSkillPoints - currentSpend));
+        ? Math.max(0, Math.floor((getSkillAllocationCap(SKILL_EXPERTISE_CAP) - Math.max(0, skill.expertiseBonusForAllocation - currentSpend * 2)) / 2))
+        : Math.max(0, getSkillAllocationCap(SKILL_POINT_CAP) - Math.max(0, skill.uncappedSkillPoints - currentSpend));
 const maxSpend = Math.min(Math.max(0, CREATION_SKILL_POINT_BUDGET - spentElsewhere), capRoom);
 const currentValid = currentSpend <= maxSpend;
 
@@ -2259,6 +2298,9 @@ const grantedText = stripPickOneProficiencySentences(text);
       // "light and medium armor" (Ranger).
       if (/\bproficien(?:t|cy)\s+in\s+pistols\s*(?:\.|$)/i.test(text)) {
         push("Pistol");
+      }
+      if (/\bproficien(?:t|cy)\s+in\s+shotguns\s*(?:\.|$)/i.test(text)) {
+        push("Shotgun");
       }
       if (/\bproficien(?:t|cy)\s+in\s+sniper rifles\b/i.test(text)) {
         push("Sniper Rifle");
@@ -6265,6 +6307,41 @@ function refreshPlayTrackerViews() {
       renderBuilderSummary();
       renderPlayDashboard();
     }
+function canSpendProgressionExp(amount) {
+      const { spendRoom } = getSkyboundTrialState();
+      if (amount <= spendRoom) return true;
+      setStatus("Complete the Skybound Trial to spend more than 9,999 EXP.");
+      return false;
+    }
+function awardProgressionExp(amount) {
+      const trial = getSkyboundTrialState();
+      const banked = Math.min(amount, Math.max(0, trial.spendRoom - trial.expBank));
+      const held = Math.min(amount - banked, trial.availableHeldSpace);
+      const unrecorded = amount - banked - held;
+      if (held) {
+        state.play.skyboundTrial = { completed: false, heldExp: trial.heldExp + held };
+      }
+      if (banked) {
+        updateFieldValue("Exp", String(trial.expBank + banked));
+        markProgressionTrackerManual("Exp");
+      }
+      if (held) scheduleWorkingStatePersist();
+      const parts = [banked && `Added ${banked} EXP`, held && `Held ${held} EXP for the Skybound Trial`,
+        unrecorded && `${unrecorded} EXP exceeded the 1,000 held EXP limit`].filter(Boolean);
+      return parts.join(". ") + ".";
+    }
+function recordSkyboundTrialCompletion() {
+      const trial = getSkyboundTrialState();
+      if (!trial.enabled || trial.completed || !window.confirm("Has the GM confirmed this character completed the Skybound Trial?")) return;
+      state.play.skyboundTrial = { completed: true, heldExp: 0 };
+      if (trial.heldExp) {
+        updateFieldValue("Exp", String(trial.expBank + trial.heldExp));
+        markProgressionTrackerManual("Exp");
+      }
+      persistWorkingState();
+      refreshPlayTrackerViews();
+      setStatus(trial.heldExp ? `Skybound Trial completed. Released ${trial.heldExp} held EXP.` : "Skybound Trial completed.");
+    }
 function applyPlayTrackerTransaction(button) {
       const fieldName = button.dataset.playTransactionField;
 const action = button.dataset.playTransactionAction;
@@ -6284,6 +6361,7 @@ const label = getPlayTrackerLabel(fieldName);
           input?.focus();
           return;
         }
+        if (!canSpendProgressionExp(amount)) return;
 const spiritCore = Math.max(0, toNumber(cleanText(state.fields["Spirit Core"]), 0));
         updateFieldValue("Exp", String(expBank - amount));
         updateFieldValue("Spirit Core", String(spiritCore + amount));
@@ -6291,6 +6369,12 @@ const spiritCore = Math.max(0, toNumber(cleanText(state.fields["Spirit Core"]), 
         state.builder.autoSpiritCore = "";
         refreshPlayTrackerViews();
         setStatus(`Spent ${amount} EXP and added ${amount} to Spirit Core.`);
+        return;
+      }
+      if (fieldName === "Exp" && action === "add") {
+        const message = awardProgressionExp(amount);
+        refreshPlayTrackerViews();
+        setStatus(message);
         return;
       }
 const current = toNumber(cleanText(state.fields[fieldName]), 0);
@@ -6426,6 +6510,41 @@ function hasSelectedBreakthroughNamed(name, selectedBreakthroughIds) {
         : new Set(selectedBreakthroughIds || []);
       return Array.from(selectedIds).some((id) => normalizePhrase(lookup.breakthroughs.resolve(id)?.name) === expected);
     }
+function isLargeSpecimenBreakthrough(entry) {
+      return entry?.id === LARGE_SPECIMEN_BREAKTHROUGH.historical.id
+        || entry?.id === LARGE_SPECIMEN_BREAKTHROUGH.maleOni.id;
+    }
+function normalizeLargeSpecimenSelections() {
+      // Saved state can load before its rules bundle. Migrate only once that
+      // bundle is active so a failed or pending load cannot change the saved ID.
+      if (state.ui.gameVersion && state.ui.gameVersion !== window.LYRIAN_DATA?.version) {
+        return;
+      }
+      const record = lookup.breakthroughs.resolve(LARGE_SPECIMEN_BREAKTHROUGH.historical.id);
+      if (!record) {
+        return;
+      }
+      const canonicalize = (id) => lookup.breakthroughs.resolve(id) === record ? record.id : id;
+      for (const field of ["selectedBreakthroughIds", "gmApprovedBreakthroughIds", "unmetBreakthroughIds"]) {
+        const ids = state.builder[field];
+        if (!ids.some((id) => canonicalize(id) === record.id)) {
+          continue;
+        }
+        let found = false;
+        state.builder[field] = ids.map(canonicalize).filter((id) => {
+          if (id !== record.id) {
+            return true;
+          }
+          if (found) {
+            return false;
+          }
+          found = true;
+          return true;
+        });
+      }
+      state.builder.inspected.breakthrough = canonicalize(state.builder.inspected.breakthrough);
+      state.librarySelections.breakthrough = canonicalize(state.librarySelections.breakthrough);
+    }
 export function getBreakthroughRequirementStatus(entry, selectedBreakthroughIds = state.builder.selectedBreakthroughIds) {
       const status = {
         met: true,
@@ -6447,6 +6566,20 @@ export function getBreakthroughRequirementStatus(entry, selectedBreakthroughIds 
 const selectedRace = getSelectedRaceDetail();
 const selectedAncestry = getSelectedAncestryDetail();
 const requirementText = cleanText(entry.requirements);
+
+      if (isLargeSpecimenBreakthrough(entry)) {
+        const ancestryId = selectedAncestry?.id;
+        const oniEligible = ancestryId === "oni" && entry.id === LARGE_SPECIMEN_BREAKTHROUGH.maleOni.id;
+        if (!oniEligible && !["nio", "bullfolk", "bearfolk"].includes(ancestryId)) {
+          status.met = false;
+          status.ancestryMismatch = true;
+          status.reasons.push(requirementText);
+        } else if (oniEligible && normalizeKey(state.fields.Gender) !== "male") {
+          status.met = false;
+          status.reasons.push("For an Oni, enter Male on the Name & Profile step.");
+        }
+        return status;
+      }
 
       if (normalizePhrase(entry.name) === "skilled flier") {
         const hasFlightTrait = getSelectedAncestryFeatureRecords().some((ancestry) => ancestryHasTraitNamed(ancestry, "Flight"));
@@ -6529,6 +6662,9 @@ function eligibleBreakthroughs() {
       return lookup.breakthroughs.entries.filter((entry) => isBreakthroughEligible(entry));
     }
 function shouldShowBreakthroughForCurrentLineage(entry) {
+      if (isLargeSpecimenBreakthrough(entry) && state.builder.selectedBreakthroughIds.includes(entry.id)) {
+        return true;
+      }
       const status = getBreakthroughRequirementStatus(entry);
       return !status.raceMismatch && !status.ancestryMismatch;
     }
@@ -6548,6 +6684,7 @@ function filteredBreakthroughs() {
 //    still removed, as before, but one already flagged at load is left for the player to
 //    remove by hand, and unknown ids are never dropped.
 function pruneIneligibleBreakthroughSelections({ keepUnmet = false } = {}) {
+      normalizeLargeSpecimenSelections();
       const flagged = new Set(state.builder.unmetBreakthroughIds || []);
       let changed = false;
 
@@ -6564,7 +6701,7 @@ const nextIds = state.builder.selectedBreakthroughIds.filter((id) => {
             flagged.delete(id);
             return true;
           }
-          if (keepUnmet) {
+          if (keepUnmet || isLargeSpecimenBreakthrough(record)) {
             flagged.add(id);
             return true;
           }
@@ -7048,6 +7185,11 @@ function getPlayAbilityLogLines(ability = {}) {
         cleanText(ability.descriptionText || ability.description || "")
       ].filter(Boolean);
     }
+const RULES_0133_CLASS_KEY_ACTION_IDS = {
+      aetherologist: "begin-the-final-calculation",
+      enforcer: "final-warning",
+      fateweaver: "thread-of-reprieve"
+    };
 function getQuickPlayAbilities() {
       const abilities = [];
 const seen = new Set();
@@ -7076,9 +7218,11 @@ const race = getSelectedRaceDetail();
 
       getSelectedClassProgress().forEach(({ record: entry }) => {
         const keyAbility = getClassKeyAbilityPlayRecord(entry);
-        if (keyAbility) {
+        const linkedAction = lookup.abilities.resolve(RULES_0133_CLASS_KEY_ACTION_IDS[entry.id]);
+        if (keyAbility && normalizePhrase(keyAbility.name) !== normalizePhrase(linkedAction?.name)) {
           push(keyAbility, keyAbility.source);
         }
+        push(linkedAction, `${entry.name} key ability`);
         getPurchasedClassAbilities(entry).forEach((ability) => {
           push(ability, entry.name);
         });
@@ -9092,9 +9236,13 @@ const featureSkillPoints = bonuses.skillPoints[definition.name] || 0;
 const racialSkillInfo = getRacialSkillPointsForSkill(index);
 const racialSkillPoints = racialSkillInfo.total;
 const uncappedSkillPoints = creationSkillPoints + racialSkillPoints + featureSkillPoints;
-const skillPoints = Math.min(SKILL_POINT_CAP, uncappedSkillPoints);
+const skillPointCap = getSkillAllocationCap(SKILL_POINT_CAP);
+const skillPoints = Math.min(skillPointCap, uncappedSkillPoints);
 const expertiseGroups = getSkillExpertiseGroups(index, bonuses);
 const expertiseValue = expertiseGroups.reduce((best, entry) => Math.max(best, entry.bonus), 0);
+const expertiseBonusForAllocation = usesSpiritCoreSkillCaps()
+        ? expertiseGroups.reduce((best, entry) => Math.max(best, entry.bonusSubjectToCap), 0)
+        : expertiseValue;
 const creationExpertiseSpend = getCreationExpertiseSpendForSkill(index);
 const expertiseSpend = getTotalExpertiseSpendForSkill(index);
 const bonusValue = bonuses.skillChecks[definition.name] || 0;
@@ -9111,9 +9259,10 @@ const bestExpertiseTotal = total + expertiseValue;
         racialSkillBreakdown: racialSkillInfo.breakdown,
         featureSkillPoints,
         uncappedSkillPoints,
-        overSkillPointCap: Math.max(0, uncappedSkillPoints - SKILL_POINT_CAP),
+        overSkillPointCap: Math.max(0, uncappedSkillPoints - skillPointCap),
         skillPoints,
         expertiseValue,
+        expertiseBonusForAllocation,
         expertiseGroups,
         creationExpertiseSpend,
         expertiseSpend,
@@ -9139,7 +9288,7 @@ function setSkillAllocation(index, type, value) {
       }
 const optionState = getSkillAllocationOptions(row, type);
 const requestedSpend = Math.max(0, toNumber(value, 0));
-const safeSpend = optionState.choices.includes(requestedSpend) ? requestedSpend : clamp(requestedSpend, 0, optionState.maxSpend);
+const safeSpend = clampSkillAllocation(requestedSpend, optionState);
 
       if (type === "expertise") {
         updateFieldValue(`Expertise${row}`, formatExpertiseValueFromSpend(safeSpend));
@@ -9188,8 +9337,7 @@ function syncSkillFields() {
         updateFieldValue(`Skill${row}`, definition.name);
         updateFieldValue(`Stat${row}`, definition.stat);
 const skillData = getSkillRowData(row);
-const creationExpertiseBonus = getBestCreationExpertiseBonusForSkill(row);
-        updateFieldValue(`Expertise${row}`, creationExpertiseBonus ? formatModifier(creationExpertiseBonus) : "");
+        syncExpertiseDisplayField(row);
         updateFieldValue(`Bonus${row}`, formatModifier(skillData ? skillData.total : 0));
 const bonusNode = document.querySelector(`[data-field="${cssEscape(`Bonus${row}`)}"]`);
         if (bonusNode) {
@@ -9211,8 +9359,7 @@ function syncSkillFieldsForExport() {
         setFieldValueForExport(`Skill${row}`, definition.name);
         setFieldValueForExport(`Stat${row}`, definition.stat);
 const skillData = getSkillRowData(row);
-const creationExpertiseBonus = getBestCreationExpertiseBonusForSkill(row);
-        setFieldValueForExport(`Expertise${row}`, creationExpertiseBonus ? formatModifier(creationExpertiseBonus) : "");
+        syncExpertiseDisplayField(row, setFieldValueForExport);
         setFieldValueForExport(`Bonus${row}`, formatModifier(skillData ? skillData.total : 0));
 const bonusNode = document.querySelector(`[data-field="${cssEscape(`Bonus${row}`)}"]`);
         if (bonusNode) {
@@ -10413,6 +10560,7 @@ const climValue = funds?.availableClim ?? getStartingFundsState().availableClim;
       `;
     }
 function renderPlayEditableDerivedCard({ label, value, summary = "", fieldName, fieldLabel, spendToSpiritCore = false, cardClass = "" }) {
+      const trial = fieldName === "Exp" ? getSkyboundTrialState() : null;
       return `
         <div class="play-derived-card${cardClass ? ` ${escapeHtml(cardClass)}` : ""}">
           <strong>${escapeHtml(label)}</strong>
@@ -10449,6 +10597,10 @@ function renderPlayEditableDerivedCard({ label, value, summary = "", fieldName, 
               ` : ""}
             </div>
           </div>
+          ${trial?.enabled ? trial.completed
+            ? "<p>Skybound Trial completed.</p>"
+            : `<p>Skybound Trial pending. ${escapeHtml(String(trial.heldExp))} / 1,000 EXP held.</p>
+               <button type="button" data-record-skybound-trial>Record Trial Completion</button>` : ""}
         </div>
       `;
     }
@@ -12086,8 +12238,7 @@ function getInferredRecipeRequirements(recipe = {}) {
         label: "Iron Artifice Parts",
         lookupName: "Iron Artifice Parts",
         quantity,
-        unit: "part",
-        standardUnitCost: 1
+        unit: "part"
       });
       const originalWeaponRequirement = () => createRecipeRequirement({
         section: "base item",
@@ -12100,8 +12251,7 @@ function getInferredRecipeRequirements(recipe = {}) {
         label: "Food Units",
         lookupName: "Food Units",
         quantity,
-        unit: "units",
-        standardUnitCost: 1
+        unit: "units"
       });
       const isTwoHanded = /\btwo\s+handed\b|\btwohanded\b/.test(text);
       const isLongsword = /\blongsword\b/.test(text);
@@ -12268,14 +12418,31 @@ function getOwnedRequirementQuantity(record, requirement, inventory) {
         return total + (Math.max(1, Math.floor(toNumber(entry.quantity, 1))) * packageQuantity);
       }, 0);
     }
+// Rulebook, Crafting & Gathering > Material (0.13.2 and 0.13.3): "All Materials
+// sell on the market on average for 2 units for every 1 Clim, with the exception
+// of junk units which sell for 4 units for every clim." This prices raw unit
+// materials on a recipe that have no priced material card of their own
+// (Alchemy Materials and Iron Artifice Parts). Herbs, ingots, blocks, hides and
+// the builder's own unit packs (Food Units, Alchemy Units, raw unit packs) keep
+// the price on their card: re-pricing a card changes the Clim of every saved
+// character that already holds it, so that waits for a planned migration.
+function getRawMaterialUnitPrice(requirement) {
+      const unit = normalizePhrase(requirement?.unit);
+      if (requirement?.herbLike || !["unit", "units", "part", "parts"].includes(unit)) {
+        return 0;
+      }
+      return /\bjunk\b/i.test(`${requirement.label || ""} ${requirement.lookupName || ""}`) ? 0.25 : 0.5;
+    }
 function getRecipeRequirementState(requirement, inventory, recipe, crafting) {
       const record = findRecipeRequirementRecord(requirement);
       const packageQuantity = record ? getMaterialPackageQuantity(record, requirement) : 1;
       const have = getOwnedRequirementQuantity(record, requirement, inventory);
       const need = Math.max(0, requirement.quantity - have);
       const packagesNeeded = record ? Math.ceil(need / packageQuantity) : 0;
-      const standardUnitCost = record ? parseClimCost(record.cost) : Math.max(0, toNumber(requirement.standardUnitCost, 0));
-      const standardCost = record ? standardUnitCost * packagesNeeded : standardUnitCost * need;
+      const standardUnitCost = record
+        ? parseClimCost(record.cost)
+        : (Math.max(0, toNumber(requirement.standardUnitCost, 0)) || getRawMaterialUnitPrice(requirement));
+      const standardCost = record ? standardUnitCost * packagesNeeded : Math.ceil(standardUnitCost * need);
       const customCosts = crafting.materialCustomCosts && typeof crafting.materialCustomCosts === "object"
         ? crafting.materialCustomCosts
         : {};
@@ -15927,10 +16094,11 @@ function resolveCraftOutcome(didSucceed) {
         if (crafting.miraneInterludeExpClaimed) {
           miraneExpLine = `Mirane natural-IP EXP: already claimed this interlude phase; no additional EXP awarded.`;
         } else {
-          const expBank = Math.max(0, toNumber(cleanText(state.fields.Exp), 0));
-          updateFieldValue("Exp", String(expBank + MIRANE_CRAFTING_INTERLUDE_EXP));
+          const awardMessage = awardProgressionExp(MIRANE_CRAFTING_INTERLUDE_EXP);
           state.play.crafting.miraneInterludeExpClaimed = true;
-          miraneExpLine = `Mirane natural-IP EXP: +${MIRANE_CRAFTING_INTERLUDE_EXP} EXP (once-per-interlude-phase award claimed).`;
+          miraneExpLine = getSkyboundTrialState().enabled
+            ? `Mirane natural-IP EXP: ${awardMessage} Once-per-interlude-phase award claimed.`
+            : `Mirane natural-IP EXP: +${MIRANE_CRAFTING_INTERLUDE_EXP} EXP (once-per-interlude-phase award claimed).`;
         }
       }
       let craftedLine = "";
@@ -16506,6 +16674,8 @@ const gatheringWorkflowStepBadge = (step) => (isGatheringMode && step
                 <p class="eyebrow">Crafting Wizard - Step ${wizardIndex + 1} of ${CRAFTING_WIZARD_STEPS.length}</p>
                 <h3>${escapeHtml(stepMeta.title)}</h3>
                 <span class="integration-status is-warn">Alpha — still in testing</span>
+                <span class="integration-status is-warn play-pc-only-pill">PC only</span>
+                <p class="play-pc-only-note">PC only for now. On a phone this tool is long to scroll and may not work properly. Use a computer for Crafting.</p>
                 <p class="play-wizard-lead">${escapeHtml(stepMeta.lead)}</p>
               </div>
               ${renderCraftingWizardNav(wizardIndex)}
@@ -16687,6 +16857,8 @@ const gatheringWorkflowStepBadge = (step) => (isGatheringMode && step
                 <p class="eyebrow">Gathering Wizard - Step ${gatheringWizardIndex + 1} of ${GATHERING_WIZARD_STEPS.length}</p>
                 <h3>${escapeHtml(gatheringStepMeta.title)}</h3>
                 <span class="integration-status is-warn">Alpha — still in testing</span>
+                <span class="integration-status is-warn play-pc-only-pill">PC only</span>
+                <p class="play-pc-only-note">PC only for now. On a phone this tool is long to scroll and may not work properly. Use a computer for Gathering.</p>
                 <p class="play-wizard-lead">${escapeHtml(gatheringStepMeta.lead)}</p>
               </div>
               ${renderGatheringWizardNav(gatheringWizardIndex)}
@@ -19452,6 +19624,10 @@ const className = getPoolDisplayName(choice, /\s+class$/i);
         || "Class skill points";
     }
 function renderSkillExpertisePanelBody(entry) {
+      const expertiseCap = getSkillAllocationCap(SKILL_EXPERTISE_CAP);
+      const expertiseCapNote = Number.isFinite(expertiseCap)
+        ? `Assigned points can give up to +${expertiseCap} expertise.`
+        : "Assigned expertise has no cap at this Spirit Core.";
       const sourceOptions = getSkillExpertiseSourceOptions(entry);
 const groups = entry.expertiseGroups || [];
 const expertiseOptions = getSkillExpertiseOptionList(entry.name);
@@ -19467,7 +19643,7 @@ const unassignedSources = groups.flatMap((group) => {
         }));
       });
       return `
-        <p>Exchange 1 eligible skill point for +2 in one narrow specialty. The exchanged point does not also increase the broad skill. Only the relevant owned specialty applies to a roll, and expertise cannot exceed +${SKILL_EXPERTISE_CAP}.</p>
+        <p>Exchange 1 eligible skill point for +2 in one narrow specialty. The exchanged point does not also increase the broad skill. Only the relevant owned specialty applies to a roll. ${expertiseCapNote}</p>
         ${sourceOptions.length ? `
           <div class="builder-skill-expertise-form">
             <select class="builder-skill-input" data-skill-expertise-name>
@@ -19506,6 +19682,7 @@ const sourceLabel = option?.sourceLabel || getSkillExpertiseSourceLabel(unassign
                     ? `${group.points} exchanged point${group.points === 1 ? "" : "s"}${group.fixedSources?.length ? " plus feature expertise" : ""} = ${formatModifier(group.bonus)}`
                     : `Feature expertise ${formatModifier(group.bonus)}`)}</span>
                 </div>
+                ${group.bonusSubjectToCap > expertiseCap ? `<small class="builder-skill-cap-warning">Saved expertise exceeds the current cap. The excess stays assigned.</small>` : ""}
                 <div class="builder-skill-expertise-actions">
                   ${(group.fixedSources || []).map((fixedSource) => `
                     <span>${escapeHtml(`${fixedSource.source}: ${formatModifier(fixedSource.bonus)}`)}</span>
@@ -19516,7 +19693,7 @@ const label = option?.sourceLabel || getSkillExpertiseSourceLabel(sourceSpec, en
                     return `
                       <span>${escapeHtml(`${label}: ${points}`)}</span>
                       <button type="button" data-adjust-skill-expertise="-1" data-skill-expertise-index="${entry.index}" data-skill-expertise-source="${escapeHtml(sourceSpec)}" data-skill-expertise-name="${escapeHtml(group.name)}">-</button>
-                      <button type="button" data-adjust-skill-expertise="1" data-skill-expertise-index="${entry.index}" data-skill-expertise-source="${escapeHtml(sourceSpec)}" data-skill-expertise-name="${escapeHtml(group.name)}" ${option?.canAdd && (group.uncappedBonus || group.bonus) + 2 <= SKILL_EXPERTISE_CAP ? "" : "disabled"}>+</button>
+                      <button type="button" data-adjust-skill-expertise="1" data-skill-expertise-index="${entry.index}" data-skill-expertise-source="${escapeHtml(sourceSpec)}" data-skill-expertise-name="${escapeHtml(group.name)}" ${option?.canAdd && group.bonusSubjectToCap + 2 <= expertiseCap ? "" : "disabled"}>+</button>
                     `;
                   }).join("")}
                 </div>
@@ -19607,6 +19784,10 @@ const mastered = isTrackedClassMastered(entry);
       `;
     }
 function renderSkillsStep() {
+      const skillPointCap = getSkillAllocationCap(SKILL_POINT_CAP);
+      const capNote = Number.isFinite(skillPointCap)
+        ? `Assigned skill points and expertise are capped at ${skillPointCap}.`
+        : "Assigned skill points and expertise have no cap at this Spirit Core.";
       const budget = getSkillBudgetState();
 const racialPools = getVisibleRacialSkillPoolChoices().map((choice) => ({
         choice,
@@ -19625,7 +19806,7 @@ let statusText = "Use + or - to assign broad skill points. Use Expertise to exch
 
       return `
         <div class="builder-content-grid">
-          <p class="builder-note">A normal skill roll is <strong>d20 + affiliated sub stat + main skill</strong>. Artisan and gathering skills have no affiliated sub-stat. Instead of assigning a point to the broad skill, you may exchange an eligible point for <strong>+2 expertise</strong> in one narrow specialty. Skills and expertise are each capped at ${SKILL_POINT_CAP}; that exchanged point does not also increase the broad skill, and only the relevant owned expertise applies to a roll.</p>
+          <p class="builder-note">A normal skill roll is <strong>d20 + affiliated sub stat + main skill</strong>. Artisan and gathering skills have no affiliated sub-stat. Instead of assigning a point to the broad skill, you may exchange an eligible point for <strong>+2 expertise</strong> in one narrow specialty. ${capNote} The exchanged point does not also increase the broad skill, and only the relevant owned expertise applies to a roll.</p>
           ${renderBuilderChoiceSection("skills", "Skill Choices")}
           <div class="selected-chip-list">
             <span class="selected-chip">Skill Points Spent: ${escapeHtml(String(budget.spent))} / ${budget.budget}</span>
@@ -19666,7 +19847,7 @@ let statusText = "Use + or - to assign broad skill points. Use Expertise to exch
                   <span>Base Roll</span>
                   <strong>${escapeHtml(formatModifier(entry.total))}</strong>
                 </div>
-                ${entry.overSkillPointCap ? `<small class="builder-skill-cap-warning">Saved sources exceed the ${SKILL_POINT_CAP}-point cap by ${escapeHtml(String(entry.overSkillPointCap))}; the roll uses ${SKILL_POINT_CAP}.</small>` : ""}
+                ${entry.overSkillPointCap ? `<small class="builder-skill-cap-warning">Saved sources exceed the ${skillPointCap}-point cap by ${escapeHtml(String(entry.overSkillPointCap))}. The roll uses ${skillPointCap}.</small>` : ""}
                 ${renderSkillExpertisePanel(entry)}
               </div>
             `).join("")}
@@ -20014,6 +20195,34 @@ const QUICK_BUILD_ROLES = [
         nextClassWhy: "Protector is the direct Tier 3 continuation after Guardian mastery and turns the shield package into a stronger party-cover defender."
       },
       {
+        id: "enforcer",
+        rulesVersion: "0.13.3",
+        label: "Enforcer",
+        className: "Ranger",
+        targetClass: "Enforcer",
+        classPlan: [{ name: "Ranger", purchasedCount: 7 }, { name: "Enforcer", purchasedCount: 0 }],
+        role: "Defender",
+        mainStats: { Toughness: 5, Focus: 4, Agility: 4, Power: 3 },
+        secondaryStats: { Awareness: 5, Fitness: 4, Presence: 3, Cunning: 2, Reason: 1 },
+        skills: { Perception: 4, Athletics: 3, Intimidation: 2, Insight: 1 },
+        skillSpill: ["Survival", "Medicine", "Common Knowledge", "Negotiation"],
+        items: ["Armor (Medium)", "Shotgun (Two-Handed)", "Small Weapons (One-Handed)", "Adventurer's Kit", "Healing Potion", "Military Ration"],
+        breakthroughPlan: [{ name: "On the Draw" }, { name: "Secondary Stat Training", choice: "Awareness" }],
+        weaponGroup: "Musket",
+        weaponGroups: ["Small Weapons"],
+        humanStat: "Toughness",
+        humanSecondary: "Awareness",
+        human: { stat: "Toughness", secondary: "Awareness", weaponGroup: "Crossbow", extraClass: "Enforcer" },
+        demonClan: "d",
+        why: "Hold close range with a shotgun and protect allies with Challenge or Mandate.",
+        playstyle: "Ranger supplies tracking, armor, and a melee fallback. Enforcer adds shotgun proficiency and Final Warning. Use its conditions to make attacking your allies a costly choice.",
+        gameplayLoop: ["Use the shotgun at close range, or draw the small weapon when you need it.", "Use Final Warning to apply Challenge or Mandate when you deal damage.", "On a Human build, Intercede can reduce damage when an enemy defies your Mandate."],
+        bestFor: "Choose this for close-range protection and battlefield control.",
+        classPathWhy: "Ranger mastery costs 800 EXP and meets Enforcer's prerequisite. The Enforcer key costs 200 EXP and grants Shotgun proficiency. Humans spend their extra 100 EXP on Intercede.",
+        nextClass: "Enforcer",
+        nextClassWhy: "Advance Enforcer for its protection and shotgun abilities."
+      },
+      {
         id: "great-weapon-striker",
         label: "Great Weapon Striker",
         className: "Fighter",
@@ -20274,6 +20483,45 @@ const QUICK_BUILD_ROLES = [
     label: "Arcane Caster",
     builds: [
       {
+        id: "aetherologist-path",
+        rulesVersion: "0.13.3",
+        label: "Aetherologist Path",
+        className: "Sorcerer",
+        targetClass: "Elementalist",
+        classPlan: [{ name: "Sorcerer", purchasedCount: 7 }, { name: "Elementalist", purchasedCount: 0 }],
+        role: "Striker",
+        mainStats: { Focus: 5, Power: 4, Agility: 4, Toughness: 3 },
+        secondaryStats: { Reason: 5, Awareness: 4, Presence: 3, Cunning: 2, Fitness: 1 },
+        skills: { Magic: 4, History: 2, Appraise: 2, "Common Knowledge": 2 },
+        skillSpill: ["Linguistics", "Religion", "Insight", "Perception"],
+        expertiseNames: { Magic: "Dispel" },
+        items: ["Armor (Light)", "Wand (One-Handed)", "Wand (One-Handed)", "Adventurer's Kit", "Research Kit", "Greater Healing Potion", "Greater Healing Potion", "Shielding Potion", "Healing Potion", "Military Ration"],
+        breakthroughPlan: [
+          { name: "Wide Circuits I" },
+          { name: "Skill Training", choice: "Magic" },
+          { name: "Skill Training", choice: "History" },
+          { name: "Skill Training", choice: "Appraise" },
+          { name: "Skill Training", choice: "Common Knowledge" },
+          { name: "Skill Training", choice: "Religion" },
+          { name: "Skill Training", choice: "Perception" }
+        ],
+        weaponGroup: "Wand",
+        masteryElement: "Lightning",
+        humanStat: "Power",
+        humanSecondary: "Reason",
+        human: { stat: "Power", secondary: "Reason", weaponGroup: "Small Weapons", extraClass: "Elementalist" },
+        demonClan: "lu",
+        why: "Start with Sorcerer mastery and Elementalist. Advance both prerequisites to reach Aetherologist.",
+        playstyle: "The starting build supplies long-range spell damage and elemental flexibility. Aetherologist later adds Scientific Witchery and rewards setup turns with Ruin Formula and Final Theorem.",
+        gameplayLoop: ["Concentrate Sorcerer's Arcane Rapidfire on one exposed target.", "Pick an Elementalist element to suit the encounter and use wands to conserve mana.", "Master Elementalist, then save 300 EXP and another Interlude Point for Aetherologist."],
+        bestFor: "Choose this for a caster that grows into Aetherologist during play.",
+        classPathWhy: "Sorcerer mastery and the Elementalist key spend the normal 1,000 starting EXP. Humans spend their extra 100 EXP on the first Elementalist ability.",
+        nextClass: "Elementalist",
+        laterClass: "Aetherologist",
+        nextClassWhy: "Master Elementalist to meet the Tier 2 prerequisite.",
+        laterClassWhy: "Aetherologist requires Sorcerer or Mage mastery and Tier 2 mastery. This path reaches its key at 2,000 total class EXP with an additional Interlude Point."
+      },
+      {
         id: "control-wizard",
         label: "Control Wizard",
         className: "Mage",
@@ -20340,6 +20588,39 @@ const QUICK_BUILD_ROLES = [
     id: "support",
     label: "Healer / Holy / Performance Support",
     builds: [
+      {
+        id: "fateweaver",
+        rulesVersion: "0.13.3",
+        label: "Fateweaver",
+        className: "Medic",
+        targetClass: "Fateweaver",
+        classPlan: [{ name: "Medic", purchasedCount: 7 }, { name: "Fateweaver", purchasedCount: 0 }],
+        role: "Healer",
+        mainStats: { Focus: 5, Toughness: 4, Agility: 4, Power: 3 },
+        secondaryStats: { Reason: 5, Awareness: 4, Fitness: 3, Presence: 2, Cunning: 1 },
+        skills: { Medicine: 4, Insight: 3, Perception: 2, "Common Knowledge": 1 },
+        skillSpill: ["Athletics", "History", "Linguistics", "Negotiation"],
+        items: ["Armor (Light)", "Set of Missiles (One-Handed)", "Shield", "Medical Kit", "Adventurer's Kit", "Healing Potion", "Healing Potion", "Greater Healing Potion", "Shielding Potion", "Military Ration"],
+        breakthroughPlan: [
+          { name: "Secondary Stat Training", choice: "Reason" },
+          { name: "Light Armor Training" },
+          { name: "Skill Training", choice: "Medicine" },
+          { name: "Skill Training", choice: "Insight" },
+          { name: "Skill Training", choice: "Perception" }
+        ],
+        weaponGroup: "Set of Missiles",
+        humanStat: "Focus",
+        humanSecondary: "Reason",
+        human: { stat: "Focus", secondary: "Reason", weaponGroup: "Thrown", extraClass: "Fateweaver" },
+        demonClan: "ar",
+        why: "Combine Medic's First Aid with Fateweaver's ranged protection and healing.",
+        playstyle: "Tag allies with First Aid and use Code Blue to reach someone who needs you. Thread of Reprieve can catch damage from farther away when you reserve AP and mana.",
+        gameplayLoop: ["Mark damage with First Aid when an ally is hit, then close in to treat it.", "Use Thread of Reprieve to restore HP after damage.", "On a Human build, use Thread of Defiance to help an ally make a save."],
+        bestFor: "Choose this for a healer that can respond both beside an ally and across the battlefield.",
+        classPathWhy: "Medic mastery costs 800 EXP and meets Fateweaver's prerequisite. The Fateweaver key costs 200 EXP. Humans spend their extra 100 EXP on Thread of Defiance.",
+        nextClass: "Fateweaver",
+        nextClassWhy: "Advance Fateweaver to add more ways to protect and support allies."
+      },
       {
         id: "cleric-support",
         label: "Cleric Support",
@@ -20517,8 +20798,27 @@ function getQuickBuildStep() {
 function getQuickBuildSpecies(id = state.builder.quickBuild?.speciesId) {
       return QUICK_BUILD_SPECIES.find((entry) => entry.id === id) || null;
     }
+function isQuickBuildAvailable(build) {
+      return (!build.rulesVersion || build.rulesVersion === window.LYRIAN_DATA?.version)
+        && asArray(build.classPlan).every((entry) => getClassDetail(entry.name))
+        && asArray(build.items).every((name) => lookup.items.resolve(name))
+        && asArray(build.breakthroughPlan).every((entry) => lookup.breakthroughs.resolve(entry.name));
+    }
+function getQuickBuildRoles() {
+      return QUICK_BUILD_ROLES.map((role) => ({
+        ...role,
+        builds: role.builds.filter(isQuickBuildAvailable)
+      }));
+    }
 function getQuickBuildById(id = state.builder.quickBuild?.buildId) {
-      return QUICK_BUILD_ROLES.flatMap((role) => role.builds.map((build) => ({ ...build, roleGroup: role.label }))).find((entry) => entry.id === id) || null;
+      for (const role of QUICK_BUILD_ROLES) {
+        const build = role.builds.find((entry) => entry.id === id);
+        if (build && isQuickBuildAvailable(build)) return { ...build, roleGroup: role.label };
+      }
+      return null;
+    }
+function hasQuickBuildAncestryClassGrants() {
+      return compareVersionIds(window.LYRIAN_DATA?.version, '0.13.1') >= 0;
     }
 function getQuickBuildResolvedClassPlan(build, species = getQuickBuildSpecies()) {
       if (!build) {
@@ -20549,26 +20849,27 @@ function getQuickBuildResolvedClassPlan(build, species = getQuickBuildSpecies())
         plan.push({ name, purchasedCount, raceGranted: true, grantedLevel });
       };
       if (raceName === "demon") {
-        if (build.id === "potion-healer") {
+        const clan = normalizePhrase(ancestry?.lineageCode || build?.demonClan);
+        if (build.id === "potion-healer" && clan === "vi" && getClassDetail("Medic")) {
           plan = plan.filter((entry) => normalizePhrase(entry.name) !== "acolyte");
         }
         const clanGrant = {
           wi: "Saboteur",
           vi: "Medic",
           un: "Maid"
-        }[normalizePhrase(ancestry?.lineageCode || build?.demonClan)];
-        if (clanGrant) {
+        }[clan];
+        if (clanGrant && getClassDetail(clanGrant)) {
           const purchasedCount = clanGrant === "Medic" && ["cleric-support", "potion-healer"].includes(build.id) ? 2 : 0;
           addGrantedClass(clanGrant, purchasedCount, 1);
         }
       }
-      if (ancestryName === "gnome") {
+      if (ancestryName === "gnome" && hasQuickBuildAncestryClassGrants()) {
         addGrantedClass("Miner", 0, 1);
       }
-      if (ancestryName === "raijin") {
+      if (ancestryName === "raijin" && hasQuickBuildAncestryClassGrants()) {
         addGrantedClass("Flash Star Blade Style", 0, 1);
       }
-      if (ancestryName === "selkie") {
+      if (ancestryName === "selkie" && hasQuickBuildAncestryClassGrants()) {
         addGrantedClass("Hydromancer", 0, 2);
       }
       if (raceName === "human") {
@@ -21021,6 +21322,7 @@ function addQuickBuildBreakthrough(name, fallback = "Skill Training") {
 function quickBuildNeedsDivinesChosen(build, species = getQuickBuildSpecies()) {
       const { race } = getQuickBuildSpeciesRecords(species, build);
       return normalizePhrase(race?.name) !== "human"
+        && normalizePhrase(getClassRequirementsText(getClassDetail("Acolyte"))).includes("divine s chosen")
         && getQuickBuildResolvedClassPlan(build, species).some((entry) => normalizePhrase(entry.name) === "acolyte");
     }
 function getQuickBuildBreakthroughPlan(build, hasNativeFireMastery = false, species = getQuickBuildSpecies()) {
@@ -21170,6 +21472,9 @@ const channelingWeaponPreference = /\bstaff\b/.test(buildWeaponKey)
         });
         setFirstMatchingBuilderChoice(getClassChoiceId(record, "heart-stat"), [build.humanSecondary, "Fitness", "Reason", "Presence"]);
         setFirstMatchingBuilderChoice(getClassChoiceId(record, "soul-stat"), [build.humanStat, "Focus", "Power", "Toughness", "Agility"]);
+        if (build.masteryElement) {
+          setFirstMatchingBuilderChoice(getClassChoiceId(record, "elemental-mastery"), [build.masteryElement]);
+        }
       });
       assignQuickBuildHumanWeaponGroup(humanPlan);
       // Classes and choices above change builder selections without touching
@@ -21211,7 +21516,7 @@ const channelingWeaponPreference = /\bstaff\b/.test(buildWeaponKey)
         }
       });
       // Each Skill Training point goes to its planned skill while that skill
-      // has room under the 15-point cap, otherwise to the role's next skill
+      // has room under the current cap, otherwise to the role's next skill
       // with room, so no point is lost above the cap.
       skillTargets
         .sort((left, right) => left.occurrence - right.occurrence)
@@ -21225,7 +21530,7 @@ const channelingWeaponPreference = /\bstaff\b/.test(buildWeaponKey)
           refreshQuickBuildSkillCaches();
           const target = order.find((name) => {
             const row = getQuickBuildSkillIndex(name);
-            return row > 0 && (getSkillRowData(row)?.uncappedSkillPoints || 0) < SKILL_POINT_CAP;
+            return row > 0 && (getSkillRowData(row)?.uncappedSkillPoints || 0) < getSkillAllocationCap(SKILL_POINT_CAP);
           }) || order[0] || "";
           setBuilderChoiceValue(choice.id, target);
         });
@@ -21251,7 +21556,7 @@ function getQuickBuildExpertiseNames(build, skillName) {
         .filter(Boolean))];
     }
 // Places every point of one racial or class skill pool. It fills the role's
-// skills in priority order up to the 15-point cap, then the pool's other
+// skills in priority order up to the current cap, then the pool's other
 // skills; only when every allowed skill is full does it use the pool's
 // "2 expertise per point" exchange (pools limited to one skill, such as the
 // Mage key's Magic points, reach this).
@@ -21296,7 +21601,7 @@ function allocateQuickBuildSkillPool(choice, build) {
             return;
           }
           const group = getSkillExpertiseGroups(row).find((entry) => normalizePhrase(entry.name) === normalizePhrase(name));
-          const points = Math.min(left, Math.floor((SKILL_EXPERTISE_CAP - (group?.uncappedBonus || 0)) / 2));
+          const points = Math.min(left, Math.floor((getSkillAllocationCap(SKILL_EXPERTISE_CAP) - (group?.bonusSubjectToCap || 0)) / 2));
           if (points > 0) {
             setStoredSkillExpertiseEntries([
               ...getStoredSkillExpertiseEntries(),
@@ -21522,7 +21827,7 @@ function getQuickBuildRaceOptimizationNote(build, species = getQuickBuildSpecies
       if (raceName === "demon" && build.id === "cleric-support") {
         return "Demon optimization: clan VI starts with Medic unlocked at level 1, buying both First Aid and Code Blue while keeping the full Acolyte foundation.";
       }
-      if (raceName === "demon" && build.id === "potion-healer") {
+      if (raceName === "demon" && build.id === "potion-healer" && getClassDetail("Medic")) {
         return "Demon optimization: clan VI starts with Medic unlocked at level 1, replacing the generic Acolyte dip with First Aid and Code Blue at the same 1000-EXP total.";
       }
       if (raceName === "demon" && build.id === "performance-support") {
@@ -21530,17 +21835,17 @@ function getQuickBuildRaceOptimizationNote(build, species = getQuickBuildSpecies
       }
       if (raceName === "demon") {
         const grant = { wi: "Saboteur", vi: "Medic", un: "Maid" }[normalizePhrase(ancestry?.lineageCode || build?.demonClan)];
-        if (grant) {
+        if (grant && getClassDetail(grant)) {
           return `Demon optimization: this clan starts with ${grant} unlocked at level 1, adding its key ability without spending class EXP or an Interlude Point.`;
         }
       }
-      if (ancestryName === "gnome") {
+      if (ancestryName === "gnome" && hasQuickBuildAncestryClassGrants()) {
         return "Gnome optimization: Miner starts unlocked at level 1 for 0 EXP and 0 IP, adding Rock and Stone plus its armor/shield and Pickaxe choices to the package.";
       }
-      if (ancestryName === "raijin") {
+      if (ancestryName === "raijin" && hasQuickBuildAncestryClassGrants()) {
         return "Raijin optimization: Flash Star Blade Style starts unlocked at level 1 for 0 EXP and 0 IP; Lightning Mastery also leaves Electromancer available as an immediate paid branch.";
       }
-      if (ancestryName === "selkie") {
+      if (ancestryName === "selkie" && hasQuickBuildAncestryClassGrants()) {
         return "Selkie optimization: Hydromancer starts unlocked at level 2 for 0 EXP and 0 IP, adding Water Mastery, Blue Tide, and Aqua Drill without displacing the paid class plan.";
       }
       if (ancestryName === "phoenix" && build.classStrategy === "specialty-first") {
@@ -21653,7 +21958,7 @@ function renderQuickBuildSpeciesStep() {
                 </span>
                 <span class="quick-build-card-copy">
                   <strong>${escapeHtml(entry.label)}</strong>
-                  <span>${escapeHtml(entry.defer || `${entry.race}${entry.ancestry ? ` / ${entry.ancestry}` : ""}${entry.grantedClass ? ` | Free Class: ${entry.grantedClass}` : ""}`)}</span>
+                  <span>${escapeHtml(entry.defer || `${entry.race}${entry.ancestry ? ` / ${entry.ancestry}` : ""}${entry.grantedClass && hasQuickBuildAncestryClassGrants() ? ` | Free Class: ${entry.grantedClass}` : ""}`)}</span>
                   <p>${escapeHtml(getQuickBuildSpeciesCardSummary(entry))}</p>
                 </span>
               </button>
@@ -21669,7 +21974,7 @@ function renderQuickBuildBuildStep() {
       const selectedId = state.builder.quickBuild?.buildId || "";
       return `
         <div class="builder-content-grid quick-build-content">
-          ${QUICK_BUILD_ROLES.map((role) => `
+          ${getQuickBuildRoles().map((role) => `
             <section class="quick-build-role-section">
               <h3>${escapeHtml(role.label)}</h3>
               <div class="quick-build-card-grid">
@@ -21810,6 +22115,7 @@ function enterQuickBuildMode() {
       // with the ones a sheet visit remembered for the old character.
       state.play = mergePlayState(state.play);
       state.play.resourcesBeforeBuilderVisit = null;
+      state.play.skyboundTrial = undefined;
       state.builder.quickBuild = {
         ...(state.builder.quickBuild || {}),
         speciesId: "",
@@ -22075,9 +22381,13 @@ const index = list.indexOf(id);
       return true;
     }
 function toggleBuilderBreakthrough(id) {
+      normalizeLargeSpecimenSelections();
+const record = lookup.breakthroughs.resolve(id);
+      if (isLargeSpecimenBreakthrough(record)) {
+        id = record.id;
+      }
       state.builder.inspected.breakthrough = id;
 const alreadySelected = state.builder.selectedBreakthroughIds.includes(id);
-const record = lookup.breakthroughs.resolve(id);
       if (!alreadySelected && isMiraneRestrictedBreakthrough(record)) {
         setStatus(`${record?.name || "That breakthrough"} is unavailable for new Mirane Expedition characters.`);
         renderBuilder();
@@ -22096,6 +22406,10 @@ const record = lookup.breakthroughs.resolve(id);
       if (record && isStackableBreakthrough(record)) {
         addStackableBreakthroughPurchase(id);
         return;
+      }
+      if (!alreadySelected && record) {
+        const { creationRemaining } = getBreakthroughBudgetState();
+        if (!canSpendProgressionExp(Math.max(0, parseNumericCost(record.cost) - creationRemaining))) return;
       }
 let requirementStatus = getBreakthroughRequirementStatus(record);
       if (!alreadySelected && !requirementStatus.met && requirementStatus.manualOnly && record) {
@@ -22183,6 +22497,7 @@ function addElementalAffinitySelection(elementValue) {
       }
       const nextCost = Math.max(0, parseNumericCost(record.cost));
       const budget = getBreakthroughBudgetState();
+      if (!canSpendProgressionExp(Math.max(0, nextCost - budget.creationRemaining))) return;
       if (nextCost > budget.remaining) {
         setStatus(`${record.name} costs ${nextCost} EXP, but only ${budget.remaining} remains across creation breakthrough EXP and normal XP.`);
         renderBuilder();
@@ -22239,6 +22554,7 @@ function addRepeatableBreakthroughChoice(id, selectedValue, customValue = "") {
       }
       const nextCost = Math.max(0, parseNumericCost(record.cost));
       const budget = getBreakthroughBudgetState();
+      if (!canSpendProgressionExp(Math.max(0, nextCost - budget.creationRemaining))) return;
       if (nextCost > budget.remaining) {
         setStatus(`${record.name} costs ${nextCost} EXP, but only ${budget.remaining} remains across creation breakthrough EXP and normal XP.`);
         renderBuilder();
@@ -22281,6 +22597,7 @@ function addStackableBreakthroughPurchase(id) {
       }
       const nextCost = Math.max(0, parseNumericCost(record.cost));
       const budget = getBreakthroughBudgetState();
+      if (!canSpendProgressionExp(Math.max(0, nextCost - budget.creationRemaining))) return;
       if (nextCost > budget.remaining) {
         setStatus(`${record.name} costs ${nextCost} EXP, but only ${budget.remaining} remains across creation breakthrough EXP and normal XP.`);
         renderBuilder();
@@ -22329,6 +22646,7 @@ const requirementStatus = getClassRequirementStatus(record);
       if (!alreadySelected && record) {
         const budget = getClassUnlockBudgetState();
 const unlockCost = getClassUnlockCost(record);
+        if (!canSpendProgressionExp(unlockCost)) return;
         if (getClassInterludeCost(record) > budget.remainingInterlude) {
           setStatus(`You have already committed all ${budget.interludeBudget} allowed Interlude Points to class unlocks. Add GM Additional IP if the GM is allowing more class unlocks.`);
           renderBuilder();
@@ -22374,6 +22692,7 @@ const nextSlot = slots[current];
         return;
       }
 const budget = getClassUnlockBudgetState();
+      if (!canSpendProgressionExp(100)) return;
       if (budget.remainingExp < 100) {
         setStatus(`${nextSlot.name || nextSlot.label} costs 100 EXP, but only ${budget.remainingExp} EXP is available.`);
         renderBuilder();
@@ -22569,6 +22888,7 @@ const searches = builder.searches || {};
           // Task 037: a sheet -> builder -> sheet trip in progress survives a
           // reload from an active save slot.
           resourcesBeforeBuilderVisit: snapshot.play?.resourcesBeforeBuilderVisit || undefined,
+          skyboundTrial: snapshot.play?.skyboundTrial || undefined,
           foodUsedSinceRest: Boolean(snapshot.play?.foodUsedSinceRest),
           activeEffects: snapshot.play?.activeEffects || [],
           // Roll20 token pin + opt-in flags live in state.play (see
@@ -24332,6 +24652,9 @@ export async function applyAscharImport(character, sourceLabel = "official chara
       state.builder.creationInterludeActions = [...plan.interludeActions];
       if (plan.name) {
         updateFieldValue("Name", plan.name);
+      }
+      if (plan.gender) {
+        updateFieldValue("Gender", plan.gender);
       }
       const raceRecord = getRaceDetail(plan.race.primaryRaceId) || getRaceDetail(plan.race.primaryRaceName);
       if (raceRecord) {
@@ -26204,6 +26527,9 @@ const id = trigger.dataset.id;
             syncNameFields(event.target.value, "Name");
           } else {
             updateFieldValue(fieldName, event.target.value);
+            if (fieldName === "Gender") {
+              pruneIneligibleBreakthroughSelections();
+            }
             rerenderActiveBuilderDetail();
             renderBuilderSummary();
           }
@@ -26404,6 +26730,9 @@ const id = trigger.dataset.id;
         restoreTurnResources();
       });
 
+      document.getElementById("play-derived-grid").addEventListener("click", (event) => {
+        if (event.target.closest("[data-record-skybound-trial]")) recordSkyboundTrialCompletion();
+      });
       document.getElementById("play-derived-grid").addEventListener("click", (event) => {
         const effectPickerButton = event.target.closest("[data-open-effect-picker]");
         if (effectPickerButton) {
@@ -26904,6 +27233,12 @@ const handlePlayCraftingPanelChange = (event) => {
           return;
         }
         if (event.target.dataset.miraneMarketPrice) {
+          renderPlayDashboard();
+          return;
+        }
+        if (event.target.dataset.craftingRequirementCustomCost) {
+          // The typed GM price is stored on input. Redraw once the box is left
+          // so "Set Price" becomes the Buy button without reopening the step.
           renderPlayDashboard();
           return;
         }

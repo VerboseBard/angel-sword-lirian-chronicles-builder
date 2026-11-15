@@ -1,6 +1,6 @@
 [
   {
-    "id": "6a5e50be98f4934cf278b81a",
+    "id": "6a9e68822d5e42e3f51b776e",
     "indexId": "1e259654-b060-4062-a134-51b5cae21bb1",
     "classId": "abjurer",
     "name": "Abjurer",
@@ -13,7 +13,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b853",
+    "id": "6a9e68822d5e42e3f51b7787",
     "indexId": "0d45401a-6db2-4a99-8d1f-b8b3e917ee33",
     "classId": "acolyte",
     "name": "Acolyte",
@@ -26,7 +26,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b87e",
+    "id": "6a9e68822d5e42e3f51b77da",
     "indexId": "12ae832c-9aba-49fc-80b1-99c7c07eeb38",
     "classId": "adventurer",
     "name": "Adventurer",
@@ -39,7 +39,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8cc",
+    "id": "6a9e68822d5e42e3f51b7822",
     "indexId": "a31e5fcb-b322-4c95-b6ee-5e2ec2f2d943",
     "classId": "aerial-mage",
     "name": "Aerial Mage",
@@ -52,7 +52,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b81b",
+    "id": "6a9e68822d5e42e3f51b778d",
     "indexId": "02fd2a2a-516b-455b-bc8d-4218fc239704",
     "classId": "aeromancer",
     "name": "Aeromancer",
@@ -65,7 +65,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b846",
+    "id": "6a9e68822d5e42e3f51b7781",
     "indexId": "bc7b1edc-1e2f-4a55-bf87-b5cb56bd0eb5",
     "classId": "aeromaster",
     "name": "Aeromaster",
@@ -78,7 +78,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b87f",
+    "id": "6a9e68822d5e42e3f51b77db",
     "indexId": "c571cec0-f8e6-4732-85cb-7ad5a65501bc",
     "classId": "aetherie",
     "name": "Aetherie",
@@ -91,7 +91,20 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b883",
+    "id": "6aa71d0fee297894130ef266",
+    "indexId": "84812ab3-06c2-4f1d-a262-510d5058c2ca",
+    "classId": "aetherologist",
+    "name": "Aetherologist",
+    "description": "<p>“Aetherology.” Professor Lina’chi’s porcelain-like finger tapped the desk for emphasis. “The study of and manipulation of Aether through the lens of mathematics. Quantifiable, repeatable, organized.”<br><br>Her eyes scanned her class, a collection of all kinds of races from humans, chimera, a couple goblins, and even a dwarf, gauging their attention. She raised her hand and a circle of symbols and formula of gleaming magic spun from her fingertips. None of them were particularly awed by it, she noted, but Annwyn was full of aethercraft and such formula circles were relatively commonplace. Her formula flared and the blackboard behind her was suddenly populated by notes in her neat writing, graphs, and dissected glyphs.</p><p>“In this course, we will be exploring the basics of aetherologic manipulation, glyph construction, and formula. This is not,” she tapped her finger again for emphasis, “a class for blind manipulation of aether through feel or emotion. Consider this your warning. You are all trained mages and I will not stand for such disruptive chaos in my class. If anything about that offends you or is beyond you, the door is there and I wish you a safe journey to Elyswyn. Where you can learn to get in touch with your feelings and instincts with the rabbits.”<br><br>She waited for a few moments. A rabbitfolk girl near the back of the class was glaring at her but remained seated. “Good.”</p><p>“We will begin with a fundamental. The Aether Barrier. All of you know how to invoke it, yes? In one form or another. Today, you will learn the details you have passed over with feeling and intent.”</p><p>She flicked her fingers again and the board behind her shifted to a complicated diagram of a formula circle. She let her students see the aetherological representation of Aether Barrier for a minute before she swung her hand. Glyphs, symbols, connecting lines, binding edges, and more erased themselves from the board. What was left was a plain circle containing a perfectly symmetrical triangle, inside which three more circles were contained, overlapping evenly with each other in the center.</p><p>“Pandora’s Gift. The fundamental foundation of all aetherological formulae. Remove all definitions, boundaries, and connections from any formula and you will find this at its base. Study it, understand it, memorize it. For while we all walk in the footsteps of Pandora into the wide world of discovery and the unknown, we all begin our journey here.”</p><p>The scratching of pens, quills, and pencils filled the room as students wrote hasty notes and copied the diagram. In varying degrees of accuracy, she noted. But the skills to draw even shapes would come with practice and time. Besides, now she got to relish in the memory of yet another class’s stunned and enamored expressions when they learned about Pandora’s Gift. Another class, another group, that finally understood something a little more deeply about the Goddess of Magic.</p>",
+    "difficulty": "4",
+    "tier": "3",
+    "role1": "Striker",
+    "role2": "",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/0d16b801-41c3-41dc-b34f-f3d60d154147-nerdmage.sm.webp",
+    "imageAlignment": "top"
+  },
+  {
+    "id": "6a9e68822d5e42e3f51b77c6",
     "indexId": "c6b5b766-c83e-48d8-a19b-c87c65b51696",
     "classId": "agrarian",
     "name": "Agrarian",
@@ -104,7 +117,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b86a",
+    "id": "6a9e68822d5e42e3f51b77b9",
     "indexId": "c499dc44-c803-4af9-af3b-829ea66cacd6",
     "classId": "alchemeister",
     "name": "Alchemeister",
@@ -117,7 +130,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b869",
+    "id": "6a9e68822d5e42e3f51b77d2",
     "indexId": "c0bb0c42-e417-4929-b2c1-fbfdd223fb16",
     "classId": "alchemist",
     "name": "Alchemist",
@@ -130,7 +143,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b881",
+    "id": "6a9e68822d5e42e3f51b77dd",
     "indexId": "28d1ff5e-7d63-4317-9a35-a1e18dfb625a",
     "classId": "alkahest",
     "name": "Alkahest",
@@ -143,7 +156,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b866",
+    "id": "6a9e68822d5e42e3f51b77d1",
     "indexId": "94e65c9d-0d1d-498f-89c4-8808ec7bc254",
     "classId": "amanita",
     "name": "Amanita",
@@ -156,7 +169,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b844",
+    "id": "6a9e68822d5e42e3f51b7780",
     "indexId": "bb8df19e-817f-4c62-b94c-68901de6ac58",
     "classId": "angelblooded",
     "name": "Angelblooded",
@@ -169,7 +182,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b870",
+    "id": "6a9e68822d5e42e3f51b77bf",
     "indexId": "81b6ad4e-b261-436c-875b-40520bbf4f34",
     "classId": "animal-summoner",
     "name": "Animal Summoner",
@@ -182,7 +195,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b81c",
+    "id": "6a9e68822d5e42e3f51b778e",
     "indexId": "c2b129c2-5f5e-49be-afb0-b3524c75632b",
     "classId": "anti-mage",
     "name": "Anti-Mage",
@@ -195,7 +208,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b81d",
+    "id": "6a9e68822d5e42e3f51b778f",
     "indexId": "da0b5f13-b284-4ec2-a77a-ca927805248a",
     "classId": "arcanist",
     "name": "Arcanist",
@@ -208,7 +221,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b81e",
+    "id": "6a9e68822d5e42e3f51b7790",
     "indexId": "fdb96268-fa1a-43e3-8eb4-56a25efa1b1e",
     "classId": "archer",
     "name": "Archer",
@@ -221,7 +234,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b848",
+    "id": "6a9e68822d5e42e3f51b7783",
     "indexId": "301c37f9-5235-4149-8ffb-72ff189f6cbc",
     "classId": "archsage",
     "name": "Archsage",
@@ -234,7 +247,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b877",
+    "id": "6a9e68822d5e42e3f51b77d5",
     "indexId": "b2710300-e545-47bd-85cf-e3675319e249",
     "classId": "armiger",
     "name": "Armiger",
@@ -247,7 +260,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b88d",
+    "id": "6a9e68822d5e42e3f51b77e5",
     "indexId": "6c992890-b4b3-4286-8ba7-45d320b3d31b",
     "classId": "armorsmith",
     "name": "Armorsmith",
@@ -260,7 +273,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b88b",
+    "id": "6a9e68822d5e42e3f51b77c9",
     "indexId": "16688460-1950-4b76-b7c8-414468f49f00",
     "classId": "artificer",
     "name": "Artificer",
@@ -273,7 +286,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b849",
+    "id": "6a9e68822d5e42e3f51b77a6",
     "indexId": "60ba55f7-ace7-4cec-8320-c8c515f8e32b",
     "classId": "assassin",
     "name": "Assassin",
@@ -286,7 +299,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b8ba",
+    "id": "6a9e68822d5e42e3f51b77f9",
     "indexId": "f106d562-fd03-47eb-81d6-2e9ce2344991",
     "classId": "aurora-blade-style",
     "name": "Aurora Blade Style",
@@ -299,7 +312,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b81f",
+    "id": "6a9e68822d5e42e3f51b776f",
     "indexId": "78728227-6d00-4933-9b42-b5338da1937e",
     "classId": "bajiquan-style",
     "name": "Bajiquan Style",
@@ -312,7 +325,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b820",
+    "id": "6a9e68822d5e42e3f51b7791",
     "indexId": "dafe107e-13e2-449d-8a25-3397a8c80e7a",
     "classId": "bard",
     "name": "Bard",
@@ -325,7 +338,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b821",
+    "id": "6a9e68822d5e42e3f51b7770",
     "indexId": "3415908b-0b80-493b-85be-9d8237b20a32",
     "classId": "battle-mage",
     "name": "Battle Mage",
@@ -338,7 +351,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b822",
+    "id": "6a9e68822d5e42e3f51b7792",
     "indexId": "e09224a9-abcf-46b4-a360-5a58a5acb102",
     "classId": "battlemaster",
     "name": "Battlemaster",
@@ -351,7 +364,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b823",
+    "id": "6a9e68822d5e42e3f51b7793",
     "indexId": "e69ada4a-53f2-4629-9bdd-e7fdb6307809",
     "classId": "berserker",
     "name": "Berserker",
@@ -364,7 +377,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8c2",
+    "id": "6a9e68822d5e42e3f51b77fc",
     "indexId": "92e1463f-b10d-41cb-8741-c7deb6931939",
     "classId": "biochemist",
     "name": "Biochemist",
@@ -377,7 +390,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8a8",
+    "id": "6a9e68822d5e42e3f51b77f1",
     "indexId": "58bd5f2f-e84a-488a-9737-053e69c13580",
     "classId": "black-oath-style",
     "name": "Black Oath Style",
@@ -390,7 +403,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b864",
+    "id": "6a9e68822d5e42e3f51b77d0",
     "indexId": "83d421de-efef-41bb-9e40-5e71741c50ec",
     "classId": "blacksmith",
     "name": "Blacksmith",
@@ -403,7 +416,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b85e",
+    "id": "6a9e68822d5e42e3f51b77cd",
     "indexId": "f7e5f612-a2a5-486e-bae2-c35f46e4475f",
     "classId": "bloodbinder",
     "name": "Bloodbinder",
@@ -416,7 +429,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b827",
+    "id": "6a9e68822d5e42e3f51b7771",
     "indexId": "57401ddc-be19-4e1b-8e49-2c98c8c15193",
     "classId": "bodyguard",
     "name": "Bodyguard",
@@ -429,7 +442,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b885",
+    "id": "6a9e68822d5e42e3f51b77df",
     "indexId": "42c77fbf-a77f-445e-9ec5-46f391a35ebd",
     "classId": "botanist",
     "name": "Botanist",
@@ -442,7 +455,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b824",
+    "id": "6a9e68822d5e42e3f51b7794",
     "indexId": "9999decb-b397-4868-979a-dcc972292b92",
     "classId": "brawler",
     "name": "Brawler",
@@ -455,7 +468,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8c9",
+    "id": "6a9e68822d5e42e3f51b7820",
     "indexId": "06b5aefa-f860-41a8-8e63-1d0e4eac95bb",
     "classId": "cannoneer",
     "name": "Cannoneer",
@@ -468,7 +481,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b886",
+    "id": "6a9e68822d5e42e3f51b77e0",
     "indexId": "9027b070-f6a2-4bf7-8890-3405175fbf0e",
     "classId": "carpenter",
     "name": "Carpenter",
@@ -481,7 +494,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b879",
+    "id": "6a9e68822d5e42e3f51b77d7",
     "indexId": "c0963e85-8ecb-4aa1-b9f6-9fac2f484152",
     "classId": "cavalier",
     "name": "Cavalier",
@@ -494,7 +507,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b825",
+    "id": "6a9e68822d5e42e3f51b7795",
     "indexId": "80072b34-a3f8-4382-b742-ed6980cb5e1f",
     "classId": "chronofighter",
     "name": "Chronofighter",
@@ -507,7 +520,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b86c",
+    "id": "6a9e68822d5e42e3f51b77bb",
     "indexId": "66e5535d-f925-43cd-9c57-31f68d8665f0",
     "classId": "chronomancer",
     "name": "Chronomancer",
@@ -520,7 +533,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b86d",
+    "id": "6a9e68822d5e42e3f51b77bc",
     "indexId": "0d874c9f-26fb-4462-9957-ec5b43e42d9e",
     "classId": "colossus",
     "name": "Colossus",
@@ -533,7 +546,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b856",
+    "id": "6a9e68822d5e42e3f51b778a",
     "indexId": "cee123fb-082a-49ff-8083-f576564eabf4",
     "classId": "cryomancer",
     "name": "Cryomancer",
@@ -546,7 +559,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b88f",
+    "id": "6a9e68822d5e42e3f51b77cb",
     "indexId": "6a587a34-f1ed-42ff-b083-5ade59563aac",
     "classId": "culinarian",
     "name": "Culinarian",
@@ -559,7 +572,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8ac",
+    "id": "6a9e68822d5e42e3f51b77f3",
     "indexId": "78d3ab91-b02b-4a5e-85e3-56af3d40ef3a",
     "classId": "cultivator",
     "name": "Cultivator",
@@ -572,7 +585,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b875",
+    "id": "6a9e68822d5e42e3f51b77d4",
     "indexId": "ddf4c000-a3ce-4df4-b4f0-3ee22e02ed79",
     "classId": "curse-knight",
     "name": "Curse Knight",
@@ -585,7 +598,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8a1",
+    "id": "6a9e68822d5e42e3f51b7805",
     "indexId": "b3864146-77f4-4c3a-ae8f-20dd05600809",
     "classId": "cutthroat",
     "name": "Cutthroat",
@@ -598,7 +611,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8a7",
+    "id": "6a9e68822d5e42e3f51b7808",
     "indexId": "f84ffc6f-70d6-4a21-b4aa-492850669a2b",
     "classId": "daionmyoji",
     "name": "Daionmyoji",
@@ -611,7 +624,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b89b",
+    "id": "6a9e68822d5e42e3f51b7803",
     "indexId": "e69b9c7c-dbd9-4b6e-b0a3-a9123d078de8",
     "classId": "dark-priest",
     "name": "Dark Priest",
@@ -624,7 +637,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b84a",
+    "id": "6a9e68822d5e42e3f51b7784",
     "indexId": "dce2c847-50ed-41b7-823e-392456fc31ac",
     "classId": "deadeye",
     "name": "Deadeye",
@@ -637,7 +650,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b89c",
+    "id": "6a9e68822d5e42e3f51b77ea",
     "indexId": "341869f2-a3ed-4f09-a74e-09610d0995a2",
     "classId": "death-knight",
     "name": "Death Knight",
@@ -650,7 +663,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b84b",
+    "id": "6a9e68822d5e42e3f51b77a7",
     "indexId": "c3622480-d0d0-494d-ae80-abd7f5fb4d59",
     "classId": "dragoon",
     "name": "Dragoon",
@@ -663,7 +676,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b84c",
+    "id": "6a9e68822d5e42e3f51b77a8",
     "indexId": "88c41e0d-f47d-4cb7-9033-45eff545255c",
     "classId": "duelist",
     "name": "Duelist",
@@ -676,7 +689,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8b6",
+    "id": "6a9e68822d5e42e3f51b7810",
     "indexId": "4067c319-75f6-49a4-8af0-60227631a888",
     "classId": "earthcleaving-style",
     "name": "Earthcleaving Style",
@@ -689,7 +702,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b826",
+    "id": "6a9e68822d5e42e3f51b7796",
     "indexId": "53f21615-94ea-4f21-b4d4-c7077ac09409",
     "classId": "electromancer",
     "name": "Electromancer",
@@ -702,7 +715,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b863",
+    "id": "6a9e68822d5e42e3f51b77cf",
     "indexId": "b14ddb6f-d8b2-4b51-a51f-ac2b856b651c",
     "classId": "electromaster",
     "name": "Electromaster",
@@ -715,7 +728,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8bc",
+    "id": "6a9e68822d5e42e3f51b77fa",
     "indexId": "3c2ed9f0-013e-4fe8-ba73-bd6ea57c406c",
     "classId": "elementalist",
     "name": "Elementalist",
@@ -728,7 +741,20 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b898",
+    "id": "6aa971d0ee297894130ef270",
+    "indexId": "7d4db53d-1374-4a6d-aeff-fc1834b431ce",
+    "classId": "enforcer",
+    "name": "Enforcer",
+    "description": "<p>“Move along, sir. Move along.”</p><p>Renaud waved the merchant through the checkpoint absently, his eyes not leaving the opposite set of gates. Tables ran half the length of either side of the checkpoint, staffed on one side by humans and on the other side by demons. Officials representing Westria and Sorthen, checking travel papers, wares, and business. In theory, Jav was under the control of Westria, having changed hands during the war once again. In practice, the city had always been mixed and an inner wall and multiple checkpoints linked the human half of the city to the demon half.&nbsp;</p><p>It was more complicated than that, but that was the basics of it. Plenty of humans (and others, like chimera) lived on the demon side and there were demons that freely lived on the human side. And as much animosity had been born between humans and demons during the war, Jav had always had its way of doing things and they rarely followed how their respective nations behaved. Still, this was one of the only locations on the Westria-Sorthen border to cross into each nation easily and that brought all types.</p><p>He knew them well and his demon compatriots on the other side knew them as well. A couple times a year, someone from one side or the other would try something. A rush through a checkpoint, an alchemical bomb, or some sort of magical attack. Normally handled quickly and with little fuss as those that chose to take those sorts of actions couldn’t fathom that the human and demon guards would work together to stop them.</p><p>A family of catfolk stopped briefly in front of him, presenting their signed travel papers. His eyes flicked over them with an automatic swiftness of someone who had done this thousands of times.</p><p>“It’s in order, move along,” he told them.</p><p>They had just cleared the gate when he heard a shout from behind him.</p><p>“Renaud!”</p><p>He turned, his shotgun coming up on automatic at the urgent shout. A young man was sprinting toward the gates, his hands tucked close to his chest, holding something. Citizens were already running or moving out of the way and he knew the other guards in the checkpoint would be reacting soon enough. But he was the closest.</p><p>“Halt!”</p><p>The young man looked at him in shock and then anger but didn’t stop his sprint.</p><p>BOOM!</p><p>The cobblestone around the runner’s feet shredded into chunks and he skidded to a stop, just barely missing having his legs blasted out from under him by the shotgun blast. He’d still caught a ricochet of it.</p><p>“Remain where you are! Raise your hands above your head!”</p><p>The young man stared at him and at the smoke rising gently from the muzzle of his gun.</p><p>“W-why are you doing this?!” he demanded. “You-you are a man of Westria! You should be helping me cleanse these-these monsters!”</p><p>Renaud narrowed his eyes as he cautiously stepped forward. If he had to guess, this kid was Euphoric Front…or believed he was. And now that he wasn’t running, Renaud could see he was carrying a pair of flasks, one with a gleaming silver liquid and the other with a burning orange one. Catalyst bomb. Break both flasks into each other and that much volatile mixture could blow a hole in the wall…or kill dozens of people trapped inside the checkpoint.</p><p>“On your knees! Now! I will not tell you again, son.”</p><p>The other guards were keeping their distance and ushering the crowd away. He saw it in the kid’s eyes the moment before the kid even realized he’d made the decision. A wildness, nearly madness, burning like a flame.</p><p>“I’ll burn the impure--” he raised his hands to smash the flasks together.</p><p>BOOM!</p><p>One flask tumbled to the cobblestone and shattered, the volatile fluid hissing as it rapidly evaporated. The kid’s hand landed next to it with a wet slap. He started shrieking, dropped the other flask, and was promptly tackled by a demon guard with gleaming silver wings and a cracked halo over her head. She may have cracked his head against the cobblestone a bit harder than necessary but at least he wasn’t screaming any more.</p><p>“Nice shot, Renaud. Maybe call this kid a healer, yeah?”</p>",
+    "difficulty": "2",
+    "tier": "2",
+    "role1": "Defender",
+    "role2": "",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/b84d7295-3242-4586-8cf2-cc1c9c10c974-enforcer2.sm.webp",
+    "imageAlignment": "top"
+  },
+  {
+    "id": "6a9e68822d5e42e3f51b7801",
     "indexId": "0f831cdd-01b9-4185-be0c-ac003f933b07",
     "classId": "eremancer",
     "name": "Eremancer",
@@ -741,7 +767,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b892",
+    "id": "6a9e68822d5e42e3f51b77e7",
     "indexId": "6470eaaa-166a-4b7b-92ea-27d1ac309586",
     "classId": "evil-eye",
     "name": "Evil Eye",
@@ -754,7 +780,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b893",
+    "id": "6a9e68822d5e42e3f51b77fd",
     "indexId": "f2267f3c-9174-43d3-8a82-cce89951f3e4",
     "classId": "exalted-blade",
     "name": "Exalted Blade",
@@ -767,7 +793,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b8a0",
+    "id": "6a9e68822d5e42e3f51b77ed",
     "indexId": "873bdba3-5751-443c-aedf-b550bb4705f6",
     "classId": "exalted-shield",
     "name": "Exalted Shield",
@@ -780,7 +806,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b888",
+    "id": "6a9e68822d5e42e3f51b77c8",
     "indexId": "01280ace-1ca6-449a-9e83-ef1a00427c4c",
     "classId": "excavator",
     "name": "Excavator",
@@ -793,7 +819,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b828",
+    "id": "6a9e68822d5e42e3f51b7797",
     "indexId": "40b6ed47-b2da-45a2-a000-33d3d24b61f7",
     "classId": "executor",
     "name": "Executor",
@@ -806,7 +832,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8ca",
+    "id": "6a9e68822d5e42e3f51b781d",
     "indexId": "f609606a-1a6d-4c64-96ca-02ce424fde45",
     "classId": "fae-knight",
     "name": "Fae Knight",
@@ -819,7 +845,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8cb",
+    "id": "6a9e68822d5e42e3f51b7821",
     "indexId": "3e8fd2a3-698e-40bc-9674-765425132d22",
     "classId": "fae-knight--willow-style",
     "name": "Fae Knight: Willow Style",
@@ -832,7 +858,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b847",
+    "id": "6a9e68822d5e42e3f51b7782",
     "indexId": "671c2045-6a53-42f4-9860-bcf43abb6876",
     "classId": "faerie-light-eyes",
     "name": "Faerie Light Eyes",
@@ -845,7 +871,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b882",
+    "id": "6a9e68822d5e42e3f51b77de",
     "indexId": "fcfde221-d565-43e4-9eca-216dd83621b2",
     "classId": "farmer",
     "name": "Farmer",
@@ -858,7 +884,20 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b829",
+    "id": "6aa9895bee297894130ef279",
+    "indexId": "46cbcd24-b8f4-469a-88a1-45f67ca170ef",
+    "classId": "fateweaver",
+    "name": "Fateweaver",
+    "description": "<p>Fate was a strange thing. Nothing could stop its inevitable march. Time moved forward, even if it could be nudged and manipulated. Destined actions could be nudged, too. A thread here, a thread there, and the fated fall of a hero could be nudged further down the temporal road. Nudge it enough and that hero might be able to live a full life and pass of old age.</p><p>Or so her master had told her.</p><p>Vereana bit back a curse as she ducked under a searing beam of magical energy, hearing it scorch through a tree somewhere behind her. A swarm of glittering, gleaming shards burst from her hands and engulfed the enemy mage that had been trying to take her out. He shouted at the sudden, blinding magical crystals surrounding him but it gave her the chance to focus on something that wasn’t her own safety. Master had never talked about dodging swords, arrows, and magic missiles in his training.</p><p>She flicked her fingers and threads of crimson suddenly appeared, wrapped around her hand and extending over to Benilus. For a moment, she saw double. A fate in which Benilus was not quite fast enough with raising his shield. He still caught most of the heavy blow but the angle of his shield allowed part of it to slam into his shoulder, staggering him to his knees. But with a nudge of mana down the strings, fate twitched and changed. The surge of energy brought swiftness to Benilus’s shield arm and he caught the blow cleanly, letting it slide perfectly off his block and into the dirt.<br><br>He retaliated in that moment of over extension, driving the berserker back.&nbsp;</p><p>With her other hand, she reached out and grasped the shining green threads that wrapped around critical points of his body, sending a surge of energy through them until they cut. The cascade of magic still reached him, reinvigorating him with the potential of lost moments of chance.</p><p>Atropos, her master called it.</p><p>She had made Master angry when she insisted on calling it “Healing Strings”.</p><p>But Master hadn’t been wrong. Those tiny moments, little nudges, turned the tide of the fight. Benilus overcame his opponent and was able to push on to help their allies. Without someone holding their front line, the mage that had been attacking her had no time but to focus on his own survival, freeing her up to send in her own magical attacks and attend to more threads in support of her friends.</p><p>They were one step closer to meeting the fate of dying of old age and she was going to do her best to make sure they all found that ending.</p>",
+    "difficulty": "3",
+    "tier": "2",
+    "role1": "Healer",
+    "role2": "Support",
+    "imageSmUrl": "https://cdn.angelssword.com/ttrpg/assets/7f14db84-b05c-484f-a443-ce74de17c094-fateweaver.sm.webp",
+    "imageAlignment": "top"
+  },
+  {
+    "id": "6a9e68822d5e42e3f51b7798",
     "indexId": "f64bcba8-07a0-4e0c-871d-5a5b498df6fe",
     "classId": "fencer",
     "name": "Fencer",
@@ -871,7 +910,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b851",
+    "id": "6a9e68822d5e42e3f51b7786",
     "indexId": "00622212-0ce8-4c78-9a3d-dc88188d245a",
     "classId": "fighter",
     "name": "Fighter",
@@ -884,7 +923,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8a6",
+    "id": "6a9e68822d5e42e3f51b77f0",
     "indexId": "cfebed91-f295-4210-8ac9-18226cc2a380",
     "classId": "five-harmonies-style",
     "name": "Five Harmonies Style",
@@ -897,7 +936,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b830",
+    "id": "6a9e68822d5e42e3f51b779c",
     "indexId": "14cef376-58e4-4c4a-bf0d-4548f3f5414d",
     "classId": "flame-sentinel",
     "name": "Flame Sentinel",
@@ -910,7 +949,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b86f",
+    "id": "6a9e68822d5e42e3f51b77be",
     "indexId": "dc7672cc-3c78-4483-8426-ed235f939c3a",
     "classId": "flash-star-blade-style-",
     "name": "Flash Star Blade Style ",
@@ -923,7 +962,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8ad",
+    "id": "6a9e68822d5e42e3f51b77f4",
     "indexId": "09290acb-4261-4aed-a1a0-b98b185e1e2f",
     "classId": "flowing-wind-style",
     "name": "Flowing Wind Style",
@@ -936,7 +975,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b884",
+    "id": "6a9e68822d5e42e3f51b77c7",
     "indexId": "56ab4411-9fc4-49ae-bf49-7814208b22d4",
     "classId": "forager",
     "name": "Forager",
@@ -949,7 +988,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b865",
+    "id": "6a9e68822d5e42e3f51b77b6",
     "indexId": "bce36400-9bf1-4559-a05d-e9ee80a50e14",
     "classId": "forgemaster",
     "name": "Forgemaster",
@@ -962,7 +1001,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a769e41086ffb85ad32da25",
+    "id": "6a9e68822d5e42e3f51b7823",
     "indexId": "2da8c4d6-290a-46e1-9d4a-7c9d41d96589",
     "classId": "fusilier",
     "name": "Fusilier",
@@ -975,7 +1014,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b873",
+    "id": "6a9e68822d5e42e3f51b77c2",
     "indexId": "42e564c5-7467-49f4-ade4-49d2e758a3db",
     "classId": "geomancer",
     "name": "Geomancer",
@@ -988,7 +1027,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8ab",
+    "id": "6a9e68822d5e42e3f51b780a",
     "indexId": "a723c69c-9982-4f96-9b78-8fe6a70aa428",
     "classId": "geomaster",
     "name": "Geomaster",
@@ -1001,7 +1040,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8b1",
+    "id": "6a9e68822d5e42e3f51b77f5",
     "indexId": "90f2001e-7c67-4844-b0d7-cb669c5e3dcc",
     "classId": "grandmaster",
     "name": "Grandmaster",
@@ -1014,7 +1053,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b8af",
+    "id": "6a9e68822d5e42e3f51b780c",
     "indexId": "616be77b-fba7-4082-9e61-d99a6ff697ef",
     "classId": "granite-warden",
     "name": "Granite Warden",
@@ -1027,7 +1066,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b8b2",
+    "id": "6a9e68822d5e42e3f51b780e",
     "indexId": "cbafc788-5356-4876-9edb-5b439f007d1c",
     "classId": "gravitect",
     "name": "Gravitect",
@@ -1040,7 +1079,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8b3",
+    "id": "6a9e68822d5e42e3f51b77f6",
     "indexId": "a6456526-ee25-4a46-8b80-5bd95d697c44",
     "classId": "graviturge",
     "name": "Graviturge",
@@ -1053,7 +1092,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b84e",
+    "id": "6a9e68822d5e42e3f51b77a9",
     "indexId": "1f4e151d-4fd5-421c-a89e-25bd12c5c0d3",
     "classId": "great-berserker",
     "name": "Great Berserker",
@@ -1066,7 +1105,7 @@
     "imageAlignment": "bottom"
   },
   {
-    "id": "6a5e50be98f4934cf278b878",
+    "id": "6a9e68822d5e42e3f51b77d6",
     "indexId": "6883df97-1fb5-4a01-a660-73bccb9359af",
     "classId": "great-knight",
     "name": "Great Knight",
@@ -1079,7 +1118,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b82b",
+    "id": "6a9e68822d5e42e3f51b7772",
     "indexId": "d4c5ea5d-16a6-4147-9330-c760d6654ecd",
     "classId": "guardian",
     "name": "Guardian",
@@ -1092,7 +1131,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8b5",
+    "id": "6a9e68822d5e42e3f51b780f",
     "indexId": "6042799b-c557-4887-a001-1b36d4be8357",
     "classId": "gun-paladin",
     "name": "Gun Paladin",
@@ -1105,7 +1144,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b85f",
+    "id": "6a9e68822d5e42e3f51b77b3",
     "indexId": "5ab80caa-bd78-455e-8e06-890b0cbda577",
     "classId": "gunfu",
     "name": "Gunfu",
@@ -1118,7 +1157,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b82c",
+    "id": "6a9e68822d5e42e3f51b779a",
     "indexId": "38c34baf-6bc6-4e3c-874d-acc6b3698404",
     "classId": "gunslinger",
     "name": "Gunslinger",
@@ -1131,7 +1170,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8aa",
+    "id": "6a9e68822d5e42e3f51b77f2",
     "indexId": "7c91a3e4-18d0-4947-a689-94bfbc0339cc",
     "classId": "harrier",
     "name": "Harrier",
@@ -1144,7 +1183,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b868",
+    "id": "6a9e68822d5e42e3f51b77b8",
     "indexId": "6d2e2111-964c-4a7b-9ce0-7cf79435c918",
     "classId": "high-priest",
     "name": "High Priest",
@@ -1157,7 +1196,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b82d",
+    "id": "6a9e68822d5e42e3f51b7773",
     "indexId": "6aa1f956-c319-40e9-b3b6-929ca3b237ec",
     "classId": "highlander",
     "name": "Highlander",
@@ -1170,7 +1209,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b867",
+    "id": "6a9e68822d5e42e3f51b77b7",
     "indexId": "5ccf002b-cbdd-4add-839f-d1db05cfa0c3",
     "classId": "hoarfrost",
     "name": "Hoarfrost",
@@ -1183,7 +1222,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b87b",
+    "id": "6a9e68822d5e42e3f51b77c4",
     "indexId": "45407eae-aded-40f2-95f2-081faf642f92",
     "classId": "hussar",
     "name": "Hussar",
@@ -1196,7 +1235,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b89e",
+    "id": "6a9e68822d5e42e3f51b77eb",
     "indexId": "c2983124-170e-4a2a-9199-6332cf7cb927",
     "classId": "hydromancer",
     "name": "Hydromancer",
@@ -1209,7 +1248,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b82f",
+    "id": "6a9e68822d5e42e3f51b7774",
     "indexId": "48c3abec-23e7-4fb5-9e17-3ae116b6d746",
     "classId": "iai-style",
     "name": "Iai Style",
@@ -1222,7 +1261,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b8b0",
+    "id": "6a9e68822d5e42e3f51b780d",
     "indexId": "85c6acd0-dba9-4603-90d0-fe522f547cd9",
     "classId": "idol",
     "name": "Idol",
@@ -1235,7 +1274,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8c4",
+    "id": "6a9e68822d5e42e3f51b7819",
     "indexId": "8693bc50-7461-48e6-aa02-69655073c33d",
     "classId": "jewel-idol",
     "name": "Jewel Idol",
@@ -1248,7 +1287,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8a3",
+    "id": "6a9e68822d5e42e3f51b77ee",
     "indexId": "8d245223-59ea-4212-b917-b02b26556e17",
     "classId": "jonin",
     "name": "Jonin",
@@ -1261,7 +1300,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b8a4",
+    "id": "6a9e68822d5e42e3f51b77ef",
     "indexId": "210bc182-a061-499c-a0b3-b8c9e0d74854",
     "classId": "knight-paramount",
     "name": "Knight-Paramount",
@@ -1274,7 +1313,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b82e",
+    "id": "6a9e68822d5e42e3f51b779b",
     "indexId": "ab8010fc-dffa-46cf-be35-e78a64023356",
     "classId": "lancer",
     "name": "Lancer",
@@ -1287,7 +1326,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b819",
+    "id": "6a9e68822d5e42e3f51b778c",
     "indexId": "ae8d4d72-09b5-4c3b-ba16-06e8614132b1",
     "classId": "mage",
     "name": "Mage",
@@ -1300,7 +1339,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b87c",
+    "id": "6a9e68822d5e42e3f51b77c5",
     "indexId": "f6160ec6-4760-470c-92b3-066bce176ed9",
     "classId": "mage-knight",
     "name": "Mage Knight",
@@ -1313,7 +1352,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b88c",
+    "id": "6a9e68822d5e42e3f51b77e4",
     "indexId": "f0f605a8-7185-460a-bbf5-67be0428e293",
     "classId": "magitechnician-",
     "name": "Magitechnician ",
@@ -1326,7 +1365,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8a9",
+    "id": "6a9e68822d5e42e3f51b7809",
     "indexId": "1ad7d506-7b27-4adf-af81-14708831a3b6",
     "classId": "maid",
     "name": "Maid",
@@ -1339,7 +1378,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a77cf53086ffb85ad32da36",
+    "id": "6a9e68822d5e42e3f51b7825",
     "indexId": "bd5f5b98-4d24-4307-b17e-3de0c90180e6",
     "classId": "manifestor",
     "name": "Manifestor",
@@ -1352,7 +1391,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b831",
+    "id": "6a9e68822d5e42e3f51b7775",
     "indexId": "c2bb890f-9f9b-40f0-85bb-3ae56761e6f3",
     "classId": "marksman",
     "name": "Marksman",
@@ -1365,7 +1404,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b852",
+    "id": "6a9e68822d5e42e3f51b77ac",
     "indexId": "24dacde4-3713-4e25-96c0-295526d8b2fc",
     "classId": "martial-artist",
     "name": "Martial Artist",
@@ -1378,7 +1417,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b88e",
+    "id": "6a9e68822d5e42e3f51b77ca",
     "indexId": "fa02fc8e-d105-479c-9229-86b2a81f7d44",
     "classId": "master-armorer",
     "name": "Master Armorer",
@@ -1391,7 +1430,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8c8",
+    "id": "6a9e68822d5e42e3f51b781c",
     "indexId": "a23e4cdd-2589-4c40-b708-fc3a6dc23af9",
     "classId": "medic",
     "name": "Medic",
@@ -1404,7 +1443,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8c5",
+    "id": "6a9e68822d5e42e3f51b781a",
     "indexId": "91c1f01b-3b94-4584-a4fd-c2d7c90ceb01",
     "classId": "merchant",
     "name": "Merchant",
@@ -1417,7 +1456,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8bd",
+    "id": "6a9e68822d5e42e3f51b7814",
     "indexId": "daaa3f8e-d2ed-4d63-8034-a0451b7ea540",
     "classId": "mime",
     "name": "Mime",
@@ -1430,7 +1469,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b887",
+    "id": "6a9e68822d5e42e3f51b77e1",
     "indexId": "2d4d39f6-4022-454e-bc4a-5c9e060bc490",
     "classId": "miner",
     "name": "Miner",
@@ -1443,7 +1482,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b89f",
+    "id": "6a9e68822d5e42e3f51b77ec",
     "indexId": "117d22c6-0b71-49a1-b36e-f57e4f48fb0a",
     "classId": "mist-veil-elegy",
     "name": "Mist Veil Elegy",
@@ -1456,7 +1495,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8c6",
+    "id": "6a9e68822d5e42e3f51b781b",
     "indexId": "5852bacd-f4be-451d-9237-08d63e88559e",
     "classId": "mogul",
     "name": "Mogul",
@@ -1469,7 +1508,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b832",
+    "id": "6a9e68822d5e42e3f51b779d",
     "indexId": "67ffa099-ced9-4db5-bd7a-e62b1b6f1a0c",
     "classId": "monk",
     "name": "Monk",
@@ -1482,7 +1521,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b833",
+    "id": "6a9e68822d5e42e3f51b7776",
     "indexId": "754371d5-5f29-4e4c-9d7c-0d8cd56577ee",
     "classId": "mycomancer",
     "name": "Mycomancer",
@@ -1495,7 +1534,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8b8",
+    "id": "6a9e68822d5e42e3f51b7812",
     "indexId": "53317683-553a-467f-8ae4-4d88ca86404b",
     "classId": "mystic-eyes-of-destruction",
     "name": "Mystic Eyes of Destruction",
@@ -1508,7 +1547,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b8b9",
+    "id": "6a9e68822d5e42e3f51b77f8",
     "indexId": "e0984ffb-edcc-447e-aad5-d28cacfb24de",
     "classId": "mystic-eyes-of-domination",
     "name": "Mystic Eyes of Domination",
@@ -1521,7 +1560,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a91bc74086ffb85ad32da53",
+    "id": "6a9e68822d5e42e3f51b7826",
     "indexId": "f50c8cba-9520-4c9c-ba1c-84f8f315a44a",
     "classId": "mystic-eyes-of-petrification",
     "name": "Mystic Eyes of Petrification",
@@ -1534,7 +1573,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b8c7",
+    "id": "6a9e68822d5e42e3f51b781f",
     "indexId": "a1afe04b-a9e0-4161-aa29-40565a47868a",
     "classId": "naturalist",
     "name": "Naturalist",
@@ -1547,7 +1586,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b834",
+    "id": "6a9e68822d5e42e3f51b7777",
     "indexId": "9217b70d-816b-4d34-861d-dde205ef8f86",
     "classId": "necromancer",
     "name": "Necromancer",
@@ -1560,7 +1599,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b8c1",
+    "id": "6a9e68822d5e42e3f51b77fb",
     "indexId": "76cfd399-33a1-46f0-9e75-877968140f3c",
     "classId": "necromaster",
     "name": "Necromaster",
@@ -1573,7 +1612,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b836",
+    "id": "6a9e68822d5e42e3f51b7778",
     "indexId": "20fe535c-ec09-4d08-af52-aa7ba7b2d160",
     "classId": "ninja",
     "name": "Ninja",
@@ -1586,7 +1625,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b87d",
+    "id": "6a9e68822d5e42e3f51b77d9",
     "indexId": "97050a94-9a5b-4b62-af39-31ac97aaf686",
     "classId": "nomad",
     "name": "Nomad",
@@ -1599,7 +1638,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b859",
+    "id": "6a9e68822d5e42e3f51b77ae",
     "indexId": "1f50a6ca-7477-4b82-b69e-43c9d39c6df6",
     "classId": "onmyoji-",
     "name": "Onmyoji ",
@@ -1612,7 +1651,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b857",
+    "id": "6a9e68822d5e42e3f51b77ad",
     "indexId": "edf8b86e-c4af-4b7f-8e8e-53a99b3c9c8b",
     "classId": "oracle",
     "name": "Oracle",
@@ -1625,7 +1664,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b835",
+    "id": "6a9e68822d5e42e3f51b779e",
     "indexId": "8e486304-726e-475a-8b61-14f6ffc53a22",
     "classId": "peltast",
     "name": "Peltast",
@@ -1638,7 +1677,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b894",
+    "id": "6a9e68822d5e42e3f51b77fe",
     "indexId": "536e4389-803c-4364-9fe3-a93bf1273af6",
     "classId": "phantom-thief",
     "name": "Phantom Thief",
@@ -1651,7 +1690,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b897",
+    "id": "6a9e68822d5e42e3f51b7800",
     "indexId": "f9f0c629-7363-4ac2-8896-38b967e958e4",
     "classId": "phosphomancer",
     "name": "Phosphomancer",
@@ -1664,7 +1703,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b8be",
+    "id": "6a9e68822d5e42e3f51b7815",
     "indexId": "ab7fbfe9-9f27-4868-adbe-90906fbfd9d5",
     "classId": "pierrot",
     "name": "Pierrot",
@@ -1677,7 +1716,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b837",
+    "id": "6a9e68822d5e42e3f51b7779",
     "indexId": "3505f71d-242d-4620-8ae3-431591f926bb",
     "classId": "priest",
     "name": "Priest",
@@ -1690,7 +1729,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b84f",
+    "id": "6a9e68822d5e42e3f51b77aa",
     "indexId": "d104862e-9767-4145-8c41-377aaa72b2ef",
     "classId": "protector",
     "name": "Protector",
@@ -1703,7 +1742,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b838",
+    "id": "6a9e68822d5e42e3f51b779f",
     "indexId": "4390a446-7142-42a9-aa69-a7ea4799a5c1",
     "classId": "pyromancer",
     "name": "Pyromancer",
@@ -1716,7 +1755,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b85b",
+    "id": "6a9e68822d5e42e3f51b77b0",
     "indexId": "c4ba0a3e-7c97-46e8-a378-06b6f6a73819",
     "classId": "pyromaster",
     "name": "Pyromaster",
@@ -1729,7 +1768,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b854",
+    "id": "6a9e68822d5e42e3f51b7788",
     "indexId": "24b4e69c-1e51-434e-9e8c-a035a588ddc2",
     "classId": "ranger",
     "name": "Ranger",
@@ -1742,7 +1781,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b896",
+    "id": "6a9e68822d5e42e3f51b77e8",
     "indexId": "cd6545c5-47a7-4dbb-b6a6-a76810a17b4c",
     "classId": "reaver",
     "name": "Reaver",
@@ -1755,7 +1794,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b855",
+    "id": "6a9e68822d5e42e3f51b7789",
     "indexId": "334d2a78-9cf5-42a2-aabf-7ab88fa14c5e",
     "classId": "rogue",
     "name": "Rogue",
@@ -1768,7 +1807,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b83b",
+    "id": "6a9e68822d5e42e3f51b777b",
     "indexId": "1b273e84-fd3c-42a1-b536-cc85c8e43c6d",
     "classId": "saboteur",
     "name": "Saboteur",
@@ -1781,7 +1820,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b839",
+    "id": "6a9e68822d5e42e3f51b777a",
     "indexId": "0bf81ca3-3dec-4c99-9744-11cee7585531",
     "classId": "sage",
     "name": "Sage",
@@ -1794,7 +1833,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8c3",
+    "id": "6a9e68822d5e42e3f51b7818",
     "indexId": "804bdbf8-9375-4fbc-9db1-60c4c90c6300",
     "classId": "sanctioner",
     "name": "Sanctioner",
@@ -1807,7 +1846,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b88a",
+    "id": "6a9e68822d5e42e3f51b77e3",
     "indexId": "5238ce61-81cb-431b-9bbb-069c07a3b5d2",
     "classId": "scout",
     "name": "Scout",
@@ -1820,7 +1859,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8b7",
+    "id": "6a9e68822d5e42e3f51b7811",
     "indexId": "a179ae11-2665-4f63-9d58-8f5417309c5d",
     "classId": "searing-lotus-style",
     "name": "Searing Lotus Style",
@@ -1833,7 +1872,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8cd",
+    "id": "6a9e68822d5e42e3f51b781e",
     "indexId": "6767d709-7d39-469c-9cb1-0714a187949a",
     "classId": "seven-sorrows-sword-style",
     "name": "Seven Sorrows Sword Style",
@@ -1846,7 +1885,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b83a",
+    "id": "6a9e68822d5e42e3f51b77a0",
     "indexId": "f058ff4c-60f3-4092-a2ad-6a90905be4d1",
     "classId": "shadow-thief",
     "name": "Shadow Thief",
@@ -1859,7 +1898,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b89a",
+    "id": "6a9e68822d5e42e3f51b7802",
     "indexId": "a7a1b027-1697-46ce-9aea-47a830fc3c6e",
     "classId": "shadowbringer",
     "name": "Shadowbringer",
@@ -1872,7 +1911,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b83c",
+    "id": "6a9e68822d5e42e3f51b77a1",
     "indexId": "06201eb1-24fa-47bb-9577-ea85b56a231a",
     "classId": "shield-paladin",
     "name": "Shield Paladin",
@@ -1885,7 +1924,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b874",
+    "id": "6a9e68822d5e42e3f51b77d3",
     "indexId": "c5f28555-6f67-470f-87cd-1ce6e1f35f6e",
     "classId": "shield-saint",
     "name": "Shield Saint",
@@ -1898,7 +1937,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b85d",
+    "id": "6a9e68822d5e42e3f51b77b2",
     "indexId": "47f7cf71-d29c-40f2-8492-aabe9423e81c",
     "classId": "shieldwarden",
     "name": "Shieldwarden",
@@ -1911,7 +1950,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b845",
+    "id": "6a9e68822d5e42e3f51b77a5",
     "indexId": "fa7e981a-305c-47bf-bf74-263150ed3330",
     "classId": "shinigami-eyes",
     "name": "Shinigami Eyes",
@@ -1924,7 +1963,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b87a",
+    "id": "6a9e68822d5e42e3f51b77d8",
     "indexId": "badbcb03-8469-462f-bb92-3ce07c4bb5e5",
     "classId": "sky-knight",
     "name": "Sky Knight",
@@ -1937,7 +1976,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b895",
+    "id": "6a9e68822d5e42e3f51b77ff",
     "indexId": "a5e6788c-85d8-49cb-a09d-b933bc15f18d",
     "classId": "sky-talon-style",
     "name": "Sky Talon Style",
@@ -1950,7 +1989,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b84d",
+    "id": "6a9e68822d5e42e3f51b7785",
     "indexId": "b19caf50-e200-4182-9d3a-02037b7e0901",
     "classId": "sniper",
     "name": "Sniper",
@@ -1963,7 +2002,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8bb",
+    "id": "6a9e68822d5e42e3f51b7813",
     "indexId": "b10293ac-f0d2-4c7e-88fe-873671dd909a",
     "classId": "sorcerer",
     "name": "Sorcerer",
@@ -1976,7 +2015,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b86e",
+    "id": "6a9e68822d5e42e3f51b77bd",
     "indexId": "712b3ff8-0d93-4b5f-9278-7d4ff36bb425",
     "classId": "spearmaster",
     "name": "Spearmaster",
@@ -1989,7 +2028,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b861",
+    "id": "6a9e68822d5e42e3f51b77ce",
     "indexId": "9070fbc8-9635-4b3b-b4f1-76fa020aac75",
     "classId": "spell-blademaster",
     "name": "Spell Blademaster",
@@ -2002,7 +2041,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b83d",
+    "id": "6a9e68822d5e42e3f51b777c",
     "indexId": "1a26d167-8d42-4b69-b68d-f542ee66667e",
     "classId": "spellblade",
     "name": "Spellblade",
@@ -2015,7 +2054,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8b4",
+    "id": "6a9e68822d5e42e3f51b77f7",
     "indexId": "7f25322e-95b9-4f2d-9e26-262a0f9e5489",
     "classId": "starcaller",
     "name": "Starcaller",
@@ -2028,7 +2067,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b89d",
+    "id": "6a9e68822d5e42e3f51b7804",
     "indexId": "7d42ac44-6b90-4207-b25a-873ced88d1e4",
     "classId": "still-stone-style",
     "name": "Still Stone Style",
@@ -2041,7 +2080,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a76a9a4086ffb85ad32da2d",
+    "id": "6a9e68822d5e42e3f51b7824",
     "indexId": "762ac0f8-8032-41f5-99d8-cecc750085f8",
     "classId": "still-stone-testament",
     "name": "Still Stone Testament",
@@ -2054,7 +2093,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b891",
+    "id": "6a9e68822d5e42e3f51b77cc",
     "indexId": "3371dbf5-dd4b-4e1e-b453-0a737256ce82",
     "classId": "strategist",
     "name": "Strategist",
@@ -2067,7 +2106,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b872",
+    "id": "6a9e68822d5e42e3f51b77c1",
     "indexId": "42a84d75-b4c7-4adb-8cf6-37f5d21eef9d",
     "classId": "summoner",
     "name": "Summoner",
@@ -2080,7 +2119,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8ae",
+    "id": "6a9e68822d5e42e3f51b780b",
     "indexId": "26963eda-6d31-4917-a93e-7e53c9be92d5",
     "classId": "swashbuckler",
     "name": "Swashbuckler",
@@ -2093,7 +2132,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b83f",
+    "id": "6a9e68822d5e42e3f51b77a3",
     "indexId": "87bff3bc-e3b5-417d-a392-70ea72fd25cc",
     "classId": "sword-paladin",
     "name": "Sword Paladin",
@@ -2106,7 +2145,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b850",
+    "id": "6a9e68822d5e42e3f51b77ab",
     "indexId": "c45191d1-9a63-47d5-be93-2ec11fb1d93c",
     "classId": "sword-saint",
     "name": "Sword Saint",
@@ -2119,7 +2158,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b83e",
+    "id": "6a9e68822d5e42e3f51b77a2",
     "indexId": "3ddc8d8f-18a3-4dbb-8ce0-be9710dd3346",
     "classId": "tactician",
     "name": "Tactician",
@@ -2132,7 +2171,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b85c",
+    "id": "6a9e68822d5e42e3f51b77b1",
     "indexId": "f5eb0c4b-6cbc-4e9f-aa19-f932a7b5d0ec",
     "classId": "tavern-brawler",
     "name": "Tavern Brawler",
@@ -2145,7 +2184,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8a2",
+    "id": "6a9e68822d5e42e3f51b7806",
     "indexId": "6510144a-a167-4c36-9155-8f8574edadc4",
     "classId": "temporal-trickster",
     "name": "Temporal Trickster",
@@ -2158,7 +2197,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b840",
+    "id": "6a9e68822d5e42e3f51b77a4",
     "indexId": "74a46ea1-b715-4475-bdff-b5dbbf2d0834",
     "classId": "thief",
     "name": "Thief",
@@ -2171,7 +2210,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b889",
+    "id": "6a9e68822d5e42e3f51b77e2",
     "indexId": "c5e9ad40-a090-4199-8533-1b15f3dfe9d2",
     "classId": "timberwright",
     "name": "Timberwright",
@@ -2184,7 +2223,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b858",
+    "id": "6a9e68822d5e42e3f51b778b",
     "indexId": "46237ab1-fd98-41ff-8fe2-cad7849eeba6",
     "classId": "time-thief",
     "name": "Time Thief",
@@ -2197,7 +2236,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8a5",
+    "id": "6a9e68822d5e42e3f51b7807",
     "indexId": "21e49f61-58f7-44a4-8983-bcbc123ef03a",
     "classId": "transcendent-lightning-style",
     "name": "Transcendent Lightning Style",
@@ -2210,7 +2249,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b880",
+    "id": "6a9e68822d5e42e3f51b77dc",
     "indexId": "2f8f62ce-983b-4b81-8841-6670649b4d7e",
     "classId": "transmuter",
     "name": "Transmuter",
@@ -2223,7 +2262,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b890",
+    "id": "6a9e68822d5e42e3f51b77e6",
     "indexId": "42ef279a-f1b4-47cc-9f73-ff60c937db47",
     "classId": "trapper",
     "name": "Trapper",
@@ -2236,7 +2275,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b860",
+    "id": "6a9e68822d5e42e3f51b77b4",
     "indexId": "ec19d3cc-fda3-419f-83a5-52dea16d4258",
     "classId": "trickster",
     "name": "Trickster",
@@ -2249,7 +2288,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b862",
+    "id": "6a9e68822d5e42e3f51b77b5",
     "indexId": "9657f84b-e8f0-4539-a25c-9e337891dc2e",
     "classId": "true-shinigami-eyes",
     "name": "True Shinigami Eyes",
@@ -2262,7 +2301,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b86b",
+    "id": "6a9e68822d5e42e3f51b77ba",
     "indexId": "d2ef6f8d-e238-4c9b-a95a-067dcbfb9eb7",
     "classId": "vampire",
     "name": "Vampire",
@@ -2275,7 +2314,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b876",
+    "id": "6a9e68822d5e42e3f51b77c3",
     "indexId": "903abef6-57b8-42a5-9608-f9712e4e8b29",
     "classId": "vampire-lord",
     "name": "Vampire Lord",
@@ -2288,7 +2327,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b899",
+    "id": "6a9e68822d5e42e3f51b77e9",
     "indexId": "33265f90-20d8-478f-ba34-2093b80fa38b",
     "classId": "veilguard",
     "name": "Veilguard",
@@ -2301,7 +2340,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8c0",
+    "id": "6a9e68822d5e42e3f51b7817",
     "indexId": "e288d1d8-0ebd-4ba2-88dc-639c8a9810e2",
     "classId": "venomancer",
     "name": "Venomancer",
@@ -2314,7 +2353,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b8bf",
+    "id": "6a9e68822d5e42e3f51b7816",
     "indexId": "5463405d-3586-486d-9b90-71682d00722d",
     "classId": "venomblade",
     "name": "Venomblade",
@@ -2327,7 +2366,7 @@
     "imageAlignment": "middle"
   },
   {
-    "id": "6a5e50be98f4934cf278b841",
+    "id": "6a9e68822d5e42e3f51b777d",
     "indexId": "8c1654a0-a7b2-4a61-82a7-f29dabb44508",
     "classId": "warding-mage",
     "name": "Warding Mage",
@@ -2340,7 +2379,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b842",
+    "id": "6a9e68822d5e42e3f51b777e",
     "indexId": "e3036666-25ee-4624-9d49-f4d04fb3faeb",
     "classId": "wave-palm-style",
     "name": "Wave Palm Style",
@@ -2353,7 +2392,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b871",
+    "id": "6a9e68822d5e42e3f51b77c0",
     "indexId": "2df334aa-f5c9-4560-9f6d-0b2cca882f2b",
     "classId": "wildheart",
     "name": "Wildheart",
@@ -2366,7 +2405,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b82a",
+    "id": "6a9e68822d5e42e3f51b7799",
     "indexId": "aa0f74c4-ef90-4ec9-a3f3-e874c41a5924",
     "classId": "windbringer",
     "name": "Windbringer",
@@ -2379,7 +2418,7 @@
     "imageAlignment": "top"
   },
   {
-    "id": "6a5e50be98f4934cf278b85a",
+    "id": "6a9e68822d5e42e3f51b77af",
     "indexId": "1bc352f4-49f5-4a18-aa27-f6764feb4663",
     "classId": "zen-warrior",
     "name": "Zen Warrior",
@@ -2392,7 +2431,7 @@
     "imageAlignment": "bottom"
   },
   {
-    "id": "6a5e50be98f4934cf278b843",
+    "id": "6a9e68822d5e42e3f51b777f",
     "indexId": "1b95f8fb-7b50-4d72-a893-7013597d6e66",
     "classId": "zephyr-warder",
     "name": "Zephyr Warder",

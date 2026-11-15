@@ -1,6 +1,6 @@
 [
   {
-    "id": "6a5e50be98f4934cf278b71a",
+    "id": "6a9e68822d5e42e3f51b766c",
     "indexId": "96265718-bb26-4b43-8b83-30dc06f3a8d8",
     "abilityId": "acolyte-s-journey",
     "name": "Acolyte's Journey",
@@ -12,7 +12,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b755",
+    "id": "6a9e68822d5e42e3f51b76ad",
     "indexId": "55beb2da-c777-429a-9d93-a283daae75a5",
     "abilityId": "advanced-artificing",
     "name": "Advanced Artificing",
@@ -22,7 +22,7 @@
     "benefit4": "",
     "associatedAbility": "0d745330-3f14-411b-8e6d-a45a76df75f3",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278be7e",
+      "id": "6a9e68822d5e42e3f51b7dd0",
       "indexId": "0d745330-3f14-411b-8e6d-a45a76df75f3",
       "trueAbilityId": "advanced-artificing",
       "name": "Advanced Artificing",
@@ -39,7 +39,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b746",
+    "id": "6a9e68822d5e42e3f51b76a5",
     "indexId": "511abb86-3fdf-4c10-8cf1-436c9fec4fb7",
     "abilityId": "adventurer-essentials",
     "name": "Adventurer Essentials",
@@ -49,7 +49,7 @@
     "benefit4": "",
     "associatedAbility": "1e26e66c-34c5-49dc-b99f-68b157be8aee",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bcab",
+      "id": "6a9e68822d5e42e3f51b7c25",
       "indexId": "1e26e66c-34c5-49dc-b99f-68b157be8aee",
       "trueAbilityId": "presence-concealment",
       "name": "Presence Concealment",
@@ -66,7 +66,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b793",
+    "id": "6a9e68822d5e42e3f51b76c6",
     "indexId": "8028b45c-bba4-48ea-b60d-69617b66e54f",
     "abilityId": "aerial-mage",
     "name": "Aerial Mage",
@@ -76,7 +76,7 @@
     "benefit4": "",
     "associatedAbility": "6e451755-7b48-489d-a4dd-1674db385ec6",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bfc6",
+      "id": "6a9e68822d5e42e3f51b7ef8",
       "indexId": "6e451755-7b48-489d-a4dd-1674db385ec6",
       "trueAbilityId": "aerial-mode-switch",
       "name": "Aerial Mode Switch",
@@ -95,7 +95,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b6f6",
+    "id": "6a9e68822d5e42e3f51b765b",
     "indexId": "5ab53539-acf5-4f3c-9016-9862cf4284b2",
     "abilityId": "aftershocks",
     "name": "Aftershocks",
@@ -105,7 +105,7 @@
     "benefit4": "",
     "associatedAbility": "0d5f6625-b046-45d4-879b-84bc0704fb23",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bc7b",
+      "id": "6a9e68822d5e42e3f51b7bce",
       "indexId": "0d5f6625-b046-45d4-879b-84bc0704fb23",
       "trueAbilityId": "aftershock",
       "name": "Aftershock",
@@ -124,7 +124,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b742",
+    "id": "6a9e68822d5e42e3f51b76a2",
     "indexId": "c174ab2b-bc9e-499c-819f-768911717dce",
     "abilityId": "air-stability",
     "name": "Air Stability",
@@ -136,7 +136,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b70e",
+    "id": "6a9e68822d5e42e3f51b764b",
     "indexId": "a7327a41-ce03-4234-a666-4f2eab4d58b1",
     "abilityId": "angelic-presence",
     "name": "Angelic Presence",
@@ -148,7 +148,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b756",
+    "id": "6a9e68822d5e42e3f51b768b",
     "indexId": "738b9d33-422b-486d-b755-0d3f2ac07669",
     "abilityId": "armorsmith-basics",
     "name": "Armorsmith Basics",
@@ -158,7 +158,7 @@
     "benefit4": "You gain Armorsmith Core Crafting abilities.",
     "associatedAbility": "45f7c1aa-c7d1-4ccb-8a9f-df86b1703b5e",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278be86",
+      "id": "6a9e68822d5e42e3f51b7dd2",
       "indexId": "45f7c1aa-c7d1-4ccb-8a9f-df86b1703b5e",
       "trueAbilityId": "armorsmith-basics",
       "name": "Armorsmith Basics",
@@ -175,7 +175,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b757",
+    "id": "6a9e68822d5e42e3f51b768c",
     "indexId": "de3ab5ee-57e3-4a6f-9216-5d50f77c25e7",
     "abilityId": "armorsmithing-expert",
     "name": "Armorsmithing Expert",
@@ -185,7 +185,7 @@
     "benefit4": "",
     "associatedAbility": "e024ea8e-fd06-4e45-b837-c60868a24644",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278be8b",
+      "id": "6a9e68822d5e42e3f51b7dd7",
       "indexId": "e024ea8e-fd06-4e45-b837-c60868a24644",
       "trueAbilityId": "armorsmithing-expert",
       "name": "Armorsmithing Expert",
@@ -202,7 +202,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b6ee",
+    "id": "6a9e68822d5e42e3f51b7656",
     "indexId": "5acacc04-9bc6-4255-a639-f8f6c8757a54",
     "abilityId": "arms_mastery",
     "name": "Arms Mastery",
@@ -214,7 +214,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b754",
+    "id": "6a9e68822d5e42e3f51b768a",
     "indexId": "f2fe5ddd-f2c6-4d0b-86cb-12e9fa5dbabc",
     "abilityId": "artificer-basics",
     "name": "Artificer Basics",
@@ -224,13 +224,13 @@
     "benefit4": "You gain proficiency in the musket and the Artificer's Multitool.",
     "associatedAbility": "dd303926-f704-4247-a3a7-10d046d6b842",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278be79",
+      "id": "6a9e68822d5e42e3f51b7dec",
       "indexId": "dd303926-f704-4247-a3a7-10d046d6b842",
       "trueAbilityId": "artificer-basics",
       "name": "Artificer Basics",
-      "description": "<p><strong>Artifice Modification A</strong><br><strong>Cost:&nbsp;</strong>X Crafting Points<br><strong>Description:&nbsp;</strong><br>You add an A-Type modification to an artifice.&nbsp;See the Universal Artifice mods page as well as the individual artifice page for details. Each modification has its own cost.</p><p><strong>Weapon Modification A</strong><br><strong>Cost:&nbsp;</strong>X Crafting Points<br><strong>Description:&nbsp;</strong><br>You add an A-Type modification to the weapon. See the Universal Weapon mods page as well as the individual weapon page for details. Each modification has its own cost.</p><p><strong>Artifice Modification C</strong><br><strong>Cost:&nbsp;</strong>X Crafting Points<br><strong>Description:&nbsp;</strong><br>You add an C-Type modification to the weapon. See the Universal Artifice mods page as well as the individual artifice page for details. Each modification has its own cost.</p><p><strong>Craft Fuel Shells</strong><br><strong>Cost:&nbsp;</strong>Errand<br><strong>Description:&nbsp;</strong><br>You craft up to 5 small shells.&nbsp; You can instead craft a medium shell instead of 2 small shells.&nbsp; Small shells require 50 magical fuel, medium shells require 200 magical fuel.</p><p><strong>Craft Artifice Parts</strong><br><strong>Cost:&nbsp;</strong>Errand<br><strong>Description:&nbsp;</strong><br>You create up to 3000u of artifice parts of the same type of blacksmithing material used to make them at a 1:1 rate. (3000u of Iron Creates 3000u of Iron Artifice Parts.) &nbsp;See Items: &nbsp;Blacksmithing Materials, Artificer Materials. When converting items of a higher tier, you can convert up to 6000 of tamahagane, 9000 of mithril, 12000 of Orihalcum or 15000 of escudo.</p><p><strong>Firearm Alloy</strong><br><strong>Cost:&nbsp;</strong>X Crafting Points<br><strong>Description:&nbsp;</strong><br>You mix a special material into the firearm or artifice weapon. Each material has its own crafting point cost.</p><p><strong>Create Ingot</strong><br><strong>Cost: </strong>Errand<br><strong>Description:</strong><br>You create an ingot from blacksmithing base materials or from blacksmithing special materials. &nbsp;See Item: Blacksmithing Materials.</p>",
-      "descriptionHtml": "<p><strong>Artifice Modification A</strong><br><strong>Cost:&nbsp;</strong>X Crafting Points<br><strong>Description:&nbsp;</strong><br>You add an A-Type modification to an artifice.&nbsp;See the Universal Artifice mods page as well as the individual artifice page for details. Each modification has its own cost.</p><p><strong>Weapon Modification A</strong><br><strong>Cost:&nbsp;</strong>X Crafting Points<br><strong>Description:&nbsp;</strong><br>You add an A-Type modification to the weapon. See the Universal Weapon mods page as well as the individual weapon page for details. Each modification has its own cost.</p><p><strong>Artifice Modification C</strong><br><strong>Cost:&nbsp;</strong>X Crafting Points<br><strong>Description:&nbsp;</strong><br>You add an C-Type modification to the weapon. See the Universal Artifice mods page as well as the individual artifice page for details. Each modification has its own cost.</p><p><strong>Craft Fuel Shells</strong><br><strong>Cost:&nbsp;</strong>Errand<br><strong>Description:&nbsp;</strong><br>You craft up to 5 small shells.&nbsp; You can instead craft a medium shell instead of 2 small shells.&nbsp; Small shells require 50 magical fuel, medium shells require 200 magical fuel.</p><p><strong>Craft Artifice Parts</strong><br><strong>Cost:&nbsp;</strong>Errand<br><strong>Description:&nbsp;</strong><br>You create up to 3000u of artifice parts of the same type of blacksmithing material used to make them at a 1:1 rate. (3000u of Iron Creates 3000u of Iron Artifice Parts.) &nbsp;See Items: &nbsp;Blacksmithing Materials, Artificer Materials. When converting items of a higher tier, you can convert up to 6000 of tamahagane, 9000 of mithril, 12000 of Orihalcum or 15000 of escudo.</p><p><strong>Firearm Alloy</strong><br><strong>Cost:&nbsp;</strong>X Crafting Points<br><strong>Description:&nbsp;</strong><br>You mix a special material into the firearm or artifice weapon. Each material has its own crafting point cost.</p><p><strong>Create Ingot</strong><br><strong>Cost: </strong>Errand<br><strong>Description:</strong><br>You create an ingot from blacksmithing base materials or from blacksmithing special materials. &nbsp;See Item: Blacksmithing Materials.</p>",
-      "descriptionText": "Artifice Modification A\nCost: X Crafting Points\nDescription:\nYou add an A-Type modification to an artifice. See the Universal Artifice mods page as well as the individual artifice page for details. Each modification has its own cost.\nWeapon Modification A\nCost: X Crafting Points\nDescription:\nYou add an A-Type modification to the weapon. See the Universal Weapon mods page as well as the individual weapon page for details. Each modification has its own cost.\nArtifice Modification C\nCost: X Crafting Points\nDescription:\nYou add an C-Type modification to the weapon. See the Universal Artifice mods page as well as the individual artifice page for details. Each modification has its own cost.\nCraft Fuel Shells\nCost: Errand\nDescription:\nYou craft up to 5 small shells.  You can instead craft a medium shell instead of 2 small shells.  Small shells require 50 magical fuel, medium shells require 200 magical fuel.\nCraft Artifice Parts\nCost: Errand\nDescription:\nYou create up to 3000u of artifice parts of the same type of blacksmithing material used to make them at a 1:1 rate. (3000u of Iron Creates 3000u of Iron Artifice Parts.)  See Items:  Blacksmithing Materials, Artificer Materials. When converting items of a higher tier, you can convert up to 6000 of tamahagane, 9000 of mithril, 12000 of Orihalcum or 15000 of escudo.\nFirearm Alloy\nCost: X Crafting Points\nDescription:\nYou mix a special material into the firearm or artifice weapon. Each material has its own crafting point cost.\nCreate Ingot\nCost: Errand\nDescription:\nYou create an ingot from blacksmithing base materials or from blacksmithing special materials.  See Item: Blacksmithing Materials.",
+      "description": "<p><strong>Artifice Modification A</strong><br><strong>Cost:&nbsp;</strong>X Crafting Points<br><strong>Description:&nbsp;</strong><br>You add an A-Type modification to an artifice.&nbsp;See the Universal Artifice mods page as well as the individual artifice page for details. Each modification has its own cost.</p><p><strong>Weapon Modification A</strong><br><strong>Cost:&nbsp;</strong>X Crafting Points<br><strong>Description:&nbsp;</strong><br>You add an A-Type modification to the weapon. See the Universal Weapon mods page as well as the individual weapon page for details. Each modification has its own cost.</p><p><strong>Artifice Modification C</strong><br><strong>Cost:&nbsp;</strong>X Crafting Points<br><strong>Description:&nbsp;</strong><br>You add an C-Type modification to the artifice. See the Universal Artifice mods page as well as the individual artifice page for details. Each modification has its own cost.</p><p><strong>Craft Fuel Shells</strong><br><strong>Cost:&nbsp;</strong>Errand<br><strong>Description:&nbsp;</strong><br>You craft up to 5 small shells.&nbsp; You can instead craft a medium shell instead of 2 small shells.&nbsp; Small shells require 50 magical fuel, medium shells require 200 magical fuel.</p><p><strong>Craft Artifice Parts</strong><br><strong>Cost:&nbsp;</strong>Errand<br><strong>Description:&nbsp;</strong><br>You create up to 3000u of artifice parts of the same type of blacksmithing material used to make them at a 1:1 rate. (3000u of Iron Creates 3000u of Iron Artifice Parts.) &nbsp;See Items: &nbsp;Blacksmithing Materials, Artificer Materials. When converting items of a higher tier, you can convert up to 6000 of tamahagane, 9000 of mithril, 12000 of Orihalcum or 15000 of escudo.</p><p><strong>Firearm Alloy</strong><br><strong>Cost:&nbsp;</strong>X Crafting Points<br><strong>Description:&nbsp;</strong><br>You mix a special material into the firearm or artifice weapon. Each material has its own crafting point cost.</p><p><strong>Create Ingot</strong><br><strong>Cost: </strong>Errand<br><strong>Description:</strong><br>You create an ingot from blacksmithing base materials or from blacksmithing special materials. &nbsp;See Item: Blacksmithing Materials.</p>",
+      "descriptionHtml": "<p><strong>Artifice Modification A</strong><br><strong>Cost:&nbsp;</strong>X Crafting Points<br><strong>Description:&nbsp;</strong><br>You add an A-Type modification to an artifice.&nbsp;See the Universal Artifice mods page as well as the individual artifice page for details. Each modification has its own cost.</p><p><strong>Weapon Modification A</strong><br><strong>Cost:&nbsp;</strong>X Crafting Points<br><strong>Description:&nbsp;</strong><br>You add an A-Type modification to the weapon. See the Universal Weapon mods page as well as the individual weapon page for details. Each modification has its own cost.</p><p><strong>Artifice Modification C</strong><br><strong>Cost:&nbsp;</strong>X Crafting Points<br><strong>Description:&nbsp;</strong><br>You add an C-Type modification to the artifice. See the Universal Artifice mods page as well as the individual artifice page for details. Each modification has its own cost.</p><p><strong>Craft Fuel Shells</strong><br><strong>Cost:&nbsp;</strong>Errand<br><strong>Description:&nbsp;</strong><br>You craft up to 5 small shells.&nbsp; You can instead craft a medium shell instead of 2 small shells.&nbsp; Small shells require 50 magical fuel, medium shells require 200 magical fuel.</p><p><strong>Craft Artifice Parts</strong><br><strong>Cost:&nbsp;</strong>Errand<br><strong>Description:&nbsp;</strong><br>You create up to 3000u of artifice parts of the same type of blacksmithing material used to make them at a 1:1 rate. (3000u of Iron Creates 3000u of Iron Artifice Parts.) &nbsp;See Items: &nbsp;Blacksmithing Materials, Artificer Materials. When converting items of a higher tier, you can convert up to 6000 of tamahagane, 9000 of mithril, 12000 of Orihalcum or 15000 of escudo.</p><p><strong>Firearm Alloy</strong><br><strong>Cost:&nbsp;</strong>X Crafting Points<br><strong>Description:&nbsp;</strong><br>You mix a special material into the firearm or artifice weapon. Each material has its own crafting point cost.</p><p><strong>Create Ingot</strong><br><strong>Cost: </strong>Errand<br><strong>Description:</strong><br>You create an ingot from blacksmithing base materials or from blacksmithing special materials. &nbsp;See Item: Blacksmithing Materials.</p>",
+      "descriptionText": "Artifice Modification A\nCost: X Crafting Points\nDescription:\nYou add an A-Type modification to an artifice. See the Universal Artifice mods page as well as the individual artifice page for details. Each modification has its own cost.\nWeapon Modification A\nCost: X Crafting Points\nDescription:\nYou add an A-Type modification to the weapon. See the Universal Weapon mods page as well as the individual weapon page for details. Each modification has its own cost.\nArtifice Modification C\nCost: X Crafting Points\nDescription:\nYou add an C-Type modification to the artifice. See the Universal Artifice mods page as well as the individual artifice page for details. Each modification has its own cost.\nCraft Fuel Shells\nCost: Errand\nDescription:\nYou craft up to 5 small shells.  You can instead craft a medium shell instead of 2 small shells.  Small shells require 50 magical fuel, medium shells require 200 magical fuel.\nCraft Artifice Parts\nCost: Errand\nDescription:\nYou create up to 3000u of artifice parts of the same type of blacksmithing material used to make them at a 1:1 rate. (3000u of Iron Creates 3000u of Iron Artifice Parts.)  See Items:  Blacksmithing Materials, Artificer Materials. When converting items of a higher tier, you can convert up to 6000 of tamahagane, 9000 of mithril, 12000 of Orihalcum or 15000 of escudo.\nFirearm Alloy\nCost: X Crafting Points\nDescription:\nYou mix a special material into the firearm or artifice weapon. Each material has its own crafting point cost.\nCreate Ingot\nCost: Errand\nDescription:\nYou create an ingot from blacksmithing base materials or from blacksmithing special materials.  See Item: Blacksmithing Materials.",
       "manaCost": "",
       "apCost": "",
       "rpCost": "",
@@ -241,7 +241,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b704",
+    "id": "6a9e68822d5e42e3f51b7648",
     "indexId": "05102bdf-2452-4d61-8642-cec7e20ff9c5",
     "abilityId": "augmented-casting---increased-reach",
     "name": "Augmented Casting - Increased Reach",
@@ -251,7 +251,7 @@
     "benefit4": "",
     "associatedAbility": "9aa90707-ef3a-4698-a757-76b3b5744a01",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bcb3",
+      "id": "6a9e68822d5e42e3f51b7c29",
       "indexId": "9aa90707-ef3a-4698-a757-76b3b5744a01",
       "trueAbilityId": "increased-reach",
       "name": "Increased Reach",
@@ -268,7 +268,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b710",
+    "id": "6a9e68822d5e42e3f51b764d",
     "indexId": "a8513a53-fdc3-4634-b4f3-cf26c4142b16",
     "abilityId": "augmented_casting_-_persistent_spell",
     "name": "Augmented Casting - Persistent Spell",
@@ -278,7 +278,7 @@
     "benefit4": "",
     "associatedAbility": "fdb444d2-decb-4ec1-85cc-4d54b549d74c",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bcef",
+      "id": "6a9e68822d5e42e3f51b7c68",
       "indexId": "fdb444d2-decb-4ec1-85cc-4d54b549d74c",
       "trueAbilityId": "persistent-spell",
       "name": "Persistent Spell",
@@ -295,7 +295,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b780",
+    "id": "6a9e68822d5e42e3f51b76d8",
     "indexId": "380f782a-c907-4cf9-b0c6-8ccd307c5f68",
     "abilityId": "authority",
     "name": "Authority",
@@ -307,7 +307,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b760",
+    "id": "6a9e68822d5e42e3f51b76b1",
     "indexId": "58986d57-6ee2-46a2-818d-00b22932ae8e",
     "abilityId": "benevolence",
     "name": "Benevolence",
@@ -319,7 +319,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b765",
+    "id": "6a9e68822d5e42e3f51b76b5",
     "indexId": "828e7b8b-bc1b-480e-8ef0-9a585637f6b9",
     "abilityId": "bone-armor",
     "name": "Bone Armor",
@@ -329,7 +329,7 @@
     "benefit4": "",
     "associatedAbility": "3b8f6012-79db-41e3-aa09-c9490c0c90dd",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278becd",
+      "id": "6a9e68822d5e42e3f51b7e1c",
       "indexId": "3b8f6012-79db-41e3-aa09-c9490c0c90dd",
       "trueAbilityId": "bone-armor",
       "name": "Bone Armor",
@@ -348,7 +348,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b74d",
+    "id": "6a9e68822d5e42e3f51b76a9",
     "indexId": "46a5161d-26ed-4206-851c-c598001fa39a",
     "abilityId": "botany-study",
     "name": "Botany Study",
@@ -360,7 +360,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b75e",
+    "id": "6a9e68822d5e42e3f51b7691",
     "indexId": "da83a27c-d721-422f-b724-0944e2b69bab",
     "abilityId": "boundless-wind",
     "name": "Boundless Wind",
@@ -370,7 +370,7 @@
     "benefit4": "",
     "associatedAbility": "75017c9e-52da-4bc9-9d3d-626faee21f77",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bead",
+      "id": "6a9e68822d5e42e3f51b7e08",
       "indexId": "75017c9e-52da-4bc9-9d3d-626faee21f77",
       "trueAbilityId": "boundless-wind-stance",
       "name": "Boundless Wind Stance",
@@ -387,7 +387,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b6fc",
+    "id": "6a9e68822d5e42e3f51b7644",
     "indexId": "e1512e0d-5958-4cb2-89b5-7942504365a0",
     "abilityId": "brace",
     "name": "Brace",
@@ -399,7 +399,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b790",
+    "id": "6a9e68822d5e42e3f51b76c4",
     "indexId": "68de6426-43eb-4622-9640-f70148f300b4",
     "abilityId": "cannon-expert",
     "name": "Cannon Expert",
@@ -409,7 +409,7 @@
     "benefit4": "",
     "associatedAbility": "cc55e00f-152d-4d8c-9c83-a7fb575a3393",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bfb7",
+      "id": "6a9e68822d5e42e3f51b7f23",
       "indexId": "cc55e00f-152d-4d8c-9c83-a7fb575a3393",
       "trueAbilityId": "rocket-jump",
       "name": "Rocket Jump",
@@ -428,7 +428,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b74e",
+    "id": "6a9e68822d5e42e3f51b7687",
     "indexId": "75d61cd7-b39b-406d-8d6e-bf3d1d36f9d3",
     "abilityId": "carpenter-basics",
     "name": "Carpenter Basics",
@@ -438,7 +438,7 @@
     "benefit4": "You can use the Carpenter's core crafting abilities.",
     "associatedAbility": "30c207c3-b3cf-444b-8b79-09dc6903c500",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278be5d",
+      "id": "6a9e68822d5e42e3f51b7dbf",
       "indexId": "30c207c3-b3cf-444b-8b79-09dc6903c500",
       "trueAbilityId": "carpenter-basics",
       "name": "Carpenter Basics",
@@ -454,7 +454,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b77c",
+    "id": "6a9e68822d5e42e3f51b76d5",
     "indexId": "58bae54f-814a-4853-beb2-15b63d7e2e8a",
     "abilityId": "celestial-artillery",
     "name": "Celestial Artillery",
@@ -464,7 +464,7 @@
     "benefit4": "",
     "associatedAbility": "1414e402-1079-4c0d-9c47-000082b2dabe",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bf55",
+      "id": "6a9e68822d5e42e3f51b7ebf",
       "indexId": "1414e402-1079-4c0d-9c47-000082b2dabe",
       "trueAbilityId": "comet",
       "name": "Comet",
@@ -481,7 +481,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b776",
+    "id": "6a9e68822d5e42e3f51b76d1",
     "indexId": "cfcc08ac-13c7-45b1-bad8-f0b258e3f1af",
     "abilityId": "cloudstep",
     "name": "Cloudstep",
@@ -491,7 +491,7 @@
     "benefit4": "",
     "associatedAbility": "a52f1ca5-bec1-4b5a-9674-cb2c568ef0be",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bf2a",
+      "id": "6a9e68822d5e42e3f51b7e88",
       "indexId": "a52f1ca5-bec1-4b5a-9674-cb2c568ef0be",
       "trueAbilityId": "cloudstep",
       "name": "Cloudstep",
@@ -510,7 +510,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b6fb",
+    "id": "6a9e68822d5e42e3f51b7643",
     "indexId": "b2e0da5b-4bcb-4eee-814d-5be34600dc05",
     "abilityId": "controlled-blaze",
     "name": "Controlled Blaze",
@@ -522,7 +522,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b6f9",
+    "id": "6a9e68822d5e42e3f51b7641",
     "indexId": "1dfbb0c2-128c-4d9c-81b5-e005454b2f9a",
     "abilityId": "controlled_opportunities",
     "name": "Controlled Opportunities",
@@ -534,7 +534,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b70c",
+    "id": "6a9e68822d5e42e3f51b7666",
     "indexId": "e7e11c72-4d8e-47e9-ac82-2f5fe01f6a1b",
     "abilityId": "controlled-wind",
     "name": "Controlled Wind",
@@ -546,7 +546,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b78b",
+    "id": "6a9e68822d5e42e3f51b76e0",
     "indexId": "16b30c3f-adf2-4f44-8bc5-e52cb89a4283",
     "abilityId": "cool-spotlight",
     "name": "Cool Spotlight",
@@ -558,7 +558,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b72c",
+    "id": "6a9e68822d5e42e3f51b7696",
     "indexId": "093f710b-f848-4e62-a3fd-4b8988331549",
     "abilityId": "craft-weapons",
     "name": "Craft Weapons",
@@ -568,7 +568,7 @@
     "benefit4": "You gain proficiency in 1 smithing weapon. ",
     "associatedAbility": "1c273737-e5a7-4391-955c-714d24e26ab0",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bda1",
+      "id": "6a9e68822d5e42e3f51b7d02",
       "indexId": "1c273737-e5a7-4391-955c-714d24e26ab0",
       "trueAbilityId": "blacksmith-core-crafting",
       "name": "Blacksmith Core Crafting",
@@ -584,7 +584,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b758",
+    "id": "6a9e68822d5e42e3f51b768d",
     "indexId": "bfa1fc7a-0bdd-4276-ac97-f0a0192c8323",
     "abilityId": "culinary-basics",
     "name": "Culinary Basics",
@@ -594,7 +594,7 @@
     "benefit4": "You gain proficiency in small weapons.",
     "associatedAbility": "5a52c2a4-58f8-48ee-adf4-22e244d74d48",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278be92",
+      "id": "6a9e68822d5e42e3f51b7dda",
       "indexId": "5a52c2a4-58f8-48ee-adf4-22e244d74d48",
       "trueAbilityId": "culinary-basics",
       "name": "Culinary Basics",
@@ -611,7 +611,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b775",
+    "id": "6a9e68822d5e42e3f51b76bb",
     "indexId": "7b17529b-72b3-429b-86ef-8a51d7a33d42",
     "abilityId": "cultivator-s-journey",
     "name": "Cultivator's Journey",
@@ -623,7 +623,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b771",
+    "id": "6a9e68822d5e42e3f51b76d0",
     "indexId": "e60e5a05-2d87-4f57-9adc-0d070f035582",
     "abilityId": "dark-surge",
     "name": "Dark Surge",
@@ -635,7 +635,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b794",
+    "id": "6a9e68822d5e42e3f51b76e4",
     "indexId": "9e161ce7-23a3-4158-832d-37d508a79b72",
     "abilityId": "dark-weapon",
     "name": "Dark Weapon",
@@ -647,7 +647,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b70f",
+    "id": "6a9e68822d5e42e3f51b764c",
     "indexId": "50bc4583-d08f-48f7-a767-7ea201c3a5ab",
     "abilityId": "death-perception",
     "name": "Death Perception",
@@ -657,7 +657,7 @@
     "benefit4": "",
     "associatedAbility": "ad9a0274-32df-4eb4-ae68-19a4d7ed220f",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bdeb",
+      "id": "6a9e68822d5e42e3f51b7d47",
       "indexId": "ad9a0274-32df-4eb4-ae68-19a4d7ed220f",
       "trueAbilityId": "death-perception",
       "name": "Death Perception",
@@ -673,7 +673,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b714",
+    "id": "6a9e68822d5e42e3f51b7669",
     "indexId": "19083f05-90bf-4610-b327-acf952ae8025",
     "abilityId": "deflect-everything",
     "name": "Deflect Everything",
@@ -685,7 +685,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b73f",
+    "id": "6a9e68822d5e42e3f51b76a0",
     "indexId": "589893b4-d23e-4194-bd82-3ea8c5a44bc4",
     "abilityId": "dimensional-armory",
     "name": "Dimensional Armory",
@@ -697,7 +697,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b70a",
+    "id": "6a9e68822d5e42e3f51b764a",
     "indexId": "f200be45-f829-48ff-bbab-43220c3fd223",
     "abilityId": "disable-magic",
     "name": "Disable Magic",
@@ -709,7 +709,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b773",
+    "id": "6a9e68822d5e42e3f51b76b9",
     "indexId": "d7f796b0-8068-451c-8923-79edfcebfe0e",
     "abilityId": "discern-immunities",
     "name": "Discern Immunities",
@@ -719,7 +719,7 @@
     "benefit4": "",
     "associatedAbility": "87c13302-1eaf-44ee-88d5-fa6c0551629f",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bf1d",
+      "id": "6a9e68822d5e42e3f51b7e64",
       "indexId": "87c13302-1eaf-44ee-88d5-fa6c0551629f",
       "trueAbilityId": "discern-immunities",
       "name": "Discern Immunities",
@@ -736,7 +736,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b707",
+    "id": "6a9e68822d5e42e3f51b7662",
     "indexId": "6cc7cd03-7c91-4a53-9356-50c0f6c4a11d",
     "abilityId": "divine-weapon",
     "name": "Divine Weapon",
@@ -748,7 +748,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b705",
+    "id": "6a9e68822d5e42e3f51b7649",
     "indexId": "55b5ed98-a395-4b9b-b072-68e41a08f9f4",
     "abilityId": "draw_elements",
     "name": "Draw Elements",
@@ -758,7 +758,7 @@
     "benefit4": "",
     "associatedAbility": "f8c3cbae-1fed-4c8e-8557-1fa232a546f3",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bcbf",
+      "id": "6a9e68822d5e42e3f51b7c30",
       "indexId": "f8c3cbae-1fed-4c8e-8557-1fa232a546f3",
       "trueAbilityId": "draw_elements",
       "name": "Draw Elements",
@@ -773,7 +773,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b729",
+    "id": "6a9e68822d5e42e3f51b7695",
     "indexId": "0d56140f-a915-4511-821a-fa32827336f4",
     "abilityId": "draw-elements-ii",
     "name": "Draw Elements II",
@@ -783,7 +783,7 @@
     "benefit4": "",
     "associatedAbility": "832dda9e-c2f0-496b-b678-77b42c24b4a1",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bd85",
+      "id": "6a9e68822d5e42e3f51b7cd5",
       "indexId": "832dda9e-c2f0-496b-b678-77b42c24b4a1",
       "trueAbilityId": "draw-elements-ii",
       "name": "Draw Elements II",
@@ -799,7 +799,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b77d",
+    "id": "6a9e68822d5e42e3f51b76d6",
     "indexId": "6db2558c-5a5e-4b5e-8c90-485e7a344f63",
     "abilityId": "earth-weapon",
     "name": "Earth Weapon",
@@ -811,7 +811,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b783",
+    "id": "6a9e68822d5e42e3f51b76d9",
     "indexId": "e99e7948-b8c3-4f9f-90b3-0860d4ea9f57",
     "abilityId": "elemental-convergence",
     "name": "Elemental Convergence",
@@ -821,7 +821,7 @@
     "benefit4": "",
     "associatedAbility": "16a663c5-487c-4795-afef-21be2cfc5842",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bf79",
+      "id": "6a9e68822d5e42e3f51b7ed0",
       "indexId": "16a663c5-487c-4795-afef-21be2cfc5842",
       "trueAbilityId": "elemental-convergence",
       "name": "Elemental Convergence",
@@ -838,7 +838,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b762",
+    "id": "6a9e68822d5e42e3f51b76b2",
     "indexId": "5f0f4003-07e2-41c5-a492-4f186e6505c2",
     "abilityId": "emergency-shields",
     "name": "Emergency Shields",
@@ -850,7 +850,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b6fe",
+    "id": "6a9e68822d5e42e3f51b7646",
     "indexId": "fe29d72e-0d56-4c7c-8a2b-795ad43706a6",
     "abilityId": "empty_body",
     "name": "Empty Body",
@@ -860,7 +860,7 @@
     "benefit4": "",
     "associatedAbility": "dc114d27-65ef-4f11-8fd9-b569ac6480a4",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bc8b",
+      "id": "6a9e68822d5e42e3f51b7bf6",
       "indexId": "dc114d27-65ef-4f11-8fd9-b569ac6480a4",
       "trueAbilityId": "empty-body",
       "name": "Empty Body",
@@ -877,7 +877,7 @@
     }
   },
   {
-    "id": "6a76a313086ffb85ad32da2c",
+    "id": "6a9e68822d5e42e3f51b76e6",
     "indexId": "db22c344-3981-4e24-ba8d-43d5978c0746",
     "abilityId": "enduring-earth",
     "name": "Enduring Earth",
@@ -889,7 +889,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b786",
+    "id": "6a9e68822d5e42e3f51b76dc",
     "indexId": "32a1a158-746d-4b75-ae73-e451cf15318f",
     "abilityId": "envenom-weapon",
     "name": "Envenom Weapon",
@@ -899,7 +899,7 @@
     "benefit4": "",
     "associatedAbility": "98023eff-92f0-4c40-ae62-9ecdda4441c8",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bf88",
+      "id": "6a9e68822d5e42e3f51b7f0a",
       "indexId": "98023eff-92f0-4c40-ae62-9ecdda4441c8",
       "trueAbilityId": "envenom-weapon",
       "name": "Envenom Weapon",
@@ -916,7 +916,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b723",
+    "id": "6a9e68822d5e42e3f51b7674",
     "indexId": "5d576cf4-59c9-4993-b2ef-b43733c80628",
     "abilityId": "eternal-flames",
     "name": "Eternal Flames",
@@ -928,7 +928,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b72f",
+    "id": "6a9e68822d5e42e3f51b7679",
     "indexId": "c2193678-fd4c-4889-93b5-a3cda807b750",
     "abilityId": "eternal-mirane-cage",
     "name": "Eternal Mirane Cage",
@@ -938,7 +938,7 @@
     "benefit4": "",
     "associatedAbility": "7f7c91d1-0f03-48d3-a595-9ac48e134409",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bdab",
+      "id": "6a9e68822d5e42e3f51b7d06",
       "indexId": "7f7c91d1-0f03-48d3-a595-9ac48e134409",
       "trueAbilityId": "eternal-mirane-cage",
       "name": "Eternal Mirane Cage",
@@ -956,7 +956,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b75b",
+    "id": "6a9e68822d5e42e3f51b7690",
     "indexId": "66ca23e4-00c0-4379-ab45-d1d2f1601412",
     "abilityId": "evil-eye",
     "name": "Evil Eye",
@@ -968,7 +968,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b75c",
+    "id": "6a9e68822d5e42e3f51b76ae",
     "indexId": "3f398d48-499d-4078-aa0b-4b2d4a3738fb",
     "abilityId": "execute-the-heretic",
     "name": "Execute the Heretic",
@@ -978,7 +978,7 @@
     "benefit4": "",
     "associatedAbility": "eff6d4b1-5a40-44eb-a578-1e7ab1168c3b",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bea3",
+      "id": "6a9e68822d5e42e3f51b7e04",
       "indexId": "eff6d4b1-5a40-44eb-a578-1e7ab1168c3b",
       "trueAbilityId": "execute-heretic",
       "name": "Execute Heretic",
@@ -997,7 +997,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b6ea",
+    "id": "6a9e68822d5e42e3f51b7639",
     "indexId": "2341bb47-aef4-4a83-b92b-7c06ece067bf",
     "abilityId": "expanded-circuits",
     "name": "Expanded Circuits",
@@ -1009,7 +1009,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b739",
+    "id": "6a9e68822d5e42e3f51b769c",
     "indexId": "7ba4236c-91b9-43cc-bf03-8dc9d7c02cfd",
     "abilityId": "expanded-menagerie",
     "name": "Expanded Menagerie",
@@ -1021,7 +1021,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b732",
+    "id": "6a9e68822d5e42e3f51b767b",
     "indexId": "5373ef8a-a619-4016-ba70-4d1dfc52170f",
     "abilityId": "expert-alchemist",
     "name": "Expert Alchemist",
@@ -1031,7 +1031,7 @@
     "benefit4": "",
     "associatedAbility": "926351fb-d8b4-424b-95de-c5db8a604344",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bdb9",
+      "id": "6a9e68822d5e42e3f51b7d0e",
       "indexId": "926351fb-d8b4-424b-95de-c5db8a604344",
       "trueAbilityId": "alchemeister-core-crafting",
       "name": "Alchemeister Core Crafting",
@@ -1047,7 +1047,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b74b",
+    "id": "6a9e68822d5e42e3f51b7686",
     "indexId": "0757d6c2-6abb-441d-8465-4a25c9d267a6",
     "abilityId": "expert-farmer",
     "name": "Expert Farmer",
@@ -1057,7 +1057,7 @@
     "benefit4": "",
     "associatedAbility": "231512ae-3d9b-451c-a22b-8997dac58407",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278be50",
+      "id": "6a9e68822d5e42e3f51b7d9e",
       "indexId": "231512ae-3d9b-451c-a22b-8997dac58407",
       "trueAbilityId": "expert-farmer",
       "name": "Expert Farmer",
@@ -1073,7 +1073,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b722",
+    "id": "6a9e68822d5e42e3f51b7673",
     "indexId": "007d9532-c0b8-4c44-9222-db2735025586",
     "abilityId": "expert-scribe",
     "name": "Expert Scribe",
@@ -1085,7 +1085,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b70d",
+    "id": "6a9e68822d5e42e3f51b7667",
     "indexId": "e1903e6e-f272-4c6c-8912-0dd498931227",
     "abilityId": "faerie-light-eyes",
     "name": "Faerie Light Eyes",
@@ -1097,7 +1097,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b6f0",
+    "id": "6a9e68822d5e42e3f51b7657",
     "indexId": "369ae69a-e856-4565-a6d4-a6aa5e3aa3f2",
     "abilityId": "fallen-friend",
     "name": "Fallen Friend",
@@ -1109,7 +1109,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b6f8",
+    "id": "6a9e68822d5e42e3f51b765c",
     "indexId": "7dfa6da8-40f2-411d-ac47-1956275597cf",
     "abilityId": "fancy-footwork",
     "name": "Fancy Footwork",
@@ -1121,7 +1121,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b74a",
+    "id": "6a9e68822d5e42e3f51b76a7",
     "indexId": "51e01b47-f2e4-47d2-8913-b13344af09be",
     "abilityId": "farming-basics",
     "name": "Farming Basics",
@@ -1131,7 +1131,7 @@
     "benefit4": "",
     "associatedAbility": "aa50566f-e237-4022-b119-5cdccbd438e4",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278be4b",
+      "id": "6a9e68822d5e42e3f51b7db8",
       "indexId": "aa50566f-e237-4022-b119-5cdccbd438e4",
       "trueAbilityId": "farming-basics",
       "name": "Farming Basics",
@@ -1147,7 +1147,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b71c",
+    "id": "6a9e68822d5e42e3f51b7653",
     "indexId": "e0e19be7-0e99-4566-9bb7-169dfb1157ee",
     "abilityId": "fighter's_journey",
     "name": "Fighter's Journey",
@@ -1159,7 +1159,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b752",
+    "id": "6a9e68822d5e42e3f51b76ac",
     "indexId": "a0b266a8-3a96-4849-9f7e-db38bf94def5",
     "abilityId": "fire-stance",
     "name": "Fire Stance",
@@ -1169,7 +1169,7 @@
     "benefit4": "",
     "associatedAbility": "6e0bbe1d-2559-413e-81fa-9902475e714d",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bc3f",
+      "id": "6a9e68822d5e42e3f51b7bb0",
       "indexId": "6e0bbe1d-2559-413e-81fa-9902475e714d",
       "trueAbilityId": "tempestuous-fire-stance",
       "name": "Tempestuous Fire Stance",
@@ -1186,7 +1186,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b77e",
+    "id": "6a9e68822d5e42e3f51b76be",
     "indexId": "668e0bab-7c1e-486b-93da-05326197857d",
     "abilityId": "fire-weapon",
     "name": "Fire Weapon",
@@ -1198,7 +1198,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b76f",
+    "id": "6a9e68822d5e42e3f51b76ce",
     "indexId": "22a3a12c-80e6-4748-84a9-49c6ae4bbdd4",
     "abilityId": "five-harmonies-",
     "name": "Five Harmonies",
@@ -1208,7 +1208,7 @@
     "benefit4": "",
     "associatedAbility": "423d0a8f-630b-451a-896e-6ebb4f127a85",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bf0a",
+      "id": "6a9e68822d5e42e3f51b7e59",
       "indexId": "423d0a8f-630b-451a-896e-6ebb4f127a85",
       "trueAbilityId": "luminous-form-stance",
       "name": "Luminous Form Stance",
@@ -1225,7 +1225,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b72d",
+    "id": "6a9e68822d5e42e3f51b7697",
     "indexId": "3d9eddff-ae99-4ba9-aaef-7fd80006c95c",
     "abilityId": "focused-weapons",
     "name": "Focused Weapons",
@@ -1235,7 +1235,7 @@
     "benefit4": "",
     "associatedAbility": "13876827-f77a-4039-a96b-07bdaac32734",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bda2",
+      "id": "6a9e68822d5e42e3f51b7d03",
       "indexId": "13876827-f77a-4039-a96b-07bdaac32734",
       "trueAbilityId": "forgemaster-core-crafting",
       "name": "Forgemaster Core Crafting",
@@ -1251,7 +1251,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b74c",
+    "id": "6a9e68822d5e42e3f51b76a8",
     "indexId": "3d8f081f-7795-4548-9f79-085f147d5c8a",
     "abilityId": "forager-s-path",
     "name": "Forager's Path",
@@ -1263,7 +1263,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b781",
+    "id": "6a9e68822d5e42e3f51b76bf",
     "indexId": "51a9e9f6-fd19-4abf-8eb9-19f08a8034fc",
     "abilityId": "frost-weapon",
     "name": "Frost Weapon",
@@ -1275,7 +1275,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b72e",
+    "id": "6a9e68822d5e42e3f51b7698",
     "indexId": "f9be7b6e-5803-4e00-9856-8b99706f6e25",
     "abilityId": "fungal-metabolite",
     "name": "Fungal Metabolite",
@@ -1285,7 +1285,7 @@
     "benefit4": "",
     "associatedAbility": "e522ec17-9951-49d8-a3fd-f21f486bb117",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bf96",
+      "id": "6a9e68822d5e42e3f51b7ee3",
       "indexId": "e522ec17-9951-49d8-a3fd-f21f486bb117",
       "trueAbilityId": "resist-poison",
       "name": "Resist Poison",
@@ -1304,7 +1304,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b715",
+    "id": "6a9e68822d5e42e3f51b766a",
     "indexId": "cbf62d54-8965-4eb0-9e99-872f9ab5d247",
     "abilityId": "giant-strength",
     "name": "Giant Strength",
@@ -1316,7 +1316,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b77a",
+    "id": "6a9e68822d5e42e3f51b76bc",
     "indexId": "5d8cb5f5-f77e-4cd9-98f3-916d80f9cde9",
     "abilityId": "gravity-master",
     "name": "Gravity Master",
@@ -1328,7 +1328,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b717",
+    "id": "6a9e68822d5e42e3f51b766b",
     "indexId": "1cac72e6-052f-4392-a732-d6c0cfb0ff85",
     "abilityId": "greatshield-master",
     "name": "Greatshield Master",
@@ -1340,7 +1340,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b727",
+    "id": "6a9e68822d5e42e3f51b7676",
     "indexId": "b1cda6b2-49aa-4c81-a38a-055bcd4b46dd",
     "abilityId": "gun-martial-arts",
     "name": "Gun Martial Arts",
@@ -1352,7 +1352,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b6f7",
+    "id": "6a9e68822d5e42e3f51b7640",
     "indexId": "bd9e4508-ea72-4012-b1b8-15037c8ef2b7",
     "abilityId": "gunslinger-s-agility",
     "name": "Gunslinger's Agility",
@@ -1364,7 +1364,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b740",
+    "id": "6a9e68822d5e42e3f51b7682",
     "indexId": "2041103f-66cf-4dab-8fbf-df563344d01d",
     "abilityId": "heavy-cavalry",
     "name": "Heavy Cavalry",
@@ -1376,7 +1376,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b6f5",
+    "id": "6a9e68822d5e42e3f51b763f",
     "indexId": "2cc12174-d6c0-44ef-9280-dbde95d7eb53",
     "abilityId": "holy_orders",
     "name": "Holy Orders",
@@ -1386,7 +1386,7 @@
     "benefit4": "",
     "associatedAbility": "b5ae210d-a690-4a1b-841d-9a27b68b90fd",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bc65",
+      "id": "6a9e68822d5e42e3f51b7bc5",
       "indexId": "b5ae210d-a690-4a1b-841d-9a27b68b90fd",
       "trueAbilityId": "holy-orders",
       "name": "Holy Orders",
@@ -1403,19 +1403,19 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b6fa",
+    "id": "6a9e68822d5e42e3f51b7642",
     "indexId": "8c32be11-f2af-447c-800d-14964589336a",
     "abilityId": "iaijutsu",
     "name": "Iaijutsu",
     "benefit1": "If you become the target of an attack while you're surprised, you may still react to it and any special properties of an attack that require you to be unaware of the attack (such as Killshot) do not apply to it.",
-    "benefit2": "You may sheathe and draw katanas for 0 AP once per turn per katana.",
+    "benefit2": "You may sheathe or draw katanas for 0 AP once per turn per katana.",
     "benefit3": "You start each battle in the 'Iai' state, which is used for Iai abilities. Making an attack with a katana removes the Iai state for that weapon. Using a skill that requires the Iai state requires the weapon to be sheathed and will remove the Iai state for ALL your weapons, unless specified otherwise.",
     "benefit4": "",
     "associatedAbility": null,
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b71e",
+    "id": "6a9e68822d5e42e3f51b766f",
     "indexId": "c2b109d7-b577-4c21-b242-84cc2ae41727",
     "abilityId": "ice-cold",
     "name": "Ice Cold",
@@ -1427,7 +1427,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b778",
+    "id": "6a9e68822d5e42e3f51b76d3",
     "indexId": "083995c8-4c9f-4deb-a8cd-6fa932b04620",
     "abilityId": "idol-s-journey",
     "name": "Idol's Journey",
@@ -1437,7 +1437,7 @@
     "benefit4": "",
     "associatedAbility": "3c0c1814-64db-4c22-b158-424a0149c3eb",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bf3c",
+      "id": "6a9e68822d5e42e3f51b7eb0",
       "indexId": "3c0c1814-64db-4c22-b158-424a0149c3eb",
       "trueAbilityId": "one-beat--one-heart",
       "name": "One Beat, One Heart",
@@ -1454,7 +1454,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b72a",
+    "id": "6a9e68822d5e42e3f51b7677",
     "indexId": "1c69f611-fee4-4ced-9cae-266d7ee917cb",
     "abilityId": "improved-death-perception",
     "name": "Improved Death Perception",
@@ -1466,7 +1466,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b724",
+    "id": "6a9e68822d5e42e3f51b7654",
     "indexId": "8bc9bb54-948e-473c-91f5-054c38f589b3",
     "abilityId": "improvised-weaponry",
     "name": "Improvised Weaponry",
@@ -1476,7 +1476,7 @@
     "benefit4": "",
     "associatedAbility": "2c86fc51-dffe-4a39-8a7d-4aa0bff9aacc",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bd62",
+      "id": "6a9e68822d5e42e3f51b7ca4",
       "indexId": "2c86fc51-dffe-4a39-8a7d-4aa0bff9aacc",
       "trueAbilityId": "chair_grab",
       "name": "Chair Grab",
@@ -1491,7 +1491,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b712",
+    "id": "6a9e68822d5e42e3f51b7668",
     "indexId": "9b284aa7-1372-46f2-805c-f02cec921458",
     "abilityId": "inconspicuous",
     "name": "Inconspicuous",
@@ -1503,7 +1503,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b753",
+    "id": "6a9e68822d5e42e3f51b7689",
     "indexId": "cb916057-5024-4045-b7f5-c2c5d323503e",
     "abilityId": "independent-actor",
     "name": "Independent Actor",
@@ -1513,7 +1513,7 @@
     "benefit4": "Having an Aetherie or similar connection active automatically fails the ‘No known allies’ requirements.",
     "associatedAbility": "c4cde73c-9d00-4e7f-b40b-7d2b3f150075",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278be74",
+      "id": "6a9e68822d5e42e3f51b7dea",
       "indexId": "c4cde73c-9d00-4e7f-b40b-7d2b3f150075",
       "trueAbilityId": "scout-s-retreat",
       "name": "Scout's Retreat",
@@ -1532,7 +1532,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b709",
+    "id": "6a9e68822d5e42e3f51b7664",
     "indexId": "a3d39dd2-68d1-452c-99bc-18302fe4e4de",
     "abilityId": "infiltrate",
     "name": "Infiltrate",
@@ -1544,7 +1544,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b713",
+    "id": "6a9e68822d5e42e3f51b764f",
     "indexId": "0008bda7-b804-4d05-9e13-56a1164282d2",
     "abilityId": "jump",
     "name": "Jump",
@@ -1554,7 +1554,7 @@
     "benefit4": "",
     "associatedAbility": "208f4f91-aa08-457e-83f4-66ed5a30c03d",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bcfc",
+      "id": "6a9e68822d5e42e3f51b7c6f",
       "indexId": "208f4f91-aa08-457e-83f4-66ed5a30c03d",
       "trueAbilityId": "jump",
       "name": "Jump",
@@ -1571,7 +1571,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b791",
+    "id": "6a9e68822d5e42e3f51b76c5",
     "indexId": "94dc6db0-6882-467b-8524-338d2f944c4d",
     "abilityId": "knight-of-yggdrasil",
     "name": "Knight of Yggdrasil",
@@ -1581,7 +1581,7 @@
     "benefit4": "",
     "associatedAbility": "ca8b73da-9f28-4043-80a6-dc5b4c6f9872",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bfbc",
+      "id": "6a9e68822d5e42e3f51b7ef3",
       "indexId": "ca8b73da-9f28-4043-80a6-dc5b4c6f9872",
       "trueAbilityId": "fluttering-blade",
       "name": "Fluttering Blade",
@@ -1598,7 +1598,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b792",
+    "id": "6a9e68822d5e42e3f51b76e3",
     "indexId": "a8c49df0-7463-45f3-be5e-63d42bef133b",
     "abilityId": "knight-of-yggdrasil-ii",
     "name": "Knight of Yggdrasil II",
@@ -1608,7 +1608,7 @@
     "benefit4": "",
     "associatedAbility": "6f63aea8-4474-413e-9e29-d7ad4309f05f",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bfc1",
+      "id": "6a9e68822d5e42e3f51b7ef6",
       "indexId": "6f63aea8-4474-413e-9e29-d7ad4309f05f",
       "trueAbilityId": "fae-knight-style--willow-stance",
       "name": "Fae Knight Style: Willow Stance",
@@ -1625,7 +1625,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b745",
+    "id": "6a9e68822d5e42e3f51b76a4",
     "indexId": "39e08bd4-19a4-4a21-af4a-a2fd6ca84e44",
     "abilityId": "light-cavalry",
     "name": "Light Cavalry",
@@ -1637,7 +1637,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b72b",
+    "id": "6a9e68822d5e42e3f51b7678",
     "indexId": "eee1d60e-1d8e-40b7-8d08-9136c0669e6a",
     "abilityId": "lightning-strikes-twice",
     "name": "Lightning Strikes Twice",
@@ -1649,7 +1649,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b737",
+    "id": "6a9e68822d5e42e3f51b767f",
     "indexId": "7ab28c17-b35d-4f2f-8d2d-f671ee110bb0",
     "abilityId": "lightning-weapon",
     "name": "Lightning Weapon",
@@ -1661,7 +1661,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b76d",
+    "id": "6a9e68822d5e42e3f51b76cc",
     "indexId": "b3538102-e9f7-4c95-aa6f-fe8832814e91",
     "abilityId": "living-cover",
     "name": "Living Cover",
@@ -1673,7 +1673,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b77f",
+    "id": "6a9e68822d5e42e3f51b76d7",
     "indexId": "8a452db6-5faa-49d7-8c79-ea1ad746d952",
     "abilityId": "look-of-death",
     "name": "Look of Death",
@@ -1683,7 +1683,7 @@
     "benefit4": "",
     "associatedAbility": "003f15ef-ac1a-414f-8059-d63bedeb47f0",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bf68",
+      "id": "6a9e68822d5e42e3f51b7ec6",
       "indexId": "003f15ef-ac1a-414f-8059-d63bedeb47f0",
       "trueAbilityId": "perish",
       "name": "Perish",
@@ -1700,7 +1700,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b73e",
+    "id": "6a9e68822d5e42e3f51b7681",
     "indexId": "a0d43f25-2960-4493-a30e-dfc764aba120",
     "abilityId": "lord-s-dominion",
     "name": "Lord's Dominion",
@@ -1712,7 +1712,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b6ef",
+    "id": "6a9e68822d5e42e3f51b763d",
     "indexId": "645192af-84c9-4dee-beb9-491590ae82bf",
     "abilityId": "mage-armor",
     "name": "Mage Armor",
@@ -1722,7 +1722,7 @@
     "benefit4": "",
     "associatedAbility": "e837fc6d-f762-4369-84e8-a36bf264c521",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bc4c",
+      "id": "6a9e68822d5e42e3f51b7bb7",
       "indexId": "e837fc6d-f762-4369-84e8-a36bf264c521",
       "trueAbilityId": "mage-armor",
       "name": "Mage Armor",
@@ -1739,7 +1739,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b744",
+    "id": "6a9e68822d5e42e3f51b76a3",
     "indexId": "da47f44d-4060-4ffd-815d-7bfd8bbe180d",
     "abilityId": "mage-knight",
     "name": "Mage Knight",
@@ -1751,7 +1751,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b767",
+    "id": "6a9e68822d5e42e3f51b76c8",
     "indexId": "1e45d3bd-18f5-4d2d-9384-ad7796949060",
     "abilityId": "mage-of-the-tides",
     "name": "Mage of the Tides",
@@ -1761,7 +1761,7 @@
     "benefit4": "",
     "associatedAbility": "268bb8cf-7a75-49fc-862a-19e9576a108b",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bedd",
+      "id": "6a9e68822d5e42e3f51b7e40",
       "indexId": "268bb8cf-7a75-49fc-862a-19e9576a108b",
       "trueAbilityId": "blue-tide",
       "name": "Blue Tide",
@@ -1778,7 +1778,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b6e7",
+    "id": "6a9e68822d5e42e3f51b7637",
     "indexId": "37fe1444-7c50-4872-a921-eee266503966",
     "abilityId": "mage-s-journey",
     "name": "Mage's Journey",
@@ -1788,7 +1788,7 @@
     "benefit4": "",
     "associatedAbility": "cbfc49c9-90e8-4940-a09b-a2d913d42080",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bc2c",
+      "id": "6a9e68822d5e42e3f51b7b89",
       "indexId": "cbfc49c9-90e8-4940-a09b-a2d913d42080",
       "trueAbilityId": "sense_magic",
       "name": "Sense Magic",
@@ -1803,7 +1803,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b6e9",
+    "id": "6a9e68822d5e42e3f51b7638",
     "indexId": "b6fb8a83-6436-4246-993b-3c929ae491fa",
     "abilityId": "magic-resistance",
     "name": "Magic Resistance",
@@ -1815,7 +1815,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b772",
+    "id": "6a9e68822d5e42e3f51b76b8",
     "indexId": "18c04cca-b655-45cf-868e-06f4d69d32b0",
     "abilityId": "maid-training",
     "name": "Maid Training",
@@ -1825,7 +1825,7 @@
     "benefit4": "",
     "associatedAbility": "fd369348-a806-47d8-9d62-0c2230771ae6",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bdc9",
+      "id": "6a9e68822d5e42e3f51b7d37",
       "indexId": "fd369348-a806-47d8-9d62-0c2230771ae6",
       "trueAbilityId": "graceful-service",
       "name": "Graceful Service",
@@ -1841,7 +1841,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b70b",
+    "id": "6a9e68822d5e42e3f51b7665",
     "indexId": "111eadce-c322-4eb1-a1e4-71b7225c2188",
     "abilityId": "mana-sight",
     "name": "Mana Sight",
@@ -1851,7 +1851,7 @@
     "benefit4": "",
     "associatedAbility": "f7e8cabb-aa1d-4b99-81ca-ea4dc212c2f9",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bcd6",
+      "id": "6a9e68822d5e42e3f51b7c1d",
       "indexId": "f7e8cabb-aa1d-4b99-81ca-ea4dc212c2f9",
       "trueAbilityId": "mana-sight",
       "name": "Mana Sight",
@@ -1868,7 +1868,7 @@
     }
   },
   {
-    "id": "6a77cdf6086ffb85ad32da35",
+    "id": "6a9e68822d5e42e3f51b76e7",
     "indexId": "395a01f6-e8e2-4192-abdd-0e80005b3c42",
     "abilityId": "manifestor-s-journey",
     "name": "Manifestor's Journey",
@@ -1878,7 +1878,7 @@
     "benefit4": "",
     "associatedAbility": "4a914c8b-388d-45f1-850c-d9279cbd3616",
     "associatedAbilityRef": {
-      "id": "6a77c986086ffb85ad32da2f",
+      "id": "6a9e68822d5e42e3f51b7f37",
       "indexId": "4a914c8b-388d-45f1-850c-d9279cbd3616",
       "trueAbilityId": "secret-art--manifest",
       "name": "Secret Art: Manifest",
@@ -1895,7 +1895,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b719",
+    "id": "6a9e68822d5e42e3f51b7652",
     "indexId": "5ec49f45-f281-48f2-bacf-9a31c8498d9a",
     "abilityId": "martial-artist-s-journey",
     "name": "Martial Artist's Journey",
@@ -1905,7 +1905,7 @@
     "benefit4": "",
     "associatedAbility": "9db4a877-8d93-460c-87a0-2609a36ddfbb",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bd3d",
+      "id": "6a9e68822d5e42e3f51b7cb1",
       "indexId": "9db4a877-8d93-460c-87a0-2609a36ddfbb",
       "trueAbilityId": "discipline",
       "name": "Discipline",
@@ -1920,7 +1920,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b77b",
+    "id": "6a9e68822d5e42e3f51b76bd",
     "indexId": "37358196-6881-49a6-acff-db47d8a8df5e",
     "abilityId": "mass-index",
     "name": "Mass Index",
@@ -1930,7 +1930,7 @@
     "benefit4": "",
     "associatedAbility": "ae0d84da-a321-46d0-9556-231ac2abcfbb",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bf50",
+      "id": "6a9e68822d5e42e3f51b7eba",
       "indexId": "ae0d84da-a321-46d0-9556-231ac2abcfbb",
       "trueAbilityId": "gravity-crush",
       "name": "Gravity Crush",
@@ -1947,7 +1947,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b78f",
+    "id": "6a9e68822d5e42e3f51b76c3",
     "indexId": "7735a9e1-c61f-434e-b58f-640e06c612e3",
     "abilityId": "medic-s-journey",
     "name": "Medic's Journey",
@@ -1957,7 +1957,7 @@
     "benefit4": "",
     "associatedAbility": "0e2cca4a-edc5-4f1a-a64b-6508cf7df15c",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bdca",
+      "id": "6a9e68822d5e42e3f51b7d38",
       "indexId": "0e2cca4a-edc5-4f1a-a64b-6508cf7df15c",
       "trueAbilityId": "first-response",
       "name": "First Response",
@@ -1973,7 +1973,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b76b",
+    "id": "6a9e68822d5e42e3f51b76cb",
     "indexId": "5a266851-1dbe-43e8-8b9f-84ee0609c922",
     "abilityId": "mending",
     "name": "Mending",
@@ -1985,7 +1985,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b78d",
+    "id": "6a9e68822d5e42e3f51b76e2",
     "indexId": "d86e8c96-49b0-4b4f-bc7c-83a627e81d03",
     "abilityId": "merchant-lord",
     "name": "Merchant Lord",
@@ -1997,7 +1997,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b784",
+    "id": "6a9e68822d5e42e3f51b76da",
     "indexId": "b5fb9bc9-83a3-43f8-aed8-bc2e84de9f71",
     "abilityId": "mime-s-journey",
     "name": "Mime's Journey",
@@ -2009,7 +2009,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b747",
+    "id": "6a9e68822d5e42e3f51b7684",
     "indexId": "20393e2d-5b39-43a9-9a3f-4439b0e697d8",
     "abilityId": "mission-control",
     "name": "Mission Control",
@@ -2019,7 +2019,7 @@
     "benefit4": "",
     "associatedAbility": "53afdce0-f6f0-441a-876c-cd25a63f7d6d",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278be3c",
+      "id": "6a9e68822d5e42e3f51b7d93",
       "indexId": "53afdce0-f6f0-441a-876c-cd25a63f7d6d",
       "trueAbilityId": "mind-connection",
       "name": "Mind Connection",
@@ -2035,7 +2035,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b741",
+    "id": "6a9e68822d5e42e3f51b76a1",
     "indexId": "94c15b56-8597-40bf-9460-31f54a65965e",
     "abilityId": "mounted-basics",
     "name": "Mounted Basics",
@@ -2045,7 +2045,7 @@
     "benefit4": "If you have mastered cavalier, your mount can withstand one lethal blow. If your mount would be reduced to 0 HP or below by an attack, it instead is reduced to 1 HP. Only works once per encounter.",
     "associatedAbility": "6db0edca-5258-45c5-af4b-fa64c93d0f25",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278be23",
+      "id": "6a9e68822d5e42e3f51b7d82",
       "indexId": "6db0edca-5258-45c5-af4b-fa64c93d0f25",
       "trueAbilityId": "spirit-jump",
       "name": "Spirit Jump",
@@ -2063,7 +2063,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b78e",
+    "id": "6a9e68822d5e42e3f51b76c2",
     "indexId": "945b10eb-5f6e-4bcd-8ab2-cbed8cc9c069",
     "abilityId": "natural-cycle",
     "name": "Natural Cycle",
@@ -2073,7 +2073,7 @@
     "benefit4": "",
     "associatedAbility": "e30efab3-a95b-4976-b200-bf914fdacb29",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bfae",
+      "id": "6a9e68822d5e42e3f51b7f1c",
       "indexId": "e30efab3-a95b-4976-b200-bf914fdacb29",
       "trueAbilityId": "regrowth",
       "name": "Regrowth",
@@ -2090,7 +2090,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b706",
+    "id": "6a9e68822d5e42e3f51b7661",
     "indexId": "abde20c5-ca37-4ee9-a68f-ea2ec34c9367",
     "abilityId": "nightstalker",
     "name": "Nightstalker",
@@ -2102,7 +2102,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b700",
+    "id": "6a9e68822d5e42e3f51b765e",
     "indexId": "bb197651-56c9-4d9a-b9e1-960d3c02dde0",
     "abilityId": "ninja_style",
     "name": "Ninja Style",
@@ -2112,7 +2112,7 @@
     "benefit4": "",
     "associatedAbility": "9c7bfadd-dae1-4da1-b95e-e6d4d62ff1e6",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bc9d",
+      "id": "6a9e68822d5e42e3f51b7c01",
       "indexId": "9c7bfadd-dae1-4da1-b95e-e6d4d62ff1e6",
       "trueAbilityId": "ninja-run",
       "name": "Ninja Run",
@@ -2127,7 +2127,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b76c",
+    "id": "6a9e68822d5e42e3f51b76b7",
     "indexId": "7f15c71c-b289-4c65-b5ad-1417e9d27d70",
     "abilityId": "ninja-techniques",
     "name": "Ninja Techniques",
@@ -2137,7 +2137,7 @@
     "benefit4": "",
     "associatedAbility": "51ee50de-0fbe-4189-bd67-2cde1a56165b",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bef3",
+      "id": "6a9e68822d5e42e3f51b7e4d",
       "indexId": "51ee50de-0fbe-4189-bd67-2cde1a56165b",
       "trueAbilityId": "genjutsu-kai",
       "name": "Genjutsu Kai",
@@ -2156,7 +2156,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b73d",
+    "id": "6a9e68822d5e42e3f51b769f",
     "indexId": "2906419d-6b27-4747-94e5-21c85fb55eb6",
     "abilityId": "on-my-terms",
     "name": "On my terms",
@@ -2168,7 +2168,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b750",
+    "id": "6a9e68822d5e42e3f51b76aa",
     "indexId": "5b416233-7ffd-4f24-adeb-57c92bd6d07d",
     "abilityId": "ore-hunter",
     "name": "Ore Hunter",
@@ -2180,7 +2180,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b75f",
+    "id": "6a9e68822d5e42e3f51b76b0",
     "indexId": "7e58bb5f-1060-4bde-8a3c-bb4f27552a99",
     "abilityId": "overwhelming-critical",
     "name": "Overwhelming Critical",
@@ -2192,7 +2192,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b6f3",
+    "id": "6a9e68822d5e42e3f51b7659",
     "indexId": "de8bc2b7-3a6b-42b7-b2ec-5062ac7bb966",
     "abilityId": "past-self",
     "name": "Past Self",
@@ -2202,7 +2202,7 @@
     "benefit4": "",
     "associatedAbility": "29952616-a6e8-4442-94eb-afff28e44c16",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bf5a",
+      "id": "6a9e68822d5e42e3f51b7e9d",
       "indexId": "29952616-a6e8-4442-94eb-afff28e44c16",
       "trueAbilityId": "past-self",
       "name": "Past Self",
@@ -2219,7 +2219,34 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b78c",
+    "id": "6aa96f30ee297894130ef26f",
+    "indexId": "27a63977-3732-400b-be31-ff966344b0cc",
+    "abilityId": "peacekeeper",
+    "name": "Peacekeeper",
+    "benefit1": "You gain proficiency in Shotguns.",
+    "benefit2": "Against targets inflicted by your Challenge or Mandate, you may use ranged weapons to make Attacks of Opportunity against them if you are within 10ft of them.",
+    "benefit3": "You may use Final Warning.",
+    "benefit4": "",
+    "associatedAbility": "20545150-ded5-4095-a587-5e72c9f64f36",
+    "associatedAbilityRef": {
+      "id": "6aa96d90ee297894130ef26a",
+      "indexId": "20545150-ded5-4095-a587-5e72c9f64f36",
+      "trueAbilityId": "final-warning",
+      "name": "Final Warning",
+      "description": "<p>You make a Light attack against the target. On damage, inflict either Challenge or Mandate.</p>",
+      "descriptionHtml": "<p>You make a Light attack against the target. On damage, inflict either Challenge or Mandate.</p>",
+      "descriptionText": "You make a Light attack against the target. On damage, inflict either Challenge or Mandate.",
+      "manaCost": "",
+      "apCost": "2",
+      "rpCost": "",
+      "keywords": "Challenge,Mandate",
+      "range": "Ranged Weapon Range",
+      "requirement": "",
+      "otherCosts": ""
+    }
+  },
+  {
+    "id": "6a9e68822d5e42e3f51b76e1",
     "indexId": "0237f460-9c96-45ea-af84-9bc1217360a1",
     "abilityId": "peddler-of-wares",
     "name": "Peddler of Wares",
@@ -2231,7 +2258,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b728",
+    "id": "6a9e68822d5e42e3f51b7694",
     "indexId": "23da5aae-6215-4248-953d-91a3286c6d2f",
     "abilityId": "perfect-mimicry",
     "name": "Perfect Mimicry",
@@ -2243,7 +2270,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a91bbdd086ffb85ad32da52",
+    "id": "6a9e68822d5e42e3f51b76e8",
     "indexId": "58cbf29d-9a65-4fd6-9ed4-6412228e25a8",
     "abilityId": "petrification-eye",
     "name": "Petrification Eye",
@@ -2253,7 +2280,7 @@
     "benefit4": "",
     "associatedAbility": "4d24a7ac-cea9-47fd-8230-1e207a34839b",
     "associatedAbilityRef": {
-      "id": "6a91ba44086ffb85ad32da4d",
+      "id": "6a9e68822d5e42e3f51b7f3f",
       "indexId": "4d24a7ac-cea9-47fd-8230-1e207a34839b",
       "trueAbilityId": "unpetrify",
       "name": "Unpetrify",
@@ -2263,14 +2290,14 @@
       "manaCost": "1",
       "apCost": "1",
       "rpCost": "",
-      "keywords": "",
+      "keywords": "Mystic Eye",
       "range": "60ft",
       "requirement": "",
       "otherCosts": ""
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b75d",
+    "id": "6a9e68822d5e42e3f51b76af",
     "indexId": "4a258d2b-b5f5-4ea5-ac37-abf3a5ae24d7",
     "abilityId": "phantom-thief",
     "name": "Phantom Thief",
@@ -2280,7 +2307,7 @@
     "benefit4": "",
     "associatedAbility": "1fb943e0-15c3-4980-a4ab-2872d6d8f80c",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bea8",
+      "id": "6a9e68822d5e42e3f51b7e06",
       "indexId": "1fb943e0-15c3-4980-a4ab-2872d6d8f80c",
       "trueAbilityId": "stolen-skill",
       "name": "Stolen Skill",
@@ -2297,7 +2324,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b785",
+    "id": "6a9e68822d5e42e3f51b76db",
     "indexId": "3ae4f0c0-0102-4805-a260-00d6c66d8d33",
     "abilityId": "pierrot-s-journey",
     "name": "Pierrot's Journey",
@@ -2309,7 +2336,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b779",
+    "id": "6a9e68822d5e42e3f51b76d4",
     "indexId": "d2a5fcf5-5ec5-4c74-90a1-050e2e16f7d7",
     "abilityId": "puppet-grandmaster",
     "name": "Puppet Grandmaster",
@@ -2319,7 +2346,7 @@
     "benefit4": "",
     "associatedAbility": "646b5751-19fe-4b72-8991-cce46836a0cd",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bf44",
+      "id": "6a9e68822d5e42e3f51b7eb3",
       "indexId": "646b5751-19fe-4b72-8991-cce46836a0cd",
       "trueAbilityId": "summon-piece",
       "name": "Summon Piece",
@@ -2336,7 +2363,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b6ff",
+    "id": "6a9e68822d5e42e3f51b765d",
     "indexId": "9ddef49c-2213-4412-9a48-a7f72a34eadf",
     "abilityId": "raise_undead",
     "name": "Raise Undead",
@@ -2346,7 +2373,7 @@
     "benefit4": "",
     "associatedAbility": "613f9256-6e12-46da-b183-071f85cfb26c",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bc99",
+      "id": "6a9e68822d5e42e3f51b7bdd",
       "indexId": "613f9256-6e12-46da-b183-071f85cfb26c",
       "trueAbilityId": "raise-undead",
       "name": "Raise Undead",
@@ -2363,7 +2390,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b71b",
+    "id": "6a9e68822d5e42e3f51b766d",
     "indexId": "dfff15be-3c7c-4d88-baf6-934ac35681ff",
     "abilityId": "ranger-s-journey",
     "name": "Ranger's Journey",
@@ -2373,7 +2400,7 @@
     "benefit4": "",
     "associatedAbility": "bdd832c5-e394-46bd-83f4-bc26d284de17",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bc3a",
+      "id": "6a9e68822d5e42e3f51b7bac",
       "indexId": "bdd832c5-e394-46bd-83f4-bc26d284de17",
       "trueAbilityId": "status-assessment",
       "name": "Status Assessment",
@@ -2390,7 +2417,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b721",
+    "id": "6a9e68822d5e42e3f51b7672",
     "indexId": "130eead4-b34e-4729-a86c-17e21c53afcd",
     "abilityId": "rapid-blasts",
     "name": "Rapid Blasts",
@@ -2400,7 +2427,7 @@
     "benefit4": "",
     "associatedAbility": "bd6d6a19-72bb-4c4b-8a3e-4e13cf615cba",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bd67",
+      "id": "6a9e68822d5e42e3f51b7cc5",
       "indexId": "bd6d6a19-72bb-4c4b-8a3e-4e13cf615cba",
       "trueAbilityId": "ki-blast-ii",
       "name": "Ki Blast II",
@@ -2417,7 +2444,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b71f",
+    "id": "6a9e68822d5e42e3f51b7670",
     "indexId": "3c020c07-111e-4476-a87b-763050fb54e1",
     "abilityId": "receive_oracle",
     "name": "Receive Oracle",
@@ -2427,7 +2454,7 @@
     "benefit4": "",
     "associatedAbility": "b94357a0-f9aa-46e2-940d-08db4414ef58",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bd54",
+      "id": "6a9e68822d5e42e3f51b7c9e",
       "indexId": "b94357a0-f9aa-46e2-940d-08db4414ef58",
       "trueAbilityId": "receive-oracle",
       "name": "Receive Oracle",
@@ -2444,19 +2471,19 @@
     }
   },
   {
-    "id": "6a769cb6086ffb85ad32da24",
+    "id": "6a9e68822d5e42e3f51b76e5",
     "indexId": "fb0d9f7a-7c1d-4cae-b86b-604f60c0a093",
     "abilityId": "recoil-control",
     "name": "Recoil Control",
     "benefit1": "You gain proficiency in pistols, muskets or crossbows.",
-    "benefit2": "When making a Salvo attack, you gain a +1 bonus to the attack rolls.",
+    "benefit2": "When making a Salvo attack, you gain Recoil Control, which gives a +1 bonus to the attack's accuracy rolls.",
     "benefit3": "",
     "benefit4": "",
     "associatedAbility": "",
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b725",
+    "id": "6a9e68822d5e42e3f51b7675",
     "indexId": "fcf45dbb-0674-4a1e-9e8c-bfab7a370d3a",
     "abilityId": "recover-power",
     "name": "Recover Power",
@@ -2468,7 +2495,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b716",
+    "id": "6a9e68822d5e42e3f51b7650",
     "indexId": "d51aca36-f58d-4e65-ac14-1fc0c54877e4",
     "abilityId": "resheathe",
     "name": "Resheathe",
@@ -2478,7 +2505,7 @@
     "benefit4": "",
     "associatedAbility": "554df130-95d9-4a33-bc63-5745c6161daf",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bd10",
+      "id": "6a9e68822d5e42e3f51b7c5d",
       "indexId": "554df130-95d9-4a33-bc63-5745c6161daf",
       "trueAbilityId": "resheathe",
       "name": "Resheathe",
@@ -2497,7 +2524,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b74f",
+    "id": "6a9e68822d5e42e3f51b7688",
     "indexId": "f2d35fa5-937c-47b7-aa25-9c8ebf0e1ac1",
     "abilityId": "rock-and-stone",
     "name": "Rock and Stone",
@@ -2509,7 +2536,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b71d",
+    "id": "6a9e68822d5e42e3f51b766e",
     "indexId": "3e25b973-c187-4f30-8c13-b2a980e0134d",
     "abilityId": "rogue-s-journey",
     "name": "Rogue's Journey",
@@ -2519,7 +2546,7 @@
     "benefit4": "",
     "associatedAbility": "7e9dca18-d206-424e-aea8-7cf7ea0913a3",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bd43",
+      "id": "6a9e68822d5e42e3f51b7c92",
       "indexId": "7e9dca18-d206-424e-aea8-7cf7ea0913a3",
       "trueAbilityId": "feint",
       "name": "Feint",
@@ -2536,7 +2563,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b76e",
+    "id": "6a9e68822d5e42e3f51b76cd",
     "indexId": "a2a9267d-2f8d-422e-aafb-ce740ea9e96d",
     "abilityId": "rolling-thunder",
     "name": "Rolling Thunder",
@@ -2548,7 +2575,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b703",
+    "id": "6a9e68822d5e42e3f51b7660",
     "indexId": "5a488fec-4783-42ca-a7c0-228dfc8a3e03",
     "abilityId": "saboteur",
     "name": "Saboteur",
@@ -2558,7 +2585,7 @@
     "benefit4": "",
     "associatedAbility": "1e26e66c-34c5-49dc-b99f-68b157be8aee",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bcab",
+      "id": "6a9e68822d5e42e3f51b7c25",
       "indexId": "1e26e66c-34c5-49dc-b99f-68b157be8aee",
       "trueAbilityId": "presence-concealment",
       "name": "Presence Concealment",
@@ -2575,7 +2602,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b78a",
+    "id": "6a9e68822d5e42e3f51b76df",
     "indexId": "feb4c2bc-8a42-48e1-b8bc-a8aa67fff6be",
     "abilityId": "sanctioned-healer",
     "name": "Sanctioned Healer",
@@ -2587,7 +2614,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b708",
+    "id": "6a9e68822d5e42e3f51b7663",
     "indexId": "8e74a43b-36ff-4e96-b655-ab755d6a13e2",
     "abilityId": "scholar-of-tactics",
     "name": "Scholar of Tactics",
@@ -2597,7 +2624,7 @@
     "benefit4": "",
     "associatedAbility": "3832172d-0dcc-4857-8f51-3a6d4e5ce683",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bccc",
+      "id": "6a9e68822d5e42e3f51b7c37",
       "indexId": "3832172d-0dcc-4857-8f51-3a6d4e5ce683",
       "trueAbilityId": "take-cover-",
       "name": "Take Cover!",
@@ -2612,7 +2639,34 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b763",
+    "id": "6aa71c25ee297894130ef265",
+    "indexId": "6b0d328c-75fc-4b1c-b5da-8b04225b7489",
+    "abilityId": "scientific-witchery",
+    "name": "Scientific Witchery",
+    "benefit1": "You may use Begin the Final Calculation.",
+    "benefit2": "",
+    "benefit3": "",
+    "benefit4": "",
+    "associatedAbility": "cd462100-d3da-4e0f-ab94-46b585fcb498",
+    "associatedAbilityRef": {
+      "id": "6aa7184eee297894130ef260",
+      "indexId": "cd462100-d3da-4e0f-ab94-46b585fcb498",
+      "trueAbilityId": "begin-the-final-calculation",
+      "name": "Begin the Final Calculation",
+      "description": "<p>You prepare to unleash the Final Theorem.</p><p>The area becomes saturated with magical energy, immediately alerting all in the combat. While this is active, you can never enter the hiding state and the first Thaumaturge spell you cast each turn raises your Theorem level.</p><p>You may at any time decide to stop preparing the Final Theorem for 0 RP. If you do, all stacks are lost. Stacks otherwise last until consumed by the Final Theorem or until encounter conclusion.</p>",
+      "descriptionHtml": "<p>You prepare to unleash the Final Theorem.</p><p>The area becomes saturated with magical energy, immediately alerting all in the combat. While this is active, you can never enter the hiding state and the first Thaumaturge spell you cast each turn raises your Theorem level.</p><p>You may at any time decide to stop preparing the Final Theorem for 0 RP. If you do, all stacks are lost. Stacks otherwise last until consumed by the Final Theorem or until encounter conclusion.</p>",
+      "descriptionText": "You prepare to unleash the Final Theorem.\nThe area becomes saturated with magical energy, immediately alerting all in the combat. While this is active, you can never enter the hiding state and the first Thaumaturge spell you cast each turn raises your Theorem level.\nYou may at any time decide to stop preparing the Final Theorem for 0 RP. If you do, all stacks are lost. Stacks otherwise last until consumed by the Final Theorem or until encounter conclusion.",
+      "manaCost": "",
+      "apCost": "",
+      "rpCost": "",
+      "keywords": "Stacking",
+      "range": "Self",
+      "requirement": "",
+      "otherCosts": ""
+    }
+  },
+  {
+    "id": "6a9e68822d5e42e3f51b76b3",
     "indexId": "d6ae7f56-6115-4234-9609-a75c3a57aaf8",
     "abilityId": "shared-darkness",
     "name": "Shared Darkness",
@@ -2622,7 +2676,7 @@
     "benefit4": "",
     "associatedAbility": "6b4a182a-59ee-475f-983e-0dc0bd13b962",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bec7",
+      "id": "6a9e68822d5e42e3f51b7e35",
       "indexId": "6b4a182a-59ee-475f-983e-0dc0bd13b962",
       "trueAbilityId": "darkvision",
       "name": "Darkvision",
@@ -2639,7 +2693,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b769",
+    "id": "6a9e68822d5e42e3f51b76ca",
     "indexId": "5d5c0dc4-0876-481a-8dd2-04f0c6f59004",
     "abilityId": "shield-the-fallen",
     "name": "Shield the Fallen",
@@ -2649,7 +2703,7 @@
     "benefit4": "",
     "associatedAbility": "2fff1f67-4567-40ae-814e-a94aa61a0287",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bee7",
+      "id": "6a9e68822d5e42e3f51b7e26",
       "indexId": "2fff1f67-4567-40ae-814e-a94aa61a0287",
       "trueAbilityId": "shield-the-fallen",
       "name": "Shield the Fallen",
@@ -2668,7 +2722,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b766",
+    "id": "6a9e68822d5e42e3f51b76c7",
     "indexId": "50f7b301-dbff-4617-96fa-9c4b00c9a106",
     "abilityId": "shielding-fist",
     "name": "Shielding Fist",
@@ -2680,7 +2734,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b6f2",
+    "id": "6a9e68822d5e42e3f51b7658",
     "indexId": "361519a0-14c3-4c4b-ac99-6e0b9d396c61",
     "abilityId": "shrug-it-off",
     "name": "Shrug it off",
@@ -2690,7 +2744,7 @@
     "benefit4": "",
     "associatedAbility": "2c5b050a-d98f-4ea0-aea5-68865ee44652",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bc58",
+      "id": "6a9e68822d5e42e3f51b7bbf",
       "indexId": "2c5b050a-d98f-4ea0-aea5-68865ee44652",
       "trueAbilityId": "vital-drive-ii",
       "name": "Vital Drive II",
@@ -2707,7 +2761,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b718",
+    "id": "6a9e68822d5e42e3f51b7651",
     "indexId": "82f32ad1-b86c-4b9f-864e-385568f3d18a",
     "abilityId": "snipe",
     "name": "Snipe",
@@ -2719,7 +2773,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b768",
+    "id": "6a9e68822d5e42e3f51b76c9",
     "indexId": "cc52bb2c-351d-40c3-8a6d-138531cedaab",
     "abilityId": "song-without-song",
     "name": "Song without Song",
@@ -2731,7 +2785,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b782",
+    "id": "6a9e68822d5e42e3f51b76c0",
     "indexId": "ad970e79-f0e5-48ff-988b-ad67a33a1743",
     "abilityId": "sorcerer-s-journey",
     "name": "Sorcerer's Journey",
@@ -2743,7 +2797,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b764",
+    "id": "6a9e68822d5e42e3f51b76b4",
     "indexId": "1c6fa755-467c-416b-9f20-6b7c3caf4686",
     "abilityId": "soul-absorption",
     "name": "Soul Absorption",
@@ -2753,7 +2807,7 @@
     "benefit4": "",
     "associatedAbility": "a0fdd470-fcd1-4926-a37f-d97a85ad6b32",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bec8",
+      "id": "6a9e68822d5e42e3f51b7e17",
       "indexId": "a0fdd470-fcd1-4926-a37f-d97a85ad6b32",
       "trueAbilityId": "soul-absorption",
       "name": "Soul Absorption",
@@ -2770,7 +2824,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b73c",
+    "id": "6a9e68822d5e42e3f51b7680",
     "indexId": "848b833a-73f4-4869-a46c-83bf731c4b79",
     "abilityId": "soul-bond",
     "name": "Soul Bond",
@@ -2782,7 +2836,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b75a",
+    "id": "6a9e68822d5e42e3f51b768f",
     "indexId": "b4e1c618-7a10-48a2-8d2e-f87dae8b1093",
     "abilityId": "sound-the-retreat",
     "name": "Sound the retreat",
@@ -2792,7 +2846,7 @@
     "benefit4": "",
     "associatedAbility": "dac4299e-a8fc-46cc-85c3-879ce2662fec",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278be9a",
+      "id": "6a9e68822d5e42e3f51b7ddc",
       "indexId": "dac4299e-a8fc-46cc-85c3-879ce2662fec",
       "trueAbilityId": "sound-the-retreat",
       "name": "Sound the retreat",
@@ -2809,7 +2863,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b6e6",
+    "id": "6a9e68822d5e42e3f51b7636",
     "indexId": "8f7ad9e9-ff8f-40a6-b757-a92e4fbf8f3b",
     "abilityId": "spell-challenge",
     "name": "Spell Challenge",
@@ -2821,7 +2875,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b770",
+    "id": "6a9e68822d5e42e3f51b76cf",
     "indexId": "78f6328c-43c1-4509-8524-7ae782086b91",
     "abilityId": "spell-transfer",
     "name": "Spell Transfer",
@@ -2833,7 +2887,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b6fd",
+    "id": "6a9e68822d5e42e3f51b7645",
     "indexId": "9b8aaca2-20d6-441e-aaed-06d7c89b3b27",
     "abilityId": "spore-symbiote",
     "name": "Spore Symbiote",
@@ -2843,7 +2897,7 @@
     "benefit4": "",
     "associatedAbility": "0cf24f63-7c3e-4954-a37c-c3949b109237",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bc93",
+      "id": "6a9e68822d5e42e3f51b7bda",
       "indexId": "0cf24f63-7c3e-4954-a37c-c3949b109237",
       "trueAbilityId": "spore_symbiote",
       "name": "Spore Symbiote",
@@ -2858,7 +2912,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b6eb",
+    "id": "6a9e68822d5e42e3f51b763a",
     "indexId": "20f581c0-dfba-48e7-b260-76e076682337",
     "abilityId": "status-assessment-ii",
     "name": "Status Assessment II",
@@ -2868,7 +2922,7 @@
     "benefit4": "",
     "associatedAbility": "f40ee45c-1c24-4f5c-9ec6-8c1d4602193f",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bd42",
+      "id": "6a9e68822d5e42e3f51b7c91",
       "indexId": "f40ee45c-1c24-4f5c-9ec6-8c1d4602193f",
       "trueAbilityId": "status-assessment-ii",
       "name": "Status Assessment II",
@@ -2885,7 +2939,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b734",
+    "id": "6a9e68822d5e42e3f51b767c",
     "indexId": "aca6ea81-c8ab-4017-9a41-64cb1e2be07a",
     "abilityId": "store-time",
     "name": "Store Time",
@@ -2895,7 +2949,7 @@
     "benefit4": "",
     "associatedAbility": "f33a0ea1-1022-49b6-a0ad-4df2ebc5a018",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bddb",
+      "id": "6a9e68822d5e42e3f51b7d20",
       "indexId": "f33a0ea1-1022-49b6-a0ad-4df2ebc5a018",
       "trueAbilityId": "store-time",
       "name": "Store Time",
@@ -2911,7 +2965,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b701",
+    "id": "6a9e68822d5e42e3f51b765f",
     "indexId": "96cdedef-b044-44de-8689-be2bda03eda0",
     "abilityId": "studied-healer",
     "name": "Studied Healer",
@@ -2923,7 +2977,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b761",
+    "id": "6a9e68822d5e42e3f51b7692",
     "indexId": "b3aa8bbc-a508-4752-96c1-f8f48db26a46",
     "abilityId": "stygian-comprehension",
     "name": "Stygian Comprehension",
@@ -2933,7 +2987,7 @@
     "benefit4": "",
     "associatedAbility": "d8b1c3a2-b246-44cb-8bf2-8192e51fb2c9",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bebb",
+      "id": "6a9e68822d5e42e3f51b7e30",
       "indexId": "d8b1c3a2-b246-44cb-8bf2-8192e51fb2c9",
       "trueAbilityId": "dark-bolt",
       "name": "Dark Bolt",
@@ -2950,7 +3004,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b738",
+    "id": "6a9e68822d5e42e3f51b769b",
     "indexId": "dc2137fc-f712-4c16-b470-52b237ddb268",
     "abilityId": "summon-animal",
     "name": "Summon Animal",
@@ -2960,7 +3014,7 @@
     "benefit4": "",
     "associatedAbility": "9494f15b-c0ec-4e56-8c57-6329516af37b",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bdf6",
+      "id": "6a9e68822d5e42e3f51b7d4c",
       "indexId": "9494f15b-c0ec-4e56-8c57-6329516af37b",
       "trueAbilityId": "summon-animal",
       "name": "Summon Animal",
@@ -2976,7 +3030,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b73a",
+    "id": "6a9e68822d5e42e3f51b769d",
     "indexId": "1e3697ea-80bc-4252-bee5-a5cd0fc0ff05",
     "abilityId": "summoning-basics",
     "name": "Summoning Basics",
@@ -2986,7 +3040,7 @@
     "benefit4": "",
     "associatedAbility": "9417f043-0cc8-4432-9d03-76dcd8cd304f",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278be00",
+      "id": "6a9e68822d5e42e3f51b7d53",
       "indexId": "9417f043-0cc8-4432-9d03-76dcd8cd304f",
       "trueAbilityId": "attune-eidolon",
       "name": "Attune Eidolon",
@@ -3004,7 +3058,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b6f4",
+    "id": "6a9e68822d5e42e3f51b765a",
     "indexId": "45f1d76f-e334-43ef-9643-0adc6edbb2ee",
     "abilityId": "superconductor",
     "name": "Superconductor",
@@ -3016,7 +3070,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b711",
+    "id": "6a9e68822d5e42e3f51b764e",
     "indexId": "118702d7-2c50-4e3e-85c1-fe165327a038",
     "abilityId": "superior_assessment",
     "name": "Superior Assessment",
@@ -3026,7 +3080,7 @@
     "benefit4": "",
     "associatedAbility": "9dd5d233-7114-4bc8-be29-c97373f03965",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bcf5",
+      "id": "6a9e68822d5e42e3f51b7c6c",
       "indexId": "9dd5d233-7114-4bc8-be29-c97373f03965",
       "trueAbilityId": "status-assessment-iii",
       "name": "Status Assessment III",
@@ -3043,7 +3097,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b76a",
+    "id": "6a9e68822d5e42e3f51b76b6",
     "indexId": "65e51562-f60a-4556-a106-186f00d73337",
     "abilityId": "surgical-precision",
     "name": "Surgical Precision",
@@ -3055,7 +3109,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b777",
+    "id": "6a9e68822d5e42e3f51b76d2",
     "indexId": "26e450a4-3ed2-4e7b-84c5-34cfdfe2418e",
     "abilityId": "take-the-advantage",
     "name": "Take the advantage",
@@ -3067,7 +3121,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b743",
+    "id": "6a9e68822d5e42e3f51b7683",
     "indexId": "0796b52f-93e0-4978-a034-fccf9a320f8d",
     "abilityId": "terrifying-charge",
     "name": "Terrifying Charge",
@@ -3079,7 +3133,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b731",
+    "id": "6a9e68822d5e42e3f51b7699",
     "indexId": "1979fa59-8e17-462f-9cb3-982a6ec9a571",
     "abilityId": "the-alchemist",
     "name": "The Alchemist",
@@ -3089,7 +3143,7 @@
     "benefit4": "You craft 3 of the same Elixir, Potion, Flask, Poison or Salve when using an interlude point instead of 1. You only need to pay the listed cost once.",
     "associatedAbility": "01cdee4e-876d-4342-a56c-2006d731ed52",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bdb4",
+      "id": "6a9e68822d5e42e3f51b7d2c",
       "indexId": "01cdee4e-876d-4342-a56c-2006d731ed52",
       "trueAbilityId": "alchemist-core-crafting",
       "name": "Alchemist Core Crafting",
@@ -3105,7 +3159,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b720",
+    "id": "6a9e68822d5e42e3f51b7671",
     "indexId": "0eb5af8e-ac0a-4e55-9e0b-faaf513d6320",
     "abilityId": "thefts-of-the-past",
     "name": "Thefts of the past",
@@ -3117,7 +3171,34 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b702",
+    "id": "6aa988caee297894130ef278",
+    "indexId": "46592190-ceca-40d6-892f-be6052b00247",
+    "abilityId": "thread-of-reprieve",
+    "name": "Thread of Reprieve",
+    "benefit1": "You may use Thread of Reprieve.",
+    "benefit2": "",
+    "benefit3": "",
+    "benefit4": "",
+    "associatedAbility": "085a3fc6-38b3-4d92-b27d-97f52802e74e",
+    "associatedAbilityRef": {
+      "id": "6aa986f6ee297894130ef272",
+      "indexId": "085a3fc6-38b3-4d92-b27d-97f52802e74e",
+      "trueAbilityId": "thread-of-reprieve",
+      "name": "Thread of Reprieve",
+      "description": "<p>You apply the Threads of Reprieve to a single ally until the start of your next turn&nbsp;</p><p>If that ally takes damage while the threads remain attached, you may spend 1 mana to heal them 3+Focus, up to the damage they took.</p>",
+      "descriptionHtml": "<p>You apply the Threads of Reprieve to a single ally until the start of your next turn&nbsp;</p><p>If that ally takes damage while the threads remain attached, you may spend 1 mana to heal them 3+Focus, up to the damage they took.</p>",
+      "descriptionText": "You apply the Threads of Reprieve to a single ally until the start of your next turn\nIf that ally takes damage while the threads remain attached, you may spend 1 mana to heal them 3+Focus, up to the damage they took.",
+      "manaCost": "",
+      "apCost": "1",
+      "rpCost": "",
+      "keywords": "Active",
+      "range": "60ft",
+      "requirement": "",
+      "otherCosts": ""
+    }
+  },
+  {
+    "id": "6a9e68822d5e42e3f51b7647",
     "indexId": "9afdcd91-6d51-416d-aa69-1bee7ace219e",
     "abilityId": "throwing-rhythm",
     "name": "Throwing Rhythm",
@@ -3129,7 +3210,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b751",
+    "id": "6a9e68822d5e42e3f51b76ab",
     "indexId": "8fcafec9-cd97-4be7-88c1-340cf4d691ca",
     "abilityId": "timberwright-s-core-crafting",
     "name": "Timberwright's Core Crafting",
@@ -3139,7 +3220,7 @@
     "benefit4": "",
     "associatedAbility": "01a4dde6-bfed-4af6-829f-060c91f0d20a",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278be6a",
+      "id": "6a9e68822d5e42e3f51b7dc7",
       "indexId": "01a4dde6-bfed-4af6-829f-060c91f0d20a",
       "trueAbilityId": "timberwright-s-core-crafting",
       "name": "Timberwright's Core Crafting",
@@ -3155,7 +3236,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b735",
+    "id": "6a9e68822d5e42e3f51b767d",
     "indexId": "92934ba5-4d76-475b-85a9-dfd693da3725",
     "abilityId": "titan-s-grip",
     "name": "Titan's Grip",
@@ -3167,7 +3248,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b6ed",
+    "id": "6a9e68822d5e42e3f51b763c",
     "indexId": "2fe9880d-4c4f-4753-b54e-4be45a287539",
     "abilityId": "toss-a-coin",
     "name": "Toss a coin",
@@ -3179,7 +3260,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b787",
+    "id": "6a9e68822d5e42e3f51b76dd",
     "indexId": "db443d80-5c58-4c92-874d-3c203bb26cc6",
     "abilityId": "toxic-blast",
     "name": "Toxic Blast",
@@ -3189,7 +3270,7 @@
     "benefit4": "",
     "associatedAbility": "ae446094-a5bb-48f2-ad4c-490657707200",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bf8d",
+      "id": "6a9e68822d5e42e3f51b7edc",
       "indexId": "ae446094-a5bb-48f2-ad4c-490657707200",
       "trueAbilityId": "toxic-blast",
       "name": "Toxic Blast",
@@ -3206,7 +3287,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b730",
+    "id": "6a9e68822d5e42e3f51b767a",
     "indexId": "272f9a97-4064-4c49-b809-9e182b4a6ebb",
     "abilityId": "tranquil-prayers",
     "name": "Tranquil Prayers",
@@ -3218,7 +3299,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b726",
+    "id": "6a9e68822d5e42e3f51b7693",
     "indexId": "4852a089-ac80-4cef-89b0-b267dd49bf6b",
     "abilityId": "transfusion",
     "name": "Transfusion",
@@ -3228,7 +3309,7 @@
     "benefit4": "",
     "associatedAbility": "314f6d68-9be0-42c6-a20f-4a0d5821739c",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bd79",
+      "id": "6a9e68822d5e42e3f51b7cef",
       "indexId": "314f6d68-9be0-42c6-a20f-4a0d5821739c",
       "trueAbilityId": "transfusion",
       "name": "Transfusion",
@@ -3244,7 +3325,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b748",
+    "id": "6a9e68822d5e42e3f51b76a6",
     "indexId": "d9aa1834-3a02-4072-b318-139393d61db0",
     "abilityId": "transmutation-basics",
     "name": "Transmutation Basics",
@@ -3254,7 +3335,7 @@
     "benefit4": "You gain proficiency in alchemist’s alembic and 1 basic weapon type.",
     "associatedAbility": "0f5eb799-13d5-4f01-9642-74d5fa2eede5",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278be41",
+      "id": "6a9e68822d5e42e3f51b7d97",
       "indexId": "0f5eb799-13d5-4f01-9642-74d5fa2eede5",
       "trueAbilityId": "transmutation-basics",
       "name": "Transmutation Basics",
@@ -3270,7 +3351,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b749",
+    "id": "6a9e68822d5e42e3f51b7685",
     "indexId": "0e71f201-d383-4085-8097-61ca64ded45b",
     "abilityId": "transmutation-tricks",
     "name": "Transmutation Tricks",
@@ -3280,7 +3361,7 @@
     "benefit4": "",
     "associatedAbility": "8c0dc284-0333-4d51-9bc1-eef2034c37ac",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278be46",
+      "id": "6a9e68822d5e42e3f51b7d99",
       "indexId": "8c0dc284-0333-4d51-9bc1-eef2034c37ac",
       "trueAbilityId": "transmuter-tricks",
       "name": "Transmuter Tricks",
@@ -3296,7 +3377,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b789",
+    "id": "6a9e68822d5e42e3f51b76de",
     "indexId": "0a751ecd-d57d-4a3f-b0d1-5ca69fef30a2",
     "abilityId": "transmuter-of-life",
     "name": "Transmuter of Life",
@@ -3306,7 +3387,7 @@
     "benefit4": "",
     "associatedAbility": "94ad5731-f627-44db-baab-7ecc35179b70",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bf97",
+      "id": "6a9e68822d5e42e3f51b7f0f",
       "indexId": "94ad5731-f627-44db-baab-7ecc35179b70",
       "trueAbilityId": "biohacking",
       "name": "Biohacking",
@@ -3323,7 +3404,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b759",
+    "id": "6a9e68822d5e42e3f51b768e",
     "indexId": "20f3d7ab-9396-45ea-82fe-367533a18276",
     "abilityId": "trap-basics",
     "name": "Trap Basics",
@@ -3335,7 +3416,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b73b",
+    "id": "6a9e68822d5e42e3f51b769e",
     "indexId": "68a52b38-51f8-4388-9098-be37493e3793",
     "abilityId": "tremorsense",
     "name": "Tremorsense",
@@ -3345,7 +3426,7 @@
     "benefit4": "",
     "associatedAbility": "3a1ba5e6-2df1-4b6f-aad6-00c4edcf5927",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278be06",
+      "id": "6a9e68822d5e42e3f51b7d58",
       "indexId": "3a1ba5e6-2df1-4b6f-aad6-00c4edcf5927",
       "trueAbilityId": "tremorsense",
       "name": "Tremorsense",
@@ -3363,7 +3444,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b788",
+    "id": "6a9e68822d5e42e3f51b76c1",
     "indexId": "c4370754-2338-497e-8c35-df5ad40ea0f2",
     "abilityId": "undead-mastery",
     "name": "Undead Mastery",
@@ -3375,7 +3456,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b733",
+    "id": "6a9e68822d5e42e3f51b769a",
     "indexId": "dbc1d4de-9383-46f1-bdf3-e6f38f164d0c",
     "abilityId": "vampiric-strength",
     "name": "Vampiric Strength",
@@ -3385,7 +3466,7 @@
     "benefit4": "",
     "associatedAbility": "d79a84ca-cf51-42b8-8fc4-023002ba0648",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bdcf",
+      "id": "6a9e68822d5e42e3f51b7d17",
       "indexId": "d79a84ca-cf51-42b8-8fc4-023002ba0648",
       "trueAbilityId": "vampire-bite",
       "name": "Vampire Bite",
@@ -3401,7 +3482,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b736",
+    "id": "6a9e68822d5e42e3f51b767e",
     "indexId": "e185e399-38ac-4673-a805-c02e51da01f3",
     "abilityId": "versatile-range",
     "name": "Versatile Range",
@@ -3413,7 +3494,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b6f1",
+    "id": "6a9e68822d5e42e3f51b763e",
     "indexId": "1cf8ae2f-87c4-4e9a-b633-6d22db5ba4d1",
     "abilityId": "vip-protection",
     "name": "VIP Protection",
@@ -3423,13 +3504,13 @@
     "benefit4": "",
     "associatedAbility": "d090d94f-fcc3-4b1b-bf35-2648b3ba1bbc",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bf1b",
+      "id": "6a9e68822d5e42e3f51b7e7e",
       "indexId": "d090d94f-fcc3-4b1b-bf35-2648b3ba1bbc",
       "trueAbilityId": "vip-protection",
       "name": "VIP Protection",
-      "description": "<p>You change the target of the attack to you instead of your VIP.</p><p>This attack automatically hits you and you may not use the Dodge and Block or similar reactions against it.&nbsp;</p><p>The re-directed attack is treated as having most the requirements met as if it was still targeting the original target, including effects that are conditional such as Full Pierce on a downed target, and you are considered to be in the original target's spot for the purposes of range of the attack you're re-directing.&nbsp;</p><p>GM's may rule some conditional effects are based on you rather than the original target, such as attacks with effects based on race.</p><p>Does not work against Attacks of Opportunity and cannot be used against an attack that's already redirected.</p>",
-      "descriptionHtml": "<p>You change the target of the attack to you instead of your VIP.</p><p>This attack automatically hits you and you may not use the Dodge and Block or similar reactions against it.&nbsp;</p><p>The re-directed attack is treated as having most the requirements met as if it was still targeting the original target, including effects that are conditional such as Full Pierce on a downed target, and you are considered to be in the original target's spot for the purposes of range of the attack you're re-directing.&nbsp;</p><p>GM's may rule some conditional effects are based on you rather than the original target, such as attacks with effects based on race.</p><p>Does not work against Attacks of Opportunity and cannot be used against an attack that's already redirected.</p>",
-      "descriptionText": "You change the target of the attack to you instead of your VIP.\nThis attack automatically hits you and you may not use the Dodge and Block or similar reactions against it.\nThe re-directed attack is treated as having most the requirements met as if it was still targeting the original target, including effects that are conditional such as Full Pierce on a downed target, and you are considered to be in the original target's spot for the purposes of range of the attack you're re-directing.\nGM's may rule some conditional effects are based on you rather than the original target, such as attacks with effects based on race.\nDoes not work against Attacks of Opportunity and cannot be used against an attack that's already redirected.",
+      "description": "<p>You change the target of the attack to you instead of your VIP.</p><p>This attack automatically hits you and you may not use the Dodge and Block or similar reactions against it.&nbsp;</p><p>The re-directed attack is treated as having most the requirements met as if it was still targeting the original target, including effects that are conditional such as Full Pierce on a downed target, and you are considered to be in the original target's spot for the purposes of range of the attack you're re-directing. Attacks re-directed to you gain the Crushing keyword. However, you may spend 1 Mana to make these redirected attacks not gain Crushing until the end of your next turn.</p><p>GM's may rule some conditional effects are based on you rather than the original target, such as attacks with effects based on race.</p><p>Does not work against Attacks of Opportunity and cannot be used against an attack that's already redirected.</p>",
+      "descriptionHtml": "<p>You change the target of the attack to you instead of your VIP.</p><p>This attack automatically hits you and you may not use the Dodge and Block or similar reactions against it.&nbsp;</p><p>The re-directed attack is treated as having most the requirements met as if it was still targeting the original target, including effects that are conditional such as Full Pierce on a downed target, and you are considered to be in the original target's spot for the purposes of range of the attack you're re-directing. Attacks re-directed to you gain the Crushing keyword. However, you may spend 1 Mana to make these redirected attacks not gain Crushing until the end of your next turn.</p><p>GM's may rule some conditional effects are based on you rather than the original target, such as attacks with effects based on race.</p><p>Does not work against Attacks of Opportunity and cannot be used against an attack that's already redirected.</p>",
+      "descriptionText": "You change the target of the attack to you instead of your VIP.\nThis attack automatically hits you and you may not use the Dodge and Block or similar reactions against it.\nThe re-directed attack is treated as having most the requirements met as if it was still targeting the original target, including effects that are conditional such as Full Pierce on a downed target, and you are considered to be in the original target's spot for the purposes of range of the attack you're re-directing. Attacks re-directed to you gain the Crushing keyword. However, you may spend 1 Mana to make these redirected attacks not gain Crushing until the end of your next turn.\nGM's may rule some conditional effects are based on you rather than the original target, such as attacks with effects based on race.\nDoes not work against Attacks of Opportunity and cannot be used against an attack that's already redirected.",
       "manaCost": "",
       "apCost": "",
       "rpCost": "0",
@@ -3442,7 +3523,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b774",
+    "id": "6a9e68822d5e42e3f51b76ba",
     "indexId": "f69e1029-7515-45ff-84dc-fa94d729261e",
     "abilityId": "wall-ride",
     "name": "Wall Ride",
@@ -3454,7 +3535,7 @@
     "associatedAbilityRef": null
   },
   {
-    "id": "6a5e50be98f4934cf278b6e8",
+    "id": "6a9e68822d5e42e3f51b7655",
     "indexId": "1eb98d03-67af-4688-8e5e-98b2c263db88",
     "abilityId": "wind_master",
     "name": "Wind Master",
@@ -3464,7 +3545,7 @@
     "benefit4": "",
     "associatedAbility": "e8acaf6a-f6aa-47c8-b44a-802c49be7c67",
     "associatedAbilityRef": {
-      "id": "6a5e50be98f4934cf278bc2d",
+      "id": "6a9e68822d5e42e3f51b7ba5",
       "indexId": "e8acaf6a-f6aa-47c8-b44a-802c49be7c67",
       "trueAbilityId": "glide",
       "name": "Glide",
@@ -3481,7 +3562,7 @@
     }
   },
   {
-    "id": "6a5e50be98f4934cf278b6ec",
+    "id": "6a9e68822d5e42e3f51b763b",
     "indexId": "b573c1f7-0d6a-4607-baf2-4907d4984a83",
     "abilityId": "zhen_jiao",
     "name": "Zhen Jiao",
